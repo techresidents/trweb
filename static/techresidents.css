@@ -1,0 +1,29 @@
+.content {
+    padding-top: 40px;
+}
+
+.masthead {
+    min-width: 940px;
+    background-color: #049CD9;
+    background-image: -moz-linear-gradient(#004D9F, #049CD9);
+    background-repeat: no-repeat;
+}
+
+.masthead h1, .masthead p {
+    color: #FFFFFF;
+    margin-bottom: 9px;
+    text-align: center;
+}
+
+.masthead h1 {
+    font-size: 54px;
+    line-height: 1;
+}
+
+.masthead p {
+    font-weight: 300;
+}
+
+.inner {
+    padding: 45px;
+}

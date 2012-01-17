@@ -1,0 +1,23 @@
+Getting Started
+
+1) mkvirtualenv techresidents
+2) python bootstrap.py
+
+Postgres Database (localdev must be running)
+3a) psql -U postgres -h localdev -f sql/create_localdev_db.sql
+
+    or
+
+    fab localdev create_database
+
+    or if usernmae is different than local machine
+
+    fab -u <username> localdev create_database
+
+SQLlite Database
+3b) Coment out postgres and uncomment sqlite3 db engine lines in setting.py
+
+
+4) python manage.py syncdb
+5) python manage.py runserver
+6) Visit 127.0.0.1:8000 in browser.
