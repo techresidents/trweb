@@ -1,4 +1,8 @@
 .content {
+    padding-top: 10px;
+}
+
+.menu-content {
     padding-top: 40px;
 }
 
@@ -24,6 +28,6 @@
     font-weight: 300;
 }
 
-.inner {
-    padding: 45px;
+.masthead-inner {
+    padding: 20px;
 }

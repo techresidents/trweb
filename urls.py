@@ -16,6 +16,10 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
+    
+    url(r'^$', redirect_to, {'url': 'accounts/login/'}),
+    url(r'^accounts/', include('accounts.urls')),
+
 )
 
 #This is for development purposes only.

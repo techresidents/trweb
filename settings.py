@@ -95,6 +95,11 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+AUTH_PROFILE_MODULE = 'techresidents_web.accounts.UserProfile'
+LOGIN_REDIRECT_URL = '/accounts/loggedin/'
+LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout/'
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -123,6 +128,8 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'techresidents_web.common',
+    'techresidents_web.accounts',
 )
 
 # A sample logging configuration. The only tangible logging
