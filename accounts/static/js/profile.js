@@ -196,6 +196,9 @@ $(document).ready(function() {
                     exporting: {
                        enabled: false
                     },
+                    credits: {
+                        enabled: false
+                    },
                     tooltip: {
                         formatter: function() {
                             return this.point.name;
