@@ -37,6 +37,7 @@ virtualenv --no-site-packages $RPM_BUILD_ROOT/env
 source $RPM_BUILD_ROOT/env/bin/activate
 python %{app_buildroot}/bootstrap.py --requirements %{app_buildroot}/requirements/requirements.txt
 python %{app_buildroot}/manage.py collectstatic --noinput
+find %{app_buildroot}/static -name app.build.js -exec r.js -o {} \; 
 
 # fix the #! line in installed python files
 find "$RPM_BUILD_ROOT" -type f -print0 |

@@ -1,5 +1,11 @@
-$(document).ready(function() {
+define([
+    'jQuery',
+    'Underscore',
+    'Backbone',
+    'Highcharts'
+], function($, _, Backbone, Highcharts) {
 
+$(document).ready(function() {
 
     var Skill = Backbone.Model.extend({
     
@@ -31,7 +37,7 @@ $(document).ready(function() {
     
     var SkillCollection = Backbone.Collection.extend({
             model: Skill,
-            localStorage: new Store("skills"),
+            //localStorage: new Store("skills"),
             selectedIndex: -1,
     
             select: function(id) {
@@ -256,3 +262,4 @@ $(document).ready(function() {
 
 });
     
+});

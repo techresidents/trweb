@@ -80,7 +80,7 @@ def _create_app_tarball(tag="HEAD", release="1", arch="x86_64"):
             local("tar -C %s -cLzf %s %s" % (tempdir_name, tarball, versioned_project))
 
     else:
-        #git archive --format=tar --prefix=thirty_web-0.1/thirty_web/ HEAD |gzip > thirty_web-0.1.tar.gz
+        #git archive --format=tar --prefix=techresidents_web-0.1/thirty_web/ HEAD |gzip > thirty_web-0.1.tar.gz
         local("git archive --format=tar --prefix={0}-{1}/{0}/ {2} |gzip > {3}".format(env.project, env.project_version, tag, tarball))
 
         #Check that the version in the local version.py matches the archive
@@ -198,6 +198,15 @@ def deploy(version):
             run("mkdir -p %s" % env.project_localdev_deploy_root)
             run("ln -fns %s %s" % (target, os.path.join(env.project_localdev_deploy_root, "test")))
 
+def restart_apache():
+    """
+        Restart Apache Httpd on specified environments.
+        This should be necessary for normal deployments.
+    """
+
+    with settings(user="root"):
+        run("service httpd restart")
+
 
 def create_database():
     sqlfile = os.path.join("sql", "create_%s_db.sql" % env.project_environment)
@@ -212,5 +221,3 @@ def uninstall(version):
 
     with settings(user="root"):
         run("rpm -ev %s-%s" % (env.project, version))
-
-
