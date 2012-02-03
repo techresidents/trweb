@@ -1,0 +1,9 @@
+
+#chat > div {
+}
+
+.chat {
+    display: inline;
+    float: left;
+    margin-left: 20px;
+}

@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     
     url(r'^$', redirect_to, {'url': 'accounts/login/'}),
     url(r'^accounts/', include('accounts.urls')),
+    url(r'^chat/', include('chat.urls')),
 
 )
 

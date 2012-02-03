@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load verbatim %}
+
+{% block title %}tech residents{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="span16">
+            <h1>Tech Residents</h1>
+        </div/>
+    </div>
+    <div class="row">
+        <div class="span16">
+            <ul>
+                {% for chat in chats %}
+                    <li><a href={%url 'chat.views.chat' chat_id=chat.id%}>{{chat.start}}</a></li>
+                {%endfor %}
+            </ul>
+        </div/>
+    </div>
+</div>
+
+
+{% endblock %}

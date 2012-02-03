@@ -103,6 +103,7 @@ LOGOUT_URL = '/accounts/logout/'
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -130,6 +131,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'techresidents_web.common',
     'techresidents_web.accounts',
+    'techresidents_web.chat',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -154,3 +156,7 @@ LOGGING = {
         },
     }
 }
+
+TOKBOX_API_KEY = '11557552'
+TOKBOX_API_SECRET = 'a3fc9c8a0e37bd9fa04018132e55b4141195ce2b'
+TOKBOX_IS_STAGING = True

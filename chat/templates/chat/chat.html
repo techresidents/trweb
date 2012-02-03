@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load verbatim %}
+
+{% block title %}tech residents{% endblock %}
+
+{% block extrahead %}
+<script src="http://staging.tokbox.com/v0.91/js/TB.min.js" ></script>
+
+<script>
+    var require = {
+        baseUrl: '/static/js',
+    };
+</script>
+<script data-main="{{STATIC_URL}}js/apps/chat/main.js" src="{{STATIC_URL}}js/3ps/require/require.js"></script>
+{%endblock %}
+
+{% block content %}
+
+<div class="container" id="chatapp">
+    <div class="row" id="chat"/>
+</div>
+
+
+<!-- All of these data structures are generated on the server w/out user input, so it's safe -->
+{% autoescape off %}
+<script>
+    data =  {
+        chatAPIKey: "{{chat_api_key}}",
+        chatSessionId: "{{chat_session_id}}",
+        chatSessionToken: "{{chat_session_token}}",
+        users: {{users_json}} };
+</script>
+{% endautoescape %}
+
+<!-- Templates -->
+
+{% verbatim %}
+<script type="text/template" id="chat-user-header-template">
+    <div id="user<%= id %>-header"
+    />
+</script>
+
+<script type="text/template" id="chat-user-template">
+    <div class="chat-user-container">
+        <div id="user<%= id %>"/>
+    </div>
+</script>
+
+<script type="text/template" id="chat-user-footer-template">
+    <div id="user<%= id %>-footer"
+        <p>Connected: <%= isConnected %> </p>
+        <p>Publishing: <%= isPublishing %> </p>
+    <div/>
+</script>
+{% endverbatim %}
+
+
+{% endblock %}
