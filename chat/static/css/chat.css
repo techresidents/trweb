@@ -1,9 +1,8 @@
-
-#chat > div {
+#chat {
+    padding-bottom: 30px;
 }
 
-.chat {
-    display: inline;
-    float: left;
-    margin-left: 20px;
+.chatlist {
+    height: 100px;
+    overflow-y: auto;
 }

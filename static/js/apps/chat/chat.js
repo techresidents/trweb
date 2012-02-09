@@ -136,6 +136,110 @@ $(document).ready(function() {
 
     });
 
+    var ChatMessage = Backbone.Model.extend({
+
+            messageTypeMap: {
+                "tag": ChatTagMessage
+            },
+
+            defaults: function() {
+                return {
+                    header: null,
+                    msg: null
+                };
+            },
+
+            initialize: function(attributes, options) {
+
+                if(attributes.header.constructor == Object) {
+                    attributes.header = new ChatMessageHeader(attributes.header);
+                }
+
+                if(attributes.msg.constructor == Object) {
+                    var constructor = this.messageTypeMap[attributes.msg.type]
+                    if(constructor) {
+                        attributes.msg = new constructor(attributes.msg);
+                    }
+                }
+
+                if(!attributes.header.type && attributes.msg.type) {
+                    attributes.header.type = attributes.msg.type;
+                }
+            },
+
+            header: function() {
+                return this.get("header");
+            },
+
+            msg: function() {
+                return this.get("msg");
+            },
+            
+            url: function() {
+                return "http://localdev:6767/chat/message/" + this.attributes.header.type;
+            },
+
+            toJSON: function() {
+                return _.extend({}, this.attributes.header, this.attributes.msg);
+            },
+
+            sync: function(method, model, options) {
+                options.type = "GET";
+                options.data = model.toJSON();
+                options.dataType = "jsonp";
+                return Backbone.sync(method, model, options);
+            }
+    });
+
+    var ChatMessageCollection = Backbone.Collection.extend({
+            model: ChatMessage,
+            
+            url: "http://localdev:6767/chat/messages",
+
+            initialize: function(models, options) {
+                this.chatSessionId = options.chatSessionId;
+                this.userId = options.userId;
+            },
+
+            sync: function(method, collection, options) {
+                var last = this.last();
+                var asOf = last ? last.attributes.header.timestamp : 0;
+
+                options.type = "GET";
+                options.dataType = "jsonp";
+                options.data = {
+                    chatSessionId: this.chatSessionId,
+                    userId: this.userId,
+                    asOf: asOf
+                };
+                return Backbone.sync(method, collection, options);
+            },
+
+            longPoll: function() {
+                var that = this;
+                this.fetch({add: true, silent: false, complete: function() { that.longPoll.call(that);} });
+            }
+    });
+
+    var ChatMessageHeader = function(attributes) {
+        this.id = null;
+        this.type = null;
+        this.chatSessionId = null;
+        this.userId = null;
+        this.timestamp = null;
+
+        _.extend(this, attributes);
+    };
+
+
+    var ChatTagMessage = function(attributes) {
+        this.type = "tag";
+        this.name = null;
+
+        _.extend(this, attributes);
+    };
+
+
     var ChatUserView = Backbone.View.extend({
             tagName: "div",
             
@@ -272,6 +376,90 @@ $(document).ready(function() {
                 //console.log(event.target.connection.data);
             }
     });
+
+    var ChatTagItemView = Backbone.View.extend({
+            tag: "li",
+
+            template: _.template($("#tag-item-template").html()),
+
+            initialize: function() {
+                this.model = this.options.model;
+            },
+            
+            render: function() {
+                $(this.el).html(this.template(this.model.toJSON()));
+                return this;
+            }
+    });
+
+    
+    var ChatTagView = Backbone.View.extend({
+
+            el: $("#tags"),
+
+            events: {
+                "click button": "addTag",
+                "keypress #taginput": "updateOnEnter"
+            },
+
+            initialize: function() {
+                this.chatSessionId = this.options.chatSessionId;
+                this.userId = this.options.userId;
+                this.chatMessageCollection = this.options.chatMessageCollection;
+                this.chatMessageCollection.bind("reset", this.reset, this);
+                this.chatMessageCollection.bind("add", this.added, this);
+
+                this.taglist = this.$("#taglist");
+                this.tagInput = this.$("#taginput");
+            },
+
+            reset: function() {
+            },
+
+            added: function(model) {
+                this.taglist.append(new ChatTagItemView({model: model}).render().el);
+
+                //scroll to bottom
+                this.taglist.animate({scrollTop: 1000}, 800);
+            },
+
+            addTag: function() {
+                var value = this.tagInput.val();
+
+                if(value) {
+                    var header = new ChatMessageHeader({
+                        chatSessionId: this.chatSessionId,
+                        userId: this.userId
+                    });
+
+                    var msg = new ChatTagMessage({
+                        name: this.tagInput.val()
+                    });
+
+                    var message = new ChatMessage({
+                            header: header,
+                            msg: msg
+                    });
+
+                    message.save();
+
+                    this.tagInput.val("");
+                    this.tagInput.focus();
+
+                    //scroll to bottom
+                    this.taglist.animate({scrollTop: 1000}, 800);
+
+                } else {
+                    this.tagInput.focus();
+                }
+            },
+
+            updateOnEnter: function(e) {
+                if(e.keyCode == 13) {
+                    this.addTag();
+                }
+            }
+    });
         
 
     var ChatAppView = Backbone.View.extend({
@@ -304,6 +492,21 @@ $(document).ready(function() {
                 
                 //connect the chat session
                 this.chatSession.connect();
+
+
+                var chatMessageCollection = new ChatMessageCollection(null, {
+                        chatSessionId: this.options.data.chatSessionId,
+                        userId: this.chatUsers.first().id
+                });
+
+                //create tag view
+                var chatTagView = new ChatTagView({
+                        chatSessionId: this.options.data.chatSessionId,
+                        userId: this.chatUsers.first().id,
+                        chatMessageCollection: chatMessageCollection});
+
+                //long poll
+                chatMessageCollection.longPoll();
             },
 
             changed: function(user) {

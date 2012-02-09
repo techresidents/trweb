@@ -1,6 +1,6 @@
 require.config({
     paths: {
-        Loader: 'loader/loader-min',
+        Loader: 'loader/loader',
         jQuery: 'loader/jquery',
         Underscore: 'loader/underscore',
         Backbone: 'loader/backbone',

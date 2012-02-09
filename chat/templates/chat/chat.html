@@ -5,6 +5,8 @@
 {% block title %}tech residents{% endblock %}
 
 {% block extrahead %}
+<link href="{{STATIC_URL}}css/chat.css" rel="stylesheet">
+
 <script src="http://staging.tokbox.com/v0.91/js/TB.min.js" ></script>
 
 <script>
@@ -18,7 +20,36 @@
 {% block content %}
 
 <div class="container" id="chatapp">
-    <div class="row" id="chat"/>
+    <div class="row">
+        <div class="span16">
+            <h1>Tech Residents</h1>
+        </div/>
+    </div>
+    <div class="row" id="chat"></div>
+    <div class="row">
+        <div class="span16 page-header">
+            <h3>Discuss: Web Security: Preventitive Measures</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8">
+            <h5>Agenda</h5>
+            <div>
+                <ul id="topiclist" class="chatlist">
+                </ul>
+            </div>
+        </div>
+        <div class="span8">
+            <h5>Tags</h5>
+            <div id="tags">
+                <ul id="taglist"class="chatlist">
+                </ul>
+
+                <input id="taginput" class="span6"/>
+                <button class="btn primary">Tag</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -35,15 +66,16 @@
 
 <!-- Templates -->
 
-{% verbatim %}
 <script type="text/template" id="chat-user-header-template">
-    <div id="user<%= id %>-header"
-    />
+    <div id="user<%= id %>-header">
+    </div>
 </script>
 
 <script type="text/template" id="chat-user-template">
-    <div class="chat-user-container">
-        <div id="user<%= id %>"/>
+    <div class="well chat-user-container">
+        <div id="user<%= id %>">
+            <img height=200 src="{{STATIC_URL}}assets/person.jpg"/>
+        </div>
     </div>
 </script>
 
@@ -53,7 +85,10 @@
         <p>Publishing: <%= isPublishing %> </p>
     <div/>
 </script>
-{% endverbatim %}
+
+<script type="text/template" id="tag-item-template">
+    <li> <%= name %> </li>
+</script>
 
 
 {% endblock %}
