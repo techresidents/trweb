@@ -1,7 +1,7 @@
 ({
         appDir: ".",
         baseUrl: "../../",
-        dir: "../../../../static_collected/js/apps/chat",
+        dir: "../../../../static_collected/js/apps/topic",
         modules: [
                 { name: "apps/topic/main" }
         ],
