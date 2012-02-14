@@ -21,32 +21,32 @@
 
 <div class="container" id="chatapp">
     <div class="row">
-        <div class="span16">
+        <div class="span12">
             <h1>Tech Residents</h1>
         </div/>
     </div>
     <div class="row" id="chat"></div>
     <div class="row">
-        <div class="span16 page-header">
+        <div class="span12 page-header">
             <h3>Discuss: Web Security: Preventitive Measures</h3>
         </div>
     </div>
     <div class="row">
-        <div class="span8">
+        <div class="span6">
             <h5>Agenda</h5>
             <div>
                 <ul id="topiclist" class="chatlist">
                 </ul>
             </div>
         </div>
-        <div class="span8">
+        <div class="span6">
             <h5>Tags</h5>
             <div id="tags">
                 <ul id="taglist"class="chatlist">
                 </ul>
-
-                <input id="taginput" class="span6"/>
-                <button class="btn primary">Tag</button>
+                
+                <input id="taginput" class="span4"/>
+                <button class="btn btn-input">Tag</button>
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@
 <script type="text/template" id="chat-user-template">
     <div class="well chat-user-container">
         <div id="user<%= id %>">
-            <img height=200 src="{{STATIC_URL}}assets/person.jpg"/>
+            <img height=200 src="{{STATIC_URL}}img/person.jpg"/>
         </div>
     </div>
 </script>
@@ -87,7 +87,7 @@
 </script>
 
 <script type="text/template" id="tag-item-template">
-    <li> <%= name %> </li>
+    <%= name %>
 </script>
 
 

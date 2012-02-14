@@ -132,6 +132,7 @@ INSTALLED_APPS = (
     'techresidents_web.common',
     'techresidents_web.accounts',
     'techresidents_web.chat',
+    'techresidents_web.topic',
 )
 
 # A sample logging configuration. The only tangible logging

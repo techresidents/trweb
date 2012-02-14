@@ -31,3 +31,14 @@
 .masthead-inner {
     padding: 20px;
 }
+
+
+.btn-input {
+    margin-bottom: 9px;
+}
+
+.btn-tiny {
+    font-size: 13px;
+    line-height: 16px;
+    padding: 2px 4px;
+}

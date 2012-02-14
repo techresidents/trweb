@@ -60,8 +60,6 @@ def register(request):
             user_profile.save()
 
             return HttpResponseRedirect("/accounts/loggedin/")
-        else:
-            print user_profile_form.errors
     else:
         user_form = forms.RegisterUserForm()
         user_profile_form = forms.RegisterUserProfileForm()

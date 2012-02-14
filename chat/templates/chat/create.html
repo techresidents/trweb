@@ -7,28 +7,28 @@
 
 <div class="container">
     <div class="row">
-        <div class="span16">
+        <div class="span12">
             <h1>Tech Residents</h1>
         </div/>
     </div>
     <div class="row">
-        <div class="span16">
-            <form method="post" action="{% url 'chat.views.create' %}">
+        <div class="span12">
+            <form class="form-horizontal" method="post" action="{% url 'chat.views.create' %}">
                 {% csrf_token %}
-                <div class="clearfix{% if form.username.errors %} error{% endif %}">
+                <div class="control-group{% if form.username.errors %} error{% endif %}">
                     {{ form.username.label_tag }}
-                    <div class="input">
+                    <div class="controls">
                         {{ form.username }}
                         {% for error in form.username.errors %}
                             <span class="help-inline">{{error}}</span>
                         {% endfor %}
                     </div>
                 </div>
-                <div class="input">
-                    <input type="submit" value="Submit" class="btn primary" />
+                <div class="controls">
+                    <input type="submit" value="Submit" class="btn btn-primary" />
 
                     {% if user_form.non_field_errors %}
-                        <div class="alert-message block-message error">
+                        <div class="alert-message alert-error">
                             {% for error in form.non_field_errors%}
                                 <span>{{error}}</span>
                             {% endfor %}

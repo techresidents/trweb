@@ -7,57 +7,61 @@
 
 <div class="container">
     <div class="row">
-        <div class="span16">
+        <div class="span12">
             <h1>Tech Residents</h1>
         </div/>
     </div>
     <div class="row">
-        <div class="span16">
-            <form method="post" action="{% url 'accounts.views.register' %}">
+        <div class="span12">
+            <form class="form-horizontal" method="post" action="{% url 'accounts.views.register' %}">
                 {% csrf_token %}
-                <div class="clearfix{% if user_form.username.errors %} error{% endif %}">
+                <fieldset>
+                <div class="control-group{% if user_form.username.errors %} error{% endif %}">
                     {{ user_form.username.label_tag }}
-                    <div class="input">
+                    <div class="controls">
                         {{ user_form.username }}
                         {% for error in user_form.username.errors %}
                             <span class="help-inline">{{error}}</span>
                         {% endfor %}
                     </div>
                 </div>
-                <div class="clearfix{% if user_form.password.errors%} error{% endif %}">
+                <div class="control-group{% if user_form.password.errors%} error{% endif %}">
                     {{ user_form.password.label_tag }}
-                    <div class="input">
+                    <div class="controls">
                         {{ user_form.password }}
                         {% for error in user_form.password.errors %}
                             <span class="help-inline">{{error}}</span>
                         {% endfor %}
                     </div>
                 </div>
-                <div class="clearfix{% if user_form.password_confirmation.errors%} error{% endif %}">
+                <div class="control-group{% if user_form.password_confirmation.errors%} error{% endif %}">
                     {{ user_form.password_confirmation.label_tag }}
-                    <div class="input">
+                    <div class="controls">
                         {{ user_form.password_confirmation }}
                         {% for error in user_form.password_confirmation.errors %}
                             <span class="help-inline">{{error}}</span>
                         {% endfor %}
                     </div>
                 </div>
-                <div class="input">
-                    <input type="submit" value="Register" class="btn primary" />
+                <div class="controls">
+                    <input type="submit" value="Register" class="btn btn-primary" />
 
                     {% if user_form.non_field_errors %}
-                        <div class="alert-message block-message error">
+                        <div class="alert alert-error">
                             {% for error in user_form.non_field_errors%}
                                 <span>{{error}}</span>
                             {% endfor %}
+                        </div>
                     {% endif %}
                     {% if user_profile_form.non_field_errors %}
-                        <div class="alert-message block-message error">
+                        <div class="alert alert-error">
                             {% for error in user_profile_form.non_field_errors%}
                                 <span>{{error}}</span>
                             {% endfor %}
+                        </div>
                     {% endif %}
                 </div>
+            </fieldset>
             </form>
         </div>
     </div>

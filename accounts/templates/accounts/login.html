@@ -7,25 +7,25 @@
 
 <div class="container">
     <div class="row">
-        <div class="span9">
+        <div class="span6">
             <h1>Tech Residents</h1>
         </div/>
 
-        <div class="span7">
-            <form method="post" action="{% url 'accounts.views.login' %}">
+        <div class="span6">
+            <form class="form-horizontal" method="post" action="{% url 'accounts.views.login' %}">
                 {% csrf_token %}
-                <div class="clearfix{% if form.username.errors %} error{% endif %}">
+                <div class="control-group{% if form.username.errors %} error{% endif %}">
                     {{ form.username.label_tag }}
-                    <div class="input">
+                    <div class="controls">
                         {{ form.username }}
                         {% for error in form.username.errors %}
                             <span class="help-inline">{{error}}</span>
                         {% endfor %}
                     </div>
                 </div>
-                <div class="clearfix{% if form.password.errors%} error{% endif %}">
+                <div class="control-group{% if form.password.errors%} error{% endif %}">
                     {{ form.password.label_tag }}
-                    <div class="input">
+                    <div class="controls">
                         {{ form.password }}
                         {% for error in form.password.errors %}
                             <span class="help-inline">{{error}}</span>
@@ -34,18 +34,21 @@
                 </div>
 
                 <input type="hidden" name="next" value="{{next}}"/>
-
-                <div class="input">
-                    <input type="submit" value="Login" class="btn primary pull-left" />
-                    <label>
-                        {{ form.remember_me }} <span>{{ form.remember_me.label }}</span>
+                
+                <div class="controls">
+                    <input type="submit" value="Login" class="btn btn-primary inline" />
+                    <label class="checkbox inline">
+                        {{ form.remember_me }}
+                        {{ form.remember_me.label }}
                     </label>
+                </div>
 
                     {% if form.non_field_errors %}
-                        <div class="alert-message block-message error">
+                        <div class="controls alert alert-error">
                             {% for error in form.non_field_errors%}
                                 <span>{{error}}</span>
                             {% endfor %}
+                        </div>
                     {% endif %}
                 </div>
             </form>
