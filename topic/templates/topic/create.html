@@ -26,14 +26,14 @@
         </div>
         <div class="span9">
             <div id="topicapp">
-                <div class="control-group topic">
-                    <h3>Topic</h3>
+                <div class="page-header control-group topic">
+                    <h3>Discussion</h3>
                     <div class="controls"/>
                         <input id="root-topic-input" class="span4"/>
                     </div>
                 </div>
-                <div id="topic-add">
-                    <h3>Agenda</h3>
+                <div class="page-header" id="topic-add">
+                    <h3>Topics</h3>
                     <input id="topic-input" class="span4"/>
                     <button class="btn btn-input">Add</button>
                 </div>
@@ -68,8 +68,8 @@
                         Remove
                     </a>
                 </div>
-                <div>
-                    <form id="topic-form" class="form-horizontal" method="post" action="{% url 'topic.views.create' %}">
+                <div class="form-actions">
+                    <form id="topic-form" class="form-vertical" method="post" action="{% url 'topic.views.create' %}">
                         {% csrf_token %}
                         <input id="topic-form-input" type="hidden" name="topics"/>
 
@@ -90,6 +90,16 @@
         </div>
     </div>
 </div>
+
+<!-- TODO: add proper escapejs filter that works with json -->
+
+{% autoescape off %}
+<script>
+    var data =  {
+        topic_json: {{topic_json}}
+    };
+</script>
+{% endautoescape %}
 
 
 <!-- Templates -->

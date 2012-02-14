@@ -19,7 +19,7 @@ class TopicManager(models.Manager):
         if not topics or len(topics) < 2:
             raise ValueError("topic tree must have at least two items")
 
-        root = topics.pop(0)
+        root = topics[0]
 
         if root.parent or root.parent_id:
             raise ValueError("root parent and parent_id must be None")
@@ -38,7 +38,7 @@ class TopicManager(models.Manager):
         # Note this could be optimized to do a single insert for all
         # topics at the same level.
 
-        for topic in topics:
+        for topic in topics[1:]:
             parent_id = topic.parent.id
             
             # Parents must come before children in adjacency list

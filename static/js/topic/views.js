@@ -192,8 +192,6 @@ define([
             initialize: function() {
                 this.topicCollection = this.options.topicCollection;
                 this.topicInput = this.$("#topic-input");
-
-
             },
 
             addTopic: function() {
@@ -203,7 +201,8 @@ define([
                     var topic = new models.Topic({
                             parentId: 0,
                             title: title,
-                            rank: this.topicCollection.length
+                            rank: this.topicCollection.length,
+                            expanded: true
                     });
 
                     this.topicCollection.add(topic);
