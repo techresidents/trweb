@@ -159,6 +159,8 @@ LOGGING = {
     }
 }
 
+TR_XD_REMOTE = 'http://localdev:6767/static/js/easyXDM/cors/index.html'
+
 TOKBOX_API_KEY = '11557552'
 TOKBOX_API_SECRET = 'a3fc9c8a0e37bd9fa04018132e55b4141195ce2b'
 TOKBOX_IS_STAGING = True

@@ -73,6 +73,7 @@ def chat(request, chat_id):
             users.append(user)
 
     context = {
+        'TR_XD_REMOTE': settings.TR_XD_REMOTE,
         'chat_api_key': settings.TOKBOX_API_KEY,
         'chat_session_id': chat.chat_session_id,
         'chat_session_token': chat_user.token,

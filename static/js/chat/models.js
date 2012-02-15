@@ -2,8 +2,8 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'easyXDM',
-], function($, _, Backbone, easyXDM) {
+    'xd/xd',
+], function($, _, Backbone, xd) {
 
     var ChatUser = Backbone.Model.extend({
 
@@ -148,7 +148,6 @@ define([
             },
 
             initialize: function(attributes, options) {
-
                 if(attributes.header.constructor == Object) {
                     attributes.header = new ChatMessageHeader(attributes.header);
                 }
@@ -163,15 +162,6 @@ define([
                 if(!attributes.header.type && attributes.msg.type) {
                     attributes.header.type = attributes.msg.type;
                 }
-
-
-                this.xhr = new easyXDM.Rpc({
-                        remote: "http://localdev:6767/static/js/easyXDM/cors/index.html"
-                }, {
-                    remote: {
-                        request: {}
-                    }
-                });
             },
 
             header: function() {
@@ -193,7 +183,7 @@ define([
             sync: function(method, model, options) {
                 var data = model.toJSON();
 
-                this.xhr.request({
+                xd.xhr.request({
                     url: this.url(),
                     method: "POST",
                     timeout: 60000,
@@ -215,14 +205,6 @@ define([
             initialize: function(models, options) {
                 this.chatSessionId = options.chatSessionId;
                 this.userId = options.userId;
-                
-                this.xhr = new easyXDM.Rpc({
-                        remote: "http://localdev:6767/static/js/easyXDM/cors/index.html"
-                }, {
-                    remote: {
-                        request: {}
-                    }
-                });
             },
 
             sync: function(method, collection, options) {
@@ -235,7 +217,7 @@ define([
                     asOf: asOf
                 };
 
-                this.xhr.request({
+                xd.xhr.request({
                     url: this.url,
                     method: "POST",
                     timeout: 60000,

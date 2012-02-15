@@ -56,6 +56,8 @@
 <!-- All of these data structures are generated on the server w/out user input, so it's safe -->
 {% autoescape off %}
 <script>
+    TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
+
     data =  {
         chatAPIKey: "{{chat_api_key}}",
         chatSessionId: "{{chat_session_id}}",
