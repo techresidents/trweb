@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block title %}tech residents{% endblock %}
+
+{% block extrahead %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js"></script>
+<script src="{{STATIC_URL}}js/whiteboard.js"></script>
+{%endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            <h1>Tech Residents</h1>
+        </div/>
+    </div>
+    <div class="row">
+        <div id="whiteboard-container" class="well">
+            <div id="whiteboard">
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="well">
+            <div class="btn-group">
+                <a id="pen-button" class="btn">Pen</a>
+                <a id="rect-button" class="btn">Rectcangle</a>
+                <a id="circle-button" class="btn">Circle</a>
+                <a id="clear-button" class="btn">Clear</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
