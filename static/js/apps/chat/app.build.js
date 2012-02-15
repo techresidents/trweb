@@ -11,6 +11,7 @@
         Underscore: 'loader/underscore',
         Backbone: 'loader/backbone',
         Highcharts: 'loader/highcharts',
+        easyXDM: 'loader/easyXDM',
     }
 })
 

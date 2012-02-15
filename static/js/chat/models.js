@@ -2,7 +2,8 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-], function($, _, Backbone) {
+    'easyXDM',
+], function($, _, Backbone, easyXDM) {
 
     var ChatUser = Backbone.Model.extend({
 
@@ -162,6 +163,15 @@ define([
                 if(!attributes.header.type && attributes.msg.type) {
                     attributes.header.type = attributes.msg.type;
                 }
+
+
+                this.xhr = new easyXDM.Rpc({
+                        remote: "http://localdev:6767/static/js/easyXDM/cors/index.html"
+                }, {
+                    remote: {
+                        request: {}
+                    }
+                });
             },
 
             header: function() {
@@ -173,7 +183,7 @@ define([
             },
             
             url: function() {
-                return "http://localdev:6767/chat/message/" + this.attributes.header.type;
+                return "/chat/message/" + this.attributes.header.type;
             },
 
             toJSON: function() {
@@ -181,35 +191,67 @@ define([
             },
 
             sync: function(method, model, options) {
-                options.type = "GET";
-                options.data = model.toJSON();
-                options.dataType = "jsonp";
-                return Backbone.sync(method, model, options);
+                var data = model.toJSON();
+
+                this.xhr.request({
+                    url: this.url(),
+                    method: "POST",
+                    timeout: 60000,
+                    data: data,
+                }, function(response) {
+                    options.success(JSON.parse(response.data), response.status);
+                }, function(response) {
+                    options.error(response.data.data, response.data.status);
+                }
+                );
             }
     });
 
     var ChatMessageCollection = Backbone.Collection.extend({
             model: ChatMessage,
             
-            url: "http://localdev:6767/chat/messages",
+            url: "/chat/messages",
 
             initialize: function(models, options) {
                 this.chatSessionId = options.chatSessionId;
                 this.userId = options.userId;
+                
+                this.xhr = new easyXDM.Rpc({
+                        remote: "http://localdev:6767/static/js/easyXDM/cors/index.html"
+                }, {
+                    remote: {
+                        request: {}
+                    }
+                });
             },
 
             sync: function(method, collection, options) {
                 var last = this.last();
                 var asOf = last ? last.attributes.header.timestamp : 0;
 
-                options.type = "GET";
-                options.dataType = "jsonp";
-                options.data = {
+                var data = {
                     chatSessionId: this.chatSessionId,
                     userId: this.userId,
                     asOf: asOf
                 };
-                return Backbone.sync(method, collection, options);
+
+                this.xhr.request({
+                    url: this.url,
+                    method: "POST",
+                    timeout: 60000,
+                    data: data,
+                }, function(response) {
+                    options.success(JSON.parse(response.data), response.status);
+                    if(options.complete) {
+                        options.complete();
+                    }
+                }, function(response) {
+                    options.error(response.data.data, response.data.status);
+                    if(options.complete) {
+                        options.complete();
+                    }
+                }
+                );
             },
 
             longPoll: function() {
