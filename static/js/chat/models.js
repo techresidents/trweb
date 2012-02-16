@@ -3,7 +3,8 @@ define([
     'Underscore',
     'Backbone',
     'xd/xd',
-], function($, _, Backbone, xd) {
+    'xd/backbone',
+], function($, _, Backbone, xd, xdBackbone) {
 
     var ChatUser = Backbone.Model.extend({
 
@@ -180,21 +181,7 @@ define([
                 return _.extend({}, this.attributes.header, this.attributes.msg);
             },
 
-            sync: function(method, model, options) {
-                var data = model.toJSON();
-
-                xd.xhr.request({
-                    url: this.url(),
-                    method: "POST",
-                    timeout: 60000,
-                    data: data,
-                }, function(response) {
-                    options.success(JSON.parse(response.data), response.status);
-                }, function(response) {
-                    options.error(response.data.data, response.data.status);
-                }
-                );
-            }
+            sync: xdBackbone.sync
     });
 
     var ChatMessageCollection = Backbone.Collection.extend({
@@ -208,32 +195,20 @@ define([
             },
 
             sync: function(method, collection, options) {
-                var last = this.last();
-                var asOf = last ? last.attributes.header.timestamp : 0;
+                if(method == 'read') {
+                    var last = this.last();
+                    var asOf = last ? last.attributes.header.timestamp : 0;
 
-                var data = {
-                    chatSessionId: this.chatSessionId,
-                    userId: this.userId,
-                    asOf: asOf
-                };
+                    var data = {
+                        chatSessionId: this.chatSessionId,
+                        userId: this.userId,
+                        asOf: asOf
+                    };
 
-                xd.xhr.request({
-                    url: this.url,
-                    method: "POST",
-                    timeout: 60000,
-                    data: data,
-                }, function(response) {
-                    options.success(JSON.parse(response.data), response.status);
-                    if(options.complete) {
-                        options.complete();
-                    }
-                }, function(response) {
-                    options.error(response.data.data, response.data.status);
-                    if(options.complete) {
-                        options.complete();
-                    }
+                    options.data = data;
                 }
-                );
+
+                return xdBackbone.sync(method, collection, options);
             },
 
             longPoll: function() {
