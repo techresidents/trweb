@@ -21,23 +21,23 @@
     </head>
 
     <body>
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="#">Tech Residents</a>
 
-  <div class="topbar-wrapper" style="z-index: 5;">
-    <div class="topbar">
-      <div class="topbar-inner">
-        <div class="container">
-          <h3><a href="#">tech residents</a></h3>
+                    <ul class="nav">
+                        <li><a href="/chat">Chat</a></li>
+                        <li><a href="/topic/create">Topics</a></li>
+                        <li><a href="/whiteboard">Whiteboard</a></li>
+                    </ul>
 
-          <ul class="nav">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Link</a></li>
-            <li><a href="#">Link</a></li>
-            <li><a href="#">Link</a></li>
-          </ul>
-      </div>
-    </div>
-  </div>
- </div>
+                    <ul class="nav pull-right">
+                        <li><a href="/accounts/logout">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <div class="menu-content">
             {% block content %}{% endblock %}
         </div>

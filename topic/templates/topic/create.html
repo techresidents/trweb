@@ -1,7 +1,7 @@
-{% extends "base.html" %}
+{% extends "menu_base.html" %}
 {% load url from future %}
 
-{% block title %}tech residents{% endblock %}
+{% block title %}Tech Residents Topic{% endblock %}
 
 {% block extrahead %}
 <link href="{{STATIC_URL}}css/topic.css" rel="stylesheet">
@@ -17,15 +17,13 @@
 
 <div class="container">
     <div class="row">
-        <div class="span12">
-            <h1>Tech Residents</h1>
-        </div/>
-    </div>
-    <div class="row">
         <div class="span3">
         </div>
         <div class="span9">
             <div id="topicapp">
+                <div class="page-header">
+                    <h1>Create Topic</h1>
+                </div>
                 <div class="page-header control-group topic">
                     <h3>Discussion</h3>
                     <div class="controls"/>

@@ -1,8 +1,8 @@
-{% extends "base.html" %}
+{% extends "menu_base.html" %}
 {% load url from future %}
 {% load verbatim %}
 
-{% block title %}tech residents{% endblock %}
+{% block title %}Tech Residents Chat{% endblock %}
 
 {% block extrahead %}
 <link href="{{STATIC_URL}}css/chat.css" rel="stylesheet">
@@ -20,11 +20,6 @@
 {% block content %}
 
 <div class="container" id="chatapp">
-    <div class="row">
-        <div class="span12">
-            <h1>Tech Residents</h1>
-        </div/>
-    </div>
     <div class="row" id="chat"></div>
     <div class="row">
         <div class="span12 page-header">

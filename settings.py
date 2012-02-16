@@ -96,7 +96,7 @@ TEMPLATE_LOADERS = (
 )
 
 AUTH_PROFILE_MODULE = 'techresidents_web.accounts.UserProfile'
-LOGIN_REDIRECT_URL = '/accounts/loggedin/'
+LOGIN_REDIRECT_URL = '/chat'
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
 

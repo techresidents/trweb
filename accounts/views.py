@@ -9,10 +9,6 @@ from django.views.decorators.cache import never_cache
 import forms
 import models
 
-@login_required
-def loggedin(request):
-    return render_to_response('accounts/loggedin.html', context_instance=RequestContext(request))
-
 @never_cache
 def login(request):
     redirect_to = request.REQUEST.get("next", settings.LOGIN_REDIRECT_URL)
@@ -59,7 +55,7 @@ def register(request):
             user_profile.user = user
             user_profile.save()
 
-            return HttpResponseRedirect("/accounts/loggedin/")
+            return HttpResponseRedirect("/chat")
     else:
         user_form = forms.RegisterUserForm()
         user_profile_form = forms.RegisterUserProfileForm()
