@@ -1,0 +1,4 @@
+define([
+    'Loader'
+], function(Loader) {
+});

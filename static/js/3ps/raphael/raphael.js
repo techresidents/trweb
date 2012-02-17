@@ -1,20 +1,20 @@
-// ┌────────────────────────────────────────────────────────────────────┐ \\
-// │ Raphaël 2.0.2 - JavaScript Vector Library                          │ \\
-// ├────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2008-2012 Dmitry Baranovskiy (http://raphaeljs.com)    │ \\
-// │ Copyright © 2008-2012 Sencha Labs (http://sencha.com)              │ \\
-// ├────────────────────────────────────────────────────────────────────┤ \\
-// │ Licensed under the MIT (http://raphaeljs.com/license.html) license.│ \\
-// └────────────────────────────────────────────────────────────────────┘ \\
+// ┌─────────────────────────────────────────────────────────────────────┐ \\
+// │ Raphaël 2.0.1 - JavaScript Vector Library                           │ \\
+// ├─────────────────────────────────────────────────────────────────────┤ \\
+// │ Copyright (c) 2008-2011 Dmitry Baranovskiy (http://raphaeljs.com)   │ \\
+// │ Copyright (c) 2008-2011 Sencha Labs (http://sencha.com)             │ \\
+// │ Licensed under the MIT (http://raphaeljs.com/license.html) license. │ \\
+// └─────────────────────────────────────────────────────────────────────┘ \\
+
 // ┌──────────────────────────────────────────────────────────────────────────────────────┐ \\
-// │ Eve 0.3.4 - JavaScript Events Library                                                │ \\
+// │ Eve 0.4.0 - JavaScript Events Library                                                │ \\
 // ├──────────────────────────────────────────────────────────────────────────────────────┤ \\
 // │ Copyright (c) 2008-2011 Dmitry Baranovskiy (http://dmitry.baranovskiy.com/)          │ \\
 // │ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license. │ \\
 // └──────────────────────────────────────────────────────────────────────────────────────┘ \\
 
 (function (glob) {
-    var version = "0.3.4",
+    var version = "0.4.0",
         has = "hasOwnProperty",
         separator = /[\.\/]/,
         wildcard = "*",
@@ -37,7 +37,6 @@
                 indexed = [],
                 queue = {},
                 out = [],
-                ce = current_event,
                 errors = [];
             current_event = name;
             stop = 0;
@@ -62,14 +61,16 @@
                     if (l.zIndex == indexed[z]) {
                         out.push(l.apply(scope, args));
                         if (stop) {
-                            break;
+                            stop = oldstop;
+                            return out;
                         }
                         do {
                             z++;
                             l = queue[indexed[z]];
                             l && out.push(l.apply(scope, args));
                             if (stop) {
-                                break;
+                                stop = oldstop;
+                                return out;
                             }
                         } while (l)
                     } else {
@@ -78,12 +79,12 @@
                 } else {
                     out.push(l.apply(scope, args));
                     if (stop) {
-                        break;
+                        stop = oldstop;
+                        return out;
                     }
                 }
             }
             stop = oldstop;
-            current_event = ce;
             return out.length ? out : null;
         };
     
@@ -151,8 +152,7 @@
         return current_event;
     };
     
-    
-    eve.off = eve.unbind = function (name, f) {
+    eve.unbind = function (name, f) {
         var names = name.split(separator),
             e,
             key,
@@ -207,9 +207,8 @@
     
     eve.once = function (name, f) {
         var f2 = function () {
-            var res = f.apply(this, arguments);
+            f.apply(this, arguments);
             eve.unbind(name, f2);
-            return res;
         };
         return eve.on(name, f2);
     };
@@ -218,12 +217,11 @@
     eve.toString = function () {
         return "You are running Eve " + version;
     };
-    (typeof module != "undefined" && module.exports) ? (module.exports = eve) : (typeof define != "undefined" ? (define("eve", [], function() { return eve; })) : (glob.eve = eve));
+    (typeof module != "undefined" && module.exports) ? (module.exports = eve) : (glob.eve = eve);
 })(this);
 
-
 // ┌─────────────────────────────────────────────────────────────────────┐ \\
-// │ "Raphaël 2.0.2" - JavaScript Vector Library                         │ \\
+// │ "Raphaël 2.0.1" - JavaScript Vector Library                         │ \\
 // ├─────────────────────────────────────────────────────────────────────┤ \\
 // │ Copyright (c) 2008-2011 Dmitry Baranovskiy (http://raphaeljs.com)   │ \\
 // │ Copyright (c) 2008-2011 Sencha Labs (http://sencha.com)             │ \\
@@ -248,7 +246,7 @@
             }
         }
     }
-    R.version = "2.0.2";
+    R.version = "2.0.1";
     R.eve = eve;
     var loaded,
         separator = /[, ]+/,
@@ -370,14 +368,13 @@
             x: nu,
             y: nu
         },
-        whitespace = /[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029]/g,
-        commaSpaces = /[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029]*,[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029]*/,
+        commaSpaces = /\s*,\s*/,
         hsrg = {hs: 1, rg: 1},
         p2s = /,?([achlmqrstvxz]),?/gi,
-        pathCommand = /([achlmrqstvz])[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029,]*((-?\d*\.?\d*(?:e[\-+]?\d+)?[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029]*,?[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029]*)+)/ig,
-        tCommand = /([rstm])[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029,]*((-?\d*\.?\d*(?:e[\-+]?\d+)?[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029]*,?[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029]*)+)/ig,
-        pathValues = /(-?\d*\.?\d*(?:e[\-+]?\d+)?)[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029]*,?[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029]*/ig,
-        radial_gradient = R._radial_gradient = /^r(?:\(([^,]+?)[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029]*,[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029]*([^\)]+?)\))?/,
+        pathCommand = /([achlmrqstvz])[\s,]*((-?\d*\.?\d*(?:e[\-+]?\d+)?\s*,?\s*)+)/ig,
+        tCommand = /([rstm])[\s,]*((-?\d*\.?\d*(?:e[\-+]?\d+)?\s*,?\s*)+)/ig,
+        pathValues = /(-?\d*\.?\d*(?:e[\-+]?\d+)?)\s*,?\s*/ig,
+        radial_gradient = R._radial_gradient = /^r(?:\(([^,]+?)\s*,\s*([^\)]+?)\))?/,
         eldata = {},
         sortByKey = function (a, b) {
             return a.key - b.key;
@@ -891,43 +888,31 @@
     };
 
     // http://schepers.cc/getting-to-the-point
-    function catmullRom2bezier(crp, z) {
+    function catmullRom2bezier(crp) {
         var d = [];
-        for (var i = 0, iLen = crp.length; iLen - 2 * !z > i; i += 2) {
-            var p = [
-                        {x: +crp[i - 2], y: +crp[i - 1]},
-                        {x: +crp[i],     y: +crp[i + 1]},
-                        {x: +crp[i + 2], y: +crp[i + 3]},
-                        {x: +crp[i + 4], y: +crp[i + 5]}
-                    ];
-            if (z) {
-                if (!i) {
-                    p[0] = {x: +crp[iLen - 2], y: +crp[iLen - 1]};
-                } else if (iLen - 4 == i) {
-                    p[3] = {x: +crp[0], y: +crp[1]};
-                } else if (iLen - 2 == i) {
-                    p[2] = {x: +crp[0], y: +crp[1]};
-                    p[3] = {x: +crp[2], y: +crp[3]};
-                }
-            } else {
-                if (iLen - 4 == i) {
-                    p[3] = p[2];
-                } else if (!i) {
-                    p[0] = {x: +crp[i], y: +crp[i + 1]};
-                }
+        for (var i = 0, iLen = crp.length; iLen - 2 > i; i += 2) {
+            var p = [{x: +crp[i],     y: +crp[i + 1]},
+                     {x: +crp[i],     y: +crp[i + 1]},
+                     {x: +crp[i + 2], y: +crp[i + 3]},
+                     {x: +crp[i + 4], y: +crp[i + 5]}];
+            if (iLen - 4 == i) {
+                p[0] = {x: +crp[i - 2], y: +crp[i - 1]};
+                p[3] = p[2];
+            } else if (i) {
+                p[0] = {x: +crp[i - 2], y: +crp[i - 1]};
             }
             d.push(["C",
-                  (-p[0].x + 6 * p[1].x + p[2].x) / 6,
-                  (-p[0].y + 6 * p[1].y + p[2].y) / 6,
-                  (p[1].x + 6 * p[2].x - p[3].x) / 6,
-                  (p[1].y + 6*p[2].y - p[3].y) / 6,
-                  p[2].x,
-                  p[2].y
+                (-p[0].x + 6 * p[1].x + p[2].x) / 6,
+                (-p[0].y + 6 * p[1].y + p[2].y) / 6,
+                (p[1].x + 6 * p[2].x - p[3].x) / 6,
+                (p[1].y + 6*p[2].y - p[3].y) / 6,
+                p[2].x,
+                p[2].y
             ]);
         }
 
-          return d;
-      }
+        return d;
+    }
     
     R.parsePathString = cacher(function (pathString) {
         if (!pathString) {
@@ -1170,7 +1155,6 @@
                 start++;
                 res[0] = ["M", x, y];
             }
-            var crz = pathArray.length == 3 && pathArray[0][0] == "M" && pathArray[1][0].toUpperCase() == "R" && pathArray[2][0].toUpperCase() == "Z";
             for (var r, pa, i = start, ii = pathArray.length; i < ii; i++) {
                 res.push(r = []);
                 pa = pathArray[i];
@@ -1199,7 +1183,7 @@
                                 dots[++j] = +dots[j] + y;
                             }
                             res.pop();
-                            res = res[concat](catmullRom2bezier(dots, crz));
+                            res = res[concat](catmullRom2bezier(dots));
                             break;
                         case "M":
                             mx = +pa[1] + x;
@@ -1212,7 +1196,7 @@
                 } else if (pa[0] == "R") {
                     dots = [x, y][concat](pa.slice(1));
                     res.pop();
-                    res = res[concat](catmullRom2bezier(dots, crz));
+                    res = res[concat](catmullRom2bezier(dots));
                     r = ["R"][concat](pa.slice(-2));
                 } else {
                     for (var k = 0, kk = pa.length; k < kk; k++) {
@@ -1895,7 +1879,7 @@
                 s.scalex = +s.scalex.toFixed(4);
                 s.scaley = +s.scaley.toFixed(4);
                 s.rotate = +s.rotate.toFixed(4);
-                return  (s.dx || s.dy ? "t" + [s.dx, s.dy] : E) + 
+                return  (s.dx && s.dy ? "t" + [s.dx, s.dy] : E) + 
                         (s.scalex != 1 || s.scaley != 1 ? "s" + [s.scalex, s.scaley, 0, 0] : E) +
                         (s.rotate ? "r" + [s.rotate, 0, 0] : E);
             } else {
@@ -2075,7 +2059,7 @@
                 return this;
             };
             R["un" + eventName] = elproto["un" + eventName] = function (fn) {
-                var events = this.events || [],
+                var events = this.events,
                     l = events.length;
                 while (l--) if (events[l].name == eventName && events[l].f == fn) {
                     events[l].unbind();
@@ -2667,27 +2651,10 @@
             return color > 255 ? 255 : color < 0 ? 0 : color;
         };
     
-    elproto.animateWith = function (el, anim, params, ms, easing, callback) {
-        var element = this;
-        if (element.removed) {
-            callback && callback.call(element);
-            return element;
-        }
-        var a = params instanceof Animation ? params : R.animation(params, ms, easing, callback),
-            x, y;
-        runAnimation(a, element, a.percents[0], null, element.attr());
-        for (var i = 0, ii = animationElements.length; i < ii; i++) {
-            if (animationElements[i].anim == anim && animationElements[i].el == el) {
-                animationElements[ii - 1].start = animationElements[i].start;
-                break;
-            }
-        }
-        return element;
-        // 
-        // 
-        // var a = params ? R.animation(params, ms, easing, callback) : anim,
-        //     status = element.status(anim);
-        // return this.animate(a).status(a, status * anim.ms / a.ms);
+    elproto.animateWith = function (element, anim, params, ms, easing, callback) {
+        var a = params ? R.animation(params, ms, easing, callback) : anim,
+            status = element.status(anim);
+        return this.animate(a).status(a, status * anim.ms / a.ms);
     };
     function CubicBezierAtTime(t, p1x, p1y, p2x, p2y, duration) {
         var cx = 3 * p1x,
@@ -3209,7 +3176,7 @@
         var anim = R.animation(params, ms, easing, collector);
         item = this.items[--i].animate(anim);
         while (i--) {
-            this.items[i] && !this.items[i].removed && this.items[i].animateWith(item, anim, anim);
+            this.items[i] && !this.items[i].removed && this.items[i].animateWith(item, anim);
         }
         return this;
     };
@@ -3657,8 +3624,8 @@ window.Raphael.svg && function (R) {
                     });
                     use = $($("use"), {
                         "xlink:href": "#" + pathId,
-                        transform: (isEnd ? "rotate(180 " + w / 2 + " " + h / 2 + ") " : E) + "scale(" + w / t + "," + h / t + ")",
-                        "stroke-width": (1 / ((w / t + h / t) / 2)).toFixed(4)
+                        transform: (isEnd ? " rotate(180 " + w / 2 + " " + h / 2 + ") " : S) + "scale(" + w / t + "," + h / t + ")",
+                        "stroke-width": 1 / ((w / t + h / t) / 2)
                     });
                     marker.appendChild(use);
                     p.defs.appendChild(marker);
@@ -3761,8 +3728,8 @@ window.Raphael.svg && function (R) {
                             hl.appendChild(node);
                             pn = hl;
                         }
-                        if (att == "target") {
-                            pn.setAttributeNS(xlink, "show", value == "blank" ? "new" : value);
+                        if (att == "target" && value == "blank") {
+                            pn.setAttributeNS(xlink, "show", "new");
                         } else {
                             pn.setAttributeNS(xlink, att, value);
                         }
@@ -3913,6 +3880,7 @@ window.Raphael.svg && function (R) {
                                 });
                             })(el);
                             o.paper.defs.appendChild(el);
+                            node.style.fill = "url(#" + el.id + ")";
                             $(node, {fill: "url(#" + el.id + ")"});
                             o.pattern = el;
                             o.pattern && updatePosition(o);
@@ -4167,11 +4135,7 @@ window.Raphael.svg && function (R) {
             paper.defs.removeChild(this.gradient);
         }
         R._tear(this, paper);
-        if (this.node.parentNode.tagName.toLowerCase() == "a") {
-            this.node.parentNode.parentNode.removeChild(this.node.parentNode);
-        } else {
-            this.node.parentNode.removeChild(this.node);
-        }
+        this.node.parentNode.removeChild(this.node);
         for (var i in this) {
             this[i] = typeof this[i] == "function" ? R._removedFactory(i) : null;
         }
@@ -4368,6 +4332,7 @@ window.Raphael.svg && function (R) {
     };
     R._engine.text = function (svg, x, y, text) {
         var el = $("text");
+        // $(el, {x: x, y: y, "text-anchor": "middle"});
         svg.canvas && svg.canvas.appendChild(el);
         var res = new Element(el, svg);
         res.attrs = {
@@ -4432,6 +4397,7 @@ window.Raphael.svg && function (R) {
         container.width = width;
         container.height = height;
         container.canvas = cnvs;
+        // plugins.call(container, container, R.fn);
         container.clear();
         container._left = container._top = 0;
         isFloating && (container.renderfix = function () {});
@@ -4473,13 +4439,8 @@ window.Raphael.svg && function (R) {
     R.prototype.renderfix = function () {
         var cnvs = this.canvas,
             s = cnvs.style,
-            pos;
-        try {
-            pos = cnvs.getScreenCTM() || cnvs.createSVGMatrix();
-        } catch (e) {
-            pos = cnvs.createSVGMatrix();
-        }
-        var left = -pos.e % 1,
+            pos = cnvs.getScreenCTM() || cnvs.createSVGMatrix(),
+            left = -pos.e % 1,
             top = -pos.f % 1;
         if (left || top) {
             if (left) {
