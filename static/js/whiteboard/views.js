@@ -8,7 +8,7 @@ define([
 
     var WhiteboardView = Backbone.View.extend({
             tagName: "div",
-
+            
             events: {
                 "mousedown": "mousedown",
                 "mousemove": "mousemove",
@@ -27,7 +27,23 @@ define([
                     $(this.el).height(this.options.height);
                 }
                 
-                this.paper = Raphael($(this.el).get(0), $(this.el).width(), $(this.el).height());
+                // set logical (scrollable) paper size if options provided
+                // otherwise use container sizes
+                var paperWidth = this.options.paperWidth || $(this.el).width();
+                var paperHeight = this.options.paperHeight || $(this.el).height();
+                
+                // if paper size size is larger than element size, set overflow for scrolling
+                if(paperWidth > $(this.el).width() || paperHeight > $(this.el).height()) {
+                    var paperWidth = this.options.paperWidth || $(this.el).width();
+                    $(this.el).css("overflow", "auto");
+                }
+                
+                this.paper = Raphael(
+                    $(this.el).get(0),
+                    paperWidth,
+                    paperHeight);
+
+
                 this.tool = new Pen(this.paper);
             },
             
@@ -49,8 +65,8 @@ define([
                 
                 var offset = $(this.el).offset();
                 return {
-                    x: event.pageX - offset.left,
-                    y: event.pageY - offset.top
+                    x: event.pageX - offset.left + $(this.el).scrollLeft(),
+                    y: event.pageY - offset.top + $(this.el).scrollTop()
                 };
             },
 
@@ -95,7 +111,6 @@ define([
             },
 
             initialize: function() {
-                console.log(this.el);
                 this.whiteboard = this.options.whiteboard;
                 this.pen = new Pen(this.whiteboard.paper);
                 this.circle = new Circle(this.whiteboard.paper);
@@ -148,7 +163,6 @@ define([
 
     Rectangle.prototype.start = function(x, y) {
         this.rect = this.paper.rect(x, y, 0, 0, 5);
-        console.log(this.rect);
     }
 
     Rectangle.prototype.stop = function(x, y) {
@@ -172,7 +186,6 @@ define([
 
     Circle.prototype.start = function(x, y) {
         this.circle = this.paper.circle(x, y, 0);
-        console.log(this.circle);
     }
 
     Circle.prototype.stop = function(x, y) {

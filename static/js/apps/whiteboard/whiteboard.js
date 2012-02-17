@@ -14,7 +14,8 @@ $(document).ready(function() {
             initialize: function() {
                 var whiteboardView = new views.WhiteboardView({
                         el: $("#whiteboard"),
-                        height: 400
+                        height: 400,
+                        paperHeight: 768
                 });
 
                 var whiteboardToolView = new views.WhiteboardToolView({
