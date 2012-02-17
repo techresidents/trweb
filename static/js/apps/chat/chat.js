@@ -50,6 +50,15 @@ $(document).ready(function() {
                         chatSessionId: this.options.data.chatSessionId,
                         userId: this.chatUsers.first().id,
                         chatMessageCollection: chatMessageCollection});
+                
+                //whiteboard view
+                var whiteboardView = new views.ChatWhiteboardView({
+                        el: $("#whiteboard"),
+                        height: 350,
+                        chatSessionId: this.options.data.chatSessionId,
+                        userId: this.chatUsers.first().id,
+                        chatMessageCollection: chatMessageCollection,
+                });
 
                 //long poll
                 chatMessageCollection.longPoll();

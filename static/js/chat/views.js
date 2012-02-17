@@ -2,8 +2,11 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'chat/models'
-], function($, _, Backbone, models) {
+    'chat/models',
+    'chat/messages',
+    'whiteboard/views',
+    'whiteboard/serialize',
+], function($, _, Backbone, models, messages, whiteboard, serialize) {
 
     var ChatUserView = Backbone.View.extend({
             tagName: "div",
@@ -182,6 +185,10 @@ define([
             },
 
             added: function(model) {
+                if(model.msgType() != "tag") {
+                    return;
+                }
+
                 this.taglist.append(new ChatTagItemView({model: model}).render().el);
 
                 //scroll to bottom
@@ -192,12 +199,12 @@ define([
                 var value = this.tagInput.val();
 
                 if(value) {
-                    var header = new models.ChatMessageHeader({
+                    var header = new messages.ChatMessageHeader({
                         chatSessionId: this.chatSessionId,
                         userId: this.userId
                     });
 
-                    var msg = new models.ChatTagMessage({
+                    var msg = new messages.ChatTagMessage({
                         name: this.tagInput.val()
                     });
 
@@ -226,9 +233,62 @@ define([
             }
     });
 
+
+    var ChatWhiteboardView = whiteboard.WhiteboardView.extend({
+
+            initialize: function() {
+                whiteboard.WhiteboardView.prototype.initialize.call(this);
+
+                this.chatSessionId = this.options.chatSessionId;
+                this.userId = this.options.userId;
+                this.chatMessageCollection = this.options.chatMessageCollection;
+                this.chatMessageCollection.bind("reset", this.reset, this);
+                this.chatMessageCollection.bind("add", this.added, this);
+                
+                this.serializer = new serialize.Serializer();
+            },
+
+            reset: function() {
+            },
+
+            added: function(model) {
+                if(model.msgType() != "whiteboard") {
+                    return;
+                }
+                
+                var msg = model.get("msg");
+                this.paper.add(this.serializer.deserializeElement(msg.data));
+            },
+
+            onElementAdded: function(tool, element) {
+                whiteboard.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
+
+                var header = new messages.ChatMessageHeader({
+                        chatSessionId: this.chatSessionId,
+                        userId: this.userId
+                });
+
+                var msg = new messages.ChatWhiteboardMessage({
+                        data: this.serializer.serializeElement(element)
+                });
+
+                console.log(msg.data);
+
+                var message = new models.ChatMessage({
+                        header: header,
+                        msg: msg
+                });
+
+                message.save();
+                //element.remove();
+            }
+    });
+
+
     return {
         ChatTagView: ChatTagView,
         ChatTagItemView: ChatTagItemView,
-        ChatUserView: ChatUserView
+        ChatUserView: ChatUserView,
+        ChatWhiteboardView: ChatWhiteboardView,
     }
 });

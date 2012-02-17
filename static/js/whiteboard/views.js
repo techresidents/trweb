@@ -26,7 +26,7 @@ define([
                 if(this.options.height) {
                     $(this.el).height(this.options.height);
                 }
-
+                
                 this.paper = Raphael($(this.el).get(0), $(this.el).width(), $(this.el).height());
                 this.tool = new Pen(this.paper);
             },
@@ -44,10 +44,13 @@ define([
             },
 
             adjustedCoordinates: function(event) {
+                //TODO deal with clientX/ClientY if pageX/pageY are unaavailable.
+                //This will requuire adjusting for the page scrollbar position.
+                
                 var offset = $(this.el).offset();
                 return {
-                    x: event.clientX - offset.left,
-                    y: event.clientY - offset.top
+                    x: event.pageX - offset.left,
+                    y: event.pageY - offset.top
                 };
             },
 
@@ -68,8 +71,14 @@ define([
 
             mouseup: function(event) {
                 var coordinates = this.adjustedCoordinates(event);
-                this.tool.stop(coordinates.x, coordinates.y);
+                var element = this.tool.stop(coordinates.x, coordinates.y);
                 this.capturing = false;
+
+                this.onElementAdded(this.tool, element);
+
+            },
+
+            onElementAdded: function(tool, element) {
 
             }
     });
@@ -122,7 +131,7 @@ define([
     }
 
     Pen.prototype.stop = function(x, y) {
-        this.path = null;
+        return this.path;
     }
 
     Pen.prototype.move = function(x, y) {
@@ -130,7 +139,6 @@ define([
         path += ['L', x, y].join(' ');
         this.path.attr("path", path);
     }
-
 
 
     var Rectangle = function(paper) {
@@ -144,7 +152,7 @@ define([
     }
 
     Rectangle.prototype.stop = function(x, y) {
-        this.rect = null;
+        return this.rect;
     }
 
     Rectangle.prototype.move = function(x, y) {
@@ -168,7 +176,7 @@ define([
     }
 
     Circle.prototype.stop = function(x, y) {
-        this.circle = null;
+        return this.circle;
     }
 
     Circle.prototype.move = function(x, y) {

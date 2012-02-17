@@ -27,21 +27,37 @@
         </div>
     </div>
     <div class="row">
-        <div class="span6">
-            <h5>Agenda</h5>
-            <div>
-                <ul id="topiclist" class="chatlist">
-                </ul>
-            </div>
-        </div>
-        <div class="span6">
-            <h5>Tags</h5>
-            <div id="tags">
-                <ul id="taglist"class="chatlist">
-                </ul>
-                
-                <input id="taginput" class="span4"/>
-                <button class="btn btn-input">Tag</button>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+                <li><a data-toggle="tab" href="#whiteboard-container">Whiteboard</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="home" class="tab-pane fade in active">
+                    <div class="span5">
+                        <h5>Agenda</h5>
+                        <div>
+                            <ul id="topiclist" class="chatlist">
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="span5">
+                        <h5>Tags</h5>
+                        <div id="tags">
+                            <ul id="taglist"class="chatlist">
+                            </ul>
+                            
+                            <input id="taginput" class="span4"/>
+                            <button class="btn btn-input">Tag</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="whiteboard-container" class="span10 well tab-pane fade">
+                    <div id="whiteboard" class="span10">
+                    </div>
+                </div>
             </div>
         </div>
     </div>

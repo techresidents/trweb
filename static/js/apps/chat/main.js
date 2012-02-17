@@ -6,6 +6,7 @@ require.config({
         Backbone: 'loader/backbone',
         Highcharts: 'loader/highcharts',
         easyXDM: 'loader/easyXDM',
+        raphael: 'loader/raphael',
     }
 });
 

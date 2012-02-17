@@ -4,7 +4,8 @@ define([
     'Backbone',
     'xd/xd',
     'xd/backbone',
-], function($, _, Backbone, xd, xdBackbone) {
+    'chat/messages',
+], function($, _, Backbone, xd, xdBackbone, messages) {
 
     var ChatUser = Backbone.Model.extend({
 
@@ -137,10 +138,6 @@ define([
 
     var ChatMessage = Backbone.Model.extend({
 
-            messageTypeMap: {
-                "tag": ChatTagMessage
-            },
-
             defaults: function() {
                 return {
                     header: null,
@@ -149,15 +146,13 @@ define([
             },
 
             initialize: function(attributes, options) {
+
                 if(attributes.header.constructor == Object) {
-                    attributes.header = new ChatMessageHeader(attributes.header);
+                    attributes.header = new messages.ChatMessageHeader(attributes.header);
                 }
 
                 if(attributes.msg.constructor == Object) {
-                    var constructor = this.messageTypeMap[attributes.msg.type]
-                    if(constructor) {
-                        attributes.msg = new constructor(attributes.msg);
-                    }
+                    attributes.msg = messages.chatMessageFactory.create(attributes.header, attributes.msg);
                 }
 
                 if(!attributes.header.type && attributes.msg.type) {
@@ -181,7 +176,16 @@ define([
                 return _.extend({}, this.attributes.header, this.attributes.msg);
             },
 
-            sync: xdBackbone.sync
+            sync: xdBackbone.sync,
+
+            msgType: function() {
+                var header = this.get("header");
+                if(header) {
+                    return header.type;
+                } else {
+                    return null;
+                }
+            }
     });
 
     var ChatMessageCollection = Backbone.Collection.extend({
@@ -217,31 +221,10 @@ define([
             }
     });
 
-    var ChatMessageHeader = function(attributes) {
-        this.id = null;
-        this.type = null;
-        this.chatSessionId = null;
-        this.userId = null;
-        this.timestamp = null;
-
-        _.extend(this, attributes);
-    };
-
-
-    var ChatTagMessage = function(attributes) {
-        this.type = "tag";
-        this.name = null;
-
-        _.extend(this, attributes);
-    };
-
-
     return {
         ChatSession: ChatSession,
         ChatUserCollection: ChatUserCollection,
         ChatMessage: ChatMessage,
-        ChatMessageHeader: ChatMessageHeader,
-        ChatTagMessage: ChatTagMessage,
-        ChatMessageCollection: ChatMessageCollection
+        ChatMessageCollection: ChatMessageCollection,
     }
 });
