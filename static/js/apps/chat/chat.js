@@ -20,8 +20,8 @@ $(document).ready(function() {
                 //create chat session (not yet connected)
                 this.chatSession = new models.ChatSession({
                         apiKey: this.options.data.chatAPIKey,
-                        sessionId: this.options.data.chatSessionId,
                         sessionToken: this.options.data.chatSessionToken,
+                        userToken: this.options.data.chatUserToken,
                         users: this.chatUsers
                 });
                 
@@ -41,13 +41,13 @@ $(document).ready(function() {
 
 
                 var chatMessageCollection = new models.ChatMessageCollection(null, {
-                        chatSessionId: this.options.data.chatSessionId,
+                        chatSessionToken: this.options.data.chatSessionToken,
                         userId: this.chatUsers.first().id
                 });
 
                 //create tag view
                 var chatTagView = new views.ChatTagView({
-                        chatSessionId: this.options.data.chatSessionId,
+                        chatSessionToken: this.options.data.chatSessionToken,
                         userId: this.chatUsers.first().id,
                         chatMessageCollection: chatMessageCollection});
                 
@@ -55,7 +55,7 @@ $(document).ready(function() {
                 var whiteboardView = new views.ChatWhiteboardView({
                         el: $("#whiteboard"),
                         height: 350,
-                        chatSessionId: this.options.data.chatSessionId,
+                        chatSessionToken: this.options.data.chatSessionToken,
                         userId: this.chatUsers.first().id,
                         chatMessageCollection: chatMessageCollection,
                 });

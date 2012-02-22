@@ -31,6 +31,8 @@ class TopicForm(forms.Form):
             if not topic["title"]:
                 raise forms.ValidationError("Topic title field required")
 
+            topic_map[topic["id"]] = topic
+
         return self.cleaned_data
 
     def save(self, commit=True):
@@ -42,12 +44,15 @@ class TopicForm(forms.Form):
         topics = self.cleaned_data.get("topics")
         
         root_topic = topics[0]
+        
+        #TODO fix topic style hard code
 
         root = Topic(
                 id=root_topic["id"],
                 title=root_topic["title"],
                 description=root_topic["description"],
                 rank=root_topic["rank"],
+                style_id = 1, 
                 user = self.request.user
                 )
         
@@ -62,6 +67,7 @@ class TopicForm(forms.Form):
                     title=topic["title"],
                     rank=topic["rank"],
                     description=root_topic["description"],
+                    style_id = 1,
                     user = self.request.user
                     )
 

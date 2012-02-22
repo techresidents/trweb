@@ -58,8 +58,8 @@ define([
             defaults: function() {
                 return {
                     apiKey: null,
-                    sessionId: null,
                     sessionToken: null,
+                    userToken: null,
                     session: null,
                     users: null,
                 }
@@ -68,8 +68,8 @@ define([
             initialize: function(model) {
                 //make 'this' available for tokbox event listeners
                 var that = this;
-
-                var session =  TB.initSession(model.sessionId);
+                
+                var session =  TB.initSession(model.sessionToken);
                 this.set({ session: session });
                 
                 //tokbox event listeners defined inline delegate to ChatSession handlers with 'this' set properly.
@@ -85,12 +85,12 @@ define([
                 return this.get("apiKey");
             },
 
-            getSessionId: function() {
-                return this.get("sessionId");
-            },
-
             getSessionToken: function() {
                 return this.get("sessionToken");
+            },
+
+            getUserToken: function() {
+                return this.get("userToken");
             },
 
             getSession: function() {
@@ -104,10 +104,10 @@ define([
             //connect tokbox session to start everything.
             connect: function() {
                 var session = this.getSession();
-                var sessionToken = this.getSessionToken();
+                var userToken = this.getUserToken();
                 var apiKey = this.getApiKey();
                 
-                session.connect(apiKey, sessionToken);
+                session.connect(apiKey, userToken);
             },
 
             sessionConnectedHandler: function(event) {
@@ -194,7 +194,7 @@ define([
             url: "/chat/messages",
 
             initialize: function(models, options) {
-                this.chatSessionId = options.chatSessionId;
+                this.chatSessionToken = options.chatSessionToken;
                 this.userId = options.userId;
             },
 
@@ -204,7 +204,7 @@ define([
                     var asOf = last ? last.attributes.header.timestamp : 0;
 
                     var data = {
-                        chatSessionId: this.chatSessionId,
+                        chatSessionToken: this.chatSessionToken,
                         userId: this.userId,
                         asOf: asOf
                     };

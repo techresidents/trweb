@@ -7,26 +7,75 @@ class Chat(models.Model):
     class Meta:
         db_table = "chat"
 
-    #users = models.ManyToManyField(User, db_table="chat_user")
-    users = models.ManyToManyField(User, through="ChatUser")
     topic = models.ForeignKey(Topic)
-    chat_session_id = models.CharField(max_length=100, null=True)
     start = models.DateTimeField()
     end = models.DateTimeField()
+
+class ChatRole(models.Model):
+    class Meta:
+        db_table = "chat_role"
+
+    role = models.CharField(max_length=100)
+    description = models.CharField(max_length=1024)
+
+class ChatSession(models.Model):
+    class Meta:
+        db_table = "chat_session"
+    
+    chat = models.ForeignKey(Chat)
+    users = models.ManyToManyField(User, through="ChatUser")
+    token = models.CharField(max_length=1024, null=True)
+    participants = models.IntegerField(default=0)
+
+class ChatRegistration(models.Model):
+    class Meta:
+        db_table = "chat_registration"
+    
+    chat = models.ForeignKey(Chat)
+    user = models.ForeignKey(User)
+    chat_session = models.ForeignKey(ChatSession, null=True)
 
 class ChatUser(models.Model):
     class Meta:
         db_table = "chat_user"
     
-    chat = models.ForeignKey(Chat)
+    chat_session = models.ForeignKey(ChatSession)
     user = models.ForeignKey(User)
     token = models.CharField(max_length=1024, null=True)
 
-class Minute(models.Model):
-    chat = models.ForeignKey(Chat)
-    start = models.IntegerField(),
-    end = models.IntegerField(),
+class ChatMinute(models.Model):
+    class Meta:
+        db_table = "chat_minute"
 
-class MinuteTag(models.Model):
-    minute = models.ForeignKey(Minute)
+    chat_session = models.ForeignKey(ChatSession)
+    start = models.IntegerField(),
+    end = models.IntegerField(null=True),
+
+class ChatTag(models.Model):
+    class Meta:
+        db_table = "chat_tag"
+
+    chat_minute = models.ForeignKey(ChatMinute)
     tag = models.ForeignKey(Tag)
+
+class ChatTagNote(models.Model):
+    class Meta:
+        db_table = "chat_tag_note"
+
+    chat_tag = models.ForeignKey(ChatTag)
+    user = models.ForeignKey(User)
+    note = models.CharField(max_length=4096)
+
+class ChatArchive(models.Model):
+    class Meta:
+        db_table = "chat_archive"
+
+    chat_session = models.ForeignKey(ChatSession)
+
+class ChatFeedback(models.Model):
+    class Meta:
+        db_table = "chat_feedback"
+
+    chat_session = models.ForeignKey(ChatSession)
+    user = models.ForeignKey(User)
+

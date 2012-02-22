@@ -9,7 +9,7 @@ define([
     var ChatMessageHeader = function(attributes) {
         this.id = null;
         this.type = null;
-        this.chatSessionId = null;
+        this.chatSessionToken = null;
         this.userId = null;
         this.timestamp = null;
 
@@ -40,7 +40,6 @@ define([
     };
 
     var ChatMessageFactory = function() {
-        console.log(messageTypeMap);
         this.messageTypeMap = messageTypeMap;
     };
 

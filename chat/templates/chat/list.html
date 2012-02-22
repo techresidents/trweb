@@ -14,8 +14,8 @@
     <div class="row">
         <div class="span16">
             <ul>
-                {% for chat in chats %}
-                    <li><a href={%url 'chat.views.chat' chat_id=chat.id%}>{{chat.start}}</a></li>
+                {% for chat_session in chat_sessions %}
+                    <li><a href={%url 'chat.views.chat' chat_session_id=chat_session.id%}>{{chat_session.start}}</a></li>
                 {%endfor %}
             </ul>
         </div/>

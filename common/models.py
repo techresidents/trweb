@@ -57,16 +57,33 @@ class TopicManager(models.Manager):
     def update_topic_tree(self, user, topics):
         pass
 
+class TopicStyle(models.Model):
+    class Meta:
+        db_table = "topic_style"
+    
+    style = models.CharField(max_length=100)
+    description = models.CharField(max_length=1024)
+
 class Topic(models.Model):
     class Meta:
         db_table = "topic"
-
+    
+    #Self referential topic hierarchy where root's parent must be null
     parent = models.ForeignKey("self", null=True)
+    rank = models.IntegerField()
+    style = models.ForeignKey(TopicStyle)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=2048, null=True)
-    rank = models.IntegerField()
+    public = models.BooleanField(default=True)
     user = models.ForeignKey(User)
+
     objects = TopicManager()
+
+class TopicContent(models.Model):
+    class Meta:
+        db_table = "topic_content"
+
+    topic = models.ForeignKey(Topic)
 
 class Tag(models.Model):
     class Meta:

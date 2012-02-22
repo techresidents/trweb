@@ -171,7 +171,7 @@ define([
             },
 
             initialize: function() {
-                this.chatSessionId = this.options.chatSessionId;
+                this.chatSessionToken = this.options.chatSessionToken;
                 this.userId = this.options.userId;
                 this.chatMessageCollection = this.options.chatMessageCollection;
                 this.chatMessageCollection.bind("reset", this.reset, this);
@@ -200,7 +200,7 @@ define([
 
                 if(value) {
                     var header = new messages.ChatMessageHeader({
-                        chatSessionId: this.chatSessionId,
+                        chatSessionToken: this.chatSessionToken,
                         userId: this.userId
                     });
 
@@ -239,7 +239,7 @@ define([
             initialize: function() {
                 whiteboard.WhiteboardView.prototype.initialize.call(this);
 
-                this.chatSessionId = this.options.chatSessionId;
+                this.chatSessionToken = this.options.chatSessionToken;
                 this.userId = this.options.userId;
                 this.chatMessageCollection = this.options.chatMessageCollection;
                 this.chatMessageCollection.bind("reset", this.reset, this);
@@ -264,7 +264,7 @@ define([
                 whiteboard.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
 
                 var header = new messages.ChatMessageHeader({
-                        chatSessionId: this.chatSessionId,
+                        chatSessionToken: this.chatSessionToken,
                         userId: this.userId
                 });
 
@@ -272,7 +272,6 @@ define([
                         data: this.serializer.serializeElement(element)
                 });
 
-                console.log(msg.data);
 
                 var message = new models.ChatMessage({
                         header: header,
