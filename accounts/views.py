@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from django.contrib.csrf.middleware import csrf_exempt
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -8,6 +9,16 @@ from django.views.decorators.cache import never_cache
 
 import forms
 
+#Disable csrf for the login view since we support logging in
+#from an http landing page which results in a POST from
+#the http landing page to the https login page and 
+#this will result in a failed referer check (403).
+#Disabling the CSRF check for the login page is fairly
+#safe since a cross site POST to the login page can't
+#do much harm. Supporting a POST from http to https
+#does make this pages vulnerable to man in the middle
+#attacks. Support for this may be removed in the future.
+@csrf_exempt
 @never_cache
 def login(request):
     redirect_to = request.REQUEST.get("next", settings.LOGIN_REDIRECT_URL)
