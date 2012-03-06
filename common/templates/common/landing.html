@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block title %}Welcome to Tech Residents{% endblock %}
+
+{% block extrahead %}
+<script src="{{STATIC_URL}}/js/3ps/swfobject/swfobject.js"></script>
+<script type="text/javascript">
+var videoID = "ylLzyHk54Z0"
+var params = { allowScriptAccess: "always" };
+var atts = { id: "ytPlayer" };
+swfobject.embedSWF("http://www.youtube.com/v/" + videoID + "?version=3&enablejsapi=1&playerapiid=player1&modestbranding=1",
+                   "videoDiv", "480", "295", "9", null, null, params, atts);
+</script>
+        
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="span7">
+            <a class="logo" href="/"></a>
+        </div/>
+        <div class="span5">
+            <form class="form-horizontal pull-right" method="post" action="{{ LOGIN_URL }}">
+                {% csrf_token %}
+                <div class="control-group banner-control-group">
+                    {{ form.username.label_tag }}
+                    <div class="controls">
+                        {{ form.username }}
+                    </div>
+                </div>
+                <div class="control-group banner-control-group">
+                    {{ form.password.label_tag }}
+                    <div class="controls">
+                        {{ form.password }}
+                    </div>
+                </div>
+                
+                <div class="control-group banner-control-group">
+                    <div class="controls">
+                        <input type="submit" value="Login" class="btn inline" />
+                        <label class="checkbox inline">
+                            {{ form.remember_me }}
+                            {{ form.remember_me.label }}
+                        </label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="page-header">
+            <h1>
+                Join the conversation
+                <small>It's free</small>
+                <a class="btn btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div id="videoDiv"/>
+    </div>
+    <div class="row">
+        <div class="page-header">
+        </div>
+        <div class="span4">
+            <h2>Discuss</h2>
+            <ul>
+                <li>Interactive technical discussions</li>
+                <li>Open educational environment</li>
+                <li>Diverse skillsets and ideas</li>
+            </ul>
+            <a class="btn btn-primary" href="{% url 'common.views.learn_more' %}">Learn More</a>
+        </div>
+        <div class="span4">
+            <h2>Expand Your Network</h2>
+            <ul>
+                <li>Networking the natural way</li>
+                <li>Open community</li>
+                <li>Connect with developers near and far</li>
+            </ul>
+            <a class="btn btn-primary" href="">Learn More</a>
+        </div>
+        <div class="span4">
+            <h2>Connect</h2>
+            <ul>
+                <li>Ready for a change?</li>
+                <li>Connect with our network of employers and recruiters on your terms</li>
+            </ul>
+            <a class="btn btn-primary" href="">Learn More</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

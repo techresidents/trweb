@@ -1,69 +1,68 @@
-{% extends "base.html" %}
+{% extends "banner_base.html" %}
 {% load url from future %}
 
-{% block title %}tech residents{% endblock %}
+{% block title %}Welcome to Tech Residents - Sign Up{% endblock %}
 
 {% block content %}
 
 <div class="container">
     <div class="row">
-        <div class="span12">
-            <h1>Tech Residents</h1>
-        </div/>
-    </div>
-    <div class="row">
-        <div class="span12">
-            <form class="form-horizontal" method="post" action="{% url 'accounts.views.register' %}">
-                {% csrf_token %}
-                <fieldset>
-                <div class="control-group{% if user_form.username.errors %} error{% endif %}">
-                    {{ user_form.username.label_tag }}
-                    <div class="controls">
-                        {{ user_form.username }}
-                        {% for error in user_form.username.errors %}
-                            <span class="help-inline">{{error}}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="control-group{% if user_form.password.errors%} error{% endif %}">
-                    {{ user_form.password.label_tag }}
-                    <div class="controls">
-                        {{ user_form.password }}
-                        {% for error in user_form.password.errors %}
-                            <span class="help-inline">{{error}}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="control-group{% if user_form.password_confirmation.errors%} error{% endif %}">
-                    {{ user_form.password_confirmation.label_tag }}
-                    <div class="controls">
-                        {{ user_form.password_confirmation }}
-                        {% for error in user_form.password_confirmation.errors %}
-                            <span class="help-inline">{{error}}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="controls">
-                    <input type="submit" value="Register" class="btn btn-primary" />
+        <div class="span12 page-header">
+            <h1>
+                Sign up for Tech Residents
+                <small>Join the conversation</small>
+            </h1>
+        </div>
 
-                    {% if user_form.non_field_errors %}
-                        <div class="alert alert-error">
-                            {% for error in user_form.non_field_errors%}
-                                <span>{{error}}</span>
-                            {% endfor %}
+        <div class="span10">
+            <div class="well">
+                <form class="form-horizontal" method="post" action="{% url 'accounts.views.register' %}">
+                    {% csrf_token %}
+                    <fieldset>
+                        {% for field in user_form %}
+                            <div class="control-group{% if field.errors %} error{% endif %}">
+                                {{ field.label_tag }}
+                                <div class="controls">
+                                    {{ field }}
+                                    {% for error in field.errors %}
+                                        <span class="help-inline">{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="control-group">
+                            <div class="controls">
+                                <div>
+                                    <p>By clicking Sign Up you agree to our <a href="#">Terms of Service.</a></p>
+                                </div>
+                                <input type="submit" value="Sign Up" class="btn btn-success" />
+                            </div>
                         </div>
-                    {% endif %}
-                    {% if user_profile_form.non_field_errors %}
-                        <div class="alert alert-error">
-                            {% for error in user_profile_form.non_field_errors%}
-                                <span>{{error}}</span>
-                            {% endfor %}
+
+                        <div class="control-group">
+                            <div class="controls">
+                                {% if user_form.non_field_errors %}
+                                    <div class="alert alert-error">
+                                        {% for error in user_form.non_field_errors%}
+                                            <span>{{error}}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                {% if user_profile_form.non_field_errors %}
+                                    <div class="alert alert-error">
+                                        {% for error in user_profile_form.non_field_errors%}
+                                            <span>{{error}}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
-                    {% endif %}
-                </div>
-            </fieldset>
-            </form>
+                    </fieldset>
+                </form>
+            </div>
         </div>
     </div>
+</div>
 
 {% endblock %}

@@ -3,11 +3,10 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from django.template import loader, Context, RequestContext
+from django.template import RequestContext
 from django.views.decorators.cache import never_cache
 
 import forms
-import models
 
 @never_cache
 def login(request):
@@ -31,16 +30,9 @@ def login(request):
     context = {
             "form": form,
             "next": redirect_to,
-    }
+            }
 
     return render_to_response('accounts/login.html', context,  context_instance=RequestContext(request))
-
-def logout(request):
-    auth.logout(request)
-    redirect_to = request.REQUEST.get("next", settings.LOGIN_URL)
-    return HttpResponseRedirect(redirect_to)
-
-
 
 def register(request):
     if request.method == "POST":
@@ -55,7 +47,7 @@ def register(request):
             user_profile.user = user
             user_profile.save()
 
-            return HttpResponseRedirect("/chat")
+            return HttpResponseRedirect("/")
     else:
         user_form = forms.RegisterUserForm()
         user_profile_form = forms.RegisterUserProfileForm()
@@ -63,10 +55,54 @@ def register(request):
     context = {
             "user_form" : user_form,
             "user_profile_form" : user_profile_form
-    }
+            }
 
     return render_to_response('accounts/register.html', context,  context_instance=RequestContext(request))
 
+def forgot_password(request):
+    success = False
 
+    if request.method == "POST":
+        form = forms.ForgotPasswordForm(data=request.POST)
+        if form.is_valid():
+            form.send_email()
+            success = True
+    else:
+        form = forms.ForgotPasswordForm()
+    
+    context = {
+            "form": form,
+            "success": success,
+            }
+
+    return render_to_response('accounts/forgot_password.html', context,  context_instance=RequestContext(request))
+
+def reset_password(request, reset_password_code):
+    success = False
+
+    if request.method == "POST":
+        form = forms.ResetPasswordForm(reset_password_code, data=request.POST)
+        if form.is_valid():
+            form.reset_password()
+            success = True
+    else:
+        form = forms.ResetPasswordForm(reset_password_code)
+    
+    context = {
+            "form": form,
+            "reset_password_code": reset_password_code,
+            "success": success
+            }
+
+    return render_to_response('accounts/reset_password.html', context,  context_instance=RequestContext(request))
+
+
+@login_required
+def logout(request):
+    auth.logout(request)
+    redirect_to = request.REQUEST.get("next", settings.LOGIN_URL)
+    return HttpResponseRedirect(redirect_to)
+
+@login_required
 def profile(request):
     return render_to_response('accounts/profile.html',  context_instance=RequestContext(request))

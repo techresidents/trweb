@@ -76,7 +76,6 @@ class TopicForm(forms.Form):
             result.append(model)
         
         if commit:
-            print len(result)
             Topic.objects.create_topic_tree(self.request.user, result)
         
         return result

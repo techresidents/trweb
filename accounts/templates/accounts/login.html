@@ -1,57 +1,77 @@
-{% extends "base.html" %}
+{% extends "banner_base.html" %}
 {% load url from future %}
 
-{% block title %}tech residents{% endblock %}
+{% block title %}Welcome to Tech Residents - Login{% endblock %}
 
 {% block content %}
 
 <div class="container">
     <div class="row">
-        <div class="span6">
-            <h1>Tech Residents</h1>
-        </div/>
-
-        <div class="span6">
-            <form class="form-horizontal" method="post" action="{% url 'accounts.views.login' %}">
-                {% csrf_token %}
-                <div class="control-group{% if form.username.errors %} error{% endif %}">
-                    {{ form.username.label_tag }}
-                    <div class="controls">
-                        {{ form.username }}
-                        {% for error in form.username.errors %}
-                            <span class="help-inline">{{error}}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="control-group{% if form.password.errors%} error{% endif %}">
-                    {{ form.password.label_tag }}
-                    <div class="controls">
-                        {{ form.password }}
-                        {% for error in form.password.errors %}
-                            <span class="help-inline">{{error}}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <input type="hidden" name="next" value="{{next}}"/>
-                
-                <div class="controls">
-                    <input type="submit" value="Login" class="btn btn-primary inline" />
-                    <label class="checkbox inline">
-                        {{ form.remember_me }}
-                        {{ form.remember_me.label }}
-                    </label>
-                </div>
-
-                    {% if form.non_field_errors %}
-                        <div class="controls alert alert-error">
-                            {% for error in form.non_field_errors%}
-                                <span>{{error}}</span>
-                            {% endfor %}
+        <div class="page-header">
+            <h1>
+                Join the conversation
+                <small>It's free</small>
+                <a class="btn btn-success" href="{% url 'accounts.views.register' %}">Sign Up</a>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span10">
+            <div class="well">
+                <form class="form-horizontal" method="post" action="{% url 'accounts.views.login' %}">
+                    {% csrf_token %}
+                    <fieldset>
+                        <legend>Tech Residents Login</legend>
+                        <div class="control-group{% if form.username.errors %} error{% endif %}">
+                            {{ form.username.label_tag }}
+                            <div class="controls">
+                                {{ form.username }}
+                                {% for error in form.username.errors %}
+                                    <span class="help-inline">{{error}}</span>
+                                {% endfor %}
+                            </div>
                         </div>
-                    {% endif %}
-                </div>
-            </form>
+                        <div class="control-group{% if form.password.errors%} error{% endif %}">
+                            {{ form.password.label_tag }}
+                            <div class="controls">
+                                {{ form.password }}
+                                {% for error in form.password.errors %}
+                                    <span class="help-inline">{{error}}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="next" value="{{next}}"/>
+                        
+                        <div class="control-group">
+                            <div class="controls">
+                                <input type="submit" value="Login" class="btn btn-primary inline" />
+                                <label class="checkbox inline">
+                                    {{ form.remember_me }}
+                                    {{ form.remember_me.label }}
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="controls">
+                                <a href="{% url 'accounts.views.forgot_password' %}">Forgot Password?</a>
+                            </div>
+                        </div>
+
+                        <div>
+                            {% if form.non_field_errors %}
+                                <div class="controls alert alert-error">
+                                    {% for error in form.non_field_errors%}
+                                        <span>{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    </fieldset>
+                </form>
+            </div>
         </div>
     </div>
 </div>

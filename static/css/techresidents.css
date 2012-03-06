@@ -6,6 +6,26 @@
     padding-top: 40px;
 }
 
+.banner-content {
+    padding-top: 25px;
+}
+
+.banner {
+    background-image: url("/static/img/banner.png");
+    background-repeat: repeat-x;
+}
+
+.banner-control-group label {
+        color: #EEEEEE;
+}
+
+.logo {
+    display: block;
+    height: 115px;
+    width: 503px;
+    background-image: url("/static/img/logo.png");
+}
+
 .btn-input {
     margin-bottom: 9px;
 }
@@ -14,4 +34,15 @@
     font-size: 13px;
     line-height: 16px;
     padding: 2px 4px;
+}
+
+.footer {
+    border-top: 1px solid #E5E5E5;
+    margin-top: 45px;
+    padding: 35px 0 36px;
+}
+
+.footer span {
+    color: #555555;
+    margin-bottom: 0;
 }
