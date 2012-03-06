@@ -20,3 +20,7 @@ DATABASES = {
         'PORT': '5432',                                         # Set to empty string for default. Not used with sqlite3.
     }
 }
+
+#Login using HTTPS. This is should only be used by the landing page which is http,
+#but POSTS to the login page using https in non-development environments.
+TR_LOGIN_USING_HTTPS = True

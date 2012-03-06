@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(PROJECT_ROOT, "../")))
 #print sys.path
 
 #Configure settings
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'localdev_settings'
 
 import django.core.handlers.wsgi
 application = django.core.handlers.wsgi.WSGIHandler()

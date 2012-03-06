@@ -11,10 +11,14 @@ def landing(request):
     #if request.user.is_authenticated:
     #    return HttpResponseRedirect('/home')
     
+    login_url = settings.LOGIN_URL
+    if settings.TR_LOGIN_USING_HTTPS:
+        login_url = request.build_absolute_uri(login_url).replace("http", "https")
+
     form = LoginForm()
 
     context = {
-            'LOGIN_URL': settings.LOGIN_URL,
+            'LOGIN_URL': login_url,
             'form': form
             }
 

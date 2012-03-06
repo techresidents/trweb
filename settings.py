@@ -159,6 +159,11 @@ LOGGING = {
     }
 }
 
+#Login using HTTPS. This is should only be used by the landing page which is http,
+#but POSTS to the login page using https in non-development environments.
+TR_LOGIN_USING_HTTPS = False
+
+#Set the location of the cross domain (XD) server for use with easyXDM.
 TR_XD_REMOTE = 'http://localdev:6767/static/js/easyXDM/cors/index.html'
 #TR_XD_REMOTE = 'http://iville.local:6767/static/js/easyXDM/cors/index.html'
 

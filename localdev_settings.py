@@ -1,4 +1,4 @@
-#Staging settings
+#localdev settings
 from techresidents_web.settings import *
 
 DEBUG = True
