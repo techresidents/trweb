@@ -22,9 +22,20 @@
 
     <body class="banner">
         <div class="content">
-            {% block content %}{% endblock %}
+            <div class="container">
+                <div class="row">
+                    <div class="span12">
+                        <a class="logo" href="/"></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="banner-content">
+                {% block content %}{% endblock %}
+            </div>
+            
+            {% include 'footer.html' %}
+
         </div>
-        
-        {% include 'footer.html' %}
     </body>
 </html>
