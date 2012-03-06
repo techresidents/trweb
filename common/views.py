@@ -8,8 +8,11 @@ from accounts.forms import LoginForm
 
 @never_cache
 def landing(request):
-    #if request.user.is_authenticated:
-    #    return HttpResponseRedirect('/home')
+
+    #if the user is logged in forward them to the http version of the LOGIN_REDIRCT_URL
+    if request.user.is_authenticated():
+        redirect_to = request.build_absolute_uri(settings.LOGIN_REDIRECT_URL).replace("https", "http")
+        return HttpResponseRedirect(redirect_to)
     
     login_url = settings.LOGIN_URL
     if settings.TR_LOGIN_USING_HTTPS:
