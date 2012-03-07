@@ -24,7 +24,7 @@ def login(request):
     redirect_to = request.REQUEST.get("next", settings.LOGIN_REDIRECT_URL)
 
     #build absolute url and replace https with http
-    redirect_to = request.build_absolute_uri(redirect_to).replace("https", "http")
+    redirect_to = request.build_absolute_uri(redirect_to).replace("https:", "http:")
 
     if request.method == "POST":
         form = forms.LoginForm(data=request.POST)
