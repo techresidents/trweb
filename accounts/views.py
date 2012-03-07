@@ -51,28 +51,46 @@ def login(request):
 
 def register(request):
     if request.method == "POST":
-        user_form = forms.RegisterUserForm(data=request.POST)
-        user_profile_form = forms.RegisterUserProfileForm(data=request.POST)
+        user_form = forms.RegisterUserForm(request, data=request.POST)
 
-        if user_form.is_valid() and user_profile_form.is_valid():
+        if user_form.is_valid():
             user = user_form.save(commit=False)
             user.save()
 
-            user_profile = user_profile_form.save(commit=False)
-            user_profile.user = user
-            user_profile.save()
-
+            text_template = get_template('accounts/registration_email.txt')
+            html_template = get_template('accounts/registration_email.html')
+            
+            user_form.send_activation_email(
+                    subject = "Tech Residents - Registration",
+                    text_template = text_template,
+                    html_template = html_template
+                    )
+            
+            #TODO should user be authenticated and send to home page
             return HttpResponseRedirect("/")
     else:
-        user_form = forms.RegisterUserForm()
-        user_profile_form = forms.RegisterUserProfileForm()
+        user_form = forms.RegisterUserForm(request)
     
     context = {
             "user_form" : user_form,
-            "user_profile_form" : user_profile_form
             }
 
     return render_to_response('accounts/register.html', context,  context_instance=RequestContext(request))
+
+def register_activate(request, registration_code):
+    success = False
+
+    form = forms.RegistrationActivationForm(allow_reactivation=True, data={"registration_code": registration_code})
+
+    if form.is_valid():
+        form.activate()
+        success = True
+
+    context = {
+            "success": success,
+            }
+
+    return render_to_response('accounts/register_activate.html', context,  context_instance=RequestContext(request))
 
 def forgot_password(request):
     success = False

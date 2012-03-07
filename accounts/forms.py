@@ -21,6 +21,10 @@ class RegisterUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("first_name", "last_name", "username",)
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.request = request
+        super(RegisterUserForm, self).__init__(*args, **kwargs)
     
     def clean_username(self):
         username = self.cleaned_data["username"]
@@ -47,17 +51,74 @@ class RegisterUserForm(forms.ModelForm):
             user.save()
         return user
 
-class RegisterUserProfileForm(forms.ModelForm):
+    def create_registration_code(self, registration_code=None):
+        if self.errors:
+            raise ValueError("Unable to create registration code for invalid register form")
 
-    class Meta:
-        model = models.UserProfile
-        exclude = ("user",)
+        user = User.objects.get(username=self.cleaned_data["username"])
+        code_type = models.CodeType.objects.get(type="REGISTRATION")
+        registration_code = registration_code or uuid.uuid4().hex
+        models.Code.objects.create(user=user, type=code_type, code=registration_code)
+
+        return registration_code
+
+    def get_activation_url(self, registration_code):
+        url = self.request.build_absolute_uri(reverse("accounts.views.register_activate", args=[registration_code]))
+        return url
+
     
-    def save(self, commit=True):
-        user_profile = super(RegisterUserProfileForm, self).save(commit=False)
-        if commit:
-            user_profile.save()
-        return user_profile
+    def send_activation_email(self, subject, text_template, html_template, from_email=None, context = None, registration_code=None):
+        if self.errors:
+            raise ValueError("Unable to send email for invalid registration form")
+        
+        registration_code = registration_code or self.create_registration_code()
+
+        context = context or Context()
+        context["activation_url"] = self.get_activation_url(registration_code)
+        to = self.cleaned_data["username"]
+
+        text_content = text_template.render(context)
+        html_content = html_template.render(context)
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+class RegistrationActivationForm(forms.Form):
+
+    registration_code = forms.CharField(label="Registration Code", max_length=128, required=True)
+
+    def __init__(self, allow_reactivation, *args, **kwargs):
+        self.allow_reactivation = allow_reactivation
+
+        super(RegistrationActivationForm, self).__init__(*args, **kwargs)
+
+    def clean_registration_code(self):
+        #Validate the registration code
+        #If the code is not found in the database raise an exception
+        try:
+            registration_code = self.cleaned_data["registration_code"]
+
+            if self.allow_reactivation:
+                models.Code.objects.get(type__type="REGISTRATION", code=registration_code)
+            else:
+                models.Code.objects.get(type__type="REGISTRATION", code=registration_code, used=None)
+
+        except ObjectDoesNotExist:
+            raise forms.ValidationError("Invalid registration code.")
+
+        return registration_code
+
+    def activate(self):
+        if self.errors:
+            raise ValueError("Unable to activate invalid registration activation form")
+        
+        registration_code = self.cleaned_data["registration_code"]
+
+        code = models.Code.objects.get(type__type="REGISTRATION", code=registration_code)
+
+        if not code.used:
+            code.used = datetime.now()
+            code.save()
 
 
 class LoginForm(forms.Form):

@@ -1,0 +1,29 @@
+{% extends "banner_base.html" %}
+{% load url from future %}
+
+{% block title %}Welcome to Tech Residents - Activation{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="span12 page-header">
+            <h2>Account Activation</h2>
+        </div>
+
+        <div class="span10">
+            <div class="well">
+                {% if success %}
+                    <div class="alert alert-success">
+                        <span>Your account has been successfully activated. Please <a href="{% url 'accounts.views.login' %}">Login</a>.</span>
+                    </div>
+                {% else %}
+                    <div class="alert alert-error">
+                        <span>Invalid account activation code.</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
