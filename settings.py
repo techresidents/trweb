@@ -119,6 +119,9 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    #Patches must be applied before any other apps are loaded
+    'techresidents_web.patch',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -129,6 +132,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+
     'techresidents_web.common',
     'techresidents_web.accounts',
     'techresidents_web.chat',
@@ -159,6 +163,16 @@ LOGGING = {
     }
 }
 
+#Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localdev'
+EMAIL_PORT = 25
+#EMAIL_HOST_USER = 'user'
+#EMAIL_HOST_PASSWORD = 'password'
+DEFAULT_FROM_EMAIL = 'Tech Residents Support <jmullins@techresidents.com>'
+
+#Tech Residents specific settings
 #Login using HTTPS. This is should only be used by the landing page which is http,
 #but POSTS to the login page using https in non-development environments.
 TR_LOGIN_USING_HTTPS = False
@@ -167,6 +181,8 @@ TR_LOGIN_USING_HTTPS = False
 TR_XD_REMOTE = 'http://localdev:6767/static/js/easyXDM/cors/index.html'
 #TR_XD_REMOTE = 'http://iville.local:6767/static/js/easyXDM/cors/index.html'
 
+
+#Tokbox settings
 TOKBOX_API_KEY = '11557552'
 TOKBOX_API_SECRET = 'a3fc9c8a0e37bd9fa04018132e55b4141195ce2b'
 TOKBOX_IS_STAGING = True

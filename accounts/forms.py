@@ -1,19 +1,22 @@
 import uuid
 from datetime import datetime
 
-from django.core.exceptions import ObjectDoesNotExist
 from django import forms
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMultiAlternatives
+from django.core.urlresolvers import reverse
 from django.contrib import auth
 from django.contrib.auth.models import User
+from django.template import Context
 
 import models
 
 class RegisterUserForm(forms.ModelForm):
     first_name = forms.CharField(label="First Name", max_length=30, required=True)
     last_name = forms.CharField(label="Last Name", max_length=30, required=True)
-    username = forms.EmailField(label="Email", max_length=30, required=True)
-    password = forms.CharField(label="Password", max_length=75, widget=forms.PasswordInput, required=True)
-    password_confirmation  = forms.CharField(label="Re-enter password", max_length=75, widget=forms.PasswordInput, required=True)
+    username = forms.EmailField(label="Email", max_length=75, required=True)
+    password = forms.CharField(label="Password", min_length=4, max_length=75, widget=forms.PasswordInput, required=True)
+    password_confirmation  = forms.CharField(label="Re-enter password", min_length=4,  max_length=75, widget=forms.PasswordInput, required=True)
 
     class Meta:
         model = User
@@ -26,6 +29,7 @@ class RegisterUserForm(forms.ModelForm):
         except User.DoesNotExist:
             return username
         raise forms.ValidationError("Username already exists.")
+
 
     def clean(self):
         if "password" in self.cleaned_data and "password_confirmation" in self.cleaned_data:
@@ -57,7 +61,7 @@ class RegisterUserProfileForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    username = forms.EmailField(label="Email", max_length=30, required=True)
+    username = forms.EmailField(label="Email", max_length=75, required=True)
     password = forms.CharField(label="Password", max_length=75, widget=forms.PasswordInput, required=True)
     remember_me = forms.BooleanField(label="Remember me", widget=forms.CheckboxInput, required=False)
 
@@ -89,8 +93,12 @@ class LoginForm(forms.Form):
         return self.user
 
 class ForgotPasswordForm(forms.Form):
-    username = forms.EmailField(label="Email", max_length=30, required=True)
-    username_confirmation = forms.EmailField(label="Re-enter email", max_length=30, required=True)
+    username = forms.EmailField(label="Email", max_length=75, required=True)
+    username_confirmation = forms.EmailField(label="Re-enter email", max_length=75, required=True)
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.request = request
+        super(ForgotPasswordForm, self).__init__(*args, **kwargs)
 
     def clean(self):
         if "username" in self.cleaned_data and "username_confirmation" in self.cleaned_data:
@@ -99,11 +107,13 @@ class ForgotPasswordForm(forms.Form):
             if username != username_confirmation:
                 raise forms.ValidationError("Email addresses do not match.")
         return self.cleaned_data
-    
-    def send_email(self, reset_password_code=None):
+
+    def create_reset_password_code(self):
         if self.errors:
-            raise ValueError("Unable to send email for invalid forgot password form")
+            raise ValueError("Unable to create reset password code for invalid forgot password form")
         
+        reset_password_code = None
+
         try:
             user = User.objects.get(username=self.cleaned_data["username"])
             code_type = models.CodeType.objects.get(type="RESET_PASSWORD")
@@ -113,9 +123,34 @@ class ForgotPasswordForm(forms.Form):
         except ObjectDoesNotExist:
             pass
 
+        return reset_password_code
+
+    def get_reset_password_url(self, reset_password_code):
+        url = self.request.build_absolute_uri(reverse("accounts.views.reset_password", args=[reset_password_code]))
+        return url.replace("http:", "https:")
+
+    
+    def send_email(self, subject, text_template, html_template, from_email=None, context = None, reset_password_code=None):
+        if self.errors:
+            raise ValueError("Unable to send email for invalid forgot password form")
+        
+        reset_password_code = reset_password_code or self.create_reset_password_code()
+
+        if reset_password_code:
+            context = context or Context()
+            context["reset_password_url"] = self.get_reset_password_url(reset_password_code)
+            to = self.cleaned_data["username"]
+
+            text_content = text_template.render(context)
+            html_content = html_template.render(context)
+            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
+
 class ResetPasswordForm(forms.Form):
-    password = forms.CharField(label="Password", max_length=75, widget=forms.PasswordInput, required=True)
-    password_confirmation = forms.CharField(label="Re-enter password", max_length=75, widget=forms.PasswordInput, required=True)
+    password = forms.CharField(label="Password", min_length=4, max_length=75, widget=forms.PasswordInput, required=True)
+    password_confirmation = forms.CharField(label="Re-enter password", min_length=4, max_length=75, widget=forms.PasswordInput, required=True)
 
     def __init__(self, reset_password_code, *args, **kwargs):
         self.reset_password_code = reset_password_code

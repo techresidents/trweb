@@ -5,6 +5,7 @@ from django.contrib.csrf.middleware import csrf_exempt
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
 
 import forms
@@ -77,9 +78,18 @@ def forgot_password(request):
     success = False
 
     if request.method == "POST":
-        form = forms.ForgotPasswordForm(data=request.POST)
+        form = forms.ForgotPasswordForm(request, data=request.POST)
         if form.is_valid():
-            form.send_email()
+
+            text_template = get_template('accounts/forgot_password_email.txt')
+            html_template = get_template('accounts/forgot_password_email.html')
+            
+            form.send_email(
+                    subject = "Tech Residents - Reset Password",
+                    text_template = text_template,
+                    html_template = html_template
+                    )
+
             success = True
     else:
         form = forms.ForgotPasswordForm()
