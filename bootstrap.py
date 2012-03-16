@@ -31,7 +31,7 @@ def main(argv):
             log.error("bootstrap must be run in a virtual environment")
             return 2
 
-        subprocess.call(["pip", "install",  "-E", os.environ["VIRTUAL_ENV"], "--requirement", args.requirements])
+        subprocess.call(["pip", "install", "--requirement", args.requirements])
 
         return 0
 
