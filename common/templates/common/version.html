@@ -1,0 +1,20 @@
+{% extends "banner_base.html" %}
+{% load url from future %}
+
+{% block title %}Welcome to Tech Residents - About us{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="page-header">
+            <h1>Version</h1>
+        </div>
+        <div class="span12">
+            <p><strong>Version:</strong> {{version}}</p>
+            <p><strong>Build:</strong> {{build}}</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

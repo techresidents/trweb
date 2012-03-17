@@ -4,7 +4,17 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.cache import never_cache
 
+import version as version_num
 from accounts.forms import LoginForm
+
+@never_cache
+def version(request):
+    context = {
+            'version': version_num.VERSION,
+            'build': version_num.BUILD 
+            }
+
+    return render_to_response('common/version.html', context,  context_instance=RequestContext(request))
 
 @never_cache
 def landing(request):
