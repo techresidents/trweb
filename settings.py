@@ -166,7 +166,7 @@ LOGGING = {
 #Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'localdev'
+EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
 #EMAIL_HOST_USER = 'user'
 #EMAIL_HOST_PASSWORD = 'password'
