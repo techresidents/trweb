@@ -148,3 +148,18 @@ def logout(request):
 @login_required
 def profile(request):
     return render_to_response('accounts/profile.html',  context_instance=RequestContext(request))
+
+
+def profile_account(request):
+    return render_to_response('accounts/profile_account.html',  context_instance=RequestContext(request))
+
+
+def profile_password(request):
+    return render_to_response('accounts/profile_password.html',  context_instance=RequestContext(request))
+
+
+def profile_notifications(request):
+    return render_to_response('accounts/profile_notifications.html',  context_instance=RequestContext(request))
+
+def ptidemo(request):
+    return render_to_response('accounts/ptiDemo.html',  context_instance=RequestContext(request))

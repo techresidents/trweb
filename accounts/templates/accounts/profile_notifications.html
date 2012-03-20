@@ -1,0 +1,100 @@
+{% extends "menu_base.html" %}
+{% load url from future %}
+
+{% block title %}Profile{% endblock %}
+
+{% block extrahead %}
+    <link href="{{STATIC_URL}}css/profile.css" rel="stylesheet">
+{%endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="page-header">
+                <h1>Profile</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+
+            <!--Sidebar content-->
+            <div class="span3">
+                <div class="well">
+                    <ul class="nav nav-list">
+                        <li class="nav-header">Account</li>
+                        <li><a href="{% url 'accounts.views.profile_account' %}"><i class="icon-user"></i>Account</a></li>
+                        <li><a href="{% url 'accounts.views.profile_password' %}"><i class="icon-lock"></i>Password</a></li>
+                        <li class="active"><a href="#"><i class="icon-info-sign icon-white"></i>Notifications</a></li>
+
+                        <li class="nav-header">Technology</li>
+                        <ul class="nav nav-list">
+                            <li><a href="#">Programming</a></li>
+                            <li><a href="#">Frameworks</a></li>
+                            <li><a href="#">Persistence</a></li>
+                        </ul>
+                    </ul>
+                </div>
+
+                <div class="well">
+
+                </div>
+            </div> <!-- end span3 -->
+
+            <div class="span9">
+                <!--Body content-->
+                <form class="form-horizontal well">
+                    <fieldset>
+                        <legend>Change your notification settings</legend>
+                        <div class="control-group">
+                            <label class="control-label" for="chatOptionsCheckbox">Chat Notifications</label>
+                            <div class="controls">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="chatOptionsCheckbox">Notify me when new chat topics become available
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="chatOptionsCheckbox">Notify me 24 hours before the start of registered chats
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="newPositionOptionsCheckbox">New Job Notifications</label>
+                            <div class="controls">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="newPositionOptionsCheckbox">Allow contact by potential employers and recruiters on these terms:
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="input01">Positions</label>
+                            <div class="controls">
+                                <input type="text" class="input-xlarge" id="input01">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="input02">Technologies</label>
+                            <div class="controls">
+                                <input type="text" class="input-xlarge" id="input02">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="input03">Locations</label>
+                            <div class="controls">
+                                <input type="text" class="input-xlarge" id="input03">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="controls">
+                                <button type="submit" class="btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div> <!-- end span9 -->
+
+        </div>
+    </div>
+
+{% endblock %}
