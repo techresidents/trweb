@@ -90,3 +90,34 @@ class Tag(models.Model):
         db_table = "tag"
 
     name = models.CharField(max_length=100, unique=True)
+
+
+class TechnologyType(models.Model):
+    """Represents a technology type such as framework, programming language, etc"""
+    name = models.CharField(max_length=100)
+
+
+class Technology(models.Model):
+    """Represents a technology such as a specific framework such as Django or Rails"""
+    name = models.CharField(max_length=100)
+    type = models.ForeignKey(TechnologyType)
+    isDefault = models.BooleanField(default=False)
+
+
+class PositionType(models.Model):
+    """Represents a position type such as developer, manager, or architect"""
+    name = models.CharField(max_length=100)
+
+
+class Positions(models.Model):
+    """Represents a position such as a junior developer, senior manager, etc"""
+    name = models.CharField(max_length=100)
+    type = models.ForeignKey(PositionType)
+
+
+class Location(models.Model):
+    """Represents a user's target job location"""
+    country = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    zip = models.CharField(max_length=25)
