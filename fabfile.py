@@ -64,8 +64,7 @@ def _tempdir():
         tempdir_name = tempfile.mkdtemp()
         yield tempdir_name
     finally:
-        pass
-        #shutil.rmtree(tempdir_name)
+        shutil.rmtree(tempdir_name)
 
 def _create_app_tarball(tag="HEAD", release="1", arch="x86_64"):
     """Helper to create application tarball"""
