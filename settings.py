@@ -163,6 +163,15 @@ LOGGING = {
     }
 }
 
+#Riak Session Cache
+import riak
+SESSION_ENGINE = 'riak_sessions.backends.cache'
+RIAK_HOST = 'localdev'
+RIAK_PORT = 8087
+RIAK_TRANSPORT_CLASS = riak.RiakPbcTransport
+RIAK_SESSION_BUCKET = 'tr_sessions'
+RIAK_SESSION_KEY = '%(session_key)s'
+
 #Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
