@@ -7,6 +7,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
+from django.contrib.auth.models import User
+from techresidents_web.accounts import models
 
 import forms
 
@@ -151,7 +153,20 @@ def profile(request):
 
 
 def profile_account(request):
-    return render_to_response('accounts/profile_account.html',  context_instance=RequestContext(request))
+    user = request.user
+    if request.method == "POST":
+        form = forms.ProfileAccountForm(data=request.POST)
+        if form.is_valid():
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.save()
+    else:
+        form = forms.ProfileAccountForm({'first_name':user.first_name, 'last_name':user.last_name, 'email_address':user.email})
+
+    context = {
+        "form": form
+    }
+    return render_to_response('accounts/profile_account.html', context,  context_instance=RequestContext(request))
 
 
 def profile_password(request):
