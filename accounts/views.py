@@ -57,9 +57,7 @@ def register(request):
 
         if user_form.is_valid():
             user = user_form.save(commit=False)
-            print "here..."
             user.save()
-            print "here... after save"
 
             text_template = get_template('accounts/registration_email.txt')
             html_template = get_template('accounts/registration_email.html')
