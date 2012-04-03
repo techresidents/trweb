@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.template import Context
+from techresidents_web.common.constants import FieldSizeConstants
 
 import models
 
@@ -242,3 +243,10 @@ class ResetPasswordForm(forms.Form):
 
         code.used = datetime.now()
         code.save()
+
+class ProfileAccountForm(forms.Form):
+    YEARS_EXPERIENCE_CHOICES = (("1", "1 year"),("2", "2-5 years"), ("3", "5-10 years"), ("4", "10-20 years"), ("5", "20+ years"))
+    first_name = forms.CharField(label="First Name", max_length=FieldSizeConstants.NAME_MAX_LEN, widget=forms.TextInput, required=True)
+    last_name = forms.CharField(label="Last Name", max_length=FieldSizeConstants.NAME_MAX_LEN, widget=forms.TextInput, required=True)
+    email_address = forms.EmailField(label="Email", max_length=FieldSizeConstants.EMAIL_MAX_LEN, widget=forms.TextInput, required=True)
+    years_experience = forms.ChoiceField(label="Proud Developer for", choices=YEARS_EXPERIENCE_CHOICES, required=False)
