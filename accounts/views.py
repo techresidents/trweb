@@ -57,7 +57,9 @@ def register(request):
 
         if user_form.is_valid():
             user = user_form.save(commit=False)
+            print "here..."
             user.save()
+            print "here... after save"
 
             text_template = get_template('accounts/registration_email.txt')
             html_template = get_template('accounts/registration_email.html')
@@ -151,7 +153,7 @@ def logout(request):
 def profile(request):
     return render_to_response('accounts/profile.html',  context_instance=RequestContext(request))
 
-
+@login_required
 def profile_account(request):
     user = request.user
     if request.method == "POST":
@@ -160,6 +162,10 @@ def profile_account(request):
             user.first_name = form.cleaned_data['first_name']
             user.last_name = form.cleaned_data['last_name']
             user.save()
+            user_profile = request.user.get_profile()
+            user_profile.yrs_experience = form.cleaned_data['years_experience']
+            user_profile.save()
+
     else:
         form = forms.ProfileAccountForm({'first_name':user.first_name, 'last_name':user.last_name, 'email_address':user.email})
 

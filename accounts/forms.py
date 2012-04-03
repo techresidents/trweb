@@ -1,6 +1,6 @@
+
 import uuid
 from datetime import datetime
-
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMultiAlternatives
@@ -8,16 +8,23 @@ from django.core.urlresolvers import reverse
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.template import Context
-from techresidents_web.common.constants import FieldSizeConstants
+from techresidents_web.accounts.models import CodeType, Code
 
-import models
+
+# Some field size constants for this form.
+# These lengths are purposefully less than what is permitted at the db layer.
+NAME_MAX_LEN = 30
+EMAIL_MAX_LEN = 75
+PASSWORD_MIN_LEN = 4
+PASSWORD_MAX_LEN = 30
+
 
 class RegisterUserForm(forms.ModelForm):
-    first_name = forms.CharField(label="First Name", max_length=30, required=True)
-    last_name = forms.CharField(label="Last Name", max_length=30, required=True)
-    username = forms.EmailField(label="Email", max_length=75, required=True)
-    password = forms.CharField(label="Password", min_length=4, max_length=75, widget=forms.PasswordInput, required=True)
-    password_confirmation  = forms.CharField(label="Re-enter password", min_length=4,  max_length=75, widget=forms.PasswordInput, required=True)
+    first_name = forms.CharField(label="First Name", max_length=NAME_MAX_LEN, required=True)
+    last_name = forms.CharField(label="Last Name", max_length=NAME_MAX_LEN, required=True)
+    username = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, required=True)
+    password = forms.CharField(label="Password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
+    password_confirmation  = forms.CharField(label="Re-enter password", min_length=PASSWORD_MIN_LEN,  max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
 
     class Meta:
         model = User
@@ -57,9 +64,9 @@ class RegisterUserForm(forms.ModelForm):
             raise ValueError("Unable to create registration code for invalid register form")
 
         user = User.objects.get(username=self.cleaned_data["username"])
-        code_type = models.CodeType.objects.get(type="REGISTRATION")
+        code_type = CodeType.objects.get(type="REGISTRATION")
         registration_code = registration_code or uuid.uuid4().hex
-        models.Code.objects.create(user=user, type=code_type, code=registration_code)
+        Code.objects.create(user=user, type=code_type, code=registration_code)
 
         return registration_code
 
@@ -100,9 +107,9 @@ class RegistrationActivationForm(forms.Form):
             registration_code = self.cleaned_data["registration_code"]
 
             if self.allow_reactivation:
-                models.Code.objects.get(type__type="REGISTRATION", code=registration_code)
+                Code.objects.get(type__type="REGISTRATION", code=registration_code)
             else:
-                models.Code.objects.get(type__type="REGISTRATION", code=registration_code, used=None)
+                Code.objects.get(type__type="REGISTRATION", code=registration_code, used=None)
 
         except ObjectDoesNotExist:
             raise forms.ValidationError("Invalid registration code.")
@@ -115,7 +122,7 @@ class RegistrationActivationForm(forms.Form):
         
         registration_code = self.cleaned_data["registration_code"]
 
-        code = models.Code.objects.get(type__type="REGISTRATION", code=registration_code)
+        code = Code.objects.get(type__type="REGISTRATION", code=registration_code)
 
         if not code.used:
             code.used = datetime.now()
@@ -123,8 +130,8 @@ class RegistrationActivationForm(forms.Form):
 
 
 class LoginForm(forms.Form):
-    username = forms.EmailField(label="Email", max_length=75, required=True)
-    password = forms.CharField(label="Password", max_length=75, widget=forms.PasswordInput, required=True)
+    username = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, required=True)
+    password = forms.CharField(label="Password", max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
     remember_me = forms.BooleanField(label="Remember me", widget=forms.CheckboxInput, required=False)
 
     def __init__(self, request=None, *args, **kwargs):
@@ -155,8 +162,8 @@ class LoginForm(forms.Form):
         return self.user
 
 class ForgotPasswordForm(forms.Form):
-    username = forms.EmailField(label="Email", max_length=75, required=True)
-    username_confirmation = forms.EmailField(label="Re-enter email", max_length=75, required=True)
+    username = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, required=True)
+    username_confirmation = forms.EmailField(label="Re-enter email", max_length=EMAIL_MAX_LEN, required=True)
 
     def __init__(self, request=None, *args, **kwargs):
         self.request = request
@@ -178,9 +185,9 @@ class ForgotPasswordForm(forms.Form):
 
         try:
             user = User.objects.get(username=self.cleaned_data["username"])
-            code_type = models.CodeType.objects.get(type="RESET_PASSWORD")
+            code_type = CodeType.objects.get(type="RESET_PASSWORD")
             reset_password_code = reset_password_code or uuid.uuid4().hex
-            models.Code.objects.create(user=user, type=code_type, code=reset_password_code)
+            Code.objects.create(user=user, type=code_type, code=reset_password_code)
 
         except ObjectDoesNotExist:
             pass
@@ -211,8 +218,8 @@ class ForgotPasswordForm(forms.Form):
 
 
 class ResetPasswordForm(forms.Form):
-    password = forms.CharField(label="Password", min_length=4, max_length=75, widget=forms.PasswordInput, required=True)
-    password_confirmation = forms.CharField(label="Re-enter password", min_length=4, max_length=75, widget=forms.PasswordInput, required=True)
+    password = forms.CharField(label="Password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
+    password_confirmation = forms.CharField(label="Re-enter password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
 
     def __init__(self, reset_password_code, *args, **kwargs):
         self.reset_password_code = reset_password_code
@@ -228,7 +235,7 @@ class ResetPasswordForm(forms.Form):
         #Validate the reset password code
         #If the code is not found in the database raise an exception
         try:
-            models.Code.objects.get(type__type="RESET_PASSWORD", code=self.reset_password_code, used=None)
+            Code.objects.get(type__type="RESET_PASSWORD", code=self.reset_password_code, used=None)
         except ObjectDoesNotExist:
             raise forms.ValidationError("Invalid reset password code.")
         return self.cleaned_data
@@ -237,7 +244,7 @@ class ResetPasswordForm(forms.Form):
         if self.errors:
             raise ValueError("Unable to reset password for invalid reset password form")
 
-        code = models.Code.objects.get(type__type="RESET_PASSWORD", code=self.reset_password_code, used=None)
+        code = Code.objects.get(type__type="RESET_PASSWORD", code=self.reset_password_code, used=None)
         code.user.set_password(self.cleaned_data["password"])
         code.user.save()
 
@@ -246,7 +253,7 @@ class ResetPasswordForm(forms.Form):
 
 class ProfileAccountForm(forms.Form):
     YEARS_EXPERIENCE_CHOICES = (("1", "1 year"),("2", "2-5 years"), ("3", "5-10 years"), ("4", "10-20 years"), ("5", "20+ years"))
-    first_name = forms.CharField(label="First Name", max_length=FieldSizeConstants.NAME_MAX_LEN, widget=forms.TextInput, required=True)
-    last_name = forms.CharField(label="Last Name", max_length=FieldSizeConstants.NAME_MAX_LEN, widget=forms.TextInput, required=True)
-    email_address = forms.EmailField(label="Email", max_length=FieldSizeConstants.EMAIL_MAX_LEN, widget=forms.TextInput, required=True)
+    first_name = forms.CharField(label="First Name", max_length=NAME_MAX_LEN, widget=forms.TextInput, required=True)
+    last_name = forms.CharField(label="Last Name", max_length=NAME_MAX_LEN, widget=forms.TextInput, required=True)
+    email_address = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, widget=forms.TextInput, required=True)
     years_experience = forms.ChoiceField(label="Proud Developer for", choices=YEARS_EXPERIENCE_CHOICES, required=False)
