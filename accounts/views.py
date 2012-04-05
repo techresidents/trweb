@@ -153,19 +153,27 @@ def profile(request):
 
 @login_required
 def profile_account(request):
-    user = request.user
     if request.method == "POST":
-        form = forms.ProfileAccountForm(data=request.POST)
+        form = forms.ProfileAccountForm(request, data=request.POST)
         if form.is_valid():
-            user.first_name = form.cleaned_data['first_name']
-            user.last_name = form.cleaned_data['last_name']
-            user.save()
-            user_profile = request.user.get_profile()
-            user_profile.yrs_experience = form.cleaned_data['years_experience']
-            user_profile.save()
-
+            form.save(commit=True)
     else:
-        form = forms.ProfileAccountForm({'first_name':user.first_name, 'last_name':user.last_name, 'email_address':user.email})
+        user = request.user
+        user_profile = request.user.get_profile()
+        if user_profile.developer_since is None:
+            form_data = {
+                'first_name':user.first_name,
+                'last_name':user.last_name,
+                'email_address':user.email
+            }
+        else:
+            form_data = {
+                'first_name':user.first_name,
+                'last_name':user.last_name,
+                'email_address':user.email,
+                'developer_since':user_profile.developer_since.year
+            }
+        form = forms.ProfileAccountForm(request, data=form_data)
 
     context = {
         "form": form
@@ -182,3 +190,12 @@ def profile_notifications(request):
 
 def ptidemo(request):
     return render_to_response('accounts/ptiDemo.html',  context_instance=RequestContext(request))
+
+
+
+    #TODO - temp
+    #technology = models.Technology.objects.get(name="Python")
+    #tmp = models.UserSkill.objects.filter(technology__name__iexact="Python", yrs_experience__gte=1)
+    #print tmp
+    #user_skill = models.UserSkill(user=request.user, technology=technology, yrs_experience=1, expertise_level=3)
+    #user_skill.save()

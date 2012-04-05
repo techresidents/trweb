@@ -7,7 +7,7 @@ from django.db.models.signals import post_save
 class UserProfile(models.Model):
     """ Represents a user's profile"""
     user = models.OneToOneField(User)
-    yrs_experience = models.IntegerField(null=True)
+    developer_since = models.DateField(null=True)
     email_upcoming_chats = models.BooleanField(default=False)
     email_new_chat_topics = models.BooleanField(default=False)
     email_new_job_opps = models.BooleanField(default=False)
@@ -39,6 +39,9 @@ class Code(models.Model):
 
 class UserSkill(models.Model):
     """Represents one of potentially many user skills """
+    class Meta:
+        unique_together = ("user", "technology")
+
     user = models.ForeignKey(User)
     technology = models.ForeignKey(Technology)
     yrs_experience = models.IntegerField()

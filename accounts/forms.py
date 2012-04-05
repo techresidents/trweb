@@ -1,6 +1,7 @@
 
+import datetime
 import uuid
-from datetime import datetime
+
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMultiAlternatives
@@ -8,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.template import Context
+
 from techresidents_web.accounts.models import CodeType, Code
 
 
@@ -125,7 +127,7 @@ class RegistrationActivationForm(forms.Form):
         code = Code.objects.get(type__type="REGISTRATION", code=registration_code)
 
         if not code.used:
-            code.used = datetime.now()
+            code.used = datetime.datetime.now()
             code.save()
 
 
@@ -248,12 +250,34 @@ class ResetPasswordForm(forms.Form):
         code.user.set_password(self.cleaned_data["password"])
         code.user.save()
 
-        code.used = datetime.now()
+        code.used = datetime.datetime.now()
         code.save()
 
 class ProfileAccountForm(forms.Form):
-    YEARS_EXPERIENCE_CHOICES = (("1", "1 year"),("2", "2-5 years"), ("3", "5-10 years"), ("4", "10-20 years"), ("5", "20+ years"))
+    years_experience_range = reversed(range(datetime.datetime.now().year - 50, datetime.datetime.now().year))
+    years_experience_choices = [(year, year) for year in years_experience_range]
+    years_experience_choices.insert(0,('', ''))  # insert blank default value
+
     first_name = forms.CharField(label="First Name", max_length=NAME_MAX_LEN, widget=forms.TextInput, required=True)
     last_name = forms.CharField(label="Last Name", max_length=NAME_MAX_LEN, widget=forms.TextInput, required=True)
     email_address = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, widget=forms.TextInput, required=True)
-    years_experience = forms.ChoiceField(label="Proud Developer for", choices=YEARS_EXPERIENCE_CHOICES, required=False)
+    developer_since = forms.TypedChoiceField(label="Proud Developer Since", choices=years_experience_choices, required=False)
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.request = request
+        super(ProfileAccountForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        user = self.request.user
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user_profile = self.request.user.get_profile()
+        year = self.cleaned_data['developer_since'] # returns year as a string when not empty
+        if year:
+            user_profile.developer_since = datetime.date(int(year),1,1)
+        else:
+            user_profile.developer_since = None
+        if commit:
+            user.save()
+            user_profile.save()
+        return user

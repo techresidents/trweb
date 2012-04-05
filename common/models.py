@@ -101,7 +101,8 @@ class Technology(models.Model):
     """Represents a technology such as a specific framework such as Django or Rails"""
     name = models.CharField(max_length=100)
     type = models.ForeignKey(TechnologyType)
-    isDefault = models.BooleanField(default=False)
+    is_profile_default = models.BooleanField(default=False)
+    #is_profile_default is a flag to indicate if this technology should show up in the default list of technologies
 
 
 class PositionType(models.Model):
@@ -109,7 +110,7 @@ class PositionType(models.Model):
     name = models.CharField(max_length=100)
 
 
-class Positions(models.Model):
+class Position(models.Model):
     """Represents a position such as a junior developer, senior manager, etc"""
     name = models.CharField(max_length=100)
     type = models.ForeignKey(PositionType)
