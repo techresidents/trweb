@@ -1,4 +1,4 @@
-INSERT INTO common_technologytype (name) VALUES ('Framework');
-INSERT INTO common_technologytype (name) VALUES ('Language');
-INSERT INTO common_technologytype (name) VALUES ('OS');
-INSERT INTO common_technologytype (name) VALUES ('Application');
+INSERT INTO technology_type (name, description) VALUES ('Framework', 'framework such as Django, Rails, etc');
+INSERT INTO technology_type (name, description) VALUES ('Language', 'programming language');
+INSERT INTO technology_type (name, description) VALUES ('OS', 'operating system');
+INSERT INTO technology_type (name, description) VALUES ('Application', 'application');

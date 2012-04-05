@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from techresidents_web.common.models import Technology
+from techresidents_web.common.models import ExpertiseType
 from django.db.models.signals import post_save
 
 
@@ -39,13 +40,14 @@ class Code(models.Model):
 
 class UserSkill(models.Model):
     """Represents one of potentially many user skills """
+    # Constants, meta, etc
     class Meta:
         unique_together = ("user", "technology")
 
     user = models.ForeignKey(User)
     technology = models.ForeignKey(Technology)
+    expertise_type = models.ForeignKey(ExpertiseType)
     yrs_experience = models.IntegerField()
-    expertise_level = models.IntegerField() #TODO define custom levels?
 
 
 class UserJobPrefs(models.Model):

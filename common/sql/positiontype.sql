@@ -1,3 +1,3 @@
-INSERT INTO common_positiontype (name) VALUES ('Developer');
-INSERT INTO common_positiontype (name) VALUES ('Manager');
-INSERT INTO common_positiontype (name) VALUES ('Architect');
+INSERT INTO position_type (name, description) VALUES ('Developer', 'developer or programmer');
+INSERT INTO position_type (name, description) VALUES ('Manager', 'developer manager');
+INSERT INTO position_type (name, description) VALUES ('Architect', 'architect');
