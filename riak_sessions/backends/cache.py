@@ -91,7 +91,7 @@ class SessionStore(SessionBase):
         #Riak bucket data
         #expire_date is stored in seconds, since datetime() objects are not JSON serializable.
         data = {
-            "session_data": session_data,
+            "session_data": {"_auth_user_id": session_data["_auth_user_id"], "_session_expiry": session_data["_session_expiry"]},
             "encoded_session_data": encoded_session_data,
             "expire_time": float(self.get_expiry_date().strftime("%s"))
         }
