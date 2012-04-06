@@ -77,6 +77,9 @@ class SessionStore(SessionBase):
         is created (otherwise a CreateError exception is raised). Otherwise,
         save() can update an existing object with the same key.
         """
+        session = None
+        
+        #Check to see if the session exists first to avoid any uncessary work
         if must_create:
             session = self._get_riak_session()
             if session.exists():
@@ -90,13 +93,22 @@ class SessionStore(SessionBase):
         data = {
             "session_data": session_data,
             "encoded_session_data": encoded_session_data,
-            "expire_date": float(self.get_expiry_date().strftime("%s"))
+            "expire_time": float(self.get_expiry_date().strftime("%s"))
         }
         
         #Update the data and store the session
-        session = self._get_riak_session()
-        session.set_data(data)
-        session.store()
+        try:
+            #Get the session if we have not already (must_create is False)
+            session = session or self._get_riak_session()
+            session.set_data(data)
+            session.store(if_none_match=must_create)
+        except Exception:
+            #Riak will riase an Exception if if_none_match is True and object already exists.
+            #If this happens raise CreateError, otherwise re-raise the original exception.
+            if must_create:
+                raise CreateError
+            else:
+                raise
 
     def delete(self, session_key=None):
         """
@@ -122,7 +134,7 @@ class SessionStore(SessionBase):
         #otherwise create a new session.
         if session.exists():
             session_data = session.get_data()
-            expire_date = datetime.datetime.fromtimestamp(session_data["expire_date"])
+            expire_date = datetime.datetime.fromtimestamp(session_data["expire_time"])
             if datetime.datetime.now() < expire_date:
                 encoded_session_data = session_data["encoded_session_data"]
                 return self.decode(encoded_session_data)
