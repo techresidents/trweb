@@ -93,7 +93,7 @@ class SessionStore(SessionBase):
         
         #Only store the user id and session expiry unencoded for consumption
         #in non-django applications.
-        unencoded_session_data = []
+        unencoded_session_data = {}
         for key in ["_auth_user_id", "_session_expiry"]:
             if key in session_data:
                 unencoded_session_data[key] = session_data[key]
