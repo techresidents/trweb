@@ -91,11 +91,11 @@ class Tag(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
 
-
 class TechnologyType(models.Model):
     """Represents a technology type such as framework, programming language, etc"""
     class Meta:
         db_table = "technology_type"
+
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=1024)
 
@@ -103,32 +103,18 @@ class Technology(models.Model):
     """Represents a technology such as a specific framework such as Django or Rails"""
     class Meta:
         db_table = "technology"
+
     name = models.CharField(max_length=100)
     type = models.ForeignKey(TechnologyType)
     is_profile_default = models.BooleanField(default=False)
     #is_profile_default is a flag to indicate if this technology should show up in the default list of technologies
     description = models.CharField(max_length=1024, blank=True)
 
-
-class PositionType(models.Model):
-    """Represents a position type such as developer, manager, or architect"""
-    class Meta:
-        db_table = "position_type"
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=1024)
-
-class Position(models.Model):
-    """Represents a position such as a junior developer, senior manager, etc"""
-    class Meta:
-        db_table = "position"
-    name = models.CharField(max_length=100)
-    type = models.ForeignKey(PositionType)
-    description = models.CharField(max_length=1024, blank=True)
-
 class ExpertiseType(models.Model):
     """Represents an expertise level typically associated with a skill"""
     class Meta:
         db_table = "expertise_type"
+
     name = models.CharField(max_length=100)
     value = models.IntegerField()
     description = models.CharField(max_length=1024)
@@ -137,7 +123,18 @@ class Location(models.Model):
     """Represents a user's target job location"""
     class Meta:
         db_table = "location"
+
     country = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     zip = models.CharField(max_length=25)
+    county = models.CharField(max_length=100)
+    #TODO add longitude and latitude.  Research how best to store this data within the db.
+
+class Organization(models.Model):
+    """Represents an organization such as RSA or Bloomberg"""
+    class Meta:
+        db_table = "organization"
+
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1024)

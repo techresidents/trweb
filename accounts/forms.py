@@ -261,7 +261,7 @@ class ProfileAccountForm(forms.Form):
     first_name = forms.CharField(label="First Name", max_length=NAME_MAX_LEN, widget=forms.TextInput, required=True)
     last_name = forms.CharField(label="Last Name", max_length=NAME_MAX_LEN, widget=forms.TextInput, required=True)
     email_address = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, widget=forms.TextInput, required=True)
-    developer_since = forms.TypedChoiceField(label="Proud Developer Since", choices=years_experience_choices, required=False)
+    developer_since = forms.ChoiceField(label="Proud Developer Since", choices=years_experience_choices, required=False)
 
     def __init__(self, request=None, *args, **kwargs):
         self.request = request

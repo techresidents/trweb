@@ -38,9 +38,8 @@ class Code(models.Model):
     used = models.DateTimeField(null=True)
 
 
-class UserSkill(models.Model):
+class Skill(models.Model):
     """Represents one of potentially many user skills """
-    # Constants, meta, etc
     class Meta:
         unique_together = ("user", "technology")
 
@@ -48,10 +47,3 @@ class UserSkill(models.Model):
     technology = models.ForeignKey(Technology)
     expertise_type = models.ForeignKey(ExpertiseType)
     yrs_experience = models.IntegerField()
-
-
-class UserJobPrefs(models.Model):
-    """Represents a user's job preferences """
-    user = models.ForeignKey(User)
-    salary_start = models.IntegerField()
-    salary_end   = models.IntegerField()
