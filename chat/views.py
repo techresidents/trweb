@@ -57,7 +57,7 @@ def chat(request,chat_session_id):
         token = opentok.generate_token(chat_session.token, connection_data = json.dumps({"id": request.user.id}))
         chat_user.token = token
         chat_user.save()
-   
+    
     # Create JSON user objects and pass down to the javascript app through template
     users = []
     for user in chat_session.users.all():
@@ -70,6 +70,14 @@ def chat(request,chat_session_id):
             users.insert(0, user)
         else:
             users.append(user)
+
+    # Update the session with active chat information to make it available to chatsvc
+    request.session["chat_session"] = {
+        'chat_session_token': chat_session.token,
+        'chat_user_token': chat_user.token,
+        'chat_users': users
+    }
+    request.session.modified = True
 
     context = {
         'TR_XD_REMOTE': settings.TR_XD_REMOTE,

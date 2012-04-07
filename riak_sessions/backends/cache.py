@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import datetime
+import threading
 
 import riak
 
@@ -19,24 +20,31 @@ RIAK_SESSION_KEY = getattr(settings, "RIAK_SESSION_KEY", "%(session_key)s")
 class SessionStore(SessionBase):
     """ Riak session store for django """
     
-    #Store the Riak client and bucket outside of the SessionStore instance,
-    #since SessionStore objects are created frequently.
-    #It looks like the RiakClient handles disconnections, which is a plus,
-    #but it does not support load balancing across multiple hosts.
-    client = riak.RiakClient(
-             host=RIAK_HOST,
-             port=RIAK_PORT,
-             transport_class = RIAK_TRANSPORT_CLASS)
+    #SessionStore thread local storage
+    threadlocal = threading.local()
     
-    bucket = client.bucket(RIAK_SESSION_BUCKET)
-
-
     def __init__(self, session_key=None):
         super(SessionStore, self).__init__(session_key)
+        
+        #Store riak client and session bucket in threadlocal storage.
+        #This will ensure thread safety and avoid the cost of
+        #recreating the riak_client for each request.
+        threadlocal = SessionStore.threadlocal
+        if not getattr(threadlocal, "riak_client", None):
+            #Create client and bucket
+            client = riak.RiakClient(
+                     host=RIAK_HOST,
+                     port=RIAK_PORT,
+                     transport_class = RIAK_TRANSPORT_CLASS)
+            bucket = client.bucket(RIAK_SESSION_BUCKET)
 
-        self.client = SessionStore.client
-        self.bucket = SessionStore.bucket
-
+            #Store client and bucket in thread local storage
+            threadlocal.riak_client = client
+            threadlocal.riak_session_bucket = bucket
+        
+        #Use threadlocal riak client and session bucket
+        self.client = threadlocal.riak_client
+        self.bucket = threadlocal.riak_session_bucket
     
     def _get_riak_session(self, session_key=None):
         """ Return the session object from Riak bucket """
