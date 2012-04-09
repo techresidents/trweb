@@ -281,3 +281,34 @@ class ProfileAccountForm(forms.Form):
             user.save()
             user_profile.save()
         return user
+
+class ProfilePasswordForm(forms.Form):
+    current_password = forms.CharField(label="Current Password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
+    new_password = forms.CharField(label="New Password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
+    password_confirmation = forms.CharField(label="Re-enter password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.user = request.user
+        super(ProfilePasswordForm, self).__init__(*args, **kwargs)
+
+    def clean_current_password(self):
+        current_password = self.cleaned_data["current_password"]
+        if not self.user.check_password(current_password):
+            raise forms.ValidationError("Incorrect password")
+        return current_password
+
+    def clean(self):
+        clean_data = super(ProfilePasswordForm, self).clean()
+        # Only validate the new password values if both fields are valid so far
+        if "new_password" in clean_data and "password_confirmation" in clean_data:
+            new_password = clean_data["new_password"]
+            password_confirmation = clean_data["password_confirmation"]
+            if new_password != password_confirmation:
+                raise forms.ValidationError("New password values do not match")
+        return clean_data
+
+    def save(self, commit=True):
+        self.user.set_password(self.cleaned_data['new_password'])
+        if commit:
+            self.user.save()
+        return self.user

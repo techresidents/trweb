@@ -185,9 +185,21 @@ def profile_account(request):
 
     return render_to_response('accounts/profile_account.html', context,  context_instance=RequestContext(request))
 
-
+@login_required
 def profile_password(request):
-    return render_to_response('accounts/profile_password.html',  context_instance=RequestContext(request))
+    if request.method == "POST":
+        form = forms.ProfilePasswordForm(request, data=request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            messages.success(request, 'Password successfully changed')
+            return HttpResponseRedirect(reverse("accounts.views.profile_password"))
+    else:
+        form = forms.ProfilePasswordForm(request)
+
+    context = {
+        "form": form
+    }
+    return render_to_response('accounts/profile_password.html', context, context_instance=RequestContext(request))
 
 
 def profile_notifications(request):

@@ -75,7 +75,7 @@
                             <!-- Consume all messages stored -->
                             {% if message.tags == 'success' %}
                                 <div class="alert alert-success">
-                                    <span>Save successful</span>
+                                    <span>{{ message }}</span>
                                 </div>
                             {% endif %}
                         {% endfor %}
