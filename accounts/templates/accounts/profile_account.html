@@ -53,14 +53,18 @@
                             <div class="control-group {% if field.errors %}error{% endif %}">
                                 {{ field.label_tag }}
                                 <div class="controls">
-                                    {{ field }}
+                                    {% if field.label == 'Email' %}
+                                        <input class="disabled" id={{ field.auto_id }} type="text" name={{ field.html_name }} value={{ field.value }} disabled>
+                                    {% else %}
+                                        {{ field }}
+                                    {% endif %}
                                     {% for error in field.errors %}
                                         <span class="help-inline">{{error}}</span>
                                     {% endfor %}
                                 </div>
                             </div>
                         {% endfor %}
-                        <div class="control-group success">
+                        <div class="control-group">
                             <div class="controls">
                                 <button type="submit" class="btn-primary">Save changes</button>
                             </div>
