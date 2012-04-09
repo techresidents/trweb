@@ -285,7 +285,7 @@ class ProfileAccountForm(forms.Form):
 class ProfilePasswordForm(forms.Form):
     current_password = forms.CharField(label="Current Password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
     new_password = forms.CharField(label="New Password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
-    password_confirmation = forms.CharField(label="Re-enter password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
+    password_confirmation = forms.CharField(label="Re-enter Password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
 
     def __init__(self, request=None, *args, **kwargs):
         self.user = request.user
@@ -312,3 +312,18 @@ class ProfilePasswordForm(forms.Form):
         if commit:
             self.user.save()
         return self.user
+
+class ProfileChatsForm(forms.Form):
+    email_upcoming_chats = forms.BooleanField(label="Notify me 24 hours before the start of registered chats", widget=forms.CheckboxInput, required=False)
+    email_new_chat_topics = forms.BooleanField(label="Notify me when new chat topics become available", widget=forms.CheckboxInput, required=False)
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.user_profile = request.user.get_profile()
+        super(ProfileChatsForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        self.user_profile.email_upcoming_chats = self.cleaned_data["email_upcoming_chats"]
+        self.user_profile.email_new_chat_topics = self.cleaned_data["email_new_chat_topics"]
+        if commit:
+            self.user_profile.save()
+        return self.user_profile

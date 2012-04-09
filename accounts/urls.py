@@ -10,6 +10,7 @@ urlpatterns = patterns('accounts.views',
     url(r'^profile/$', 'profile'),
     url(r'^ptidemo/$', 'ptidemo'),
     url(r'^profile_account/$', 'profile_account'),
+    url(r'^profile_chats/$', 'profile_chats'),
     url(r'^profile_password/$', 'profile_password'),
     url(r'^profile_notifications/$', 'profile_notifications'),
 )

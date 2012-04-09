@@ -25,9 +25,9 @@
                 <div class="well">
                     <ul class="nav nav-list">
                         <li class="nav-header">Account</li>
-                        <li class="active"><a href="#"><i class="icon-user icon-white"></i>Account</a></li>
+                        <li><a href="{% url 'accounts.views.profile_account' %}"><i class="icon-user"></i>Account</a></li>
                         <li><a href="{% url 'accounts.views.profile_password' %}"><i class="icon-lock"></i>Password</a></li>
-                        <li><a href="{% url 'accounts.views.profile_chats' %}"><i class="icon-info-sign"></i>Chats</a></li>
+                        <li class="active"><a href="#"><i class="icon-info-sign icon-white"></i>Chats</a></li>
 
                         <li class="nav-header">Technology</li>
                         <ul class="nav nav-list">
@@ -44,32 +44,35 @@
             </div> <!-- end span3 -->
 
             <div class="span9">
-                <!--Body content-->
-                <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_account' %}">
+                <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_chats' %}">
                     {% csrf_token %}
                     <fieldset>
-                        <legend>Change your account information</legend>
+                        <legend>Change your Chat settings</legend>
+
                         {% for field in form %}
                             <div class="control-group {% if field.errors %}error{% endif %}">
-                                {{ field.label_tag }}
+                                {% if forloop.first%}
+                                    <label class="control-label">Chat Notifications</label>
+                                {% endif %}
                                 <div class="controls">
-                                    {% if field.label == 'Email' %}
-                                        <input class="disabled" id={{ field.auto_id }} type="text" name={{ field.html_name }} value={{ field.value }} disabled>
-                                    {% else %}
-                                        {{ field }}
-                                    {% endif %}
-                                    {% for error in field.errors %}
-                                        <span class="help-inline">{{error}}</span>
-                                    {% endfor %}
+                                    <label class="checkbox">
+                                        {{ field }} {{ field.label }}
+                                        {% for error in field.errors %}
+                                            <span class="help-inline">{{error}}</span>
+                                        {% endfor %}
+                                    </label>
                                 </div>
                             </div>
                         {% endfor %}
+
                         <div class="control-group">
                             <div class="controls">
                                 <button type="submit" class="btn-primary">Save changes</button>
                             </div>
                         </div>
+
                     </fieldset>
+
                     {% if messages %}
                         {% for message in messages %}
                             <!-- Consume all messages stored -->
@@ -80,6 +83,7 @@
                             {% endif %}
                         {% endfor %}
                     {% endif %}
+
                 </form>
             </div> <!-- end span9 -->
 
