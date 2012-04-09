@@ -223,6 +223,27 @@ def profile_chats(request):
 
     return render_to_response('accounts/profile_chats.html', context, context_instance=RequestContext(request))
 
+@login_required
+def profile_jobs(request):
+    if request.method == "POST":
+        form = forms.ProfileJobsForm(request, data=request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            messages.success(request, 'Save successful')
+            return HttpResponseRedirect(reverse("accounts.views.profile_jobs"))
+    else:
+        user_profile = request.user.get_profile()
+        form_data = {
+            'email_new_job_opps':user_profile.email_new_job_opps
+        }
+        form = forms.ProfileJobsForm(request, data=form_data)
+
+    context = {
+        "form": form
+    }
+
+    return render_to_response('accounts/profile_jobs.html', context, context_instance=RequestContext(request))
+
 def profile_notifications(request):
     return render_to_response('accounts/profile_notifications.html',  context_instance=RequestContext(request))
 

@@ -327,3 +327,16 @@ class ProfileChatsForm(forms.Form):
         if commit:
             self.user_profile.save()
         return self.user_profile
+
+class ProfileJobsForm(forms.Form):
+    email_new_job_opps = forms.BooleanField(label="Allow potential employers to contact me on my terms:", widget=forms.CheckboxInput, required=False)
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.user_profile = request.user.get_profile()
+        super(ProfileJobsForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        self.user_profile.email_new_job_opps = self.cleaned_data["email_new_job_opps"]
+        if commit:
+            self.user_profile.save()
+        return self.user_profile
