@@ -60,12 +60,22 @@
                                 </div>
                             </div>
                         {% endfor %}
-                        <div class="control-group">
+                        <div class="control-group success">
                             <div class="controls">
                                 <button type="submit" class="btn-primary">Save changes</button>
                             </div>
                         </div>
                     </fieldset>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <!-- Consume all messages stored -->
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success">
+                                    <span>Save successful</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                 </form>
             </div> <!-- end span9 -->
 

@@ -1,7 +1,9 @@
+from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.csrf.middleware import csrf_exempt
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -157,6 +159,8 @@ def profile_account(request):
         form = forms.ProfileAccountForm(request, data=request.POST)
         if form.is_valid():
             form.save(commit=True)
+            messages.success(request, 'Save successful')
+            return HttpResponseRedirect(reverse("accounts.views.profile_account"))
     else:
         user = request.user
         user_profile = request.user.get_profile()
@@ -178,6 +182,7 @@ def profile_account(request):
     context = {
         "form": form
     }
+
     return render_to_response('accounts/profile_account.html', context,  context_instance=RequestContext(request))
 
 
@@ -192,10 +197,12 @@ def ptidemo(request):
     return render_to_response('accounts/ptiDemo.html',  context_instance=RequestContext(request))
 
 
-
     #TODO - temp
-    #technology = models.Technology.objects.get(name="Python")
-    #tmp = models.UserSkill.objects.filter(technology__name__iexact="Python", yrs_experience__gte=1)
-    #print tmp
-    #user_skill = models.UserSkill(user=request.user, technology=technology, yrs_experience=1, expertise_level=3)
+    #technology = models.Technology.objects.get(name="Django")
+    #expertise_type = models.ExpertiseType.objects.get(name="Seasoned")
+    #tmp = models.Skill.objects.filter(technology__name__iexact="Python", yrs_experience__gte=1).select_related("auth_user")
+    #for skill in tmp:
+    #    print skill.technology.name + ":" + str(skill.yrs_experience)
+    #    print skill.user.get_profile().developer_since
+    #user_skill = models.Skill(user=request.user, technology=technology, yrs_experience=2, expertise_type=expertise_type)
     #user_skill.save()
