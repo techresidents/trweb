@@ -337,7 +337,7 @@ class ProfileJobsForm(forms.Form):
     technologies = forms.CharField(label="Technologies", max_length=1024, widget=forms.TextInput, required=False)
     locations = forms.CharField(label="Locations", max_length=1024, widget=forms.TextInput, required=False)
 
-    salary_start = forms.DecimalField(label="Salary Floor (k)", min_value=0.0, max_digits=3, decimal_places=0, required=False)
+    salary_start = forms.DecimalField(label="Minimum Salary", min_value=10000, max_digits=7, decimal_places=0, required=False)
 
     def __init__(self, request=None, *args, **kwargs):
         self.user = request.user

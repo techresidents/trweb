@@ -251,9 +251,6 @@ def profile_jobs(request):
 
     return render_to_response('accounts/profile_jobs.html', context, context_instance=RequestContext(request))
 
-def profile_notifications(request):
-    return render_to_response('accounts/profile_notifications.html',  context_instance=RequestContext(request))
-
 def ptidemo(request):
     return render_to_response('accounts/ptiDemo.html',  context_instance=RequestContext(request))
 
