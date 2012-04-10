@@ -5,6 +5,7 @@
 
 {% block extrahead %}
     <link href="{{STATIC_URL}}css/profile.css" rel="stylesheet">
+    {% load widget_filters %}
 {%endblock %}
 
 {% block content %}
@@ -49,9 +50,10 @@
                     {% csrf_token %}
                     <fieldset>
                         <legend>Change your Job settings</legend>
-
                         {% for field in form %}
                             <div class="control-group {% if field.errors %}error{% endif %}">
+
+                            {% if field.field.widget|widget_type == 'django.forms.widgets.CheckboxInput'%}
                                 {% if forloop.first%}
                                     <label class="control-label">Job Notifications</label>
                                 {% endif %}
@@ -63,6 +65,16 @@
                                         {% endfor %}
                                     </label>
                                 </div>
+                            {% else %}
+                                {{ field.label_tag }}
+                                <div class="controls">
+                                    {{ field }}
+                                    {% for error in field.errors %}
+                                        <span class="help-inline">{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
                             </div>
                         {% endfor %}
 
