@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.template import Context
 
 from techresidents_web.accounts.models import CodeType, Code
-from techresidents_web.job.models import PositionTypePref
+from techresidents_web.job.models import PositionTypePref, Prefs
 
 
 # Some field size constants for this form.
@@ -331,20 +331,22 @@ class ProfileChatsForm(forms.Form):
 
 class ProfileJobsForm(forms.Form):
     email_new_job_opps = forms.BooleanField(label="Allow potential employers to contact me on my terms:", widget=forms.CheckboxInput, required=False)
+
     # TODO these charFields are placeholders until we add autocomplete functionality
     positions = forms.CharField(label="Positions", max_length=1024, widget=forms.TextInput, required=False)
     technologies = forms.CharField(label="Technologies", max_length=1024, widget=forms.TextInput, required=False)
     locations = forms.CharField(label="Locations", max_length=1024, widget=forms.TextInput, required=False)
 
+    salary_start = forms.DecimalField(label="Salary Floor (k)", min_value=0.0, max_digits=3, decimal_places=0, required=False)
+
     def __init__(self, request=None, *args, **kwargs):
         self.user = request.user
-        self.user_profile = request.user.get_profile()
         super(ProfileJobsForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
-        self.user_profile.email_new_job_opps = self.cleaned_data["email_new_job_opps"]
-        # position_pref = PositionTypePref(user=self.user, position_type=self.cleaned_data["positions"])
+        job_prefs = Prefs.objects.get(user=self.user)
+        job_prefs.email_new_job_opps=self.cleaned_data["email_new_job_opps"]
+        job_prefs.salary_start=self.cleaned_data["salary_start"]
         if commit:
-            self.user_profile.save()
-            # TODO position_pref.save()
-        return self.user_profile
+            job_prefs.save()
+        return self.user

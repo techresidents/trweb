@@ -10,7 +10,9 @@ from django.template import RequestContext
 from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
+
 from techresidents_web.accounts import models
+from techresidents_web.job.models import Prefs
 
 import forms
 
@@ -232,9 +234,16 @@ def profile_jobs(request):
             messages.success(request, 'Save successful')
             return HttpResponseRedirect(reverse("accounts.views.profile_jobs"))
     else:
-        user_profile = request.user.get_profile()
+        query_set = Prefs.objects.filter(user=request.user)
+        if query_set.exists():
+            prefs = query_set[0]
+        else:
+            # if Prefs don't exist, create and store it
+            prefs = Prefs(user=request.user)
+            prefs.save()
         form_data = {
-            'email_new_job_opps':user_profile.email_new_job_opps
+            'email_new_job_opps': prefs.email_new_job_opps,
+            'salary_start': prefs.salary_start
         }
         form = forms.ProfileJobsForm(request, data=form_data)
 
