@@ -234,17 +234,15 @@ def profile_jobs(request):
             messages.success(request, 'Save successful')
             return HttpResponseRedirect(reverse("accounts.views.profile_jobs"))
     else:
-        query_set = Prefs.objects.filter(user=request.user)
-        if query_set.exists():
-            prefs = query_set[0]
-        else:
-            # if Prefs don't exist, create and store it
-            prefs = Prefs(user=request.user)
-            prefs.save()
-        form_data = {
-            'email_new_job_opps': prefs.email_new_job_opps,
-            'salary_start': prefs.salary_start
-        }
+        try:
+            prefs = Prefs.objects.get(user=request.user)
+            form_data = {
+                'email_new_job_opps': prefs.email_new_job_opps,
+                'salary_start': prefs.salary_start
+            }
+        except Prefs.DoesNotExist:
+            form_data = {}
+
         form = forms.ProfileJobsForm(request, data=form_data)
 
     context = {

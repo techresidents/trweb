@@ -344,7 +344,7 @@ class ProfileJobsForm(forms.Form):
         super(ProfileJobsForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
-        job_prefs = Prefs.objects.get(user=self.user)
+        job_prefs, created = Prefs.objects.get_or_create(user=self.user)
         job_prefs.email_new_job_opps=self.cleaned_data["email_new_job_opps"]
         job_prefs.salary_start=self.cleaned_data["salary_start"]
         if commit:
