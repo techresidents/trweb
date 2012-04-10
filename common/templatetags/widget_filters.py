@@ -5,8 +5,9 @@ from django import template
 register = template.Library()
 
 
-@register.filter(name='widget_type', is_safe=True)
+@register.filter()
 def widget_type(object):
     """ Returns a widget's type"""
     full_class_name = object.__class__.__module__ + "." + object.__class__.__name__
     return full_class_name
+widget_type.is_safe = True
