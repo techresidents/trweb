@@ -27,7 +27,8 @@
                         <li class="nav-header">Account</li>
                         <li class="active"><a href="#"><i class="icon-user icon-white"></i>Account</a></li>
                         <li><a href="{% url 'accounts.views.profile_password' %}"><i class="icon-lock"></i>Password</a></li>
-                        <li><a href="{% url 'accounts.views.profile_notifications' %}"><i class="icon-info-sign"></i>Notifications</a></li>
+                        <li><a href="{% url 'accounts.views.profile_chats' %}"><i class="icon-info-sign"></i>Chats</a></li>
+                        <li><a href="{% url 'accounts.views.profile_jobs' %}"><i class="icon-road"></i>Jobs</a></li>
 
                         <li class="nav-header">Technology</li>
                         <ul class="nav nav-list">
@@ -53,7 +54,11 @@
                             <div class="control-group {% if field.errors %}error{% endif %}">
                                 {{ field.label_tag }}
                                 <div class="controls">
-                                    {{ field }}
+                                    {% if field.label == 'Email' %}
+                                        <input class="disabled" id={{ field.auto_id }} type="text" name={{ field.html_name }} value={{ field.value }} disabled>
+                                    {% else %}
+                                        {{ field }}
+                                    {% endif %}
                                     {% for error in field.errors %}
                                         <span class="help-inline">{{error}}</span>
                                     {% endfor %}
@@ -66,6 +71,16 @@
                             </div>
                         </div>
                     </fieldset>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <!-- Consume all messages stored -->
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success">
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                 </form>
             </div> <!-- end span9 -->
 

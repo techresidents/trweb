@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.template import Context
 
 from techresidents_web.accounts.models import CodeType, Code
+from techresidents_web.job.models import PositionTypePref, Prefs
 
 
 # Some field size constants for this form.
@@ -260,7 +261,7 @@ class ProfileAccountForm(forms.Form):
 
     first_name = forms.CharField(label="First Name", max_length=NAME_MAX_LEN, widget=forms.TextInput, required=True)
     last_name = forms.CharField(label="Last Name", max_length=NAME_MAX_LEN, widget=forms.TextInput, required=True)
-    email_address = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, widget=forms.TextInput, required=True)
+    email_address = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, widget=forms.TextInput, required=False)
     developer_since = forms.ChoiceField(label="Proud Developer Since", choices=years_experience_choices, required=False)
 
     def __init__(self, request=None, *args, **kwargs):
@@ -281,3 +282,71 @@ class ProfileAccountForm(forms.Form):
             user.save()
             user_profile.save()
         return user
+
+class ProfilePasswordForm(forms.Form):
+    current_password = forms.CharField(label="Current Password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
+    new_password = forms.CharField(label="New Password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
+    password_confirmation = forms.CharField(label="Re-enter Password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.user = request.user
+        super(ProfilePasswordForm, self).__init__(*args, **kwargs)
+
+    def clean_current_password(self):
+        current_password = self.cleaned_data["current_password"]
+        if not self.user.check_password(current_password):
+            raise forms.ValidationError("Incorrect password")
+        return current_password
+
+    def clean(self):
+        clean_data = super(ProfilePasswordForm, self).clean()
+        # Only validate the new password values if both fields are valid so far
+        if "new_password" in clean_data and "password_confirmation" in clean_data:
+            new_password = clean_data["new_password"]
+            password_confirmation = clean_data["password_confirmation"]
+            if new_password != password_confirmation:
+                raise forms.ValidationError("New password values do not match")
+        return clean_data
+
+    def save(self, commit=True):
+        self.user.set_password(self.cleaned_data['new_password'])
+        if commit:
+            self.user.save()
+        return self.user
+
+class ProfileChatsForm(forms.Form):
+    email_upcoming_chats = forms.BooleanField(label="Notify me 24 hours before the start of registered chats", widget=forms.CheckboxInput, required=False)
+    email_new_chat_topics = forms.BooleanField(label="Notify me when new chat topics become available", widget=forms.CheckboxInput, required=False)
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.user_profile = request.user.get_profile()
+        super(ProfileChatsForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        self.user_profile.email_upcoming_chats = self.cleaned_data["email_upcoming_chats"]
+        self.user_profile.email_new_chat_topics = self.cleaned_data["email_new_chat_topics"]
+        if commit:
+            self.user_profile.save()
+        return self.user_profile
+
+class ProfileJobsForm(forms.Form):
+    email_new_job_opps = forms.BooleanField(label="Allow potential employers to contact me on my terms:", widget=forms.CheckboxInput, required=False)
+
+    # TODO these charFields are placeholders until we add autocomplete functionality
+    positions = forms.CharField(label="Positions", max_length=1024, widget=forms.TextInput, required=False)
+    technologies = forms.CharField(label="Technologies", max_length=1024, widget=forms.TextInput, required=False)
+    locations = forms.CharField(label="Locations", max_length=1024, widget=forms.TextInput, required=False)
+
+    salary_start = forms.DecimalField(label="Minimum Salary", min_value=10000, max_digits=7, decimal_places=0, required=False)
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.user = request.user
+        super(ProfileJobsForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        job_prefs, created = Prefs.objects.get_or_create(user=self.user)
+        job_prefs.email_new_job_opps=self.cleaned_data["email_new_job_opps"]
+        job_prefs.salary_start=self.cleaned_data["salary_start"]
+        if commit:
+            job_prefs.save()
+        return self.user

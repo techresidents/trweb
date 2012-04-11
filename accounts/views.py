@@ -1,14 +1,18 @@
+from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.csrf.middleware import csrf_exempt
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
+
 from techresidents_web.accounts import models
+from techresidents_web.job.models import Prefs
 
 import forms
 
@@ -157,6 +161,8 @@ def profile_account(request):
         form = forms.ProfileAccountForm(request, data=request.POST)
         if form.is_valid():
             form.save(commit=True)
+            messages.success(request, 'Save successful')
+            return HttpResponseRedirect(reverse("accounts.views.profile_account"))
     else:
         user = request.user
         user_profile = request.user.get_profile()
@@ -178,24 +184,83 @@ def profile_account(request):
     context = {
         "form": form
     }
+
     return render_to_response('accounts/profile_account.html', context,  context_instance=RequestContext(request))
 
-
+@login_required
 def profile_password(request):
-    return render_to_response('accounts/profile_password.html',  context_instance=RequestContext(request))
+    if request.method == "POST":
+        form = forms.ProfilePasswordForm(request, data=request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            messages.success(request, 'Password successfully changed')
+            return HttpResponseRedirect(reverse("accounts.views.profile_password"))
+    else:
+        form = forms.ProfilePasswordForm(request)
 
+    context = {
+        "form": form
+    }
+    return render_to_response('accounts/profile_password.html', context, context_instance=RequestContext(request))
 
-def profile_notifications(request):
-    return render_to_response('accounts/profile_notifications.html',  context_instance=RequestContext(request))
+@login_required
+def profile_chats(request):
+    if request.method == "POST":
+        form = forms.ProfileChatsForm(request, data=request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            messages.success(request, 'Save successful')
+            return HttpResponseRedirect(reverse("accounts.views.profile_chats"))
+    else:
+        user_profile = request.user.get_profile()
+        form_data = {
+            'email_upcoming_chats':user_profile.email_upcoming_chats,
+            'email_new_chat_topics':user_profile.email_new_chat_topics
+        }
+        form = forms.ProfileChatsForm(request, data=form_data)
+
+    context = {
+        "form": form
+    }
+
+    return render_to_response('accounts/profile_chats.html', context, context_instance=RequestContext(request))
+
+@login_required
+def profile_jobs(request):
+    if request.method == "POST":
+        form = forms.ProfileJobsForm(request, data=request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            messages.success(request, 'Save successful')
+            return HttpResponseRedirect(reverse("accounts.views.profile_jobs"))
+    else:
+        try:
+            prefs = Prefs.objects.get(user=request.user)
+            form_data = {
+                'email_new_job_opps': prefs.email_new_job_opps,
+                'salary_start': prefs.salary_start
+            }
+        except Prefs.DoesNotExist:
+            form_data = {}
+
+        form = forms.ProfileJobsForm(request, data=form_data)
+
+    context = {
+        "form": form
+    }
+
+    return render_to_response('accounts/profile_jobs.html', context, context_instance=RequestContext(request))
 
 def ptidemo(request):
     return render_to_response('accounts/ptiDemo.html',  context_instance=RequestContext(request))
 
 
-
     #TODO - temp
-    #technology = models.Technology.objects.get(name="Python")
-    #tmp = models.UserSkill.objects.filter(technology__name__iexact="Python", yrs_experience__gte=1)
-    #print tmp
-    #user_skill = models.UserSkill(user=request.user, technology=technology, yrs_experience=1, expertise_level=3)
+    #technology = models.Technology.objects.get(name="Django")
+    #expertise_type = models.ExpertiseType.objects.get(name="Seasoned")
+    #tmp = models.Skill.objects.filter(technology__name__iexact="Python", yrs_experience__gte=1).select_related("auth_user")
+    #for skill in tmp:
+    #    print skill.technology.name + ":" + str(skill.yrs_experience)
+    #    print skill.user.get_profile().developer_since
+    #user_skill = models.Skill(user=request.user, technology=technology, yrs_experience=2, expertise_type=expertise_type)
     #user_skill.save()

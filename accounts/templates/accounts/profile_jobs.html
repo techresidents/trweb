@@ -5,6 +5,7 @@
 
 {% block extrahead %}
     <link href="{{STATIC_URL}}css/profile.css" rel="stylesheet">
+    {% load widget_filters %}
 {%endblock %}
 
 {% block content %}
@@ -26,9 +27,9 @@
                     <ul class="nav nav-list">
                         <li class="nav-header">Account</li>
                         <li><a href="{% url 'accounts.views.profile_account' %}"><i class="icon-user"></i>Account</a></li>
-                        <li class="active"><a href="#"><i class="icon-lock icon-white"></i>Password</a></li>
+                        <li><a href="{% url 'accounts.views.profile_password' %}"><i class="icon-lock"></i>Password</a></li>
                         <li><a href="{% url 'accounts.views.profile_chats' %}"><i class="icon-info-sign"></i>Chats</a></li>
-                        <li><a href="{% url 'accounts.views.profile_jobs' %}"><i class="icon-road"></i>Jobs</a></li>
+                        <li class="active"><a href="#"><i class="icon-road icon-white"></i>Jobs</a></li>
 
                         <li class="nav-header">Technology</li>
                         <ul class="nav nav-list">
@@ -45,26 +46,35 @@
             </div> <!-- end span3 -->
 
             <div class="span9">
-                <!--Body content-->
-                <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_password' %}">
+                <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_jobs' %}">
                     {% csrf_token %}
                     <fieldset>
-                        <legend>Change or reset your password</legend>
-
+                        <legend>Change your Job settings</legend>
                         {% for field in form %}
                             <div class="control-group {% if field.errors %}error{% endif %}">
+
+                            {% if field.field.widget|widget_type == 'django.forms.widgets.CheckboxInput'%}
+                                {% if forloop.first%}
+                                    <label class="control-label">Job Notifications</label>
+                                {% endif %}
+                                <div class="controls">
+                                    <label class="checkbox">
+                                        {{ field }} {{ field.label }}
+                                        {% for error in field.errors %}
+                                            <span class="help-inline">{{error}}</span>
+                                        {% endfor %}
+                                    </label>
+                                </div>
+                            {% else %}
                                 {{ field.label_tag }}
                                 <div class="controls">
                                     {{ field }}
-                                    {% if field.label == 'Current Password' %}
-                                        <span class="help-inline">
-                                            <a href="{% url 'accounts.views.forgot_password' %}">Forgot your password?</a>
-                                        </span>
-                                    {% endif %}
                                     {% for error in field.errors %}
                                         <span class="help-inline">{{error}}</span>
                                     {% endfor %}
                                 </div>
+                            {% endif %}
+
                             </div>
                         {% endfor %}
 
@@ -75,14 +85,6 @@
                         </div>
 
                     </fieldset>
-
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-error">
-                            {% for error in form.non_field_errors%}
-                                <span>{{error}}</span>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
 
                     {% if messages %}
                         {% for message in messages %}
@@ -96,7 +98,6 @@
                     {% endif %}
 
                 </form>
-
             </div> <!-- end span9 -->
 
         </div>
