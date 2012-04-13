@@ -174,15 +174,10 @@ define([
 
                     if(result) {
                         //see if the input value matches one of the autocomplete options.
-                        //if it does trigger the selected event, otherwise only trigger
-                        //the selected event if this.forceSelection is false, since
-                        //we guarantee that this will not happen when this.forceSelection
-                        //is true.
+                        //if it does trigger the selected event.
                         match = _.find(result.matches(), function(m) { return m.value == value; });
                         if(match) {
                             this.selected(match.value, match);
-                        } else if(!this.forceSelection) {
-                            this.selected(value, null);
                         }
                     }
                 }
