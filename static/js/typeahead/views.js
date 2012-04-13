@@ -12,7 +12,7 @@ define([
      * stronger guarantees about the onselect/oneneter callbacks being called.
      * @constructor
      * @param {options} - options object
-     *   source: requuired boostrap typeahead plugin source array
+     *   source: required boostrap typeahead plugin source array
      *   maxResults: max number of typeahead results to return (default 8)
      *   forceSelection: boolean indicating if the user should be forced
      *     to select an autocompleted result. (default false)
