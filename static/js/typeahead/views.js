@@ -12,7 +12,8 @@ define([
      * stronger guarantees about the onselect/oneneter callbacks being called.
      * @constructor
      * @param {options} - options object
-     *   source: required boostrap typeahead plugin source array (strings or objects)
+     *   source: boostrap typeahead plugin source array (strings or objects).
+     *     If not provided, the element data-source attribute will be used.
      *   property: if sources contains objects, the object property to display
      *   maxResults: max number of typeahead results to return (default 8)
      *   forceSelection: boolean indicating if the user should be forced
@@ -47,7 +48,7 @@ define([
             },
 
             initialize: function(options) {
-                this.source = options.source;
+                this.source = options.source || this.el.data("source");
                 this.property = options.property;
                 this.maxResults = options.maxResults || 8;
                 this.forceSelection = options.forceSelection || false;
