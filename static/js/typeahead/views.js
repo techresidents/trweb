@@ -12,24 +12,29 @@ define([
      * stronger guarantees about the onselect/oneneter callbacks being called.
      * @constructor
      * @param {options} - options object
-     *   source: required boostrap typeahead plugin source array
+     *   source: required boostrap typeahead plugin source array (strings or objects)
+     *   property: if sources contains objects, the object property to display
      *   maxResults: max number of typeahead results to return (default 8)
      *   forceSelection: boolean indicating if the user should be forced
      *     to select an autocompleted result. (default false)
      *   onenter: optional callback to be invoked when the user presses
      *     enter in the typeahead input when typeahead menu is not visible.
-     *     If provided, method will be invoked with (value) args where
-     *     value is the string in the typeahead input.
+     *     If provided, method will be invoked with (value) args, or
+     *     (value, object) args if property is set, where value is 
+     *     the string in the typeahead input and object is the 
+     *     source object.
      *     If force selection is true onenter will only be invoked
      *     if the value of the typeahead input matches an autocomplete
      *     option.
      *   onselect: optional callback to be invoked when a typeahead 
      *     result is selected either explicity through the typeahead
-     *     menu or implicitly when focus is lost. If provided, the
-     *     callback will be invoked with (value) arguments  where
-     *     value is the string in the typeahead input.     
-     *     If forceSelection is true, object is guaranteed to only be
-     *     call if the value if in the typeahead input matches an
+     *     menu or implicitly when focus is lost.
+     *     If provided, method will be invoked with (value) args, or
+     *     (value, object) args if property is set, where value is 
+     *     the string in the typeahead input and object is the 
+     *     source object.
+     *     If forceSelection is true, onselect is guaranteed to only be
+     *     called if the value if in the typeahead input matches an
      *     autocomplete option.
      */
 
@@ -42,16 +47,19 @@ define([
 
             initialize: function(options) {
                 this.source = options.source;
+                this.property = options.property;
                 this.maxResults = options.maxResults || 8;
                 this.forceSelection = options.forceSelection || false;
                 this.onenter = options.onenter;
                 this.onselect = options.onselect;
                 this.lastSelection = null;
+                this.lastValue = null;
                 
                 //create bootstrap typeahead
                 var that = this;
                 this.el.typeahead({
                     source: this.source,
+                    property: this.property,
                     items: this.maxResults,
                     onselect: function(value) {
                         that.selected.call(that, value);
@@ -71,6 +79,21 @@ define([
             },
             
             /**
+             * Helper function which returns true if value matches lastSelected, false otherwise.
+             */
+            matchesLastSelected: function(value) {
+                if(value && this.lastSelected) {
+                    if(this.property) {
+                        return this.lastSelected[this.property] == value;
+                    } else {
+                        return this.lastSelected == value;
+                    }
+                } else {
+                    return false;
+                }
+            },
+            
+            /**
              * Typeahead selection processing.
              * @param {value} value in typeahead input
              * @param {object} associated LookupResult.matches() object
@@ -78,9 +101,17 @@ define([
              *   to not be null if forceSelection is true.
              */
             selected: function(value) {
+
                 this.lastSelected = value;
                 if(this.onselect) {
-                    this.onselect(value);
+                    if(this.property && value[this.property]) {
+                        this.onselect(value[this.property], value);
+                    } else if(this.property) {
+                        //non-autocomoplete option selected (forceSelection is false)
+                        this.onselect(value, null);
+                    } else {
+                        this.onselect(value);
+                    }
                 }
             },
             
@@ -89,15 +120,27 @@ define([
              * @param {e} event object.
              */
             keypress: function(e) {
+                this.lastValue = this.el.val();
+
                 //if enter is pressed and the typeahead menu is not visible, process.
                 if(e.keyCode == 13 && !this.typeahead.shown) {
                     value = this.el.val();
-
+                    
                     if(value && this.onenter) {
                         //only invoke onenter callback if forceSelection is false
                         //or typeahead value matches an autocomplete option.
-                        if(!this.forceSelection || this.lastSelected == value) {
-                            this.onenter(value);
+                        var object = null;
+                        var matches = false;
+                        if(this.matchesLastSelected(value)) {
+                            matches = true;
+                            object = this.lastSelected;
+                        }
+                        if(matches || !this.forceSelection) {
+                            if(this.property) {
+                                this.onenter(value, object);
+                            } else {
+                                this.onenter(value);
+                            }
                         }
                     }
                 }
@@ -118,21 +161,25 @@ define([
                 //selected event manually.
                 
                 //see if the input value matches one of the autocomplete options.
-                //if it does trigger the selected event, otherwise only trigger
-                //the selected event if this.forceSelection is false, since
-                //we guarantee that this will not happen when this.forceSelection
-                //is true.
-                if(this.lastSelected != value) {
-                    match = _.find(this.source, function(source) { return source == value; });
-                    if(match || !this.forceSelection) {
-                        this.selected(value);
+                //if it does trigger the selected event.
+                if(!this.matchesLastSelected(value)) {
+                    var that = this;
+                    match = _.find(this.source, function(source) {
+                        if(that.property) {
+                            return source[that.property] == value;
+                        } else {
+                            return source == value;
+                        }
+                    });
+                    if(match) {
+                        this.selected(match);
                     }
                 }
                 
                 //Null out the typeahead input if forceSelection is true and the
                 //value in the input does not match an autocomplete option.
                 if(this.forceSelection) {
-                    if(this.lastSelected != value) {
+                    if(!this.matchesLastSelected(value)) {
                         this.el.val(null);
                     }
                 }
