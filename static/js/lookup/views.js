@@ -37,6 +37,7 @@ define([
      *     If forceSelection is true, object is guaranteed to not be null,
      *     otherwise object will be null if the user has entered text
      *     which was not autocompleted.
+     *  context: optional callback context (defaults LookupView object)
      */
     var LookupView = Backbone.View.extend({
 
@@ -53,6 +54,7 @@ define([
                 this.forceSelection = options.forceSelection || false;
                 this.onenter = options.onenter;
                 this.onselect = options.onselect;
+                this.context = options.context || this;
                 this.lastSelected = null;
                 
                 //create bootstrap typeahead
@@ -125,7 +127,7 @@ define([
             selected: function(value, object) {
                 this.lastSelected = object;
                 if(this.onselect) {
-                    this.onselect(value, object);
+                    this.onselect.call(this.context, value, object);
                 }
             },
             
@@ -147,7 +149,7 @@ define([
                         //or typeahead value matches an autocomplete option.
                         if(!this.forceSelection ||
                            (this.lastSelected && this.lastSelected.value == value)) {
-                            this.onenter(value, object);
+                            this.onenter.call(this.context, value, object);
                         }
                     }
                 }

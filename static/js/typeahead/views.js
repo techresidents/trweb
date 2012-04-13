@@ -36,6 +36,7 @@ define([
      *     If forceSelection is true, onselect is guaranteed to only be
      *     called if the value if in the typeahead input matches an
      *     autocomplete option.
+     *  context: optional callback context (default TypeaheadView object).
      */
 
     var TypeaheadView = Backbone.View.extend({
@@ -52,6 +53,7 @@ define([
                 this.forceSelection = options.forceSelection || false;
                 this.onenter = options.onenter;
                 this.onselect = options.onselect;
+                this.context = options.context || this;
                 this.lastSelection = null;
                 this.lastValue = null;
                 
@@ -105,12 +107,12 @@ define([
                 this.lastSelected = value;
                 if(this.onselect) {
                     if(this.property && value[this.property]) {
-                        this.onselect(value[this.property], value);
+                        this.onselect.call(this.context, value[this.property], value);
                     } else if(this.property) {
                         //non-autocomoplete option selected (forceSelection is false)
-                        this.onselect(value, null);
+                        this.onselect.call(this.context, value, null);
                     } else {
-                        this.onselect(value);
+                        this.onselect.call(this.context, value);
                     }
                 }
             },
@@ -137,9 +139,9 @@ define([
                         }
                         if(matches || !this.forceSelection) {
                             if(this.property) {
-                                this.onenter(value, object);
+                                this.onenter.call(this.context, value, object);
                             } else {
-                                this.onenter(value);
+                                this.onenter.call(this.context, value);
                             }
                         }
                     }
