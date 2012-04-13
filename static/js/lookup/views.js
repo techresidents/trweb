@@ -25,6 +25,9 @@ define([
      *     If provided, method will be invoked with (value, object) where
      *     value is the string in the typeahead input and object is the
      *     LookupResult.matches object which is scope/category specific.
+     *     If force selection is true onenter will only be invoked
+     *     if the value of the typeahead input matches an autocomplete
+     *     option.
      *   onselect: optional callback to be invoked when a typeahead 
      *     result is selected either explicity through the typeahead
      *     menu or implicitly when focus is lost. If provided, the
@@ -58,6 +61,7 @@ define([
                     source: function(typeahead, query) {
                         that.lookup.call(that, typeahead, query);
                     },
+                    items: this.maxResults,
                     onselect: function(object) {
                         that.selected.call(that, object.value, object);
                     },
@@ -139,7 +143,12 @@ define([
                         if(this.lastSelected && this.lastSelected.value == value) {
                             object = this.lastSelected;
                         }
-                        this.onenter(value, object);
+                        //only invoke onenter callback if forceSelection is false
+                        //or typeahead value matches an autocomplete option.
+                        if(!this.forceSelection ||
+                           (this.lastSelected && this.lastSelected.value == value)) {
+                            this.onenter(value, object);
+                        }
                     }
                 }
             },
