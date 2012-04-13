@@ -187,8 +187,8 @@ define([
                     }
                 }
                 
-                //Null out the typeahead input if forceSelection si true and the
-                //value in the input does not macch an autocomplete option.
+                //Null out the typeahead input if forceSelection is true and the
+                //value in the input does not match an autocomplete option.
                 if(this.forceSelection) {
                     if(!this.lastSelected || this.lastSelected.value != value) {
                         this.el.val(null);
