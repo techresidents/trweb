@@ -1,8 +1,9 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone'
-], function($, _, Backbone) {
+    'Backbone',
+    'typeahead/views'
+], function($, _, Backbone, typeahead) {
 
 $(document).ready(function() {
 
@@ -134,17 +135,15 @@ $(document).ready(function() {
         el: $("#skill-add"),
 
         events: {
-            "click button": "addSkill",
-            "keypress input": "updateOnEnter"
+            "click button": "addSkill"
         },
 
         initialize: function() {
-
-            // The boostrap autocomplete field prevents the keypress event
-            // from bubbling out, so we handle it with the following:
-            var that = this;
-            $('#skill-input').on('keypress', function(e){
-                that.updateOnEnter.call(that, e);
+            this.typeaheadView = new typeahead.TypeaheadView({
+                el: this.$("#skill-input"),
+                forceSelection: true,
+                onenter: this.updateOnEnter,
+                context: this
             });
 
             this.skillCollection = this.options.skillCollection;
@@ -172,10 +171,8 @@ $(document).ready(function() {
 
         },
 
-        updateOnEnter: function(e) {
-            if(e.keyCode == 13) {
-                this.addSkill();
-            }
+        updateOnEnter: function(value) {
+            this.addSkill();
         }
     });
 
