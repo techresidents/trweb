@@ -4,9 +4,7 @@ define([
     'Backbone',
     'chat/models',
     'chat/messages',
-    'whiteboard/views',
-    'whiteboard/serialize',
-], function($, _, Backbone, models, messages, whiteboard, serialize) {
+], function($, _, Backbone, models, messages) {
 
     var ChatUserView = Backbone.View.extend({
             tagName: "div",
@@ -62,6 +60,10 @@ define([
 
                 for(var i = 0; i < connections.length; i++) {
                     var connection = connections[i];
+                    console.log(connection.data);
+                    console.log(unescape(connection.data));
+                    connection.data = '{"id": 1}';
+                    console.log(connection.data);
                     if(JSON.parse(connection.data).id == this.user.id) {
                         return connection;
                     }
@@ -145,149 +147,8 @@ define([
             }
     });
 
-    var ChatTagItemView = Backbone.View.extend({
-            tagName: "li",
-
-            template: _.template($("#tag-item-template").html()),
-
-            initialize: function() {
-                this.model = this.options.model;
-            },
-            
-            render: function() {
-                $(this.el).html(this.template(this.model.toJSON()));
-                return this;
-            }
-    });
-
-    
-    var ChatTagView = Backbone.View.extend({
-
-            el: $("#tags"),
-
-            events: {
-                "click button": "addTag",
-                "keypress #taginput": "updateOnEnter"
-            },
-
-            initialize: function() {
-                this.chatSessionToken = this.options.chatSessionToken;
-                this.userId = this.options.userId;
-                this.chatMessageCollection = this.options.chatMessageCollection;
-                this.chatMessageCollection.bind("reset", this.reset, this);
-                this.chatMessageCollection.bind("add", this.added, this);
-
-                this.taglist = this.$("#taglist");
-                this.tagInput = this.$("#taginput");
-            },
-
-            reset: function() {
-            },
-
-            added: function(model) {
-                if(model.msgType() != "tag") {
-                    return;
-                }
-
-                this.taglist.append(new ChatTagItemView({model: model}).render().el);
-
-                //scroll to bottom
-                this.taglist.animate({scrollTop: 1000}, 800);
-            },
-
-            addTag: function() {
-                var value = this.tagInput.val();
-
-                if(value) {
-                    var header = new messages.ChatMessageHeader({
-                        chatSessionToken: this.chatSessionToken,
-                        userId: this.userId
-                    });
-
-                    var msg = new messages.ChatTagMessage({
-                        name: this.tagInput.val()
-                    });
-
-                    var message = new models.ChatMessage({
-                            header: header,
-                            msg: msg
-                    });
-
-                    message.save();
-
-                    this.tagInput.val("");
-                    this.tagInput.focus();
-
-                    //scroll to bottom
-                    this.taglist.animate({scrollTop: 1000}, 800);
-
-                } else {
-                    this.tagInput.focus();
-                }
-            },
-
-            updateOnEnter: function(e) {
-                if(e.keyCode == 13) {
-                    this.addTag();
-                }
-            }
-    });
-
-
-    var ChatWhiteboardView = whiteboard.WhiteboardView.extend({
-
-            initialize: function() {
-                whiteboard.WhiteboardView.prototype.initialize.call(this);
-
-                this.chatSessionToken = this.options.chatSessionToken;
-                this.userId = this.options.userId;
-                this.chatMessageCollection = this.options.chatMessageCollection;
-                this.chatMessageCollection.bind("reset", this.reset, this);
-                this.chatMessageCollection.bind("add", this.added, this);
-                
-                this.serializer = new serialize.Serializer();
-            },
-
-            reset: function() {
-            },
-
-            added: function(model) {
-                if(model.msgType() != "whiteboard") {
-                    return;
-                }
-                
-                var msg = model.get("msg");
-                this.paper.add(this.serializer.deserializeElement(msg.data));
-            },
-
-            onElementAdded: function(tool, element) {
-                whiteboard.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
-
-                var header = new messages.ChatMessageHeader({
-                        chatSessionToken: this.chatSessionToken,
-                        userId: this.userId
-                });
-
-                var msg = new messages.ChatWhiteboardMessage({
-                        data: this.serializer.serializeElement(element)
-                });
-
-
-                var message = new models.ChatMessage({
-                        header: header,
-                        msg: msg
-                });
-
-                message.save();
-                //element.remove();
-            }
-    });
-
 
     return {
-        ChatTagView: ChatTagView,
-        ChatTagItemView: ChatTagItemView,
         ChatUserView: ChatUserView,
-        ChatWhiteboardView: ChatWhiteboardView,
     }
 });

@@ -5,8 +5,7 @@ define([
 ], function($, _, Backbone) {
 
 
-
-    var ChatMessageHeader = function(attributes) {
+    var MessageHeader = function(attributes) {
         this.id = null;
         this.type = null;
         this.chatSessionToken = null;
@@ -15,35 +14,44 @@ define([
 
         _.extend(this, attributes);
     };
+    MessageHeader.prototype.url = function() {
+        return "/chat/message";
+    }
 
 
-    var ChatTagMessage = function(attributes) {
-        this.type = "tag";
+    var TagCreateMessage = function(attributes) {
+        this.type = "TAG_CREATE";
+        this.tagId = null;
         this.name = null;
+            
+        _.extend(this, attributes);
+    };
+    TagCreateMessage.prototype.url = function() {
+        return "/tag";
+    }
+    
+
+    var WhiteboardCreateMessage = function(attributes) {
+        this.type = "WHITEBOARD_CREATE";
+        this.whiteboardId = null;
 
         _.extend(this, attributes);
     };
-
-
-    var ChatWhiteboardMessage = function(attributes) {
-        this.type = "whiteboard";
-        this.command = null;
-        this.data = {}
-
-        _.extend(this, attributes);
-    };
+    WhiteboardCreateMessage.prototype.url = function() {
+        return "/whiteboard";
+    }
 
     
     var messageTypeMap = {
-        "tag": ChatTagMessage,
-        "whiteboard": ChatWhiteboardMessage
+        "TAG_CREATE": TagCreateMessage,
+        "WHITEBOARD_CREATE": WhiteboardCreateMessage
     };
 
-    var ChatMessageFactory = function() {
+    var MessageFactory = function() {
         this.messageTypeMap = messageTypeMap;
     };
 
-    ChatMessageFactory.prototype.create = function(header, object) {
+    MessageFactory.prototype.create = function(header, object) {
         var Constructor = this.messageTypeMap[header.type];
         if(Constructor) {
             return new Constructor(object);
@@ -54,9 +62,9 @@ define([
 
 
     return {
-        chatMessageFactory: new ChatMessageFactory(),
-        ChatMessageHeader: ChatMessageHeader,
-        ChatTagMessage: ChatTagMessage,
-        ChatWhiteboardMessage: ChatWhiteboardMessage,
+        messageFactory: new MessageFactory(),
+        MessageHeader: MessageHeader,
+        TagCreateMessage: TagCreateMessage,
+        WhiteboardCreateMessage: WhiteboardCreateMessage,
     }
 });
