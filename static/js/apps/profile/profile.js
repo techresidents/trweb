@@ -152,27 +152,29 @@ $(document).ready(function() {
 
         addSkill: function() {
             var skillName = this.skillInput.val();
-
-            if(skillName) {
-                var skill = new Skill({
-                    name: skillName,
-                    expertise: "None",
-                    yrs_experience: 0
-                });
-
-                this.skillCollection.add(skill);
-
+            if (skillName) {
+                // only add if entry doesn't exist
+                if (!this.skillCollection.find(this.skillExists, this)) {
+                    var skill = new Skill({
+                        name: skillName,
+                        expertise: "None",
+                        yrs_experience: 0
+                    });
+                    this.skillCollection.add(skill);
+                }
                 this.skillInput.val("");
-                this.skillInput.focus();
-            }
-            else {
-                this.skillInput.focus();
-            }
 
+            }
+            this.skillInput.focus();
         },
 
         updateOnEnter: function(value) {
             this.addSkill();
+        },
+
+        skillExists: function(model) {
+            ret = (this.skillInput.val() == model.name());
+            return ret
         }
     });
 
