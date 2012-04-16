@@ -1,3 +1,7 @@
+import forms
+import json
+
+from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import auth
@@ -11,10 +15,11 @@ from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
 
-from techresidents_web.accounts import models
+from techresidents_web.accounts.models import Skill
 from techresidents_web.job.models import Prefs
+from techresidents_web.common.models import Technology, TechnologyType, ExpertiseType
 
-import forms
+
 
 #Disable csrf for the login view since we support logging in
 #from an http landing page which results in a POST from
@@ -250,6 +255,66 @@ def profile_jobs(request):
     }
 
     return render_to_response('accounts/profile_jobs.html', context, context_instance=RequestContext(request))
+
+@login_required
+def profile_skills_languages(request):
+    # Populate list of supported languages for autocomplete widget
+    language_technology_type = TechnologyType.objects.get(name="Language")
+    languages = Technology.objects.filter(type=language_technology_type)
+    language_names = [str(lang.name) for lang in languages]
+    json_languages = json.dumps(language_names)
+
+    if request.method == "POST":
+        form = forms.ProfileLanguageSkillsForm(request, data=request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            messages.success(request, 'Save successful')
+            return HttpResponseRedirect(reverse("accounts.views.profile_skills_languages"))
+    else:
+        # Retrieve list of user's language skills
+        language_skills = Skill.objects.filter(technology__type=language_technology_type).select_related("auth_user")
+        skills_list = list(language_skills.values('technology', 'expertise_type', 'yrs_experience'))
+        if skills_list:
+            for skill in skills_list:
+                # Lookup technology name
+                technology_id = skill['technology']
+                del skill['technology']
+                technology = Technology.objects.get(id=technology_id) #TODO need catch block
+                skill['name'] = str(technology.name)
+                # Lookup expertise type name
+                expertise_id = skill['expertise_type']
+                del skill['expertise_type']
+                expertise = ExpertiseType.objects.get(id=expertise_id)
+                skill['expertise'] = str(expertise.name)
+            json_language_skills = json.dumps(skills_list)
+            print json_language_skills
+        else:
+            # if user has no language skills specified, then create the default list
+            default_profile_languages = languages.filter(is_profile_default=True)
+            default_language_skills = []
+            for language in default_profile_languages:
+                l = {'name':str(language.name), 'expertise':'None', 'yrs_experience':0}
+                default_language_skills.append(l)
+            json_language_skills = json.dumps(default_language_skills)
+            print json_language_skills
+
+        # Used to serialize django objects
+        #JsonSerializer = serializers.get_serializer('json')
+        #serializer = JsonSerializer()
+        #json_language_skills = serializer.serialize(language_skills, ensure_ascii=False)
+        #print json_language_skills
+
+        #TODO clean up
+        form_data = {}
+        form = forms.ProfileLanguageSkillsForm(request, data=form_data)
+
+    context = {
+        "form": form,
+        "json_languages": json_languages,
+        "json_language_skills": json_language_skills
+    }
+
+    return render_to_response('accounts/profile_skills_languages.html', context, context_instance=RequestContext(request))
 
 def ptidemo(request):
     return render_to_response('accounts/ptiDemo.html',  context_instance=RequestContext(request))

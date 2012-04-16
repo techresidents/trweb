@@ -13,4 +13,5 @@ urlpatterns = patterns('accounts.views',
     url(r'^profile/chats/$', 'profile_chats'),
     url(r'^profile/jobs/$', 'profile_jobs'),
     url(r'^profile/password/$', 'profile_password'),
+    url(r'^profile/skills/languages$', 'profile_skills_languages'),
 )

@@ -1,11 +1,11 @@
 {% extends "menu_base.html" %}
 {% load url from future %}
+{% load widget_filters %}
 
 {% block title %}Profile{% endblock %}
 
 {% block extrahead %}
     <link href="{{STATIC_URL}}css/profile.css" rel="stylesheet">
-    {% load widget_filters %}
 {%endblock %}
 
 {% block content %}
@@ -33,7 +33,7 @@
 
                         <li class="nav-header">Technology</li>
                         <ul class="nav nav-list">
-                            <li><a href="#">Programming</a></li>
+                            <li><a href="{% url 'accounts.views.profile_skills_languages' %}">Languages</a></li>
                             <li><a href="#">Frameworks</a></li>
                             <li><a href="#">Persistence</a></li>
                         </ul>
@@ -69,6 +69,7 @@
                                 {{ field.label_tag }}
                                 <div class="controls">
                                     {{ field }}
+                                    <button onclick="return false" type="add" name="add" class="btn btn-primary test">Add</button>
                                     {% for error in field.errors %}
                                         <span class="help-inline">{{error}}</span>
                                     {% endfor %}

@@ -1,9 +1,8 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
-    'Highcharts'
-], function($, _, Backbone, Highcharts) {
+    'Backbone'
+], function($, _, Backbone) {
 
 $(document).ready(function() {
 
@@ -11,10 +10,17 @@ $(document).ready(function() {
     
             defaults : function() {
                 return {
+                    id: null,
                     name: "",
-                    expertise: 0,
-                    experience: 0
+                    expertise: "",
+                    yrs_experience: 0
                 };
+            },
+
+            initialize: function() {
+                if(this.get("id") == null) {
+                    this.set({ id: this.cid });
+                }
             },
 
             name: function() {
@@ -26,11 +32,19 @@ $(document).ready(function() {
             },
 
             experience: function() {
-                return this.get("experience");
+                return this.get("yrs_experience");
             },
-    
-            setValues: function(expertise, experience) {
-                this.set({ expertise: expertise, experience: experience });
+
+            setYrsExperience: function(yrs_experience) {
+                this.set({yrs_experience: yrs_experience});
+            },
+
+            setExpertise: function(expertise) {
+                this.set({expertise: expertise});
+            },
+
+            setValues: function(expertise, yrs_experience) {
+                this.set({ expertise: expertise, yrs_experience: yrs_experience });
             }
     
     });
@@ -61,205 +75,149 @@ $(document).ready(function() {
             }
     });
 
+    var SkillListItemView = Backbone.View.extend({
+
+        tagName: "tr",
+        template: _.template($('#skill-item-template').html()),
+        events: {
+            "change .skill-yrs-experience": "clickedYrsExperience",
+            "change .skill-expertise": "clickedExpertise"
+        },
+
+        initialize: function() {
+            this.model = this.options.model;
+        },
+
+        render: function() {
+            $(this.el).html(this.template(this.model.toJSON()));
+            $(this.el).find('.skill-yrs-experience').val(this.model.experience());
+            $(this.el).find('.skill-expertise').val(this.model.expertise());
+            return this;
+        },
+
+        clickedYrsExperience: function() {
+            this.model.setYrsExperience($(this.el).find('.skill-yrs-experience').val());
+        },
+
+        clickedExpertise: function() {
+            console.log("clickedExpertise called")
+            this.model.setExpertise($(this.el).find('.skill-expertise').val());
+        }
+    });
 
     var SkillListView = Backbone.View.extend({
-            tagName: "tr",
-    
-            template: _.template($('#item-template').html()),
-    
-            skillSet: null,
-    
-            events : {
-                "click" : "select",
-            },
-    
-            initialize: function() {
-                this.skillSet = this.options.skillSet;
-                this.model.bind("change", this.render, this);
-                this.skillSet.bind("change:selection", this.selectionChanged, this);
-            },
-    
-            render: function() {
-                $(this.el).html(this.template(this.model.toJSON()));
-                return this;
-            },
-    
-            select: function() {
-                this.skillSet.select(this.model.id);
-            },
 
-            isSelected: function() {
-                var selected = this.skillSet.selected();
-                if(selected && selected.id == this.model.id) {
-                    return true;
-                } else {
-                    return false;
-                }
-            },
-    
-            selectionChanged: function() {
-                if(this.isSelected()) {
-                    $(this.el).addClass("ui-selected");
-                } else {
-                    $(this.el).removeClass("ui-selected");
-                }
-            }
+        el: $("#skill-list"),
+
+        initialize: function() {
+            this.skillCollection = this.options.skillCollection;
+            this.skillCollection.bind("reset", this.render, this);
+            this.skillCollection.bind("add", this.addSkillView, this);
+        },
+
+        render: function() {
+            this.el.children().remove();
+            this.skillCollection.each(this.addSkillView, this);
+        },
+
+        addSkillView: function(skill) {
+            var view = new SkillListItemView({
+                model: skill
+            });
+
+            this.el.append(view.render().el);
+        }
     });
-    
-    var SkillChartView = Backbone.View.extend({
 
-            selectionChanged: function() {
-            },
+    var SkillAddView = Backbone.View.extend({
 
-            
-            initialize: function() {
-                this.skillSet = this.options.skillSet;
-                this.skillSet.bind("change:selection", this.selectionChanged, this);
-                
-                var that = this;
-                this.chart =  new Highcharts.Chart({
-                    chart: {
-                        renderTo: 'chart',
-                        defaultSeriesType: 'scatter',
-                        margin: [70, 50, 60, 80],
-                        events: {
-                            click: function(e) {
-                                var x = e.xAxis[0].value;
-                                var y = e.yAxis[0].value;
-                                var series = this.series[0];
-                                var skill = that.skillSet.selected();
-                    
-                                if(skill) {
-                                    skill.set({"expertise": x.toFixed(1), "experience": y.toFixed(1)});
-                                    if(this.get(skill.id)) {
-                                       this.get(skill.id).remove();
-                                    }
-                                    series.addPoint({id: skill.id, name: skill.name(), x: x, y: y});
-                                }
-                            }
-                        }
-                    },
-                    title: {
-                       text: 'Tech Profile'
-                    },
-                    subtitle: {
-                       text: 'Click the plot area to add a point. Click a point to remove it.'
-                    },
-                    xAxis: {
-                       title: {
-                          text: 'Expertise'
-                       },
-                       minPadding: 0.2,
-                       maxPadding: 0.2,
-                       maxZoom: 0,
-                       min: 0,
-                       max: 10.1,
-                       plotBands: [{
-                               from: 0,
-                               to: 1,
-                               label: {
-                                   text: 'Novice'
-                               },
-                          }, {
-                              from: 2,
-                              to: 3,
-                              label: { 
-                                   text: 'Beginner'
-                              }
-                          }, {
-                              from:4 ,
-                              to: 6,
-                              label: { 
-                                   text: 'Intermediate'
-                              }
-                          }, {
-                              from:6 ,
-                              to: 8,
-                              label: { 
-                                   text: 'Proficient'
-                              }
-                          }, {
-                              from:8 ,
-                              to: 10,
-                              label: { 
-                                   text: 'Expert'
-                              }
-                           }]
-                    },
-                    yAxis: {
-                       title: {
-                           text: 'Professional Experience <br> (Years)'
-                       },
-                       minPadding: 0.2,
-                       maxPadding: 0.2,
-                       maxZoom: 0,
-                       min: 0,
-                       max: 15,
-                    },
-                    legend: {
-                       enabled: false
-                    },
-                    exporting: {
-                       enabled: false
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    tooltip: {
-                        formatter: function() {
-                            return this.point.name;
-                        }
-                    },
-                    plotOptions: {
-                       scatter: {
-                          point: {
-                             events: {
-                                'click': function() {
-                                   that.skillSet.select(this.id);
-                                   that.skillSet.get(this.id).setValues(0, 0);
-                                   this.remove();
-                                }
-                             }
-                          }
-                       }
-                    },
-                    series: [{
-                       data: []
-                    }]
+        el: $("#skill-add"),
+
+        events: {
+            "click button": "addSkill",
+            "keypress input": "updateOnEnter"
+        },
+
+        initialize: function() {
+
+            // The boostrap autocomplete field prevents the keypress event
+            // from bubbling out, so we handle it with the following:
+            var that = this;
+            $('#skill-input').on('keypress', function(e){
+                that.updateOnEnter.call(that, e);
+            });
+
+            this.skillCollection = this.options.skillCollection;
+            this.skillInput = this.$("#skill-input");
+        },
+
+        addSkill: function() {
+            var skillName = this.skillInput.val();
+
+            if(skillName) {
+                var skill = new Skill({
+                    name: skillName,
+                    expertise: "None",
+                    yrs_experience: 0
                 });
 
-            },
-    
+                this.skillCollection.add(skill);
+
+                this.skillInput.val("");
+                this.skillInput.focus();
+            }
+            else {
+                this.skillInput.focus();
+            }
+
+        },
+
+        updateOnEnter: function(e) {
+            if(e.keyCode == 13) {
+                this.addSkill();
+            }
+        }
+    });
+
+    var SkillFormView = Backbone.View.extend({
+
+        el: $("#skill-form"),
+
+        initialize: function() {
+            this.skillCollection = this.options.skillCollection;
+            this.skillCollection.bind("reset", this.change, this);
+            this.skillCollection.bind("add", this.change, this);
+            this.skillCollection.bind("remove", this.change, this);
+            this.skillCollection.bind("change", this.change, this);
+
+            this.skillsFormInput = this.$("#skill-form-input");
+        },
+
+        change: function() {
+            this.skillsFormInput.val(JSON.stringify(this.skillCollection.toJSON()));
+        }
     });
 
     var ProfileAppView = Backbone.View.extend({
 
             initialize: function() {
-
                 this.skillSet = new SkillCollection();
+
+                this.skillListView = new SkillListView({skillCollection: this.skillSet});
+                this.skillAddView = new SkillAddView({skillCollection: this.skillSet});
+                this.skillFormView = new SkillFormView({skillCollection: this.skillSet});
+
+                console.log("Input data:")
+                console.log(this.options.data)
+
                 this.skillSet.reset(this.options.data);
-                this.skillSet.bind("change", this.changed, this);
-
-                this.chartView = new SkillChartView({skillSet: this.skillSet});
-
-                this.skillSet.each(function(model) { 
-                    var listItemView = new SkillListView({model: model, id: model.id, skillSet: this.skillSet});
-                    $("#table").append(listItemView.render().el);
-                }, this);
-
-                this.skillSet.selectNext();
-            },
-
-            changed: function(skill) {
-                if(skill.expertise() != 0 && skill.experience() != 0) {
-                    this.skillSet.selectNext();
-                }
+                console.log('SkillCollection data:')
+                console.log(this.skillSet)
             }
-
     });
 
     app = new ProfileAppView({data: window.data});
 
 });
-    
+
 });

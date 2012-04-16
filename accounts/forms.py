@@ -10,7 +10,9 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from django.template import Context
 
-from techresidents_web.accounts.models import CodeType, Code
+from techresidents_web.common.forms import JSONField
+from techresidents_web.common.models import ExpertiseType, Technology
+from techresidents_web.accounts.models import CodeType, Code, Skill
 from techresidents_web.job.models import PositionTypePref, Prefs
 
 
@@ -131,7 +133,6 @@ class RegistrationActivationForm(forms.Form):
             code.used = datetime.datetime.now()
             code.save()
 
-
 class LoginForm(forms.Form):
     username = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, required=True)
     password = forms.CharField(label="Password", max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
@@ -218,7 +219,6 @@ class ForgotPasswordForm(forms.Form):
             msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
             msg.attach_alternative(html_content, "text/html")
             msg.send()
-
 
 class ResetPasswordForm(forms.Form):
     password = forms.CharField(label="Password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
@@ -350,3 +350,54 @@ class ProfileJobsForm(forms.Form):
         if commit:
             job_prefs.save()
         return self.user
+
+    # TODO
+
+class ProfileLanguageSkillsForm(forms.Form):
+    language_skills = JSONField(max_length=2048, widget=forms.HiddenInput, required=True)
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.request = request
+        super(ProfileLanguageSkillsForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        language_skills = self.cleaned_data.get("language_skills")
+        for skill in language_skills:
+            print 'language skill json data: '
+            print skill
+            technology = Technology.objects.get(name=skill['name'])
+
+            try:
+                user_skill = Skill.objects.get(user=self.request.user, technology=technology)
+            except Skill.DoesNotExist:
+                user_skill = Skill(
+                    user=self.request.user,
+                    technology=technology,
+                    expertise_type=ExpertiseType.objects.get(name="None"),
+                    yrs_experience=0
+                )
+            print skill['yrs_experience']
+            user_skill.yrs_experience = skill['yrs_experience']
+            user_skill.expertise_type = ExpertiseType.objects.get(name=skill['expertise']) #TODO catch?
+            if commit:
+                user_skill.save()
+        return self.request.user
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
