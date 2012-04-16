@@ -2,8 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'lookup/models',
-], function($, _, Backbone, models) {
+], function($, _, Backbone) {
     
     /*
      * Typeahead view.
