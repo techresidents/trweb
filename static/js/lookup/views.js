@@ -59,7 +59,7 @@ define([
                 
                 //create bootstrap typeahead
                 var that = this;
-                this.el.typeahead({
+                this.$el.typeahead({
                     source: function(typeahead, query) {
                         that.lookup.call(that, typeahead, query);
                     },
@@ -73,7 +73,7 @@ define([
                 
                 //store the actual typeahead plugin so we can make
                 //some strong guarantees about onselect.
-                this.typeahead = this.el.data("typeahead");
+                this.typeahead = this.$el.data("typeahead");
                 
                 this.lookupCache = new models.LookupCache(null, {
                     scope: this.scope,
@@ -88,7 +88,7 @@ define([
              */
             clear: function() {
                 this.lastSelected = null;
-                this.el.val(null);
+                this.$el.val(null);
             },
             
             /**
@@ -138,7 +138,7 @@ define([
             keypress: function(e) {
                 //if enter is pressed and the typeahead menu is not visible, process.
                 if(e.keyCode == 13 && !this.typeahead.shown) {
-                    value = this.el.val();
+                    value = this.$el.val();
 
                     if(value && this.onenter) {
                         object = null;
@@ -160,7 +160,7 @@ define([
              * @param {e} event object.
              */
             blur: function(e) {
-                value = this.el.val();
+                value = this.$el.val();
                 
                 //Handle the case where the user has typed text into the typeahead
                 //input and then clicked another elment on the page. In this situation
@@ -188,7 +188,7 @@ define([
                 //value in the input does not match an autocomplete option.
                 if(this.forceSelection) {
                     if(!this.lastSelected || this.lastSelected.value != value) {
-                        this.el.val(null);
+                        this.$el.val(null);
                     }
                 }
             }

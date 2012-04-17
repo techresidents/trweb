@@ -47,7 +47,7 @@ define([
             },
 
             initialize: function(options) {
-                this.source = options.source || this.el.data("source");
+                this.source = options.source || this.$el.data("source");
                 this.property = options.property;
                 this.maxResults = options.maxResults || 8;
                 this.forceSelection = options.forceSelection || false;
@@ -59,7 +59,7 @@ define([
                 
                 //create bootstrap typeahead
                 var that = this;
-                this.el.typeahead({
+                this.$el.typeahead({
                     source: this.source,
                     property: this.property,
                     items: this.maxResults,
@@ -70,14 +70,14 @@ define([
                 
                 //store the actual typeahead plugin so we can make
                 //some strong guarantees about onselect.
-                this.typeahead = this.el.data("typeahead");
+                this.typeahead = this.$el.data("typeahead");
             },
 
             /**
              * Clear the typeahead input.
              */
             clear: function() {
-                this.el.val(null);
+                this.$el.val(null);
             },
             
             /**
@@ -122,11 +122,11 @@ define([
              * @param {e} event object.
              */
             keypress: function(e) {
-                this.lastValue = this.el.val();
+                this.lastValue = this.$el.val();
 
                 //if enter is pressed and the typeahead menu is not visible, process.
                 if(e.keyCode == 13 && !this.typeahead.shown) {
-                    value = this.el.val();
+                    value = this.$el.val();
                     
                     if(value && this.onenter) {
                         //only invoke onenter callback if forceSelection is false
@@ -153,7 +153,7 @@ define([
              * @param {e} event object.
              */
             blur: function(e) {
-                value = this.el.val();
+                value = this.$el.val();
                 
                 //Handle the case where the user has typed text into the typeahead
                 //input and then clicked another elment on the page. In this situation
@@ -182,7 +182,7 @@ define([
                 //value in the input does not match an autocomplete option.
                 if(this.forceSelection) {
                     if(!this.matchesLastSelected(value)) {
-                        this.el.val(null);
+                        this.$el.val(null);
                     }
                 }
             }

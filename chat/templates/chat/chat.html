@@ -23,7 +23,28 @@
     <div class="row" id="chat"></div>
     <div class="row">
         <div class="span12 page-header">
-            <h3>Discuss: Web Security: Preventitive Measures</h3>
+            <div class="span1">
+                <h3>Discuss</h3>
+            </div>
+            <div class="span8 well">
+                <h5>Web Security Preventative Measures</h5>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="tagger" class="span12 page-header">
+            <div class="span1">
+                <h3>Tag</h3>
+            </div>
+            <div class="span8">
+                <div>
+                    <input class="span7">
+                    <button class="btn btn-input">Add</button>
+                    <span><strong>Recent Tags</strong>
+                        <ul/>
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -31,11 +52,14 @@
     <div class="row">
         <div class="span12">
             <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
-                <li><a data-toggle="tab" href="#whiteboard-container">Whiteboard</a></li>
+                <li class="active" ><a data-toggle="tab" href="#agenda">Agenda</a></li>
+                <li><a data-toggle="tab" href="#tags">Tags</a></li>
+                <li><a data-toggle="tab" href="#whiteboard">Whiteboard</a></li>
             </ul>
             <div class="tab-content">
-                <div id="home" class="tab-pane fade in active">
+                <div id="agenda" class="tab-pane fade in active">
+                    <h5>Agenda</h5>
+                    <!--
                     <div class="span5">
                         <h5>Agenda</h5>
                         <div>
@@ -53,9 +77,14 @@
                             <button class="btn btn-input">Tag</button>
                         </div>
                     </div>
+                    -->
                 </div>
-                <div id="whiteboard-container" class="span10 well tab-pane fade">
-                    <div id="whiteboard" class="span10">
+                <div id="tags" class="tab-pane fade">
+                    <h5>Tags</h5>
+                    <ul id="taglist"/>
+                </div>
+                <div id="whiteboard" class="span10 well tab-pane fade">
+                    <div id="whiteboard-container">
                     </div>
                 </div>
             </div>
@@ -100,7 +129,8 @@
 </script>
 
 <script type="text/template" id="tag-item-template">
-    <%= name %>
+    <a rel="tooltip" href="#" title="tooltip"><%= name %></a>
+    <a class="close-inline">x</a>
 </script>
 
 
