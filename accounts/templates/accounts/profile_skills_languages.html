@@ -71,7 +71,7 @@
 
                     <div id="skill-add" class="control-group ">
                         <label for="skill-input">Other Language?</label>
-                        <input id="skill-input" data-items="4" data-provide="typeahead" data-source='{{ json_languages }}' maxlength="1024" type="text" name="language">
+                        <input id="skill-input" data-source='{{ json_languages }}' maxlength="1024" type="text" name="language">
                         <button id="skill-add-button" type="button" class="btn-primary">Add</button>
                     </div>
 
@@ -163,6 +163,7 @@
                     <option value="20">20</option>
                     <option value="20+">20+</option>
                 </select>
+                <a class="close">x</a>
             </td>
         </script>
     {% endverbatim %}

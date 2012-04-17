@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.template import Context
 
 from techresidents_web.common.forms import JSONField
-from techresidents_web.common.models import ExpertiseType, Technology
+from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType
 from techresidents_web.accounts.models import CodeType, Code, Skill
 from techresidents_web.job.models import PositionTypePref, Prefs
 
@@ -361,13 +361,28 @@ class ProfileLanguageSkillsForm(forms.Form):
         super(ProfileLanguageSkillsForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
-        language_skills = self.cleaned_data.get("language_skills")
-        for skill in language_skills:
-            print 'language skill json data: '
-            print skill
-            technology = Technology.objects.get(name=skill['name'])
+        # retrieve posted data
+        updated_language_skills = self.cleaned_data.get("language_skills")
 
+        # check if user deleted any language skills
+        if commit:
+            language_technology_type = TechnologyType.objects.get(name="Language")
+            previous_language_skills = Skill.objects.filter(user=self.request.user, technology__type=language_technology_type)
+            for skill in previous_language_skills:
+                wasRemoved = True
+                for updated_skill in updated_language_skills:
+                    if (skill.technology.name == updated_skill['name']):
+                        wasRemoved = False
+                        break
+                if wasRemoved:
+                    print 'removing' + skill.technology.name
+                    skill.delete()
+
+        # Update user's skills based on data posted
+        for skill in updated_language_skills:
+            # retrieve the existing skill, or create new one if it doesn't exist
             try:
+                technology = Technology.objects.get(name=skill['name'])
                 user_skill = Skill.objects.get(user=self.request.user, technology=technology)
             except Skill.DoesNotExist:
                 user_skill = Skill(
@@ -376,11 +391,16 @@ class ProfileLanguageSkillsForm(forms.Form):
                     expertise_type=ExpertiseType.objects.get(name="None"),
                     yrs_experience=0
                 )
-            print skill['yrs_experience']
+            # update skill object with posted data
             user_skill.yrs_experience = skill['yrs_experience']
             user_skill.expertise_type = ExpertiseType.objects.get(name=skill['expertise']) #TODO catch?
+
             if commit:
                 user_skill.save()
+
+
+
+
         return self.request.user
 
 

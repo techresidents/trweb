@@ -287,7 +287,6 @@ def profile_skills_languages(request):
                 expertise = ExpertiseType.objects.get(id=expertise_id)
                 skill['expertise'] = str(expertise.name)
             json_language_skills = json.dumps(skills_list)
-            print json_language_skills
         else:
             # if user has no language skills specified, then create the default list
             default_profile_languages = languages.filter(is_profile_default=True)
@@ -296,7 +295,6 @@ def profile_skills_languages(request):
                 l = {'name':str(language.name), 'expertise':'None', 'yrs_experience':0}
                 default_language_skills.append(l)
             json_language_skills = json.dumps(default_language_skills)
-            print json_language_skills
 
         # Used to serialize django objects
         #JsonSerializer = serializers.get_serializer('json')
