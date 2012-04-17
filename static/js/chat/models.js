@@ -147,14 +147,6 @@ define([
 
             initialize: function(attributes, options) {
 
-                if(attributes.header.constructor == Object) {
-                    attributes.header = new messages.ChatMessageHeader(attributes.header);
-                }
-
-                if(attributes.msg.constructor == Object) {
-                    attributes.msg = messages.chatMessageFactory.create(attributes.header, attributes.msg);
-                }
-
                 if(!attributes.header.type && attributes.msg.type) {
                     attributes.header.type = attributes.msg.type;
                 }
@@ -169,11 +161,19 @@ define([
             },
             
             url: function() {
-                return "/chat/message/" + this.attributes.header.type;
+                return this.header().url() + this.msg().url();
             },
 
             toJSON: function() {
-                return _.extend({}, this.attributes.header, this.attributes.msg);
+                return _.extend({}, this.header(), this.msg());
+            },
+            
+            parse: function(response) {
+                return {
+                    id: response.header.id,
+                    header: new messages.MessageHeader(response.header),
+                    msg: messages.messageFactory.create(response.header, response.msg)
+                };
             },
 
             sync: xdBackbone.sync,
@@ -196,6 +196,14 @@ define([
             initialize: function(models, options) {
                 this.chatSessionToken = options.chatSessionToken;
                 this.userId = options.userId;
+                
+                //define long poll callback outside of longPoll function
+                //to cut down on memory usage since this function is
+                //call frequently.
+                var that=this;
+                this.longPollCallback = function() {
+                    that.longPoll.call(that);
+                };
             },
 
             sync: function(method, collection, options) {
@@ -215,9 +223,11 @@ define([
                 return xdBackbone.sync(method, collection, options);
             },
 
+            longPollCallback: function() {
+            },
+
             longPoll: function() {
-                var that = this;
-                this.fetch({add: true, silent: false, complete: function() { that.longPoll.call(that);} });
+                this.fetch({add: true, silent: false, complete: this.longPollCallback});
             }
     });
 

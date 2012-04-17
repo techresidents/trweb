@@ -3,8 +3,11 @@ define([
     'Underscore',
     'Backbone',
     'chat/models',
-    'chat/views'
-], function($, _, Backbone, models, views) {
+    'chat/agenda/views',
+    'chat/tag/views',
+    'chat/user/views',
+    'chat/whiteboard/views',
+], function($, _, Backbone, models, agenda, tag, user, whiteboard) {
 
 $(document).ready(function() {
     
@@ -26,9 +29,9 @@ $(document).ready(function() {
                 });
                 
                 //create a view for each user
-                this.chatUsers.each(function(user) {
-                    var chatUserView = new views.ChatUserView({
-                            model: user,
+                this.chatUsers.each(function(userModel) {
+                    var chatUserView = new user.ChatUserView({
+                            model: userModel,
                             id: user.id,
                             chatSession: this.chatSession,
                             css: "span" + 12/this.chatUsers.length
@@ -46,13 +49,13 @@ $(document).ready(function() {
                 });
 
                 //create tag view
-                var chatTagView = new views.ChatTagView({
+                var chatTagView = new tag.ChatTagView({
                         chatSessionToken: this.options.data.chatSessionToken,
                         userId: this.chatUsers.first().id,
                         chatMessageCollection: chatMessageCollection});
                 
                 //whiteboard view
-                var whiteboardView = new views.ChatWhiteboardView({
+                var whiteboardView = new whiteboard.ChatWhiteboardView({
                         el: $("#whiteboard"),
                         height: 350,
                         chatSessionToken: this.options.data.chatSessionToken,
