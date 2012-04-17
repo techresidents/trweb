@@ -8,10 +8,11 @@ define([
 $(document).ready(function() {
 
     var Skill = Backbone.Model.extend({
-    
+
+            idAttribute: "name",
+
             defaults : function() {
                 return {
-                    id: null,
                     name: "",
                     expertise: "",
                     yrs_experience: 0
@@ -19,9 +20,7 @@ $(document).ready(function() {
             },
 
             initialize: function() {
-                if(this.get("id") == null) {
-                    this.set({ id: this.cid });
-                }
+
             },
 
             name: function() {
@@ -82,11 +81,13 @@ $(document).ready(function() {
         template: _.template($('#skill-item-template').html()),
         events: {
             "change .skill-yrs-experience": "clickedYrsExperience",
-            "change .skill-expertise": "clickedExpertise"
+            "change .skill-expertise": "clickedExpertise",
+            "click .close": "clickedDeleteItemButton"
         },
 
         initialize: function() {
             this.model = this.options.model;
+            this.collection = this.options.collection;
         },
 
         render: function() {
@@ -101,8 +102,14 @@ $(document).ready(function() {
         },
 
         clickedExpertise: function() {
-            console.log("clickedExpertise called")
             this.model.setExpertise($(this.el).find('.skill-expertise').val());
+        },
+
+        clickedDeleteItemButton: function() {
+            if (null != this.collection.get(this.model)){
+                this.collection.remove(this.model);
+                this.model = null; // TODO mark for GC
+            }
         }
     });
 
@@ -114,6 +121,7 @@ $(document).ready(function() {
             this.skillCollection = this.options.skillCollection;
             this.skillCollection.bind("reset", this.render, this);
             this.skillCollection.bind("add", this.addSkillView, this);
+            this.skillCollection.bind("remove", this.render, this);
         },
 
         render: function() {
@@ -123,10 +131,15 @@ $(document).ready(function() {
 
         addSkillView: function(skill) {
             var view = new SkillListItemView({
-                model: skill
+                model: skill,
+                collection: this.skillCollection
             });
 
             this.el.append(view.render().el);
+        },
+
+        removeSkillView: function(skill) {
+            // TODO would be preferable to only remove the item we want...
         }
     });
 
@@ -141,6 +154,7 @@ $(document).ready(function() {
         initialize: function() {
             this.typeaheadView = new typeahead.TypeaheadView({
                 el: this.$("#skill-input"),
+                maxResults: 5,
                 forceSelection: true,
                 onenter: this.updateOnEnter,
                 context: this
@@ -154,7 +168,8 @@ $(document).ready(function() {
             var skillName = this.skillInput.val();
             if (skillName) {
                 // only add if entry doesn't exist
-                if (!this.skillCollection.find(this.skillExists, this)) {
+                if (null == this.skillCollection.get(skillName))
+                {
                     var skill = new Skill({
                         name: skillName,
                         expertise: "None",
@@ -166,15 +181,6 @@ $(document).ready(function() {
 
             }
             this.skillInput.focus();
-        },
-
-        updateOnEnter: function(value) {
-            this.addSkill();
-        },
-
-        skillExists: function(model) {
-            ret = (this.skillInput.val() == model.name());
-            return ret
         }
     });
 
