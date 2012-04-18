@@ -263,6 +263,7 @@ def profile_skills_languages(request):
     languages = Technology.objects.filter(type=language_technology_type)
     language_names = [str(lang.name) for lang in languages]
     json_autocomplete_languages = json.dumps(language_names)
+    json_language_skills = '[]'
 
     if request.method == 'POST':
         form = forms.ProfileLanguageSkillsForm(request, data=request.POST)

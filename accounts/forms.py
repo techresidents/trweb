@@ -374,7 +374,7 @@ class ProfileLanguageSkillsForm(forms.Form):
         language_skills = self.cleaned_data.get('language_skills')
 
         # Verify we have some data to validate
-        if not language_skills:
+        if language_skills is None:
             raise forms.ValidationError("Invalid language data")
 
         for skill in language_skills:
@@ -414,6 +414,7 @@ class ProfileLanguageSkillsForm(forms.Form):
         return self.cleaned_data
 
     def save(self, commit=True):
+        print 'called save'
         # retrieve posted data
         updated_language_skills = self.cleaned_data.get('language_skills')
 

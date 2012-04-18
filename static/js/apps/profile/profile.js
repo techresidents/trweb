@@ -50,29 +50,7 @@ $(document).ready(function() {
     });
     
     var SkillCollection = Backbone.Collection.extend({
-            model: Skill,
-            //localStorage: new Store("skills"),
-            selectedIndex: -1,
-    
-            select: function(id) {
-                this.selectedIndex = this.indexOf(this.get(id));
-                this.trigger("change:selection");
-                return this;
-            },
-    
-            selectNext: function() {
-                if(this.selectedIndex < this.length - 1) {
-                    this.selectedIndex++;
-                } else {
-                    this.selectedIndex = -1;
-                }
-                this.trigger("change:selection");
-                return this;
-            },
-    
-            selected: function() {
-                return this.at(this.selectedIndex);
-            }
+            model: Skill
     });
 
     var SkillListItemView = Backbone.View.extend({
@@ -108,7 +86,7 @@ $(document).ready(function() {
         clickedDeleteItemButton: function() {
             if (null != this.collection.get(this.model)){
                 this.collection.remove(this.model);
-                this.model = null; // TODO mark for GC
+                this.model = null; // TODO mark for GC?
             }
         }
     });
@@ -139,7 +117,7 @@ $(document).ready(function() {
         },
 
         removeSkillView: function(skill) {
-            // TODO would be preferable to only remove the item we want...
+            // TODO would be preferable to only remove the item we want instead of resetting the collection.
         }
     });
 
@@ -216,12 +194,7 @@ $(document).ready(function() {
                 this.skillAddView = new SkillAddView({skillCollection: this.skillSet});
                 this.skillFormView = new SkillFormView({skillCollection: this.skillSet});
 
-                console.log("Input data:")
-                console.log(this.options.data)
-
                 this.skillSet.reset(this.options.data);
-                console.log('SkillCollection data:')
-                console.log(this.skillSet)
             }
     });
 
