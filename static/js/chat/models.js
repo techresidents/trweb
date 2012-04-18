@@ -100,6 +100,10 @@ define([
             getUsers: function() {
                 return this.get("users");
             },
+            
+            getCurrentUser: function() {
+                return this.get("users").first();
+            },
            
             //connect tokbox session to start everything.
             connect: function() {

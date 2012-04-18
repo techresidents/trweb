@@ -24,7 +24,7 @@ define([
             },
             
             render: function() {
-                $(this.el).html(this.template(this.model.toJSON()));
+                $(this.$el).html(this.template(this.model.toJSON()));
                 return this;
             },
 
@@ -158,7 +158,7 @@ define([
             },
 
             render: function() {
-                this.el.children().remove();
+                this.$el.children().remove();
                 this.topicCollection.each(this.addTopicView, this);
             },
 
@@ -175,7 +175,7 @@ define([
                             topicCollection: this.topicCollection
                     });
 
-                    this.el.append(view.render().el);
+                    this.$el.append(view.render().el);
                 }
             },
     });

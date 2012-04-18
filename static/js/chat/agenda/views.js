@@ -13,6 +13,6 @@ define([
     });
 
     return {
-        ChatAgendaTabiew: ChatAgendaTabView,
+        ChatAgendaTabView: ChatAgendaTabView,
     }
 });

@@ -34,37 +34,60 @@ $(document).ready(function() {
                             model: userModel,
                             id: user.id,
                             chatSession: this.chatSession,
-                            css: "span" + 12/this.chatUsers.length
+                            css: 'span' + 12/this.chatUsers.length
                     });
-                    this.$("#chat").append(chatUserView.render().el);
+                    this.$('#chat').append(chatUserView.render().el);
                 }, this);
                 
                 //connect the chat session
                 this.chatSession.connect();
 
 
-                var chatMessageCollection = new models.ChatMessageCollection(null, {
+                this.chatMessageCollection = new models.ChatMessageCollection(null, {
                         chatSessionToken: this.options.data.chatSessionToken,
                         userId: this.chatUsers.first().id
                 });
-
+                
                 //create tag view
                 var chatTagView = new tag.ChatTagView({
-                        chatSessionToken: this.options.data.chatSessionToken,
-                        userId: this.chatUsers.first().id,
-                        chatMessageCollection: chatMessageCollection});
-                
+                        el: '#tagger',
+                        chatSession: this.chatSession,
+                        chatMessages: this.chatMessageCollection
+                });
+
+                /*
                 //whiteboard view
                 var whiteboardView = new whiteboard.ChatWhiteboardView({
-                        el: $("#whiteboard"),
+                        el: $('#whiteboard'),
                         height: 350,
                         chatSessionToken: this.options.data.chatSessionToken,
                         userId: this.chatUsers.first().id,
                         chatMessageCollection: chatMessageCollection,
                 });
+                */
+
+
+                //create tab views
+                var chatAgendaTabView = new agenda.ChatAgendaTabView({
+                    el: $('#agenda'),
+                    chatSession: this.chatSession,
+                    chatMessages: this.chatMessageCollection
+                });
+
+                var chatTagTabView = new tag.ChatTagTabView({
+                    el: $('#tags'),
+                    chatSession: this.chatSession,
+                    chatMessages: this.chatMessageCollection
+                });
+
+                var chatWhiteboardTabView = new whiteboard.ChatWhiteboardTabView({
+                    el: $('#whiteboard'),
+                    chatSession: this.chatSession,
+                    chatMessages: this.chatMessageCollection
+                });
 
                 //long poll
-                chatMessageCollection.longPoll();
+                this.chatMessageCollection.longPoll();
             },
 
             changed: function(user) {

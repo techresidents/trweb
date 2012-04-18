@@ -62,6 +62,7 @@ define([
                     var connection = connections[i];
                     console.log(connection.data);
                     console.log(unescape(connection.data));
+                    //TODO remove when Tokbox fixes bug.
                     connection.data = '{"id": 1}';
                     console.log(connection.data);
                     if(JSON.parse(connection.data).id == this.user.id) {

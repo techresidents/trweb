@@ -2,7 +2,26 @@
     padding-bottom: 30px;
 }
 
-.chatlist {
+#tags ul {
     height: 100px;
     overflow-y: auto;
+}
+
+#tagger ul {
+    display: inline;
+    margin: 0 0 5px 5px;
+}
+
+#tagger li {
+    display: inline;
+    list-style-type:none;
+    padding-right: 8px;
+}
+
+#tagger li .close-inline {
+    display: none;
+}
+
+#tagger li:hover .close-inline {
+    display:inline;
 }
