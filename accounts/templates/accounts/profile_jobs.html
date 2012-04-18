@@ -21,29 +21,7 @@
     <div class="container">
         <div class="row">
 
-            <!--Sidebar content-->
-            <div class="span3">
-                <div class="well">
-                    <ul class="nav nav-list">
-                        <li class="nav-header">Account</li>
-                        <li><a href="{% url 'accounts.views.profile_account' %}"><i class="icon-user"></i>Account</a></li>
-                        <li><a href="{% url 'accounts.views.profile_password' %}"><i class="icon-lock"></i>Password</a></li>
-                        <li><a href="{% url 'accounts.views.profile_chats' %}"><i class="icon-info-sign"></i>Chats</a></li>
-                        <li class="active"><a href="#"><i class="icon-road icon-white"></i>Jobs</a></li>
-
-                        <li class="nav-header">Technology</li>
-                        <ul class="nav nav-list">
-                            <li><a href="{% url 'accounts.views.profile_skills_languages' %}">Languages</a></li>
-                            <li><a href="#">Frameworks</a></li>
-                            <li><a href="#">Persistence</a></li>
-                        </ul>
-                    </ul>
-                </div>
-
-                <div class="well">
-
-                </div>
-            </div> <!-- end span3 -->
+            {% include 'accounts/navigation_panel.html' %}
 
             <div class="span9">
                 <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_jobs' %}">
