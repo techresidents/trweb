@@ -69,18 +69,18 @@ $(document).ready(function() {
         },
 
         render: function() {
-            $(this.el).html(this.template(this.model.toJSON()));
-            $(this.el).find('.skill-yrs-experience').val(this.model.experience());
-            $(this.el).find('.skill-expertise').val(this.model.expertise());
+            this.$el.html(this.template(this.model.toJSON()));
+            this.$el.find('.skill-yrs-experience').val(this.model.experience());
+            this.$el.find('.skill-expertise').val(this.model.expertise());
             return this;
         },
 
         clickedYrsExperience: function() {
-            this.model.setYrsExperience($(this.el).find('.skill-yrs-experience').val());
+            this.model.setYrsExperience(this.$el.find('.skill-yrs-experience').val());
         },
 
         clickedExpertise: function() {
-            this.model.setExpertise($(this.el).find('.skill-expertise').val());
+            this.model.setExpertise(this.$el.find('.skill-expertise').val());
         },
 
         clickedDeleteItemButton: function() {
@@ -93,9 +93,8 @@ $(document).ready(function() {
 
     var SkillListView = Backbone.View.extend({
 
-        el: $("#skill-list"),
-
         initialize: function() {
+            this.setElement($("#skill-list"));
             this.skillCollection = this.options.skillCollection;
             this.skillCollection.bind("reset", this.render, this);
             this.skillCollection.bind("add", this.addSkillView, this);
@@ -103,7 +102,7 @@ $(document).ready(function() {
         },
 
         render: function() {
-            this.el.children().remove();
+            this.$el.children().remove();
             this.skillCollection.each(this.addSkillView, this);
         },
 
@@ -113,7 +112,7 @@ $(document).ready(function() {
                 collection: this.skillCollection
             });
 
-            this.el.append(view.render().el);
+            this.$el.append(view.render().el);
         },
 
         removeSkillView: function(skill) {
@@ -123,13 +122,12 @@ $(document).ready(function() {
 
     var SkillAddView = Backbone.View.extend({
 
-        el: $("#skill-add"),
-
         events: {
             "click button": "addSkill"
         },
 
         initialize: function() {
+            this.setElement($("#skill-add"));
             this.typeaheadView = new typeahead.TypeaheadView({
                 el: this.$("#skill-input"),
                 maxResults: 5,
@@ -168,9 +166,8 @@ $(document).ready(function() {
 
     var SkillFormView = Backbone.View.extend({
 
-        el: $("#skill-form"),
-
         initialize: function() {
+            this.setElement($("#skill-form"));
             this.skillCollection = this.options.skillCollection;
             this.skillCollection.bind("reset", this.change, this);
             this.skillCollection.bind("add", this.change, this);
