@@ -70,7 +70,7 @@
 
                     <div id="skill-add" class="control-group ">
                         <label for="skill-input">Other Language?</label>
-                        <input id="skill-input" data-source='{{ json_autocomplete_languages }}' maxlength="1024" type="text" name="language">
+                        <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language">
                         <button id="skill-add-button" type="button" class="btn-primary">Add</button>
                     </div>
 
@@ -78,7 +78,7 @@
                         <fieldset>
                             {% csrf_token %}
 
-                            <input id="skill-form-input" type="hidden" name="language_skills"/>
+                            <input id="skill-form-input" type="hidden" name="skills_form_data"/>
 
                             <div class="control-group">
                                 <div class="controls">
@@ -110,7 +110,7 @@
     <!-- TODO: add proper escapejs filter that works with json -->
     {% autoescape off %}
         <script>
-            var data = {{json_language_skills}};
+            var data = {{json_skills}};
         </script>
     {% endautoescape %}
 
