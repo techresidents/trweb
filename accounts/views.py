@@ -286,7 +286,7 @@ def profile_skills_languages(request):
     else:
         form = forms.ProfileLanguageSkillsForm(request)
         # Retrieve list of user's language skills
-        language_skills = Skill.objects.filter(technology__type=language_technology_type).select_related('auth_user')
+        language_skills = Skill.objects.filter(technology__type=language_technology_type).select_related('auth_user') #TODO
         skills_list = list(language_skills.values('technology', 'expertise_type', 'yrs_experience'))
         if skills_list:
             for skill in skills_list:
@@ -326,6 +326,88 @@ def profile_skills_languages(request):
     }
 
     return render_to_response('accounts/profile_skills_languages.html', context, context_instance=RequestContext(request))
+
+@login_required
+def profile_skills_frameworks(request):
+    technology_type = 'Framework'
+    if request.method == 'POST':
+        form = forms.ProfileSkillsForm(request, technology_type, data=request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            messages.success(request, "Save successful")
+            return HttpResponseRedirect(reverse('accounts.views.profile_skills_frameworks'))
+
+    context = profile_skills_common(request, technology_type)
+    context['form'] = forms.ProfileSkillsForm(request,technology_type)
+
+    return render_to_response('accounts/profile_skills_frameworks.html', context, context_instance=RequestContext(request))
+
+
+""" Pulled out the code that was common between the language_skills
+    and framework_skill views. """
+def profile_skills_common(request, technology_type_name):
+
+    # Init user's skills
+    json_skills = '[]'
+
+    # Populate list of supported skills for autocomplete widget
+    skill_technology_type = TechnologyType.objects.get(name=technology_type_name)
+    skill_technologies = Technology.objects.filter(type=skill_technology_type)
+    skill_names = [str(s.name) for s in skill_technologies]
+    json_autocomplete_skills = json.dumps(skill_names)
+
+    # Create expertise values to populate the UI with
+    expertise_types = ExpertiseType.objects.all()
+    expertise_name_values = list(expertise_types.values('name'))
+    expertise_options = []
+    for value in expertise_name_values:
+        expertise_options.append(value['name'])
+
+    # Create years experience values to populate the UI with
+    yrs_experience_options = range(0,21)
+
+    # Retrieve list of user's language skills
+    user_skills = Skill.objects.filter(technology__type=skill_technology_type).select_related('auth_user') #TODO
+    user_skills_list = list(user_skills.values('technology', 'expertise_type', 'yrs_experience'))
+    if user_skills_list:
+        for skill in user_skills_list:
+
+            # Lookup technology name
+            technology_id = skill['technology']
+            technology = Technology.objects.get(id=technology_id)
+            skill[forms.ProfileSkillsForm.JSON_SKILL_NAME] = str(technology.name)
+            del skill['technology'] # no longer need this data
+
+            # Lookup expertise type name
+            expertise_id = skill['expertise_type']
+            expertise = ExpertiseType.objects.get(id=expertise_id)
+            skill[forms.ProfileSkillsForm.JSON_EXPERTISE] = str(expertise.name)
+            del skill['expertise_type'] # no longer need this data
+
+        json_skills = json.dumps(user_skills_list)
+    else:
+        # if user has no skills specified, then create a list of defaults
+        default_profile_skills = skill_technologies.filter(is_profile_default=True)
+        default_skills = []
+        for skill in default_profile_skills:
+            default_skill = {
+                forms.ProfileSkillsForm.JSON_SKILL_NAME:str(skill.name),
+                forms.ProfileSkillsForm.JSON_EXPERTISE:'None',
+                forms.ProfileSkillsForm.JSON_YRS_EXPERIENCE:0
+            }
+            default_skills.append(default_skill)
+        json_skills = json.dumps(default_skills)
+
+    context = {
+        "expertise_options": expertise_options,
+        "yrs_experience_options": yrs_experience_options,
+        "json_autocomplete_skills": json_autocomplete_skills,
+        "json_skills": json_skills
+    }
+
+    return context
+
+
 
 def ptidemo(request):
     return render_to_response('accounts/ptiDemo.html',  context_instance=RequestContext(request))

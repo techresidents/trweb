@@ -459,7 +459,113 @@ class ProfileLanguageSkillsForm(forms.Form):
         return self.request.user
 
 
+class ProfileSkillsForm(forms.Form):
+    skills_form_data = JSONField(max_length=2048, widget=forms.HiddenInput, required=True)
 
+    # JSON keys
+    JSON_SKILL_NAME = 'name'
+    JSON_EXPERTISE = 'expertise'
+    JSON_YRS_EXPERIENCE = 'yrs_experience'
+
+    # numerical constants
+    MAX_YRS_EXPERIENCE = 21 #This represents the 20+ yrs experience selection in the UI.
+                            #TODO is this too coupled to value in the UI?
+
+    def __init__(self, request=None, technology_type_name=None, *args, **kwargs):
+        self.request = request
+        self.technology_type_name = technology_type_name
+        super(ProfileSkillsForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        super(ProfileSkillsForm, self).clean()
+        cleaned_skills_data = self.cleaned_data.get('skills_form_data')
+
+        # Verify we have some data to validate
+        if cleaned_skills_data is None:
+            print 'no data being passed in'
+            raise forms.ValidationError("Invalid Skill data")
+
+        for skill in cleaned_skills_data:
+            # Verify we have a name attribute
+            skill_name = skill[self.JSON_SKILL_NAME]
+            if skill_name:
+                # if we have a name attribute, verify that it's valid
+                try:
+                    Technology.objects.get(name=skill_name)
+                    #TODO should ensure that technology is of correct type as well.
+                except Technology.DoesNotExist:
+                    raise forms.ValidationError("Skill name value is invalid")
+            else:
+                raise forms.ValidationError("Skill name field required")
+
+            # Verify we have an expertise level attribute
+            skill_expertise = skill[self.JSON_EXPERTISE]
+            if skill_expertise:
+                # if we have an expertise attribute, verify that it's valid
+                try:
+                    ExpertiseType.objects.get(name=skill_expertise)
+                except ExpertiseType.DoesNotExist:
+                    raise forms.ValidationError("Skill expertise value is invalid")
+            else:
+                raise forms.ValidationError("Skill expertise field required")
+
+            # Verify we have a years_experience attribute
+            skill_yrs_experience = skill[self.JSON_YRS_EXPERIENCE]
+            if skill_yrs_experience is not None:
+                # if we have a years_experience attribute, verify that it's valid
+                if not type(skill_yrs_experience == int):
+                    if skill_yrs_experience < 0 or\
+                       skill_yrs_experience > self.MAX_YRS_EXPERIENCE:
+                        raise forms.ValidationError("Skill years experience value is invalid")
+            else:
+                raise forms.ValidationError("Skill years experience field required")
+
+        return self.cleaned_data
+
+    def save(self, commit=True):
+        # retrieve posted data
+        updated_skills = self.cleaned_data.get('skills_form_data')
+
+        # Before updating the user's language skills, save the old skills to check for deleted skills
+        skill_technology_type = TechnologyType.objects.get(name=self.technology_type_name)
+        previous_skills = Skill.objects.filter(user=self.request.user, technology__type=skill_technology_type)
+        if commit:
+            for previous_skill in previous_skills:
+                wasRemoved = True
+                for updated_skill in updated_skills:
+                    if previous_skill.technology.name == updated_skill[self.JSON_SKILL_NAME]:
+                        print previous_skill.technology.name
+                        wasRemoved = False
+                        break
+                if wasRemoved:
+                    previous_skill.delete() #TODO we're deleting even though it's possible this is junk data.
+
+        # Update user's skills based on data posted
+        for skill in updated_skills:
+            # retrieve the existing skill, or create a new skill if one doesn't exist
+            user_skill = None
+            try:
+                technology = Technology.objects.get(name=skill[self.JSON_SKILL_NAME])
+                user_skill = Skill.objects.get(user=self.request.user, technology=technology)
+                #TODO need to worry if technology is not right type?
+            except Technology.DoesNotExist:
+                # TODO Log error
+                user_skill = None
+            except Skill.DoesNotExist:
+                user_skill = Skill(
+                    user=self.request.user,
+                    technology=technology,
+                    expertise_type=ExpertiseType.objects.get(name='None'),
+                    yrs_experience=0
+                )
+                # update skill object with posted data
+            if user_skill is not None:
+                user_skill.yrs_experience = skill[self.JSON_YRS_EXPERIENCE]
+                user_skill.expertise_type = ExpertiseType.objects.get(name=skill[self.JSON_EXPERTISE]) #TODO catch?
+                if commit:
+                    user_skill.save()
+
+        return self.request.user
 
 
 
