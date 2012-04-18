@@ -181,6 +181,10 @@ $(document).ready(function() {
 
             }
             this.skillInput.focus();
+        },
+
+        updateOnEnter: function(value) {
+            this.addSkill();
         }
     });
 

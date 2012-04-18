@@ -417,31 +417,30 @@ class ProfileLanguageSkillsForm(forms.Form):
         # retrieve posted data
         updated_language_skills = self.cleaned_data.get('language_skills')
 
-        # check if user deleted any language skills
+        # Before updating the user's language skills, save the old skills to check for deleted skills
+        language_technology_type = TechnologyType.objects.get(name='Language')
+        previous_language_skills = Skill.objects.filter(user=self.request.user, technology__type=language_technology_type)
         if commit:
-            language_technology_type = TechnologyType.objects.get(name='Language')
-            previous_language_skills = Skill.objects.filter(user=self.request.user, technology__type=language_technology_type)
-            for skill in previous_language_skills:
+            for previous_skill in previous_language_skills:
                 wasRemoved = True
                 for updated_skill in updated_language_skills:
-                    if skill.technology.name == updated_skill[self.JSON_LANGUAGE_NAME]:
-                        print skill.technology.name
+                    if previous_skill.technology.name == updated_skill[self.JSON_LANGUAGE_NAME]:
+                        print previous_skill.technology.name
                         wasRemoved = False
                         break
                 if wasRemoved:
-                    print 'removing item'
-                    skill.delete()
+                    previous_skill.delete() #TODO we're deleting even though it's possible this is junk data.
 
         # Update user's skills based on data posted
         for skill in updated_language_skills:
-            # retrieve the existing skill, or create new one if it doesn't exist
+            # retrieve the existing skill, or create a new skill if one doesn't exist
             user_skill = None
             try:
                 technology = Technology.objects.get(name=skill[self.JSON_LANGUAGE_NAME])
                 user_skill = Skill.objects.get(user=self.request.user, technology=technology)
             except Technology.DoesNotExist:
-                # TODO how to handle this?  My thought is that we should never get this far if the name is invalid.
-                print 'ToDo error'
+                # TODO Log error
+                user_skill = None
             except Skill.DoesNotExist:
                 user_skill = Skill(
                     user=self.request.user,
@@ -450,11 +449,11 @@ class ProfileLanguageSkillsForm(forms.Form):
                     yrs_experience=0
                 )
             # update skill object with posted data
-            user_skill.yrs_experience = skill[self.JSON_YRS_EXPERIENCE]
-            user_skill.expertise_type = ExpertiseType.objects.get(name=skill[self.JSON_EXPERTISE]) #TODO catch?
-
-            if commit:
-                user_skill.save()
+            if user_skill is not None:
+                user_skill.yrs_experience = skill[self.JSON_YRS_EXPERIENCE]
+                user_skill.expertise_type = ExpertiseType.objects.get(name=skill[self.JSON_EXPERTISE]) #TODO catch?
+                if commit:
+                    user_skill.save()
 
         return self.request.user
 
