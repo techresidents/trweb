@@ -263,6 +263,18 @@ def profile_skills_languages(request):
     languages = Technology.objects.filter(type=language_technology_type)
     language_names = [str(lang.name) for lang in languages]
     json_autocomplete_languages = json.dumps(language_names)
+
+    # Create expertise values to populate the UI with
+    expertise_types = ExpertiseType.objects.all()
+    expertise_name_values = list(expertise_types.values('name'))
+    expertise_options = []
+    for value in expertise_name_values:
+        expertise_options.append(value['name'])
+
+    # Create years experience values to populate the UI with
+    yrs_experience_options = range(0,21)
+
+    # Init user's language skills
     json_language_skills = '[]'
 
     if request.method == 'POST':
@@ -307,6 +319,8 @@ def profile_skills_languages(request):
 
     context = {
         "form": form,
+        "expertise_options": expertise_options,
+        "yrs_experience_options": yrs_experience_options,
         "json_autocomplete_languages": json_autocomplete_languages,
         "json_language_skills": json_language_skills
     }
