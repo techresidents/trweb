@@ -56,12 +56,12 @@
                             <div id="skill-add" class="control-group">
                                 <label for="skill-input">Add Framework</label>
                                 <div class="controls">
-                                    <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language">
+                                    <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off">
                                     <button id="skill-add-button" type="button" class="btn-primary">Add</button>
                                 </div>
                                 <div class="controls">
                                     <span class="help">
-                                        <a href="{% url 'accounts.views.forgot_password' %}">Framework not listed?</a>
+                                        <a href="{% url 'accounts.views.forgot_password' %}">Framework not listed?</a> <!-- TODO decide what to do here. -->
                                     </span>
                                 </div>
                             </div>
