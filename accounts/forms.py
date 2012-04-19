@@ -33,14 +33,14 @@ class RegisterUserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ("first_name", "last_name", "username",)
+        fields = ('first_name', 'last_name', 'username',)
 
     def __init__(self, request=None, *args, **kwargs):
         self.request = request
         super(RegisterUserForm, self).__init__(*args, **kwargs)
     
     def clean_username(self):
-        username = self.cleaned_data["username"]
+        username = self.cleaned_data['username']
         try:
             User.objects.get(username=username)
         except User.DoesNotExist:
@@ -49,17 +49,17 @@ class RegisterUserForm(forms.ModelForm):
 
 
     def clean(self):
-        if "password" in self.cleaned_data and "password_confirmation" in self.cleaned_data:
-            password = self.cleaned_data["password"]
-            password_confirmation = self.cleaned_data["password_confirmation"]
+        if 'password' in self.cleaned_data and 'password_confirmation' in self.cleaned_data:
+            password = self.cleaned_data['password']
+            password_confirmation = self.cleaned_data['password_confirmation']
             if password != password_confirmation:
                 raise forms.ValidationError("Passwords do not match.")
         return self.cleaned_data
     
     def save(self, commit=True):
         user = super(RegisterUserForm, self).save(commit=False)
-        user.email = self.cleaned_data["username"]
-        user.set_password(self.cleaned_data["password"])
+        user.email = self.cleaned_data['username']
+        user.set_password(self.cleaned_data['password'])
         if commit:
             user.save()
         return user
@@ -68,8 +68,8 @@ class RegisterUserForm(forms.ModelForm):
         if self.errors:
             raise ValueError("Unable to create registration code for invalid register form")
 
-        user = User.objects.get(username=self.cleaned_data["username"])
-        code_type = CodeType.objects.get(type="REGISTRATION")
+        user = User.objects.get(username=self.cleaned_data['username'])
+        code_type = CodeType.objects.get(type='REGISTRATION')
         registration_code = registration_code or uuid.uuid4().hex
         Code.objects.create(user=user, type=code_type, code=registration_code)
 
@@ -87,13 +87,13 @@ class RegisterUserForm(forms.ModelForm):
         registration_code = registration_code or self.create_registration_code()
 
         context = context or Context()
-        context["activation_url"] = self.get_activation_url(registration_code)
-        to = self.cleaned_data["username"]
+        context['activation_url'] = self.get_activation_url(registration_code)
+        to = self.cleaned_data['username']
 
         text_content = text_template.render(context)
         html_content = html_template.render(context)
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-        msg.attach_alternative(html_content, "text/html")
+        msg.attach_alternative(html_content, 'text/html')
         msg.send()
 
 class RegistrationActivationForm(forms.Form):
@@ -109,12 +109,12 @@ class RegistrationActivationForm(forms.Form):
         #Validate the registration code
         #If the code is not found in the database raise an exception
         try:
-            registration_code = self.cleaned_data["registration_code"]
+            registration_code = self.cleaned_data['registration_code']
 
             if self.allow_reactivation:
-                Code.objects.get(type__type="REGISTRATION", code=registration_code)
+                Code.objects.get(type__type='REGISTRATION', code=registration_code)
             else:
-                Code.objects.get(type__type="REGISTRATION", code=registration_code, used=None)
+                Code.objects.get(type__type='REGISTRATION', code=registration_code, used=None)
 
         except ObjectDoesNotExist:
             raise forms.ValidationError("Invalid registration code.")
@@ -125,9 +125,9 @@ class RegistrationActivationForm(forms.Form):
         if self.errors:
             raise ValueError("Unable to activate invalid registration activation form")
         
-        registration_code = self.cleaned_data["registration_code"]
+        registration_code = self.cleaned_data['registration_code']
 
-        code = Code.objects.get(type__type="REGISTRATION", code=registration_code)
+        code = Code.objects.get(type__type='REGISTRATION', code=registration_code)
 
         if not code.used:
             code.used = datetime.datetime.now()
@@ -144,8 +144,8 @@ class LoginForm(forms.Form):
         super(LoginForm, self).__init__(*args, **kwargs)
     
     def clean(self):
-        username = self.cleaned_data.get("username")
-        password = self.cleaned_data.get("password")
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
 
         if username and password:
             self.user = auth.authenticate(username=username, password=password)
@@ -174,9 +174,9 @@ class ForgotPasswordForm(forms.Form):
         super(ForgotPasswordForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        if "username" in self.cleaned_data and "username_confirmation" in self.cleaned_data:
-            username = self.cleaned_data["username"]
-            username_confirmation = self.cleaned_data["username_confirmation"]
+        if 'username' in self.cleaned_data and 'username_confirmation' in self.cleaned_data:
+            username = self.cleaned_data['username']
+            username_confirmation = self.cleaned_data['username_confirmation']
             if username != username_confirmation:
                 raise forms.ValidationError("Email addresses do not match.")
         return self.cleaned_data
@@ -188,8 +188,8 @@ class ForgotPasswordForm(forms.Form):
         reset_password_code = None
 
         try:
-            user = User.objects.get(username=self.cleaned_data["username"])
-            code_type = CodeType.objects.get(type="RESET_PASSWORD")
+            user = User.objects.get(username=self.cleaned_data['username'])
+            code_type = CodeType.objects.get(type='RESET_PASSWORD')
             reset_password_code = reset_password_code or uuid.uuid4().hex
             Code.objects.create(user=user, type=code_type, code=reset_password_code)
 
@@ -199,7 +199,7 @@ class ForgotPasswordForm(forms.Form):
         return reset_password_code
 
     def get_reset_password_url(self, reset_password_code):
-        url = self.request.build_absolute_uri(reverse("accounts.views.reset_password", args=[reset_password_code]))
+        url = self.request.build_absolute_uri(reverse('accounts.views.reset_password', args=[reset_password_code]))
         return url.replace("http:", "https:")
 
     
@@ -211,13 +211,13 @@ class ForgotPasswordForm(forms.Form):
 
         if reset_password_code:
             context = context or Context()
-            context["reset_password_url"] = self.get_reset_password_url(reset_password_code)
-            to = self.cleaned_data["username"]
+            context['reset_password_url'] = self.get_reset_password_url(reset_password_code)
+            to = self.cleaned_data['username']
 
             text_content = text_template.render(context)
             html_content = html_template.render(context)
             msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-            msg.attach_alternative(html_content, "text/html")
+            msg.attach_alternative(html_content, 'text/html')
             msg.send()
 
 class ResetPasswordForm(forms.Form):
@@ -229,16 +229,16 @@ class ResetPasswordForm(forms.Form):
         super(ResetPasswordForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        if "password" in self.cleaned_data and "password_confirmation" in self.cleaned_data:
-            password = self.cleaned_data["password"]
-            password_confirmation = self.cleaned_data["password_confirmation"]
+        if 'password' in self.cleaned_data and 'password_confirmation' in self.cleaned_data:
+            password = self.cleaned_data['password']
+            password_confirmation = self.cleaned_data['password_confirmation']
             if password != password_confirmation:
                 raise forms.ValidationError("Passwords do not match.")
         
         #Validate the reset password code
         #If the code is not found in the database raise an exception
         try:
-            Code.objects.get(type__type="RESET_PASSWORD", code=self.reset_password_code, used=None)
+            Code.objects.get(type__type='RESET_PASSWORD', code=self.reset_password_code, used=None)
         except ObjectDoesNotExist:
             raise forms.ValidationError("Invalid reset password code.")
         return self.cleaned_data
@@ -247,8 +247,8 @@ class ResetPasswordForm(forms.Form):
         if self.errors:
             raise ValueError("Unable to reset password for invalid reset password form")
 
-        code = Code.objects.get(type__type="RESET_PASSWORD", code=self.reset_password_code, used=None)
-        code.user.set_password(self.cleaned_data["password"])
+        code = Code.objects.get(type__type='RESET_PASSWORD', code=self.reset_password_code, used=None)
+        code.user.set_password(self.cleaned_data['password'])
         code.user.save()
 
         code.used = datetime.datetime.now()
@@ -293,7 +293,7 @@ class ProfilePasswordForm(forms.Form):
         super(ProfilePasswordForm, self).__init__(*args, **kwargs)
 
     def clean_current_password(self):
-        current_password = self.cleaned_data["current_password"]
+        current_password = self.cleaned_data['current_password']
         if not self.user.check_password(current_password):
             raise forms.ValidationError("Incorrect password")
         return current_password
@@ -301,9 +301,9 @@ class ProfilePasswordForm(forms.Form):
     def clean(self):
         clean_data = super(ProfilePasswordForm, self).clean()
         # Only validate the new password values if both fields are valid so far
-        if "new_password" in clean_data and "password_confirmation" in clean_data:
-            new_password = clean_data["new_password"]
-            password_confirmation = clean_data["password_confirmation"]
+        if 'new_password' in clean_data and 'password_confirmation' in clean_data:
+            new_password = clean_data['new_password']
+            password_confirmation = clean_data['password_confirmation']
             if new_password != password_confirmation:
                 raise forms.ValidationError("New password values do not match")
         return clean_data
@@ -323,8 +323,8 @@ class ProfileChatsForm(forms.Form):
         super(ProfileChatsForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
-        self.user_profile.email_upcoming_chats = self.cleaned_data["email_upcoming_chats"]
-        self.user_profile.email_new_chat_topics = self.cleaned_data["email_new_chat_topics"]
+        self.user_profile.email_upcoming_chats = self.cleaned_data['email_upcoming_chats']
+        self.user_profile.email_new_chat_topics = self.cleaned_data['email_new_chat_topics']
         if commit:
             self.user_profile.save()
         return self.user_profile
@@ -345,8 +345,8 @@ class ProfileJobsForm(forms.Form):
 
     def save(self, commit=True):
         job_prefs, created = Prefs.objects.get_or_create(user=self.user)
-        job_prefs.email_new_job_opps=self.cleaned_data["email_new_job_opps"]
-        job_prefs.salary_start=self.cleaned_data["salary_start"]
+        job_prefs.email_new_job_opps=self.cleaned_data['email_new_job_opps']
+        job_prefs.salary_start=self.cleaned_data['salary_start']
         if commit:
             job_prefs.save()
         return self.user

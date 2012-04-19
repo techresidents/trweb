@@ -38,12 +38,12 @@ def login(request):
     #build absolute url and replace https with http
     redirect_to = request.build_absolute_uri(redirect_to).replace("https:", "http:")
 
-    if request.method == "POST":
+    if request.method == 'POST':
         form = forms.LoginForm(data=request.POST)
         if form.is_valid():
             auth.login(request, form.get_user())
 
-            if not request.POST.get("remember_me", None):
+            if not request.POST.get('remember_me', None):
                 request.session.set_expiry(0)
 
             if request.session.test_cookie_worked():
@@ -54,14 +54,14 @@ def login(request):
         form = forms.LoginForm()
     
     context = {
-            "form": form,
-            "next": redirect_to,
+            'form': form,
+            'next': redirect_to,
             }
 
     return render_to_response('accounts/login.html', context,  context_instance=RequestContext(request))
 
 def register(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         user_form = forms.RegisterUserForm(request, data=request.POST)
 
         if user_form.is_valid():
@@ -83,7 +83,7 @@ def register(request):
         user_form = forms.RegisterUserForm(request)
     
     context = {
-            "user_form" : user_form,
+            'user_form' : user_form,
             }
 
     return render_to_response('accounts/register.html', context,  context_instance=RequestContext(request))
@@ -91,14 +91,14 @@ def register(request):
 def register_activate(request, registration_code):
     success = False
 
-    form = forms.RegistrationActivationForm(allow_reactivation=True, data={"registration_code": registration_code})
+    form = forms.RegistrationActivationForm(allow_reactivation=True, data={'registration_code': registration_code})
 
     if form.is_valid():
         form.activate()
         success = True
 
     context = {
-            "success": success,
+            'success': success,
             }
 
     return render_to_response('accounts/register_activate.html', context,  context_instance=RequestContext(request))
@@ -106,7 +106,7 @@ def register_activate(request, registration_code):
 def forgot_password(request):
     success = False
 
-    if request.method == "POST":
+    if request.method == 'POST':
         form = forms.ForgotPasswordForm(request, data=request.POST)
         if form.is_valid():
 
@@ -124,8 +124,8 @@ def forgot_password(request):
         form = forms.ForgotPasswordForm()
     
     context = {
-            "form": form,
-            "success": success,
+            'form': form,
+            'success': success,
             }
 
     return render_to_response('accounts/forgot_password.html', context,  context_instance=RequestContext(request))
@@ -133,7 +133,7 @@ def forgot_password(request):
 def reset_password(request, reset_password_code):
     success = False
 
-    if request.method == "POST":
+    if request.method == 'POST':
         form = forms.ResetPasswordForm(reset_password_code, data=request.POST)
         if form.is_valid():
             form.reset_password()
@@ -142,9 +142,9 @@ def reset_password(request, reset_password_code):
         form = forms.ResetPasswordForm(reset_password_code)
     
     context = {
-            "form": form,
-            "reset_password_code": reset_password_code,
-            "success": success
+            'form': form,
+            'reset_password_code': reset_password_code,
+            'success': success
             }
 
     return render_to_response('accounts/reset_password.html', context,  context_instance=RequestContext(request))
@@ -162,12 +162,12 @@ def profile(request):
 
 @login_required
 def profile_account(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = forms.ProfileAccountForm(request, data=request.POST)
         if form.is_valid():
             form.save(commit=True)
-            messages.success(request, 'Save successful')
-            return HttpResponseRedirect(reverse("accounts.views.profile_account"))
+            messages.success(request, "Save successful")
+            return HttpResponseRedirect(reverse('accounts.views.profile_account'))
     else:
         user = request.user
         user_profile = request.user.get_profile()
@@ -187,35 +187,35 @@ def profile_account(request):
         form = forms.ProfileAccountForm(request, data=form_data)
 
     context = {
-        "form": form
+        'form': form
     }
 
     return render_to_response('accounts/profile_account.html', context,  context_instance=RequestContext(request))
 
 @login_required
 def profile_password(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = forms.ProfilePasswordForm(request, data=request.POST)
         if form.is_valid():
             form.save(commit=True)
-            messages.success(request, 'Password successfully changed')
-            return HttpResponseRedirect(reverse("accounts.views.profile_password"))
+            messages.success(request, "Password successfully changed")
+            return HttpResponseRedirect(reverse('accounts.views.profile_password'))
     else:
         form = forms.ProfilePasswordForm(request)
 
     context = {
-        "form": form
+        'form': form
     }
     return render_to_response('accounts/profile_password.html', context, context_instance=RequestContext(request))
 
 @login_required
 def profile_chats(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = forms.ProfileChatsForm(request, data=request.POST)
         if form.is_valid():
             form.save(commit=True)
-            messages.success(request, 'Save successful')
-            return HttpResponseRedirect(reverse("accounts.views.profile_chats"))
+            messages.success(request, "Save successful")
+            return HttpResponseRedirect(reverse('accounts.views.profile_chats'))
     else:
         user_profile = request.user.get_profile()
         form_data = {
@@ -225,19 +225,19 @@ def profile_chats(request):
         form = forms.ProfileChatsForm(request, data=form_data)
 
     context = {
-        "form": form
+        'form': form
     }
 
     return render_to_response('accounts/profile_chats.html', context, context_instance=RequestContext(request))
 
 @login_required
 def profile_jobs(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = forms.ProfileJobsForm(request, data=request.POST)
         if form.is_valid():
             form.save(commit=True)
-            messages.success(request, 'Save successful')
-            return HttpResponseRedirect(reverse("accounts.views.profile_jobs"))
+            messages.success(request, "Save successful")
+            return HttpResponseRedirect(reverse('accounts.views.profile_jobs'))
     else:
         try:
             prefs = Prefs.objects.get(user=request.user)
@@ -251,7 +251,7 @@ def profile_jobs(request):
         form = forms.ProfileJobsForm(request, data=form_data)
 
     context = {
-        "form": form
+        'form': form
     }
 
     return render_to_response('accounts/profile_jobs.html', context, context_instance=RequestContext(request))
@@ -293,9 +293,9 @@ def profile_skills_frameworks(request):
     return render_to_response('accounts/profile_skills_frameworks.html', context, context_instance=RequestContext(request))
 
 
-""" Pulled out the code that was common between the language_skills
-    and framework_skill views. """
 def profile_skills_common(request, technology_type_name):
+    """ Pulled out the code that was common between the language_skills
+        and framework_skill views. """
 
     # Init user's skills
     json_skills = '[]'
@@ -349,10 +349,10 @@ def profile_skills_common(request, technology_type_name):
         json_skills = json.dumps(default_skills)
 
     context = {
-        "expertise_options": expertise_options,
-        "yrs_experience_options": yrs_experience_options,
-        "json_autocomplete_skills": json_autocomplete_skills,
-        "json_skills": json_skills
+        'expertise_options': expertise_options,
+        'yrs_experience_options': yrs_experience_options,
+        'json_autocomplete_skills': json_autocomplete_skills,
+        'json_skills': json_skills
     }
 
     return context
