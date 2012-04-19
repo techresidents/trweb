@@ -29,29 +29,7 @@
     <div class="container">
         <div class="row">
 
-            <!--Sidebar content-->
-            <div class="span3">
-                <div class="well">
-                    <ul class="nav nav-list">
-                        <li class="nav-header">Account</li>
-                        <li><a href="{% url 'accounts.views.profile_account' %}"><i class="icon-user"></i>Account</a></li>
-                        <li><a href="{% url 'accounts.views.profile_password' %}"><i class="icon-lock"></i>Password</a></li>
-                        <li><a href="{% url 'accounts.views.profile_chats' %}"><i class="icon-info-sign"></i>Chats</a></li>
-                        <li><a href="{% url 'accounts.views.profile_jobs' %}"><i class="icon-road"></i>Jobs</a></li>
-
-                        <li class="nav-header">Technology</li>
-                        <ul class="nav nav-list">
-                            <li class="active"><a href="{% url 'accounts.views.profile_skills_languages' %}">Languages</a></li>
-                            <li><a href="{% url 'accounts.views.profile_skills_frameworks' %}">Frameworks</a></li>
-                            <li><a href="#">Persistence</a></li>
-                        </ul>
-                    </ul>
-                </div>
-
-                <div class="well">
-
-                </div>
-            </div> <!-- end span3 -->
+            {% include 'accounts/navigation_panel.html' %}
 
             <div class="span9">
                 <div class="well">
@@ -70,7 +48,7 @@
 
                     <div id="skill-add" class="control-group ">
                         <label for="skill-input">Other Language?</label>
-                        <input id="skill-input" data-source='{{ json_autocomplete_languages }}' maxlength="1024" type="text" name="language">
+                        <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off">
                         <button id="skill-add-button" type="button" class="btn-primary">Add</button>
                     </div>
 
@@ -78,7 +56,7 @@
                         <fieldset>
                             {% csrf_token %}
 
-                            <input id="skill-form-input" type="hidden" name="language_skills"/>
+                            <input id="skill-form-input" type="hidden" name="skills_form_data"/>
 
                             <div class="control-group">
                                 <div class="controls">
@@ -87,6 +65,22 @@
                             </div>
                         </fieldset>
                      </form>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-error">
+                            {% for error in form.non_field_errors%}
+                                <span>{{error}}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if field.errors %}
+                        <div class="alert alert-error">
+                            {% for error in field.errors %}
+                                <span>{{error}}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
 
                     {% if messages %}
                         {% for message in messages %}
@@ -110,7 +104,7 @@
     <!-- TODO: add proper escapejs filter that works with json -->
     {% autoescape off %}
         <script>
-            var data = {{json_language_skills}};
+            var data = {{json_skills}};
         </script>
     {% endautoescape %}
 

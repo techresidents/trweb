@@ -5,7 +5,7 @@
 {% block title %}Profile{% endblock %}
 
 {% block extrahead %}
-    <link href="{{STATIC_URL}}css/profile.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}css/profile_skills_table.css" rel="stylesheet">
     <script src="{{STATIC_URL}}js/3ps/jquery/jquery.js"></script>
     <script src="{{STATIC_URL}}js/3ps/bootstrap/bootstrap.js"></script>
     <script>
@@ -29,52 +29,40 @@
     <div class="container">
         <div class="row">
 
-            <!--Sidebar content-->
-            <div class="span3">
-                <div class="well">
-                    <ul class="nav nav-list">
-                        <li class="nav-header">Account</li>
-                        <li><a href="{% url 'accounts.views.profile_account' %}"><i class="icon-user"></i>Account</a></li>
-                        <li><a href="{% url 'accounts.views.profile_password' %}"><i class="icon-lock"></i>Password</a></li>
-                        <li><a href="{% url 'accounts.views.profile_chats' %}"><i class="icon-info-sign"></i>Chats</a></li>
-                        <li><a href="{% url 'accounts.views.profile_jobs' %}"><i class="icon-road"></i>Jobs</a></li>
-
-                        <li class="nav-header">Technology</li>
-                        <ul class="nav nav-list">
-                            <li><a href="{% url 'accounts.views.profile_skills_languages' %}">Languages</a></li>
-                            <li class="active"><a href="{% url 'accounts.views.profile_skills_frameworks' %}">Frameworks</a></li>
-                            <li><a href="#">Persistence</a></li>
-                        </ul>
-                    </ul>
-                </div>
-
-                <div class="well">
-
-                </div>
-            </div> <!-- end span3 -->
+            {% include 'accounts/navigation_panel.html' %}
 
             <div class="span9">
                 <div class="well">
+                    <fieldset>
+                        <legend>Update your skills with frameworks</legend>
+                    </fieldset>
 
                     <div id="table-wrap">
-                        <table id="table" class="table table-striped table-condensed">
-                            <thead>
+                        <table id="table" class="table">
+                            <thead class="skill-list-header">
                             <th>Framework</th>
-                            <th>Expertise</th>
-                            <th>Years Pro</th>
+                            <th>Expertise Level</th>
+                            <th>Yrs Professional Experience</th>
                             </thead>
-                            <tbody id="skill-list">
+                            <tbody id="skill-list" class="skill-list-body">
                             </tbody>
                         </table>
                     </div>
 
-                    <div id="skill-add" class="control-group ">
-                        <label for="skill-input">Other Language?</label>
-                        <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language">
-                        <button id="skill-add-button" type="button" class="btn-primary">Add</button>
+                    <div id="skill-add" class="control-group">
+                        <label for="skill-input">Add Framework</label>
+                        <div class="controls">
+                            <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off">
+                            <button id="skill-add-button" type="button" class="btn-primary">Add</button>
+                        </div>
+                        <div class="controls">
+                            <span class="help">
+                                <a href="{% url 'accounts.views.forgot_password' %}">Framework not listed?</a> <!-- TODO decide what to do here. -->
+                            </span>
+                        </div>
                     </div>
 
-                    <form id="skill-form" class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_skills_frameworks' %}"> <!--TODO uncommon code -->
+                    <form id="skill-form" class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_skills_frameworks' %}">
                         <fieldset>
                             {% csrf_token %}
 
@@ -87,6 +75,22 @@
                             </div>
                         </fieldset>
                     </form>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-error">
+                            {% for error in form.non_field_errors%}
+                                <span>{{error}}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if field.errors %}
+                        <div class="alert alert-error">
+                            {% for error in field.errors %}
+                                <span>{{error}}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
 
                     {% if messages %}
                         {% for message in messages %}

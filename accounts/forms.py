@@ -33,14 +33,14 @@ class RegisterUserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ("first_name", "last_name", "username",)
+        fields = ('first_name', 'last_name', 'username',)
 
     def __init__(self, request=None, *args, **kwargs):
         self.request = request
         super(RegisterUserForm, self).__init__(*args, **kwargs)
     
     def clean_username(self):
-        username = self.cleaned_data["username"]
+        username = self.cleaned_data['username']
         try:
             User.objects.get(username=username)
         except User.DoesNotExist:
@@ -49,17 +49,17 @@ class RegisterUserForm(forms.ModelForm):
 
 
     def clean(self):
-        if "password" in self.cleaned_data and "password_confirmation" in self.cleaned_data:
-            password = self.cleaned_data["password"]
-            password_confirmation = self.cleaned_data["password_confirmation"]
+        if 'password' in self.cleaned_data and 'password_confirmation' in self.cleaned_data:
+            password = self.cleaned_data['password']
+            password_confirmation = self.cleaned_data['password_confirmation']
             if password != password_confirmation:
                 raise forms.ValidationError("Passwords do not match.")
         return self.cleaned_data
     
     def save(self, commit=True):
         user = super(RegisterUserForm, self).save(commit=False)
-        user.email = self.cleaned_data["username"]
-        user.set_password(self.cleaned_data["password"])
+        user.email = self.cleaned_data['username']
+        user.set_password(self.cleaned_data['password'])
         if commit:
             user.save()
         return user
@@ -68,8 +68,8 @@ class RegisterUserForm(forms.ModelForm):
         if self.errors:
             raise ValueError("Unable to create registration code for invalid register form")
 
-        user = User.objects.get(username=self.cleaned_data["username"])
-        code_type = CodeType.objects.get(type="REGISTRATION")
+        user = User.objects.get(username=self.cleaned_data['username'])
+        code_type = CodeType.objects.get(type='REGISTRATION')
         registration_code = registration_code or uuid.uuid4().hex
         Code.objects.create(user=user, type=code_type, code=registration_code)
 
@@ -87,13 +87,13 @@ class RegisterUserForm(forms.ModelForm):
         registration_code = registration_code or self.create_registration_code()
 
         context = context or Context()
-        context["activation_url"] = self.get_activation_url(registration_code)
-        to = self.cleaned_data["username"]
+        context['activation_url'] = self.get_activation_url(registration_code)
+        to = self.cleaned_data['username']
 
         text_content = text_template.render(context)
         html_content = html_template.render(context)
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-        msg.attach_alternative(html_content, "text/html")
+        msg.attach_alternative(html_content, 'text/html')
         msg.send()
 
 class RegistrationActivationForm(forms.Form):
@@ -109,12 +109,12 @@ class RegistrationActivationForm(forms.Form):
         #Validate the registration code
         #If the code is not found in the database raise an exception
         try:
-            registration_code = self.cleaned_data["registration_code"]
+            registration_code = self.cleaned_data['registration_code']
 
             if self.allow_reactivation:
-                Code.objects.get(type__type="REGISTRATION", code=registration_code)
+                Code.objects.get(type__type='REGISTRATION', code=registration_code)
             else:
-                Code.objects.get(type__type="REGISTRATION", code=registration_code, used=None)
+                Code.objects.get(type__type='REGISTRATION', code=registration_code, used=None)
 
         except ObjectDoesNotExist:
             raise forms.ValidationError("Invalid registration code.")
@@ -125,9 +125,9 @@ class RegistrationActivationForm(forms.Form):
         if self.errors:
             raise ValueError("Unable to activate invalid registration activation form")
         
-        registration_code = self.cleaned_data["registration_code"]
+        registration_code = self.cleaned_data['registration_code']
 
-        code = Code.objects.get(type__type="REGISTRATION", code=registration_code)
+        code = Code.objects.get(type__type='REGISTRATION', code=registration_code)
 
         if not code.used:
             code.used = datetime.datetime.now()
@@ -144,8 +144,8 @@ class LoginForm(forms.Form):
         super(LoginForm, self).__init__(*args, **kwargs)
     
     def clean(self):
-        username = self.cleaned_data.get("username")
-        password = self.cleaned_data.get("password")
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
 
         if username and password:
             self.user = auth.authenticate(username=username, password=password)
@@ -174,9 +174,9 @@ class ForgotPasswordForm(forms.Form):
         super(ForgotPasswordForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        if "username" in self.cleaned_data and "username_confirmation" in self.cleaned_data:
-            username = self.cleaned_data["username"]
-            username_confirmation = self.cleaned_data["username_confirmation"]
+        if 'username' in self.cleaned_data and 'username_confirmation' in self.cleaned_data:
+            username = self.cleaned_data['username']
+            username_confirmation = self.cleaned_data['username_confirmation']
             if username != username_confirmation:
                 raise forms.ValidationError("Email addresses do not match.")
         return self.cleaned_data
@@ -188,8 +188,8 @@ class ForgotPasswordForm(forms.Form):
         reset_password_code = None
 
         try:
-            user = User.objects.get(username=self.cleaned_data["username"])
-            code_type = CodeType.objects.get(type="RESET_PASSWORD")
+            user = User.objects.get(username=self.cleaned_data['username'])
+            code_type = CodeType.objects.get(type='RESET_PASSWORD')
             reset_password_code = reset_password_code or uuid.uuid4().hex
             Code.objects.create(user=user, type=code_type, code=reset_password_code)
 
@@ -199,7 +199,7 @@ class ForgotPasswordForm(forms.Form):
         return reset_password_code
 
     def get_reset_password_url(self, reset_password_code):
-        url = self.request.build_absolute_uri(reverse("accounts.views.reset_password", args=[reset_password_code]))
+        url = self.request.build_absolute_uri(reverse('accounts.views.reset_password', args=[reset_password_code]))
         return url.replace("http:", "https:")
 
     
@@ -211,13 +211,13 @@ class ForgotPasswordForm(forms.Form):
 
         if reset_password_code:
             context = context or Context()
-            context["reset_password_url"] = self.get_reset_password_url(reset_password_code)
-            to = self.cleaned_data["username"]
+            context['reset_password_url'] = self.get_reset_password_url(reset_password_code)
+            to = self.cleaned_data['username']
 
             text_content = text_template.render(context)
             html_content = html_template.render(context)
             msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-            msg.attach_alternative(html_content, "text/html")
+            msg.attach_alternative(html_content, 'text/html')
             msg.send()
 
 class ResetPasswordForm(forms.Form):
@@ -229,16 +229,16 @@ class ResetPasswordForm(forms.Form):
         super(ResetPasswordForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        if "password" in self.cleaned_data and "password_confirmation" in self.cleaned_data:
-            password = self.cleaned_data["password"]
-            password_confirmation = self.cleaned_data["password_confirmation"]
+        if 'password' in self.cleaned_data and 'password_confirmation' in self.cleaned_data:
+            password = self.cleaned_data['password']
+            password_confirmation = self.cleaned_data['password_confirmation']
             if password != password_confirmation:
                 raise forms.ValidationError("Passwords do not match.")
         
         #Validate the reset password code
         #If the code is not found in the database raise an exception
         try:
-            Code.objects.get(type__type="RESET_PASSWORD", code=self.reset_password_code, used=None)
+            Code.objects.get(type__type='RESET_PASSWORD', code=self.reset_password_code, used=None)
         except ObjectDoesNotExist:
             raise forms.ValidationError("Invalid reset password code.")
         return self.cleaned_data
@@ -247,8 +247,8 @@ class ResetPasswordForm(forms.Form):
         if self.errors:
             raise ValueError("Unable to reset password for invalid reset password form")
 
-        code = Code.objects.get(type__type="RESET_PASSWORD", code=self.reset_password_code, used=None)
-        code.user.set_password(self.cleaned_data["password"])
+        code = Code.objects.get(type__type='RESET_PASSWORD', code=self.reset_password_code, used=None)
+        code.user.set_password(self.cleaned_data['password'])
         code.user.save()
 
         code.used = datetime.datetime.now()
@@ -293,7 +293,7 @@ class ProfilePasswordForm(forms.Form):
         super(ProfilePasswordForm, self).__init__(*args, **kwargs)
 
     def clean_current_password(self):
-        current_password = self.cleaned_data["current_password"]
+        current_password = self.cleaned_data['current_password']
         if not self.user.check_password(current_password):
             raise forms.ValidationError("Incorrect password")
         return current_password
@@ -301,9 +301,9 @@ class ProfilePasswordForm(forms.Form):
     def clean(self):
         clean_data = super(ProfilePasswordForm, self).clean()
         # Only validate the new password values if both fields are valid so far
-        if "new_password" in clean_data and "password_confirmation" in clean_data:
-            new_password = clean_data["new_password"]
-            password_confirmation = clean_data["password_confirmation"]
+        if 'new_password' in clean_data and 'password_confirmation' in clean_data:
+            new_password = clean_data['new_password']
+            password_confirmation = clean_data['password_confirmation']
             if new_password != password_confirmation:
                 raise forms.ValidationError("New password values do not match")
         return clean_data
@@ -323,8 +323,8 @@ class ProfileChatsForm(forms.Form):
         super(ProfileChatsForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
-        self.user_profile.email_upcoming_chats = self.cleaned_data["email_upcoming_chats"]
-        self.user_profile.email_new_chat_topics = self.cleaned_data["email_new_chat_topics"]
+        self.user_profile.email_upcoming_chats = self.cleaned_data['email_upcoming_chats']
+        self.user_profile.email_new_chat_topics = self.cleaned_data['email_new_chat_topics']
         if commit:
             self.user_profile.save()
         return self.user_profile
@@ -345,119 +345,13 @@ class ProfileJobsForm(forms.Form):
 
     def save(self, commit=True):
         job_prefs, created = Prefs.objects.get_or_create(user=self.user)
-        job_prefs.email_new_job_opps=self.cleaned_data["email_new_job_opps"]
-        job_prefs.salary_start=self.cleaned_data["salary_start"]
+        job_prefs.email_new_job_opps=self.cleaned_data['email_new_job_opps']
+        job_prefs.salary_start=self.cleaned_data['salary_start']
         if commit:
             job_prefs.save()
         return self.user
 
     # TODO
-
-class ProfileLanguageSkillsForm(forms.Form):
-    language_skills = JSONField(max_length=2048, widget=forms.HiddenInput, required=True)
-
-    # JSON keys
-    JSON_LANGUAGE_NAME = 'name'
-    JSON_EXPERTISE = 'expertise'
-    JSON_YRS_EXPERIENCE = 'yrs_experience'
-
-    # numerical constants
-    MAX_YRS_EXPERIENCE = 21 #This represents the 20+ yrs experience selection in the UI.
-                            #TODO is this too coupled to value in the UI?
-
-    def __init__(self, request=None, *args, **kwargs):
-        self.request = request
-        super(ProfileLanguageSkillsForm, self).__init__(*args, **kwargs)
-
-    def clean(self):
-        super(ProfileLanguageSkillsForm, self).clean()
-        language_skills = self.cleaned_data.get('language_skills')
-
-        # Verify we have some data to validate
-        if language_skills is None:
-            raise forms.ValidationError("Invalid language data")
-
-        for skill in language_skills:
-            # Verify we have a name attribute
-            skill_name = skill[self.JSON_LANGUAGE_NAME]
-            if skill_name:
-                # if we have a name attribute, verify that it's valid
-                try:
-                    Technology.objects.get(name=skill_name)
-                except Technology.DoesNotExist:
-                    raise forms.ValidationError("Language name value is invalid")
-            else:
-                raise forms.ValidationError("Language name field required")
-
-            # Verify we have an expertise level attribute
-            skill_expertise = skill[self.JSON_EXPERTISE]
-            if skill_expertise:
-                # if we have an expertise attribute, verify that it's valid
-                try:
-                    ExpertiseType.objects.get(name=skill_expertise)
-                except ExpertiseType.DoesNotExist:
-                    raise forms.ValidationError("Language expertise value is invalid")
-            else:
-                raise forms.ValidationError("Language expertise field required")
-
-            # Verify we have a years_experience attribute
-            skill_yrs_experience = skill[self.JSON_YRS_EXPERIENCE]
-            if skill_yrs_experience is not None:
-                # if we have a years_experience attribute, verify that it's valid
-                if not type(skill_yrs_experience == int):
-                    if skill_yrs_experience < 0 or \
-                       skill_yrs_experience > self.MAX_YRS_EXPERIENCE:
-                        raise forms.ValidationError("Language years experience value is invalid")
-            else:
-                raise forms.ValidationError("Language years experience field required")
-
-        return self.cleaned_data
-
-    def save(self, commit=True):
-        print 'called save'
-        # retrieve posted data
-        updated_language_skills = self.cleaned_data.get('language_skills')
-
-        # Before updating the user's language skills, save the old skills to check for deleted skills
-        language_technology_type = TechnologyType.objects.get(name='Language')
-        previous_language_skills = Skill.objects.filter(user=self.request.user, technology__type=language_technology_type)
-        if commit:
-            for previous_skill in previous_language_skills:
-                wasRemoved = True
-                for updated_skill in updated_language_skills:
-                    if previous_skill.technology.name == updated_skill[self.JSON_LANGUAGE_NAME]:
-                        print previous_skill.technology.name
-                        wasRemoved = False
-                        break
-                if wasRemoved:
-                    previous_skill.delete() #TODO we're deleting even though it's possible this is junk data.
-
-        # Update user's skills based on data posted
-        for skill in updated_language_skills:
-            # retrieve the existing skill, or create a new skill if one doesn't exist
-            user_skill = None
-            try:
-                technology = Technology.objects.get(name=skill[self.JSON_LANGUAGE_NAME])
-                user_skill = Skill.objects.get(user=self.request.user, technology=technology)
-            except Technology.DoesNotExist:
-                # TODO Log error
-                user_skill = None
-            except Skill.DoesNotExist:
-                user_skill = Skill(
-                    user=self.request.user,
-                    technology=technology,
-                    expertise_type=ExpertiseType.objects.get(name='None'),
-                    yrs_experience=0
-                )
-            # update skill object with posted data
-            if user_skill is not None:
-                user_skill.yrs_experience = skill[self.JSON_YRS_EXPERIENCE]
-                user_skill.expertise_type = ExpertiseType.objects.get(name=skill[self.JSON_EXPERTISE]) #TODO catch?
-                if commit:
-                    user_skill.save()
-
-        return self.request.user
-
 
 class ProfileSkillsForm(forms.Form):
     skills_form_data = JSONField(max_length=2048, widget=forms.HiddenInput, required=True)
@@ -482,18 +376,23 @@ class ProfileSkillsForm(forms.Form):
 
         # Verify we have some data to validate
         if cleaned_skills_data is None:
-            print 'no data being passed in'
             raise forms.ValidationError("Invalid Skill data")
+
+        # Perform two db queries up front to prevent calling into the
+        # the db to validate each skill in the form data
+        valid_technologies = Technology.objects.filter(type__name=self.technology_type_name)
+        valid_technology_list = list(valid_technologies.values('name'))
+        valid_technology_names = [t['name'] for t in valid_technology_list]
+        valid_expertise = ExpertiseType.objects.all()
+        valid_expertise_list = list(valid_expertise.values('name'))
+        valid_expertise_names = [e['name'] for e in valid_expertise_list]
 
         for skill in cleaned_skills_data:
             # Verify we have a name attribute
             skill_name = skill[self.JSON_SKILL_NAME]
             if skill_name:
                 # if we have a name attribute, verify that it's valid
-                try:
-                    Technology.objects.get(name=skill_name)
-                    #TODO should ensure that technology is of correct type as well.
-                except Technology.DoesNotExist:
+                if not skill_name in valid_technology_names:
                     raise forms.ValidationError("Skill name value is invalid")
             else:
                 raise forms.ValidationError("Skill name field required")
@@ -502,9 +401,7 @@ class ProfileSkillsForm(forms.Form):
             skill_expertise = skill[self.JSON_EXPERTISE]
             if skill_expertise:
                 # if we have an expertise attribute, verify that it's valid
-                try:
-                    ExpertiseType.objects.get(name=skill_expertise)
-                except ExpertiseType.DoesNotExist:
+                if not skill_expertise in valid_expertise_names:
                     raise forms.ValidationError("Skill expertise value is invalid")
             else:
                 raise forms.ValidationError("Skill expertise field required")
