@@ -58,6 +58,8 @@ def chat(request,chat_session_id):
         chat_user.token = token
         chat_user.save()
     
+    users_by_id = [user for user in chat_session.users.order_by('id')]
+
     # Create JSON user objects and pass down to the javascript app through template
     users = []
     for user in chat_session.users.all():
@@ -70,6 +72,9 @@ def chat(request,chat_session_id):
             users.insert(0, user)
         else:
             users.append(user)
+
+    print users_by_id
+    print users
 
     # Update the session with active chat information to make it available to chatsvc
     request.session["chat_session"] = {
@@ -84,6 +89,7 @@ def chat(request,chat_session_id):
         'chat_api_key': settings.TOKBOX_API_KEY,
         'chat_session_token': chat_session.token,
         'chat_user_token': chat_user.token,
+        'users' : users_by_id,
         'users_json': json.dumps(users)
     }
     

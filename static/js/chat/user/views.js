@@ -2,9 +2,8 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'chat/models',
-    'chat/messages',
-], function($, _, Backbone, models, messages) {
+    'spin',
+], function($, _, Backbone, spin) {
 
     var ChatUserView = Backbone.View.extend({
             tagName: "div",
@@ -32,6 +31,7 @@ define([
                 this.chatSession.bind("stream:created", this.streamCreated, this);
                 this.chatSession.bind("stream:destroyed", this.streamDestroyed, this);
                 this.chatSession.bind("microphone:changed", this.microphoneChanged, this);
+
             },
 
             render: function() {
@@ -39,15 +39,27 @@ define([
                 //if we are conncted than tokbox will have replaced elements in 
                 //the chat-user-template with the video player, so we can no longer
                 //re-render it.
+                
                 if(!this.user.isConnected()) {
                     var json = this.model.toJSON();
                     var html = this.templateHeader(json) + this.template(json) + this.templateFooter(json);
-                    $(this.el).html(html);
-                    $(this.el).addClass(this.css);
+                    this.$el.html(html);
+                    this.$el.addClass(this.css);
+                    
+                    if(this.user.id == this.chatSession.getCurrentUser().id) {
+                        this.spinner = new spin.Spinner({left: 200, top: 100}).spin(this.el);
+                    }
+
                 } else {
+
+                    if(this.user.id == this.chatSession.getCurrentUser().id) {
+                        this.spinner.stop();
+                    }
+
                     this.$("#user" + this.user.id + "-header").html(this.templateHeader(this.model.toJSON()));
                     this.$("#user" + this.user.id + "-footer").html(this.templateFooter(this.model.toJSON()));
                 }
+
                 return this;
             },
 
@@ -60,11 +72,6 @@ define([
 
                 for(var i = 0; i < connections.length; i++) {
                     var connection = connections[i];
-                    console.log(connection.data);
-                    console.log(unescape(connection.data));
-                    //TODO remove when Tokbox fixes bug.
-                    connection.data = '{"id": 1}';
-                    console.log(connection.data);
                     if(JSON.parse(connection.data).id == this.user.id) {
                         return connection;
                     }
@@ -94,10 +101,14 @@ define([
 
                     var session = this.chatSession.getSession();
                     if(session.connection.connectionId == connection.connectionId) {
-                        session.publish(
-                            "user" + this.user.id,
-                            { width: 200, height: 200 }
-                        );
+                        var container = this.$('.chat-user-container');
+                        session.publish( "user" + this.user.id, {
+                                width: container.width(),
+                                height: container.height(),
+                                encodedWidth: container.width(),
+                                encodedHeight: container.height(),
+                                reportMicLevels: true
+                        });
                     } 
 
                     this.streamCreated(event);
@@ -122,14 +133,16 @@ define([
                 var stream = this.filterStreams(event.streams);
                 if(stream) {
                     var session = this.chatSession.getSession();
-                    
+                    this.user.setStreamId(stream.streamId);
+
                     if(stream.connection.connectionId != session.connection.connectionId) {
+                        var container = this.$('.chat-user-container');
                         session.subscribe(
                             stream,
                             "user" + this.user.id,
-                            { width: 200, height: 200 }
+                            { width: container.width(), height: container.height() }
                         );
-                    }
+                    } 
 
                     this.user.setPublishing(true);
                 }
@@ -143,6 +156,8 @@ define([
             },
 
             microphoneChanged: function(event) {
+                console.log(event.volume);
+                this.$('.chat-user-container').addStyle('speaking');
                 //console.log(event.volume);
                 //console.log(event.target.connection.data);
             }

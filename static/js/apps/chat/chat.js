@@ -2,12 +2,26 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'chat/models',
     'chat/agenda/views',
+    'chat/message/dispatch',
+    'chat/message/models',
+    'chat/session/models',
     'chat/tag/views',
+    'chat/user/models',
     'chat/user/views',
     'chat/whiteboard/views',
-], function($, _, Backbone, models, agenda, tag, user, whiteboard) {
+], function(
+    $,
+    _,
+    Backbone,
+    agenda,
+    dispatch,
+    message,
+    session,
+    tag,
+    user_models,
+    user_views,
+    whiteboard) {
 
 $(document).ready(function() {
     
@@ -16,22 +30,25 @@ $(document).ready(function() {
             el: $("#chatapp"),
 
             initialize: function() {
-                this.chatUsers = new models.ChatUserCollection();
+                this.chatUsers = new user_models.ChatUserCollection();
                 this.chatUsers.reset(this.options.data.users);
                 this.chatUsers.bind("change", this.changed, this);
                 
                 //create chat session (not yet connected)
-                this.chatSession = new models.ChatSession({
+                this.chatSession = new session.ChatSession({
                         apiKey: this.options.data.chatAPIKey,
                         sessionToken: this.options.data.chatSessionToken,
                         userToken: this.options.data.chatUserToken,
                         users: this.chatUsers
                 });
+
+                //store current user
+                user_models.currentUser = this.chatSession.getCurrentUser();
                 
                 //create a view for each user
-                this.chatUsers.each(function(userModel) {
-                    var chatUserView = new user.ChatUserView({
-                            model: userModel,
+                this.chatUsers.each(function(user) {
+                    var chatUserView = new user_views.ChatUserView({
+                            model: user,
                             id: user.id,
                             chatSession: this.chatSession,
                             css: 'span' + 12/this.chatUsers.length
@@ -41,11 +58,16 @@ $(document).ready(function() {
                 
                 //connect the chat session
                 this.chatSession.connect();
-
-
-                this.chatMessageCollection = new models.ChatMessageCollection(null, {
+                
+                //chat message collection
+                this.chatMessageCollection = new message.ChatMessageCollection(null, {
                         chatSessionToken: this.options.data.chatSessionToken,
                         userId: this.chatUsers.first().id
+                });
+
+                //dispatcher
+                this.dispatcher = new dispatch.Dispatcher({
+                        chatMessages: this.chatMessageCollection
                 });
                 
                 //create tag view

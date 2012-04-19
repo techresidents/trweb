@@ -2,9 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'chat/models',
-    'chat/messages',
-], function($, _, Backbone, models, messages) {
+], function($, _, Backbone) {
 
     var ChatAgendaTabView = Backbone.View.extend({
 

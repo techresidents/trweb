@@ -44,12 +44,12 @@ define([
         }, function(response) {
             params.success(JSON.parse(response.data), response.status);
             if(params.complete) {
-                params.complete();
+                params.complete(true, response);
             }
         }, function(response) {
             params.error(response.data.data, response.data.status);
             if(params.complete) {
-                params.complete();
+                params.complete(false, response);
             }
         }
         );

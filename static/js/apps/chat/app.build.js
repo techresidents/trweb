@@ -13,6 +13,7 @@
         Highcharts: 'loader/highcharts',
         easyXDM: 'loader/easyXDM',
         raphael: 'loader/raphael',
+        spin: 'loader/spin',
     }
 })
 

@@ -2,11 +2,9 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'chat/models',
-    'chat/messages',
     'whiteboard/views',
     'whiteboard/serialize',
-], function($, _, Backbone, models, messages, whiteboard, serialize) {
+], function($, _, Backbone, whiteboard, serialize) {
 
 
     var ChatWhiteboardView = whiteboard.WhiteboardView.extend({
@@ -38,6 +36,8 @@ define([
             onElementAdded: function(tool, element) {
                 whiteboard.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
 
+                /*
+
                 var header = new messages.MessageHeader({
                         chatSessionToken: this.chatSessionToken,
                         userId: this.userId
@@ -55,6 +55,7 @@ define([
 
                 message.save();
                 //element.remove();
+                */
             }
     });
 
