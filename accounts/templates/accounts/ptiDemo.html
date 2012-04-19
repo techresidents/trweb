@@ -1,0 +1,125 @@
+{% extends "menu_base.html" %}
+{% load url from future %}
+
+{% block title %}Tech Residents PTI Demo{% endblock %}
+
+{% block extrahead %}
+    <link href="{{STATIC_URL}}css/ptidemo.css" rel="stylesheet">
+    <script src="{{STATIC_URL}}js/3ps/jquery/jquery.js"></script>
+    <script>
+        $(document).ready(function(){
+
+            /**
+             * Function to format time string
+             * @param time
+             */
+            function appendLeadingZeroToTimeString(time) {
+                var timeStr;
+                if (time < 10) {
+                    timeStr = "0" + time;
+                } else {
+                    timeStr = time;
+                }
+                return timeStr;
+            }
+
+            /**
+             * Function to convert seconds to a time string mm:ss
+             * @param totalSeconds
+             */
+            function getTimeString(totalSeconds) {
+                var seconds = totalSeconds;
+                var minutes = Math.floor(seconds / 60);
+                seconds -= minutes * (60);
+                var timeStr = appendLeadingZeroToTimeString(minutes) + ":" + appendLeadingZeroToTimeString(seconds);
+                return timeStr;
+            }
+
+            /**
+             * Function to convert time string to seconds
+             * Expecting mm:ss
+             * @param timeString
+             */
+            function getSecs(timeString) {
+                var timeStringArray = timeString.split(":");
+                var minutes = parseInt(timeStringArray[0],10);
+                var seconds = parseInt(timeStringArray[1],10);
+                var ret = seconds + (minutes*60);
+                return ret;
+            }
+
+
+
+            // set button click listener on agenda items
+            $('.agendaItem').click(function(){
+                var that = this;
+                // handle highlighting of selected item
+                if (!($(this).hasClass("selected-agenda-item")))
+                {
+                    $('.agendaItem').removeClass("selected-agenda-item"); // remove current selection
+                    $(this).addClass("selected-agenda-item"); //select only this item
+
+                    // setup agenda timers
+                    var startCountdownTimer = function(){
+                        var interval = 1000; // 1 second in millis
+                        var countdownStep = 1; // 1 second decrement for UI
+                        var agendaItemTimeStr = $(that).find('.duration').html();
+                        var totalTimeInt = getSecs(agendaItemTimeStr);
+                        var intervalID = setInterval(function(){
+                            if (totalTimeInt > 0) {
+                                totalTimeInt -= countdownStep;
+                                var timeRemainingString = getTimeString(totalTimeInt);
+                                $(that).find('.duration').html(timeRemainingString);
+                            } else {
+                                alert("time's up!");
+                                clearInterval(intervalID);
+                            }
+                        }, interval);
+                    }();
+                }
+            });
+
+        }); //end ready
+    </script>
+{%endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="page-header">
+                <h1>PTI Demo</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <table id="agenda-topic-table" class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Duration</th>
+                    <th>Agenda Topic</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="agendaItem">
+                    <td class="duration">0:10</td>
+                    <td>Intros</td>
+                    <td>Introduce yourself. Provide brief background on your experiences.</td>
+                </tr>
+                <tr class="agendaItem">
+                    <td class="duration">7:00</td>
+                    <td>JVM</td>
+                    <td>What advantages does the JVM offer over X?</td>
+                </tr>
+                <tr class="agendaItem">
+                    <td class="duration">5:00</td>
+                    <td>Java Security</td>
+                    <td>What drawbacks exist when using the Java programming language compared to C?</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

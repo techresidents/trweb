@@ -149,7 +149,6 @@ def reset_password(request, reset_password_code):
 
     return render_to_response('accounts/reset_password.html', context,  context_instance=RequestContext(request))
 
-
 @login_required
 def logout(request):
     auth.logout(request)
@@ -292,10 +291,10 @@ def profile_skills_frameworks(request):
 
     return render_to_response('accounts/profile_skills_frameworks.html', context, context_instance=RequestContext(request))
 
-
 def profile_skills_common(request, technology_type_name):
     """ Pulled out the code that was common between the language_skills
-        and framework_skill views. """
+        and framework_skill views.
+    """
 
     # Init user's skills
     json_skills = '[]'
@@ -363,12 +362,4 @@ def ptidemo(request):
     return render_to_response('accounts/ptiDemo.html',  context_instance=RequestContext(request))
 
 
-    #TODO - temp
-    #technology = models.Technology.objects.get(name="Django")
-    #expertise_type = models.ExpertiseType.objects.get(name="Seasoned")
     #tmp = models.Skill.objects.filter(technology__name__iexact="Python", yrs_experience__gte=1).select_related("auth_user")
-    #for skill in tmp:
-    #    print skill.technology.name + ":" + str(skill.yrs_experience)
-    #    print skill.user.get_profile().developer_since
-    #user_skill = models.Skill(user=request.user, technology=technology, yrs_experience=2, expertise_type=expertise_type)
-    #user_skill.save()
