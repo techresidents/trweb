@@ -1,3 +1,16 @@
+INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Django', 1, True, '');
+INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Ruby on Rails', 1, True, '');
+INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Symfony', 1, True, '');
+INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Spring', 1, False, '');
+INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Struts', 1, False, '');
+INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Qt', 1, False, '');
+INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('.Net', 1, False, '');
+
+INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Zepto', 1, False, '');
+INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('DynamicX', 1, False, '');
+INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Sencha', 1, False, '');
+
+
 INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Assembly', 2, False, '');
 
 INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('C', 2, False, '');
@@ -63,6 +76,5 @@ INSERT INTO technology (name, type_id, is_profile_default, description) VALUES (
 INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Visual Basic', 2, False, '');
 
 
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Django', 1, False, '');
 INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Android', 3, False, '');
 INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('IDAPro', 4, False, '');

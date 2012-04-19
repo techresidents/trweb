@@ -280,9 +280,12 @@ def profile_skills_frameworks(request):
             form.save(commit=True)
             messages.success(request, "Save successful")
             return HttpResponseRedirect(reverse('accounts.views.profile_skills_frameworks'))
-
-    context = profile_skills_common(request, technology_type)
-    context['form'] = forms.ProfileSkillsForm(request,technology_type)
+        else:
+            context = profile_skills_common(request, technology_type)
+            context['form'] = form
+    else:
+        context = profile_skills_common(request, technology_type)
+        context['form'] = forms.ProfileSkillsForm(request,technology_type)
 
     return render_to_response('accounts/profile_skills_frameworks.html', context, context_instance=RequestContext(request))
 

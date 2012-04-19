@@ -376,7 +376,6 @@ class ProfileSkillsForm(forms.Form):
 
         # Verify we have some data to validate
         if cleaned_skills_data is None:
-            print 'no data being passed in'
             raise forms.ValidationError("Invalid Skill data")
 
         for skill in cleaned_skills_data:
@@ -386,6 +385,7 @@ class ProfileSkillsForm(forms.Form):
                 # if we have a name attribute, verify that it's valid
                 try:
                     Technology.objects.get(name=skill_name)
+                    #TODO get list of technologies once and check if item is in list
                     #TODO should ensure that technology is of correct type as well.
                 except Technology.DoesNotExist:
                     raise forms.ValidationError("Skill name value is invalid")

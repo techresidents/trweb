@@ -49,22 +49,22 @@
                         </table>
                     </div>
 
+                    <div id="skill-add" class="control-group">
+                        <label for="skill-input">Add Framework</label>
+                        <div class="controls">
+                            <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off">
+                            <button id="skill-add-button" type="button" class="btn-primary">Add</button>
+                        </div>
+                        <div class="controls">
+                            <span class="help">
+                                <a href="{% url 'accounts.views.forgot_password' %}">Framework not listed?</a> <!-- TODO decide what to do here. -->
+                            </span>
+                        </div>
+                    </div>
+
                     <form id="skill-form" class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_skills_frameworks' %}">
                         <fieldset>
                             {% csrf_token %}
-
-                            <div id="skill-add" class="control-group">
-                                <label for="skill-input">Add Framework</label>
-                                <div class="controls">
-                                    <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off">
-                                    <button id="skill-add-button" type="button" class="btn-primary">Add</button>
-                                </div>
-                                <div class="controls">
-                                    <span class="help">
-                                        <a href="{% url 'accounts.views.forgot_password' %}">Framework not listed?</a> <!-- TODO decide what to do here. -->
-                                    </span>
-                                </div>
-                            </div>
 
                             <input id="skill-form-input" type="hidden" name="skills_form_data"/>
 
@@ -76,11 +76,21 @@
                         </fieldset>
                     </form>
 
-                    {% for error in field.errors %}
+                    {% if form.non_field_errors %}
                         <div class="alert alert-error">
-                            <span>{{error}}</span>
+                            {% for error in form.non_field_errors%}
+                                <span>{{error}}</span>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
+                    {% endif %}
+
+                    {% if field.errors %}
+                        <div class="alert alert-error">
+                            {% for error in field.errors %}
+                                <span>{{error}}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
 
                     {% if messages %}
                         {% for message in messages %}
