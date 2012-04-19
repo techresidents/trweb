@@ -41,8 +41,8 @@
 
                         <li class="nav-header">Technology</li>
                         <ul class="nav nav-list">
-                            <li class="active"><a href="{% url 'accounts.views.profile_skills_languages' %}">Languages</a></li>
-                            <li><a href="{% url 'accounts.views.profile_skills_frameworks' %}">Frameworks</a></li>
+                            <li><a href="{% url 'accounts.views.profile_skills_languages' %}">Languages</a></li>
+                            <li class="active"><a href="{% url 'accounts.views.profile_skills_frameworks' %}">Frameworks</a></li>
                             <li><a href="#">Persistence</a></li>
                         </ul>
                     </ul>
@@ -59,7 +59,7 @@
                     <div id="table-wrap">
                         <table id="table" class="table table-striped table-condensed">
                             <thead>
-                            <th>Language</th>
+                            <th>Framework</th>
                             <th>Expertise</th>
                             <th>Years Pro</th>
                             </thead>
@@ -70,15 +70,15 @@
 
                     <div id="skill-add" class="control-group ">
                         <label for="skill-input">Other Language?</label>
-                        <input id="skill-input" data-source='{{ json_autocomplete_languages }}' maxlength="1024" type="text" name="language">
+                        <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language">
                         <button id="skill-add-button" type="button" class="btn-primary">Add</button>
                     </div>
 
-                    <form id="skill-form" class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_skills_languages' %}">
+                    <form id="skill-form" class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_skills_frameworks' %}"> <!--TODO uncommon code -->
                         <fieldset>
                             {% csrf_token %}
 
-                            <input id="skill-form-input" type="hidden" name="language_skills"/>
+                            <input id="skill-form-input" type="hidden" name="skills_form_data"/>
 
                             <div class="control-group">
                                 <div class="controls">
@@ -86,7 +86,7 @@
                                 </div>
                             </div>
                         </fieldset>
-                     </form>
+                    </form>
 
                     {% if messages %}
                         {% for message in messages %}
@@ -110,7 +110,7 @@
     <!-- TODO: add proper escapejs filter that works with json -->
     {% autoescape off %}
         <script>
-            var data = {{json_language_skills}};
+            var data = {{json_skills}};
         </script>
     {% endautoescape %}
 

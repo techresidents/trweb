@@ -50,29 +50,7 @@ $(document).ready(function() {
     });
     
     var SkillCollection = Backbone.Collection.extend({
-            model: Skill,
-            //localStorage: new Store("skills"),
-            selectedIndex: -1,
-    
-            select: function(id) {
-                this.selectedIndex = this.indexOf(this.get(id));
-                this.trigger("change:selection");
-                return this;
-            },
-    
-            selectNext: function() {
-                if(this.selectedIndex < this.length - 1) {
-                    this.selectedIndex++;
-                } else {
-                    this.selectedIndex = -1;
-                }
-                this.trigger("change:selection");
-                return this;
-            },
-    
-            selected: function() {
-                return this.at(this.selectedIndex);
-            }
+            model: Skill
     });
 
     var SkillListItemView = Backbone.View.extend({
@@ -91,33 +69,32 @@ $(document).ready(function() {
         },
 
         render: function() {
-            $(this.el).html(this.template(this.model.toJSON()));
-            $(this.el).find('.skill-yrs-experience').val(this.model.experience());
-            $(this.el).find('.skill-expertise').val(this.model.expertise());
+            this.$el.html(this.template(this.model.toJSON()));
+            this.$el.find('.skill-yrs-experience').val(this.model.experience());
+            this.$el.find('.skill-expertise').val(this.model.expertise());
             return this;
         },
 
         clickedYrsExperience: function() {
-            this.model.setYrsExperience($(this.el).find('.skill-yrs-experience').val());
+            this.model.setYrsExperience(this.$el.find('.skill-yrs-experience').val());
         },
 
         clickedExpertise: function() {
-            this.model.setExpertise($(this.el).find('.skill-expertise').val());
+            this.model.setExpertise(this.$el.find('.skill-expertise').val());
         },
 
         clickedDeleteItemButton: function() {
             if (null != this.collection.get(this.model)){
                 this.collection.remove(this.model);
-                this.model = null; // TODO mark for GC
+                this.model = null; // TODO mark for GC?
             }
         }
     });
 
     var SkillListView = Backbone.View.extend({
 
-        el: $("#skill-list"),
-
         initialize: function() {
+            this.setElement($("#skill-list"));
             this.skillCollection = this.options.skillCollection;
             this.skillCollection.bind("reset", this.render, this);
             this.skillCollection.bind("add", this.addSkillView, this);
@@ -125,7 +102,7 @@ $(document).ready(function() {
         },
 
         render: function() {
-            this.el.children().remove();
+            this.$el.children().remove();
             this.skillCollection.each(this.addSkillView, this);
         },
 
@@ -135,23 +112,22 @@ $(document).ready(function() {
                 collection: this.skillCollection
             });
 
-            this.el.append(view.render().el);
+            this.$el.append(view.render().el);
         },
 
         removeSkillView: function(skill) {
-            // TODO would be preferable to only remove the item we want...
+            // TODO would be preferable to only remove the item we want instead of resetting the collection.
         }
     });
 
     var SkillAddView = Backbone.View.extend({
-
-        el: $("#skill-add"),
 
         events: {
             "click button": "addSkill"
         },
 
         initialize: function() {
+            this.setElement($("#skill-add"));
             this.typeaheadView = new typeahead.TypeaheadView({
                 el: this.$("#skill-input"),
                 maxResults: 5,
@@ -181,14 +157,17 @@ $(document).ready(function() {
 
             }
             this.skillInput.focus();
+        },
+
+        updateOnEnter: function(value) {
+            this.addSkill();
         }
     });
 
     var SkillFormView = Backbone.View.extend({
 
-        el: $("#skill-form"),
-
         initialize: function() {
+            this.setElement($("#skill-form"));
             this.skillCollection = this.options.skillCollection;
             this.skillCollection.bind("reset", this.change, this);
             this.skillCollection.bind("add", this.change, this);
@@ -212,12 +191,7 @@ $(document).ready(function() {
                 this.skillAddView = new SkillAddView({skillCollection: this.skillSet});
                 this.skillFormView = new SkillFormView({skillCollection: this.skillSet});
 
-                console.log("Input data:")
-                console.log(this.options.data)
-
                 this.skillSet.reset(this.options.data);
-                console.log('SkillCollection data:')
-                console.log(this.skillSet)
             }
     });
 
