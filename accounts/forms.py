@@ -378,16 +378,21 @@ class ProfileSkillsForm(forms.Form):
         if cleaned_skills_data is None:
             raise forms.ValidationError("Invalid Skill data")
 
+        # Perform two db queries up front to prevent calling into the
+        # the db to validate each skill in the form data
+        valid_technologies = Technology.objects.filter(type__name=self.technology_type_name)
+        valid_technology_list = list(valid_technologies.values('name'))
+        valid_technology_names = [t['name'] for t in valid_technology_list]
+        valid_expertise = ExpertiseType.objects.all()
+        valid_expertise_list = list(valid_expertise.values('name'))
+        valid_expertise_names = [e['name'] for e in valid_expertise_list]
+
         for skill in cleaned_skills_data:
             # Verify we have a name attribute
             skill_name = skill[self.JSON_SKILL_NAME]
             if skill_name:
                 # if we have a name attribute, verify that it's valid
-                try:
-                    Technology.objects.get(name=skill_name)
-                    #TODO get list of technologies once and check if item is in list
-                    #TODO should ensure that technology is of correct type as well.
-                except Technology.DoesNotExist:
+                if not skill_name in valid_technology_names:
                     raise forms.ValidationError("Skill name value is invalid")
             else:
                 raise forms.ValidationError("Skill name field required")
@@ -396,9 +401,7 @@ class ProfileSkillsForm(forms.Form):
             skill_expertise = skill[self.JSON_EXPERTISE]
             if skill_expertise:
                 # if we have an expertise attribute, verify that it's valid
-                try:
-                    ExpertiseType.objects.get(name=skill_expertise)
-                except ExpertiseType.DoesNotExist:
+                if not skill_expertise in valid_expertise_names:
                     raise forms.ValidationError("Skill expertise value is invalid")
             else:
                 raise forms.ValidationError("Skill expertise field required")

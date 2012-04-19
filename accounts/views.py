@@ -156,10 +156,6 @@ def logout(request):
     return HttpResponseRedirect(redirect_to)
 
 @login_required
-def profile(request):
-    return render_to_response('accounts/profile.html',  context_instance=RequestContext(request))
-
-@login_required
 def profile_account(request):
     if request.method == 'POST':
         form = forms.ProfileAccountForm(request, data=request.POST)
@@ -357,9 +353,3 @@ def profile_skills_common(request, technology_type_name):
     return context
 
 
-
-def ptidemo(request):
-    return render_to_response('accounts/ptiDemo.html',  context_instance=RequestContext(request))
-
-
-    #tmp = models.Skill.objects.filter(technology__name__iexact="Python", yrs_experience__gte=1).select_related("auth_user")
