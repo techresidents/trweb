@@ -351,8 +351,6 @@ class ProfileJobsForm(forms.Form):
             job_prefs.save()
         return self.user
 
-    # TODO
-
 class ProfileSkillsForm(forms.Form):
     skills_form_data = JSONField(max_length=2048, widget=forms.HiddenInput, required=True)
 
@@ -421,12 +419,15 @@ class ProfileSkillsForm(forms.Form):
         return self.cleaned_data
 
     def save(self, commit=True):
+        # Making the assumption that form data is clean and valid (meaning that the skill
+        # data passed in from the user matches existing skills in the db).
+
         # retrieve posted data
         updated_skills = self.cleaned_data.get('skills_form_data')
 
         # Before updating the user's language skills, save the old skills to check for deleted skills
         updated_skill_names = {s[self.JSON_SKILL_NAME] for s in updated_skills}
-        skill_technology_type = TechnologyType.objects.get(name=self.technology_type_name) #TODO this can throw, but shouldn't since we are providing this data
+        skill_technology_type = TechnologyType.objects.get(name=self.technology_type_name)
         previous_skills = Skill.objects.filter(user=self.request.user, technology__type=skill_technology_type).select_related('technology')
 
         # Update user's skills based on data posted
@@ -435,11 +436,8 @@ class ProfileSkillsForm(forms.Form):
             # retrieve the existing skill, or create a new skill if one doesn't exist
             user_skill = None
             try:
-                technology = Technology.objects.get(name=skill[self.JSON_SKILL_NAME]) #TODO assume type is correct?
+                technology = Technology.objects.get(name=skill[self.JSON_SKILL_NAME])
                 user_skill = Skill.objects.get(user=self.request.user, technology=technology)
-            except Technology.DoesNotExist:
-                # TODO Log error
-                user_skill = None
             except Skill.DoesNotExist:
                 user_skill = Skill(
                     user=self.request.user,
@@ -451,7 +449,7 @@ class ProfileSkillsForm(forms.Form):
             # update skill object with posted data
             if user_skill is not None:
                 user_skill.yrs_experience = skill[self.JSON_YRS_EXPERIENCE]
-                user_skill.expertise_type = ExpertiseType.objects.get(name=skill[self.JSON_EXPERTISE]) #TODO catch?
+                user_skill.expertise_type = ExpertiseType.objects.get(name=skill[self.JSON_EXPERTISE])
                 if commit:
                     user_skill.save()
 

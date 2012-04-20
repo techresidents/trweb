@@ -293,7 +293,7 @@ def profile_skills_common(request, technology_type_name):
     """
 
     # Populate list of supported skills for autocomplete widget
-    skill_technology_type = TechnologyType.objects.get(name=technology_type_name) #TODO catch? we pass in this name.
+    skill_technology_type = TechnologyType.objects.get(name=technology_type_name)
     skill_technologies = Technology.objects.filter(type=skill_technology_type)
     skill_names = [str(s.name) for s in skill_technologies]
     json_autocomplete_skills = json.dumps(skill_names)
