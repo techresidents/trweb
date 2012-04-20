@@ -330,7 +330,8 @@ def profile_skills_common(request, technology_type_name):
         'expertise_options': expertise_options,
         'yrs_experience_options': yrs_experience_options,
         'json_autocomplete_skills': json_autocomplete_skills,
-        'json_skills': json_skills
+        'json_skills': json_skills,
+        'support_email': settings.DEFAULT_SUPPORT_EMAIL
     }
 
     return context
