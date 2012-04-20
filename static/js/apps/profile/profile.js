@@ -76,7 +76,8 @@ $(document).ready(function() {
         },
 
         clickedYrsExperience: function() {
-            this.model.setYrsExperience(this.$el.find('.skill-yrs-experience').val());
+            var yrs = this.$el.find('.skill-yrs-experience').val();
+            this.model.setYrsExperience(parseInt(yrs));
         },
 
         clickedExpertise: function() {

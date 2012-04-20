@@ -373,6 +373,7 @@ class ProfileSkillsForm(forms.Form):
     def clean(self):
         super(ProfileSkillsForm, self).clean()
         cleaned_skills_data = self.cleaned_data.get('skills_form_data')
+        print cleaned_skills_data
 
         # Verify we have some data to validate
         if cleaned_skills_data is None:
@@ -381,11 +382,9 @@ class ProfileSkillsForm(forms.Form):
         # Perform two db queries up front to prevent calling into the
         # the db to validate each skill in the form data
         valid_technologies = Technology.objects.filter(type__name=self.technology_type_name)
-        valid_technology_list = list(valid_technologies.values('name'))
-        valid_technology_names = [t['name'] for t in valid_technology_list]
+        valid_technology_names = [t.name for t in valid_technologies]
         valid_expertise = ExpertiseType.objects.all()
-        valid_expertise_list = list(valid_expertise.values('name'))
-        valid_expertise_names = [e['name'] for e in valid_expertise_list]
+        valid_expertise_names = [e.name for e in valid_expertise]
 
         for skill in cleaned_skills_data:
             # Verify we have a name attribute
@@ -411,9 +410,11 @@ class ProfileSkillsForm(forms.Form):
             if skill_yrs_experience is not None:
                 # if we have a years_experience attribute, verify that it's valid
                 if not type(skill_yrs_experience == int):
-                    if skill_yrs_experience < 0 or\
-                       skill_yrs_experience > self.MAX_YRS_EXPERIENCE:
-                        raise forms.ValidationError("Skill years experience value is invalid")
+                    yrs = int(skill_yrs_experience)
+                else:
+                    yrs = skill_yrs_experience
+                if yrs < 0 or yrs > self.MAX_YRS_EXPERIENCE:
+                    raise forms.ValidationError("Skill years experience value is invalid")
             else:
                 raise forms.ValidationError("Skill years experience field required")
 
