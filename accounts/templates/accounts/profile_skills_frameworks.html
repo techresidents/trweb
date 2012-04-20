@@ -39,18 +39,18 @@
 
                     <div id="table-wrap">
                         <table id="table" class="table">
-                            <thead class="skill-list-header">
+                            <thead>
                             <th>Framework</th>
                             <th>Expertise Level</th>
                             <th>Yrs Professional Experience</th>
                             </thead>
-                            <tbody id="skill-list" class="skill-list-body">
+                            <tbody id="skill-list">
                             </tbody>
                         </table>
                     </div>
 
                     <div class="form-horizontal well">
-                        
+
                         <div id="skill-add" class="control-group">
                             <label for="skill-input">Add Framework</label>
                             <div class="controls">
@@ -58,9 +58,9 @@
                                 <button id="skill-add-button" type="button" class="btn-primary">Add</button>
                             </div>
                             <div class="controls">
-                            <span class="help">
-                                <a href="{% url 'accounts.views.forgot_password' %}">Framework not listed?</a> <!-- TODO decide what to do here. -->
-                            </span>
+                                <span class="help">
+                                    <a href="{% url 'accounts.views.forgot_password' %}">Framework not listed?</a> <!-- TODO decide what to do here. -->
+                                </span>
                             </div>
                         </div>
 
@@ -129,14 +129,14 @@
             <td><%= name %></td>
         {% endverbatim %}
         <td>
-            <select class="skill-expertise">
+            <select>
                 {% for option in expertise_options %}
                     <option value={{ option }}>{{ option }}</option>
                 {% endfor %}
             </select>
         </td>
         <td>
-            <select class="skill-yrs-experience">
+            <select>
                 {% for option in yrs_experience_options %}
                     <option value={{ option }}>{{ option }}
                         {% if forloop.last %}+{% endif %}
