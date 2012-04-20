@@ -7,6 +7,20 @@
 {% block extrahead %}
 <link href="{{STATIC_URL}}css/chat.css" rel="stylesheet">
 
+<style type="text/css">
+    {% for user in users %}
+    .user{{user.id}} {
+        color: {% cycle '#00A651' '#00AEEF' '#F15A29' '#231F20' as usercolor %};
+    }
+    
+    .user{{user.id}}-border {
+        border-style: solid;
+        border-color: {{ usercolor }};
+        border-width: 5px;
+    }
+    {% endfor %}
+</style>
+
 <script src="http://staging.tokbox.com/v0.91/js/TB.min.js" ></script>
 
 <script>
@@ -15,7 +29,7 @@
     };
 </script>
 <script data-main="{{STATIC_URL}}js/apps/chat/main.js" src="{{STATIC_URL}}js/3ps/require/require.js"></script>
-{%endblock %}
+{% endblock %}
 
 {% block content %}
 
@@ -114,9 +128,9 @@
 </script>
 
 <script type="text/template" id="chat-user-template">
-    <div class="well chat-user-container">
+    <div class="user<%= id %>-border chat-user-container" style="width: 300px; height: 225px;">
         <div id="user<%= id %>">
-            <img height=200 src="{{STATIC_URL}}img/person.jpg"/>
+            <img style="height: 225px;" src="{{STATIC_URL}}img/person.jpg"/>
         </div>
     </div>
 </script>
@@ -129,8 +143,10 @@
 </script>
 
 <script type="text/template" id="tag-item-template">
-    <a rel="tooltip" href="#" title="tooltip"><%= name %></a>
-    <a class="close-inline">x</a>
+    <a class="user<%= userId %>" rel="tooltip" href="#" title="tooltip"><%= name %></a>
+    <% if(myTag) { %>
+        <a class="close-inline destroy">x</a>
+    <% } %>
 </script>
 
 

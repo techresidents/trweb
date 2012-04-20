@@ -2,21 +2,34 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'chat/models',
-    'chat/messages',
+    'chat/tag/models',
     'lookup/views',
-], function($, _, Backbone, models, messages, lookup) {
+], function($, _, Backbone, models, lookup, user) {
 
 
     var ChatTagItemView = Backbone.View.extend({
+
             tagName: "li",
 
             template: _.template($("#tag-item-template").html()),
+
+            events: {
+                "click .destroy": "destroy",
+            },
+
+            initialize: function() {
+                this.model.bind("destroy", this.remove, this);
+            },
+
             
             render: function() {
                 this.$el.html(this.template(this.model.toJSON()));
                 this.$('[rel=tooltip]').tooltip();
                 return this;
+            },
+
+            destroy: function() {
+                this.model.destroy();
             }
     });
 
@@ -28,11 +41,7 @@ define([
             },
 
             initialize: function() {
-                this.chatSession = this.options.chatSession;
-                this.chatMessages = this.options.chatMessages;
-                this.chatUser = this.chatSession.getCurrentUser();
-
-                this.chatMessages.bind("add", this.added, this);
+                models.tagCollection.bind("add", this.added, this);
                 
                 this.tagInput = this.$("input");
                 this.tagList = this.$("ul");
@@ -44,41 +53,26 @@ define([
                     onenter: this.updateOnEnter,
                     context: this
                 });
+
             },
             
             added: function(model) {
-                if(model.msgType() != "TAG_CREATE") {
-                    return;
-                }
-
-                this.tagList.append(new ChatTagItemView({model: model}).render().el);
+                view = new ChatTagItemView({model: model}).render();
+                view.$el.fadeTo(1000, 1);
+                this.tagList.prepend(view.el);
             },
 
             addTag: function() {
                 var value = this.tagInput.val();
 
                 if(value) {
-                    var header = new messages.MessageHeader({
-                        chatSessionToken: this.chatSessionToken,
-                        userId: this.chatUser.id
+                    var tag = new models.Tag({
+                            name: value
                     });
+                    tag.save();
 
-                    var msg = new messages.TagCreateMessage({
-                        name: this.tagInput.val()
-                    });
-
-                    var message = new models.ChatMessage({
-                            header: header,
-                            msg: msg
-                    });
-
-                    message.save();
-
-                    this.tagInput.val("");
+                    this.tagInput.val(null);
                     this.tagInput.focus();
-
-                    //scroll to bottom
-                    this.tagList.animate({scrollTop: 1000}, 800);
 
                 } else {
                     this.tagInput.focus();
@@ -94,24 +88,11 @@ define([
     var ChatTagTabView = Backbone.View.extend({
 
             initialize: function() {
-                this.chatSession = this.options.chatSession;
-                this.chatMessages = this.options.chatMessages;
-                this.chatUser = this.chatSession.getCurrentUser();
-
-                this.chatMessages.bind("reset", this.reset, this);
-                this.chatMessages.bind("add", this.added, this);
-                
+                models.tagCollection.bind("add", this.added, this);
                 this.tagList = this.$("ul");
             },
             
-            reset: function() {
-            },
-
             added: function(model) {
-                if(model.msgType() != "TAG_CREATE") {
-                    return;
-                }
-
                 this.tagList.append(new ChatTagItemView({model: model}).render().el);
 
                 //scroll to bottom
