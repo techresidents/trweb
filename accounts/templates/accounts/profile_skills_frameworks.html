@@ -34,7 +34,7 @@
             <div class="span9">
                 <div class="well">
                     <fieldset>
-                        <legend>Update your skills with frameworks</legend>
+                        <legend>Update your framework skills</legend>
                     </fieldset>
 
                     <div id="table-wrap">
@@ -49,32 +49,36 @@
                         </table>
                     </div>
 
-                    <div id="skill-add" class="control-group">
-                        <label for="skill-input">Add Framework</label>
-                        <div class="controls">
-                            <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off">
-                            <button id="skill-add-button" type="button" class="btn-primary">Add</button>
-                        </div>
-                        <div class="controls">
+                    <div class="form-horizontal well">
+                        
+                        <div id="skill-add" class="control-group">
+                            <label for="skill-input">Add Framework</label>
+                            <div class="controls">
+                                <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off">
+                                <button id="skill-add-button" type="button" class="btn-primary">Add</button>
+                            </div>
+                            <div class="controls">
                             <span class="help">
                                 <a href="{% url 'accounts.views.forgot_password' %}">Framework not listed?</a> <!-- TODO decide what to do here. -->
                             </span>
+                            </div>
                         </div>
+
+                        <form id="skill-form" class="form-horizontal" method="post" action="{% url 'accounts.views.profile_skills_frameworks' %}">
+                            <fieldset>
+                                {% csrf_token %}
+
+                                <input id="skill-form-input" type="hidden" name="skills_form_data"/>
+
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <button type="submit" class="btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
                     </div>
 
-                    <form id="skill-form" class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_skills_frameworks' %}">
-                        <fieldset>
-                            {% csrf_token %}
-
-                            <input id="skill-form-input" type="hidden" name="skills_form_data"/>
-
-                            <div class="control-group">
-                                <div class="controls">
-                                    <button type="submit" class="btn-primary">Save changes</button>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </form>
 
                     {% if form.non_field_errors %}
                         <div class="alert alert-error">
