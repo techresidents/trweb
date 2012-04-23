@@ -41,7 +41,7 @@
                 <h3>Discuss</h3>
             </div>
             <div class="span8 well">
-                <h5>Web Security Preventative Measures</h5>
+                <h3>Web Security Preventative Measures</h3>
             </div>
         </div>
     </div>
@@ -53,7 +53,7 @@
             <div class="span8">
                 <div>
                     <input class="span7">
-                    <button class="btn btn-input">Add</button>
+                    <button class="btn btn-input add">Add</button>
                     <span><strong>Recent Tags</strong>
                         <ul/>
                     </span>
@@ -72,26 +72,11 @@
             </ul>
             <div class="tab-content">
                 <div id="agenda" class="tab-pane fade in active">
-                    <h5>Agenda</h5>
-                    <!--
                     <div class="span5">
-                        <h5>Agenda</h5>
-                        <div>
-                            <ul id="topiclist" class="chatlist">
-                            </ul>
-                        </div>
+                        <h3>Agenda</h3>
+                        <ul id="agendalist"/>
                     </div>
-                    <div class="span5">
-                        <h5>Tags</h5>
-                        <div id="tags">
-                            <ul id="taglist"class="chatlist">
-                            </ul>
-                            
-                            <input id="taginput" class="span4"/>
-                            <button class="btn btn-input">Tag</button>
-                        </div>
-                    </div>
-                    -->
+                    <div id="agenda-detail" class="span5"></div>
                 </div>
                 <div id="tags" class="tab-pane fade">
                     <h5>Tags</h5>
@@ -116,7 +101,8 @@
         chatAPIKey: "{{chat_api_key}}",
         chatSessionToken: "{{chat_session_token}}",
         chatUserToken: "{{chat_user_token}}",
-        users: {{users_json}} };
+        users: {{users_json}},
+        topics: {{topics_json}} };
 </script>
 {% endautoescape %}
 
@@ -143,10 +129,28 @@
 </script>
 
 <script type="text/template" id="tag-item-template">
+    <a class="user<%= userId %>" href="#"><%= name %></a>
+    <% if(myTag) { %>
+        <a class="close-inline destroy">x</a>
+    <% } %>
+</script>
+
+<script type="text/template" id="tagger-item-template">
     <a class="user<%= userId %>" rel="tooltip" href="#" title="tooltip"><%= name %></a>
     <% if(myTag) { %>
         <a class="close-inline destroy">x</a>
     <% } %>
+</script>
+
+<script type="text/template" id="agenda-item-template">
+    <div class="level<%= level %>">
+        <%= title %>
+    </div>
+</script>
+
+<script type="text/template" id="agenda-detail-template">
+    <h3><%= title %></h3>
+    <p><%= description %></p>
 </script>
 
 

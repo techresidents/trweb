@@ -49,7 +49,10 @@ def chat(request,chat_session_id):
 
     
     #Get the specified chat. User filter must be present for security.
-    chat_session = models.ChatSession.objects.select_related("chat").get(id=chat_session_id, users=request.user, chat__start__lte=datetime.now())
+    chat_session = models.ChatSession.objects.select_related("chat").get(
+            id=chat_session_id,
+            users=request.user,
+            chat__start__lte=datetime.now())
 
     #Get the associated chat_user and use that token if it exists, otherwise create it.
     chat_user = models.ChatUser.objects.get(chat_session=chat_session, user=request.user)
@@ -73,9 +76,6 @@ def chat(request,chat_session_id):
         else:
             users.append(user)
 
-    print users_by_id
-    print users
-
     # Update the session with active chat information to make it available to chatsvc
     request.session["chat_session"] = {
         'chat_session_token': chat_session.token,
@@ -83,14 +83,29 @@ def chat(request,chat_session_id):
         'chat_users': users
     }
     request.session.modified = True
-
+    
+    #topics
+    topics = []
+    topic_tree = Topic.objects.topic_tree(chat_session.chat.topic_id)
+    for topic in topic_tree:
+        topics.append({
+            "id": topic.id,
+            "parentId": topic.parent_id,
+            "level": topic.level,
+            "title": topic.title,
+            "description": topic.description,
+            "rank": topic.rank,
+            "userId": topic.user_id
+        })
+    
     context = {
         'TR_XD_REMOTE': settings.TR_XD_REMOTE,
         'chat_api_key': settings.TOKBOX_API_KEY,
         'chat_session_token': chat_session.token,
         'chat_user_token': chat_user.token,
         'users' : users_by_id,
-        'users_json': json.dumps(users)
+        'users_json': json.dumps(users),
+        'topics_json': json.dumps(topics),
     }
     
     return render_to_response('chat/chat.html', context, context_instance=RequestContext(request))

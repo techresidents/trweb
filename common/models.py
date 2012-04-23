@@ -5,10 +5,10 @@ class TopicManager(models.Manager):
 
     def topic_tree(self, topic_id):
         topics = self.raw("""with recursive q as 
-                            ( select id, parent_id, title, description, rank, user_id from topic where id = %s
+                            ( select t.*, 1 as level from topic t where id = %s
                               union all
-                              select t.id, t.parent_id, t.title, t.description, t.rank, t.user_id from q
-                              join topic t on t.parent_id = q.id
+                              select tc.*, level + 1 from q
+                              join topic tc on tc.parent_id = q.id
                             )
                             select * from q order by rank
                           """, [topic_id])
@@ -65,6 +65,13 @@ class TopicStyle(models.Model):
     description = models.CharField(max_length=1024)
 
 class Topic(models.Model):
+    """Topic model.
+
+    Topics are hierarchical and this is represented with a parent
+    child relationship. To support the recursive queries for the Topic,
+    this model uses the TopicManager model manager.
+
+    """
     class Meta:
         db_table = "topic"
     

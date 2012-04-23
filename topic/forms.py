@@ -4,7 +4,7 @@ from common.forms import JSONField
 from common.models import Topic
 
 class TopicForm(forms.Form):
-    topics = JSONField(max_length=2048, widget=forms.HiddenInput, required=True)
+    topics = JSONField(max_length=8192, widget=forms.HiddenInput, required=True)
 
     def __init__(self, request, *args, **kwargs):
         self.request = request

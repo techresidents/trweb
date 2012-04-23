@@ -13,7 +13,7 @@ define([
                     level: 1,
                     rank: null,
                     title: "",
-                    description: "This is a description",
+                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet rhoncus eros. Proin ut dolor neque, quis pretium massa. In facilisis interdum tortor. Proin fermentum dignissim lorem. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
                     expanded: false
                 };
             },
@@ -22,7 +22,7 @@ define([
                 if(this.get("id") == null) {
                     this.set({ id: this.cid });
                 }
-            }
+            },
     });
 
 
