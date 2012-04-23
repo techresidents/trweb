@@ -28,7 +28,6 @@ define([
         },
 
         added: function(model) {
-            console.log(model);
             var handler = this.msgHandlerMap[model.msgType()];
             if(handler) {
                 handler(model);
@@ -51,7 +50,7 @@ define([
         },
 
         whiteboardCreate: function(model) {
-            var wb = new whiteboard.(null, {
+            var wb = new whiteboard(null, {
                 header: model.header(),
                 msg: model.msg()
             });

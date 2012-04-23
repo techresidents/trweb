@@ -3,6 +3,7 @@ define([
     'Underscore',
     'Backbone',
     'chat/agenda/views',
+    'chat/agenda/models',
     'chat/message/dispatch',
     'chat/message/models',
     'chat/session/models',
@@ -10,18 +11,21 @@ define([
     'chat/user/models',
     'chat/user/views',
     'chat/whiteboard/views',
+    'topic/models',
 ], function(
     $,
     _,
     Backbone,
-    agenda,
+    agenda_views,
+    agenda_models,
     dispatch,
     message,
     session,
     tag,
     user_models,
     user_views,
-    whiteboard) {
+    whiteboard,
+    topic) {
 
 $(document).ready(function() {
     
@@ -44,7 +48,10 @@ $(document).ready(function() {
 
                 //store current user
                 user_models.currentUser = this.chatSession.getCurrentUser();
-                
+
+                //update chat agenda
+                agenda_models.agenda.topics().reset(this.options.data.topics);
+
                 //create a view for each user
                 this.chatUsers.each(function(user) {
                     var chatUserView = new user_views.ChatUserView({
@@ -70,12 +77,11 @@ $(document).ready(function() {
                         chatMessages: this.chatMessageCollection
                 });
                 
-                //create tag view
-                var chatTagView = new tag.ChatTagView({
+                //create tagger view
+                var chatTaggerView = new tag.ChatTaggerView({
                         el: '#tagger',
-                        chatSession: this.chatSession,
-                        chatMessages: this.chatMessageCollection
                 });
+                chatTaggerView.render();
 
                 /*
                 //whiteboard view
@@ -90,23 +96,26 @@ $(document).ready(function() {
 
 
                 //create tab views
-                var chatAgendaTabView = new agenda.ChatAgendaTabView({
+                var chatAgendaTabView = new agenda_views.ChatAgendaTabView({
                     el: $('#agenda'),
                     chatSession: this.chatSession,
                     chatMessages: this.chatMessageCollection
                 });
+                chatAgendaTabView.render();
 
                 var chatTagTabView = new tag.ChatTagTabView({
                     el: $('#tags'),
                     chatSession: this.chatSession,
                     chatMessages: this.chatMessageCollection
                 });
+                chatTagTabView.render();
 
                 var chatWhiteboardTabView = new whiteboard.ChatWhiteboardTabView({
                     el: $('#whiteboard'),
                     chatSession: this.chatSession,
                     chatMessages: this.chatMessageCollection
                 });
+
 
                 //long poll
                 this.chatMessageCollection.longPoll();

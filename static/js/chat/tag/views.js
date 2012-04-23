@@ -7,11 +7,11 @@ define([
 ], function($, _, Backbone, models, lookup, user) {
 
 
-    var ChatTagItemView = Backbone.View.extend({
+    var ChatTaggerItemView = Backbone.View.extend({
 
-            tagName: "li",
+            tagName: 'li',
 
-            template: _.template($("#tag-item-template").html()),
+            template: _.template($("#tagger-item-template").html()),
 
             events: {
                 "click .destroy": "destroy",
@@ -34,18 +34,35 @@ define([
     });
 
     
-    var ChatTagView = Backbone.View.extend({
+    var ChatTaggerListView = Backbone.View.extend({
+
+            tagName: 'ul',
+            
+            initialize: function() {
+                this.collection.bind("reset", this.render, this);
+                this.collection.bind("add", this.added, this);
+            },
+
+            render: function() {
+                this.collection.each(this.added, this);
+            },
+            
+            added: function(model) {
+                view = new ChatTaggerItemView({model: model}).render();
+                view.$el.fadeTo(1000, 1);
+                this.$el.prepend(view.el);
+            }
+    });
+
+    var ChatTaggerView = Backbone.View.extend({
 
             events: {
-                "click button": "addTag",
+                "click .add": "addTag",
             },
 
             initialize: function() {
-                models.tagCollection.bind("add", this.added, this);
-                
-                this.tagInput = this.$("input");
-                this.tagList = this.$("ul");
-                
+                this.tagInput = this.$('input');
+
                 this.lookupView = new lookup.LookupView({
                     el: this.tagInput,
                     scope: "tag",
@@ -55,13 +72,14 @@ define([
                 });
 
             },
-            
-            added: function(model) {
-                view = new ChatTagItemView({model: model}).render();
-                view.$el.fadeTo(1000, 1);
-                this.tagList.prepend(view.el);
-            },
 
+            render: function() {
+                new ChatTaggerListView({
+                        el: this.$('ul'),
+                        collection: models.tagCollection
+                }).render();
+            },
+            
             addTag: function() {
                 var value = this.tagInput.val();
 
@@ -84,26 +102,67 @@ define([
             }
     });
 
+    var ChatTagItemView = Backbone.View.extend({
 
-    var ChatTagTabView = Backbone.View.extend({
+            tagName: 'li',
+
+            template: _.template($("#tag-item-template").html()),
+
+            events: {
+                "click .destroy": "destroy",
+            },
 
             initialize: function() {
-                models.tagCollection.bind("add", this.added, this);
-                this.tagList = this.$("ul");
+                this.model.bind("destroy", this.remove, this);
+            },
+
+            render: function() {
+                this.$el.html(this.template(this.model.toJSON()));
+                return this;
+            },
+
+            destroy: function() {
+                this.model.destroy();
+            }
+    });
+
+    var ChatTagListView = Backbone.View.extend({
+
+            tagName: 'ul',
+            
+            initialize: function() {
+                this.collection.bind("reset", this.render, this);
+                this.collection.bind("add", this.added, this);
+            },
+
+            render: function() {
+                this.collection.each(this.added, this);
             },
             
             added: function(model) {
-                this.tagList.append(new ChatTagItemView({model: model}).render().el);
+                view = new ChatTagItemView({model: model}).render();
+                view.$el.fadeTo(1000, 1);
+                this.$el.prepend(view.el);
+            }
+    });
 
-                //scroll to bottom
-                this.tagList.animate({scrollTop: 1000}, 800);
+    
+    var ChatTagTabView = Backbone.View.extend({
+
+            initialize: function() {
+            },
+
+            render: function() {
+                new ChatTagListView({
+                        el: this.$('ul'),
+                        collection: models.tagCollection
+                }).render();
             },
     });
 
 
     return {
         ChatTagTabView: ChatTagTabView,
-        ChatTagView: ChatTagView,
-        ChatTagItemView: ChatTagItemView,
+        ChatTaggerView: ChatTaggerView,
     }
 });

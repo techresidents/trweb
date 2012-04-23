@@ -3,8 +3,57 @@
     padding-bottom: 30px;
 }
 
+#agenda ul {
+    height: 200px;
+    overflow-y: auto;
+}
+
+#agenda li {
+    cursor: pointer;
+}
+
+#agenda .selected {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #0088cc;
+}
+
+#agenda .active {
+  color: #aaaaaa;
+  text-decoration: none;
+}
+
+#agenda .selected.active {
+  color: #aaaaaa;
+  text-decoration: none;
+  background-color: #0088cc;
+}
+
+#agenda .level1 {
+  margin-left: 5px;
+}
+
+
+#agenda .level2 {
+  margin-left: 15px;
+}
+
+
+#agenda .level3 {
+  margin-left: 25px;
+}
+
+
+#agenda .level4 {
+  margin-left: 35px;
+}
+
+#agenda .level5 {
+  margin-left: 45px;
+}
+
 #tags ul {
-    height: 100px;
+    height: 200px;
     overflow-y: auto;
 }
 
@@ -24,5 +73,13 @@
 }
 
 #tagger li:hover .close-inline {
+    display:inline;
+}
+
+#tags li .close-inline {
+    display: none;
+}
+
+#tags li:hover .close-inline {
     display:inline;
 }
