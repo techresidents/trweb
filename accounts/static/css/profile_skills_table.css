@@ -1,8 +1,13 @@
 
-.skill-list-header th {
+#table th {
     vertical-align: middle;
 }
 
-.skill-list-body td {
+#table td {
     vertical-align: middle;
+}
+
+#table select {
+    margin-top: 1px;
+    margin-bottom: 1px;
 }

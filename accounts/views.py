@@ -292,9 +292,6 @@ def profile_skills_common(request, technology_type_name):
         and framework_skill views.
     """
 
-    # Init user's skills
-    json_skills = '[]'
-
     # Populate list of supported skills for autocomplete widget
     skill_technology_type = TechnologyType.objects.get(name=technology_type_name)
     skill_technologies = Technology.objects.filter(type=skill_technology_type)
@@ -303,40 +300,26 @@ def profile_skills_common(request, technology_type_name):
 
     # Create expertise values to populate the UI with
     expertise_types = ExpertiseType.objects.all()
-    expertise_name_values = list(expertise_types.values('name'))
-    expertise_options = []
-    for value in expertise_name_values:
-        expertise_options.append(value['name'])
+    expertise_options = [e.name for e in expertise_types]
 
     # Create years experience values to populate the UI with
     yrs_experience_options = range(0,21)
 
-    # Retrieve list of user's language skills
-    user_skills = Skill.objects.filter(technology__type=skill_technology_type).select_related('auth_user') #TODO
-    user_skills_list = list(user_skills.values('technology', 'expertise_type', 'yrs_experience'))
+    # Retrieve list of user's language skills from db and create json data to populate UI
+    user_skills = Skill.objects.filter(technology__type=skill_technology_type).select_related('technology').select_related('expertise_type')
+    user_skills_list = [ {forms.ProfileSkillsForm.JSON_SKILL_NAME: skill.technology.name,
+                           forms.ProfileSkillsForm.JSON_EXPERTISE: skill.expertise_type.name,
+                           forms.ProfileSkillsForm.JSON_YRS_EXPERIENCE: skill.yrs_experience} for skill in user_skills]
+    json_skills = '[]'
     if user_skills_list:
-        for skill in user_skills_list:
-
-            # Lookup technology name
-            technology_id = skill['technology']
-            technology = Technology.objects.get(id=technology_id)
-            skill[forms.ProfileSkillsForm.JSON_SKILL_NAME] = str(technology.name)
-            del skill['technology'] # no longer need this data
-
-            # Lookup expertise type name
-            expertise_id = skill['expertise_type']
-            expertise = ExpertiseType.objects.get(id=expertise_id)
-            skill[forms.ProfileSkillsForm.JSON_EXPERTISE] = str(expertise.name)
-            del skill['expertise_type'] # no longer need this data
-
         json_skills = json.dumps(user_skills_list)
     else:
         # if user has no skills specified, then create a list of defaults
-        default_profile_skills = skill_technologies.filter(is_profile_default=True)
+        default_profile_technologies = skill_technologies.filter(is_profile_default=True)
         default_skills = []
-        for skill in default_profile_skills:
+        for technology in default_profile_technologies:
             default_skill = {
-                forms.ProfileSkillsForm.JSON_SKILL_NAME:str(skill.name),
+                forms.ProfileSkillsForm.JSON_SKILL_NAME:str(technology.name),
                 forms.ProfileSkillsForm.JSON_EXPERTISE:'None',
                 forms.ProfileSkillsForm.JSON_YRS_EXPERIENCE:0
             }
@@ -347,7 +330,8 @@ def profile_skills_common(request, technology_type_name):
         'expertise_options': expertise_options,
         'yrs_experience_options': yrs_experience_options,
         'json_autocomplete_skills': json_autocomplete_skills,
-        'json_skills': json_skills
+        'json_skills': json_skills,
+        'support_email': settings.DEFAULT_SUPPORT_EMAIL
     }
 
     return context
