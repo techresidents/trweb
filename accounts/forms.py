@@ -1,5 +1,5 @@
-
 import datetime
+import json
 import uuid
 
 from django import forms
@@ -13,7 +13,7 @@ from django.template import Context
 from techresidents_web.common.forms import JSONField
 from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType
 from techresidents_web.accounts.models import CodeType, Code, Skill
-from techresidents_web.job.models import PositionTypePref, Prefs
+from techresidents_web.job.models import PositionType, PositionTypePref, Prefs
 
 
 # Some field size constants for this form.
@@ -330,13 +330,18 @@ class ProfileChatsForm(forms.Form):
         return self.user_profile
 
 class ProfileJobsForm(forms.Form):
+    # Create data to populate the Positions field autocomplete
+    position_types = PositionType.objects.all()
+    position_names = [str(p.name) for p in position_types]
+    json_autocomplete_positions = json.dumps(position_names)
+
     email_new_job_opps = forms.BooleanField(label="Allow potential employers to contact me on my terms:", widget=forms.CheckboxInput, required=False)
 
-    # TODO these charFields are placeholders until we add autocomplete functionality
-    positions = forms.CharField(label="Positions", max_length=1024, widget=forms.TextInput, required=False)
-    technologies = forms.CharField(label="Technologies", max_length=1024, widget=forms.TextInput, required=False)
-    locations = forms.CharField(label="Locations", max_length=1024, widget=forms.TextInput, required=False)
+    positions = forms.CharField(label="Positions", max_length=1024, widget=forms.TextInput(attrs={'autocomplete':'off', 'data-source':json_autocomplete_positions}), required=False)
+    positions_form_data = JSONField(max_length=2048, widget=forms.HiddenInput, required=False)
 
+    locations = forms.CharField(label="Locations", max_length=1024, widget=forms.TextInput, required=False)
+    technologies = forms.CharField(label="Technologies", max_length=1024, widget=forms.TextInput, required=False)
     salary_start = forms.DecimalField(label="Minimum Salary", min_value=10000, max_digits=7, decimal_places=0, required=False)
 
     def __init__(self, request=None, *args, **kwargs):

@@ -8,7 +8,7 @@ define([
 
 $(document).ready(function() {
 
-    var ProfileAppView = Backbone.View.extend({
+    var SkillsAppView = Backbone.View.extend({
 
             initialize: function() {
                 this.skillSet = new models.SkillCollection();
@@ -21,7 +21,19 @@ $(document).ready(function() {
             }
     });
 
-    app = new ProfileAppView({data: window.data});
+    var JobsAppView = Backbone.View.extend({
+
+        initialize: function() {
+            this.positionCollection = new models.JobPositionCollection();
+
+            this.positionLisView = new views.JobPositionListView({positionCollection: this.positionCollection});
+            this.positionAddView = new views.JobPositionAddView({positionCollection: this.positionCollection});
+
+            this.positionCollection.reset(this.options.data);
+        }
+    });
+
+    app = new JobsAppView({data: window.data});
 
 });
 

@@ -50,8 +50,33 @@ define([
         model: Skill
     });
 
+    var JobPosition = Backbone.Model.extend({
+
+        idAttribute: "name",
+
+        defaults : function() {
+            return {
+                name: ""
+            };
+        },
+
+        initialize: function() {
+
+        },
+
+        name: function() {
+            return this.get("name");
+        }
+    });
+
+    var JobPositionCollection = Backbone.Collection.extend({
+        model: JobPosition
+    });
+
     return {
         Skill: Skill,
-        SkillCollection: SkillCollection
+        SkillCollection: SkillCollection,
+        JobPosition: JobPosition,
+        JobPositionCollection: JobPositionCollection
     }
 });

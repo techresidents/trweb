@@ -1,11 +1,19 @@
 {% extends "menu_base.html" %}
 {% load url from future %}
+{% load verbatim %}
 {% load widget_filters %}
 
 {% block title %}Profile{% endblock %}
 
 {% block extrahead %}
-    <link href="{{STATIC_URL}}css/profile.css" rel="stylesheet">
+    <script src="{{STATIC_URL}}js/3ps/jquery/jquery.js"></script>
+    <script src="{{STATIC_URL}}js/3ps/bootstrap/bootstrap.js"></script>
+    <script>
+        var require = {
+            baseUrl: '/static/js',
+        };
+    </script>
+    <script data-main="{{STATIC_URL}}js/apps/profile/main.js" src="{{STATIC_URL}}js/3ps/require/require.js"></script>
 {%endblock %}
 
 {% block content %}
@@ -27,35 +35,66 @@
                 <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_jobs' %}">
                     {% csrf_token %}
                     <fieldset>
-                        <legend>Change your Job settings</legend>
+                        <legend>Change your job preferences</legend>
                         {% for field in form %}
+
                             <div class="control-group {% if field.errors %}error{% endif %}">
 
-                            {% if field.field.widget|widget_type == 'django.forms.widgets.CheckboxInput'%}
-                                {% if forloop.first%}
-                                    <label class="control-label">Job Notifications</label>
+                                {% if field.field.widget|widget_type == 'django.forms.widgets.CheckboxInput' %}
+
+                                    {% if forloop.first%}
+                                        <label class="control-label">Job Notifications</label>
+                                    {% endif %}
+
+                                    <div class="controls">
+                                        <label class="checkbox">
+                                            {{ field }} {{ field.label }}
+                                            {% for error in field.errors %}
+                                                <span class="help-inline">{{error}}</span>
+                                            {% endfor %}
+                                        </label>
+                                    </div>
                                 {% endif %}
-                                <div class="controls">
-                                    <label class="checkbox">
-                                        {{ field }} {{ field.label }}
-                                        {% for error in field.errors %}
-                                            <span class="help-inline">{{error}}</span>
-                                        {% endfor %}
-                                    </label>
-                                </div>
-                            {% else %}
-                                {{ field.label_tag }}
-                                <div class="controls">
-                                    {{ field }}
-                                    <button onclick="return false" type="add" name="add" class="btn btn-primary test">Add</button>
-                                    {% for error in field.errors %}
-                                        <span class="help-inline">{{error}}</span>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+
+                                {% if field.field.widget|widget_type == 'django.forms.widgets.TextInput' %}
+                                    {{ field.label_tag }}
+                                    <div class="controls">
+                                        {% if field.label == 'Positions' %}
+                                            <div id="position-add" class="input-append">
+                                                {{ field }}
+                                                {% if not forloop.last %}
+                                                    <button onclick="return false" class="btn">Add</button>
+                                                {% endif %}
+                                                {% for error in field.errors %}
+                                                    <span class="help-inline">{{error}}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                       
+                                    </div>
+                                {% endif %}
 
                             </div>
+
+                            <!-- Area for added entries -->
+                            {% if not forloop.last %}
+                                {% if field.field.widget|widget_type == 'django.forms.widgets.TextInput'%}
+                                    <div class="control-group">
+                                        <label class="control-label"></label>
+                                        {% if field.label == 'Positions' %}
+                                            <div id="positions-list" class="controls">
+
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+
                         {% endfor %}
+
+
+                        <!-- Hidden field inputs -->
+                        <input id="positions-form-input" type="hidden" name="positions_form_data"/>
 
                         <div class="control-group">
                             <div class="controls">
@@ -64,6 +103,7 @@
                         </div>
 
                     </fieldset>
+
 
                     {% if messages %}
                         {% for message in messages %}
@@ -81,5 +121,19 @@
 
         </div>
     </div>
+
+    <!-- TODO: add proper escapejs filter that works with json -->
+    {% autoescape off %}
+    <script>
+        var data = [{'name':'Manager'},{'name':'Developer'}];
+    </script>
+    {% endautoescape %}
+
+    <!-- Templates -->
+    <script type="text/template" id="position-item-template">
+        {% verbatim %}
+            <%= name %>
+        {% endverbatim %}
+    </script>
 
 {% endblock %}

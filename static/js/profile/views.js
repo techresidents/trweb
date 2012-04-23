@@ -9,7 +9,7 @@ define([
     var SkillListItemView = Backbone.View.extend({
 
         tagName: "tr",
-        template: _.template($('#skill-item-template').html()),
+        template: '#skill-item-template',
         events: {
             "change .skill-yrs-experience": "clickedYrsExperience",
             "change .skill-expertise": "clickedExpertise",
@@ -19,6 +19,7 @@ define([
         initialize: function() {
             this.model = this.options.model;
             this.collection = this.options.collection;
+            this.template = _.template($(this.template).html());
         },
 
         render: function() {
@@ -136,10 +137,117 @@ define([
         }
     });
 
+
+    var JobPositionListItemView = Backbone.View.extend({
+
+        tagName: "li",
+        templateName: '#position-item-template',
+        events: {
+            "click .close": "clickedDeleteItemButton"
+        },
+
+        initialize: function() {
+            this.model = this.options.model;
+            this.collection = this.options.collection;
+            this.template = _.template($(this.templateName).html());
+        },
+
+        render: function() {
+            this.$el.html(this.template(this.model.toJSON()));
+            return this;
+        },
+
+        clickedDeleteItemButton: function() {
+            if (null != this.collection.get(this.model)){
+                this.collection.remove(this.model);
+                this.model = null; // TODO mark for GC?
+            }
+        }
+    });
+
+    var JobPositionListView = Backbone.View.extend({
+
+        initialize: function() {
+            this.setElement($("#positions-list"));
+            this.positionCollection = this.options.positionCollection;
+            this.positionCollection.bind("reset", this.render, this);
+            this.positionCollection.bind("add", this.addPositionView, this);
+            this.positionCollection.bind("remove", this.render, this);
+        },
+
+        render: function() {
+            this.$el.children().remove();
+            this.positionCollection.each(this.addPositionView, this);
+        },
+
+        addPositionView: function(position) {
+            var view = new JobPositionListItemView({
+                model: position,
+                collection: this.positionCollection
+            });
+
+            this.$el.append(view.render().el);
+        },
+
+        removePositionView: function(skill) {
+            // TODO would be preferable to only remove the item we want instead of resetting the collection.
+        }
+    });
+
+    var JobPositionAddView = Backbone.View.extend({
+
+        events: {
+            "click button": "addPosition"
+        },
+
+        initialize: function() {
+            this.setElement($("#position-add"));
+            this.typeaheadView = new typeahead.TypeaheadView({
+                el: this.$("#id_positions"),
+                maxResults: 5,
+                forceSelection: true,
+                onenter: this.updateOnEnter,
+                context: this
+            });
+
+            this.positionCollection = this.options.positionCollection;
+            this.positionInput = this.$("#id_positions");
+        },
+
+        addPosition: function() {
+            console.log("addPosition called")
+            var positionName = this.positionInput.val();
+            if (positionName) {
+                // only add if entry doesn't exist
+                if (null == this.positionCollection.get(positionName))
+                {
+                    var position = new models.JobPosition({
+                        name: positionName
+                    });
+                    this.positionCollection.add(position);
+                }
+                this.positionInput.val("");
+
+            }
+            this.positionInput.focus();
+        },
+
+        updateOnEnter: function(value) {
+            this.addPosition();
+        }
+
+    });
+
+
+
     return {
         SkillListItemView: SkillListItemView,
         SkillListView: SkillListView,
         SkillAddView: SkillAddView,
-        SkillFormView: SkillFormView
+        SkillFormView: SkillFormView,
+
+        JobPositionListItemView: JobPositionListItemView,
+        JobPositionListView: JobPositionListView,
+        JobPositionAddView: JobPositionAddView
     }
 });
