@@ -32,65 +32,41 @@
             {% include 'accounts/navigation_panel.html' %}
 
             <div class="span9">
-                <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_jobs' %}">
+                <form id="profile-jobs-form" class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_jobs' %}">
                     {% csrf_token %}
                     <fieldset>
                         <legend>Change your job preferences</legend>
-                        {% for field in form %}
 
-                            <div class="control-group {% if field.errors %}error{% endif %}">
-
-                                {% if field.field.widget|widget_type == 'django.forms.widgets.CheckboxInput' %}
-
-                                    {% if forloop.first%}
-                                        <label class="control-label">Job Notifications</label>
-                                    {% endif %}
-
-                                    <div class="controls">
-                                        <label class="checkbox">
-                                            {{ field }} {{ field.label }}
-                                            {% for error in field.errors %}
-                                                <span class="help-inline">{{error}}</span>
-                                            {% endfor %}
-                                        </label>
-                                    </div>
-                                {% endif %}
-
-                                {% if field.field.widget|widget_type == 'django.forms.widgets.TextInput' %}
-                                    {{ field.label_tag }}
-                                    <div class="controls">
-                                        {% if field.label == 'Positions' %}
-                                            <div id="position-add" class="input-append">
-                                                {{ field }}
-                                                {% if not forloop.last %}
-                                                    <button onclick="return false" class="btn">Add</button>
-                                                {% endif %}
-                                                {% for error in field.errors %}
-                                                    <span class="help-inline">{{error}}</span>
-                                                {% endfor %}
-                                            </div>
-                                        {% endif %}
-                                       
-                                    </div>
-                                {% endif %}
-
+                        <div class="control-group {% if form.email_new_job_opps.errors %}error{% endif %}">
+                            <label class="control-label">Job Notifications</label>
+                            <div class="controls">
+                                <label class="checkbox">
+                                    {{ form.email_new_job_opps }} {{ form.email_new_job_opps.label }}
+                                    {% for error in form.email_new_job_opps.errors %}
+                                        <span class="help-inline">{{error}}</span>
+                                    {% endfor %}
+                                </label>
                             </div>
+                        </div>
 
-                            <!-- Area for added entries -->
-                            {% if not forloop.last %}
-                                {% if field.field.widget|widget_type == 'django.forms.widgets.TextInput'%}
-                                    <div class="control-group">
-                                        <label class="control-label"></label>
-                                        {% if field.label == 'Positions' %}
-                                            <div id="positions-list" class="controls">
+                        <div class="control-group {% if form.positions.errors %}error{% endif %}">
+                            {{ form.positions.label_tag }}
+                            <div class="controls">
+                                <div id="position-add" class="input-append">
+                                    {{ form.positions }}
+                                    <button id="position-add-button" class="btn">Add</button>
+                                    {% for error in form.positions.errors %}
+                                        <span class="help-inline">{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label"></label>
+                            <ul id="positions-list" class="controls">
 
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
-                            {% endif %}
-
-                        {% endfor %}
+                            </ul>
+                        </div>
 
 
                         <!-- Hidden field inputs -->
@@ -125,15 +101,14 @@
     <!-- TODO: add proper escapejs filter that works with json -->
     {% autoescape off %}
     <script>
-        var data = [{'name':'Manager'},{'name':'Developer'}];
+        var data = [{'name':'Developer'}];
+        var app = {'name':'jobs'}
     </script>
     {% endautoescape %}
 
     <!-- Templates -->
     <script type="text/template" id="position-item-template">
-        {% verbatim %}
-            <%= name %>
-        {% endverbatim %}
+        <%= name %>
     </script>
 
 {% endblock %}

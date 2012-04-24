@@ -233,6 +233,9 @@ def profile_jobs(request):
             form.save(commit=True)
             messages.success(request, "Save successful")
             return HttpResponseRedirect(reverse('accounts.views.profile_jobs'))
+        else:
+            form_data = {}
+            form = forms.ProfileJobsForm(request, data=form_data)
     else:
         try:
             prefs = Prefs.objects.get(user=request.user)

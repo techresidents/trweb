@@ -28,12 +28,21 @@ $(document).ready(function() {
 
             this.positionLisView = new views.JobPositionListView({positionCollection: this.positionCollection});
             this.positionAddView = new views.JobPositionAddView({positionCollection: this.positionCollection});
+            this.positionFormView = new views.JobPositionFormView({positionCollection: this.positionCollection});
 
             this.positionCollection.reset(this.options.data);
         }
     });
 
-    app = new JobsAppView({data: window.data});
+    if (window.app) {
+        if (window.app.name == 'jobs') {
+            app = new JobsAppView({data: window.data});
+        }
+        else if (window.app.name == 'skills') {
+            app = new SkillsAppView({data: window.data});
+        }
+    }
+
 
 });
 

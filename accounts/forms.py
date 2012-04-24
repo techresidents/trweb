@@ -330,30 +330,67 @@ class ProfileChatsForm(forms.Form):
         return self.user_profile
 
 class ProfileJobsForm(forms.Form):
+
+    # JSON keys
+    JSON_POSITION_NAME = 'name'
+
     # Create data to populate the Positions field autocomplete
     position_types = PositionType.objects.all()
     position_names = [str(p.name) for p in position_types]
     json_autocomplete_positions = json.dumps(position_names)
 
+    # Setup form fields
     email_new_job_opps = forms.BooleanField(label="Allow potential employers to contact me on my terms:", widget=forms.CheckboxInput, required=False)
-
     positions = forms.CharField(label="Positions", max_length=1024, widget=forms.TextInput(attrs={'autocomplete':'off', 'data-source':json_autocomplete_positions}), required=False)
     positions_form_data = JSONField(max_length=2048, widget=forms.HiddenInput, required=False)
-
     locations = forms.CharField(label="Locations", max_length=1024, widget=forms.TextInput, required=False)
     technologies = forms.CharField(label="Technologies", max_length=1024, widget=forms.TextInput, required=False)
     salary_start = forms.DecimalField(label="Minimum Salary", min_value=10000, max_digits=7, decimal_places=0, required=False)
+
 
     def __init__(self, request=None, *args, **kwargs):
         self.user = request.user
         super(ProfileJobsForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
+        # Making the assumption that form data is clean and valid (meaning that the position
+        # data passed in from the user matches existing positions in the db).
+
+        # Before updating the user's position preferences, save the old prefs to check for prefs that may have been deleted
+        previous_positions = PositionTypePref.objects.filter(user=self.user).select_related('job_positiontype')
+
+        # Retrieve posted position data
+        updated_positions = self.cleaned_data.get('positions_form_data')
+        updated_position_names = {p[self.JSON_POSITION_NAME] for p in updated_positions}
+
+        # Update user's positions based on data posted
+        for position in updated_positions:
+            # create a new position if one doesn't already exist
+            try:
+                pos_type = PositionType.objects.get(name=position[self.JSON_POSITION_NAME])
+                user_position = PositionTypePref.objects.get(user=self.user, position_type=pos_type)
+            except PositionTypePref.DoesNotExist:
+                user_position = PositionTypePref(
+                    user=self.user,
+                    position_type=pos_type
+                )
+                if commit:
+                    user_position.save()
+
+
+        # Update general job prefs
         job_prefs, created = Prefs.objects.get_or_create(user=self.user)
         job_prefs.email_new_job_opps=self.cleaned_data['email_new_job_opps']
         job_prefs.salary_start=self.cleaned_data['salary_start']
+
         if commit:
             job_prefs.save()
+
+            # if we've made it this far, then we go ahead and delete any obsolete positions
+            for previous_position in previous_positions:
+                if not previous_position.position_type.name in updated_position_names:
+                    previous_position.delete()
+
         return self.user
 
 class ProfileSkillsForm(forms.Form):

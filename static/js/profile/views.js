@@ -212,6 +212,11 @@ define([
 
             this.positionCollection = this.options.positionCollection;
             this.positionInput = this.$("#id_positions");
+
+            this.$("#position-add-button").click(function(event) {
+                    event.preventDefault(); // prevent form submission
+                }
+            );
         },
 
         addPosition: function() {
@@ -238,7 +243,23 @@ define([
 
     });
 
+    var JobPositionFormView = Backbone.View.extend({
 
+        initialize: function() {
+            this.setElement($("#profile-jobs-form"));
+            this.positionCollection = this.options.positionCollection;
+            this.positionCollection.bind("reset", this.change, this);
+            this.positionCollection.bind("add", this.change, this);
+            this.positionCollection.bind("remove", this.change, this);
+            this.positionCollection.bind("change", this.change, this);
+
+            this.positionsFormInput = this.$("#positions-form-input");
+        },
+
+        change: function() {
+            this.positionsFormInput.val(JSON.stringify(this.positionCollection.toJSON()));
+        }
+    });
 
     return {
         SkillListItemView: SkillListItemView,
@@ -248,6 +269,7 @@ define([
 
         JobPositionListItemView: JobPositionListItemView,
         JobPositionListView: JobPositionListView,
-        JobPositionAddView: JobPositionAddView
+        JobPositionAddView: JobPositionAddView,
+        JobPositionFormView: JobPositionFormView
     }
 });
