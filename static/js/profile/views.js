@@ -143,7 +143,7 @@ define([
         tagName: "li",
         templateName: '#position-item-template',
         events: {
-            "click .close": "clickedDeleteItemButton"
+            "click .destroy": "clickedDeleteItemMarker"
         },
 
         initialize: function() {
@@ -157,7 +157,8 @@ define([
             return this;
         },
 
-        clickedDeleteItemButton: function() {
+        clickedDeleteItemMarker: function() {
+            console.log("destroy clicked");
             if (null != this.collection.get(this.model)){
                 this.collection.remove(this.model);
                 this.model = null; // TODO mark for GC?

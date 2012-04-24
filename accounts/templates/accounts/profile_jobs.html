@@ -6,6 +6,7 @@
 {% block title %}Profile{% endblock %}
 
 {% block extrahead %}
+    <link href="{{STATIC_URL}}css/profile_jobs.css" rel="stylesheet">
     <script src="{{STATIC_URL}}js/3ps/jquery/jquery.js"></script>
     <script src="{{STATIC_URL}}js/3ps/bootstrap/bootstrap.js"></script>
     <script>
@@ -68,6 +69,42 @@
                             </ul>
                         </div>
 
+                        <div class="control-group {% if form.locations.errors %}error{% endif %}">
+                            {{ form.locations.label_tag }}
+                            <div class="controls">
+                                <div id="location-add" class="input-append">
+                                    {{ form.locations }}
+                                    <button id="location-add-button" class="btn">Add</button>
+                                    {% for error in form.locations.errors %}
+                                        <span class="help-inline">{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group {% if form.technologies.errors %}error{% endif %}">
+                            {{ form.technologies.label_tag }}
+                            <div class="controls">
+                                <div id="technology-add" class="input-append">
+                                    {{ form.technologies }}
+                                    <button id="technology-add-button" class="btn">Add</button>
+                                    {% for error in form.technologies.errors %}
+                                        <span class="help-inline">{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group {% if form.salary_start.errors %}error{% endif %}">
+                            {{ form.salary_start.label_tag }}
+                            <div class="controls">
+                                {{ form.salary_start }}
+                                {% for error in form.salary_start.errors %}
+                                    <span class="help-inline">{{error}}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
 
                         <!-- Hidden field inputs -->
                         <input id="positions-form-input" type="hidden" name="positions_form_data"/>
@@ -101,7 +138,7 @@
     <!-- TODO: add proper escapejs filter that works with json -->
     {% autoescape off %}
     <script>
-        var data = [{'name':'Developer'}];
+        var data = {{json_positions}};
         var app = {'name':'jobs'}
     </script>
     {% endautoescape %}
@@ -109,6 +146,7 @@
     <!-- Templates -->
     <script type="text/template" id="position-item-template">
         <%= name %>
+        <a href="#" class="close-inline destroy">x</a>
     </script>
 
 {% endblock %}

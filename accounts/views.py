@@ -16,7 +16,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
 
 from techresidents_web.accounts.models import Skill
-from techresidents_web.job.models import Prefs
+from techresidents_web.job.models import Prefs, PositionTypePref
 from techresidents_web.common.models import Technology, TechnologyType, ExpertiseType
 
 
@@ -233,9 +233,6 @@ def profile_jobs(request):
             form.save(commit=True)
             messages.success(request, "Save successful")
             return HttpResponseRedirect(reverse('accounts.views.profile_jobs'))
-        else:
-            form_data = {}
-            form = forms.ProfileJobsForm(request, data=form_data)
     else:
         try:
             prefs = Prefs.objects.get(user=request.user)
@@ -245,11 +242,18 @@ def profile_jobs(request):
             }
         except Prefs.DoesNotExist:
             form_data = {}
-
         form = forms.ProfileJobsForm(request, data=form_data)
 
+    # Retrieve list of user's position preferences and create json data to populate UI
+    user_positions = PositionTypePref.objects.filter(user=request.user).select_related('job_positiontype')
+    user_positions_list = [ {forms.ProfileJobsForm.JSON_POSITION_NAME: pos.position_type.name} for pos in user_positions]
+    json_positions = '[]'
+    if user_positions_list:
+        json_positions = json.dumps(user_positions_list)
+
     context = {
-        'form': form
+        'form': form,
+        'json_positions': json_positions
     }
 
     return render_to_response('accounts/profile_jobs.html', context, context_instance=RequestContext(request))

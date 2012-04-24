@@ -1,0 +1,18 @@
+#positions-list {
+    display: inline;
+    margin: 0 0 5px 5px;
+}
+
+#positions-list li {
+    display: inline;
+    list-style-type:none;
+    padding-right: 8px;
+}
+
+#positions-list li .close-inline {
+    display: none;
+}
+
+#positions-list li:hover .close-inline {
+    display:inline;
+}
