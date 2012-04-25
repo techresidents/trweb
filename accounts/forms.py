@@ -340,7 +340,10 @@ class ProfileJobsForm(forms.Form):
     json_autocomplete_positions = json.dumps(position_names)
 
     # Setup form fields
-    email_new_job_opps = forms.BooleanField(label="Allow potential employers to contact me on my terms:", widget=forms.CheckboxInput, required=False)
+    email_new_job_opps = forms.BooleanField(
+        label="Allow potential employers to contact me on my terms:",
+        widget=forms.CheckboxInput,
+        required=False)
     positions = forms.CharField(
         label="Positions",
         max_length=1024,
@@ -355,6 +358,26 @@ class ProfileJobsForm(forms.Form):
     def __init__(self, request=None, *args, **kwargs):
         self.user = request.user
         super(ProfileJobsForm, self).__init__(*args, **kwargs)
+
+    def clean_positions_form_data(self):
+        cleaned_positions_data = self.cleaned_data.get('positions_form_data')
+        if cleaned_positions_data:
+            # Perform db query up front to prevent calling into the
+            # the db to validate each position in the form data
+            valid_positions = PositionType.objects.all()
+            valid_position_names = [p.name for p in valid_positions]
+
+            for position in cleaned_positions_data:
+                # Verify we have a name attribute
+                position_name = position[self.JSON_POSITION_NAME]
+                if position_name:
+                    # if we have a name attribute, verify that it's valid
+                    if not position_name in valid_position_names:
+                        raise forms.ValidationError("Position name value is invalid")
+                else:
+                    raise forms.ValidationError("Position name field required")
+
+        return cleaned_positions_data
 
     def save(self, commit=True):
         # Making the assumption that form data is clean and valid (meaning that the position
