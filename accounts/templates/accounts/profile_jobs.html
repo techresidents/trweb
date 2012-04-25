@@ -64,9 +64,11 @@
                         </div>
                         <div class="control-group">
                             <label class="control-label"></label>
-                            <ul id="positions-list" class="controls">
+                            <div class="values-background span4">
+                                <ul id="positions-list">
 
-                            </ul>
+                                </ul>
+                            </div>
                         </div>
 
                         <div class="control-group {% if form.locations.errors %}error{% endif %}">
@@ -145,7 +147,7 @@
 
     <!-- Templates -->
     <script type="text/template" id="position-item-template">
-        <%= name %>
+        <span><%= name %></span>
         <a href="#" class="close-inline destroy">x</a>
     </script>
 
