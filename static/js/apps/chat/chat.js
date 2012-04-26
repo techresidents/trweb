@@ -21,6 +21,16 @@ define([
 
 $(document).ready(function() {
     
+    /**
+     * Chat application main view.
+     * @constructor
+     * @param {options} 
+     *   chatAPIKey: Tokbox API Key (required) 
+     *   chatSessionToken: Tokbox session token (required)
+     *   chatUserToken: Tokbox user token (required)
+     *   users: users participating in chat (required)
+     *   topics: chat topics (required)
+     */
     var ChatAppView = Backbone.View.extend({
 
         el: $('#chatapp'),
@@ -34,7 +44,7 @@ $(document).ready(function() {
                 topics: this.options.topics,
             });
             
-            //set chat
+            //set chat model
             models.chat = this.chat;
             
 
@@ -86,12 +96,14 @@ $(document).ready(function() {
             var chatWhiteboardTabView = new whiteboard.ChatWhiteboardTabView({
                 el: $('#whiteboard'),
             });
-
+            
+            //connect the chat and start polling for messages.
             this.chat.connect();
             this.chat.messages().longPoll();
         },
     });
-
+    
+    //constuct main app view
     app = new ChatAppView(data);
 });
 
