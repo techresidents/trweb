@@ -1,11 +1,20 @@
 {% extends "menu_base.html" %}
 {% load url from future %}
+{% load verbatim %}
 {% load widget_filters %}
 
 {% block title %}Profile{% endblock %}
 
 {% block extrahead %}
-    <link href="{{STATIC_URL}}css/profile.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}css/profile_jobs.css" rel="stylesheet">
+    <script src="{{STATIC_URL}}js/3ps/jquery/jquery.js"></script>
+    <script src="{{STATIC_URL}}js/3ps/bootstrap/bootstrap.js"></script>
+    <script>
+        var require = {
+            baseUrl: '/static/js',
+        };
+    </script>
+    <script data-main="{{STATIC_URL}}js/apps/profile/main.js" src="{{STATIC_URL}}js/3ps/require/require.js"></script>
 {%endblock %}
 
 {% block content %}
@@ -24,38 +33,81 @@
             {% include 'accounts/navigation_panel.html' %}
 
             <div class="span9">
-                <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_jobs' %}">
+                <form id="profile-jobs-form" class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_jobs' %}">
                     {% csrf_token %}
                     <fieldset>
-                        <legend>Change your Job settings</legend>
-                        {% for field in form %}
-                            <div class="control-group {% if field.errors %}error{% endif %}">
+                        <legend>Change your job preferences</legend>
 
-                            {% if field.field.widget|widget_type == 'django.forms.widgets.CheckboxInput'%}
-                                {% if forloop.first%}
-                                    <label class="control-label">Job Notifications</label>
-                                {% endif %}
-                                <div class="controls">
-                                    <label class="checkbox">
-                                        {{ field }} {{ field.label }}
-                                        {% for error in field.errors %}
-                                            <span class="help-inline">{{error}}</span>
-                                        {% endfor %}
-                                    </label>
-                                </div>
-                            {% else %}
-                                {{ field.label_tag }}
-                                <div class="controls">
-                                    {{ field }}
-                                    <button onclick="return false" type="add" name="add" class="btn btn-primary test">Add</button>
-                                    {% for error in field.errors %}
+                        <div class="control-group {% if form.email_new_job_opps.errors %}error{% endif %}">
+                            <label class="control-label">Job Notifications</label>
+                            <div class="controls">
+                                <label class="checkbox">
+                                    {{ form.email_new_job_opps }} {{ form.email_new_job_opps.label }}
+                                    {% for error in form.email_new_job_opps.errors %}
+                                        <span class="help-inline">{{error}}</span>
+                                    {% endfor %}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="control-group {% if form.positions.errors %}error{% endif %}">
+                            {{ form.positions.label_tag }}
+                            <div class="controls">
+                                <div id="position-add" class="input-append">
+                                    {{ form.positions }}
+                                    <button id="position-add-button" class="btn">Add</button>
+                                    {% for error in form.positions.errors %}
                                         <span class="help-inline">{{error}}</span>
                                     {% endfor %}
                                 </div>
-                            {% endif %}
-
                             </div>
-                        {% endfor %}
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label"></label>
+                            <ul id="positions-list" class="controls">
+
+                            </ul>
+                        </div>
+
+                        <div class="control-group {% if form.locations.errors %}error{% endif %}">
+                            {{ form.locations.label_tag }}
+                            <div class="controls">
+                                <div id="location-add" class="input-append">
+                                    {{ form.locations }}
+                                    <button id="location-add-button" class="btn">Add</button>
+                                    {% for error in form.locations.errors %}
+                                        <span class="help-inline">{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group {% if form.technologies.errors %}error{% endif %}">
+                            {{ form.technologies.label_tag }}
+                            <div class="controls">
+                                <div id="technology-add" class="input-append">
+                                    {{ form.technologies }}
+                                    <button id="technology-add-button" class="btn">Add</button>
+                                    {% for error in form.technologies.errors %}
+                                        <span class="help-inline">{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group {% if form.salary_start.errors %}error{% endif %}">
+                            {{ form.salary_start.label_tag }}
+                            <div class="controls">
+                                {{ form.salary_start }}
+                                {% for error in form.salary_start.errors %}
+                                    <span class="help-inline">{{error}}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+
+                        <!-- Hidden field inputs -->
+                        <input id="positions-form-input" type="hidden" name="positions_form_data"/>
 
                         <div class="control-group">
                             <div class="controls">
@@ -64,6 +116,7 @@
                         </div>
 
                     </fieldset>
+
 
                     {% if messages %}
                         {% for message in messages %}
@@ -81,5 +134,19 @@
 
         </div>
     </div>
+
+    <!-- TODO: add proper escapejs filter that works with json -->
+    {% autoescape off %}
+    <script>
+        var data = {{json_positions}};
+        var app = {'name':'jobs'}
+    </script>
+    {% endautoescape %}
+
+    <!-- Templates -->
+    <script type="text/template" id="position-item-template">
+        <%= name %>
+        <a href="#" class="close-inline destroy">x</a>
+    </script>
 
 {% endblock %}
