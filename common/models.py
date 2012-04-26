@@ -81,6 +81,7 @@ class Topic(models.Model):
     style = models.ForeignKey(TopicStyle)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=2048, blank=True)
+    duration = models.IntegerField()
     public = models.BooleanField(default=True)
     user = models.ForeignKey(User)
 
