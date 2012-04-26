@@ -7,6 +7,12 @@ define([
     'chat/message/messages',
 ], function($, _, Backbone, xd, xdBackbone, messages) {
     
+    /**
+     * Chat Minute model.
+     * @constructor
+     * @param {Object} attributes Optional model attributes
+     * @param {Object} options Optional options
+     */
     var Minute = Backbone.Model.extend({
             
         idAttribute: 'minuteId',
@@ -84,6 +90,9 @@ define([
             return this.header.url() + this.msg.url();
         },
 
+        /**
+         * Cross domain compatible sync function.
+         */
         sync: xdBackbone.sync,
 
         parse: function(response) {
@@ -100,10 +109,16 @@ define([
         },
     });
 
+    /**
+     * Chat Minute collection.
+     */
     var MinuteCollection = Backbone.Collection.extend({
 
         model: Minute,
         
+        /**
+         * Cross domain compatible sync function.
+         */
         sync: xdBackbone.sync,
     });
 

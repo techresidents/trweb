@@ -5,6 +5,10 @@ define([
 ], function($, _, Backbone) {
 
 
+    /**
+     * Chat message header.
+     * Header is common to all chat messages.
+     */
     var MessageHeader = function(attributes) {
         this.id = null;
         this.type = null;
@@ -20,6 +24,9 @@ define([
         }
     });
 
+    /**
+     * Chat Minute create message.
+     */
     var MinuteCreateMessage = function(attributes) {
         this.minuteId = null;
         this.topicId = null;
@@ -37,6 +44,9 @@ define([
     });
 
 
+    /**
+     * Chat Tag create message.
+     */
     var TagCreateMessage = function(attributes) {
         this.tagId = null;
         this.name = null;
@@ -52,6 +62,9 @@ define([
     });
 
 
+    /**
+     * Chat Tag delete message.
+     */
     var TagDeleteMessage = function(attributes) {
         this.tagId = null;
         _.extend(this, attributes);
@@ -66,6 +79,9 @@ define([
     });
 
 
+    /**
+     * Chat Whiteboard create message.
+     */
     var WhiteboardCreateMessage = function(attributes) {
         this.type = "WHITEBOARD_CREATE";
         this.whiteboardId = null;
@@ -82,6 +98,9 @@ define([
     });
 
 
+    /**
+     * Chat Whiteboard delete message.
+     */
     var WhiteboardDeleteMessage = function(attributes) {
         this.type = "WHITEBOARD_DELETE";
         this.whiteboardId = null;
@@ -98,7 +117,9 @@ define([
     });
 
    
-
+    /**
+     * Map message types to constructors
+     */
     var messageTypeMap = {
         "MINUTE_CREATE": MinuteCreateMessage,
         "TAG_CREATE": TagCreateMessage,
@@ -107,6 +128,10 @@ define([
         "WHITEBOARD_DELETE": WhiteboardDeleteMessage,
     };
 
+    /**
+     * Message factory for creating messages from
+     * chat message header and msg.
+     */
     var MessageFactory = function() {
         this.messageTypeMap = messageTypeMap;
     };
@@ -129,4 +154,3 @@ define([
         WhiteboardCreateMessage: WhiteboardCreateMessage,
         WhiteboardDeleteMessage: WhiteboardDeleteMessage,
     };
-});

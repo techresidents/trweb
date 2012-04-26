@@ -4,6 +4,10 @@ define([
     'Backbone',
 ], function($, _, Backbone) {
     
+    /**
+     * Chat user model.
+     * @constructor
+     */
     var ChatUser = Backbone.Model.extend({
 
         defaults: function() {
@@ -61,6 +65,11 @@ define([
         },
     });
 
+
+    /**
+     * Chat user collection.
+     * @constructor
+     */
     var ChatUserCollection = Backbone.Collection.extend({
 
         localStorage: new Backbone.LocalStorage("ChatUserCollection"),

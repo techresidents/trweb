@@ -10,7 +10,7 @@ define([
      * jquery plugin allowing for additional  options and  making 
      * stronger guarantees about the onselect/oneneter callbacks being called.
      * @constructor
-     * @param {options} - options object
+     * @param {Object} options - options object
      *   source: boostrap typeahead plugin source array (strings or objects).
      *     If not provided, the element data-source attribute will be used.
      *   property: if sources contains objects, the object property to display
@@ -97,8 +97,8 @@ define([
         
         /**
          * Typeahead selection processing.
-         * @param {value} value in typeahead input
-         * @param {object} associated LookupResult.matches() object
+         * @param {string} value value in typeahead input
+         * @param {Object} object associated LookupResult.matches() object
          *   if value is an autocompleted string. This is guaranteed
          *   to not be null if forceSelection is true.
          */
@@ -119,7 +119,7 @@ define([
         
         /**
          * keypress event handler.
-         * @param {e} event object.
+         * @param event object.
          */
         keypress: function(e) {
             this.lastValue = this.$el.val();
@@ -150,7 +150,7 @@ define([
         
         /**
          * blue event handler.
-         * @param {e} event object.
+         * @param e event object.
          */
         blur: function(e) {
             value = this.$el.val();

@@ -6,6 +6,13 @@ define([
 ], function($, _, Backbone, Raphael) {
 
 
+    /**
+     * Whiteboard view.
+     * @constructor
+     * @param {Object} options
+     *   width: whiteboard width
+     *   height: whiteboard height
+     */
     var WhiteboardView = Backbone.View.extend({
         tagName: 'div',
         

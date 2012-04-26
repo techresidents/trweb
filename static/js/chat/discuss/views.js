@@ -6,6 +6,13 @@ define([
     'timer/views',
 ], function($, _, Backbone, models, timer) {
 
+    /**
+     * Disucss view.
+     * @constructor
+     * @param {Object} options
+     *   templateSelector: html template selector (optional)
+     *   timerSelector: selector for timer view (optional)
+     */
     var DiscussView = Backbone.View.extend({
 
         templateSelector: '#discuss-template',

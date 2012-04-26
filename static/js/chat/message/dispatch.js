@@ -8,6 +8,18 @@ define([
 ], function($, _, Backbone, minute, tag, whiteboard) {
 
 
+    /**
+     * Chat message Dispatcher.
+     * Dispatches chat messages to appropriate collections.
+     * For example, tag related messages will be dispatched
+     * to the tagCollection where views can monitor and
+     * take action.
+     *
+     * This class helps to decouple the chat messages from
+     * the resources (models) which they represent. For example,
+     * the TAG_CREATE message, while containing tag data,
+     * is not suitable as a general view model.
+     */
     var Dispatcher = function(options) {
         this.chatMessages = options.chatMessages;
 

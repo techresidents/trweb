@@ -5,6 +5,13 @@ define([
     'spin',
 ], function($, _, Backbone, spin) {
 
+    /**
+     * Chat user header view.
+     * @constructor
+     * @param {Object} options
+     *   model: User model (required)
+     *   templateSelector: html template selector (optional)
+     */
     var ChatUserHeaderView = Backbone.View.extend({
 
         templateSelector: '#chat-user-header-template',
@@ -22,6 +29,14 @@ define([
 
     });
 
+
+    /**
+     * Chat user footer view.
+     * @constructor
+     * @param {Object} options
+     *   model: User model (required)
+     *   templateSelector: html template selector (optional)
+     */
     var ChatUserFooterView = Backbone.View.extend({
 
         templateSelector: '#chat-user-footer-template',
@@ -40,6 +55,15 @@ define([
     });
 
 
+    /**
+     * Chat user view.
+     * @constructor
+     * @param {Object} options
+     *   model: User model (required)
+     *   chatSession: ChatSession model (required)
+     *   css: style to add to view (optional)
+     *   templateSelector: html template selector (optional)
+     */
     var ChatUserView = Backbone.View.extend({
 
         templateSelector: '#chat-user-template',

@@ -6,6 +6,11 @@ define([
     'xd/backbone',
 ], function($, _, Backbone, xd, xdBackbone) {
     
+    /**
+     * Chat session model.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     */
     var ChatSession = Backbone.Model.extend({
 
         localStorage: new Backbone.LocalStorage("ChatSession"),
@@ -20,7 +25,7 @@ define([
             }
         },
 
-        initialize: function(model) {
+        initialize: function(attributes) {
             //make 'this' available for tokbox event listeners
             var that = this;
             
@@ -60,7 +65,9 @@ define([
             return this.get("users").first();
         },
         
-        //connect tokbox session to start everything.
+        /**
+         * Connect chat session.
+         */
         connect: function() {
             var session = this.getSession();
             var userToken = this.getUserToken();

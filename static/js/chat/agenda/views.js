@@ -7,6 +7,18 @@ define([
     'timer/util',
 ], function($, _, Backbone, models, timer_views, timer_util) {
 
+    
+    /**
+     * Agenda topic item view which represents a single Topic which
+     * may be selected, active or both.
+     * @constructor
+     * @param {Object} options View options
+     *   agenda: Agenda model (required) 
+     *   model: Topic model (required)
+     *   selectedClass: style to add when selected (optional)
+     *   activeClass: style to add when active (optional)
+     *   templateSelector: html template selector (optional)
+     */
     var AgendaItemView = Backbone.View.extend({
 
         tagName: 'li',
@@ -68,6 +80,13 @@ define([
         },
     });
 
+
+    /**
+     * Agenda topic list view.
+     * @constructor
+     * @param {Object} options View options
+     *   model: Agenda model (required) 
+     */
     var AgendaListView = Backbone.View.extend({
 
         tagName: 'ul',
@@ -91,6 +110,12 @@ define([
         }
     });
 
+    /**
+     * Agenda detail view.
+     * @constructor
+     * @param {Object} options View options
+     *   templateSelector: html template selector (optional)
+     */
     var AgendaDetailView = Backbone.View.extend({
 
         templateSelector: '#agenda-detail-template',
@@ -115,6 +140,15 @@ define([
         }
     });
 
+
+    /**
+     * Agenda control view.
+     * @constructor
+     * @param {Object} options View options
+     *   model: Agenda model (required)
+     *   templateSelector: html template selector (optional)
+     *   timerSelector: el selector for timer view (optional)
+     */
     var AgendaControlView = Backbone.View.extend({
 
         templateSelector: '#agenda-control-template',
@@ -164,6 +198,15 @@ define([
         },
     });
     
+
+    /**
+     * Agenda tab view.
+     * @constructor
+     * @param {Object} options View options
+     *   controlSelector: el selector for AgendaControlView
+     *   detailSelector: el selector for AgendaDetailView
+     *   listSelect: el selector for AgendaListView
+     */
     var ChatAgendaTabView = Backbone.View.extend({
 
         controlSelector: '#agenda-control',

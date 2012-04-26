@@ -4,6 +4,13 @@ define([
     'Backbone',
 ], function($, _, Backbone) {
 
+    /**
+     * Topic model.
+     * Chat topics are hierarchical and represented through a parent-child 
+     * relationship (adjacency list). The root topic must have a rank
+     * and level equal to zero.
+     * @constructor
+     */
     var Topic = Backbone.Model.extend({
 
         defaults: function() {
@@ -88,22 +95,38 @@ define([
     });
 
 
+    /**
+     * Topic collection.
+     * Contains method for accessing and manipulating topic hierarchy.
+     * @constructor
+     */
     var TopicCollection = Backbone.Collection.extend({
 
         model: Topic,
-
-        selectedIndex: -1,
-
+        
+        initialize: function() {
+            this.selectedIndex = -1;
+        },
+        
+        /**
+         * Sort topics by rank.
+         */
         comparator: function(topic) {
             return topic.rank();
         },
         
+        /**
+         * TODO: remove.
+         */ 
         select: function(id) {
             this.selectedIndex = this.indexOf(this.get(id));
             this.trigger('change:selection');
             return this;
         },
         
+        /**
+         * TODO: remove.
+         */ 
         selectNext: function() {
             if(this.selectedIndex < this.length - 1) {
                 this.selectedIndex++;
@@ -114,14 +137,28 @@ define([
             return this;
         },
         
+        /**
+         * TODO: remove.
+         */ 
         selected: function() {
             return this.at(this.selectedIndex);
         },
 
+        /**
+         * Test if topic is leaf node.
+         * @param {number} id Topic id
+         * @return {boolean} true if leaf, false otherwise.
+         */
         isLeaf: function(id) {
             return this.findChildren(id).length == 0;
         },
 
+
+        /**
+         * Test if topic is allowed be shifted up.
+         * @param {number} id Topic id
+         * @return {boolean}.
+         */
         isShiftUpAllowed: function(id) {
             var topic = this.get(id);
             if(topic.rank() <= 1) {
@@ -131,6 +168,11 @@ define([
             }
         },
 
+        /**
+         * Test if topic is allowed be shifted down.
+         * @param {number} id Topic id
+         * @return {boolean}.
+         */
         isShiftDownAllowed: function(id) {
             var topic = this.get(id);
             if(topic.rank() == this.length - 1) {
@@ -140,6 +182,11 @@ define([
             }
         },
 
+        /**
+         * Test if topic is allowed be shifted left.
+         * @param {number} id Topic id
+         * @return {boolean}.
+         */
         isShiftLeftAllowed: function(id) {
             var topic = this.get(id);
             if(topic.level() == 1) {
@@ -149,6 +196,11 @@ define([
             }
         },
 
+        /**
+         * Test if topic is allowed be shifted right.
+         * @param {number} id Topic id
+         * @return {boolean}.
+         */
         isShiftRightAllowed: function(id) {
             var topic = this.get(id);
             var index = this.indexOf(topic);
@@ -157,6 +209,11 @@ define([
             return sibling != null;
         },
 
+        /**
+         * Shift topic up if allowed.
+         * Swaps topic with the previous topic.
+         * @param {number} id Topic id
+         */
         shiftUp: function(id) {
             if(!this.isShiftUpAllowed(id)) {
                 return;
@@ -180,8 +237,15 @@ define([
             current.set({ parentId: parentItem.id, level: parentItem.level() + 1 }, { silent: true });   
 
             this.sort();
+            console.log(JSON.stringify(this.toJSON()));
         },
 
+        /**
+         * Shift topic down if allowed.
+         * Swaps topic with the next topic.
+         * by this topic.
+         * @param {number} id Topic id
+         */
         shiftDown: function(id) {
             if(!this.isShiftDownAllowed(id)) {
                 return;
@@ -190,9 +254,13 @@ define([
             var current = this.get(id);
             var index = this.indexOf(current);
 
-            return this.shiftUp(this.at(index + 1));
+            this.shiftUp(this.at(index + 1));
         },
 
+        /**
+         * Shift topic right if allowed.
+         * @param {number} id Topic id
+         */
         shiftRight: function(id) {
             if(!this.isShiftRightAllowed(id)) {
                 return;
@@ -204,8 +272,19 @@ define([
             var parentItem = this.findPrevLevelSibling(current.id, current.level());
 
             current.set({ parentId: parentItem.id, level: current.level() + 1 });
+            console.log(current.parentId());
+
+            var children = this.findChildren(id);
+
+            _.each(children, function(topic) {
+                topic.set({ level: topic.level() + 1 });
+                }, this);
         },
 
+        /**
+         * Shift topic rightif allowed.
+         * @param {number} id Topic id
+         */
         shiftLeft: function(id) {
             if(!this.isShiftLeftAllowed(id)) {
                 return;
@@ -213,19 +292,26 @@ define([
 
             var current = this.get(id);
             var index = this.indexOf(current);
-            var parentItem = this.findPrevLevelSibling(current.id, current.level() - 1);
+
+            var parentItem = this.findPrevLevelSibling(current.id, current.level() - 2);
 
             current.set({ parentId: parentItem.id, level: current.level() - 1 });
+            console.log(current.parentId());
 
 
             var children = this.findChildren(id);
 
             _.each(children, function(topic) {
-                topic.set({ level: topic.level() -1 });
+                topic.set({ level: topic.level() - 1 });
                 }, this);
 
         },
 
+        /**
+         * Find topic children.
+         * @param {number} id Topic id
+         * @return {Topic[]}
+         */
         findChildren: function(id) {
             var topic = this.get(id);
 
@@ -235,6 +321,12 @@ define([
             }, this);
         },
 
+        /**
+         * Find should-be parent of topic.
+         * This is useful during manipulation.
+         * @param {number} id Topic id
+         * @return {Topic}
+         */
         findParent: function(id) {
             var topic = this.get(id);
 
@@ -250,7 +342,14 @@ define([
             return _.last(items);
         },
 
+        /**
+         * Find the next leaf topic.
+         * @param {number} id Topic id
+         * @return {Topic} if found, null otherwise.
+         */
         findLeaf: function(id) {
+            var result = null;
+
             var topic = this.get(id);
             var index = this.indexOf(topic);
             var i = index + 1;
@@ -266,6 +365,13 @@ define([
             return result;
         },
 
+        /**
+         * Find the previous level sibling at specified level.
+         * i.e. Previous topic (rank < topic.rank()) and 
+         * topic.level() == level.
+         * @param {number} id Topic id
+         * @param {number} level 
+         */
         findPrevLevelSibling: function(id, level) {
             var topic = this.get(id);
 
@@ -281,6 +387,9 @@ define([
             return _.last(siblings);
         },
 
+        /**
+         * Remove model.
+         */
         remove: function(model, options) {
             var parentItem = this.get(model.parentId());
 
@@ -289,7 +398,7 @@ define([
                 item.set({ parentId: parentItem.id, level: parentItem.level() + 1 });
             }, this);
             
-            this._remove(model, options);
+            Backbone.Collection.prototype.remove.call(this, model, options);
         }
 
     });

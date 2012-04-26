@@ -10,7 +10,7 @@ define([
      * LookupResult encapsulates an autocomplete lookup result from lookupsvc.
      * This class is not typically instantiated directly. @see LookupCache.
      * @constructor
-     * @param {attributes} Optional model attributes.
+     * @param {Object} attributes Optional model attributes.
      *   scope: identifies which scope to use for the lookup, i.e. 'location', 'technology'.
      *   category: further refines the scope, i.e. 'zip', 'city'.
      *   query: lookup query string, i.e. 'san fran'
@@ -75,8 +75,8 @@ define([
     /**
      * LookupCache provides read-through cache for performing lookups via lookupsvc.
      * @constructor
-     * @param {models}: Optional array of LookupResult models to include in collection.
-     * @param {attributes} collection options.
+     * @param {LookupResult[]} models: Optional LookupResult models to include in collection.
+     * @param {Object} attributes collection options.
      *   scope: required scope to use for the lookup, i.e. 'location', 'technology'.
      *   category: optional scope refinement, i.e. 'zip', 'city'.
      *   cacheSize: max number of results to cache, defaults to 30.
@@ -115,7 +115,7 @@ define([
          * For instance, if the last result contains less than maxResults
          * matches, then there's no need to send additional queries if they
          * start with the same characters as the previous query.
-         * @param {query} lookup query string.
+         * @param {string} query lookup query.
          * @return {boolean} indicating if the given query is satisfied by
          *   the previous result.
          */ 
@@ -134,8 +134,8 @@ define([
         
         /**
          * Send a lookup query to lookupsvc and return the result via callback.
-         * @param {query} lookup query string.
-         * @param {callback} optional callback to invoke when the 
+         * @param {string}  query lookup query.
+         * @param {function} callback optional callback to invoke when the 
          *   result is available. If provided, the callback will be 
          *   invoked with (query, LookupResult) arguments.
          * @return {LookupResult} if a cached result is available which
@@ -168,9 +168,9 @@ define([
         
         /**
          * Processes a lookup result.
-         * @param {query} lookup query string.
-         * @param {result} LookupResult object.
-         * @param {callback} user supplied callback to be invoked.
+         * @param {string} query lookup query.
+         * @param {LookupResult} result}.
+         * @param {function} callback user supplied callback to be invoked.
          */
         lookupComplete: function(query, result, callback) {
             this.lastResult = result;

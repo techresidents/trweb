@@ -7,6 +7,10 @@ define([
 ], function($, _, Backbone, whiteboard, serialize) {
 
 
+    /**
+     * Whiteboard view.
+     * @constructor
+     */
     var ChatWhiteboardView = whiteboard.WhiteboardView.extend({
 
         initialize: function() {
@@ -60,12 +64,15 @@ define([
     });
 
 
+    /**
+     * Whiteboard tab view.
+     * @constructor
+     */
     var ChatWhiteboardTabView = Backbone.View.extend({
 
         initialize: function() {
         },
     });
-
 
     return {
         ChatWhiteboardTabView: ChatWhiteboardTabView,

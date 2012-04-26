@@ -7,6 +7,13 @@ define([
 ], function($, _, Backbone, models, lookup, user) {
 
 
+    /**
+     * Chat tagger list item view.
+     * @constructor
+     * @param {Object} options
+     *   model: Tag model (required)
+     *   templateSelector: html template selector (optional)
+     */
     var ChatTaggerItemView = Backbone.View.extend({
 
         tagName: 'li',
@@ -36,6 +43,12 @@ define([
     });
 
     
+    /**
+     * Chat tagger list view.
+     * @constructor
+     * @param {Object} options
+     *   collection: TagCollection (required)
+     */
     var ChatTaggerListView = Backbone.View.extend({
 
         tagName: 'ul',
@@ -56,6 +69,16 @@ define([
         }
     });
 
+
+
+    /**
+     * Chat tagger view.
+     * @constructor
+     * @param {Object} options
+     *   templateSelector: html template selector (optional)
+     *   inputSelector: el input selector for LookupView (optional)
+     *   listSelector: el selector for ChatTaggerListView (optional)
+     */
     var ChatTaggerView = Backbone.View.extend({
 
         templateSelector: '#tagger-template',
@@ -118,6 +141,13 @@ define([
         }
     });
 
+    /**
+     * Chat tag list item view.
+     * @constructor
+     * @param {Object} options
+     *   model: Tag model (required)
+     *   templateSelector: html template selector (optional)
+     */
     var ChatTagItemView = Backbone.View.extend({
 
         tagName: 'li',
@@ -144,6 +174,12 @@ define([
         }
     });
 
+    /**
+     * Chat tag list view.
+     * @constructor
+     * @param {Object} options
+     *   collection: TagCollection (required)
+     */
     var ChatTagListView = Backbone.View.extend({
 
         tagName: 'ul',
@@ -164,7 +200,14 @@ define([
         }
     });
 
-    
+
+    /**
+     * Chat tag tab view.
+     * @constructor
+     * @param {Object} options
+     *   templateSelector: html template selector (optional)
+     *   listSelector: el selector for ChatTagListView (optional)
+     */
     var ChatTagTabView = Backbone.View.extend({
 
         listSelector: 'ul',

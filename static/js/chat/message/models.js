@@ -7,6 +7,14 @@ define([
     'chat/message/messages',
 ], function($, _, Backbone, xd, xdBackbone, messages) {
     
+    /**
+     * Represent chat messages from server.
+     * @constructor
+     * @param {Object} attributes model attributes (optional)
+     * @param {Object} options
+     *   header: chat message header (optional)
+     *   msg: chat message body (optional)
+     */
     var ChatMessage = Backbone.Model.extend({
 
         defaults: function() {
@@ -22,11 +30,19 @@ define([
                 attributes.header.type = attributes.msg.type;
             }
         },
-
+        
+        /**
+         * Get message header.
+         * @return {MessageHeader}.
+         */
         header: function() {
             return this.get("header");
         },
 
+        /**
+         * Get message body.
+         * @return {Message} i.e. TagCreateMessage
+         */
         msg: function() {
             return this.get("msg");
         },
@@ -46,7 +62,10 @@ define([
                 msg: messages.messageFactory.create(response.header, response.msg)
             };
         },
-
+        
+        /**
+         * Cross domain compatible sync
+         */
         sync: xdBackbone.sync,
 
         msgType: function() {
@@ -59,6 +78,15 @@ define([
         }
     });
 
+    /**
+     * Chat message collection.
+     * @constructor
+     * @param {ChatMessage[]} models (optional)
+     * @param {Object} options
+     *   chatSessionToken: Tokbox sessino token (required)
+     *   userId: current user id (required)
+     *   longPollErrorDelayMs: (optional)
+     */
     var ChatMessageCollection = Backbone.Collection.extend({
         model: ChatMessage,
         
@@ -67,7 +95,7 @@ define([
         initialize: function(models, options) {
             this.chatSessionToken = options.chatSessionToken;
             this.userId = options.userId;
-            this.longPollErrorDelayMs = 10000;
+            this.longPollErrorDelayMs = 10000 || options.longPollErrorDelayMs;
             
             //define long poll callback outside of longPoll function
             //to cut down on memory usage since this function is

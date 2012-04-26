@@ -8,9 +8,15 @@ define([
     'chat/user/models',
 ], function($, _, Backbone, xd, xdBackbone, messages, user) {
     
+    /**
+     * Chat Tag model.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
     var Tag = Backbone.Model.extend({
             
-        idAttribute: "tagId",
+        idAttribute: 'tagId',
 
         defaults: function() {
             return {
@@ -63,6 +69,9 @@ define([
             return this.header.url() + this.msg.url();
         },
 
+        /**
+         * Cross domain compatible sync.
+         */
         sync: xdBackbone.sync,
 
         parse: function(response) {
@@ -83,10 +92,16 @@ define([
         }
     });
 
+    /**
+     * Chat Tag collection.
+     */
     var TagCollection = Backbone.Collection.extend({
 
         model: Tag,
         
+        /**
+         * Cross domain compatible sync.
+         */
         sync: xdBackbone.sync,
     });
 

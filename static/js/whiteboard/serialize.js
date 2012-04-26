@@ -5,6 +5,10 @@ define([
     'raphael',
 ], function($, _, Backbone, Raphael) {
 
+    /**
+     * Whiteboard element serializer.
+     * @constructor
+     */
     var Serializer = function() {
     };
 

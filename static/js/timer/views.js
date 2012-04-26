@@ -5,6 +5,16 @@ define([
     'timer/util',
 ], function($, _, Backbone, util) {
     
+
+    /**
+     * Duration timer view.
+     * @constructor
+     * @param {Object} options
+     *   duration: timer duration in ms (required)
+     *   interval: view update interval in ms (optional)
+     *   runningClass: style to add when timer is running (optional)
+     *   expredClass: style to add when timer exceeds duration (optional)
+     */
     var DurationTimerView = Backbone.View.extend({
 
         initialize: function() {

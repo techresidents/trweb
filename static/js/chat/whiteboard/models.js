@@ -7,7 +7,10 @@ define([
     'chat/message/messages',
     'chat/user/models',
 ], function($, _, Backbone, xd, xdBackbone, messages, user) {
-    
+ 
+    /**
+     * Whiteboard model.
+     */
     var Whiteboard = Backbone.Model.extend({
             
         idAttribute: 'whiteboardId',
@@ -16,7 +19,7 @@ define([
             return {
                 whiteboardId: null,
                 userId: null,
-                name: "",
+                name: null,
             };
         },
         
@@ -63,6 +66,9 @@ define([
             return this.header.url() + this.msg.url();
         },
 
+        /**
+         * Cross domain compatible sync.
+         */
         sync: xdBackbone.sync,
 
         parse: function(response) {
@@ -83,10 +89,16 @@ define([
         }
     });
 
+    /**
+     * Whiteboard collection.
+     */
     var WhiteboardCollection = Backbone.Collection.extend({
 
         model: Whiteboard,
         
+        /**
+         * Cross domain compatible sync.
+         */
         sync: xdBackbone.sync,
     });
 

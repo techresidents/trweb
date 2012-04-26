@@ -21,6 +21,11 @@ define([
     user,
     whiteboard) {
     
+
+    /**
+     * Chat model.
+     * Convenience model containing references to all chat objects.
+     */
     var Chat = Backbone.Model.extend({
         localStorage: new Backbone.LocalStorage('Chat'),
         
