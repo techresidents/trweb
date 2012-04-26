@@ -33,43 +33,227 @@
             {% include 'accounts/navigation_panel.html' %}
 
             <div class="span9">
-                <form id="profile-jobs-form" class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_jobs' %}">
-                    {% csrf_token %}
+                <div class="well">
                     <fieldset>
-                        <legend>Change your job preferences</legend>
+                        <legend>Update your job preferences</legend>
+                    </fieldset>
 
-                        <div class="control-group {% if form.email_new_job_opps.errors %}error{% endif %}">
-                            <label class="control-label">Job Notifications</label>
+                    <h3>Job Notifications</h3>
+                    <div class="well">
+                        <div class="control-group ">
                             <div class="controls">
                                 <label class="checkbox">
-                                    {{ form.email_new_job_opps }} {{ form.email_new_job_opps.label }}
-                                    {% for error in form.email_new_job_opps.errors %}
-                                        <span class="help-inline">{{error}}</span>
-                                    {% endfor %}
+                                    <input type="checkbox" name="email_new_job_opps" id="id_email_new_job_opps"> Allow potential employers to contact me based on the preferences provided below
                                 </label>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="control-group {% if form.positions.errors %}error{% endif %}">
-                            {{ form.positions.label_tag }}
-                            <div class="controls">
-                                <div id="position-add" class="input-append">
-                                    {{ form.positions }}
-                                    <button id="position-add-button" class="btn">Add</button>
-                                    {% for error in form.positions.errors %}
-                                        <span class="help-inline">{{error}}</span>
-                                    {% endfor %}
+                    <h3>Positions</h3>
+                    <div id="table-wrap" class="well">
+                        <table id="table" class="table">
+                            <thead>
+                            <th>Position</th>
+                            <th>Description</th>
+                            <th>Minimum Salary (US Dollars)</th>
+                            <th></th>
+                            </thead>
+                            <tbody id="skill-list">
+                                <tr>
+                                    <td>Developer</td>
+                                    <td>Development is your primary role and responsibility.</td>
+                                    <td>
+                                        <select>
+                                            <option value='50'>50,000</option>
+                                            <option value='60'>60,000</option>
+                                            <option value='70'>70,000</option>
+                                            <option value='80'>80,000</option>
+                                            <option value='90'>90,000</option>
+                                            <option value='100'>100,000</option>
+                                            <option value='110'>110,000</option>
+                                            <option value='120'>120,000</option>
+                                            <option value='130'>130,000</option>
+                                            <option value='140'>140,000</option>
+                                            <option value='150'>150,000</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a class="inline close">x</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="form-horizontal">
+                            <!-- from jobs page -->
+                            <div class="control-group">
+                                <label for="skill-input">Add Position</label>
+                                <div class="controls">
+                                    <div id="position-add" class="input-append">
+                                        <input id="skill-input" maxlength="1024" type="text" name="language" autocomplete="off">
+                                        <button id="position-add-button" class="btn">Add</button>
+                                    </div>
+                                </div>
+                                <div class="controls">
+                                <span class="help">
+                                    <a href="mailto:{{ support_email }}?Subject=Add%20Position%20Request">Position not listed?</a>
+                                </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="control-group">
-                            <label class="control-label"></label>
-                            <div class="values-background span4">
-                                <ul id="positions-list">
+                    </div>
 
-                                </ul>
+
+
+
+                    <h3>Locations</h3>
+                    <div id="location-table-wrap" class="well">
+                        <table id="location-table" class="table">
+                            <thead>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Zip</th>
+                            <th>Country</th>
+                            <th>Proximity (mi)</th>
+                            <th></th>
+                            </thead>
+                            <tbody id="location-list">
+                                <tr>
+                                    <td>Boston</td>
+                                    <td>MA</td>
+                                    <td>02115</td>
+                                    <td>USA</td>
+                                    <td>
+                                        <select>
+                                            <option value='50'>5</option>
+                                            <option value='60'>10</option>
+                                            <option value='70'>15</option>
+                                            <option value='80'>20</option>
+                                            <option value='90'>25</option>
+                                            <option value='100'>30</option>
+                                            <option value='110'>35</option>
+                                            <option value='120'>40</option>
+                                            <option value='130'>45</option>
+                                            <option value='140'>50</option>
+                                            <option value='150'>50+</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a class="inline close">x</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="form-horizontal">
+                            <!-- from jobs page -->
+                            <div class="control-group">
+                                <label for="location-input">Add Location</label>
+                                <div class="controls">
+                                    <div id="location-add" class="input-append">
+                                        <input id="location-input" maxlength="1024" type="text" name="language" autocomplete="off">
+                                        <button id="location-add-button" class="btn">Add</button>
+                                    </div>
+                                </div>
+                                <div class="controls">
+                                <span class="help">
+                                    <a href="mailto:{{ support_email }}?Subject=Add%20Location%20Request">Location not listed?</a>
+                                </span>
+                                </div>
                             </div>
                         </div>
+                    </div>
+
+
+
+
+
+                    <h3>Technologies</h3>
+                    <div id="technology-table-wrap" class="well">
+                        <table id="technology-table" class="table">
+                            <thead>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th></th>
+                            </thead>
+                            <tbody id="technology-list">
+                            <tr>
+                                <td>Mobile</td>
+                                <td>Includes all aspects of mobile software across all platforms such as Android, iOS, Blackberry, etc.</td>
+                                <td>
+                                    <a class="inline close">x</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="form-horizontal">
+                            <!-- from jobs page -->
+                            <div class="control-group">
+                                <label for="technology-input">Add Technology</label>
+                                <div class="controls">
+                                    <div id="technlogy-add" class="input-append">
+                                        <input id="technology-input" maxlength="1024" type="text" name="language" autocomplete="off">
+                                        <button id="technology-add-button" class="btn">Add</button>
+                                    </div>
+                                </div>
+                                <div class="controls">
+                                <span class="help">
+                                    <a href="mailto:{{ support_email }}?Subject=Add%20Technology%20Request">Technology not listed?</a>
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+                    <form id="skill-form" class="form-horizontal" method="post" action="{% url 'accounts.views.profile_skills_frameworks' %}">
+                        <fieldset>
+                            {% csrf_token %}
+
+
+
+                            <!-- Hidden input fields -->
+                            <input id="skill-form-input" type="hidden" name="skills_form_data"/>
+
+                            <div class="control-group">
+                                <div class="controls">
+                                    <button type="submit" class="btn-primary">Save changes</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+
+
+
+                    <!-- TODO handle errors, copy skills page -->
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <!-- Consume all messages stored -->
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success">
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                </div> <!-- end well -->
+            </div> <!-- end span9 -->
+        </div>
+    </div>
+
+    <!--
+    <div class="container">
+        <div class="row">
+
+            <div class="span9">
+                <form id="profile-jobs-form" class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_jobs' %}">
+
 
                         <div class="control-group {% if form.locations.errors %}error{% endif %}">
                             {{ form.locations.label_tag }}
@@ -108,7 +292,7 @@
                         </div>
 
 
-                        <!-- Hidden field inputs -->
+                        <!-- Hidden field inputs
                         <input id="positions-form-input" type="hidden" name="positions_form_data"/>
 
                         <div class="control-group">
@@ -119,23 +303,12 @@
 
                     </fieldset>
 
-
-                    {% if messages %}
-                        {% for message in messages %}
-                            <!-- Consume all messages stored -->
-                            {% if message.tags == 'success' %}
-                                <div class="alert alert-success">
-                                    <span>{{ message }}</span>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-
                 </form>
-            </div> <!-- end span9 -->
+            </div>
 
         </div>
     </div>
+    -->
 
     <!-- TODO: add proper escapejs filter that works with json -->
     {% autoescape off %}
