@@ -36,29 +36,11 @@
 <div class="container" id="chatapp">
     <div class="row" id="chat"></div>
     <div class="row">
-        <div class="span12 page-header">
-            <div class="span1">
-                <h3>Discuss</h3>
-            </div>
-            <div class="span8 well">
-                <h3>Web Security Preventative Measures</h3>
-            </div>
+        <div id="discuss"class="span12 page-header">
         </div>
     </div>
     <div class="row">
         <div id="tagger" class="span12 page-header">
-            <div class="span1">
-                <h3>Tag</h3>
-            </div>
-            <div class="span8">
-                <div>
-                    <input class="span7">
-                    <button class="btn btn-input add">Add</button>
-                    <span><strong>Recent Tags</strong>
-                        <ul/>
-                    </span>
-                </div>
-            </div>
         </div>
     </div>
     <div class="row">
@@ -72,11 +54,13 @@
             </ul>
             <div class="tab-content">
                 <div id="agenda" class="tab-pane fade in active">
-                    <div class="span5">
-                        <h3>Agenda</h3>
-                        <ul id="agendalist"/>
+                    <div id="agenda-control" class="span10"></div>
+                    <div>
+                        <div class="span5">
+                            <ul/>
+                        </div>
+                        <div id="agenda-detail" class="span5"></div>
                     </div>
-                    <div id="agenda-detail" class="span5"></div>
                 </div>
                 <div id="tags" class="tab-pane fade">
                     <h5>Tags</h5>
@@ -109,8 +93,6 @@
 <!-- Templates -->
 
 <script type="text/template" id="chat-user-header-template">
-    <div id="user<%= id %>-header">
-    </div>
 </script>
 
 <script type="text/template" id="chat-user-template">
@@ -122,10 +104,8 @@
 </script>
 
 <script type="text/template" id="chat-user-footer-template">
-    <div id="user<%= id %>-footer"
-        <p>Connected: <%= isConnected %> </p>
-        <p>Publishing: <%= isPublishing %> </p>
-    <div/>
+    <p>Connected: <%= isConnected %> </p>
+    <p>Publishing: <%= isPublishing %> </p>
 </script>
 
 <script type="text/template" id="tag-item-template">
@@ -133,6 +113,32 @@
     <% if(myTag) { %>
         <a class="close-inline destroy">x</a>
     <% } %>
+</script>
+
+<script type="text/template" id="discuss-template">
+    <div class="span1">
+        <h3>Discuss</h3>
+    </div>
+    <div class="span7">
+        <h3><%= root.title %>: <%= title %></h3>
+    </div>
+    <button class="btn btn-input next">Next</button>
+    <span id="discuss-timer"/>
+</script>
+
+<script type="text/template" id="tagger-template">
+    <div class="span1">
+        <h3>Tag</h3>
+    </div>
+    <div class="span8">
+        <div>
+            <input class="span7">
+            <button class="btn btn-input add">Add</button>
+            <span><strong>Recent Tags</strong>
+                <ul/>
+            </span>
+        </div>
+    </div>
 </script>
 
 <script type="text/template" id="tagger-item-template">
@@ -149,8 +155,15 @@
 </script>
 
 <script type="text/template" id="agenda-detail-template">
-    <h3><%= title %></h3>
+    <h3><%= title %>: <small><%= durationFormat %><small></h3>
     <p><%= description %></p>
+</script>
+
+<script type="text/template" id="agenda-control-template">
+    <h3><%= title %>
+        <button class="btn btn-input next">Next</button>
+        <span id="agenda-control-timer"></span>
+    </h3>
 </script>
 
 

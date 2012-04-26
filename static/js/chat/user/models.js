@@ -6,71 +6,70 @@ define([
     
     var ChatUser = Backbone.Model.extend({
 
-            defaults: function() {
-                return {
-                    name: "",
-                    streamId: null,
-                    isSpeaking: false,
-                    isConnected: false,
-                    isPublishing: false
-                };
-            },
+        defaults: function() {
+            return {
+                name: "",
+                streamId: null,
+                isSpeaking: false,
+                isConnected: false,
+                isPublishing: false
+            };
+        },
 
-            name: function() {
-                return this.get("name");
-            },
+        name: function() {
+            return this.get("name");
+        },
 
-            streamId: function() {
-                return this.get("streamId");
-            },
+        streamId: function() {
+            return this.get("streamId");
+        },
 
-            setStreamId: function(streamId) {
-                this.set({ streamId: streamId });
-                return this;
-            },
+        setStreamId: function(streamId) {
+            this.set({ streamId: streamId });
+            return this;
+        },
 
-            isSpeaking: function() {
-                return this.get("isSpeaking");
-            },
+        isSpeaking: function() {
+            return this.get("isSpeaking");
+        },
 
-            setSpeaking: function(isSpeaking) {
-                this.set({ isSpeaking: isSpeaking });
-                return this;
-            },
+        setSpeaking: function(isSpeaking) {
+            this.set({ isSpeaking: isSpeaking });
+            return this;
+        },
 
-            isConnected: function() {
-                return this.get("isConnected");
-            },
+        isConnected: function() {
+            return this.get("isConnected");
+        },
 
-            setConnected: function(isConnected) {
-                this.set({ isConnected: isConnected });
-                return this;
-            },
+        setConnected: function(isConnected) {
+            this.set({ isConnected: isConnected });
+            return this;
+        },
 
-            isPublishing: function() {
-                return this.get("isPublishing");
-            },
+        isPublishing: function() {
+            return this.get("isPublishing");
+        },
 
-            setPublishing: function(isPublishing) {
-                this.set({ isPublishing: isPublishing });
-                return this;
-            },
+        setPublishing: function(isPublishing) {
+            this.set({ isPublishing: isPublishing });
+            return this;
+        },
 
-            style: function() {
-                return "user" + this.id;
-            },
+        style: function() {
+            return "user" + this.id;
+        },
     });
 
     var ChatUserCollection = Backbone.Collection.extend({
 
-            localStorage: new Backbone.LocalStorage("ChatUserCollection"),
+        localStorage: new Backbone.LocalStorage("ChatUserCollection"),
 
-            model: ChatUser
+        model: ChatUser
     });
 
     return {
-        ChatUser: ChatUser,
-        ChatUserCollection: ChatUserCollection,
+        users: new ChatUserCollection,
         currentUser: new ChatUser,
     }
 });

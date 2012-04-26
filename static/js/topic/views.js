@@ -6,239 +6,239 @@ define([
 ], function($, _, Backbone, models) {
 
     var TopicView = Backbone.View.extend({
-            tagName: "li",
+        tagName: 'li',
 
-            template: _.template($("#topic-template").html()),
+        template: _.template($('#topic-template').html()),
 
-            events: {
-                "click": "clicked",
-                "click .toggle-expanded": "toggleExpanded",
-            },
+        events: {
+            'click': 'clicked',
+            'click .toggle-expanded': 'toggleExpanded',
+        },
 
-            initialize: function() {
-                this.model = this.options.model;
-                this.topicCollection = this.options.topicCollection;
+        initialize: function() {
+            this.model = this.options.model;
+            this.topicCollection = this.options.topicCollection;
 
-                this.model.bind("change", this.render, this);
-                this.model.bind("destroy", this.destroy, this);
-            },
-            
-            render: function() {
-                this.$el.html(this.template(this.model.toJSON()));
-                return this;
-            },
+            this.model.bind('change', this.render, this);
+            this.model.bind('destroy', this.destroy, this);
+        },
+        
+        render: function() {
+            this.$el.html(this.template(this.model.toJSON()));
+            return this;
+        },
 
-            destroy: function() {
-            },
+        destroy: function() {
+        },
 
-            clicked: function() {
-                this.topicCollection.select(this.model.id);
-            },
+        clicked: function() {
+            this.topicCollection.select(this.model.id);
+        },
 
-            toggleExpanded: function() {
-                var expanded = this.model.get("expanded");
-                this.model.set({expanded: !expanded});
-            }
+        toggleExpanded: function() {
+            var expanded = this.model.get('expanded');
+            this.model.set({expanded: !expanded});
+        }
     });
 
     var TopicButtonsView = Backbone.View.extend({
-            el: $("#topic-buttons"),
+        el: $('#topic-buttons'),
 
-            editButton: $("#topic-edit-button"),
+        editButton: $('#topic-edit-button'),
 
-            removeButton: $("#topic-remove-button"),
+        removeButton: $('#topic-remove-button'),
 
-            upButton: $("#topic-up-button"),
+        upButton: $('#topic-up-button'),
 
-            downButton: $("#topic-down-button"),
+        downButton: $('#topic-down-button'),
 
-            leftButton: $("#topic-left-button"),
+        leftButton: $('#topic-left-button'),
 
-            rightButton: $("#topic-right-button"),
+        rightButton: $('#topic-right-button'),
 
-            events: {
-                "click #topic-remove-button" : "remove",
-                "click #topic-up-button" : "shiftUp",
-                "click #topic-down-button" : "shiftDown",
-                "click #topic-left-button" : "shiftLeft",
-                "click #topic-right-button" : "shiftRight"
-            },
+        events: {
+            'click #topic-remove-button' : 'remove',
+            'click #topic-up-button' : 'shiftUp',
+            'click #topic-down-button' : 'shiftDown',
+            'click #topic-left-button' : 'shiftLeft',
+            'click #topic-right-button' : 'shiftRight'
+        },
 
-            initialize: function() {
-                this.topicCollection = this.options.topicCollection;
-                this.topicCollection.bind("change:selection", this.selectedChanged, this);
+        initialize: function() {
+            this.topicCollection = this.options.topicCollection;
+            this.topicCollection.bind('change:selection', this.selectedChanged, this);
 
-                this.render();
-            },
+            this.render();
+        },
 
-            render: function() {
-                var topic = this.topicCollection.selected();
+        render: function() {
+            var topic = this.topicCollection.selected();
 
-                if(topic) {
-                    this.enableAll();
-                    this.updateButton(this.upButton, this.topicCollection.isShiftUpAllowed(topic.id));
-                    this.updateButton(this.downButton, this.topicCollection.isShiftDownAllowed(topic.id));
-                    this.updateButton(this.leftButton, this.topicCollection.isShiftLeftAllowed(topic.id));
-                    this.updateButton(this.rightButton, this.topicCollection.isShiftRightAllowed(topic.id));
+            if(topic) {
+                this.enableAll();
+                this.updateButton(this.upButton, this.topicCollection.isShiftUpAllowed(topic.id));
+                this.updateButton(this.downButton, this.topicCollection.isShiftDownAllowed(topic.id));
+                this.updateButton(this.leftButton, this.topicCollection.isShiftLeftAllowed(topic.id));
+                this.updateButton(this.rightButton, this.topicCollection.isShiftRightAllowed(topic.id));
 
-                } else {
-                    this.disableAll();
-                }
-            },
-
-            selectedChanged: function() {
-                this.render();
-            },
-
-            disableAll: function() {
-                this.$("a").addClass("disabled");
-            },
-
-            enableAll: function() {
-                this.$("a").removeClass("disabled");
-            },
-
-            updateButton: function(button, enable) {
-                if(enable == true) {
-                    button.removeClass("disabled")
-                } else {
-                    button.addClass("disabled")
-                }
-            },
-
-            remove: function() {
-                var topic = this.topicCollection.selected();
-                this.topicCollection.remove(topic);
-            },
-
-            shiftUp: function() {
-                var topic = this.topicCollection.selected();
-                if(this.topicCollection.isShiftUpAllowed(topic.id)) {
-                    this.topicCollection.shiftUp(topic.id);
-                    this.topicCollection.select(topic.id);
-                }
-            },
-
-            shiftDown: function() {
-                var topic = this.topicCollection.selected();
-                if(this.topicCollection.isShiftDownAllowed(topic.id)) {
-                    this.topicCollection.shiftDown(topic.id);
-                    this.topicCollection.select(topic.id);
-                }
-            },
-
-            shiftLeft: function() {
-                var topic = this.topicCollection.selected();
-                if(this.topicCollection.isShiftLeftAllowed(topic.id)) {
-                    this.topicCollection.shiftLeft(topic.id);
-                    this.topicCollection.select(topic.id);
-                }
-            },
-
-            shiftRight: function() {
-                var topic = this.topicCollection.selected();
-                if(this.topicCollection.isShiftRightAllowed(topic.id)) {
-                    this.topicCollection.shiftRight(topic.id);
-                    this.topicCollection.select(topic.id);
-                }
+            } else {
+                this.disableAll();
             }
+        },
+
+        selectedChanged: function() {
+            this.render();
+        },
+
+        disableAll: function() {
+            this.$('a').addClass('disabled');
+        },
+
+        enableAll: function() {
+            this.$('a').removeClass('disabled');
+        },
+
+        updateButton: function(button, enable) {
+            if(enable == true) {
+                button.removeClass('disabled')
+            } else {
+                button.addClass('disabled')
+            }
+        },
+
+        remove: function() {
+            var topic = this.topicCollection.selected();
+            this.topicCollection.remove(topic);
+        },
+
+        shiftUp: function() {
+            var topic = this.topicCollection.selected();
+            if(this.topicCollection.isShiftUpAllowed(topic.id)) {
+                this.topicCollection.shiftUp(topic.id);
+                this.topicCollection.select(topic.id);
+            }
+        },
+
+        shiftDown: function() {
+            var topic = this.topicCollection.selected();
+            if(this.topicCollection.isShiftDownAllowed(topic.id)) {
+                this.topicCollection.shiftDown(topic.id);
+                this.topicCollection.select(topic.id);
+            }
+        },
+
+        shiftLeft: function() {
+            var topic = this.topicCollection.selected();
+            if(this.topicCollection.isShiftLeftAllowed(topic.id)) {
+                this.topicCollection.shiftLeft(topic.id);
+                this.topicCollection.select(topic.id);
+            }
+        },
+
+        shiftRight: function() {
+            var topic = this.topicCollection.selected();
+            if(this.topicCollection.isShiftRightAllowed(topic.id)) {
+                this.topicCollection.shiftRight(topic.id);
+                this.topicCollection.select(topic.id);
+            }
+        }
     });
     
     var TopicListView = Backbone.View.extend({
 
-            el: $("#topic-list"),
+        el: $('#topic-list'),
 
-            includeRoot: false,
+        includeRoot: false,
 
-            initialize: function() {
-                this.topicCollection = this.options.topicCollection;
-                this.topicCollection.bind("reset", this.render, this);
-                this.topicCollection.bind("remove", this.remove, this);
-                this.topicCollection.bind("add", this.addTopicView, this);
-            },
+        initialize: function() {
+            this.topicCollection = this.options.topicCollection;
+            this.topicCollection.bind('reset', this.render, this);
+            this.topicCollection.bind('remove', this.remove, this);
+            this.topicCollection.bind('add', this.addTopicView, this);
+        },
 
-            render: function() {
-                this.$el.children().remove();
-                this.topicCollection.each(this.addTopicView, this);
-            },
+        render: function() {
+            this.$el.children().remove();
+            this.topicCollection.each(this.addTopicView, this);
+        },
 
-            remove: function() {
-                this.render();
-                this.topicCollection.select(-1);
-            },
+        remove: function() {
+            this.render();
+            this.topicCollection.select(-1);
+        },
 
-            addTopicView: function(topic) {
-                if(this.includeRoot || topic.get("rank") != 0) {
-                
-                    var view = new TopicView({
-                            model: topic,
-                            topicCollection: this.topicCollection
-                    });
+        addTopicView: function(topic) {
+            if(this.includeRoot || topic.get('rank') != 0) {
+            
+                var view = new TopicView({
+                        model: topic,
+                        topicCollection: this.topicCollection
+                });
 
-                    this.$el.append(view.render().el);
-                }
-            },
+                this.$el.append(view.render().el);
+            }
+        },
     });
 
     var TopicAddView = Backbone.View.extend({
 
-            el: $("#topic-add"),
+        el: $('#topic-add'),
 
-            events: {
-                "click button": "addTopic",
-                "keypress #topic-input": "updateOnEnter"
-            },
+        events: {
+            'click button': 'addTopic',
+            'keypress #topic-input': 'updateOnEnter'
+        },
 
-            initialize: function() {
-                this.topicCollection = this.options.topicCollection;
-                this.topicInput = this.$("#topic-input");
-            },
+        initialize: function() {
+            this.topicCollection = this.options.topicCollection;
+            this.topicInput = this.$('#topic-input');
+        },
 
-            addTopic: function() {
-                var title = this.topicInput.val();
-                
-                if(title) {
-                    var topic = new models.Topic({
-                            parentId: 0,
-                            title: title,
-                            rank: this.topicCollection.length,
-                            expanded: true
-                    });
+        addTopic: function() {
+            var title = this.topicInput.val();
+            
+            if(title) {
+                var topic = new models.Topic({
+                        parentId: 0,
+                        title: title,
+                        rank: this.topicCollection.length,
+                        expanded: true
+                });
 
-                    this.topicCollection.add(topic);
+                this.topicCollection.add(topic);
 
-                    this.topicInput.val("");
-                    this.topicInput.focus();
-                } else {
-                    this.topicInput.focus();
-                }
-
-            },
-
-            updateOnEnter: function(e) {
-                if(e.keyCode == 13) {
-                    this.addTopic();
-                }
+                this.topicInput.val('');
+                this.topicInput.focus();
+            } else {
+                this.topicInput.focus();
             }
+
+        },
+
+        updateOnEnter: function(e) {
+            if(e.keyCode == 13) {
+                this.addTopic();
+            }
+        }
     });
 
     var TopicFormView = Backbone.View.extend({
 
-            el: $("#topic-form"),
+        el: $('#topic-form'),
 
-            initialize: function() {
-                this.topicCollection = this.options.topicCollection;
-                this.topicCollection.bind("add", this.change, this);
-                this.topicCollection.bind("reset", this.change, this);
-                this.topicCollection.bind("remove", this.change, this);
-                this.topicCollection.bind("change", this.change, this);
+        initialize: function() {
+            this.topicCollection = this.options.topicCollection;
+            this.topicCollection.bind('add', this.change, this);
+            this.topicCollection.bind('reset', this.change, this);
+            this.topicCollection.bind('remove', this.change, this);
+            this.topicCollection.bind('change', this.change, this);
 
-                this.topicsFormInput = this.$("#topic-form-input");
-            },
+            this.topicsFormInput = this.$('#topic-form-input');
+        },
 
-            change: function() {
-                this.topicsFormInput.val(JSON.stringify(this.topicCollection.toJSON()));
-            }
+        change: function() {
+            this.topicsFormInput.val(JSON.stringify(this.topicCollection.toJSON()));
+        }
     });
 
     return {

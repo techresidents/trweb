@@ -20,6 +20,22 @@ define([
         }
     });
 
+    var MinuteCreateMessage = function(attributes) {
+        this.minuteId = null;
+        this.topicId = null;
+        this.start = null;
+        this.end = null;
+        _.extend(this, attributes);
+    };
+
+    _.extend(MinuteCreateMessage.prototype, {
+        type: "MINUTE_CREATE",
+
+        url: function() {
+            return "/minute";
+        }
+    });
+
 
     var TagCreateMessage = function(attributes) {
         this.tagId = null;
@@ -84,6 +100,7 @@ define([
    
 
     var messageTypeMap = {
+        "MINUTE_CREATE": MinuteCreateMessage,
         "TAG_CREATE": TagCreateMessage,
         "TAG_DELETE": TagDeleteMessage,
         "WHITEBOARD_CREATE": WhiteboardCreateMessage,
@@ -97,7 +114,6 @@ define([
     MessageFactory.prototype.create = function(header, object) {
         var Constructor = this.messageTypeMap[header.type];
         if(Constructor) {
-            console.log(header.type);
             return new Constructor(object);
         } else {
             return object;
@@ -107,6 +123,7 @@ define([
     return {
         messageFactory: new MessageFactory(),
         MessageHeader: MessageHeader,
+        MinuteCreateMessage: MinuteCreateMessage,
         TagCreateMessage: TagCreateMessage,
         TagDeleteMessage: TagDeleteMessage,
         WhiteboardCreateMessage: WhiteboardCreateMessage,

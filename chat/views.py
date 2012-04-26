@@ -94,6 +94,7 @@ def chat(request,chat_session_id):
             "level": topic.level,
             "title": topic.title,
             "description": topic.description,
+            "duration": topic.duration,
             "rank": topic.rank,
             "userId": topic.user_id
         })

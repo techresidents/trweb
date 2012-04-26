@@ -2,9 +2,10 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
+    'chat/minute/models',
     'chat/tag/models',
     'chat/whiteboard/models',
-], function($, _, Backbone, tag, whiteboard) {
+], function($, _, Backbone, minute, tag, whiteboard) {
 
 
     var Dispatcher = function(options) {
@@ -17,13 +18,15 @@ define([
 
         initialize: function(options) {
             this.msgHandlerMap = {
-                "TAG_CREATE": this.tagCreate,
-                "TAG_DELETE": this.tagDelete,
-                "WHITEBOARD_CREATE": this.whiteboardCreate,
-                "WHITEBOARD_DELETE": this.whiteboardDelete,
+                'MINUTE_CREATE': this.minuteCreate,
+                'MINUTE_UPDATE': this.minuteUpdate,
+                'TAG_CREATE': this.tagCreate,
+                'TAG_DELETE': this.tagDelete,
+                'WHITEBOARD_CREATE': this.whiteboardCreate,
+                'WHITEBOARD_DELETE': this.whiteboardDelete,
             };
 
-            this.chatMessages.bind("add", this.added, this);
+            this.chatMessages.bind('add', this.added, this);
 
         },
 
@@ -32,6 +35,22 @@ define([
             if(handler) {
                 handler(model);
             }
+        },
+
+        minuteCreate: function(model) {
+            var min = new minute.Minute(null, {
+                header: model.header(),
+                msg: model.msg()
+            });
+            minute.minuteCollection.add(min);
+        },
+
+        minuteUpdate: function(model) {
+            var min = minute.minuteCollection.get(model.get('msg').minuteId);
+            min.initialize(null, {
+                header: model.header(),
+                msg: model.msg()
+            });
         },
 
         tagCreate: function(model) {
@@ -43,9 +62,9 @@ define([
         },
 
         tagDelete: function(model) {
-            var chatTag = tag.tagCollection.get(model.get("msg").tagId);
+            var chatTag = tag.tagCollection.get(model.get('msg').tagId);
             if(chatTag) {
-                chatTag.trigger("destroy", chatTag);
+                chatTag.trigger('destroy', chatTag);
             }
         },
 
@@ -58,9 +77,9 @@ define([
         },
 
         whiteboardDelete: function(model) {
-            var wb = whiteboard.whiteboardCollection.get(model.get("msg").whiteboardId);
+            var wb = whiteboard.whiteboardCollection.get(model.get('msg').whiteboardId);
             if(wb) {
-                wb.trigger("destroy", wb);
+                wb.trigger('destroy', wb);
             }
         },
 
