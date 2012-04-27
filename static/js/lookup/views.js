@@ -16,6 +16,8 @@ define([
      * @param {options} - options object
      *   scope: required lookupsvc scope, i.e. 'location', 'technology'
      *   category: optional lookupsvc category, i.e. 'zipcode', 'city'
+     *   property: optional object property to display. If not provided
+     *   defaults to 'value' which is the value of the matching string.
      *   maxResults: max number of typeahead results to return (default 8)
      *   cacheSize: max number of lookupsvc results to cache (default 30)
      *   forceSelection: boolean indicating if the user should be forced
@@ -49,6 +51,7 @@ define([
         initialize: function(options) {
             this.scope = options.scope || '';
             this.category = options.category;
+            this.property = options.property || 'value';
             this.maxResults = options.maxResults || 8;
             this.cacheSize = options.cacheSize || 30;
             this.forceSelection = options.forceSelection || false;
@@ -67,8 +70,8 @@ define([
                 onselect: function(object) {
                     that.selected.call(that, object.value, object);
                 },
-                //display LookupResult.matches() 'value' property in typeahead menu.
-                property: 'value',
+
+                property: this.property,
             });
             
             //store the actual typeahead plugin so we can make
@@ -99,10 +102,10 @@ define([
         lookup: function(typeahead, query) {
             var that = this;
             this.lookupCache.lookup(
-                    query, 
-                    function(query, result) {
-                        that.lookupCompleted.call(that, typeahead, query, result);
-                    }
+                query, 
+                function(query, result) {
+                    that.lookupCompleted.call(that, typeahead, query, result);
+                }
             );
         },
 
@@ -142,13 +145,13 @@ define([
 
                 if(value && this.onenter) {
                     object = null;
-                    if(this.lastSelected && this.lastSelected.value == value) {
+                    if(this.lastSelected && this.lastSelected[this.property] == value) {
                         object = this.lastSelected;
                     }
                     //only invoke onenter callback if forceSelection is false
                     //or typeahead value matches an autocomplete option.
                     if(!this.forceSelection ||
-                       (this.lastSelected && this.lastSelected.value == value)) {
+                       (this.lastSelected && this.lastSelected[this.property] == value)) {
                         this.onenter.call(this.context, value, object);
                     }
                 }
@@ -168,7 +171,7 @@ define([
             //we need to directly access the plugin object and determine
             //if the text value in the input is a match and trigger the
             //selected event manually.
-            if(!this.lastSelected || this.lastSelected.value != value) {
+            if(!this.lastSelected || this.lastSelected[this.property] != value) {
                 //get the result from the lookup cache.
                 //this is guaranteed to be a cache hit, so we
                 //can count on a return value.
@@ -177,9 +180,9 @@ define([
                 if(result) {
                     //see if the input value matches one of the autocomplete options.
                     //if it does trigger the selected event.
-                    match = _.find(result.matches(), function(m) { return m.value == value; });
+                    match = _.find(result.matches(), function(m) { return m[this.property] == value; });
                     if(match) {
-                        this.selected(match.value, match);
+                        this.selected(match[this.property], match);
                     }
                 }
             }
@@ -187,7 +190,7 @@ define([
             //Null out the typeahead input if forceSelection is true and the
             //value in the input does not match an autocomplete option.
             if(this.forceSelection) {
-                if(!this.lastSelected || this.lastSelected.value != value) {
+                if(!this.lastSelected || this.lastSelected[this.property] != value) {
                     this.$el.val(null);
                 }
             }

@@ -108,7 +108,8 @@ define([
             new lookup.LookupView({
                 el: this.tagInput,
                 scope: 'tag',
-                forceSelection: false,
+                property: 'value',
+                forceSelection: true,
                 onenter: this.updateOnEnter,
                 context: this
             });
@@ -136,7 +137,7 @@ define([
             }
         },
 
-        updateOnEnter: function(value) {
+        updateOnEnter: function(value, data) {
             this.addTag();
         }
     });
