@@ -29,7 +29,7 @@ define([
             //make 'this' available for tokbox event listeners
             var that = this;
             
-            var session =  TB.initSession(model.sessionToken);
+            var session =  TB.initSession(attributes.sessionToken);
             this.set({ session: session });
             
             //tokbox event listeners defined inline delegate to ChatSession handlers with 'this' set properly.

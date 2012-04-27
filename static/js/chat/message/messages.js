@@ -154,3 +154,5 @@ define([
         WhiteboardCreateMessage: WhiteboardCreateMessage,
         WhiteboardDeleteMessage: WhiteboardDeleteMessage,
     };
+
+});
