@@ -109,7 +109,7 @@ define([
                 el: this.tagInput,
                 scope: 'tag',
                 property: 'value',
-                forceSelection: true,
+                forceSelection: false,
                 onenter: this.updateOnEnter,
                 context: this
             });
