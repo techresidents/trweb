@@ -137,39 +137,47 @@ define([
         }
     });
 
-
     var JobPositionListItemView = Backbone.View.extend({
 
-        tagName: "li",
+        tagName: "tr",
         templateName: '#position-item-template',
         events: {
-            "click .destroy": "clickedDeleteItemMarker"
+            "change .min-salary-option": "clickedMinSalary",
+            "click .close": "clickedDeleteItemMarker"
         },
 
         initialize: function() {
             this.model = this.options.model;
             this.collection = this.options.collection;
+            this.positionTypeCollection = this.options.positionTypeCollection;
             this.template = _.template($(this.templateName).html());
         },
 
         render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
+            this.$el.html(this.template(
+                _.extend(this.model.toJSON(), this.positionTypeCollection.get(this.model.positionTypeId()).toJSON())
+            ));
+            this.$el.find('.min-salary-option').val(this.model.min_salary());
             return this;
         },
 
+        clickedMinSalary: function() {
+            var minSalary = this.$el.find('.min-salary-option').val();
+            console.log(minSalary);
+            this.model.setMinSalary(parseInt(minSalary));
+        },
+
         clickedDeleteItemMarker: function() {
-            console.log("destroy clicked");
-            if (null != this.collection.get(this.model)){
-                this.collection.remove(this.model);
-                this.model = null; // TODO mark for GC?
-            }
+            this.collection.remove(this.model);
+            this.model = null; // TODO mark for GC?
         }
     });
 
     var JobPositionListView = Backbone.View.extend({
 
         initialize: function() {
-            this.setElement($("#positions-list"));
+            this.setElement($("#user-positions-list"));
+            this.positionTypeCollection = this.options.positionTypeCollection;
             this.positionCollection = this.options.positionCollection;
             this.positionCollection.bind("reset", this.render, this);
             this.positionCollection.bind("add", this.addPositionView, this);
@@ -184,7 +192,8 @@ define([
         addPositionView: function(position) {
             var view = new JobPositionListItemView({
                 model: position,
-                collection: this.positionCollection
+                collection: this.positionCollection,
+                positionTypeCollection: this.positionTypeCollection
             });
 
             this.$el.append(view.render().el);
@@ -204,33 +213,37 @@ define([
         initialize: function() {
             this.setElement($("#position-add"));
             this.typeaheadView = new typeahead.TypeaheadView({
-                el: this.$("#id_positions"),
+                el: this.$("#position-input"),
                 maxResults: 5,
                 forceSelection: true,
                 onenter: this.updateOnEnter,
                 context: this
             });
 
+            this.positionTypeCollection = this.options.positionTypeCollection;
             this.positionCollection = this.options.positionCollection;
-            this.positionInput = this.$("#id_positions");
-
-            this.$("#position-add-button").click(function(event) {
-                    event.preventDefault(); // prevent form submission
-                }
-            );
+            this.positionInput = this.$("#position-input");
         },
 
         addPosition: function() {
-            console.log("addPosition called")
             var positionName = this.positionInput.val();
+            var positionTypeId = null;
             if (positionName) {
-                // only add if entry doesn't exist
-                if (null == this.positionCollection.get(positionName))
+                var positions = this.positionTypeCollection.where({'name': positionName});
+                if (1 == positions.length){
+                    positionTypeId = (positions[0]).id;
+                }
+            }
+
+            if (positionTypeId) {
+                // only add if entry doesn't already exist in user's position prefs
+                var posPrefs = this.positionCollection.where({'positionTypeId': positionTypeId});
+                if (0 == posPrefs.length)
                 {
-                    var position = new models.JobPosition({
-                        name: positionName
+                    var positionPref = new models.PositionPreference({
+                        positionTypeId: positionTypeId
                     });
-                    this.positionCollection.add(position);
+                    this.positionCollection.add(positionPref);
                 }
                 this.positionInput.val("");
 

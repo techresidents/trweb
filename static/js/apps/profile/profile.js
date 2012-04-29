@@ -24,19 +24,27 @@ $(document).ready(function() {
     var JobsAppView = Backbone.View.extend({
 
         initialize: function() {
-            this.positionCollection = new models.JobPositionCollection();
+            this.positionTypeCollection = new models.PositionTypeCollection();
+            this.positionPrefCollection = new models.PositionPrefCollection();
 
-            this.positionLisView = new views.JobPositionListView({positionCollection: this.positionCollection});
-            this.positionAddView = new views.JobPositionAddView({positionCollection: this.positionCollection});
-            this.positionFormView = new views.JobPositionFormView({positionCollection: this.positionCollection});
+            this.positionLisView = new views.JobPositionListView({
+                positionCollection: this.positionPrefCollection,
+                positionTypeCollection: this.positionTypeCollection
+            });
+            this.positionAddView = new views.JobPositionAddView({
+                positionCollection: this.positionPrefCollection,
+                positionTypeCollection: this.positionTypeCollection
+            });
+            this.positionFormView = new views.JobPositionFormView({positionCollection: this.positionPrefCollection});
 
-            this.positionCollection.reset(this.options.data);
+            this.positionTypeCollection.reset(this.options.positionTypes);
+            this.positionPrefCollection.reset(this.options.positions);
         }
     });
 
     if (window.app) {
         if (window.app.name == 'jobs') {
-            app = new JobsAppView({data: window.data});
+            app = new JobsAppView({positions: window.positions, positionTypes: window.positionTypes});
         }
         else if (window.app.name == 'skills') {
             app = new SkillsAppView({data: window.data});

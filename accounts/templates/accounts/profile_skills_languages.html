@@ -113,9 +113,6 @@
         </div>
     </div>
 
-
-
-
     <!-- TODO: add proper escapejs filter that works with json -->
     {% autoescape off %}
         <script>
@@ -127,9 +124,9 @@
 
     <!-- Templates -->
     <script type="text/template" id="skill-item-template">
-        {% verbatim %}
-            <td><%= name %></td>
-        {% endverbatim %}
+        <td>
+            <span> <%= name %> </span>
+        </td>
         <td>
             <select class="skill-expertise">
                 {% for option in expertise_options %}
@@ -138,7 +135,7 @@
             </select>
         </td>
         <td>
-            <select>
+            <select class="skill-yrs-experience">
                 {% for option in yrs_experience_options %}
                     <option value={{ option }}>{{ option }}
                         {% if forloop.last %}+{% endif %}

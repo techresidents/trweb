@@ -16,7 +16,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
 
 from techresidents_web.accounts.models import Skill
-from techresidents_web.job.models import Prefs, PositionTypePref
+from techresidents_web.job.models import Prefs, PositionType, PositionTypePref
 from techresidents_web.common.models import Technology, TechnologyType, ExpertiseType
 
 
@@ -230,30 +230,37 @@ def profile_jobs(request):
     if request.method == 'POST':
         form = forms.ProfileJobsForm(request, data=request.POST)
         if form.is_valid():
-            form.save(commit=True)
+            form.save()
             messages.success(request, "Save successful")
             return HttpResponseRedirect(reverse('accounts.views.profile_jobs'))
     else:
-        try:
-            prefs = Prefs.objects.get(user=request.user)
-            form_data = {
-                'email_new_job_opps': prefs.email_new_job_opps,
-                'salary_start': prefs.salary_start
-            }
-        except Prefs.DoesNotExist:
-            form_data = {}
-        form = forms.ProfileJobsForm(request, data=form_data)
+        form = forms.ProfileJobsForm(request)
+
+    # Create minimum salary values to populate the UI with
+    min_salary_options = range(50000,260000,10000)
+
+    # Create data to populate the Positions field autocomplete
+    position_types = PositionType.objects.all()
+    json_position_names = [str(p.name) for p in position_types]
+    json_position_types = [ {
+        forms.ProfileJobsForm.JSON_POSITION_TYPE_ID: p.id,
+        forms.ProfileJobsForm.JSON_POSITION_NAME: p.name,
+        forms.ProfileJobsForm.JSON_POSITION_DESCRIPTION: p.description} for p in position_types]
 
     # Retrieve list of user's position preferences and create json data to populate UI
-    user_positions = PositionTypePref.objects.filter(user=request.user).select_related('job_positiontype')
-    user_positions_list = [ {forms.ProfileJobsForm.JSON_POSITION_NAME: pos.position_type.name} for pos in user_positions]
-    json_positions = '[]'
-    if user_positions_list:
-        json_positions = json.dumps(user_positions_list)
+    position_prefs = PositionTypePref.objects.filter(user=request.user)
+    json_user_position_prefs = [ {
+        'id': pos.id,
+        'positionTypeId': pos.position_type.id,
+        'min_salary': pos.salary_start} for pos in position_prefs]
 
     context = {
         'form': form,
-        'json_positions': json_positions
+        'json_user_positions': json.dumps(json_user_position_prefs),
+        'json_autocomplete_positions': json.dumps(json_position_names),
+        'json_position_types': json.dumps(json_position_types),
+        'min_salary_options': min_salary_options,
+        'support_email': settings.DEFAULT_SUPPORT_EMAIL
     }
 
     return render_to_response('accounts/profile_jobs.html', context, context_instance=RequestContext(request))
@@ -320,6 +327,7 @@ def profile_skills_common(request, technology_type_name):
     json_skills = '[]'
     if user_skills_list:
         json_skills = json.dumps(user_skills_list)
+        print json_skills
     else:
         # if user has no skills specified, then create a list of defaults
         default_profile_technologies = skill_technologies.filter(is_profile_default=True)

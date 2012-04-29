@@ -50,13 +50,15 @@ define([
         model: Skill
     });
 
-    var JobPosition = Backbone.Model.extend({
+    var PositionType = Backbone.Model.extend({
 
-        idAttribute: "name",
+        // This object will use the PositionType.id from the SQL db.
+        // This is automatically mapped to this object's 'id' property.
 
         defaults : function() {
             return {
-                name: ""
+                name: "",
+                description: ""
             };
         },
 
@@ -66,17 +68,52 @@ define([
 
         name: function() {
             return this.get("name");
+        },
+
+        description: function() {
+            return this.get("description");
         }
     });
 
-    var JobPositionCollection = Backbone.Collection.extend({
-        model: JobPosition
+    var PositionTypeCollection = Backbone.Collection.extend({
+        model: PositionType
+    });
+
+    var PositionPreference = Backbone.Model.extend({
+
+        defaults : function() {
+            return {
+                positionTypeId: null,
+                min_salary: 50000
+            };
+        },
+
+        initialize: function() {
+        },
+
+        positionTypeId: function() {
+          return this.get('positionTypeId');
+        },
+
+        min_salary: function() {
+            return this.get('min_salary');
+        },
+
+        setMinSalary: function(minSalary) {
+            this.set({min_salary: minSalary});
+        }
+    });
+
+    var PositionPrefCollection = Backbone.Collection.extend({
+        model: PositionPreference
     });
 
     return {
         Skill: Skill,
         SkillCollection: SkillCollection,
-        JobPosition: JobPosition,
-        JobPositionCollection: JobPositionCollection
+        PositionType: PositionType,
+        PositionTypeCollection: PositionTypeCollection,
+        PositionPreference: PositionPreference,
+        PositionPrefCollection: PositionPrefCollection
     }
 });

@@ -27,8 +27,6 @@ class Prefs(models.Model):
     """Represents a user's job preferences which pertain to all jobs they are seeking"""
     user = models.ForeignKey(User)
     email_new_job_opps = models.BooleanField(default=False)
-    salary_start = models.IntegerField(null=True)
-    salary_end   = models.IntegerField(null=True)
 
 class LocationPref(models.Model):
     """Represents one of a user's potentially many location preferences """
@@ -44,6 +42,8 @@ class PositionTypePref(models.Model):
     """Represents one of a user's potentially many position type preferences """
     user = models.ForeignKey(User)
     position_type = models.ForeignKey(PositionType)
+    salary_start = models.IntegerField(null=True)
+    salary_end   = models.IntegerField(null=True)
 
 class TechnologyPref(models.Model):
     """Represents one of a user's potentially many technology preferences """

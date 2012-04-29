@@ -2,6 +2,7 @@
 {% load url from future %}
 {% load verbatim %}
 {% load widget_filters %}
+{% load humanize %}
 
 {% block title %}Profile{% endblock %}
 
@@ -50,47 +51,26 @@
                     </div>
 
                     <h3>Positions</h3>
-                    <div id="table-wrap" class="well">
-                        <table id="table" class="table">
+                    <div id="positions-table-wrap" class="well">
+                        <table id="positions-table" class="table">
                             <thead>
-                            <th>Position</th>
+                            <th>Name</th>
                             <th>Description</th>
                             <th>Minimum Salary (US Dollars)</th>
                             <th></th>
                             </thead>
-                            <tbody id="skill-list">
-                                <tr>
-                                    <td>Developer</td>
-                                    <td>Development is your primary role and responsibility.</td>
-                                    <td>
-                                        <select>
-                                            <option value='50'>50,000</option>
-                                            <option value='60'>60,000</option>
-                                            <option value='70'>70,000</option>
-                                            <option value='80'>80,000</option>
-                                            <option value='90'>90,000</option>
-                                            <option value='100'>100,000</option>
-                                            <option value='110'>110,000</option>
-                                            <option value='120'>120,000</option>
-                                            <option value='130'>130,000</option>
-                                            <option value='140'>140,000</option>
-                                            <option value='150'>150,000</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <a class="inline close">x</a>
-                                    </td>
-                                </tr>
+                            <tbody id="user-positions-list">
+
                             </tbody>
                         </table>
 
                         <div class="form-horizontal">
                             <!-- from jobs page -->
                             <div class="control-group">
-                                <label for="skill-input">Add Position</label>
+                                <label for="position-input">Add Position</label>
                                 <div class="controls">
                                     <div id="position-add" class="input-append">
-                                        <input id="skill-input" maxlength="1024" type="text" name="language" autocomplete="off">
+                                        <input id="position-input" data-source='{{ json_autocomplete_positions }}' maxlength="1024" type="text" name="language" autocomplete="off">
                                         <button id="position-add-button" class="btn">Add</button>
                                     </div>
                                 </div>
@@ -210,14 +190,12 @@
 
 
 
-                    <form id="skill-form" class="form-horizontal" method="post" action="{% url 'accounts.views.profile_skills_frameworks' %}">
+                    <form id="profile-jobs-form" class="form-horizontal" method="post" action="{% url 'accounts.views.profile_jobs' %}">
                         <fieldset>
                             {% csrf_token %}
 
-
-
                             <!-- Hidden input fields -->
-                            <input id="skill-form-input" type="hidden" name="skills_form_data"/>
+                            <input id="positions-form-input" type="hidden" name="positions_form_data"/>
 
                             <div class="control-group">
                                 <div class="controls">
@@ -247,81 +225,37 @@
         </div>
     </div>
 
-    <!--
-    <div class="container">
-        <div class="row">
 
-            <div class="span9">
-                <form id="profile-jobs-form" class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_jobs' %}">
-
-
-                        <div class="control-group {% if form.locations.errors %}error{% endif %}">
-                            {{ form.locations.label_tag }}
-                            <div class="controls">
-                                <div id="location-add" class="input-append">
-                                    {{ form.locations }}
-                                    <button id="location-add-button" class="btn">Add</button>
-                                    {% for error in form.locations.errors %}
-                                        <span class="help-inline">{{error}}</span>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="control-group {% if form.technologies.errors %}error{% endif %}">
-                            {{ form.technologies.label_tag }}
-                            <div class="controls">
-                                <div id="technology-add" class="input-append">
-                                    {{ form.technologies }}
-                                    <button id="technology-add-button" class="btn">Add</button>
-                                    {% for error in form.technologies.errors %}
-                                        <span class="help-inline">{{error}}</span>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="control-group {% if form.salary_start.errors %}error{% endif %}">
-                            {{ form.salary_start.label_tag }}
-                            <div class="controls">
-                                {{ form.salary_start }}
-                                {% for error in form.salary_start.errors %}
-                                    <span class="help-inline">{{error}}</span>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-
-                        <!-- Hidden field inputs
-                        <input id="positions-form-input" type="hidden" name="positions_form_data"/>
-
-                        <div class="control-group">
-                            <div class="controls">
-                                <button type="submit" class="btn-primary">Save changes</button>
-                            </div>
-                        </div>
-
-                    </fieldset>
-
-                </form>
-            </div>
-
-        </div>
-    </div>
-    -->
 
     <!-- TODO: add proper escapejs filter that works with json -->
     {% autoescape off %}
     <script>
-        var data = {{json_positions}};
-        var app = {'name':'jobs'}
+        var positions = {{json_user_positions}};
+        var positionTypes = {{json_position_types}};
+        var app = {'name':'jobs'};
     </script>
     {% endautoescape %}
 
     <!-- Templates -->
     <script type="text/template" id="position-item-template">
-        <span><%= name %></span>
-        <a href="#" class="close-inline destroy">x</a>
+        <td>
+            <span> <%= name %> </span>
+        </td>
+        <td>
+            <span> <%= description %> </span>
+        </td>
+        <td>
+            <select class="min-salary-option">
+                {% for option in min_salary_options %}
+                    <option value={{ option }}>{{ option|intcomma }}
+                        {% if forloop.last %}+{% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <a class="close">x</a>
+        </td>
     </script>
 
 {% endblock %}

@@ -130,14 +130,14 @@
             <td><%= name %></td>
         {% endverbatim %}
         <td>
-            <select>
+            <select class="skill-expertise">
                 {% for option in expertise_options %}
                     <option value={{ option }}>{{ option }}</option>
                 {% endfor %}
             </select>
         </td>
         <td>
-            <select>
+            <select class="skill-yrs-experience">
                 {% for option in yrs_experience_options %}
                     <option value={{ option }}>{{ option }}
                         {% if forloop.last %}+{% endif %}
