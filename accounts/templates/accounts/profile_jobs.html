@@ -258,4 +258,23 @@
         </td>
     </script>
 
+    <script type="text/template" id="position-item-hint-template">
+        <td>
+            <span>Sample Position</span>
+        </td>
+        <td>
+            <span>Sample Description</span>
+        </td>
+        <td>
+            <select class="hint-row" disabled="disabled">
+                <option value=50000>
+                    {{ 50000|intcomma }}
+                </option>
+            </select>
+        </td>
+        <td>
+            <a class="close">x</a>
+        </td>
+    </script>
+
 {% endblock %}
