@@ -137,6 +137,24 @@ define([
         }
     });
 
+
+    var JobPositionListItemHintView = Backbone.View.extend({
+
+        tagName: "tr",
+        templateName: '#position-item-hint-template',
+
+        initialize: function() {
+            this.template = _.template($(this.templateName).html());
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.$el.addClass('hint-rows');
+            return this;
+        }
+
+    });
+
     var JobPositionListItemView = Backbone.View.extend({
 
         tagName: "tr",
@@ -186,7 +204,16 @@ define([
 
         render: function() {
             this.$el.children().remove();
-            this.positionCollection.each(this.addPositionView, this);
+            if (this.positionCollection.length > 0) {
+                this.positionCollection.each(this.addPositionView, this);
+            } else {
+                this.addPositionHintView();
+            }
+        },
+
+        addPositionHintView: function() {
+            var view = new JobPositionListItemHintView();
+            this.$el.append(view.render().el);
         },
 
         addPositionView: function(position) {
