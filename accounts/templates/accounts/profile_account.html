@@ -20,70 +20,45 @@
     <div class="container">
         <div class="row">
 
-            <!--Sidebar content-->
-            <div class="span3">
-                <div class="well">
-                    <ul class="nav nav-list">
-                        <li class="nav-header">Account</li>
-                        <li class="active"><a href="#"><i class="icon-user icon-white"></i>Account</a></li>
-                        <li><a href="{% url 'accounts.views.profile_password' %}"><i class="icon-lock"></i>Password</a></li>
-                        <li><a href="{% url 'accounts.views.profile_notifications' %}"><i class="icon-info-sign"></i>Notifications</a></li>
-
-                        <li class="nav-header">Technology</li>
-                        <ul class="nav nav-list">
-                            <li><a href="#">Programming</a></li>
-                            <li><a href="#">Frameworks</a></li>
-                            <li><a href="#">Persistence</a></li>
-                        </ul>
-                    </ul>
-                </div>
-
-                <div class="well">
-
-                </div>
-            </div> <!-- end span3 -->
+            {% include 'accounts/navigation_panel.html' %}
 
             <div class="span9">
                 <!--Body content-->
-                <form class="form-horizontal well">
+                <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_account' %}">
+                    {% csrf_token %}
                     <fieldset>
                         <legend>Change your account information</legend>
-                        <div class="control-group">
-                            <label class="control-label" for="input01">First Name</label>
-                            <div class="controls">
-                                <input type="text" class="input-xlarge" id="input01">
+                        {% for field in form %}
+                            <div class="control-group {% if field.errors %}error{% endif %}">
+                                {{ field.label_tag }}
+                                <div class="controls">
+                                    {% if field.label == 'Email' %}
+                                        <input class="disabled" id={{ field.auto_id }} type="text" name={{ field.html_name }} value={{ field.value }} disabled>
+                                    {% else %}
+                                        {{ field }}
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                        <span class="help-inline">{{error}}</span>
+                                    {% endfor %}
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="input02">Last Name</label>
-                            <div class="controls">
-                                <input type="text" class="input-xlarge" id="input02">
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="input03">Email</label>
-                            <div class="controls">
-                                <input type="text" class="input-xlarge" id="input03">
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="select01">Proud Developer for</label>
-                            <div class="controls">
-                                <select id="select01">
-                                    <option>1 year</option>
-                                    <option>2-5 years</option>
-                                    <option>5-10 years</option>
-                                    <option>10-15 years</option>
-                                    <option>15-25 years</option>
-                                </select>
-                            </div>
-                        </div>
+                        {% endfor %}
                         <div class="control-group">
                             <div class="controls">
                                 <button type="submit" class="btn-primary">Save changes</button>
                             </div>
                         </div>
                     </fieldset>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <!-- Consume all messages stored -->
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success">
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                 </form>
             </div> <!-- end span9 -->
 

@@ -1,0 +1,72 @@
+{% extends "menu_base.html" %}
+{% load url from future %}
+
+{% block title %}Profile{% endblock %}
+
+{% block extrahead %}
+    <link href="{{STATIC_URL}}css/profile.css" rel="stylesheet">
+{%endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="page-header">
+                <h1>Profile</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+
+            {% include 'accounts/navigation_panel.html' %}
+
+            <div class="span9">
+                <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_chats' %}">
+                    {% csrf_token %}
+                    <fieldset>
+                        <legend>Change your Chat settings</legend>
+
+                        {% for field in form %}
+                            <div class="control-group {% if field.errors %}error{% endif %}">
+                                {% if forloop.first%}
+                                    <label class="control-label">Chat Notifications</label>
+                                {% endif %}
+                                <div class="controls">
+                                    <label class="checkbox">
+                                        {{ field }} {{ field.label }}
+                                        {% for error in field.errors %}
+                                            <span class="help-inline">{{error}}</span>
+                                        {% endfor %}
+                                    </label>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="control-group">
+                            <div class="controls">
+                                <button type="submit" class="btn-primary">Save changes</button>
+                            </div>
+                        </div>
+
+                    </fieldset>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <!-- Consume all messages stored -->
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success">
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                </form>
+            </div> <!-- end span9 -->
+
+        </div>
+    </div>
+
+{% endblock %}

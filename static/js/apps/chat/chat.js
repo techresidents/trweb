@@ -3,73 +3,108 @@ define([
     'Underscore',
     'Backbone',
     'chat/models',
-    'chat/views'
-], function($, _, Backbone, models, views) {
+    'chat/agenda/views',
+    'chat/discuss/views',
+    'chat/tag/views',
+    'chat/user/views',
+    'chat/whiteboard/views',
+], function(
+    $,
+    _,
+    Backbone,
+    models,
+    agenda,
+    discuss,
+    tag,
+    user,
+    whiteboard) {
 
 $(document).ready(function() {
     
+    /**
+     * Chat application main view.
+     * @constructor
+     * @param {options} 
+     *   chatAPIKey: Tokbox API Key (required) 
+     *   chatSessionToken: Tokbox session token (required)
+     *   chatUserToken: Tokbox user token (required)
+     *   users: users participating in chat (required)
+     *   topics: chat topics (required)
+     */
     var ChatAppView = Backbone.View.extend({
 
-            el: $("#chatapp"),
+        el: $('#chatapp'),
 
-            initialize: function() {
-                this.chatUsers = new models.ChatUserCollection();
-                this.chatUsers.reset(this.options.data.users);
-                this.chatUsers.bind("change", this.changed, this);
-                
-                //create chat session (not yet connected)
-                this.chatSession = new models.ChatSession({
-                        apiKey: this.options.data.chatAPIKey,
-                        sessionToken: this.options.data.chatSessionToken,
-                        userToken: this.options.data.chatUserToken,
-                        users: this.chatUsers
+        initialize: function() {
+            this.chat = new models.Chat(null, {
+                chatAPIKey: this.options.chatAPIKey,
+                chatSessionToken: this.options.chatSessionToken,
+                chatUserToken: this.options.chatUserToken,
+                users: this.options.users,
+                topics: this.options.topics,
+            });
+            
+            //set chat model
+            models.chat = this.chat;
+            
+
+            //create a view for each user
+            this.chat.users().each(function(chatUser) {
+                var chatUserView = new user.ChatUserView({
+                        model: chatUser,
+                        id: chatUser.id,
+                        chatSession: this.chat.session(),
+                        css: 'span' + 12/this.chat.users().length
                 });
-                
-                //create a view for each user
-                this.chatUsers.each(function(user) {
-                    var chatUserView = new views.ChatUserView({
-                            model: user,
-                            id: user.id,
-                            chatSession: this.chatSession,
-                            css: "span" + 12/this.chatUsers.length
-                    });
-                    this.$("#chat").append(chatUserView.render().el);
-                }, this);
-                
-                //connect the chat session
-                this.chatSession.connect();
+                this.$('#chat').append(chatUserView.render().el);
+            }, this);
 
+            //create discuss view
+            var discussView = new discuss.DiscussView({
+                el: '#discuss'
+            });
+            discussView.render();
 
-                var chatMessageCollection = new models.ChatMessageCollection(null, {
-                        chatSessionToken: this.options.data.chatSessionToken,
-                        userId: this.chatUsers.first().id
-                });
+            //create tagger view
+            var chatTaggerView = new tag.ChatTaggerView({
+                    el: '#tagger',
+            });
+            chatTaggerView.render();
 
-                //create tag view
-                var chatTagView = new views.ChatTagView({
-                        chatSessionToken: this.options.data.chatSessionToken,
-                        userId: this.chatUsers.first().id,
-                        chatMessageCollection: chatMessageCollection});
-                
-                //whiteboard view
-                var whiteboardView = new views.ChatWhiteboardView({
-                        el: $("#whiteboard"),
-                        height: 350,
-                        chatSessionToken: this.options.data.chatSessionToken,
-                        userId: this.chatUsers.first().id,
-                        chatMessageCollection: chatMessageCollection,
-                });
+            /*
+            //whiteboard view
+            var whiteboardView = new whiteboard.ChatWhiteboardView({
+                    el: $('#whiteboard'),
+                    height: 350,
+                    chatSessionToken: this.options.data.chatSessionToken,
+                    userId: this.chatUsers.first().id,
+                    chatMessageCollection: chatMessageCollection,
+            });
+            */
 
-                //long poll
-                chatMessageCollection.longPoll();
-            },
+            //create tab views
+            var chatAgendaTabView = new agenda.ChatAgendaTabView({
+                el: $('#agenda'),
+            });
+            chatAgendaTabView.render();
 
-            changed: function(user) {
-            }
+            var chatTagTabView = new tag.ChatTagTabView({
+                el: $('#tags'),
+            });
+            chatTagTabView.render();
+
+            var chatWhiteboardTabView = new whiteboard.ChatWhiteboardTabView({
+                el: $('#whiteboard'),
+            });
+            
+            //connect the chat and start polling for messages.
+            this.chat.connect();
+            this.chat.messages().longPoll();
+        },
     });
-
-    app = new ChatAppView({data: data});
-
+    
+    //constuct main app view
+    app = new ChatAppView(data);
 });
 
     

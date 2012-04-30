@@ -1,0 +1,151 @@
+{% extends "menu_base.html" %}
+{% load url from future %}
+{% load verbatim %}
+
+{% block title %}Profile{% endblock %}
+
+{% block extrahead %}
+    <link href="{{STATIC_URL}}css/profile_skills_table.css" rel="stylesheet">
+    <script src="{{STATIC_URL}}js/3ps/jquery/jquery.js"></script>
+    <script src="{{STATIC_URL}}js/3ps/bootstrap/bootstrap.js"></script>
+    <script>
+        var require = {
+            baseUrl: '/static/js',
+        };
+    </script>
+    <script data-main="{{STATIC_URL}}js/apps/profile/main.js" src="{{STATIC_URL}}js/3ps/require/require.js"></script>
+{%endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="page-header">
+                <h1>Profile</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+
+            {% include 'accounts/navigation_panel.html' %}
+
+            <div class="span9">
+                <div class="well">
+                    <fieldset>
+                        <legend>Update your framework skills</legend>
+                    </fieldset>
+
+                    <div id="table-wrap">
+                        <table id="table" class="table">
+                            <thead>
+                            <th>Framework</th>
+                            <th>Expertise Level</th>
+                            <th>Yrs Professional Experience</th>
+                            </thead>
+                            <tbody id="skill-list">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="form-horizontal well">
+
+                        <div id="skill-add" class="control-group">
+                            <label for="skill-input">Add Framework</label>
+                            <div class="controls">
+                                <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off">
+                                <button id="skill-add-button" type="button" class="btn-primary">Add</button>
+                            </div>
+                            <div class="controls">
+                                <span class="help">
+                                    <a href="mailto:{{ support_email }}?Subject=Add%20Framework%20Request">Framework not listed?</a>
+                                </span>
+                            </div>
+                        </div>
+
+                        <form id="skill-form" class="form-horizontal" method="post" action="{% url 'accounts.views.profile_skills_frameworks' %}">
+                            <fieldset>
+                                {% csrf_token %}
+
+                                <input id="skill-form-input" type="hidden" name="skills_form_data"/>
+
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <button type="submit" class="btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-error">
+                            {% for error in form.non_field_errors%}
+                                <span>{{error}}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if field.errors %}
+                        <div class="alert alert-error">
+                            {% for error in field.errors %}
+                                <span>{{error}}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <!-- Consume all messages stored -->
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success">
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                </div> <!-- end well -->
+            </div> <!-- end span9 -->
+        </div>
+    </div>
+
+
+
+
+    <!-- TODO: add proper escapejs filter that works with json -->
+    {% autoescape off %}
+        <script>
+            var data = {{json_skills}};
+            var app = {'name':'skills'}
+        </script>
+    {% endautoescape %}
+
+
+    <!-- Templates -->
+    <script type="text/template" id="skill-item-template">
+        {% verbatim %}
+            <td><%= name %></td>
+        {% endverbatim %}
+        <td>
+            <select class="skill-expertise">
+                {% for option in expertise_options %}
+                    <option value={{ option }}>{{ option }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select class="skill-yrs-experience">
+                {% for option in yrs_experience_options %}
+                    <option value={{ option }}>{{ option }}
+                        {% if forloop.last %}+{% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+            <a class="close">x</a>
+        </td>
+    </script>
+
+{% endblock %}

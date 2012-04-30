@@ -1,8 +1,85 @@
 #chat {
+    padding-top: 5px;
     padding-bottom: 30px;
 }
 
-.chatlist {
-    height: 100px;
+#agenda ul {
+    height: 200px;
     overflow-y: auto;
+}
+
+#agenda li {
+    cursor: pointer;
+}
+
+#agenda .selected {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #0088cc;
+}
+
+#agenda .active {
+  color: #aaaaaa;
+  text-decoration: none;
+}
+
+#agenda .selected.active {
+  color: #aaaaaa;
+  text-decoration: none;
+  background-color: #0088cc;
+}
+
+#agenda .level1 {
+  margin-left: 5px;
+}
+
+
+#agenda .level2 {
+  margin-left: 15px;
+}
+
+
+#agenda .level3 {
+  margin-left: 25px;
+}
+
+
+#agenda .level4 {
+  margin-left: 35px;
+}
+
+#agenda .level5 {
+  margin-left: 45px;
+}
+
+#tags ul {
+    height: 200px;
+    overflow-y: auto;
+}
+
+#tagger ul {
+    display: inline;
+    margin: 0 0 5px 5px;
+}
+
+#tagger li {
+    display: inline;
+    list-style-type:none;
+    padding-right: 8px;
+}
+
+#tagger li .close-inline {
+    display: none;
+}
+
+#tagger li:hover .close-inline {
+    display:inline;
+}
+
+#tags li .close-inline {
+    display: none;
+}
+
+#tags li:hover .close-inline {
+    display:inline;
 }

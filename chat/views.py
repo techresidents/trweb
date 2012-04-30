@@ -49,7 +49,10 @@ def chat(request,chat_session_id):
 
     
     #Get the specified chat. User filter must be present for security.
-    chat_session = models.ChatSession.objects.select_related("chat").get(id=chat_session_id, users=request.user, chat__start__lte=datetime.now())
+    chat_session = models.ChatSession.objects.select_related("chat").get(
+            id=chat_session_id,
+            users=request.user,
+            chat__start__lte=datetime.now())
 
     #Get the associated chat_user and use that token if it exists, otherwise create it.
     chat_user = models.ChatUser.objects.get(chat_session=chat_session, user=request.user)
@@ -57,7 +60,9 @@ def chat(request,chat_session_id):
         token = opentok.generate_token(chat_session.token, connection_data = json.dumps({"id": request.user.id}))
         chat_user.token = token
         chat_user.save()
-   
+    
+    users_by_id = [user for user in chat_session.users.order_by('id')]
+
     # Create JSON user objects and pass down to the javascript app through template
     users = []
     for user in chat_session.users.all():
@@ -71,12 +76,37 @@ def chat(request,chat_session_id):
         else:
             users.append(user)
 
+    # Update the session with active chat information to make it available to chatsvc
+    request.session["chat_session"] = {
+        'chat_session_token': chat_session.token,
+        'chat_user_token': chat_user.token,
+        'chat_users': users
+    }
+    request.session.modified = True
+    
+    #topics
+    topics = []
+    topic_tree = Topic.objects.topic_tree(chat_session.chat.topic_id)
+    for topic in topic_tree:
+        topics.append({
+            "id": topic.id,
+            "parentId": topic.parent_id,
+            "level": topic.level,
+            "title": topic.title,
+            "description": topic.description,
+            "duration": topic.duration,
+            "rank": topic.rank,
+            "userId": topic.user_id
+        })
+    
     context = {
         'TR_XD_REMOTE': settings.TR_XD_REMOTE,
         'chat_api_key': settings.TOKBOX_API_KEY,
         'chat_session_token': chat_session.token,
         'chat_user_token': chat_user.token,
-        'users_json': json.dumps(users)
+        'users' : users_by_id,
+        'users_json': json.dumps(users),
+        'topics_json': json.dumps(topics),
     }
     
     return render_to_response('chat/chat.html', context, context_instance=RequestContext(request))

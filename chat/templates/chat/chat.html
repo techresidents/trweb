@@ -7,6 +7,20 @@
 {% block extrahead %}
 <link href="{{STATIC_URL}}css/chat.css" rel="stylesheet">
 
+<style type="text/css">
+    {% for user in users %}
+    .user{{user.id}} {
+        color: {% cycle '#00A651' '#00AEEF' '#F15A29' '#231F20' as usercolor %};
+    }
+    
+    .user{{user.id}}-border {
+        border-style: solid;
+        border-color: {{ usercolor }};
+        border-width: 5px;
+    }
+    {% endfor %}
+</style>
+
 <script src="http://staging.tokbox.com/v0.91/js/TB.min.js" ></script>
 
 <script>
@@ -15,15 +29,18 @@
     };
 </script>
 <script data-main="{{STATIC_URL}}js/apps/chat/main.js" src="{{STATIC_URL}}js/3ps/require/require.js"></script>
-{%endblock %}
+{% endblock %}
 
 {% block content %}
 
 <div class="container" id="chatapp">
     <div class="row" id="chat"></div>
     <div class="row">
-        <div class="span12 page-header">
-            <h3>Discuss: Web Security: Preventitive Measures</h3>
+        <div id="discuss"class="span12 page-header">
+        </div>
+    </div>
+    <div class="row">
+        <div id="tagger" class="span12 page-header">
         </div>
     </div>
     <div class="row">
@@ -31,31 +48,26 @@
     <div class="row">
         <div class="span12">
             <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
-                <li><a data-toggle="tab" href="#whiteboard-container">Whiteboard</a></li>
+                <li class="active" ><a data-toggle="tab" href="#agenda">Agenda</a></li>
+                <li><a data-toggle="tab" href="#tags">Tags</a></li>
+                <li><a data-toggle="tab" href="#whiteboard">Whiteboard</a></li>
             </ul>
             <div class="tab-content">
-                <div id="home" class="tab-pane fade in active">
-                    <div class="span5">
-                        <h5>Agenda</h5>
-                        <div>
-                            <ul id="topiclist" class="chatlist">
-                            </ul>
+                <div id="agenda" class="tab-pane fade in active">
+                    <div id="agenda-control" class="span10"></div>
+                    <div>
+                        <div class="span5">
+                            <ul/>
                         </div>
-                    </div>
-                    <div class="span5">
-                        <h5>Tags</h5>
-                        <div id="tags">
-                            <ul id="taglist"class="chatlist">
-                            </ul>
-                            
-                            <input id="taginput" class="span4"/>
-                            <button class="btn btn-input">Tag</button>
-                        </div>
+                        <div id="agenda-detail" class="span5"></div>
                     </div>
                 </div>
-                <div id="whiteboard-container" class="span10 well tab-pane fade">
-                    <div id="whiteboard" class="span10">
+                <div id="tags" class="tab-pane fade">
+                    <h5>Tags</h5>
+                    <ul id="taglist"/>
+                </div>
+                <div id="whiteboard" class="span10 well tab-pane fade">
+                    <div id="whiteboard-container">
                     </div>
                 </div>
             </div>
@@ -73,34 +85,86 @@
         chatAPIKey: "{{chat_api_key}}",
         chatSessionToken: "{{chat_session_token}}",
         chatUserToken: "{{chat_user_token}}",
-        users: {{users_json}} };
+        users: {{users_json}},
+        topics: {{topics_json}}
+    };
 </script>
 {% endautoescape %}
 
 <!-- Templates -->
 
 <script type="text/template" id="chat-user-header-template">
-    <div id="user<%= id %>-header">
-    </div>
 </script>
 
 <script type="text/template" id="chat-user-template">
-    <div class="well chat-user-container">
+    <div class="user<%= id %>-border chat-user-container" style="width: 300px; height: 225px;">
         <div id="user<%= id %>">
-            <img height=200 src="{{STATIC_URL}}img/person.jpg"/>
+            <img style="height: 225px;" src="{{STATIC_URL}}img/person.jpg"/>
         </div>
     </div>
 </script>
 
 <script type="text/template" id="chat-user-footer-template">
-    <div id="user<%= id %>-footer"
-        <p>Connected: <%= isConnected %> </p>
-        <p>Publishing: <%= isPublishing %> </p>
-    <div/>
+    <p>Connected: <%= isConnected %> </p>
+    <p>Publishing: <%= isPublishing %> </p>
 </script>
 
 <script type="text/template" id="tag-item-template">
-    <%= name %>
+    <a class="user<%= userId %>" href="#"><%= name %></a>
+    <% if(myTag) { %>
+        <a class="close-inline destroy">x</a>
+    <% } %>
+</script>
+
+<script type="text/template" id="discuss-template">
+    <div class="span1">
+        <h3>Discuss</h3>
+    </div>
+    <div class="span7">
+        <h3><%= root.title %>: <%= title %></h3>
+    </div>
+    <button class="btn btn-input next">Next</button>
+    <span id="discuss-timer"/>
+</script>
+
+<script type="text/template" id="tagger-template">
+    <div class="span1">
+        <h3>Tag</h3>
+    </div>
+    <div class="span8">
+        <div>
+            <input class="span7">
+            <button class="btn btn-input add">Add</button>
+            <span><strong>Recent Tags</strong>
+                <ul/>
+            </span>
+        </div>
+    </div>
+</script>
+
+<script type="text/template" id="tagger-item-template">
+    <a class="user<%= userId %>" rel="tooltip" href="#" title="tooltip"><%= name %></a>
+    <% if(myTag) { %>
+        <a class="close-inline destroy">x</a>
+    <% } %>
+</script>
+
+<script type="text/template" id="agenda-item-template">
+    <div class="level<%= level %>">
+        <%= title %>
+    </div>
+</script>
+
+<script type="text/template" id="agenda-detail-template">
+    <h3><%= title %>: <small><%= durationFormat %><small></h3>
+    <p><%= description %></p>
+</script>
+
+<script type="text/template" id="agenda-control-template">
+    <h3><%= title %>
+        <button class="btn btn-input next">Next</button>
+        <span id="agenda-control-timer"></span>
+    </h3>
 </script>
 
 

@@ -95,7 +95,7 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
-AUTH_PROFILE_MODULE = 'techresidents_web.accounts.UserProfile'
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 LOGIN_REDIRECT_URL = '/chat'
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -136,6 +137,7 @@ INSTALLED_APPS = (
     'techresidents_web.common',
     'techresidents_web.accounts',
     'techresidents_web.chat',
+    'techresidents_web.job',
     'techresidents_web.topic',
     'techresidents_web.whiteboard',
 )
@@ -163,6 +165,15 @@ LOGGING = {
     }
 }
 
+#Riak Session Cache
+import riak
+SESSION_ENGINE = 'riak_sessions.backends.cache'
+RIAK_HOST = 'localdev'
+RIAK_PORT = 8087
+RIAK_TRANSPORT_CLASS = riak.RiakPbcTransport
+RIAK_SESSION_BUCKET = 'tr_sessions'
+RIAK_SESSION_KEY = '%(session_key)s'
+
 #Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -171,6 +182,7 @@ EMAIL_PORT = 25
 #EMAIL_HOST_USER = 'user'
 #EMAIL_HOST_PASSWORD = 'password'
 DEFAULT_FROM_EMAIL = 'Tech Residents Support <jmullins@techresidents.com>'
+DEFAULT_SUPPORT_EMAIL = 'Tech Residents Support <support@techresidents.com>'
 
 #Tech Residents specific settings
 #Login using HTTPS. This is should only be used by the landing page which is http,
@@ -178,11 +190,16 @@ DEFAULT_FROM_EMAIL = 'Tech Residents Support <jmullins@techresidents.com>'
 TR_LOGIN_USING_HTTPS = False
 
 #Set the location of the cross domain (XD) server for use with easyXDM.
-TR_XD_REMOTE = 'http://localdev:6767/static/js/easyXDM/cors/index.html'
-#TR_XD_REMOTE = 'http://iville.local:6767/static/js/easyXDM/cors/index.html'
+#TR_XD_REMOTE = 'http://localdev:6767/static/js/easyXDM/cors/index.html'
+#TR_XD_REMOTE = 'http://localhost:6767/static/js/easyXDM/cors/index.html'
+TR_XD_REMOTE = 'http://iville.local:6767/static/js/easyXDM/cors/index.html'
 
 
 #Tokbox settings
 TOKBOX_API_KEY = '11557552'
 TOKBOX_API_SECRET = 'a3fc9c8a0e37bd9fa04018132e55b4141195ce2b'
 TOKBOX_IS_STAGING = True
+
+
+#Django message settings
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

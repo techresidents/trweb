@@ -4,7 +4,6 @@ require.config({
         jQuery: 'loader/jquery',
         Underscore: 'loader/underscore',
         Backbone: 'loader/backbone',
-        Highcharts: 'loader/highcharts',
     }
 });
 

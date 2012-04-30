@@ -5,10 +5,10 @@ class TopicManager(models.Manager):
 
     def topic_tree(self, topic_id):
         topics = self.raw("""with recursive q as 
-                            ( select id, parent_id, title, description, rank, user_id from topic where id = %s
+                            ( select t.*, 1 as level from topic t where id = %s
                               union all
-                              select t.id, t.parent_id, t.title, t.description, t.rank, t.user_id from q
-                              join topic t on t.parent_id = q.id
+                              select tc.*, level + 1 from q
+                              join topic tc on tc.parent_id = q.id
                             )
                             select * from q order by rank
                           """, [topic_id])
@@ -65,6 +65,13 @@ class TopicStyle(models.Model):
     description = models.CharField(max_length=1024)
 
 class Topic(models.Model):
+    """Topic model.
+
+    Topics are hierarchical and this is represented with a parent
+    child relationship. To support the recursive queries for the Topic,
+    this model uses the TopicManager model manager.
+
+    """
     class Meta:
         db_table = "topic"
     
@@ -73,7 +80,8 @@ class Topic(models.Model):
     rank = models.IntegerField()
     style = models.ForeignKey(TopicStyle)
     title = models.CharField(max_length=100)
-    description = models.CharField(max_length=2048, null=True)
+    description = models.CharField(max_length=2048, blank=True)
+    duration = models.IntegerField()
     public = models.BooleanField(default=True)
     user = models.ForeignKey(User)
 
@@ -91,33 +99,50 @@ class Tag(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
 
-
 class TechnologyType(models.Model):
     """Represents a technology type such as framework, programming language, etc"""
-    name = models.CharField(max_length=100)
+    class Meta:
+        db_table = "technology_type"
 
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1024)
 
 class Technology(models.Model):
     """Represents a technology such as a specific framework such as Django or Rails"""
+    class Meta:
+        db_table = "technology"
+
     name = models.CharField(max_length=100)
     type = models.ForeignKey(TechnologyType)
-    isDefault = models.BooleanField(default=False)
+    is_profile_default = models.BooleanField(default=False)
+    #is_profile_default is a flag to indicate if this technology should show up in the default list of technologies
+    description = models.CharField(max_length=1024, blank=True)
 
+class ExpertiseType(models.Model):
+    """Represents an expertise level typically associated with a skill"""
+    class Meta:
+        db_table = "expertise_type"
 
-class PositionType(models.Model):
-    """Represents a position type such as developer, manager, or architect"""
     name = models.CharField(max_length=100)
-
-
-class Positions(models.Model):
-    """Represents a position such as a junior developer, senior manager, etc"""
-    name = models.CharField(max_length=100)
-    type = models.ForeignKey(PositionType)
-
+    value = models.IntegerField()
+    description = models.CharField(max_length=1024)
 
 class Location(models.Model):
     """Represents a user's target job location"""
+    class Meta:
+        db_table = "location"
+
     country = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     zip = models.CharField(max_length=25)
+    county = models.CharField(max_length=100)
+    #TODO add longitude and latitude.  Research how best to store this data within the db.
+
+class Organization(models.Model):
+    """Represents an organization such as RSA or Bloomberg"""
+    class Meta:
+        db_table = "organization"
+
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1024)

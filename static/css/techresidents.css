@@ -19,6 +19,22 @@
         color: #EEEEEE;
 }
 
+.close-inline {
+    color: #000000;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 15px;
+    opacity: 0.2;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.close-inline:hover {
+    color: #000000;
+    cursor: pointer;
+    opacity: 0.4;
+    text-decoration: none;
+}
+
 .logo {
     display: block;
     height: 115px;

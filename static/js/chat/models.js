@@ -2,229 +2,131 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'xd/xd',
-    'xd/backbone',
-    'chat/messages',
-], function($, _, Backbone, xd, xdBackbone, messages) {
+    'chat/agenda/models',
+    'chat/message/dispatch',
+    'chat/message/models',
+    'chat/session/models',
+    'chat/tag/models',
+    'chat/user/models',
+    'chat/whiteboard/models',
+], function(
+    $,
+    _,
+    Backbone,
+    agenda,
+    dispatch,
+    message,
+    session_models,
+    tag,
+    user,
+    whiteboard) {
+    
 
-    var ChatUser = Backbone.Model.extend({
-
-            defaults: function() {
-                return {
-                    name: "",
-                    isSpeaking: false,
-                    isConnected: false,
-                    isPublishing: false
-                };
-            },
-
-            name: function() {
-                return this.get("name");
-            },
-
-            isSpeaking: function() {
-                return this.get("isSpeaking");
-            },
-
-            setSpeaking: function(isSpeaking) {
-                this.set({ isSpeaking: isSpeaking });
-                return this;
-            },
-
-            isConnected: function() {
-                return this.get("isConnected");
-            },
-
-            setConnected: function(isConnected) {
-                this.set({ isConnected: isConnected });
-                return this;
-            },
-
-            isPublishing: function() {
-                return this.get("isPublishing");
-            },
-
-            setPublishing: function(isPublishing) {
-                this.set({ isPublishing: isPublishing });
-                return this;
-            }
-    });
-
-    var ChatUserCollection = Backbone.Collection.extend({
-            model: ChatUser
-    });
-
-    var ChatSession = Backbone.Model.extend({
-            defaults: function() {
-                return {
-                    apiKey: null,
-                    sessionToken: null,
-                    userToken: null,
-                    session: null,
-                    users: null,
-                }
-            },
-
-            initialize: function(model) {
-                //make 'this' available for tokbox event listeners
-                var that = this;
-                
-                var session =  TB.initSession(model.sessionToken);
-                this.set({ session: session });
-                
-                //tokbox event listeners defined inline delegate to ChatSession handlers with 'this' set properly.
-                session.addEventListener("sessionConnected", function(event) { that.sessionConnectedHandler.call(that, event); });
-                session.addEventListener("connectionCreated", function(event) { that.connectionCreatedHandler.call(that, event); });
-                session.addEventListener("connectionDestroyed", function(event) { that.connectionDestroyedHandler.call(that, event); });
-                session.addEventListener("streamCreated", function(event) { that.streamCreatedHandler.call(that, event); });
-                session.addEventListener("streamDestroyed", function(event) { that.streamDestroyedHandler.call(that, event); });
-                session.addEventListener("microphoneLevelChanged", function(event) { that.microphoneLevelHandler.call(that, event); });
-            },
-
-            getApiKey: function() {
-                return this.get("apiKey");
-            },
-
-            getSessionToken: function() {
-                return this.get("sessionToken");
-            },
-
-            getUserToken: function() {
-                return this.get("userToken");
-            },
-
-            getSession: function() {
-                return this.get("session");
-            },
-
-            getUsers: function() {
-                return this.get("users");
-            },
-           
-            //connect tokbox session to start everything.
-            connect: function() {
-                var session = this.getSession();
-                var userToken = this.getUserToken();
-                var apiKey = this.getApiKey();
-                
-                session.connect(apiKey, userToken);
-            },
-
-            sessionConnectedHandler: function(event) {
-                this.trigger("session:connected", event);
-            },
-
-            connectionCreatedHandler: function(event) {
-                this.trigger("connection:created", event);
-            },
-
-            connectionDestroyedHandler: function(event) {
-                this.trigger("connection:destroyed", event);
-            },
-
-            streamCreatedHandler: function(event) {
-                this.trigger("stream:created", event);
-            },
-
-            streamDestroyedHandler: function(event) {
-                this.trigger("stream:destroyed", event);
-            },
-
-            microphoneLevelHandler: function(event) {
-                this.trigger("microphone:changed", event);
-            }
-
-    });
-
-    var ChatMessage = Backbone.Model.extend({
-
-            defaults: function() {
-                return {
-                    header: null,
-                    msg: null
-                };
-            },
-
-            initialize: function(attributes, options) {
-
-                if(attributes.header.constructor == Object) {
-                    attributes.header = new messages.ChatMessageHeader(attributes.header);
-                }
-
-                if(attributes.msg.constructor == Object) {
-                    attributes.msg = messages.chatMessageFactory.create(attributes.header, attributes.msg);
-                }
-
-                if(!attributes.header.type && attributes.msg.type) {
-                    attributes.header.type = attributes.msg.type;
-                }
-            },
-
-            header: function() {
-                return this.get("header");
-            },
-
-            msg: function() {
-                return this.get("msg");
-            },
+    /**
+     * Chat model.
+     * Convenience model containing references to all chat objects.
+     */
+    var Chat = Backbone.Model.extend({
+        localStorage: new Backbone.LocalStorage('Chat'),
+        
+        defaults: function() {
+            return {
+                agenda: null,
+                currentUser: null,
+                dispatcher: null,
+                messages: null,
+                session: null,
+                users: null,
+                tags: null,
+                whiteboards: null,
+            };
+        },
+        
+        initialize: function(attributes, options) {
+            this.chatAPIKey = options.chatAPIKey;
+            this.chatSessionToken = options.chatSessionToken;
+            this.chatUserToken = options.chatUserToken;
             
-            url: function() {
-                return "/chat/message/" + this.attributes.header.type;
-            },
+            //set users
+            user.users.reset(options.users);
 
-            toJSON: function() {
-                return _.extend({}, this.attributes.header, this.attributes.msg);
-            },
+            //create chat session (not yet connected)
+            var session = new session_models.ChatSession({
+                    apiKey: this.chatAPIKey,
+                    sessionToken: this.chatSessionToken,
+                    userToken: this.chatUserToken,
+                    users: user.users
+            });
 
-            sync: xdBackbone.sync,
+            //set current user
+            user.currentUser = session.getCurrentUser();
 
-            msgType: function() {
-                var header = this.get("header");
-                if(header) {
-                    return header.type;
-                } else {
-                    return null;
-                }
-            }
-    });
+            //create chat message collection
+            var messages = new message.ChatMessageCollection(null, {
+                    chatSessionToken: this.chatSessionToken,
+                    userId: user.users.first().id
+            });
 
-    var ChatMessageCollection = Backbone.Collection.extend({
-            model: ChatMessage,
-            
-            url: "/chat/messages",
+            //create chat message dispatcher
+            var dispatcher = new dispatch.Dispatcher({
+                    chatMessages: messages
+            });
 
-            initialize: function(models, options) {
-                this.chatSessionToken = options.chatSessionToken;
-                this.userId = options.userId;
-            },
+            //update chat agenda topics
+            agenda.agenda.topics().reset(options.topics);
 
-            sync: function(method, collection, options) {
-                if(method == 'read') {
-                    var last = this.last();
-                    var asOf = last ? last.attributes.header.timestamp : 0;
+            this.set({
+                session: session,
+                messages: messages,
+                dispatcher: dispatcher,
+                users: user.users,
+                currentUser: user.currentUser,
+                agenda: agenda.agenda,
+                tags: tag.tagCollection,
+                whiteboards: whiteboard.whiteboardCollection
+            });
 
-                    var data = {
-                        chatSessionToken: this.chatSessionToken,
-                        userId: this.userId,
-                        asOf: asOf
-                    };
+        },
 
-                    options.data = data;
-                }
+        connect: function() {
+            this.get('session').connect();
+        },
 
-                return xdBackbone.sync(method, collection, options);
-            },
+        agenda: function() {
+            return this.get('agenda');
+        },
 
-            longPoll: function() {
-                var that = this;
-                this.fetch({add: true, silent: false, complete: function() { that.longPoll.call(that);} });
-            }
+        currentUser: function() {
+            return this.get('currentUser');
+        },
+
+        dispatcher: function() {
+            return this.get('dispatcher');
+        },
+
+        messages: function() {
+            return this.get('messages');
+        },
+
+        session: function() {
+            return this.get('session');
+        },
+
+        users: function() {
+            return this.get('users');
+        },
+
+        tags: function() {
+            return this.get('tags');
+        },
+
+        whiteboards: function() {
+            return this.get('whiteboards');
+        },
     });
 
     return {
-        ChatSession: ChatSession,
-        ChatUserCollection: ChatUserCollection,
-        ChatMessage: ChatMessage,
-        ChatMessageCollection: ChatMessageCollection,
-    }
+        Chat: Chat,
+        chat: null,
+    };
 });
