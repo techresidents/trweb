@@ -1,4 +1,3 @@
-import forms
 import json
 
 from django.core import serializers
@@ -15,6 +14,7 @@ from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
 
+from techresidents_web.accounts import forms
 from techresidents_web.accounts.models import Skill
 from techresidents_web.job.models import Prefs, PositionType, PositionTypePref
 from techresidents_web.common.models import Technology, TechnologyType, ExpertiseType
@@ -166,19 +166,13 @@ def profile_account(request):
     else:
         user = request.user
         user_profile = request.user.get_profile()
-        if user_profile.developer_since is None:
-            form_data = {
-                'first_name':user.first_name,
-                'last_name':user.last_name,
-                'email_address':user.email
-            }
-        else:
-            form_data = {
-                'first_name':user.first_name,
-                'last_name':user.last_name,
-                'email_address':user.email,
-                'developer_since':user_profile.developer_since.year
-            }
+        form_data = {
+            'first_name':user.first_name,
+            'last_name':user.last_name,
+            'email_address':user.email
+        }
+        if user_profile.developer_since is not None:
+            form_data['developer_since'] = user_profile.developer_since.year
         form = forms.ProfileAccountForm(request, data=form_data)
 
     context = {
@@ -241,11 +235,11 @@ def profile_jobs(request):
 
     # Create data to populate the Positions field autocomplete
     position_types = PositionType.objects.all()
-    json_position_names = [str(p.name) for p in position_types]
+    json_position_names = [p.name for p in position_types]
     json_position_types = [ {
-        forms.ProfileJobsForm.JSON_POSITION_TYPE_ID: p.id,
-        forms.ProfileJobsForm.JSON_POSITION_NAME: p.name,
-        forms.ProfileJobsForm.JSON_POSITION_DESCRIPTION: p.description} for p in position_types]
+        'id': p.id,
+        'name': p.name,
+        'description': p.description} for p in position_types]
 
     # Retrieve list of user's position preferences and create json data to populate UI
     position_prefs = PositionTypePref.objects.filter(user=request.user)
@@ -309,8 +303,7 @@ def profile_skills_common(request, technology_type_name):
     # Populate list of supported skills for autocomplete widget
     skill_technology_type = TechnologyType.objects.get(name=technology_type_name)
     skill_technologies = Technology.objects.filter(type=skill_technology_type)
-    skill_names = [str(s.name) for s in skill_technologies]
-    json_autocomplete_skills = json.dumps(skill_names)
+    json_autocomplete_skills = [s.name for s in skill_technologies]
 
     # Create expertise values to populate the UI with
     expertise_types = ExpertiseType.objects.all()
@@ -321,31 +314,30 @@ def profile_skills_common(request, technology_type_name):
 
     # Retrieve list of user's language skills from db and create json data to populate UI
     user_skills = Skill.objects.filter(technology__type=skill_technology_type).select_related('technology').select_related('expertise_type')
-    user_skills_list = [ {forms.ProfileSkillsForm.JSON_SKILL_NAME: skill.technology.name,
-                           forms.ProfileSkillsForm.JSON_EXPERTISE: skill.expertise_type.name,
-                           forms.ProfileSkillsForm.JSON_YRS_EXPERIENCE: skill.yrs_experience} for skill in user_skills]
-    json_skills = '[]'
+    user_skills_list = [ {'name': skill.technology.name,
+                          'expertise': skill.expertise_type.name,
+                          'yrs_experience': skill.yrs_experience} for skill in user_skills]
+    json_skills = []
     if user_skills_list:
-        json_skills = json.dumps(user_skills_list)
-        print json_skills
+        json_skills = user_skills_list
     else:
         # if user has no skills specified, then create a list of defaults
         default_profile_technologies = skill_technologies.filter(is_profile_default=True)
         default_skills = []
         for technology in default_profile_technologies:
             default_skill = {
-                forms.ProfileSkillsForm.JSON_SKILL_NAME:str(technology.name),
-                forms.ProfileSkillsForm.JSON_EXPERTISE:'None',
-                forms.ProfileSkillsForm.JSON_YRS_EXPERIENCE:0
+                'name':str(technology.name),
+                'expertise':'None',
+                'yrs_experience':0
             }
             default_skills.append(default_skill)
-        json_skills = json.dumps(default_skills)
+        json_skills = default_skills
 
     context = {
         'expertise_options': expertise_options,
         'yrs_experience_options': yrs_experience_options,
-        'json_autocomplete_skills': json_autocomplete_skills,
-        'json_skills': json_skills,
+        'json_autocomplete_skills': json.dumps(json_autocomplete_skills),
+        'json_skills': json.dumps(json_skills),
         'support_email': settings.DEFAULT_SUPPORT_EMAIL
     }
 

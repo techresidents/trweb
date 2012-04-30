@@ -306,6 +306,8 @@ class ProfilePasswordForm(forms.Form):
             password_confirmation = clean_data['password_confirmation']
             if new_password != password_confirmation:
                 raise forms.ValidationError("New password values do not match")
+        else:
+            raise forms.ValidationError("New password and confirmation password must be provided")
         return clean_data
 
     def save(self, commit=True):
@@ -351,7 +353,6 @@ class ProfileJobsForm(forms.Form):
 
     def clean_positions_form_data(self):
         cleaned_positions_data = self.cleaned_data.get('positions_form_data')
-        print cleaned_positions_data
         return cleaned_positions_data
 
         # TODO -- add cleaning code
@@ -410,7 +411,7 @@ class ProfileJobsForm(forms.Form):
         #job_prefs.email_new_job_opps=self.cleaned_data['email_new_job_opps']
         #job_prefs.save()
 
-        return self.user
+        return
 
 class ProfileSkillsForm(forms.Form):
     skills_form_data = JSONField(max_length=2048, widget=forms.HiddenInput, required=True)
@@ -432,7 +433,6 @@ class ProfileSkillsForm(forms.Form):
     def clean(self):
         super(ProfileSkillsForm, self).clean()
         cleaned_skills_data = self.cleaned_data.get('skills_form_data')
-        print cleaned_skills_data
 
         # Verify we have some data to validate
         if cleaned_skills_data is None:
@@ -520,7 +520,7 @@ class ProfileSkillsForm(forms.Form):
                 if not previous_skill.technology.name in updated_skill_names:
                     previous_skill.delete()
 
-        return self.request.user
+        return updated_skills
 
 
 
