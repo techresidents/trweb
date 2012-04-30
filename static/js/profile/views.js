@@ -149,7 +149,7 @@ define([
 
         render: function() {
             this.$el.html(this.template());
-            this.$el.addClass('hint-rows');
+            this.$el.addClass('hint-row');
             return this;
         }
 
