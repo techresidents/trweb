@@ -34,3 +34,4 @@ DEFAULT_FROM_EMAIL = 'Tech Residents Support <jmullins@techresidents.com>'
 #Login using HTTPS. This is should only be used by the landing page which is http,
 #but POSTS to the login page using https in non-development environments.
 TR_LOGIN_USING_HTTPS = True
+TR_XD_REMOTE = 'http://localdev:6767/static/js/easyXDM/cors/index.html'
