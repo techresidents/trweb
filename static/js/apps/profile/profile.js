@@ -28,6 +28,7 @@ $(document).ready(function() {
             this.positionTypeCollection = new models.PositionTypeCollection();
             this.positionPrefCollection = new models.PositionPrefCollection();
             this.technologyPrefCollection = new models.TechnologyPrefCollection();
+            this.locationPrefCollection = new models.LocationPrefCollection();
 
 
             // Position Views
@@ -56,10 +57,23 @@ $(document).ready(function() {
             });
 
 
-            // Init
+            // Location Views
+            this.locationListView = new views.JobLocationListView({
+                locationCollection: this.locationPrefCollection
+            });
+            this.locationAddView = new views.JobLocationAddView({
+                locationCollection: this.locationPrefCollection
+            });
+            this.locationFormView = new views.JobLocationFormView({
+                locationCollection: this.locationPrefCollection
+            });
+
+
+            // Initialize collections
             this.positionTypeCollection.reset(this.options.positionTypes);
             this.positionPrefCollection.reset(this.options.positions);
             this.technologyPrefCollection.reset(this.options.technologies);
+            this.locationPrefCollection.reset(this.options.locations);
         }
     });
 
@@ -68,7 +82,8 @@ $(document).ready(function() {
             app = new JobsAppView({
                 positions: window.positions,
                 positionTypes: window.positionTypes,
-                technologies: window.technologies
+                technologies: window.technologies,
+                locations: window.locations
             });
         }
         else if (window.app.name == 'skills') {

@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 
 from techresidents_web.accounts import forms
 from techresidents_web.accounts.models import Skill
-from techresidents_web.job.models import Prefs, PositionType, PositionTypePref, TechnologyPref
+from techresidents_web.job.models import Prefs, PositionType, PositionTypePref, TechnologyPref, LocationPref
 from techresidents_web.common.models import Technology, TechnologyType, ExpertiseType
 
 
@@ -258,8 +258,18 @@ def profile_jobs(request):
         'name': t.technology.name,
         'description': t.technology.description} for t in technology_prefs]
 
+    # Retrieve list of user's future job location preferences and create json data to populate UI
+    location_prefs = LocationPref.objects.filter(user=request.user).select_related('location').order_by('location__city')
+    json_location_prefs = [{
+        'locationId': l.location.id,
+        'city': l.location.city,
+        'state': l.location.state,
+        'zip': l.location.zip,
+        'country': l.location.country} for l in location_prefs]
+
     context = {
         'form': form,
+        'json_location_prefs' : json.dumps(json_location_prefs),
         'json_technology_prefs': json.dumps(json_technology_prefs),
         'json_user_positions': json.dumps(json_position_prefs),
         'json_autocomplete_positions': json.dumps(json_position_names),

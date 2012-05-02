@@ -11,9 +11,9 @@ from django.contrib.auth.models import User
 from django.template import Context
 
 from techresidents_web.common.forms import JSONField
-from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType
+from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType, Location
 from techresidents_web.accounts.models import CodeType, Code, Skill
-from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, Prefs
+from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, LocationPref, Prefs
 
 
 # Some field size constants for this form.
@@ -339,9 +339,10 @@ class ProfileJobsForm(forms.Form):
     SALARY_MAX = 260000
 
     # Setup form fields
-    # email_new_job_opps = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
+    #email_new_job_opps_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
     positions_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
     technologies_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
+    locations_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
 
     def __init__(self, request=None, *args, **kwargs):
         self.user = request.user
@@ -436,6 +437,7 @@ class ProfileJobsForm(forms.Form):
                 ).save()
 
 
+
         # Retrieve posted technology pref data
         updated_technology_prefs = self.cleaned_data.get('technologies_form_data')
         updated_technology_pref_ids = {t['technologyId'] for t in updated_technology_prefs}
@@ -457,9 +459,38 @@ class ProfileJobsForm(forms.Form):
                     technology=technology
                 ).save()
 
+
+
+
+
+        # Retrieve posted location pref data
+        updated_location_prefs = self.cleaned_data.get('locations_form_data')
+        updated_location_pref_ids = {l['locationId'] for l in updated_location_prefs}
+
+        # Before updating the user's location preferences, save the old prefs to check for prefs that may have been deleted
+        previous_location_prefs = LocationPref.objects.filter(user=self.user).select_related('location')
+        for previous_pref in previous_location_prefs:
+            if not previous_pref.location.id in updated_location_pref_ids:
+                previous_pref.delete()
+
+        # Update user's location prefs based on data posted
+        for location in updated_location_prefs:
+            try:
+                location = Location.objects.get(id=location['locationId'])
+                LocationPref.objects.get(user=self.user, location=location)
+            except LocationPref.DoesNotExist:
+                location_pref = LocationPref(
+                    user=self.user,
+                    location=location
+                ).save()
+
+
+
+
         # Update general job prefs
+        #email_prefs = self.cleaned_data.get('email_new_job_opps_form_data')
         #job_prefs, created = Prefs.objects.get_or_create(user=self.user)
-        #job_prefs.email_new_job_opps=self.cleaned_data['email_new_job_opps']
+        #job_prefs.email_new_job_opps = email_prefs
         #job_prefs.save()
 
         return
