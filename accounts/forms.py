@@ -389,6 +389,19 @@ class ProfileJobsForm(forms.Form):
 
     def clean_technologies_form_data(self):
         cleaned_technologies_data = self.cleaned_data.get('technologies_form_data')
+
+        valid_technologies = Technology.objects.all()
+        valid_technology_ids = [t.id for t in valid_technologies]
+
+        # Validate the technologyID
+        for technology in cleaned_technologies_data:
+            technology_id = technology['technologyId']
+            if technology_id:
+                if not technology_id in valid_technology_ids:
+                    raise forms.ValidationError("Technology id value is invalid")
+            else:
+                raise forms.ValidationError("Technology id field required")
+
         return cleaned_technologies_data
 
     def save(self):
