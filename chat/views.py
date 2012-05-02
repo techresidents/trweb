@@ -53,7 +53,7 @@ def chat(request,chat_session_id):
             id=chat_session_id,
             users=request.user,
             chat__start__lte=datetime.now())
-
+    
     #Get the associated chat_user and use that token if it exists, otherwise create it.
     chat_user = models.ChatUser.objects.get(chat_session=chat_session, user=request.user)
     if not chat_user.token:
