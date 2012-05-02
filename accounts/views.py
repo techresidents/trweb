@@ -231,7 +231,10 @@ def profile_jobs(request):
         form = forms.ProfileJobsForm(request)
 
     # Create minimum salary values to populate the UI with
-    min_salary_options = range(50000,260000,10000)
+    min_salary_options = range(
+        forms.ProfileJobsForm.SALARY_MIN,
+        forms.ProfileJobsForm.SALARY_MAX,
+        10000)
 
     # Create data to populate the Positions field autocomplete
     position_types = PositionType.objects.all()
@@ -243,7 +246,7 @@ def profile_jobs(request):
 
     # Retrieve list of user's position preferences and create json data to populate UI
     position_prefs = PositionTypePref.objects.filter(user=request.user).select_related('position_type')
-    json_user_position_prefs = [ {
+    json_position_prefs = [ {
         'id': pos.id,
         'positionTypeId': pos.position_type.id,
         'min_salary': pos.salary_start} for pos in position_prefs]
@@ -258,7 +261,7 @@ def profile_jobs(request):
     context = {
         'form': form,
         'json_technology_prefs': json.dumps(json_technology_prefs),
-        'json_user_positions': json.dumps(json_user_position_prefs),
+        'json_user_positions': json.dumps(json_position_prefs),
         'json_autocomplete_positions': json.dumps(json_position_names),
         'json_position_types': json.dumps(json_position_types),
         'min_salary_options': min_salary_options,

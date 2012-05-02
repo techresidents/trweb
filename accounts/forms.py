@@ -22,6 +22,7 @@ NAME_MAX_LEN = 30
 EMAIL_MAX_LEN = 75
 PASSWORD_MIN_LEN = 4
 PASSWORD_MAX_LEN = 30
+JSON_FIELD_MAX_LEN = 2048
 
 
 class RegisterUserForm(forms.ModelForm):
@@ -333,17 +334,14 @@ class ProfileChatsForm(forms.Form):
 
 class ProfileJobsForm(forms.Form):
 
-    # JSON keys
-    JSON_POSITION_TYPE_ID = 'id'
-    JSON_POSITION_NAME = 'name'
-    JSON_POSITION_DESCRIPTION = 'description'
-    JSON_POSITION_MIN_SALARY = 'min_salary'
+    # numerical constants
+    SALARY_MIN = 50000
+    SALARY_MAX = 260000
 
     # Setup form fields
-    # email_new_job_opps = JSONField(max_length=2048, widget=forms.HiddenInput, required=False)
-    positions_form_data = JSONField(max_length=2048, widget=forms.HiddenInput, required=False)
-    technologies_form_data = JSONField(max_length=2048, widget=forms.HiddenInput, required=False)
-
+    # email_new_job_opps = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
+    positions_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
+    technologies_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
 
     def __init__(self, request=None, *args, **kwargs):
         self.user = request.user
@@ -351,24 +349,41 @@ class ProfileJobsForm(forms.Form):
 
     def clean_positions_form_data(self):
         cleaned_positions_data = self.cleaned_data.get('positions_form_data')
-        return cleaned_positions_data
-
-        # TODO -- add cleaning code
         if cleaned_positions_data:
-            # Perform db query up front to prevent calling into the
-            # the db to validate each position in the form data
-            valid_positions = PositionType.objects.all()
-            valid_position_names = [p.name for p in valid_positions]
 
+            valid_position_types = PositionType.objects.all()
+            valid_position_type_ids = [p.id for p in valid_position_types]
+
+            # Need to validate positionPrefID, if it has one, the positionTypeID, and minSalary
             for position in cleaned_positions_data:
-                # Verify we have a name attribute
-                position_name = position[self.JSON_POSITION_NAME]
-                if position_name:
-                    # if we have a name attribute, verify that it's valid
-                    if not position_name in valid_position_names:
-                        raise forms.ValidationError("Position name value is invalid")
+
+                # Validate the PositionPrefID, if it has one
+                # The PositionPrefID is validated via the save() method.
+                # When save() is called this ID (if provided) will be used to update
+                # the user's PositionPreferences.  If this update fails, an exception
+                # will be thrown.  If the user is adding a new preference, then this
+                # PositionPrefID will be generated when save() compeletes.
+
+                # Validate the positionTypeID
+                position_type_id = position['positionTypeId']
+                if position_type_id:
+                    if not position_type_id in valid_position_type_ids:
+                        raise forms.ValidationError("PositionType id value is invalid")
                 else:
-                    raise forms.ValidationError("Position name field required")
+                    raise forms.ValidationError("PositionType id field required")
+
+                # Validate the minimum salary data
+                position_min_salary = position['min_salary']
+                if position_min_salary is not None:
+                    if not type(position_min_salary == int):
+                        min_salary = int(position_min_salary)
+                    else:
+                        min_salary = position_min_salary
+                    if min_salary < self.SALARY_MIN or\
+                       min_salary > self.SALARY_MAX:
+                        raise forms.ValidationError("Position minimum salary value is invalid")
+                else:
+                    raise forms.ValidationError("Position minimum salary field required")
 
         return cleaned_positions_data
 
@@ -379,6 +394,7 @@ class ProfileJobsForm(forms.Form):
     def save(self):
         # Making the assumption that form data is clean and valid (meaning that the position
         # data passed in from the user matches existing positions in the db).
+
 
         # Retrieve posted position data
         updated_position_prefs = self.cleaned_data.get('positions_form_data')
@@ -394,7 +410,7 @@ class ProfileJobsForm(forms.Form):
         for position in updated_position_prefs:
             if 'id' in position:
                 rows_updated = PositionTypePref.objects.filter(user=self.user).update(
-                    salary_start=position[self.JSON_POSITION_MIN_SALARY]
+                    salary_start=position['min_salary']
                 )
                 if 1 != rows_updated:
                     pass
@@ -403,7 +419,7 @@ class ProfileJobsForm(forms.Form):
                 PositionTypePref(
                     user=self.user,
                     position_type_id=position['positionTypeId'],
-                    salary_start=position[self.JSON_POSITION_MIN_SALARY]
+                    salary_start=position['min_salary']
                 ).save()
 
 
