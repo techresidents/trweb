@@ -4,7 +4,9 @@ define([
     'Backbone',
     'profile/models',
     'typeahead/views',
-], function($, _, Backbone, models, typeahead) {
+    'lookup/views',
+], function($, _, Backbone, models, typeahead, lookup) {
+
 
     var SkillListItemView = Backbone.View.extend({
 
@@ -138,10 +140,11 @@ define([
     });
 
 
+
     var JobPositionListItemHintView = Backbone.View.extend({
 
         tagName: "tr",
-        templateName: '#position-item-hint-template',
+        templateName: '#item-hint-template',
 
         initialize: function() {
             this.template = _.template($(this.templateName).html());
@@ -302,6 +305,155 @@ define([
         }
     });
 
+
+
+    var JobTechnologyListItemHintView = Backbone.View.extend({
+
+        tagName: "tr",
+        templateName: '#item-hint-template',
+
+        initialize: function() {
+            this.template = _.template($(this.templateName).html());
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.$el.addClass('hint-row');
+            return this;
+        }
+
+    });
+
+    var JobTechnologyListItemView = Backbone.View.extend({
+
+        tagName: "tr",
+        templateName: '#technology-item-template',
+        events: {
+            "click .close": "clickedDeleteItemMarker"
+        },
+
+        initialize: function() {
+            this.model = this.options.model;
+            this.collection = this.options.collection;
+            this.template = _.template($(this.templateName).html());
+        },
+
+        render: function() {
+            this.$el.html(this.template(this.model.toJSON()));
+            return this;
+        },
+
+        clickedDeleteItemMarker: function() {
+            this.collection.remove(this.model);
+            this.model = null; // TODO mark for GC?
+        }
+    });
+
+    var JobTechnologyListView = Backbone.View.extend({
+
+        initialize: function() {
+            this.setElement($("#jobs-technology-list"));
+            this.technologyCollection = this.options.technologyCollection;
+            this.technologyCollection.bind("reset", this.render, this);
+            this.technologyCollection.bind("add", this.addTechnologyView, this);
+            this.technologyCollection.bind("remove", this.render, this);
+        },
+
+        render: function() {
+            this.$el.children().remove();
+            if (this.technologyCollection.length > 0) {
+                this.technologyCollection.each(this.addTechnologyView, this);
+            } else {
+                this.addTechnologyHintView();
+            }
+        },
+
+        addTechnologyHintView: function() {
+            var view = new JobTechnologyListItemHintView();
+            this.$el.append(view.render().el);
+        },
+
+        addTechnologyView: function(technologyPref) {
+            var view = new JobTechnologyListItemView({
+                model: technologyPref,
+                collection: this.technologyCollection
+            });
+
+            this.$el.append(view.render().el);
+        },
+
+        removeTechnologyView: function(skill) {
+            // TODO would be preferable to only remove the item we want instead of resetting the collection.
+        }
+    });
+
+    var JobTechnologyAddView = Backbone.View.extend({
+
+        events: {
+            "click button": "addTechnology"
+        },
+
+        initialize: function() {
+            this.setElement($('#technology-add'));
+
+
+            new lookup.LookupView({
+                el: this.$("#technology-input"),
+                scope: 'technology',
+                property: 'name',
+                forceSelection: true,
+                onenter: this.updateOnEnter,
+                context: this
+            });
+
+            this.technologyCollection = this.options.technologyCollection;
+            this.technologyInput = this.$("#technology-input");
+        },
+
+        addTechnology: function(data) {
+            var technologyName = data.name;
+            if (technologyName) {
+                //only add if entry doesn't already exist in user's position prefs
+                var techPrefs = this.technologyCollection.where({'technologyId': data.id});
+                if (0 == techPrefs.length) {
+                    var technologyPref = new models.TechnologyPreference({
+                        technologyId: data.id,
+                        name: data.name,
+                        description: data.description
+                    });
+                    console.log(technologyPref);
+                    this.technologyCollection.add(technologyPref);
+                }
+                this.technologyInput.val("");
+            }
+            this.technologyInput.focus();
+        },
+
+        updateOnEnter: function(name, data) {
+            this.addTechnology(data);
+        }
+
+    });
+
+    var JobTechnologyFormView = Backbone.View.extend({
+
+        initialize: function() {
+            this.setElement($("#profile-jobs-form"));
+            this.technologyCollection = this.options.technologyCollection;
+            this.technologyCollection.bind("reset", this.change, this);
+            this.technologyCollection.bind("add", this.change, this);
+            this.technologyCollection.bind("remove", this.change, this);
+            this.technologyCollection.bind("change", this.change, this);
+
+            this.technologiesFormInput = this.$("#technologies-form-input");
+        },
+
+        change: function() {
+            this.technologiesFormInput.val(JSON.stringify(this.technologyCollection.toJSON()));
+        }
+    });
+
+
     return {
         SkillListItemView: SkillListItemView,
         SkillListView: SkillListView,
@@ -311,6 +463,11 @@ define([
         JobPositionListItemView: JobPositionListItemView,
         JobPositionListView: JobPositionListView,
         JobPositionAddView: JobPositionAddView,
-        JobPositionFormView: JobPositionFormView
+        JobPositionFormView: JobPositionFormView,
+
+        JobTechnologyListItemView: JobTechnologyListItemView,
+        JobTechnologyListView: JobTechnologyListView,
+        JobTechnologyAddView: JobTechnologyAddView,
+        JobTechnologyFormView: JobTechnologyFormView
     }
 });

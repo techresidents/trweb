@@ -65,7 +65,6 @@
                         </table>
 
                         <div class="form-horizontal">
-                            <!-- from jobs page -->
                             <div class="control-group">
                                 <label for="position-input">Add Position</label>
                                 <div class="controls">
@@ -126,7 +125,6 @@
                         </table>
 
                         <div class="form-horizontal">
-                            <!-- from jobs page -->
                             <div class="control-group">
                                 <label for="location-input">Add Location</label>
                                 <div class="controls">
@@ -156,23 +154,15 @@
                             <th>Description</th>
                             <th></th>
                             </thead>
-                            <tbody id="technology-list">
-                            <tr>
-                                <td>Mobile</td>
-                                <td>Includes all aspects of mobile software across all platforms such as Android, iOS, Blackberry, etc.</td>
-                                <td>
-                                    <a class="inline close">x</a>
-                                </td>
-                            </tr>
+                            <tbody id="jobs-technology-list">
                             </tbody>
                         </table>
 
                         <div class="form-horizontal">
-                            <!-- from jobs page -->
                             <div class="control-group">
                                 <label for="technology-input">Add Technology</label>
                                 <div class="controls">
-                                    <div id="technlogy-add" class="input-append">
+                                    <div id="technology-add" class="input-append">
                                         <input id="technology-input" maxlength="1024" type="text" name="language" autocomplete="off">
                                         <button id="technology-add-button" class="btn">Add</button>
                                     </div>
@@ -196,6 +186,7 @@
 
                             <!-- Hidden input fields -->
                             <input id="positions-form-input" type="hidden" name="positions_form_data"/>
+                            <input id="technologies-form-input" type="hidden" name="technologies_form_data"/>
 
                             <div class="control-group">
                                 <div class="controls">
@@ -230,8 +221,11 @@
     <!-- TODO: add proper escapejs filter that works with json -->
     {% autoescape off %}
     <script>
+        TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
+
         var positions = {{json_user_positions}};
         var positionTypes = {{json_position_types}};
+        var technologies = {{ json_technology_prefs }}
         var app = {'name':'jobs'};
     </script>
     {% endautoescape %}
@@ -258,19 +252,21 @@
         </td>
     </script>
 
-    <script type="text/template" id="position-item-hint-template">
+    <script type="text/template" id="item-hint-template">
         <td>
-            <span>Sample Position</span>
+            <span>No preferences have been provided yet.</span>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </script>
+
+    <script type="text/template" id="technology-item-template">
+        <td>
+            <span> <%= name %> </span>
         </td>
         <td>
-            <span>Sample Description</span>
-        </td>
-        <td>
-            <select class="hint-row" disabled="disabled">
-                <option value=50000>
-                    {{ 50000|intcomma }}
-                </option>
-            </select>
+            <span> <%= description %> </span>
         </td>
         <td>
             <a class="close">x</a>

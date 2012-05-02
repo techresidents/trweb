@@ -108,12 +108,48 @@ define([
         model: PositionPreference
     });
 
+    var TechnologyPreference = Backbone.Model.extend({
+
+        // This object will use the Technology.id from the SQL db.
+        // This is automatically mapped to this object's 'id' property.
+
+        defaults : function() {
+            return {
+                technologyId: null,
+                name: "",
+                description: ""
+            };
+        },
+
+        initialize: function() {
+
+        },
+
+        technologyId: function() {
+            return this.get('technologyId');
+        },
+
+        name: function() {
+            return this.get("name");
+        },
+
+        description: function() {
+            return this.get("description");
+        }
+    });
+
+    var TechnologyPrefCollection = Backbone.Collection.extend({
+        model: TechnologyPreference
+    });
+
     return {
         Skill: Skill,
         SkillCollection: SkillCollection,
         PositionType: PositionType,
         PositionTypeCollection: PositionTypeCollection,
         PositionPreference: PositionPreference,
-        PositionPrefCollection: PositionPrefCollection
+        PositionPrefCollection: PositionPrefCollection,
+        TechnologyPreference: TechnologyPreference,
+        TechnologyPrefCollection: TechnologyPrefCollection
     }
 });
