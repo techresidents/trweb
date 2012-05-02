@@ -2,13 +2,13 @@ from django.db import models
 
 from techresidents_web.common.models import Resource
 
-class Whiteboard(models.Model):
+class Codeboard(models.Model):
     class Meta:
-        db_table = "whiteboard"
+        db_table = "codeboard"
     name = models.CharField(max_length=1024)
 
-class WhiteboardResource(Resource):
+class CodeboardResource(Resource):
     class Meta:
-        db_table = "whiteboard_resource"
+        db_table = "codeboard_resource"
     resource = models.OneToOneField(Resource, parent_link=True, primary_key=True)
-    whiteboard = models.ForeignKey(Whiteboard)
+    codeboard = models.ForeignKey(Codeboard)

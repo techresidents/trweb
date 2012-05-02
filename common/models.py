@@ -1,6 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class ResourceType(models.Model):
+    class Meta:
+        db_table = "resource_type"
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1024)
+
+class Resource(models.Model):
+    class Meta:
+        db_table = "resource"
+    type = models.ForeignKey(ResourceType)
+
 class TopicManager(models.Manager):
 
     def topic_tree(self, topic_id):
@@ -57,11 +68,11 @@ class TopicManager(models.Manager):
     def update_topic_tree(self, user, topics):
         pass
 
-class TopicStyle(models.Model):
+class TopicType(models.Model):
     class Meta:
-        db_table = "topic_style"
+        db_table = "topic_type"
     
-    style = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     description = models.CharField(max_length=1024)
 
 class Topic(models.Model):
@@ -78,20 +89,22 @@ class Topic(models.Model):
     #Self referential topic hierarchy where root's parent must be null
     parent = models.ForeignKey("self", null=True)
     rank = models.IntegerField()
-    style = models.ForeignKey(TopicStyle)
+    type = models.ForeignKey(TopicType)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=2048, blank=True)
     duration = models.IntegerField()
     public = models.BooleanField(default=True)
     user = models.ForeignKey(User)
+    resources = models.ManyToManyField(Resource)
 
     objects = TopicManager()
 
-class TopicContent(models.Model):
+class TopicResource(models.Model):
     class Meta:
-        db_table = "topic_content"
-
+        db_table = "topic_resource"
     topic = models.ForeignKey(Topic)
+    resource = models.ForeignKey(Resource)
+
 
 class Tag(models.Model):
     class Meta:

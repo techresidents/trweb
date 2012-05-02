@@ -45,7 +45,7 @@ class TopicForm(forms.Form):
         
         root_topic = topics[0]
         
-        #TODO fix topic style hard code
+        #TODO fix topic type hard code
 
         root = Topic(
                 id=root_topic["id"],
@@ -53,7 +53,7 @@ class TopicForm(forms.Form):
                 description=root_topic["description"],
                 duration=root_topic["duration"],
                 rank=root_topic["rank"],
-                style_id = 1, 
+                type_id = 1, 
                 user = self.request.user
                 )
         
@@ -69,7 +69,7 @@ class TopicForm(forms.Form):
                     rank=topic["rank"],
                     description=topic["description"],
                     duration=topic["duration"],
-                    style_id = 1,
+                    type_id = 1,
                     user = self.request.user
                     )
 
