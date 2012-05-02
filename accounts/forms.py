@@ -13,7 +13,7 @@ from django.template import Context
 from techresidents_web.common.forms import JSONField
 from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType
 from techresidents_web.accounts.models import CodeType, Code, Skill
-from techresidents_web.job.models import PositionType, PositionTypePref, Prefs
+from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, Prefs
 
 
 # Some field size constants for this form.
@@ -342,10 +342,8 @@ class ProfileJobsForm(forms.Form):
     # Setup form fields
     # email_new_job_opps = JSONField(max_length=2048, widget=forms.HiddenInput, required=False)
     positions_form_data = JSONField(max_length=2048, widget=forms.HiddenInput, required=False)
+    technologies_form_data = JSONField(max_length=2048, widget=forms.HiddenInput, required=False)
 
-    #locations = forms.CharField(label="Locations", max_length=1024, widget=forms.TextInput, required=False)
-    #technologies = forms.CharField(label="Technologies", max_length=1024, widget=forms.TextInput, required=False)
-    #salary_start = forms.DecimalField(label="Minimum Salary ($)", min_value=10000, max_digits=7, decimal_places=0, required=False)
 
     def __init__(self, request=None, *args, **kwargs):
         self.user = request.user
@@ -374,6 +372,10 @@ class ProfileJobsForm(forms.Form):
 
         return cleaned_positions_data
 
+    def clean_technologies_form_data(self):
+        cleaned_technologies_data = self.cleaned_data.get('technologies_form_data')
+        return cleaned_technologies_data
+
     def save(self):
         # Making the assumption that form data is clean and valid (meaning that the position
         # data passed in from the user matches existing positions in the db).
@@ -391,7 +393,6 @@ class ProfileJobsForm(forms.Form):
         # Update user's positions based on data posted
         for position in updated_position_prefs:
             if 'id' in position:
-                print position
                 rows_updated = PositionTypePref.objects.filter(user=self.user).update(
                     salary_start=position[self.JSON_POSITION_MIN_SALARY]
                 )
@@ -405,6 +406,27 @@ class ProfileJobsForm(forms.Form):
                     salary_start=position[self.JSON_POSITION_MIN_SALARY]
                 ).save()
 
+
+        # Retrieve posted technology pref data
+        updated_technology_prefs = self.cleaned_data.get('technologies_form_data')
+        updated_technology_pref_ids = {t['technologyId'] for t in updated_technology_prefs}
+
+        # Before updating the user's technology preferences, save the old prefs to check for prefs that may have been deleted
+        previous_technology_prefs = TechnologyPref.objects.filter(user=self.user).select_related('technology')
+        for previous_pref in previous_technology_prefs:
+            if not previous_pref.technology.id in updated_technology_pref_ids:
+                previous_pref.delete()
+
+        # Update user's technology prefs based on data posted
+        for technology in updated_technology_prefs:
+            try:
+                technology = Technology.objects.get(id=technology['technologyId'])
+                TechnologyPref.objects.get(user=self.user, technology=technology)
+            except TechnologyPref.DoesNotExist:
+                tech_pref = TechnologyPref(
+                    user=self.user,
+                    technology=technology
+                ).save()
 
         # Update general job prefs
         #job_prefs, created = Prefs.objects.get_or_create(user=self.user)

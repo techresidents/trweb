@@ -1,5 +1,5 @@
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Django', 1, True, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Ruby on Rails', 1, True, '');
+INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Django', 1, True, 'django description will go here');
+INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Ruby on Rails', 1, True, 'rails description will go here');
 INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Symfony', 1, True, '');
 INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Spring', 1, False, '');
 INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Struts', 1, False, '');

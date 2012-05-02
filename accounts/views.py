@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 
 from techresidents_web.accounts import forms
 from techresidents_web.accounts.models import Skill
-from techresidents_web.job.models import Prefs, PositionType, PositionTypePref
+from techresidents_web.job.models import Prefs, PositionType, PositionTypePref, TechnologyPref
 from techresidents_web.common.models import Technology, TechnologyType, ExpertiseType
 
 
@@ -242,19 +242,28 @@ def profile_jobs(request):
         'description': p.description} for p in position_types]
 
     # Retrieve list of user's position preferences and create json data to populate UI
-    position_prefs = PositionTypePref.objects.filter(user=request.user)
+    position_prefs = PositionTypePref.objects.filter(user=request.user).select_related('position_type')
     json_user_position_prefs = [ {
         'id': pos.id,
         'positionTypeId': pos.position_type.id,
         'min_salary': pos.salary_start} for pos in position_prefs]
 
+    # Retrieve list of user's future job technology preferences and create json data to populate UI
+    technology_prefs = TechnologyPref.objects.filter(user=request.user).select_related('technology').order_by('technology__name')
+    json_technology_prefs = [{
+        'technologyId': t.technology.id,
+        'name': t.technology.name,
+        'description': t.technology.description} for t in technology_prefs]
+
     context = {
         'form': form,
+        'json_technology_prefs': json.dumps(json_technology_prefs),
         'json_user_positions': json.dumps(json_user_position_prefs),
         'json_autocomplete_positions': json.dumps(json_position_names),
         'json_position_types': json.dumps(json_position_types),
         'min_salary_options': min_salary_options,
-        'support_email': settings.DEFAULT_SUPPORT_EMAIL
+        'support_email': settings.DEFAULT_SUPPORT_EMAIL,
+        'TR_XD_REMOTE': settings.TR_XD_REMOTE
     }
 
     return render_to_response('accounts/profile_jobs.html', context, context_instance=RequestContext(request))

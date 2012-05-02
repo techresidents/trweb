@@ -24,10 +24,14 @@ $(document).ready(function() {
     var JobsAppView = Backbone.View.extend({
 
         initialize: function() {
+            // Create collections
             this.positionTypeCollection = new models.PositionTypeCollection();
             this.positionPrefCollection = new models.PositionPrefCollection();
+            this.technologyPrefCollection = new models.TechnologyPrefCollection();
 
-            this.positionLisView = new views.JobPositionListView({
+
+            // Position Views
+            this.positionListView = new views.JobPositionListView({
                 positionCollection: this.positionPrefCollection,
                 positionTypeCollection: this.positionTypeCollection
             });
@@ -35,16 +39,37 @@ $(document).ready(function() {
                 positionCollection: this.positionPrefCollection,
                 positionTypeCollection: this.positionTypeCollection
             });
-            this.positionFormView = new views.JobPositionFormView({positionCollection: this.positionPrefCollection});
+            this.positionFormView = new views.JobPositionFormView({
+                positionCollection: this.positionPrefCollection
+            });
 
+
+            // Technology Views
+            this.technologyListView = new views.JobTechnologyListView({
+                technologyCollection: this.technologyPrefCollection
+            });
+            this.technologyAddView = new views.JobTechnologyAddView({
+                technologyCollection: this.technologyPrefCollection
+            });
+            this.technologyFormView = new views.JobTechnologyFormView({
+                technologyCollection: this.technologyPrefCollection
+            });
+
+
+            // Init
             this.positionTypeCollection.reset(this.options.positionTypes);
             this.positionPrefCollection.reset(this.options.positions);
+            this.technologyPrefCollection.reset(this.options.technologies);
         }
     });
 
     if (window.app) {
         if (window.app.name == 'jobs') {
-            app = new JobsAppView({positions: window.positions, positionTypes: window.positionTypes});
+            app = new JobsAppView({
+                positions: window.positions,
+                positionTypes: window.positionTypes,
+                technologies: window.technologies
+            });
         }
         else if (window.app.name == 'skills') {
             app = new SkillsAppView({data: window.data});
