@@ -609,22 +609,12 @@ define([
 
         initialize: function() {
             this.setElement($("#jobs-notifications-list"));
-            this.notificationCollection = this.options.notificationCollection;
-            this.notificationCollection.bind("reset", this.render, this);
-        },
-
-        render: function() {
-            this.notificationCollection.each(this.setCheckboxes, this);
-        },
-
-        setCheckboxes: function(notificationPref) {
-            this.$('#id_email_new_job_opps').prop('checked', notificationPref.emailNewJobOpps());
+            this.notificationPreference = this.options.notificationPreference;
+            this.$('#id_email_new_job_opps').prop('checked', this.notificationPreference.emailNewJobOpps());
         },
 
         toggleEmailNewJobOpps: function() {
-            if (this.notificationCollection.length == 1) {
-                this.notificationCollection.at(0).setEmailNewJobOpps(this.$('#id_email_new_job_opps').is(':checked'));
-            }
+            this.notificationPreference.setEmailNewJobOpps(this.$('#id_email_new_job_opps').is(':checked'));
         }
     });
 
@@ -632,15 +622,14 @@ define([
 
         initialize: function() {
             this.setElement($("#profile-jobs-form"));
-            this.notificationCollection = this.options.notificationCollection;
-            this.notificationCollection.bind("reset", this.change, this);
-            this.notificationCollection.bind("change", this.change, this);
-
+            this.notificationPreference = this.options.notificationPreference;
+            this.notificationPreference.bind("change", this.change, this);
             this.notificationsFormInput = this.$("#notifications-form-input");
+            this.change();
         },
 
         change: function() {
-            this.notificationsFormInput.val(JSON.stringify(this.notificationCollection.toJSON()));
+            this.notificationsFormInput.val(JSON.stringify(this.notificationPreference.toJSON()));
         }
     });
 

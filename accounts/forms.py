@@ -500,10 +500,10 @@ class ProfileJobsForm(forms.Form):
 
         # Update general job prefs
         notification_prefs = self.cleaned_data.get('notifications_form_data')
+        print notification_prefs
         job_prefs, created = Prefs.objects.get_or_create(user=self.user)
-        for pref in notification_prefs:
-            if pref['emailNewJobOpps'] is not None:
-                job_prefs.email_new_job_opps = pref['emailNewJobOpps']
+        if notification_prefs['emailNewJobOpps'] is not None:
+            job_prefs.email_new_job_opps = notification_prefs['emailNewJobOpps']
         job_prefs.save()
 
         return

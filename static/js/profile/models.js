@@ -201,9 +201,6 @@ define([
         }
     });
 
-    var NotificationPrefCollection = Backbone.Collection.extend({
-        model: NotificationPreference
-    });
 
     return {
         Skill: Skill,
@@ -216,7 +213,6 @@ define([
         TechnologyPrefCollection: TechnologyPrefCollection,
         LocationPreference: LocationPreference,
         LocationPrefCollection: LocationPrefCollection,
-        NotificationPreference: NotificationPreference,
-        NotificationPrefCollection: NotificationPrefCollection
+        NotificationPreference: NotificationPreference
     }
 });

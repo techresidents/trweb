@@ -25,7 +25,7 @@ $(document).ready(function() {
 
         initialize: function() {
             // Create collections
-            this.notificationPrefCollection = new models.NotificationPrefCollection();
+            this.notificationPreference = new models.NotificationPreference(this.options.notifications);
             this.positionTypeCollection = new models.PositionTypeCollection();
             this.positionPrefCollection = new models.PositionPrefCollection();
             this.technologyPrefCollection = new models.TechnologyPrefCollection();
@@ -72,10 +72,10 @@ $(document).ready(function() {
 
             // Notification Views
             this.notificationListView = new views.JobNotificationListView({
-                notificationCollection: this.notificationPrefCollection
+                notificationPreference: this.notificationPreference
             });
             this.notificationFormView = new views.JobNotificationFormView({
-                notificationCollection: this.notificationPrefCollection
+                notificationPreference: this.notificationPreference
             });
 
 
@@ -84,10 +84,6 @@ $(document).ready(function() {
             this.positionPrefCollection.reset(this.options.positions);
             this.technologyPrefCollection.reset(this.options.technologies);
             this.locationPrefCollection.reset(this.options.locations);
-            this.notificationPrefCollection.reset(this.options.notifications);
-            if (this.notificationPrefCollection.length == 0) {
-                this.notificationPrefCollection.add(new models.NotificationPreference());
-            }
         }
     });
 
