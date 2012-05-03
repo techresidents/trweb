@@ -110,9 +110,6 @@ define([
 
     var TechnologyPreference = Backbone.Model.extend({
 
-        // This object will use the Technology.id from the SQL db.
-        // This is automatically mapped to this object's 'id' property.
-
         defaults : function() {
             return {
                 technologyId: null,
@@ -142,6 +139,69 @@ define([
         model: TechnologyPreference
     });
 
+    var LocationPreference = Backbone.Model.extend({
+
+        defaults : function() {
+            return {
+                locationId: null,
+                city: "",
+                state: "",
+                zip: "",
+                country: ""
+            };
+        },
+
+        initialize: function() {
+
+        },
+
+        locationId: function() {
+            return this.get('locationId');
+        },
+
+        city: function() {
+            return this.get("city");
+        },
+
+        state: function() {
+            return this.get("state");
+        },
+
+        zip: function() {
+            return this.get("zip");
+        },
+
+        country: function() {
+            return this.get("country");
+        }
+    });
+
+    var LocationPrefCollection = Backbone.Collection.extend({
+        model: LocationPreference
+    });
+
+    var NotificationPreference = Backbone.Model.extend({
+
+        defaults : function() {
+            return {
+                emailNewJobOpps: false
+            };
+        },
+
+        initialize: function() {
+
+        },
+
+        emailNewJobOpps: function() {
+            return this.get("emailNewJobOpps");
+        },
+
+        setEmailNewJobOpps: function(isChecked) {
+            this.set({emailNewJobOpps: isChecked});
+        }
+    });
+
+
     return {
         Skill: Skill,
         SkillCollection: SkillCollection,
@@ -150,6 +210,9 @@ define([
         PositionPreference: PositionPreference,
         PositionPrefCollection: PositionPrefCollection,
         TechnologyPreference: TechnologyPreference,
-        TechnologyPrefCollection: TechnologyPrefCollection
+        TechnologyPrefCollection: TechnologyPrefCollection,
+        LocationPreference: LocationPreference,
+        LocationPrefCollection: LocationPrefCollection,
+        NotificationPreference: NotificationPreference
     }
 });

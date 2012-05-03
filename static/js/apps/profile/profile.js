@@ -25,9 +25,11 @@ $(document).ready(function() {
 
         initialize: function() {
             // Create collections
+            this.notificationPreference = new models.NotificationPreference(this.options.notifications);
             this.positionTypeCollection = new models.PositionTypeCollection();
             this.positionPrefCollection = new models.PositionPrefCollection();
             this.technologyPrefCollection = new models.TechnologyPrefCollection();
+            this.locationPrefCollection = new models.LocationPrefCollection();
 
 
             // Position Views
@@ -56,19 +58,43 @@ $(document).ready(function() {
             });
 
 
-            // Init
+            // Location Views
+            this.locationListView = new views.JobLocationListView({
+                locationCollection: this.locationPrefCollection
+            });
+            this.locationAddView = new views.JobLocationAddView({
+                locationCollection: this.locationPrefCollection
+            });
+            this.locationFormView = new views.JobLocationFormView({
+                locationCollection: this.locationPrefCollection
+            });
+
+
+            // Notification Views
+            this.notificationListView = new views.JobNotificationListView({
+                notificationPreference: this.notificationPreference
+            });
+            this.notificationFormView = new views.JobNotificationFormView({
+                notificationPreference: this.notificationPreference
+            });
+
+
+            // Initialize collections
             this.positionTypeCollection.reset(this.options.positionTypes);
             this.positionPrefCollection.reset(this.options.positions);
             this.technologyPrefCollection.reset(this.options.technologies);
+            this.locationPrefCollection.reset(this.options.locations);
         }
     });
 
     if (window.app) {
         if (window.app.name == 'jobs') {
             app = new JobsAppView({
+                notifications: window.notifications,
                 positions: window.positions,
                 positionTypes: window.positionTypes,
-                technologies: window.technologies
+                technologies: window.technologies,
+                locations: window.locations
             });
         }
         else if (window.app.name == 'skills') {

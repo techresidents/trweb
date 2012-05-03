@@ -200,6 +200,7 @@ define([
             this.setElement($("#user-positions-list"));
             this.positionTypeCollection = this.options.positionTypeCollection;
             this.positionCollection = this.options.positionCollection;
+            this.isHintRowVisible = false;
             this.positionCollection.bind("reset", this.render, this);
             this.positionCollection.bind("add", this.addPositionView, this);
             this.positionCollection.bind("remove", this.render, this);
@@ -207,11 +208,11 @@ define([
 
         render: function() {
             this.$el.children().remove();
-            if (this.positionCollection.length > 0) {
-                this.positionCollection.each(this.addPositionView, this);
-            } else {
+            if (0 == this.positionCollection.length) {
                 this.addPositionHintView();
+                this.isHintRowVisible = true;
             }
+            this.positionCollection.each(this.addPositionView, this);
         },
 
         addPositionHintView: function() {
@@ -219,7 +220,15 @@ define([
             this.$el.append(view.render().el);
         },
 
+        removePositionHintView: function() {
+            this.$el.children().remove();
+            this.isHintRowVisible = false;
+        },
+
         addPositionView: function(position) {
+            if (this.isHintRowVisible) {
+                this.removePositionHintView();
+            }
             var view = new JobPositionListItemView({
                 model: position,
                 collection: this.positionCollection,
@@ -354,6 +363,7 @@ define([
         initialize: function() {
             this.setElement($("#jobs-technology-list"));
             this.technologyCollection = this.options.technologyCollection;
+            this.isHintRowVisible = false;
             this.technologyCollection.bind("reset", this.render, this);
             this.technologyCollection.bind("add", this.addTechnologyView, this);
             this.technologyCollection.bind("remove", this.render, this);
@@ -361,11 +371,11 @@ define([
 
         render: function() {
             this.$el.children().remove();
-            if (this.technologyCollection.length > 0) {
-                this.technologyCollection.each(this.addTechnologyView, this);
-            } else {
+            if (0 == this.technologyCollection.length) {
                 this.addTechnologyHintView();
+                this.isHintRowVisible = true;
             }
+            this.technologyCollection.each(this.addTechnologyView, this);
         },
 
         addTechnologyHintView: function() {
@@ -373,7 +383,15 @@ define([
             this.$el.append(view.render().el);
         },
 
+        removeTechnologyHintView: function() {
+            this.$el.children().remove();
+            this.isHintRowVisible = false;
+        },
+
         addTechnologyView: function(technologyPref) {
+            if (this.isHintRowVisible){
+                this.removeTechnologyHintView();
+            }
             var view = new JobTechnologyListItemView({
                 model: technologyPref,
                 collection: this.technologyCollection
@@ -395,7 +413,6 @@ define([
 
         initialize: function() {
             this.setElement($('#technology-add'));
-
 
             new lookup.LookupView({
                 el: this.$("#technology-input"),
@@ -421,7 +438,6 @@ define([
                         name: data.name,
                         description: data.description
                     });
-                    console.log(technologyPref);
                     this.technologyCollection.add(technologyPref);
                 }
                 this.technologyInput.val("");
@@ -454,6 +470,196 @@ define([
     });
 
 
+
+    var JobLocationListItemHintView = Backbone.View.extend({
+
+        tagName: "tr",
+        templateName: '#item-hint-template',
+
+        initialize: function() {
+            this.template = _.template($(this.templateName).html());
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.$el.addClass('hint-row');
+            return this;
+        }
+
+    });
+
+    var JobLocationListItemView = Backbone.View.extend({
+
+        tagName: "tr",
+        templateName: '#location-item-template',
+        events: {
+            "click .close": "clickedDeleteItemMarker"
+        },
+
+        initialize: function() {
+            this.model = this.options.model;
+            this.collection = this.options.collection;
+            this.template = _.template($(this.templateName).html());
+        },
+
+        render: function() {
+            this.$el.html(this.template(this.model.toJSON()));
+            return this;
+        },
+
+        clickedDeleteItemMarker: function() {
+            this.collection.remove(this.model);
+            this.model = null; // TODO mark for GC?
+        }
+    });
+
+    var JobLocationListView = Backbone.View.extend({
+
+        initialize: function() {
+            this.setElement($("#jobs-location-list"));
+            this.locationCollection = this.options.locationCollection;
+            this.isHintRowVisible = false;
+            this.locationCollection.bind("reset", this.render, this);
+            this.locationCollection.bind("add", this.addLocationView, this);
+            this.locationCollection.bind("remove", this.render, this);
+        },
+
+        render: function() {
+            this.$el.children().remove();
+            if (0 == this.locationCollection.length) {
+                this.addLocationHintView();
+                this.isHintRowVisible = true;
+            }
+            this.locationCollection.each(this.addLocationView, this);
+        },
+
+        addLocationHintView: function() {
+            var view = new JobLocationListItemHintView();
+            this.$el.append(view.render().el);
+        },
+
+        removeLocationHintView: function() {
+            this.$el.children().remove();
+            this.isHintRowVisible = false;
+        },
+
+        addLocationView: function(locationPref) {
+            if (this.isHintRowVisible){
+                this.removeLocationHintView();
+            }
+            var view = new JobLocationListItemView({
+                model: locationPref,
+                collection: this.locationCollection
+            });
+
+            this.$el.append(view.render().el);
+        },
+
+        removeLocationView: function(skill) {
+            // TODO would be preferable to only remove the item we want instead of resetting the collection.
+        }
+    });
+
+    var JobLocationAddView = Backbone.View.extend({
+
+        events: {
+            "click button": "addLocation"
+        },
+
+        initialize: function() {
+            this.setElement($('#location-add'));
+
+            new lookup.LookupView({
+                el: this.$("#location-input"),
+                scope: 'location',
+                property: 'name',
+                forceSelection: true,
+                onenter: this.updateOnEnter,
+                context: this
+            });
+
+            this.locationCollection = this.options.locationCollection;
+            this.locationInput = this.$("#location-input");
+        },
+
+        addLocation: function(data) {
+            if (data) {
+                //only add if entry doesn't already exist in user's location prefs
+                var locationPrefs = this.locationCollection.where({'locationId': data.id});
+                if (0 == locationPrefs.length) {
+                    var locationPref = new models.LocationPreference({
+                        locationId: data.id,
+                        city: data.city,
+                        state: data.state,
+                        zip: data.zip,
+                        country: data.country
+                    });
+                    this.locationCollection.add(locationPref);
+                }
+                this.locationInput.val("");
+            }
+            this.locationInput.focus();
+        },
+
+        updateOnEnter: function(name, data) {
+            this.addLocation(data);
+        }
+
+    });
+
+    var JobLocationFormView = Backbone.View.extend({
+
+        initialize: function() {
+            this.setElement($("#profile-jobs-form"));
+            this.locationCollection = this.options.locationCollection;
+            this.locationCollection.bind("reset", this.change, this);
+            this.locationCollection.bind("add", this.change, this);
+            this.locationCollection.bind("remove", this.change, this);
+            this.locationCollection.bind("change", this.change, this);
+
+            this.locationsFormInput = this.$("#locations-form-input");
+        },
+
+        change: function() {
+            this.locationsFormInput.val(JSON.stringify(this.locationCollection.toJSON()));
+        }
+    });
+
+
+
+    var JobNotificationListView = Backbone.View.extend({
+
+        events: {
+            "click #id_email_new_job_opps": "toggleEmailNewJobOpps"
+        },
+
+        initialize: function() {
+            this.setElement($("#jobs-notifications-list"));
+            this.notificationPreference = this.options.notificationPreference;
+            this.$('#id_email_new_job_opps').prop('checked', this.notificationPreference.emailNewJobOpps());
+        },
+
+        toggleEmailNewJobOpps: function() {
+            this.notificationPreference.setEmailNewJobOpps(this.$('#id_email_new_job_opps').is(':checked'));
+        }
+    });
+
+    var JobNotificationFormView = Backbone.View.extend({
+
+        initialize: function() {
+            this.setElement($("#profile-jobs-form"));
+            this.notificationPreference = this.options.notificationPreference;
+            this.notificationPreference.bind("change", this.change, this);
+            this.notificationsFormInput = this.$("#notifications-form-input");
+            this.change();
+        },
+
+        change: function() {
+            this.notificationsFormInput.val(JSON.stringify(this.notificationPreference.toJSON()));
+        }
+    });
+
+
     return {
         SkillListItemView: SkillListItemView,
         SkillListView: SkillListView,
@@ -468,6 +674,14 @@ define([
         JobTechnologyListItemView: JobTechnologyListItemView,
         JobTechnologyListView: JobTechnologyListView,
         JobTechnologyAddView: JobTechnologyAddView,
-        JobTechnologyFormView: JobTechnologyFormView
+        JobTechnologyFormView: JobTechnologyFormView,
+
+        JobLocationListItemView: JobLocationListItemView,
+        JobLocationListView: JobLocationListView,
+        JobLocationAddView: JobLocationAddView,
+        JobLocationFormView: JobLocationFormView,
+
+        JobNotificationListView: JobNotificationListView,
+        JobNotificationFormView: JobNotificationFormView
     }
 });

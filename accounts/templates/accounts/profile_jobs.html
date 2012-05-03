@@ -31,7 +31,7 @@
     <div class="container">
         <div class="row">
 
-            {% include 'accounts/navigation_panel.html' %}
+            {% include 'accounts/navigation_panel.html' with isJobsPageActive="active" %}
 
             <div class="span9">
                 <div class="well">
@@ -39,10 +39,27 @@
                         <legend>Update your job preferences</legend>
                     </fieldset>
 
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <!-- Consume all messages stored -->
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success">
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {%  else %}
+                        <div class="alert">
+                            <!-- TODO -->
+                        </div>
+                    {% endif %}
+
+
                     <h3>Job Notifications</h3>
                     <div class="well">
-                        <div class="control-group ">
-                            <div class="controls">
+                        <div class="control-group">
+                            <div class="controls" id="jobs-notifications-list">
                                 <label class="checkbox">
                                     <input type="checkbox" name="email_new_job_opps" id="id_email_new_job_opps"> Allow potential employers to contact me based on the preferences provided below
                                 </label>
@@ -69,7 +86,7 @@
                                 <label for="position-input">Add Position</label>
                                 <div class="controls">
                                     <div id="position-add" class="input-append">
-                                        <input id="position-input" data-source='{{ json_autocomplete_positions }}' maxlength="1024" type="text" name="language" autocomplete="off">
+                                        <input id="position-input" data-source='{{ json_autocomplete_positions }}' maxlength="1024" type="text" name="position" autocomplete="off">
                                         <button id="position-add-button" class="btn">Add</button>
                                     </div>
                                 </div>
@@ -83,8 +100,6 @@
                     </div>
 
 
-
-
                     <h3>Locations</h3>
                     <div id="location-table-wrap" class="well">
                         <table id="location-table" class="table">
@@ -93,34 +108,10 @@
                             <th>State</th>
                             <th>Zip</th>
                             <th>Country</th>
-                            <th>Proximity (mi)</th>
                             <th></th>
                             </thead>
-                            <tbody id="location-list">
-                                <tr>
-                                    <td>Boston</td>
-                                    <td>MA</td>
-                                    <td>02115</td>
-                                    <td>USA</td>
-                                    <td>
-                                        <select>
-                                            <option value='50'>5</option>
-                                            <option value='60'>10</option>
-                                            <option value='70'>15</option>
-                                            <option value='80'>20</option>
-                                            <option value='90'>25</option>
-                                            <option value='100'>30</option>
-                                            <option value='110'>35</option>
-                                            <option value='120'>40</option>
-                                            <option value='130'>45</option>
-                                            <option value='140'>50</option>
-                                            <option value='150'>50+</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <a class="inline close">x</a>
-                                    </td>
-                                </tr>
+                            <tbody id="jobs-location-list">
+
                             </tbody>
                         </table>
 
@@ -129,7 +120,7 @@
                                 <label for="location-input">Add Location</label>
                                 <div class="controls">
                                     <div id="location-add" class="input-append">
-                                        <input id="location-input" maxlength="1024" type="text" name="language" autocomplete="off">
+                                        <input id="location-input" maxlength="1024" type="text" name="location" autocomplete="off">
                                         <button id="location-add-button" class="btn">Add</button>
                                     </div>
                                 </div>
@@ -141,9 +132,6 @@
                             </div>
                         </div>
                     </div>
-
-
-
 
 
                     <h3>Technologies</h3>
@@ -163,7 +151,7 @@
                                 <label for="technology-input">Add Technology</label>
                                 <div class="controls">
                                     <div id="technology-add" class="input-append">
-                                        <input id="technology-input" maxlength="1024" type="text" name="language" autocomplete="off">
+                                        <input id="technology-input" maxlength="1024" type="text" name="technology" autocomplete="off">
                                         <button id="technology-add-button" class="btn">Add</button>
                                     </div>
                                 </div>
@@ -177,16 +165,15 @@
                     </div>
 
 
-
-
-
                     <form id="profile-jobs-form" class="form-horizontal" method="post" action="{% url 'accounts.views.profile_jobs' %}">
                         <fieldset>
                             {% csrf_token %}
 
                             <!-- Hidden input fields -->
+                            <input id="notifications-form-input" type="hidden" name="notifications_form_data"/>
                             <input id="positions-form-input" type="hidden" name="positions_form_data"/>
                             <input id="technologies-form-input" type="hidden" name="technologies_form_data"/>
+                            <input id="locations-form-input" type="hidden" name="locations_form_data"/>
 
                             <div class="control-group">
                                 <div class="controls">
@@ -197,19 +184,8 @@
                     </form>
 
 
-
                     <!-- TODO handle errors, copy skills page -->
 
-                    {% if messages %}
-                        {% for message in messages %}
-                            <!-- Consume all messages stored -->
-                            {% if message.tags == 'success' %}
-                                <div class="alert alert-success">
-                                    <span>{{ message }}</span>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
 
                 </div> <!-- end well -->
             </div> <!-- end span9 -->
@@ -222,15 +198,25 @@
     {% autoescape off %}
     <script>
         TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
-
+        var notifications = {{ json_notification_prefs }};
         var positions = {{json_user_positions}};
         var positionTypes = {{json_position_types}};
         var technologies = {{ json_technology_prefs }}
+        var locations = {{ json_location_prefs }}
         var app = {'name':'jobs'};
     </script>
     {% endautoescape %}
 
     <!-- Templates -->
+    <script type="text/template" id="item-hint-template">
+        <td>
+            <span>No preferences have been provided yet.</span>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </script>
+
     <script type="text/template" id="position-item-template">
         <td>
             <span> <%= name %> </span>
@@ -252,13 +238,22 @@
         </td>
     </script>
 
-    <script type="text/template" id="item-hint-template">
+    <script type="text/template" id="location-item-template">
         <td>
-            <span>No preferences have been provided yet.</span>
+            <span> <%= city %> </span>
         </td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td>
+            <span> <%= state %> </span>
+        </td>
+        <td>
+            <span> <%= zip %> </span>
+        </td>
+        <td>
+            <span> <%= country %> </span>
+        </td>
+        <td>
+            <a class="close">x</a>
+        </td>
     </script>
 
     <script type="text/template" id="technology-item-template">

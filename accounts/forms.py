@@ -11,9 +11,9 @@ from django.contrib.auth.models import User
 from django.template import Context
 
 from techresidents_web.common.forms import JSONField
-from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType
+from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType, Location
 from techresidents_web.accounts.models import CodeType, Code, Skill
-from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, Prefs
+from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, LocationPref, Prefs
 
 
 # Some field size constants for this form.
@@ -339,9 +339,10 @@ class ProfileJobsForm(forms.Form):
     SALARY_MAX = 260000
 
     # Setup form fields
-    # email_new_job_opps = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
+    notifications_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
     positions_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
     technologies_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
+    locations_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
 
     def __init__(self, request=None, *args, **kwargs):
         self.user = request.user
@@ -404,6 +405,24 @@ class ProfileJobsForm(forms.Form):
 
         return cleaned_technologies_data
 
+    def clean_locations_form_data(self):
+        cleaned_locations_data = self.cleaned_data.get('locations_form_data')
+
+        valid_locations = Location.objects.all()
+        valid_location_ids = [l.id for l in valid_locations]
+
+        # Validate the locationID
+        for location in cleaned_locations_data:
+            location_id = location['locationId']
+            if location_id:
+                if not location_id in valid_location_ids:
+                    raise forms.ValidationError("Location id value is invalid")
+            else:
+                raise forms.ValidationError("Location id field required")
+
+        return cleaned_locations_data
+
+
     def save(self):
         # Making the assumption that form data is clean and valid (meaning that the position
         # data passed in from the user matches existing positions in the db).
@@ -436,6 +455,7 @@ class ProfileJobsForm(forms.Form):
                 ).save()
 
 
+
         # Retrieve posted technology pref data
         updated_technology_prefs = self.cleaned_data.get('technologies_form_data')
         updated_technology_pref_ids = {t['technologyId'] for t in updated_technology_prefs}
@@ -448,19 +468,43 @@ class ProfileJobsForm(forms.Form):
 
         # Update user's technology prefs based on data posted
         for technology in updated_technology_prefs:
-            try:
-                technology = Technology.objects.get(id=technology['technologyId'])
-                TechnologyPref.objects.get(user=self.user, technology=technology)
-            except TechnologyPref.DoesNotExist:
-                tech_pref = TechnologyPref(
+            # Check if this is a new preference and save it if it is.
+            if 'id' not in technology:
+                TechnologyPref(
                     user=self.user,
-                    technology=technology
+                    technology_id=technology['technologyId']
                 ).save()
 
+
+
+
+        # Retrieve posted location pref data
+        updated_location_prefs = self.cleaned_data.get('locations_form_data')
+        updated_location_pref_ids = {l['locationId'] for l in updated_location_prefs}
+
+        # Before updating the user's location preferences, save the old prefs to check for prefs that may have been deleted
+        previous_location_prefs = LocationPref.objects.filter(user=self.user).select_related('location')
+        for previous_pref in previous_location_prefs:
+            if not previous_pref.location.id in updated_location_pref_ids:
+                previous_pref.delete()
+
+        # Update user's location prefs based on data posted
+        for location in updated_location_prefs:
+            # Check if this is a new preference and save it if it is.
+            if 'id' not in location:
+                LocationPref(
+                    user=self.user,
+                    location_id=location['locationId']
+                ).save()
+
+
         # Update general job prefs
-        #job_prefs, created = Prefs.objects.get_or_create(user=self.user)
-        #job_prefs.email_new_job_opps=self.cleaned_data['email_new_job_opps']
-        #job_prefs.save()
+        notification_prefs = self.cleaned_data.get('notifications_form_data')
+        print notification_prefs
+        job_prefs, created = Prefs.objects.get_or_create(user=self.user)
+        if notification_prefs['emailNewJobOpps'] is not None:
+            job_prefs.email_new_job_opps = notification_prefs['emailNewJobOpps']
+        job_prefs.save()
 
         return
 
