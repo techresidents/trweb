@@ -35,6 +35,18 @@
                 <div class="well">
                     <fieldset>
                         <legend>Update your framework skills</legend>
+
+                        {% if messages %}
+                            {% for message in messages %}
+                                <!-- Consume all messages stored -->
+                                {% if message.tags == 'success' %}
+                                    <div class="alert alert-success">
+                                        <span>{{ message }}</span>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
                     </fieldset>
 
                     <div id="table-wrap">
@@ -94,17 +106,6 @@
                                 <span>{{error}}</span>
                             {% endfor %}
                         </div>
-                    {% endif %}
-
-                    {% if messages %}
-                        {% for message in messages %}
-                            <!-- Consume all messages stored -->
-                            {% if message.tags == 'success' %}
-                                <div class="alert alert-success">
-                                    <span>{{ message }}</span>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
                     {% endif %}
 
                 </div> <!-- end well -->

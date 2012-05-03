@@ -28,6 +28,17 @@
                     <fieldset>
                         <legend>Change your Chat settings</legend>
 
+                        {% if messages %}
+                            {% for message in messages %}
+                                <!-- Consume all messages stored -->
+                                {% if message.tags == 'success' %}
+                                    <div class="alert alert-success">
+                                        <span>{{ message }}</span>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
                         {% for field in form %}
                             <div class="control-group {% if field.errors %}error{% endif %}">
                                 {% if forloop.first%}
@@ -51,17 +62,6 @@
                         </div>
 
                     </fieldset>
-
-                    {% if messages %}
-                        {% for message in messages %}
-                            <!-- Consume all messages stored -->
-                            {% if message.tags == 'success' %}
-                                <div class="alert alert-success">
-                                    <span>{{ message }}</span>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
 
                 </form>
             </div> <!-- end span9 -->
