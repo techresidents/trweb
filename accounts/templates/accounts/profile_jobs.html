@@ -39,10 +39,27 @@
                         <legend>Update your job preferences</legend>
                     </fieldset>
 
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <!-- Consume all messages stored -->
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success">
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {%  else %}
+                        <div class="alert">
+                            <!-- TODO -->
+                        </div>
+                    {% endif %}
+
+
                     <h3>Job Notifications</h3>
                     <div class="well">
-                        <div class="control-group ">
-                            <div class="controls">
+                        <div class="control-group">
+                            <div class="controls" id="jobs-notifications-list">
                                 <label class="checkbox">
                                     <input type="checkbox" name="email_new_job_opps" id="id_email_new_job_opps"> Allow potential employers to contact me based on the preferences provided below
                                 </label>
@@ -167,19 +184,8 @@
                     </form>
 
 
-
                     <!-- TODO handle errors, copy skills page -->
 
-                    {% if messages %}
-                        {% for message in messages %}
-                            <!-- Consume all messages stored -->
-                            {% if message.tags == 'success' %}
-                                <div class="alert alert-success">
-                                    <span>{{ message }}</span>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
 
                 </div> <!-- end well -->
             </div> <!-- end span9 -->
@@ -192,6 +198,7 @@
     {% autoescape off %}
     <script>
         TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
+        var notifications = {{ json_notification_prefs }};
         var positions = {{json_user_positions}};
         var positionTypes = {{json_position_types}};
         var technologies = {{ json_technology_prefs }}

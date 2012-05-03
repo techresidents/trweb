@@ -25,6 +25,7 @@ $(document).ready(function() {
 
         initialize: function() {
             // Create collections
+            this.notificationPrefCollection = new models.NotificationPrefCollection();
             this.positionTypeCollection = new models.PositionTypeCollection();
             this.positionPrefCollection = new models.PositionPrefCollection();
             this.technologyPrefCollection = new models.TechnologyPrefCollection();
@@ -69,17 +70,31 @@ $(document).ready(function() {
             });
 
 
+            // Notification Views
+            this.notificationListView = new views.JobNotificationListView({
+                notificationCollection: this.notificationPrefCollection
+            });
+            this.notificationFormView = new views.JobNotificationFormView({
+                notificationCollection: this.notificationPrefCollection
+            });
+
+
             // Initialize collections
             this.positionTypeCollection.reset(this.options.positionTypes);
             this.positionPrefCollection.reset(this.options.positions);
             this.technologyPrefCollection.reset(this.options.technologies);
             this.locationPrefCollection.reset(this.options.locations);
+            this.notificationPrefCollection.reset(this.options.notifications);
+            if (this.notificationPrefCollection.length == 0) {
+                this.notificationPrefCollection.add(new models.NotificationPreference());
+            }
         }
     });
 
     if (window.app) {
         if (window.app.name == 'jobs') {
             app = new JobsAppView({
+                notifications: window.notifications,
                 positions: window.positions,
                 positionTypes: window.positionTypes,
                 technologies: window.technologies,

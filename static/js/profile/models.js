@@ -159,7 +159,7 @@ define([
             return this.get('locationId');
         },
 
-        ciy: function() {
+        city: function() {
             return this.get("city");
         },
 
@@ -180,6 +180,31 @@ define([
         model: LocationPreference
     });
 
+    var NotificationPreference = Backbone.Model.extend({
+
+        defaults : function() {
+            return {
+                emailNewJobOpps: false
+            };
+        },
+
+        initialize: function() {
+
+        },
+
+        emailNewJobOpps: function() {
+            return this.get("emailNewJobOpps");
+        },
+
+        setEmailNewJobOpps: function(isChecked) {
+            this.set({emailNewJobOpps: isChecked});
+        }
+    });
+
+    var NotificationPrefCollection = Backbone.Collection.extend({
+        model: NotificationPreference
+    });
+
     return {
         Skill: Skill,
         SkillCollection: SkillCollection,
@@ -190,6 +215,8 @@ define([
         TechnologyPreference: TechnologyPreference,
         TechnologyPrefCollection: TechnologyPrefCollection,
         LocationPreference: LocationPreference,
-        LocationPrefCollection: LocationPrefCollection
+        LocationPrefCollection: LocationPrefCollection,
+        NotificationPreference: NotificationPreference,
+        NotificationPrefCollection: NotificationPrefCollection
     }
 });

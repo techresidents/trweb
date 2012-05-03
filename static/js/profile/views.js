@@ -600,6 +600,51 @@ define([
 
 
 
+
+    var JobNotificationListView = Backbone.View.extend({
+
+        events: {
+            "click #id_email_new_job_opps": "toggleEmailNewJobOpps"
+        },
+
+        initialize: function() {
+            this.setElement($("#jobs-notifications-list"));
+            this.notificationCollection = this.options.notificationCollection;
+            this.notificationCollection.bind("reset", this.render, this);
+        },
+
+        render: function() {
+            this.notificationCollection.each(this.setCheckboxes, this);
+        },
+
+        setCheckboxes: function(notificationPref) {
+            this.$('#id_email_new_job_opps').prop('checked', notificationPref.emailNewJobOpps());
+        },
+
+        toggleEmailNewJobOpps: function() {
+            if (this.notificationCollection.length == 1) {
+                this.notificationCollection.at(0).setEmailNewJobOpps(this.$('#id_email_new_job_opps').is(':checked'));
+            }
+        }
+    });
+
+    var JobNotificationFormView = Backbone.View.extend({
+
+        initialize: function() {
+            this.setElement($("#profile-jobs-form"));
+            this.notificationCollection = this.options.notificationCollection;
+            this.notificationCollection.bind("reset", this.change, this);
+            this.notificationCollection.bind("change", this.change, this);
+
+            this.notificationsFormInput = this.$("#notifications-form-input");
+        },
+
+        change: function() {
+            this.notificationsFormInput.val(JSON.stringify(this.notificationCollection.toJSON()));
+        }
+    });
+
+
     return {
         SkillListItemView: SkillListItemView,
         SkillListView: SkillListView,
@@ -619,6 +664,9 @@ define([
         JobLocationListItemView: JobLocationListItemView,
         JobLocationListView: JobLocationListView,
         JobLocationAddView: JobLocationAddView,
-        JobLocationFormView: JobLocationFormView
+        JobLocationFormView: JobLocationFormView,
+
+        JobNotificationListView: JobNotificationListView,
+        JobNotificationFormView: JobNotificationFormView
     }
 });

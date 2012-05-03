@@ -339,7 +339,7 @@ class ProfileJobsForm(forms.Form):
     SALARY_MAX = 260000
 
     # Setup form fields
-    #email_new_job_opps_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
+    notifications_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
     positions_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
     technologies_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
     locations_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
@@ -499,10 +499,12 @@ class ProfileJobsForm(forms.Form):
 
 
         # Update general job prefs
-        #email_prefs = self.cleaned_data.get('email_new_job_opps_form_data')
-        #job_prefs, created = Prefs.objects.get_or_create(user=self.user)
-        #job_prefs.email_new_job_opps = email_prefs
-        #job_prefs.save()
+        notification_prefs = self.cleaned_data.get('notifications_form_data')
+        job_prefs, created = Prefs.objects.get_or_create(user=self.user)
+        for pref in notification_prefs:
+            if pref['emailNewJobOpps'] is not None:
+                job_prefs.email_new_job_opps = pref['emailNewJobOpps']
+        job_prefs.save()
 
         return
 
