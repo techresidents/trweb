@@ -14,7 +14,7 @@ class Document(models.Model):
     class Meta:
         db_table = "document"
     name = models.CharField(max_length=1024)
-    path = models.FileField(upload_to="/doc", max_length=1024)
+    path = models.FileField(upload_to="doc", max_length=1024)
 
 class DocumentResource(Resource):
     class Meta:

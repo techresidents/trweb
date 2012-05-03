@@ -1,0 +1,54 @@
+{% extends "menu_base.html" %}
+{% load url from future %}
+
+{% block title %}Tech Residents Document Upload{% endblock %}
+
+{% block extrahead %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            <form enctype="multipart/form-data" class="form-horizontal" method="post" action="{% url 'document.views.upload' %}">
+                {% csrf_token %}
+                <fieldset>
+                    <div class="control-group{% if form.name.errors%} error{% endif %}">
+                        {{ form.name.label_tag }}
+                        <div class="controls">
+                            {{ form.name }}
+                            {% for error in form.name.errors %}
+                                <span class="help-inline">{{error}}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="control-group{% if form.path.errors%} error{% endif %}">
+                        {{ form.path.label_tag }}
+                        <div class="controls">
+                            <input id={{form.path.auto_id}} name="path" type="file" class="file-input" />
+                            {% for error in form.path.errors %}
+                                <span class="help-inline">{{error}}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="submit" value="Submit" class="btn btn-primary" />
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-error">
+                                    {% for error in form.non_field_errors%}
+                                        <span>{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
