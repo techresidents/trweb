@@ -20,7 +20,7 @@
     <div class="container">
         <div class="row">
 
-            {% include 'accounts/navigation_panel.html' %}
+            {% include 'accounts/navigation_panel.html' with isChatsPageActive="active" %}
 
             <div class="span9">
                 <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_chats' %}">
