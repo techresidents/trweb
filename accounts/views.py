@@ -254,6 +254,7 @@ def profile_jobs(request):
     # Retrieve list of user's future job technology preferences and create json data to populate UI
     technology_prefs = TechnologyPref.objects.filter(user=request.user).select_related('technology').order_by('technology__name')
     json_technology_prefs = [{
+        'id': t.id,
         'technologyId': t.technology.id,
         'name': t.technology.name,
         'description': t.technology.description} for t in technology_prefs]
@@ -261,6 +262,7 @@ def profile_jobs(request):
     # Retrieve list of user's future job location preferences and create json data to populate UI
     location_prefs = LocationPref.objects.filter(user=request.user).select_related('location').order_by('location__city')
     json_location_prefs = [{
+        'id': l.id,
         'locationId': l.location.id,
         'city': l.location.city,
         'state': l.location.state,

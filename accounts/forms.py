@@ -405,6 +405,24 @@ class ProfileJobsForm(forms.Form):
 
         return cleaned_technologies_data
 
+    def clean_locations_form_data(self):
+        cleaned_locations_data = self.cleaned_data.get('locations_form_data')
+
+        valid_locations = Location.objects.all()
+        valid_location_ids = [l.id for l in valid_locations]
+
+        # Validate the locationID
+        for location in cleaned_locations_data:
+            location_id = location['locationId']
+            if location_id:
+                if not location_id in valid_location_ids:
+                    raise forms.ValidationError("Location id value is invalid")
+            else:
+                raise forms.ValidationError("Location id field required")
+
+        return cleaned_locations_data
+
+
     def save(self):
         # Making the assumption that form data is clean and valid (meaning that the position
         # data passed in from the user matches existing positions in the db).
@@ -450,15 +468,12 @@ class ProfileJobsForm(forms.Form):
 
         # Update user's technology prefs based on data posted
         for technology in updated_technology_prefs:
-            try:
-                technology = Technology.objects.get(id=technology['technologyId'])
-                TechnologyPref.objects.get(user=self.user, technology=technology)
-            except TechnologyPref.DoesNotExist:
-                tech_pref = TechnologyPref(
+            # Check if this is a new preference and save it if it is.
+            if 'id' not in technology:
+                TechnologyPref(
                     user=self.user,
-                    technology=technology
+                    technology_id=technology['technologyId']
                 ).save()
-
 
 
 
@@ -475,16 +490,12 @@ class ProfileJobsForm(forms.Form):
 
         # Update user's location prefs based on data posted
         for location in updated_location_prefs:
-            try:
-                location = Location.objects.get(id=location['locationId'])
-                LocationPref.objects.get(user=self.user, location=location)
-            except LocationPref.DoesNotExist:
-                location_pref = LocationPref(
+            # Check if this is a new preference and save it if it is.
+            if 'id' not in location:
+                LocationPref(
                     user=self.user,
-                    location=location
+                    location_id=location['locationId']
                 ).save()
-
-
 
 
         # Update general job prefs

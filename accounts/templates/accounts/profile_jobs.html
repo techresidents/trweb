@@ -91,7 +91,6 @@
                             <th>State</th>
                             <th>Zip</th>
                             <th>Country</th>
-                            <th>Proximity (mi)</th>
                             <th></th>
                             </thead>
                             <tbody id="jobs-location-list">
@@ -244,15 +243,6 @@
         </td>
         <td>
             <span> <%= country %> </span>
-        </td>
-        <td>
-            <select class="proximity-option">
-                {% for option in proximity_options %}
-                    <option value={{ option }}>{{ option }}
-                        {% if forloop.last %}+{% endif %}
-                    </option>
-                {% endfor %}
-            </select>
         </td>
         <td>
             <a class="close">x</a>
