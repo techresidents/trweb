@@ -14,7 +14,7 @@
             <ul class="nav nav-list">
                 <li class={{ isLanguagesPageActive }}><a href="{% url 'accounts.views.profile_skills_languages' %}">Languages</a></li>
                 <li class={{ isFrameworksPageActive }}><a href="{% url 'accounts.views.profile_skills_frameworks' %}">Frameworks</a></li>
-                <li class={{ isPersistencePageActive }}><a href="#">Persistence</a></li>
+                <li class={{ isPersistencePageActive }}><a href="{% url 'accounts.views.profile_skills_persistence' %}">Persistence</a></li>
             </ul>
         </ul>
     </div>

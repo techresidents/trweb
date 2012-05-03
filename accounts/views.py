@@ -327,6 +327,25 @@ def profile_skills_frameworks(request):
 
     return render_to_response('accounts/profile_skills_frameworks.html', context, context_instance=RequestContext(request))
 
+@login_required
+def profile_skills_persistence(request):
+    technology_type = 'Persistence'
+    if request.method == 'POST':
+        form = forms.ProfileSkillsForm(request, technology_type, data=request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            messages.success(request, "Save successful")
+            return HttpResponseRedirect(reverse('accounts.views.profile_skills_persistence'))
+        else:
+            context = profile_skills_common(request, technology_type)
+            context['form'] = form
+    else:
+        context = profile_skills_common(request, technology_type)
+        context['form'] = forms.ProfileSkillsForm(request,technology_type)
+
+    return render_to_response('accounts/profile_skills_persistence.html', context, context_instance=RequestContext(request))
+
+
 def profile_skills_common(request, technology_type_name):
     """ Pulled out the code that was common between the language_skills
         and framework_skill views.
