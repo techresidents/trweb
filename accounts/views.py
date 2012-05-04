@@ -377,7 +377,8 @@ def profile_skills_common(request, technology_type_name):
         'yrs_experience_options': yrs_experience_options,
         'json_autocomplete_skills': json.dumps(json_autocomplete_skills),
         'json_skills': json.dumps(json_skills),
-        'support_email': settings.DEFAULT_SUPPORT_EMAIL
+        'support_email': settings.DEFAULT_SUPPORT_EMAIL,
+        'TR_XD_REMOTE': settings.TR_XD_REMOTE
     }
 
     return context
