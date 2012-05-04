@@ -63,6 +63,7 @@
                         </div>
                     </div>
 
+
                     <h3>Positions</h3>
                     <div id="positions-table-wrap" class="well">
                         <table id="positions-table" class="table">
@@ -180,7 +181,21 @@
                     </form>
 
 
-                    <!-- TODO handle errors, copy skills page -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-error">
+                            {% for error in form.non_field_errors%}
+                                <span>{{error}}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if field.errors %}
+                        <div class="alert alert-error">
+                            {% for error in field.errors %}
+                                <span>{{error}}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
 
 
                 </div> <!-- end well -->

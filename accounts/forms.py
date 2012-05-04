@@ -1,5 +1,5 @@
 import datetime
-import json
+import logging
 import uuid
 
 from django import forms
@@ -445,8 +445,7 @@ class ProfileJobsForm(forms.Form):
                     salary_start=position['min_salary']
                 )
                 if 1 != rows_updated:
-                    pass
-                    # TODO log error
+                    logging.error('Failed to update PositionTypePreference')
             else:
                 PositionTypePref(
                     user=self.user,
@@ -518,7 +517,7 @@ class ProfileSkillsForm(forms.Form):
 
     # numerical constants
     MAX_YRS_EXPERIENCE = 21 #This represents the 20+ yrs experience selection in the UI.
-                            #TODO is this too coupled to value in the UI?
+
 
     def __init__(self, request=None, technology_type_name=None, *args, **kwargs):
         self.request = request
@@ -616,19 +615,3 @@ class ProfileSkillsForm(forms.Form):
                     previous_skill.delete()
 
         return updated_skills
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
