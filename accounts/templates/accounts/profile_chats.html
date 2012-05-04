@@ -26,7 +26,7 @@
                 <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_chats' %}">
                     {% csrf_token %}
                     <fieldset>
-                        <legend>Change your chat settings</legend>
+                        <legend>Change your chat preferences</legend>
 
                         {% if messages %}
                             {% for message in messages %}

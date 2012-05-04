@@ -371,18 +371,6 @@ def profile_skills_common(request, technology_type_name):
     json_skills = []
     if user_skills_list:
         json_skills = user_skills_list
-    else:
-        # if user has no skills specified, then create a list of defaults
-        default_profile_technologies = skill_technologies.filter(is_profile_default=True)
-        default_skills = []
-        for technology in default_profile_technologies:
-            default_skill = {
-                'name':str(technology.name),
-                'expertise':'None',
-                'yrs_experience':0
-            }
-            default_skills.append(default_skill)
-        json_skills = default_skills
 
     context = {
         'expertise_options': expertise_options,

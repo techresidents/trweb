@@ -8,6 +8,22 @@ define([
 ], function($, _, Backbone, models, typeahead, lookup) {
 
 
+    var SkillListItemHintView = Backbone.View.extend({
+
+        tagName: "tr",
+        templateName: '#item-hint-template',
+
+        initialize: function() {
+            this.template = _.template($(this.templateName).html());
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.$el.addClass('hint-row');
+            return this;
+        }
+    });
+
     var SkillListItemView = Backbone.View.extend({
 
         tagName: "tr",
@@ -52,6 +68,7 @@ define([
 
         initialize: function() {
             this.setElement($("#skill-list"));
+            this.isHintRowVisible = false;
             this.skillCollection = this.options.skillCollection;
             this.skillCollection.bind("reset", this.render, this);
             this.skillCollection.bind("add", this.addSkillView, this);
@@ -60,10 +77,27 @@ define([
 
         render: function() {
             this.$el.children().remove();
+            if (0 == this.skillCollection.length) {
+                this.addSkillHintView();
+                this.isHintRowVisible = true;
+            }
             this.skillCollection.each(this.addSkillView, this);
         },
 
+        addSkillHintView: function() {
+            var view = new SkillListItemHintView();
+            this.$el.append(view.render().el);
+        },
+
+        removeSkillHintView: function() {
+            this.$el.children().remove();
+            this.isHintRowVisible = false;
+        },
+
         addSkillView: function(skill) {
+            if (this.isHintRowVisible) {
+                this.removeSkillHintView();
+            }
             var view = new SkillListItemView({
                 model: skill,
                 collection: this.skillCollection
@@ -155,7 +189,6 @@ define([
             this.$el.addClass('hint-row');
             return this;
         }
-
     });
 
     var JobPositionListItemView = Backbone.View.extend({
