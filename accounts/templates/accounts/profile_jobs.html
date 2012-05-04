@@ -49,14 +49,10 @@
                                 </div>
                             {% endif %}
                         {% endfor %}
-                    {%  else %}
-                        <div class="alert">
-                            <!-- TODO -->
-                        </div>
                     {% endif %}
 
 
-                    <h3>Job Notifications</h3>
+                    <h3 id="job-notifications-header">Job Notifications</h3>
                     <div class="well">
                         <div class="control-group">
                             <div class="controls" id="jobs-notifications-list">
@@ -91,9 +87,9 @@
                                     </div>
                                 </div>
                                 <div class="controls">
-                                <span class="help">
-                                    <a href="mailto:{{ support_email }}?Subject=Add%20Position%20Request">Position not listed?</a>
-                                </span>
+                                    <span class="help">
+                                        <a href="mailto:{{ support_email }}?Subject=Add%20Position%20Request">Position not listed?</a>
+                                    </span>
                                 </div>
                             </div>
                         </div>

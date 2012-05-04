@@ -28,6 +28,18 @@
                     {% csrf_token %}
                     <fieldset>
                         <legend>Change your account information</legend>
+
+                        {% if messages %}
+                            {% for message in messages %}
+                                <!-- Consume all messages stored -->
+                                {% if message.tags == 'success' %}
+                                    <div class="alert alert-success">
+                                        <span>{{ message }}</span>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
                         {% for field in form %}
                             <div class="control-group {% if field.errors %}error{% endif %}">
                                 {{ field.label_tag }}
@@ -43,22 +55,13 @@
                                 </div>
                             </div>
                         {% endfor %}
+
                         <div class="control-group">
                             <div class="controls">
                                 <button type="submit" class="btn-primary">Save changes</button>
                             </div>
                         </div>
                     </fieldset>
-                    {% if messages %}
-                        {% for message in messages %}
-                            <!-- Consume all messages stored -->
-                            {% if message.tags == 'success' %}
-                                <div class="alert alert-success">
-                                    <span>{{ message }}</span>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
                 </form>
             </div> <!-- end span9 -->
 

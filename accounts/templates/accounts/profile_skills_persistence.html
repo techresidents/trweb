@@ -29,12 +29,12 @@
     <div class="container">
         <div class="row">
 
-            {% include 'accounts/navigation_panel.html' with isFrameworksPageActive="active" %}
+            {% include 'accounts/navigation_panel.html' with isPersistencePageActive="active" %}
 
             <div class="span9">
                 <div class="well">
                     <fieldset>
-                        <legend>Update your framework skills</legend>
+                        <legend>Update your persistence skills</legend>
 
                         {% if messages %}
                             {% for message in messages %}
@@ -52,7 +52,7 @@
                     <div id="table-wrap">
                         <table id="table" class="table">
                             <thead>
-                            <th>Framework</th>
+                            <th>Persistence</th>
                             <th>Expertise Level</th>
                             <th>Yrs Professional Experience</th>
                             </thead>
@@ -64,19 +64,19 @@
                     <div class="form-horizontal well">
 
                         <div id="skill-add" class="control-group">
-                            <label for="skill-input">Add Framework</label>
+                            <label for="skill-input">Add Persistence</label>
                             <div class="controls">
                                 <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off">
                                 <button id="skill-add-button" type="button" class="btn-primary">Add</button>
                             </div>
                             <div class="controls">
                                 <span class="help">
-                                    <a href="mailto:{{ support_email }}?Subject=Add%20Framework%20Request">Framework not listed?</a>
+                                    <a href="mailto:{{ support_email }}?Subject=Add%20Persistence%20Request">Persistence not listed?</a>
                                 </span>
                             </div>
                         </div>
 
-                        <form id="skill-form" class="form-horizontal" method="post" action="{% url 'accounts.views.profile_skills_frameworks' %}">
+                        <form id="skill-form" class="form-horizontal" method="post" action="{% url 'accounts.views.profile_skills_persistence' %}">
                             <fieldset>
                                 {% csrf_token %}
 
