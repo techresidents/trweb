@@ -11,18 +11,19 @@
 {% block content %}
 
 <div class="container">
-    <div class="row">
-        <div class="span12">
-            {% filter pygmentize %}
-            <pre data-filename="{{doc.name}}">{{doc.read|safe}}</pre>
-            {% endfilter %}
+    {% if is_code_doc %}
+        <div class="row">
+            <div class="span12">
+                {% filter pygmentize %}
+                <pre data-filename="{{doc.name}}">{{doc.read|safe}}</pre>
+                {% endfilter %}
+            </div>
         </div>
-    </div>
-    <!--
-    <div class="row">
-        <div class="span12">
-            <iframe src="http://docs.google.com/gview?url={{doc.url}}&embedded=true" style="width:{{width}}px; height:{{height}}px;" frameborder="0"></iframe>
+    {% else %}
+        <div class="row">
+            <div class="span12">
+                <iframe src="http://docs.google.com/gview?url={{doc.url}}&embedded=true" style="width:{{width}}px; height:{{height}}px;" frameborder="0"></iframe>
+            </div>
         </div>
-    </div>
-    -->
+    {% endif %}
 {% endblock %}

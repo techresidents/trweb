@@ -15,6 +15,7 @@ class Document(models.Model):
         db_table = "document"
     name = models.CharField(max_length=1024)
     path = models.FileField(upload_to="doc", max_length=1024)
+    mime_type = models.ForeignKey(MimeType)
 
 class DocumentResource(Resource):
     class Meta:
