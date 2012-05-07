@@ -12,7 +12,7 @@ from techresidents_web.document.models import Document
 def upload(request):
     """Upload document"""
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = UploadForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
@@ -24,7 +24,7 @@ def upload(request):
         "form": form,
     }
     
-    return render_to_response('document/upload.html', context,  context_instance=RequestContext(request))
+    return render_to_response("document/upload.html", context,  context_instance=RequestContext(request))
 
 @login_required
 def download(request, document_id):
@@ -36,7 +36,7 @@ def download(request, document_id):
         raise Http404
 
 @login_required
-def viewer(request, document_id):
+def view(request, document_id):
     """View document"""
     
     width = int(request.GET.get("width", 800))
@@ -49,7 +49,7 @@ def viewer(request, document_id):
     
 
     is_code_doc = True
-    if document.mime_type.extension in ['.doc', '.docx', '.pdf', '.xls', '.xlsx']:
+    if document.mime_type.extension in [".doc", ".docx", ".pdf", ".xls", ".xlsx"]:
         is_code_doc = False
 
     context = {
@@ -59,4 +59,31 @@ def viewer(request, document_id):
         "height": height,
     }
     
-    return render_to_response('document/viewer.html', context,  context_instance=RequestContext(request))
+    return render_to_response("document/view.html", context,  context_instance=RequestContext(request))
+
+@login_required
+def embed(request, document_id):
+    """View document"""
+    
+    width = int(request.GET.get("width", 800))
+    height = int(request.GET.get("height", 600))
+    print width
+
+    try:
+        document = Document.objects.select_related("mime_type").get(id=document_id)
+    except ObjectDoesNotExist:
+        raise Http404
+    
+
+    is_code_doc = True
+    if document.mime_type.extension in [".doc", ".docx", ".pdf", ".xls", ".xlsx"]:
+        is_code_doc = False
+
+    context = {
+        "is_code_doc": is_code_doc,
+        "doc": document.path,
+        "width": width,
+        "height": height,
+    }
+    
+    return render_to_response("document/embed.html", context,  context_instance=RequestContext(request))

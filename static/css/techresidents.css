@@ -49,6 +49,11 @@
     background-image: url("/static/img/logo-small.png");
 }
 
+.logo-brand {
+    float: left;
+    padding: 5px 10px 5px 1px;
+}
+
 .btn-input {
     margin-bottom: 9px;
 }
