@@ -37,6 +37,15 @@ class Code(models.Model):
     used = models.DateTimeField(null=True)
 
 
+class Request(models.Model):
+    """Request an account"""
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    email = models.EmailField(max_length=75, unique=True)
+    code = models.CharField(max_length=255)
+    created = models.DateTimeField(auto_now_add=True)
+
+
 class Skill(models.Model):
     """Represents one of potentially many user skills """
     class Meta:

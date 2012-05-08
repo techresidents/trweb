@@ -1,0 +1,31 @@
+{% extends "banner_base.html" %}
+{% load url from future %}
+
+{% block title %}Welcome to Tech Residents{% endblock %}
+
+{% block extrahead %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="page-header">
+            <h1>
+                Join the conversation
+                <small>It's free</small>
+                <a class="btn btn-success" href="{% url 'accounts.views.account_request'%}">Request Account</a>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="marketing span7">
+            <blockquote>
+                <p>Tech Residents is the ground-breaking talent acquisition platform built by software developers, for software developers.</p>
+                <br>
+                <P>With our network of top employers, Tech Residents connects talented software developers with  new opportunities on their terms.</p>
+            </blockquote>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

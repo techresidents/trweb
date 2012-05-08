@@ -21,6 +21,9 @@ DATABASES = {
     }
 }
 
+#Registration settings
+REGISTRATION_REQUIRES_CODE = False
+
 #Login using HTTPS. This is should only be used by the landing page which is http,
 #but POSTS to the login page using https in non-development environments.
 TR_LOGIN_USING_HTTPS = True

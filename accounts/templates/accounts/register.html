@@ -16,7 +16,11 @@
 
         <div class="span10">
             <div class="well">
-                <form class="form-horizontal" method="post" action="{% url 'accounts.views.register' %}">
+                {% if account_request_code %}
+                    <form class="form-horizontal" method="post" action="{% url 'accounts.views.register' account_request_code %}">
+                {% else %}
+                    <form class="form-horizontal" method="post" action="{% url 'accounts.views.register' %}">
+                {% endif %}
                     {% csrf_token %}
                     <fieldset>
                         {% for field in user_form %}

@@ -12,7 +12,7 @@ from django.template import Context
 
 from techresidents_web.common.forms import JSONField
 from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType, Location
-from techresidents_web.accounts.models import CodeType, Code, Skill
+from techresidents_web.accounts.models import CodeType, Code, Request, Skill
 from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, LocationPref, Prefs
 
 
@@ -25,6 +25,27 @@ PASSWORD_MAX_LEN = 30
 JSON_FIELD_MAX_LEN = 2048
 
 
+class AccountRequestForm(forms.ModelForm):
+    class Meta:
+        model = Request
+        fields = ('first_name', 'last_name', 'email')
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        try:
+            Request.objects.get(email=email)
+        except Request.DoesNotExist:
+            return email
+        raise forms.ValidationError("Account already requested")
+
+    def save(self, commit=True):
+        request = super(AccountRequestForm, self).save(commit=False)
+        if commit:
+            request.code = uuid.uuid4().hex
+            request.save()
+        return request
+
+
 class RegisterUserForm(forms.ModelForm):
     first_name = forms.CharField(label="First Name", max_length=NAME_MAX_LEN, required=True)
     last_name = forms.CharField(label="Last Name", max_length=NAME_MAX_LEN, required=True)
@@ -34,10 +55,11 @@ class RegisterUserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username',)
+        fields = ('first_name', 'last_name', 'username')
 
-    def __init__(self, request=None, *args, **kwargs):
+    def __init__(self, request=None, account_request_code=None, *args, **kwargs):
         self.request = request
+        self.account_request_code = account_request_code
         super(RegisterUserForm, self).__init__(*args, **kwargs)
     
     def clean_username(self):
@@ -50,11 +72,23 @@ class RegisterUserForm(forms.ModelForm):
 
 
     def clean(self):
+        #Registeration requires valid account request code
+        #only if it's not set to None.
+        if self.account_request_code and 'username' in self.cleaned_data:
+            try:
+                account_request = Request.objects.get(code=self.account_request_code)
+                if account_request.email != self.cleaned_data['username']:
+                    raise forms.ValidationError("Invalid registration code.")
+            except Request.DoesNotExist:
+                raise forms.ValidationError("Invalid registration code.")
+        
+        #Validate that passwords match
         if 'password' in self.cleaned_data and 'password_confirmation' in self.cleaned_data:
             password = self.cleaned_data['password']
             password_confirmation = self.cleaned_data['password_confirmation']
             if password != password_confirmation:
                 raise forms.ValidationError("Passwords do not match.")
+
         return self.cleaned_data
     
     def save(self, commit=True):
@@ -499,7 +533,6 @@ class ProfileJobsForm(forms.Form):
 
         # Update general job prefs
         notification_prefs = self.cleaned_data.get('notifications_form_data')
-        print notification_prefs
         job_prefs, created = Prefs.objects.get_or_create(user=self.user)
         if notification_prefs['emailNewJobOpps'] is not None:
             job_prefs.email_new_job_opps = notification_prefs['emailNewJobOpps']

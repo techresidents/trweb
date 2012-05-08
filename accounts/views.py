@@ -1,6 +1,5 @@
 import json
 
-from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import auth
@@ -12,7 +11,6 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
-from django.contrib.auth.models import User
 
 from techresidents_web.accounts import forms
 from techresidents_web.accounts.models import Skill
@@ -60,31 +58,64 @@ def login(request):
 
     return render_to_response('accounts/login.html', context,  context_instance=RequestContext(request))
 
-def register(request):
+def account_request(request):
     if request.method == 'POST':
-        user_form = forms.RegisterUserForm(request, data=request.POST)
+        form = forms.AccountRequestForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Success')
+            return HttpResponseRedirect(reverse('accounts.views.account_request'))
+    else:
+        form = forms.AccountRequestForm()
+    
+    context = {
+        'form' : form,
+    }
+
+    return render_to_response('accounts/account_request.html', context,  context_instance=RequestContext(request))
+
+def register(request, account_request_code=None):
+    """Register user with or without account request code.
+    
+    In order to force user registration to require a valid 
+    account request code set the REGISTRATION_REQUIRES_CODE
+    setting to True. This will adjust the register url,
+    forcing the account_request_code to be present.
+    
+    Args:
+        request: request object
+        account_request_code: optional account request code. If not None,
+            a valid account_request must exist in the database with
+            the provided code in order for registration to be allowed.
+    """
+    if request.method == 'POST':
+        user_form = forms.RegisterUserForm(request, account_request_code, data=request.POST)
 
         if user_form.is_valid():
-            user = user_form.save(commit=False)
-            user.save()
+            user_form.save()
 
-            text_template = get_template('accounts/registration_email.txt')
-            html_template = get_template('accounts/registration_email.html')
-            
-            user_form.send_activation_email(
-                    subject = "Tech Residents - Registration",
-                    text_template = text_template,
-                    html_template = html_template
-                    )
+            #Only sending email validation if registration is not being
+            #done with an account request code. If registering with
+            #account requet code, we've already validated email.
+            if account_request_code is None:
+                text_template = get_template('accounts/registration_email.txt')
+                html_template = get_template('accounts/registration_email.html')
+                
+                user_form.send_activation_email(
+                        subject = "Tech Residents - Registration",
+                        text_template = text_template,
+                        html_template = html_template
+                        )
             
             #TODO should user be authenticated and send to home page
             return HttpResponseRedirect("/")
     else:
-        user_form = forms.RegisterUserForm(request)
+        user_form = forms.RegisterUserForm(request, account_request_code)
     
     context = {
-            'user_form' : user_form,
-            }
+        'user_form' : user_form,
+        'account_request_code': account_request_code,
+    }
 
     return render_to_response('accounts/register.html', context,  context_instance=RequestContext(request))
 
