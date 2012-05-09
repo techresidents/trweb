@@ -21,6 +21,21 @@ DATABASES = {
     }
 }
 
+#Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+#EMAIL_HOST_USER = 'user'
+#EMAIL_HOST_PASSWORD = 'password'
+DEFAULT_FROM_EMAIL = 'Tech Residents Support <jmullins@techresidents.com>'
+
+#Landing settings
+LANDING_PLACEHOLDER = True
+
+#Registration settings
+REGISTRATION_REQUIRES_CODE = True
+
 #Login using HTTPS. This is should only be used by the landing page which is http,
 #but POSTS to the login page using https in non-development environments.
 TR_LOGIN_USING_HTTPS = True
+TR_XD_REMOTE = 'http://staging.techresidents.com:6767/static/js/easyXDM/cors/index.html'

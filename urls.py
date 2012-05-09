@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
@@ -12,8 +13,6 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
     
-    url(r'^$', 'common.views.landing_placeholder'),
-    url(r'^landing$', 'common.views.landing'),
     url(r'^learn_more$', 'common.views.learn_more'),
     url(r'^about$', 'common.views.about'),
     url(r'^contact$', 'common.views.contact'),
@@ -25,6 +24,12 @@ urlpatterns = patterns('',
     url(r'^whiteboard/', include('whiteboard.urls')),
 
 )
+
+#Landing page
+if settings.LANDING_PLACEHOLDER:
+    urlpatterns += patterns('', url(r'^$', 'common.views.landing_placeholder'))
+else:
+    urlpatterns += patterns('', url(r'^$', 'common.views.landing'))
 
 #This is for development purposes only.
 #It will only work if DEBUG is set to true.

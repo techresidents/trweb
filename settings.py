@@ -186,6 +186,9 @@ EMAIL_PORT = 25
 DEFAULT_FROM_EMAIL = 'Tech Residents Support <jmullins@techresidents.com>'
 DEFAULT_SUPPORT_EMAIL = 'Tech Residents Support <support@techresidents.com>'
 
+#Landing settings
+LANDING_PLACEHOLDER = False
+
 #Registration settings
 REGISTRATION_REQUIRES_CODE = False
 

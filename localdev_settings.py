@@ -29,6 +29,11 @@ EMAIL_PORT = 25
 #EMAIL_HOST_PASSWORD = 'password'
 DEFAULT_FROM_EMAIL = 'Tech Residents Support <jmullins@techresidents.com>'
 
+#Landing settings
+LANDING_PLACEHOLDER = False
+
+#Registration settings
+REGISTRATION_REQUIRES_CODE = False
 
 #Tech Residents specific settings
 #Login using HTTPS. This is should only be used by the landing page which is http,
