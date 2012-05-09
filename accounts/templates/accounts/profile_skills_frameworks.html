@@ -5,7 +5,7 @@
 {% block title %}Profile{% endblock %}
 
 {% block extrahead %}
-    <link href="{{STATIC_URL}}css/profile_skills_table.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}css/profile_jobs.css" rel="stylesheet">
     <script src="{{STATIC_URL}}js/3ps/jquery/jquery.js"></script>
     <script src="{{STATIC_URL}}js/3ps/bootstrap/bootstrap.js"></script>
     <script>
@@ -29,12 +29,24 @@
     <div class="container">
         <div class="row">
 
-            {% include 'accounts/navigation_panel.html' %}
+            {% include 'accounts/navigation_panel.html' with isFrameworksPageActive="active" %}
 
             <div class="span9">
                 <div class="well">
                     <fieldset>
                         <legend>Update your framework skills</legend>
+
+                        {% if messages %}
+                            {% for message in messages %}
+                                <!-- Consume all messages stored -->
+                                {% if message.tags == 'success' %}
+                                    <div class="alert alert-success">
+                                        <span>{{ message }}</span>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
                     </fieldset>
 
                     <div id="table-wrap">
@@ -54,7 +66,7 @@
                         <div id="skill-add" class="control-group">
                             <label for="skill-input">Add Framework</label>
                             <div class="controls">
-                                <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off">
+                                <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off" placeholder="Framework Name ( e.g. Django )">
                                 <button id="skill-add-button" type="button" class="btn-primary">Add</button>
                             </div>
                             <div class="controls">
@@ -79,7 +91,6 @@
                         </form>
                     </div>
 
-
                     {% if form.non_field_errors %}
                         <div class="alert alert-error">
                             {% for error in form.non_field_errors%}
@@ -96,17 +107,6 @@
                         </div>
                     {% endif %}
 
-                    {% if messages %}
-                        {% for message in messages %}
-                            <!-- Consume all messages stored -->
-                            {% if message.tags == 'success' %}
-                                <div class="alert alert-success">
-                                    <span>{{ message }}</span>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-
                 </div> <!-- end well -->
             </div> <!-- end span9 -->
         </div>
@@ -114,10 +114,9 @@
 
 
 
-
-    <!-- TODO: add proper escapejs filter that works with json -->
     {% autoescape off %}
         <script>
+            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
             var data = {{json_skills}};
             var app = {'name':'skills'}
         </script>
@@ -125,6 +124,13 @@
 
 
     <!-- Templates -->
+    <script type="text/template" id="item-hint-template">
+        <td>
+            <span>No skills have been provided yet.</span>
+        </td>
+        <td></td>
+    </script>
+
     <script type="text/template" id="skill-item-template">
         {% verbatim %}
             <td><%= name %></td>

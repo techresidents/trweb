@@ -1,5 +1,5 @@
 import datetime
-import json
+import logging
 import uuid
 
 from django import forms
@@ -11,9 +11,9 @@ from django.contrib.auth.models import User
 from django.template import Context
 
 from techresidents_web.common.forms import JSONField
-from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType
-from techresidents_web.accounts.models import CodeType, Code, Skill
-from techresidents_web.job.models import PositionType, PositionTypePref, Prefs
+from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType, Location
+from techresidents_web.accounts.models import CodeType, Code, Request, Skill
+from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, LocationPref, Prefs
 
 
 # Some field size constants for this form.
@@ -22,6 +22,28 @@ NAME_MAX_LEN = 30
 EMAIL_MAX_LEN = 75
 PASSWORD_MIN_LEN = 4
 PASSWORD_MAX_LEN = 30
+JSON_FIELD_MAX_LEN = 2048
+
+
+class AccountRequestForm(forms.ModelForm):
+    class Meta:
+        model = Request
+        fields = ('first_name', 'last_name', 'email')
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        try:
+            Request.objects.get(email=email)
+        except Request.DoesNotExist:
+            return email
+        raise forms.ValidationError("Account already requested")
+
+    def save(self, commit=True):
+        request = super(AccountRequestForm, self).save(commit=False)
+        if commit:
+            request.code = uuid.uuid4().hex
+            request.save()
+        return request
 
 
 class RegisterUserForm(forms.ModelForm):
@@ -33,10 +55,11 @@ class RegisterUserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username',)
+        fields = ('first_name', 'last_name', 'username')
 
-    def __init__(self, request=None, *args, **kwargs):
+    def __init__(self, request=None, account_request_code=None, *args, **kwargs):
         self.request = request
+        self.account_request_code = account_request_code
         super(RegisterUserForm, self).__init__(*args, **kwargs)
     
     def clean_username(self):
@@ -49,11 +72,23 @@ class RegisterUserForm(forms.ModelForm):
 
 
     def clean(self):
+        #Registeration requires valid account request code
+        #only if it's not set to None.
+        if self.account_request_code and 'username' in self.cleaned_data:
+            try:
+                account_request = Request.objects.get(code=self.account_request_code)
+                if account_request.email != self.cleaned_data['username']:
+                    raise forms.ValidationError("Invalid registration code.")
+            except Request.DoesNotExist:
+                raise forms.ValidationError("Invalid registration code.")
+        
+        #Validate that passwords match
         if 'password' in self.cleaned_data and 'password_confirmation' in self.cleaned_data:
             password = self.cleaned_data['password']
             password_confirmation = self.cleaned_data['password_confirmation']
             if password != password_confirmation:
                 raise forms.ValidationError("Passwords do not match.")
+
         return self.cleaned_data
     
     def save(self, commit=True):
@@ -306,6 +341,8 @@ class ProfilePasswordForm(forms.Form):
             password_confirmation = clean_data['password_confirmation']
             if new_password != password_confirmation:
                 raise forms.ValidationError("New password values do not match")
+        else:
+            raise forms.ValidationError("New password and confirmation password must be provided")
         return clean_data
 
     def save(self, commit=True):
@@ -331,19 +368,15 @@ class ProfileChatsForm(forms.Form):
 
 class ProfileJobsForm(forms.Form):
 
-    # JSON keys
-    JSON_POSITION_TYPE_ID = 'id'
-    JSON_POSITION_NAME = 'name'
-    JSON_POSITION_DESCRIPTION = 'description'
-    JSON_POSITION_MIN_SALARY = 'min_salary'
+    # numerical constants
+    SALARY_MIN = 50000
+    SALARY_MAX = 260000
 
     # Setup form fields
-    # email_new_job_opps = JSONField(max_length=2048, widget=forms.HiddenInput, required=False)
-    positions_form_data = JSONField(max_length=2048, widget=forms.HiddenInput, required=False)
-
-    #locations = forms.CharField(label="Locations", max_length=1024, widget=forms.TextInput, required=False)
-    #technologies = forms.CharField(label="Technologies", max_length=1024, widget=forms.TextInput, required=False)
-    #salary_start = forms.DecimalField(label="Minimum Salary ($)", min_value=10000, max_digits=7, decimal_places=0, required=False)
+    notifications_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
+    positions_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
+    technologies_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
+    locations_form_data = JSONField(max_length=JSON_FIELD_MAX_LEN, widget=forms.HiddenInput, required=False)
 
     def __init__(self, request=None, *args, **kwargs):
         self.user = request.user
@@ -351,31 +384,83 @@ class ProfileJobsForm(forms.Form):
 
     def clean_positions_form_data(self):
         cleaned_positions_data = self.cleaned_data.get('positions_form_data')
-        print cleaned_positions_data
-        return cleaned_positions_data
-
-        # TODO -- add cleaning code
         if cleaned_positions_data:
-            # Perform db query up front to prevent calling into the
-            # the db to validate each position in the form data
-            valid_positions = PositionType.objects.all()
-            valid_position_names = [p.name for p in valid_positions]
 
+            valid_position_types = PositionType.objects.all()
+            valid_position_type_ids = [p.id for p in valid_position_types]
+
+            # Need to validate positionPrefID, if it has one, the positionTypeID, and minSalary
             for position in cleaned_positions_data:
-                # Verify we have a name attribute
-                position_name = position[self.JSON_POSITION_NAME]
-                if position_name:
-                    # if we have a name attribute, verify that it's valid
-                    if not position_name in valid_position_names:
-                        raise forms.ValidationError("Position name value is invalid")
+
+                # Validate the PositionPrefID, if it has one
+                # The PositionPrefID is validated via the save() method.
+                # When save() is called this ID (if provided) will be used to update
+                # the user's PositionPreferences.  If this update fails, an exception
+                # will be thrown.  If the user is adding a new preference, then this
+                # PositionPrefID will be generated when save() compeletes.
+
+                # Validate the positionTypeID
+                position_type_id = position['positionTypeId']
+                if position_type_id:
+                    if not position_type_id in valid_position_type_ids:
+                        raise forms.ValidationError("PositionType id value is invalid")
                 else:
-                    raise forms.ValidationError("Position name field required")
+                    raise forms.ValidationError("PositionType id field required")
+
+                # Validate the minimum salary data
+                position_min_salary = position['min_salary']
+                if position_min_salary is not None:
+                    if not type(position_min_salary == int):
+                        min_salary = int(position_min_salary)
+                    else:
+                        min_salary = position_min_salary
+                    if min_salary < self.SALARY_MIN or\
+                       min_salary > self.SALARY_MAX:
+                        raise forms.ValidationError("Position minimum salary value is invalid")
+                else:
+                    raise forms.ValidationError("Position minimum salary field required")
 
         return cleaned_positions_data
+
+    def clean_technologies_form_data(self):
+        cleaned_technologies_data = self.cleaned_data.get('technologies_form_data')
+
+        valid_technologies = Technology.objects.all()
+        valid_technology_ids = [t.id for t in valid_technologies]
+
+        # Validate the technologyID
+        for technology in cleaned_technologies_data:
+            technology_id = technology['technologyId']
+            if technology_id:
+                if not technology_id in valid_technology_ids:
+                    raise forms.ValidationError("Technology id value is invalid")
+            else:
+                raise forms.ValidationError("Technology id field required")
+
+        return cleaned_technologies_data
+
+    def clean_locations_form_data(self):
+        cleaned_locations_data = self.cleaned_data.get('locations_form_data')
+
+        valid_locations = Location.objects.all()
+        valid_location_ids = [l.id for l in valid_locations]
+
+        # Validate the locationID
+        for location in cleaned_locations_data:
+            location_id = location['locationId']
+            if location_id:
+                if not location_id in valid_location_ids:
+                    raise forms.ValidationError("Location id value is invalid")
+            else:
+                raise forms.ValidationError("Location id field required")
+
+        return cleaned_locations_data
+
 
     def save(self):
         # Making the assumption that form data is clean and valid (meaning that the position
         # data passed in from the user matches existing positions in the db).
+
 
         # Retrieve posted position data
         updated_position_prefs = self.cleaned_data.get('positions_form_data')
@@ -390,27 +475,70 @@ class ProfileJobsForm(forms.Form):
         # Update user's positions based on data posted
         for position in updated_position_prefs:
             if 'id' in position:
-                print position
                 rows_updated = PositionTypePref.objects.filter(user=self.user).update(
-                    salary_start=position[self.JSON_POSITION_MIN_SALARY]
+                    salary_start=position['min_salary']
                 )
                 if 1 != rows_updated:
-                    pass
-                    # TODO log error
+                    logging.error('Failed to update PositionTypePreference')
             else:
                 PositionTypePref(
                     user=self.user,
                     position_type_id=position['positionTypeId'],
-                    salary_start=position[self.JSON_POSITION_MIN_SALARY]
+                    salary_start=position['min_salary']
+                ).save()
+
+
+
+        # Retrieve posted technology pref data
+        updated_technology_prefs = self.cleaned_data.get('technologies_form_data')
+        updated_technology_pref_ids = {t['technologyId'] for t in updated_technology_prefs}
+
+        # Before updating the user's technology preferences, save the old prefs to check for prefs that may have been deleted
+        previous_technology_prefs = TechnologyPref.objects.filter(user=self.user).select_related('technology')
+        for previous_pref in previous_technology_prefs:
+            if not previous_pref.technology.id in updated_technology_pref_ids:
+                previous_pref.delete()
+
+        # Update user's technology prefs based on data posted
+        for technology in updated_technology_prefs:
+            # Check if this is a new preference and save it if it is.
+            if 'id' not in technology:
+                TechnologyPref(
+                    user=self.user,
+                    technology_id=technology['technologyId']
+                ).save()
+
+
+
+
+        # Retrieve posted location pref data
+        updated_location_prefs = self.cleaned_data.get('locations_form_data')
+        updated_location_pref_ids = {l['locationId'] for l in updated_location_prefs}
+
+        # Before updating the user's location preferences, save the old prefs to check for prefs that may have been deleted
+        previous_location_prefs = LocationPref.objects.filter(user=self.user).select_related('location')
+        for previous_pref in previous_location_prefs:
+            if not previous_pref.location.id in updated_location_pref_ids:
+                previous_pref.delete()
+
+        # Update user's location prefs based on data posted
+        for location in updated_location_prefs:
+            # Check if this is a new preference and save it if it is.
+            if 'id' not in location:
+                LocationPref(
+                    user=self.user,
+                    location_id=location['locationId']
                 ).save()
 
 
         # Update general job prefs
-        #job_prefs, created = Prefs.objects.get_or_create(user=self.user)
-        #job_prefs.email_new_job_opps=self.cleaned_data['email_new_job_opps']
-        #job_prefs.save()
+        notification_prefs = self.cleaned_data.get('notifications_form_data')
+        job_prefs, created = Prefs.objects.get_or_create(user=self.user)
+        if notification_prefs['emailNewJobOpps'] is not None:
+            job_prefs.email_new_job_opps = notification_prefs['emailNewJobOpps']
+        job_prefs.save()
 
-        return self.user
+        return
 
 class ProfileSkillsForm(forms.Form):
     skills_form_data = JSONField(max_length=2048, widget=forms.HiddenInput, required=True)
@@ -422,7 +550,7 @@ class ProfileSkillsForm(forms.Form):
 
     # numerical constants
     MAX_YRS_EXPERIENCE = 21 #This represents the 20+ yrs experience selection in the UI.
-                            #TODO is this too coupled to value in the UI?
+
 
     def __init__(self, request=None, technology_type_name=None, *args, **kwargs):
         self.request = request
@@ -432,7 +560,6 @@ class ProfileSkillsForm(forms.Form):
     def clean(self):
         super(ProfileSkillsForm, self).clean()
         cleaned_skills_data = self.cleaned_data.get('skills_form_data')
-        print cleaned_skills_data
 
         # Verify we have some data to validate
         if cleaned_skills_data is None:
@@ -520,20 +647,4 @@ class ProfileSkillsForm(forms.Form):
                 if not previous_skill.technology.name in updated_skill_names:
                     previous_skill.delete()
 
-        return self.request.user
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return updated_skills

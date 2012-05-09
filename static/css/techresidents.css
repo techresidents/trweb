@@ -37,9 +37,25 @@
 
 .logo {
     display: block;
-    height: 115px;
-    width: 503px;
+    height: 120px;
+    width: 552px;
     background-image: url("/static/img/logo.png");
+}
+
+.logo-small {
+    display: block;
+    height: 30px;
+    width: 31px;
+    background-image: url("/static/img/logo-small.png");
+}
+
+.logo-brand {
+    float: left;
+    padding: 5px 10px 5px 1px;
+}
+
+.marketing p {
+    font-size: 18px;
 }
 
 .btn-input {

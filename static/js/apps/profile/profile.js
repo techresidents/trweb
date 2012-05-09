@@ -24,10 +24,16 @@ $(document).ready(function() {
     var JobsAppView = Backbone.View.extend({
 
         initialize: function() {
+            // Create collections
+            this.notificationPreference = new models.NotificationPreference(this.options.notifications);
             this.positionTypeCollection = new models.PositionTypeCollection();
             this.positionPrefCollection = new models.PositionPrefCollection();
+            this.technologyPrefCollection = new models.TechnologyPrefCollection();
+            this.locationPrefCollection = new models.LocationPrefCollection();
 
-            this.positionLisView = new views.JobPositionListView({
+
+            // Position Views
+            this.positionListView = new views.JobPositionListView({
                 positionCollection: this.positionPrefCollection,
                 positionTypeCollection: this.positionTypeCollection
             });
@@ -35,16 +41,61 @@ $(document).ready(function() {
                 positionCollection: this.positionPrefCollection,
                 positionTypeCollection: this.positionTypeCollection
             });
-            this.positionFormView = new views.JobPositionFormView({positionCollection: this.positionPrefCollection});
+            this.positionFormView = new views.JobPositionFormView({
+                positionCollection: this.positionPrefCollection
+            });
 
+
+            // Technology Views
+            this.technologyListView = new views.JobTechnologyListView({
+                technologyCollection: this.technologyPrefCollection
+            });
+            this.technologyAddView = new views.JobTechnologyAddView({
+                technologyCollection: this.technologyPrefCollection
+            });
+            this.technologyFormView = new views.JobTechnologyFormView({
+                technologyCollection: this.technologyPrefCollection
+            });
+
+
+            // Location Views
+            this.locationListView = new views.JobLocationListView({
+                locationCollection: this.locationPrefCollection
+            });
+            this.locationAddView = new views.JobLocationAddView({
+                locationCollection: this.locationPrefCollection
+            });
+            this.locationFormView = new views.JobLocationFormView({
+                locationCollection: this.locationPrefCollection
+            });
+
+
+            // Notification Views
+            this.notificationListView = new views.JobNotificationListView({
+                notificationPreference: this.notificationPreference
+            });
+            this.notificationFormView = new views.JobNotificationFormView({
+                notificationPreference: this.notificationPreference
+            });
+
+
+            // Initialize collections
             this.positionTypeCollection.reset(this.options.positionTypes);
             this.positionPrefCollection.reset(this.options.positions);
+            this.technologyPrefCollection.reset(this.options.technologies);
+            this.locationPrefCollection.reset(this.options.locations);
         }
     });
 
     if (window.app) {
         if (window.app.name == 'jobs') {
-            app = new JobsAppView({positions: window.positions, positionTypes: window.positionTypes});
+            app = new JobsAppView({
+                notifications: window.notifications,
+                positions: window.positions,
+                positionTypes: window.positionTypes,
+                technologies: window.technologies,
+                locations: window.locations
+            });
         }
         else if (window.app.name == 'skills') {
             app = new SkillsAppView({data: window.data});

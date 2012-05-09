@@ -5,21 +5,21 @@
     <div class="well">
         <ul class="nav nav-list">
             <li class="nav-header">Account</li>
-            <li><a href="{% url 'accounts.views.profile_account' %}"><i class="icon-user"></i>Account</a></li>
-            <li><a href="{% url 'accounts.views.profile_password' %}"><i class="icon-lock"></i>Password</a></li>
-            <li><a href="{% url 'accounts.views.profile_chats' %}"><i class="icon-info-sign"></i>Chats</a></li>
-            <li><a href="{% url 'accounts.views.profile_jobs' %}"><i class="icon-road"></i>Jobs</a></li>
+            <li class={{ isAccountPageActive }}><a href="{% url 'accounts.views.profile_account' %}">Account</a></li>
+            <li class={{ isPasswordPageActive }}><a href="{% url 'accounts.views.profile_password' %}">Password</a></li>
+            <li class={{ isChatsPageActive }}><a href="{% url 'accounts.views.profile_chats' %}">Chats</a></li>
+            <li class={{ isJobsPageActive }}><a href="{% url 'accounts.views.profile_jobs' %}">Jobs</a></li>
 
-            <li class="nav-header">Technology</li>
+            <li class="nav-header">Skills</li>
             <ul class="nav nav-list">
-                <li><a href="{% url 'accounts.views.profile_skills_languages' %}">Languages</a></li>
-                <li><a href="{% url 'accounts.views.profile_skills_frameworks' %}">Frameworks</a></li>
-                <li><a href="#">Persistence</a></li>
+                <li class={{ isLanguagesPageActive }}><a href="{% url 'accounts.views.profile_skills_languages' %}">Languages</a></li>
+                <li class={{ isFrameworksPageActive }}><a href="{% url 'accounts.views.profile_skills_frameworks' %}">Frameworks</a></li>
+                <li class={{ isPersistencePageActive }}><a href="{% url 'accounts.views.profile_skills_persistence' %}">Persistence</a></li>
             </ul>
         </ul>
     </div>
 
-    <div class="well">
+    <div class="well" id="nav-panel-message">
 
     </div>
 </div> <!-- end span3 -->

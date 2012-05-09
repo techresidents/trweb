@@ -4,6 +4,7 @@ require.config({
         jQuery: 'loader/jquery',
         Underscore: 'loader/underscore',
         Backbone: 'loader/backbone',
+        easyXDM: 'loader/easyXDM',
     }
 });
 

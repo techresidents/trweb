@@ -1,0 +1,29 @@
+{% extends "menu_base.html" %}
+{% load url from future %}
+{% load pygmentize %}
+
+{% block title %}Tech Residents Document Upload{% endblock %}
+
+{% block extrahead %}
+    <link href="{{STATIC_URL}}css/pygmentize.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    {% if is_code_doc %}
+        <div class="row">
+            <div class="span12">
+                {% filter pygmentize %}
+                <pre data-filename="{{doc.name}}">{{doc.read|safe}}</pre>
+                {% endfilter %}
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="span12">
+                <iframe src="http://docs.google.com/gview?url={{doc.url}}&embedded=true" style="width:{{width}}px; height:{{height}}px;" frameborder="0"></iframe>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

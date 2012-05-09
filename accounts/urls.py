@@ -1,9 +1,10 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf import settings
+from django.conf.urls.defaults import patterns, url
 
 urlpatterns = patterns('accounts.views',
     url(r'^login/$', 'login'),
     url(r'^logout/$', 'logout'),
-    url(r'^register/$', 'register'),
+    url(r'^request/$', 'account_request'),
     url(r'^register/activate/(?P<registration_code>\w+)$', 'register_activate'),
     url(r'^forgot_password/$', 'forgot_password'),
     url(r'^reset_password/(?P<reset_password_code>\w+)$', 'reset_password'),
@@ -13,4 +14,10 @@ urlpatterns = patterns('accounts.views',
     url(r'^profile/password/$', 'profile_password'),
     url(r'^profile/skills/languages$', 'profile_skills_languages'),
     url(r'^profile/skills/frameworks$', 'profile_skills_frameworks'),
+    url(r'^profile/skills/persistence$', 'profile_skills_persistence'),
 )
+
+if settings.REGISTRATION_REQUIRES_CODE:
+    urlpatterns += patterns('accounts.views', url(r'^register/(?P<account_request_code>\w+)$', 'register'))
+else:
+    urlpatterns += patterns('accounts.views', url(r'^register/$', 'register'))

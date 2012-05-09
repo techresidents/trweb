@@ -1,7 +1,5 @@
-import forms
 import json
 
-from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import auth
@@ -13,10 +11,10 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
-from django.contrib.auth.models import User
 
+from techresidents_web.accounts import forms
 from techresidents_web.accounts.models import Skill
-from techresidents_web.job.models import Prefs, PositionType, PositionTypePref
+from techresidents_web.job.models import Prefs, PositionType, PositionTypePref, TechnologyPref, LocationPref
 from techresidents_web.common.models import Technology, TechnologyType, ExpertiseType
 
 
@@ -60,31 +58,64 @@ def login(request):
 
     return render_to_response('accounts/login.html', context,  context_instance=RequestContext(request))
 
-def register(request):
+def account_request(request):
     if request.method == 'POST':
-        user_form = forms.RegisterUserForm(request, data=request.POST)
+        form = forms.AccountRequestForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Success')
+            return HttpResponseRedirect(reverse('accounts.views.account_request'))
+    else:
+        form = forms.AccountRequestForm()
+    
+    context = {
+        'form' : form,
+    }
+
+    return render_to_response('accounts/account_request.html', context,  context_instance=RequestContext(request))
+
+def register(request, account_request_code=None):
+    """Register user with or without account request code.
+    
+    In order to force user registration to require a valid 
+    account request code set the REGISTRATION_REQUIRES_CODE
+    setting to True. This will adjust the register url,
+    forcing the account_request_code to be present.
+    
+    Args:
+        request: request object
+        account_request_code: optional account request code. If not None,
+            a valid account_request must exist in the database with
+            the provided code in order for registration to be allowed.
+    """
+    if request.method == 'POST':
+        user_form = forms.RegisterUserForm(request, account_request_code, data=request.POST)
 
         if user_form.is_valid():
-            user = user_form.save(commit=False)
-            user.save()
+            user_form.save()
 
-            text_template = get_template('accounts/registration_email.txt')
-            html_template = get_template('accounts/registration_email.html')
-            
-            user_form.send_activation_email(
-                    subject = "Tech Residents - Registration",
-                    text_template = text_template,
-                    html_template = html_template
-                    )
+            #Only sending email validation if registration is not being
+            #done with an account request code. If registering with
+            #account requet code, we've already validated email.
+            if account_request_code is None:
+                text_template = get_template('accounts/registration_email.txt')
+                html_template = get_template('accounts/registration_email.html')
+                
+                user_form.send_activation_email(
+                        subject = "Tech Residents - Registration",
+                        text_template = text_template,
+                        html_template = html_template
+                        )
             
             #TODO should user be authenticated and send to home page
             return HttpResponseRedirect("/")
     else:
-        user_form = forms.RegisterUserForm(request)
+        user_form = forms.RegisterUserForm(request, account_request_code)
     
     context = {
-            'user_form' : user_form,
-            }
+        'user_form' : user_form,
+        'account_request_code': account_request_code,
+    }
 
     return render_to_response('accounts/register.html', context,  context_instance=RequestContext(request))
 
@@ -166,19 +197,13 @@ def profile_account(request):
     else:
         user = request.user
         user_profile = request.user.get_profile()
-        if user_profile.developer_since is None:
-            form_data = {
-                'first_name':user.first_name,
-                'last_name':user.last_name,
-                'email_address':user.email
-            }
-        else:
-            form_data = {
-                'first_name':user.first_name,
-                'last_name':user.last_name,
-                'email_address':user.email,
-                'developer_since':user_profile.developer_since.year
-            }
+        form_data = {
+            'first_name':user.first_name,
+            'last_name':user.last_name,
+            'email_address':user.email
+        }
+        if user_profile.developer_since is not None:
+            form_data['developer_since'] = user_profile.developer_since.year
         form = forms.ProfileAccountForm(request, data=form_data)
 
     context = {
@@ -237,30 +262,62 @@ def profile_jobs(request):
         form = forms.ProfileJobsForm(request)
 
     # Create minimum salary values to populate the UI with
-    min_salary_options = range(50000,260000,10000)
+    min_salary_options = range(
+        forms.ProfileJobsForm.SALARY_MIN,
+        forms.ProfileJobsForm.SALARY_MAX,
+        10000)
 
     # Create data to populate the Positions field autocomplete
     position_types = PositionType.objects.all()
-    json_position_names = [str(p.name) for p in position_types]
+    json_position_names = [p.name for p in position_types]
     json_position_types = [ {
-        forms.ProfileJobsForm.JSON_POSITION_TYPE_ID: p.id,
-        forms.ProfileJobsForm.JSON_POSITION_NAME: p.name,
-        forms.ProfileJobsForm.JSON_POSITION_DESCRIPTION: p.description} for p in position_types]
+        'id': p.id,
+        'name': p.name,
+        'description': p.description} for p in position_types]
 
     # Retrieve list of user's position preferences and create json data to populate UI
-    position_prefs = PositionTypePref.objects.filter(user=request.user)
-    json_user_position_prefs = [ {
+    position_prefs = PositionTypePref.objects.filter(user=request.user).select_related('position_type')
+    json_position_prefs = [ {
         'id': pos.id,
         'positionTypeId': pos.position_type.id,
         'min_salary': pos.salary_start} for pos in position_prefs]
 
+    # Retrieve list of user's future job technology preferences and create json data to populate UI
+    technology_prefs = TechnologyPref.objects.filter(user=request.user).select_related('technology').order_by('technology__name')
+    json_technology_prefs = [{
+        'id': t.id,
+        'technologyId': t.technology.id,
+        'name': t.technology.name,
+        'description': t.technology.description} for t in technology_prefs]
+
+    # Retrieve list of user's future job location preferences and create json data to populate UI
+    location_prefs = LocationPref.objects.filter(user=request.user).select_related('location').order_by('location__city')
+    json_location_prefs = [{
+        'id': l.id,
+        'locationId': l.location.id,
+        'city': l.location.city,
+        'state': l.location.state,
+        'zip': l.location.zip,
+        'country': l.location.country} for l in location_prefs]
+
+    # Retrieve list of user's notification preferences and create json data to populate UI
+    try:
+        notification_prefs = Prefs.objects.get(user=request.user)
+        json_notification_prefs = {'emailNewJobOpps': notification_prefs.email_new_job_opps}
+    except Prefs.DoesNotExist:
+        json_notification_prefs = {'emailNewJobOpps': False}
+
     context = {
         'form': form,
-        'json_user_positions': json.dumps(json_user_position_prefs),
+        'json_notification_prefs': json.dumps(json_notification_prefs),
+        'json_location_prefs' : json.dumps(json_location_prefs),
+        'json_technology_prefs': json.dumps(json_technology_prefs),
+        'json_user_positions': json.dumps(json_position_prefs),
         'json_autocomplete_positions': json.dumps(json_position_names),
         'json_position_types': json.dumps(json_position_types),
         'min_salary_options': min_salary_options,
-        'support_email': settings.DEFAULT_SUPPORT_EMAIL
+        'support_email': settings.DEFAULT_SUPPORT_EMAIL,
+        'TR_XD_REMOTE': settings.TR_XD_REMOTE
     }
 
     return render_to_response('accounts/profile_jobs.html', context, context_instance=RequestContext(request))
@@ -301,6 +358,25 @@ def profile_skills_frameworks(request):
 
     return render_to_response('accounts/profile_skills_frameworks.html', context, context_instance=RequestContext(request))
 
+@login_required
+def profile_skills_persistence(request):
+    technology_type = 'Persistence'
+    if request.method == 'POST':
+        form = forms.ProfileSkillsForm(request, technology_type, data=request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            messages.success(request, "Save successful")
+            return HttpResponseRedirect(reverse('accounts.views.profile_skills_persistence'))
+        else:
+            context = profile_skills_common(request, technology_type)
+            context['form'] = form
+    else:
+        context = profile_skills_common(request, technology_type)
+        context['form'] = forms.ProfileSkillsForm(request,technology_type)
+
+    return render_to_response('accounts/profile_skills_persistence.html', context, context_instance=RequestContext(request))
+
+
 def profile_skills_common(request, technology_type_name):
     """ Pulled out the code that was common between the language_skills
         and framework_skill views.
@@ -309,8 +385,7 @@ def profile_skills_common(request, technology_type_name):
     # Populate list of supported skills for autocomplete widget
     skill_technology_type = TechnologyType.objects.get(name=technology_type_name)
     skill_technologies = Technology.objects.filter(type=skill_technology_type)
-    skill_names = [str(s.name) for s in skill_technologies]
-    json_autocomplete_skills = json.dumps(skill_names)
+    json_autocomplete_skills = [s.name for s in skill_technologies]
 
     # Create expertise values to populate the UI with
     expertise_types = ExpertiseType.objects.all()
@@ -321,32 +396,20 @@ def profile_skills_common(request, technology_type_name):
 
     # Retrieve list of user's language skills from db and create json data to populate UI
     user_skills = Skill.objects.filter(technology__type=skill_technology_type).select_related('technology').select_related('expertise_type')
-    user_skills_list = [ {forms.ProfileSkillsForm.JSON_SKILL_NAME: skill.technology.name,
-                           forms.ProfileSkillsForm.JSON_EXPERTISE: skill.expertise_type.name,
-                           forms.ProfileSkillsForm.JSON_YRS_EXPERIENCE: skill.yrs_experience} for skill in user_skills]
-    json_skills = '[]'
+    user_skills_list = [ {'name': skill.technology.name,
+                          'expertise': skill.expertise_type.name,
+                          'yrs_experience': skill.yrs_experience} for skill in user_skills]
+    json_skills = []
     if user_skills_list:
-        json_skills = json.dumps(user_skills_list)
-        print json_skills
-    else:
-        # if user has no skills specified, then create a list of defaults
-        default_profile_technologies = skill_technologies.filter(is_profile_default=True)
-        default_skills = []
-        for technology in default_profile_technologies:
-            default_skill = {
-                forms.ProfileSkillsForm.JSON_SKILL_NAME:str(technology.name),
-                forms.ProfileSkillsForm.JSON_EXPERTISE:'None',
-                forms.ProfileSkillsForm.JSON_YRS_EXPERIENCE:0
-            }
-            default_skills.append(default_skill)
-        json_skills = json.dumps(default_skills)
+        json_skills = user_skills_list
 
     context = {
         'expertise_options': expertise_options,
         'yrs_experience_options': yrs_experience_options,
-        'json_autocomplete_skills': json_autocomplete_skills,
-        'json_skills': json_skills,
-        'support_email': settings.DEFAULT_SUPPORT_EMAIL
+        'json_autocomplete_skills': json.dumps(json_autocomplete_skills),
+        'json_skills': json.dumps(json_skills),
+        'support_email': settings.DEFAULT_SUPPORT_EMAIL,
+        'TR_XD_REMOTE': settings.TR_XD_REMOTE
     }
 
     return context

@@ -186,8 +186,8 @@ def deploy(version):
     
     with settings(user="root"):
         run("mkdir -p %s" % os.path.join(env.project_deploy_root, "log"))
-        run("chown 30and30 %s" % os.path.join(env.project_deploy_root, "log"))
-        run("chgrp 30and30 %s" % os.path.join(env.project_deploy_root, "log"))
+        run("chown thirty %s" % os.path.join(env.project_deploy_root, "log"))
+        run("chgrp thirty %s" % os.path.join(env.project_deploy_root, "log"))
         run("ln -fns %s %s" % (target, os.path.join(env.project_deploy_root, env.project)))
         
         #If deploying to localdev also adjust the following convenience symlink

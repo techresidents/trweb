@@ -47,12 +47,12 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = '/tmp/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = 'http://localhost:8000/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -133,10 +133,12 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-
+    
     'techresidents_web.common',
     'techresidents_web.accounts',
     'techresidents_web.chat',
+    'techresidents_web.codeboard',
+    'techresidents_web.document',
     'techresidents_web.job',
     'techresidents_web.topic',
     'techresidents_web.whiteboard',
@@ -183,6 +185,12 @@ EMAIL_PORT = 25
 #EMAIL_HOST_PASSWORD = 'password'
 DEFAULT_FROM_EMAIL = 'Tech Residents Support <jmullins@techresidents.com>'
 DEFAULT_SUPPORT_EMAIL = 'Tech Residents Support <support@techresidents.com>'
+
+#Landing settings
+LANDING_PLACEHOLDER = False
+
+#Registration settings
+REGISTRATION_REQUIRES_CODE = False
 
 #Tech Residents specific settings
 #Login using HTTPS. This is should only be used by the landing page which is http,
