@@ -209,4 +209,5 @@ TOKBOX_IS_STAGING = True
 
 
 #Django message settings
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+#MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'

@@ -48,7 +48,7 @@ class SessionStore(SessionBase):
     
     def _get_riak_session(self, session_key=None):
         """ Return the session object from Riak bucket """
-        session_key = session_key or self._session_key
+        session_key = session_key or self.session_key
         riak_session_key = RIAK_SESSION_KEY % dict(session_key=session_key)
         return self.bucket.get(riak_session_key)
 
@@ -97,7 +97,7 @@ class SessionStore(SessionBase):
         encoded_session_data = self.encode(session_data)
         
         #Riak bucket data
-        #expire_date is stored in seconds, since datetime() objects are not JSON serializable.
+        #expire_time is stored in seconds, since datetime() objects are not JSON serializable.
         
         #Only store the user id and session expiry unencoded for consumption
         #in non-django applications.
@@ -131,7 +131,7 @@ class SessionStore(SessionBase):
         Deletes the session data under this key. If the key is None, the
         current session key value is used.
         """
-        session_key = session_key or self._session_key
+        session_key = session_key or self.session_key
         if session_key is None:
             return
         
