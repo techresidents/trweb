@@ -22,7 +22,9 @@ define([
             return {
                 tagId: null,
                 userId: null,
+                minuteId: null,
                 name: null,
+                tagReferenceId: null,
             };
         },
         
@@ -42,7 +44,9 @@ define([
                 this.set({
                     tagId: this.msg.tagId,
                     userId: this.header.userId,
+                    minuteId: this.msg.minuteId,
                     name: this.msg.name,
+                    tagReferenceId: this.msg.tagReferenceId,
                 });
             }
         },
@@ -62,6 +66,24 @@ define([
 
         setName: function(name) {
             this.set({name: name});
+            return this;
+        },
+
+        minuteId: function() {
+            return this.get('minuteId');
+        },
+
+        setMinuteId: function(minuteId) {
+            this.set({minuteId: minuteId});
+            return this;
+        },
+
+        tagReferenceId: function() {
+            return this.get('tagReferenceId');
+        },
+
+        setTagReferenceId: function(tagReferenceId) {
+            this.set({tagReferenceId: tagReferenceId});
             return this;
         },
 

@@ -65,6 +65,7 @@
                 </div>
                 <div id="tags" class="tab-pane fade">
                     <h5>Tags</h5>
+                    <select></select>
                     <ul id="taglist"/>
                 </div>
                 <div id="whiteboard" class="span10 well tab-pane fade">
@@ -121,6 +122,12 @@
     <% if(myTag) { %>
         <a class="close-inline destroy">x</a>
     <% } %>
+</script>
+
+<script type="text/template" id="tag-topic-select-template">
+    <%_.each(topics, function(topic) { %>
+        <option class="level<%= topic.level %>" value="<%=topic.id%>"><%=topic.title%></option>
+    <% }); %>
 </script>
 
 <script type="text/template" id="discuss-template">

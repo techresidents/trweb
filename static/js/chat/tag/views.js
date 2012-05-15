@@ -3,8 +3,10 @@ define([
     'Underscore',
     'Backbone',
     'chat/tag/models',
+    'chat/minute/models',
+    'chat/agenda/models',
     'lookup/views',
-], function($, _, Backbone, models, lookup, user) {
+], function($, _, Backbone, models, minute, agenda, lookup, user) {
 
 
     /**
@@ -115,17 +117,19 @@ define([
             });
 
             new ChatTaggerListView({
-                    el: this.$(this.listSelector),
-                    collection: models.tagCollection
+                el: this.$(this.listSelector),
+                collection: models.tagCollection
             }).render();
         },
         
         addTag: function() {
             var value = this.tagInput.val();
+            var activeMinute = minute.minuteCollection.active();
 
-            if(value) {
+            if(value && activeMinute) {
                 var tag = new models.Tag({
-                        name: value
+                    name: value,
+                    minuteId: activeMinute.id
                 });
                 tag.save();
 
@@ -180,25 +184,91 @@ define([
      * @constructor
      * @param {Object} options
      *   collection: TagCollection (required)
+     *   filter: callback method to filter displayed
+     *      tags. Method will receive the Tag object
+     *      as its sole parameter and should return
+     *      a boolean indicated whether the tag
+     *      should be displayed (optional)
+     *   context: callback context (optional)
      */
     var ChatTagListView = Backbone.View.extend({
 
         tagName: 'ul',
         
         initialize: function() {
+            this.filter = this.options.filter || this._passThroughFilter;
+            this.context = this.options.context || this;
             this.collection.bind("reset", this.render, this);
             this.collection.bind("add", this.added, this);
+            this.itemViews = [];
         },
 
         render: function() {
+            this.$el.empty();
             this.collection.each(this.added, this);
+            return this;
         },
         
         added: function(model) {
             var view = new ChatTagItemView({model: model}).render();
             view.$el.fadeTo(1000, 1);
+            view.$el.toggle(this.filter.call(this.context, model));
             this.$el.prepend(view.el);
-        }
+            this.itemViews.push(view);
+        },
+
+        applyFilter: function() {
+            var that=this;
+            _.each(this.itemViews, function(view) {
+                view.$el.toggle(that.filter.call(that.context, view.model));
+            });
+        },
+
+        _passThroughFilter: function(tag) {
+            return true;
+        },
+    });
+
+    /**
+     * Chat tag topic select view.
+     * @constructor
+     * @param {Object} options
+     *   model: Agenda (required)
+     *   onChange: callback method to be invoked
+     *      when topic selection changes. Method
+     *      will be invoked with the selected Topic
+     *      object as the sole parameter. (optional)
+     *   context: callback context (optional)
+     */
+    var ChatTagTopicSelectView = Backbone.View.extend({
+
+        tagName: 'select',
+
+        templateSelector: '#tag-topic-select-template',
+
+        events: {
+            'change': 'changed',
+        },
+        
+        initialize: function() {
+            this.templateSelector = this.options.templateSelector || this.templateSelector;
+            this.template = _.template($(this.templateSelector).html());
+            this.onChange = this.options.onChange;
+            this.context = this.options.context;
+        },
+
+        render: function() {
+            this.$el.html(this.template({'topics': this.model.topics().toJSON()}));
+            return this;
+        },
+
+        changed: function(e) {
+            var topicId = e.currentTarget.value;
+            var topic = this.model.topics().get(topicId);
+            if(this.onChange) {
+                this.onChange.call(this.context, topic);
+            }
+        },
     });
 
 
@@ -208,20 +278,61 @@ define([
      * @param {Object} options
      *   templateSelector: html template selector (optional)
      *   listSelector: el selector for ChatTagListView (optional)
+     *   topicSelector: el selector for ChatTagTopicSelectView (optional)
      */
     var ChatTagTabView = Backbone.View.extend({
 
         listSelector: 'ul',
 
+        topicSelector: 'select',
+
         initialize: function() {
             this.listSelector = this.options.listSelector || this.listSelector;
+            this.topicSelector = this.options.topicSelector || this.topicSelector;
+            this.selectedTopic = agenda.agenda.topics().first();
+            this.listView = null;
+            this.topicSelectView = null;
         },
 
         render: function() {
-            new ChatTagListView({
-                el: this.$(this.listSelector),
-                collection: models.tagCollection
+            this.topicSelectView = new ChatTagTopicSelectView({
+                el: this.$(this.topicSelector),
+                model: agenda.agenda,
+                onChange: this.topicChanged,
+                context: this,
             }).render();
+
+            this.listView = new ChatTagListView({
+                el: this.$(this.listSelector),
+                collection: models.tagCollection,
+                filter: this.listViewTagFilter,
+                context: this,
+            }).render();
+        },
+
+        topicChanged: function(topic) {
+            //reapply list filter with updated selected topic
+            this.selectedTopic = topic;
+            this.listView.applyFilter();
+        },
+
+        listViewTagFilter: function(tag) {
+            var result = false;
+
+            var tagMinute = minute.minuteCollection.get(tag.minuteId());
+            var tagTopic = agenda.agenda.topics().get(tagMinute.topicId());
+            console.log(tagTopic);
+            
+            var topic = tagTopic;
+            while(topic) {
+                if(topic.id === this.selectedTopic.id) {
+                    result = true;
+                    break;
+                }
+                topic = agenda.agenda.topics().get(topic.parentId());
+            }
+
+            return result;
         },
     });
 

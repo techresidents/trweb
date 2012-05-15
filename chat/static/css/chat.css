@@ -57,6 +57,29 @@
     overflow-y: auto;
 }
 
+#tags .level1 {
+  margin-left: 5px;
+}
+
+
+#tags .level2 {
+  margin-left: 15px;
+}
+
+
+#tags .level3 {
+  margin-left: 25px;
+}
+
+
+#tags .level4 {
+  margin-left: 35px;
+}
+
+#tags .level5 {
+  margin-left: 45px;
+}
+
 #tagger ul {
     display: inline;
     margin: 0 0 5px 5px;

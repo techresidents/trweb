@@ -120,6 +120,17 @@ define([
          * Cross domain compatible sync function.
          */
         sync: xdBackbone.sync,
+
+
+        /**
+         * Return the currently active Minute. 
+         */
+        active: function() {
+            var minutes = this.where({
+                endTimestamp: null,
+            });
+            return _.last(minutes);
+        }
     });
 
     return {
