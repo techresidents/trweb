@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.template import Context
+from django.utils import timezone
 
 from techresidents_web.common.forms import JSONField
 from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType, Location
@@ -165,7 +166,7 @@ class RegistrationActivationForm(forms.Form):
         code = Code.objects.get(type__type='REGISTRATION', code=registration_code)
 
         if not code.used:
-            code.used = datetime.datetime.now()
+            code.used = timezone.now()
             code.save()
 
 class LoginForm(forms.Form):
@@ -286,11 +287,11 @@ class ResetPasswordForm(forms.Form):
         code.user.set_password(self.cleaned_data['password'])
         code.user.save()
 
-        code.used = datetime.datetime.now()
+        code.used = timezone.now()
         code.save()
 
 class ProfileAccountForm(forms.Form):
-    years_experience_range = reversed(range(datetime.datetime.now().year - 50, datetime.datetime.now().year))
+    years_experience_range = reversed(range(timezone.now().year - 50, timezone.now().year))
     years_experience_choices = [(year, year) for year in years_experience_range]
     years_experience_choices.insert(0,('', ''))  # insert blank default value
 

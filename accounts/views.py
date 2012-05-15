@@ -4,13 +4,13 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.contrib.csrf.middleware import csrf_exempt
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 
 from techresidents_web.accounts import forms
 from techresidents_web.accounts.models import Skill

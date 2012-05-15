@@ -1,7 +1,5 @@
 import json
 
-from datetime import datetime
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -9,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils import timezone
 
 import OpenTokSDK
 
@@ -52,7 +51,7 @@ def chat(request,chat_session_id):
     chat_session = models.ChatSession.objects.select_related("chat").get(
             id=chat_session_id,
             users=request.user,
-            chat__start__lte=datetime.now())
+            chat__start__lte=timezone.now())
     
     #Get the associated chat_user and use that token if it exists, otherwise create it.
     chat_user = models.ChatUser.objects.get(chat_session=chat_session, user=request.user)
@@ -132,7 +131,7 @@ def create(request):
             topic = Topic.objects.all()[0]
 
             #create chat
-            chat = models.Chat.objects.create(topic=topic, start=datetime.now(), end=datetime.now()) 
+            chat = models.Chat.objects.create(topic=topic, start=timezone.now(), end=timezone.now()) 
 
             #create chat session
             chat_session = models.ChatSession.objects.create(chat=chat, token=session.session_id) 

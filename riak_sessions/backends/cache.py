@@ -7,6 +7,7 @@ import riak
 
 from django.conf import settings
 from django.contrib.sessions.backends.base import SessionBase, CreateError
+from django.utils import timezone
 
 
 #Riak configuration options and defaults
@@ -68,7 +69,7 @@ class SessionStore(SessionBase):
         
         #Continue to create new session keys while we get collisions
         while True:
-            self.session_key = self._get_new_session_key()
+            self._session_key = self._get_new_session_key()
             try:
                 self.save(must_create=True)
             except CreateError:
@@ -150,8 +151,8 @@ class SessionStore(SessionBase):
         #otherwise create a new session.
         if session.exists():
             session_data = session.get_data()
-            expire_date = datetime.datetime.fromtimestamp(session_data["expire_time"])
-            if datetime.datetime.now() < expire_date:
+            expire_date = datetime.datetime.fromtimestamp(session_data["expire_time"], timezone.utc)
+            if timezone.now() < expire_date:
                 encoded_session_data = session_data["encoded_session_data"]
                 return self.decode(encoded_session_data)
         
