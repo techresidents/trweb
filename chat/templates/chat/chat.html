@@ -49,30 +49,27 @@
         <div class="span12">
             <ul class="nav nav-tabs">
                 <li class="active" ><a data-toggle="tab" href="#agenda">Agenda</a></li>
-                <li><a data-toggle="tab" href="#tags">Tags</a></li>
                 <li><a data-toggle="tab" href="#whiteboard">Whiteboard</a></li>
-                <li><a data-toggle="tab" href="#resource">Resource</a></li>
+                <li><a data-toggle="tab" href="#resources">Resources</a></li>
             </ul>
             <div class="tab-content">
                 <div id="agenda" class="tab-pane fade in active">
                     <div id="agenda-control" class="span10"></div>
                     <div>
                         <div class="span5">
-                            <ul/>
+                            <ul id="agenda-list"></ul>
                         </div>
-                        <div id="agenda-detail" class="span5"></div>
+                        <div class="span5">
+                            <div id="agenda-detail"></div>
+                            <div id="agenda-tag"></div>
+                        </div>
                     </div>
-                </div>
-                <div id="tags" class="tab-pane fade">
-                    <h5>Tags</h5>
-                    <select></select>
-                    <ul id="taglist"/>
                 </div>
                 <div id="whiteboard" class="span10 well tab-pane fade">
                     <div id="whiteboard-container">
                     </div>
                 </div>
-                <div id="resource" class="tab-pane fade">
+                <div id="resources" class="tab-pane fade">
                     <!--
                     <h5>Resource</h5>
                     <iframe src="http://localhost:8000/document/embed/1?width=800&height=600" style="width: 1024px; height: 768px;" frameborder="0"></iframe>
@@ -173,6 +170,11 @@
 <script type="text/template" id="agenda-detail-template">
     <h3><%= title %>: <small><%= durationFormat %><small></h3>
     <p><%= description %></p>
+</script>
+
+<script type="text/template" id="agenda-tag-template">
+    <h3>Tags</h3>
+    <ul/>
 </script>
 
 <script type="text/template" id="agenda-control-template">

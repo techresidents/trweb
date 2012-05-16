@@ -9,7 +9,6 @@ define([
     'lookup/views',
 ], function($, _, Backbone, models, minute, agenda, user, lookup) {
 
-
     /**
      * Chat tagger list item view.
      * @constructor
@@ -56,25 +55,47 @@ define([
      * @constructor
      * @param {Object} options
      *   collection: TagCollection (required)
+     *   filter: callback method to filter displayed
+     *      tags. Method will receive the Tag object
+     *      as its sole parameter and should return
+     *      a boolean indicated whether the tag
+     *      should be displayed (optional)
+     *   context: callback context (optional)
      */
     var ChatTaggerListView = Backbone.View.extend({
 
         tagName: 'ul',
         
         initialize: function() {
+            this.filter = this.options.filter || this._passThroughFilter;
+            this.context = this.options.context || this;
             this.collection.bind('reset', this.render, this);
             this.collection.bind('add', this.added, this);
+            this.itemViews = [];
         },
 
         render: function() {
             this.collection.each(this.added, this);
+            return this;
         },
         
         added: function(model) {
             view = new ChatTaggerItemView({model: model}).render();
             view.$el.fadeTo(1000, 1);
             this.$el.prepend(view.el);
-        }
+            this.itemViews.push(view);
+        },
+
+        applyFilter: function() {
+            var that=this;
+            _.each(this.itemViews, function(view) {
+                view.$el.toggle(that.filter.call(that.context, view.model));
+            });
+        },
+
+        _passThroughFilter: function(tag) {
+            return true;
+        },
     });
 
 
@@ -350,5 +371,7 @@ define([
     return {
         ChatTagTabView: ChatTagTabView,
         ChatTaggerView: ChatTaggerView,
+        ChatTaggerListView: ChatTaggerListView,
+        ChatTagListView: ChatTagListView,
     }
 });

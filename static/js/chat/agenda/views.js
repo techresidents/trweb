@@ -3,9 +3,12 @@ define([
     'Underscore',
     'Backbone',
     'chat/agenda/models',
+    'chat/minute/models',
+    'chat/tag/models',
+    'chat/tag/views',
     'timer/views',
     'timer/util',
-], function($, _, Backbone, models, timer_views, timer_util) {
+], function($, _, Backbone, models, minute_models, tag_models, tag_views, timer_views, timer_util) {
 
     
     /**
@@ -140,6 +143,66 @@ define([
         }
     });
 
+    /**
+     * Agenda tag view.
+     * @constructor
+     * @param {Object} options View options
+     *   templateSelector: html template selector (optional)
+     *   listSelector: tag list el selector (optional)
+     */
+    var AgendaTagView = Backbone.View.extend({
+
+        templateSelector: '#agenda-tag-template',
+
+        listSelector: 'ul',
+
+        initialize: function() {
+            this.templateSelector = this.options.templateSelector || this.templateSelector;
+            this.template = _.template($(this.templateSelector).html());
+            this.listSelector = this.options.listSelector || this.listSelector;
+            this.model.bind('change:selected', this.selectedChange, this);
+            this.listView = null;
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+
+            this.listView = new tag_views.ChatTaggerListView({
+                el: this.$(this.listSelector),
+                collection: tag_models.tagCollection,
+                filter: this.listViewTagFilter,
+                context: this,
+            }).render();
+
+            return this;
+        },
+
+        selectedChange: function() {
+            if(this.listView) {
+                this.listView.applyFilter();
+            }
+        },
+
+        listViewTagFilter: function(tag) {
+            var result = false;
+
+            var tagMinute = minute_models.minuteCollection.get(tag.minuteId());
+            var tagTopic = this.model.topics().get(tagMinute.topicId());
+            var selectedTopic = this.model.selected();
+            
+            var topic = tagTopic;
+            while(topic) {
+                if(topic.id === selectedTopic.id) {
+                    result = true;
+                    break;
+                }
+                topic = this.model.topics().get(topic.parentId());
+            }
+
+            return result;
+        },
+    });
+
 
     /**
      * Agenda control view.
@@ -205,7 +268,8 @@ define([
      * @param {Object} options View options
      *   controlSelector: el selector for AgendaControlView
      *   detailSelector: el selector for AgendaDetailView
-     *   listSelect: el selector for AgendaListView
+     *   listSelector: el selector for AgendaListView
+     *   tagListSelector: el selector for TagListView
      */
     var ChatAgendaTabView = Backbone.View.extend({
 
@@ -213,12 +277,15 @@ define([
 
         detailSelector: '#agenda-detail',
 
-        listSelector: 'ul',
+        listSelector: '#agenda-list',
+
+        tagSelector: '#agenda-tag',
         
         initialize: function() {
             this.controlSelector = this.options.controlSelector || this.controlSelector;
             this.listSelector = this.options.listSelector || this.listSelector;
             this.detailSelector = this.options.detailSelector || this.detailSelector;
+            this.tagSelector = this.options.tagSelector || this.tagSelector;
         },
 
         render: function() {
@@ -236,6 +303,11 @@ define([
 
             new AgendaDetailView({
                 el: this.$(this.detailSelector),
+                model: models.agenda
+            }).render();
+
+            new AgendaTagView({
+                el: this.$(this.tagSelector),
                 model: models.agenda
             }).render();
 

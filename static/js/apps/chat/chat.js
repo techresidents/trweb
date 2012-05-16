@@ -88,10 +88,6 @@ $(document).ready(function() {
             });
             chatAgendaTabView.render();
 
-            var chatTagTabView = new tag.ChatTagTabView({
-                el: $('#tags'),
-            });
-            chatTagTabView.render();
 
             var chatWhiteboardTabView = new whiteboard.ChatWhiteboardTabView({
                 el: $('#whiteboard'),
