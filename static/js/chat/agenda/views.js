@@ -189,7 +189,7 @@ define([
         activeChanged: function() {
             var topic = this.model.active();
             if(topic) {
-                if(topic.rank() === 0) {
+                if(this.timer.running === false) {
                     this.timer.start();
                 }
             } else {

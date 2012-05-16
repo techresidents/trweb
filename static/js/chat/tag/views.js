@@ -5,8 +5,9 @@ define([
     'chat/tag/models',
     'chat/minute/models',
     'chat/agenda/models',
+    'chat/user/models',
     'lookup/views',
-], function($, _, Backbone, models, minute, agenda, lookup, user) {
+], function($, _, Backbone, models, minute, agenda, user, lookup) {
 
 
     /**
@@ -34,7 +35,12 @@ define([
 
         
         render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
+            var timestamp = this.model.header.timestamp_as_date();
+            var json = _.extend(this.model.toJSON(), {
+                user: user.users.get(this.model.userId()).toJSON(),
+                time: timestamp.getHours() + ':' + timestamp.getMinutes()
+            });
+            this.$el.html(this.template(json));
             this.$('[rel=tooltip]').tooltip();
             return this;
         },
@@ -170,7 +176,12 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
+            var timestamp = this.model.header.timestamp_as_date();
+            var json = _.extend(this.model.toJSON(), {
+                user: user.users.get(this.model.userId()).toJSON(),
+                time: timestamp.getHours() + ':' + timestamp.getMinutes()
+            });
+            this.$el.html(this.template(json));
             return this;
         },
 
@@ -321,7 +332,6 @@ define([
 
             var tagMinute = minute.minuteCollection.get(tag.minuteId());
             var tagTopic = agenda.agenda.topics().get(tagMinute.topicId());
-            console.log(tagTopic);
             
             var topic = tagTopic;
             while(topic) {

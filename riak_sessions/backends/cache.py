@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import calendar
 import datetime
 import threading
 
@@ -98,7 +99,6 @@ class SessionStore(SessionBase):
         encoded_session_data = self.encode(session_data)
         
         #Riak bucket data
-        #expire_time is stored in seconds, since datetime() objects are not JSON serializable.
         
         #Only store the user id and session expiry unencoded for consumption
         #in non-django applications.
@@ -107,10 +107,14 @@ class SessionStore(SessionBase):
             if key in session_data:
                 unencoded_session_data[key] = session_data[key]
 
+        #expire_time is stored in epoch time, since datetime() objects are not JSON serializable.
+        #self.get_expiry_date() is in UTC time and must use calendar.timegm to properly convert
+        #it to a unix timestamp. Noe that time.mktime will not work correctly for this since
+        #it assumes local time.
         data = {
             "session_data": unencoded_session_data,
             "encoded_session_data": encoded_session_data,
-            "expire_time": float(self.get_expiry_date().strftime("%s"))
+            "expire_time": calendar.timegm(self.get_expiry_date().timetuple())
         }
         
         #Update the data and store the session

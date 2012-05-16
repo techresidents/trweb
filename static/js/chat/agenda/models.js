@@ -35,6 +35,7 @@ define([
         initialize: function(attributes, options) {
             this.minutes = minute_models.minuteCollection;
             this.minutes.bind('add', this._minuteAdded, this);
+            this.minutes.bind('change', this._minuteChanged, this);
         },
         
         /**
@@ -60,11 +61,11 @@ define([
          * @return {boolean}
          */
         isLeaf: function(topic) {
+            var result = false;
             if(topic) {
-                return this.topics().isLeaf(topic.id);
-            } else {
-                return false;
+                result = this.topics().isLeaf(topic.id);
             }
+            return result;
         },
         
         /**
@@ -288,9 +289,8 @@ define([
          * if the topic is a leaf node.
          */
         _minuteAdded: function(minute) {
-            minute.bind('change', this._minuteChanged, this);
             var topic = this.topic(minute.topicId());
-            if(this.isLeaf) {
+            if(this.isLeaf(topic)) {
                 this._activate(topic);
             }
         },

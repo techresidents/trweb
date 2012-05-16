@@ -67,6 +67,7 @@ def chat(request,chat_session_id):
     for user in chat_session.users.all():
         user = {
             'id': user.id,
+            'name': user.first_name,
         }    
         
         #Add the current to the head of the list

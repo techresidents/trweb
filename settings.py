@@ -29,7 +29,7 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/New_York'
+TIME_ZONE = 'US/Eastern'
 USE_TZ = True
 
 # Language code for this installation. All choices can be found here:
@@ -108,6 +108,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'techresidents_web.common.middleware.TimezoneMiddleware',
 )
 
 ROOT_URLCONF = 'techresidents_web.urls'
@@ -167,6 +168,13 @@ LOGGING = {
         },
     }
 }
+
+#Session settings
+SESSION_COOKIE_AGE = 1209600  #2 weeks
+
+#TODO set session cookie domain to root domain, i.e. techresidents.com
+#to allow for cross sub-domain requests to services at api.techresidents.com
+#SESSION_COOKIE_DOMAIN = 
 
 #Riak Session Cache
 import riak

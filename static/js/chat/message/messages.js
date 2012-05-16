@@ -21,8 +21,19 @@ define([
     _.extend(MessageHeader.prototype, {
         url: function() {
             return "/chat/message";
+        },
+
+        timestamp_as_date: function() {
+            if(this.timestamp) {
+                var date = new Date();
+                date.setTime(this.timestamp * 1000.0);
+                return date;
+            } else {
+                return null;
+            }
         }
     });
+
 
     /**
      * Chat Minute create message.
