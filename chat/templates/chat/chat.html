@@ -65,8 +65,9 @@
                         </div>
                     </div>
                 </div>
-                <div id="whiteboard" class="span10 well tab-pane fade">
-                    <div id="whiteboard-container">
+                <div id="whiteboard" class="tab-pane fade">
+                    <div id="whiteboard-controls">
+
                     </div>
                 </div>
                 <div id="resources" class="tab-pane fade">
@@ -182,6 +183,36 @@
         <button class="btn btn-input next">Next</button>
         <span id="agenda-control-timer"></span>
     </h3>
+</script>
+    
+<script type="text/template" id="whiteboard-controls-template">
+    <div class="span2">
+        <div class="well">
+            <ul class="nav nav-list">
+                <li class="nav-header">Tools</li>
+                <li class="active"><a href="#">Pen</a></li>
+                <li><a href="#">Arrows</a></li>
+                <li><a href="#">Rectangle</a></li>
+                <li><a href="#">Circle</a></li>
+                <li><a href="#">Text</a></li>
+                <li><a href="#">Erase</a></li>
+                <li><a href="#">Clear</a></li>
+                <li><a href="#">Color Picker</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="span9">
+        <div id="nav-panel-whiteboard">
+            <select id="select-whiteboard">
+                <option value="1">Whiteboard #1</option>
+            </select>
+            <button id="whiteboard-add-button" class="btn btn-input">Create</button>
+        </div>
+        <div class="well" id="whiteboard-container">
+
+        </div>
+    </div>
 </script>
 
 

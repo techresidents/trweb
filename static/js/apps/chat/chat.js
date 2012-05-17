@@ -71,16 +71,6 @@ $(document).ready(function() {
             });
             chatTaggerView.render();
 
-            /*
-            //whiteboard view
-            var whiteboardView = new whiteboard.ChatWhiteboardView({
-                    el: $('#whiteboard'),
-                    height: 350,
-                    chatSessionToken: this.options.data.chatSessionToken,
-                    userId: this.chatUsers.first().id,
-                    chatMessageCollection: chatMessageCollection,
-            });
-            */
 
             //create tab views
             var chatAgendaTabView = new agenda.ChatAgendaTabView({
@@ -92,6 +82,8 @@ $(document).ready(function() {
             var chatWhiteboardTabView = new whiteboard.ChatWhiteboardTabView({
                 el: $('#whiteboard'),
             });
+            chatWhiteboardTabView.render();
+
             
             //connect the chat and start polling for messages.
             this.chat.connect();

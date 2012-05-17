@@ -96,6 +96,7 @@ define([
     var WhiteboardCreateMessage = function(attributes) {
         this.type = "WHITEBOARD_CREATE";
         this.whiteboardId = null;
+        this.name = null;
 
         _.extend(this, attributes);
     };
@@ -127,6 +128,45 @@ define([
         }
     });
 
+    /**
+     * Chat Whiteboard Path create message.
+     */
+    var WhiteboardCreatePathMessage = function(attributes) {
+        this.type = "WHITEBOARD_CREATE_PATH";
+        this.whiteboardId = null;
+        this.pathId = null;
+        this.pathData = null;
+
+        _.extend(this, attributes);
+    };
+
+    _.extend(WhiteboardCreatePathMessage.prototype, {
+        type: "WHITEBOARD_CREATE_PATH",
+
+        url: function() {
+            return "/whiteboard/" + this.whiteboardId + "/path";
+        }
+    });
+
+
+    /**
+     * Chat Whiteboard Path delete message.
+     */
+    var WhiteboardDeletePathMessage = function(attributes) {
+        this.type = "WHITEBOARD_DELETE_PATH";
+        this.whiteboardId = null;
+        this.pathId = null;
+
+        _.extend(this, attributes);
+    };
+
+    _.extend(WhiteboardDeletePathMessage.prototype, {
+        type: "WHITEBOARD_DELETE_PATH",
+
+        url: function() {
+            return "/whiteboard/" + this.whiteboardId + "/path";
+        }
+    });
    
     /**
      * Map message types to constructors
@@ -137,6 +177,8 @@ define([
         "TAG_DELETE": TagDeleteMessage,
         "WHITEBOARD_CREATE": WhiteboardCreateMessage,
         "WHITEBOARD_DELETE": WhiteboardDeleteMessage,
+        "WHITEBOARD_CREATE_PATH": WhiteboardCreatePathMessage,
+        "WHITEBOARD_DELETE_PATH": WhiteboardDeletePathMessage,
     };
 
     /**
@@ -164,6 +206,8 @@ define([
         TagDeleteMessage: TagDeleteMessage,
         WhiteboardCreateMessage: WhiteboardCreateMessage,
         WhiteboardDeleteMessage: WhiteboardDeleteMessage,
+        WhiteboardCreatePathMessage: WhiteboardCreatePathMessage,
+        WhiteboardDeletePathMessage: WhiteboardDeletePathMessage,
     };
 
 });
