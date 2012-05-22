@@ -4,7 +4,8 @@ define([
     'Backbone',
     'chat/agenda/models',
     'timer/views',
-], function($, _, Backbone, models, timer) {
+    'text!chat/discuss/templates/discuss.html',
+], function($, _, Backbone, models, timer, discuss_template) {
 
     /**
      * Disucss view.
@@ -15,8 +16,6 @@ define([
      */
     var DiscussView = Backbone.View.extend({
 
-        templateSelector: '#discuss-template',
-
         timerSelector: '#discuss-timer',
 
         events: {
@@ -24,9 +23,7 @@ define([
         },
 
         initialize: function() {
-            this.timerSelector = this.options.timerSelector || this.timerSelector;
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html());
+            this.template = _.template(discuss_template);
             this.model = models.agenda;
             this.model.bind('change:active', this.render, this);
 

@@ -9,6 +9,7 @@ define([
     'chat/tag/models',
     'chat/user/models',
     'chat/whiteboard/models',
+    'resource/models',
 ], function(
     $,
     _,
@@ -19,7 +20,8 @@ define([
     session_models,
     tag,
     user,
-    whiteboard) {
+    whiteboard,
+    resource) {
     
 
     /**
@@ -39,6 +41,7 @@ define([
                 users: null,
                 tags: null,
                 whiteboards: null,
+                resources: null,
             };
         },
         
@@ -72,6 +75,9 @@ define([
                     chatMessages: messages
             });
 
+            //update resources
+            resource.resourceCollection.reset(options.resources);
+
             //update chat agenda topics
             agenda.agenda.topics().reset(options.topics);
 
@@ -83,7 +89,8 @@ define([
                 currentUser: user.currentUser,
                 agenda: agenda.agenda,
                 tags: tag.tagCollection,
-                whiteboards: whiteboard.whiteboardCollection
+                whiteboards: whiteboard.whiteboardCollection,
+                resources: resource.resourceCollection,
             });
 
         },
@@ -122,6 +129,10 @@ define([
 
         whiteboards: function() {
             return this.get('whiteboards');
+        },
+
+        resources: function() {
+            return this.get('resources');
         },
     });
 

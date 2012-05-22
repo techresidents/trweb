@@ -54,26 +54,12 @@
             </ul>
             <div class="tab-content">
                 <div id="agenda" class="tab-pane fade in active">
-                    <div id="agenda-control" class="span10"></div>
-                    <div>
-                        <div class="span5">
-                            <ul id="agenda-list"></ul>
-                        </div>
-                        <div class="span5">
-                            <div id="agenda-detail"></div>
-                            <div id="agenda-tag"></div>
-                        </div>
-                    </div>
                 </div>
                 <div id="whiteboard" class="span10 well tab-pane fade">
                     <div id="whiteboard-container">
                     </div>
                 </div>
                 <div id="resources" class="tab-pane fade">
-                    <!--
-                    <h5>Resource</h5>
-                    <iframe src="http://localhost:8000/document/embed/1?width=800&height=600" style="width: 1024px; height: 768px;" frameborder="0"></iframe>
-                    -->
                 </div>
             </div>
         </div>
@@ -91,98 +77,10 @@
         chatSessionToken: "{{chat_session_token}}",
         chatUserToken: "{{chat_user_token}}",
         users: {{users_json}},
-        topics: {{topics_json}}
+        topics: {{topics_json}},
+        resources: {{resources_json}},
     };
 </script>
 {% endautoescape %}
-
-<!-- Templates -->
-
-<script type="text/template" id="chat-user-header-template">
-</script>
-
-<script type="text/template" id="chat-user-template">
-    <div class="user<%= id %>-border chat-user-container" style="width: 300px; height: 225px;">
-        <div id="user<%= id %>">
-            <img style="height: 225px;" src="{{STATIC_URL}}img/person.jpg"/>
-        </div>
-    </div>
-</script>
-
-<script type="text/template" id="chat-user-footer-template">
-    <p>Connected: <%= isConnected %> </p>
-    <p>Publishing: <%= isPublishing %> </p>
-</script>
-
-<script type="text/template" id="tag-item-template">
-    <a class="user<%= userId %>" href="#"><%= name %></a>
-    <% if(myTag) { %>
-        <a class="close-inline destroy">x</a>
-    <% } %>
-    <span>by <%= user.name %> at <%= time %> </span>
-</script>
-
-<script type="text/template" id="tag-topic-select-template">
-    <%_.each(topics, function(topic) { %>
-        <option class="level<%= topic.level %>" value="<%=topic.id%>"><%=topic.title%></option>
-    <% }); %>
-</script>
-
-<script type="text/template" id="discuss-template">
-    <div class="span1">
-        <h3>Discuss</h3>
-    </div>
-    <div class="span7">
-        <h3><%= root.title %>: <%= title %></h3>
-    </div>
-    <button class="btn btn-input next">Next</button>
-    <span id="discuss-timer"/>
-</script>
-
-<script type="text/template" id="tagger-template">
-    <div class="span1">
-        <h3>Tag</h3>
-    </div>
-    <div class="span8">
-        <div>
-            <input class="span7">
-            <button class="btn btn-input add">Add</button>
-            <span><strong>Recent Tags</strong>
-                <ul/>
-            </span>
-        </div>
-    </div>
-</script>
-
-<script type="text/template" id="tagger-item-template">
-    <a class="user<%= userId %>" rel="tooltip" href="#" title="by <%= user.name %> at <%= time %>"><%= name %></a>
-    <% if(myTag) { %>
-        <a class="close-inline destroy">x</a>
-    <% } %>
-</script>
-
-<script type="text/template" id="agenda-item-template">
-    <div class="level<%= level %>">
-        <%= title %>
-    </div>
-</script>
-
-<script type="text/template" id="agenda-detail-template">
-    <h3><%= title %>: <small><%= durationFormat %><small></h3>
-    <p><%= description %></p>
-</script>
-
-<script type="text/template" id="agenda-tag-template">
-    <h3>Tags</h3>
-    <ul/>
-</script>
-
-<script type="text/template" id="agenda-control-template">
-    <h3><%= title %>
-        <button class="btn btn-input next">Next</button>
-        <span id="agenda-control-timer"></span>
-    </h3>
-</script>
-
 
 {% endblock %}

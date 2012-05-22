@@ -2,9 +2,11 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
+    'core/mediator',
     'chat/models',
     'chat/agenda/views',
     'chat/discuss/views',
+    'chat/resource/views',
     'chat/tag/views',
     'chat/user/views',
     'chat/whiteboard/views',
@@ -12,9 +14,11 @@ define([
     $,
     _,
     Backbone,
+    mediator,
     models,
     agenda,
     discuss,
+    resource,
     tag,
     user,
     whiteboard) {
@@ -42,8 +46,9 @@ $(document).ready(function() {
                 chatUserToken: this.options.chatUserToken,
                 users: this.options.users,
                 topics: this.options.topics,
+                resources: this.options.resources,
             });
-            
+
             //set chat model
             models.chat = this.chat;
             
@@ -92,15 +97,32 @@ $(document).ready(function() {
             var chatWhiteboardTabView = new whiteboard.ChatWhiteboardTabView({
                 el: $('#whiteboard'),
             });
+
+            var chatResourceTabView = new resource.ChatResourceTabView({
+                el: $('#resources'),
+            });
+            chatResourceTabView.render();
             
             //connect the chat and start polling for messages.
             this.chat.connect();
             this.chat.messages().longPoll();
         },
     });
-    
-    //constuct main app view
-    app = new ChatAppView(data);
+   
+
+    var ChatApp = mediator.Mediator.extend({
+
+        notifications: {
+        },
+
+        initialize: function(options) {
+            this.view = new ChatAppView(options);
+        },
+
+    });
+
+    //constuct main app 
+    app = new ChatApp(data);
 });
 
     

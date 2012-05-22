@@ -3,22 +3,28 @@ define([
     'Underscore',
     'Backbone',
     'spin',
-], function($, _, Backbone, spin) {
+    'text!chat/user/templates/user.html',
+    'text!chat/user/templates/user_header.html',
+    'text!chat/user/templates/user_footer.html',
+], function(
+    $,
+    _,
+    Backbone,
+    spin,
+    user_template,
+    user_header_template,
+    user_footer_template) {
 
     /**
      * Chat user header view.
      * @constructor
      * @param {Object} options
      *   model: User model (required)
-     *   templateSelector: html template selector (optional)
      */
     var ChatUserHeaderView = Backbone.View.extend({
 
-        templateSelector: '#chat-user-header-template',
-
         initialize: function() {
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html()),
+            this.template = _.template(user_header_template);
             this.model.bind('change', this.render, this);
         },
 
@@ -39,11 +45,8 @@ define([
      */
     var ChatUserFooterView = Backbone.View.extend({
 
-        templateSelector: '#chat-user-footer-template',
-
         initialize: function() {
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html()),
+            this.template = _.template(user_footer_template);
             this.model.bind('change', this.render, this);
         },
 
@@ -62,15 +65,11 @@ define([
      *   model: User model (required)
      *   chatSession: ChatSession model (required)
      *   css: style to add to view (optional)
-     *   templateSelector: html template selector (optional)
      */
     var ChatUserView = Backbone.View.extend({
 
-        templateSelector: '#chat-user-template',
-
         initialize: function() {
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html());
+            this.template = _.template(user_template);
 
             this.user = this.model;
             this.chatSession = this.options.chatSession;

@@ -7,28 +7,42 @@ define([
     'chat/agenda/models',
     'chat/user/models',
     'lookup/views',
-], function($, _, Backbone, models, minute, agenda, user, lookup) {
+    'text!chat/tag/templates/tag_tab.html',
+    'text!chat/tag/templates/tag_item.html',
+    'text!chat/tag/templates/tagger.html',
+    'text!chat/tag/templates/tagger_item.html',
+    'text!chat/tag/templates/tag_topic_select.html',
+], function(
+    $,
+    _,
+    Backbone,
+    models,
+    minute,
+    agenda,
+    user,
+    lookup,
+    tag_tab_template,
+    tag_item_template,
+    tagger_template,
+    tagger_item_template,
+    tag_topic_select_template) {
 
     /**
      * Chat tagger list item view.
      * @constructor
      * @param {Object} options
      *   model: Tag model (required)
-     *   templateSelector: html template selector (optional)
      */
     var ChatTaggerItemView = Backbone.View.extend({
 
         tagName: 'li',
-
-        templateSelector: '#tagger-item-template',
 
         events: {
             'click .destroy': 'destroy',
         },
 
         initialize: function() {
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html());
+            this.template = _.template(tagger_item_template);
             this.model.bind('destroy', this.remove, this);
         },
 
@@ -104,13 +118,8 @@ define([
      * Chat tagger view.
      * @constructor
      * @param {Object} options
-     *   templateSelector: html template selector (optional)
-     *   inputSelector: el input selector for LookupView (optional)
-     *   listSelector: el selector for ChatTaggerListView (optional)
      */
     var ChatTaggerView = Backbone.View.extend({
-
-        templateSelector: '#tagger-template',
 
         inputSelector: 'input',
 
@@ -121,11 +130,7 @@ define([
         },
 
         initialize: function() {
-            this.inputSelector = this.options.inputSelector || this.inputSelector;
-            this.listSelector = this.options.listSelector || this.listSelector;
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template =  _.template($(this.templateSelector).html());
-
+            this.template =  _.template(tagger_template);
             this.tagInput = null;
         },
 
@@ -178,21 +183,17 @@ define([
      * @constructor
      * @param {Object} options
      *   model: Tag model (required)
-     *   templateSelector: html template selector (optional)
      */
     var ChatTagItemView = Backbone.View.extend({
 
         tagName: 'li',
-
-        templateSelector: '#tag-item-template',
 
         events: {
             'click .destroy': 'destroy',
         },
 
         initialize: function() {
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html());
+            this.template = _.template(tag_item_template);
             this.model.bind('destroy', this.remove, this);
         },
 
@@ -276,15 +277,12 @@ define([
 
         tagName: 'select',
 
-        templateSelector: '#tag-topic-select-template',
-
         events: {
             'change': 'changed',
         },
         
         initialize: function() {
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html());
+            this.template = _.template(tag_topic_select_template);
             this.onChange = this.options.onChange;
             this.context = this.options.context;
         },
@@ -308,7 +306,6 @@ define([
      * Chat tag tab view.
      * @constructor
      * @param {Object} options
-     *   templateSelector: html template selector (optional)
      *   listSelector: el selector for ChatTagListView (optional)
      *   topicSelector: el selector for ChatTagTopicSelectView (optional)
      */
@@ -319,14 +316,15 @@ define([
         topicSelector: 'select',
 
         initialize: function() {
-            this.listSelector = this.options.listSelector || this.listSelector;
-            this.topicSelector = this.options.topicSelector || this.topicSelector;
+            this.template = _.template(tag_tab_template);
             this.selectedTopic = agenda.agenda.topics().first();
             this.listView = null;
             this.topicSelectView = null;
         },
 
         render: function() {
+            this.$el.html(this.template());
+
             this.topicSelectView = new ChatTagTopicSelectView({
                 el: this.$(this.topicSelector),
                 model: agenda.agenda,
