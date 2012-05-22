@@ -205,9 +205,29 @@
     <div class="span9">
         <div id="nav-panel-whiteboard">
             <select id="select-whiteboard">
-                <option value="1">Whiteboard #1</option>
+                <%_.each(whiteboardCollection, function(whiteboard) { %>
+                    <option value="<%= whiteboard.whiteboardId %>"><%= whiteboard.name %></option>
+                <% }); %>
             </select>
-            <button id="whiteboard-add-button" class="btn btn-input">Create</button>
+            <button class="btn btn-input" data-toggle="modal" href="#create-whiteboard-modal">Create</button>
+            <button id="whiteboard-delete-button" class="btn btn-input">Delete</button>
+
+            <div class="modal hide fade" id="create-whiteboard-modal">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">×</button>
+                    <h3>Whiteboard Name</h3>
+                </div>
+                <div class="modal-body">
+                    <div id="create-whiteboard-name-input">
+                        <input type="text" class="input-xlarge" id="whiteboard-name-input">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn" data-dismiss="modal">Close</a>
+                    <a href="#" id="whiteboard-add-button" class="btn btn-primary">OK</a>
+                </div>
+            </div>
+
         </div>
         <div class="well" id="whiteboard-container">
 

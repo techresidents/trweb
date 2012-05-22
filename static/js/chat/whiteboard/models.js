@@ -100,6 +100,28 @@ define([
         model: Whiteboard,
 
         /**
+         * Override the 'add' method in order to enforce that
+         * a whiteboard's name is unique.
+         *
+         * This will solve the race-condition problem
+         * when user's first join a chat and a default
+         * whiteboard is created if none exists.
+         * @param models
+         * @param options
+         */
+        add: function(model, options) {
+            // if model.name is not already in then collection, then add it
+            var whiteboards = this.where({'name': model.name()});
+            if (whiteboards.length > 0){
+                console.log('Warning: Duplicate model tried to be added the whiteboard collection.');
+                return this;
+            } else {
+                // return this.__super__.add.apply(this, arguments);
+                return Backbone.Collection.prototype.add.call(this, model, options);
+            }
+        },
+
+        /**
          * Cross domain compatible sync.
          */
         sync: xdBackbone.sync,

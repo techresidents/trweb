@@ -109,7 +109,7 @@ define([
         },
 
         whiteboardDeletePath: function(model) {
-            var wb = whiteboard.whiteboardPathCollection.get(model.get('msg').whiteboardId);
+            var wb = whiteboard.whiteboardCollection.get(model.get('msg').whiteboardId);
             var wbPaths = wb.paths.where({'pathId': model.get('msg').pathId});
             if(1 == wbPaths.length) {
                 path = wbPaths[0];
