@@ -55,8 +55,9 @@
             <div class="tab-content">
                 <div id="agenda" class="tab-pane fade in active">
                 </div>
-                <div id="whiteboard" class="span10 well tab-pane fade">
-                    <div id="whiteboard-container">
+                <div id="whiteboard" class="tab-pane fade">
+                    <div id="whiteboard-controls">
+
                     </div>
                 </div>
                 <div id="resources" class="tab-pane fade">
@@ -82,5 +83,57 @@
     };
 </script>
 {% endautoescape %}
+
+<!-- Templates -->
+    
+<script type="text/template" id="whiteboard-controls-template">
+    <div class="span2">
+        <div class="well">
+            <ul class="nav nav-list">
+                <li class="nav-header">Tools</li>
+                <li class="active"><a href="#">Pen</a></li>
+                <li><a href="#">Arrows</a></li>
+                <li><a href="#">Rectangle</a></li>
+                <li><a href="#">Circle</a></li>
+                <li><a href="#">Text</a></li>
+                <li><a href="#">Erase</a></li>
+                <li><a href="#">Clear</a></li>
+                <li><a href="#">Color Picker</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="span9">
+        <div id="nav-panel-whiteboard">
+            <select id="select-whiteboard">
+                <%_.each(whiteboardCollection, function(whiteboard) { %>
+                    <option value="<%= whiteboard.whiteboardId %>"><%= whiteboard.name %></option>
+                <% }); %>
+            </select>
+            <button class="btn btn-input" data-toggle="modal" href="#create-whiteboard-modal">Create</button>
+            <button id="whiteboard-delete-button" class="btn btn-input">Delete</button>
+
+            <div class="modal hide fade" id="create-whiteboard-modal">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">×</button>
+                    <h3>Whiteboard Name</h3>
+                </div>
+                <div class="modal-body">
+                    <div id="create-whiteboard-name-input">
+                        <input type="text" class="input-xlarge" id="whiteboard-name-input">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn" data-dismiss="modal">Close</a>
+                    <a href="#" id="whiteboard-add-button" class="btn btn-primary">OK</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="well" id="whiteboard-container">
+
+        </div>
+    </div>
+</script>
 
 {% endblock %}

@@ -36,6 +36,8 @@ define([
                 'TAG_DELETE': this.tagDelete,
                 'WHITEBOARD_CREATE': this.whiteboardCreate,
                 'WHITEBOARD_DELETE': this.whiteboardDelete,
+                'WHITEBOARD_CREATE_PATH': this.whiteboardCreatePath,
+                'WHITEBOARD_DELETE_PATH': this.whiteboardDeletePath,
             };
 
             this.chatMessages.bind('add', this.added, this);
@@ -81,7 +83,7 @@ define([
         },
 
         whiteboardCreate: function(model) {
-            var wb = new whiteboard(null, {
+            var wb = new whiteboard.Whiteboard(null, {
                 header: model.header(),
                 msg: model.msg()
             });
@@ -92,6 +94,26 @@ define([
             var wb = whiteboard.whiteboardCollection.get(model.get('msg').whiteboardId);
             if(wb) {
                 wb.trigger('destroy', wb);
+            }
+        },
+
+        whiteboardCreatePath: function(model) {
+            var wbPath = new whiteboard.WhiteboardPath(null, {
+                header: model.header(),
+                msg: model.msg()
+            });
+            var wb = whiteboard.whiteboardCollection.get(model.get('msg').whiteboardId);
+            if(wb) {
+                wb.paths.add(wbPath);
+            }
+        },
+
+        whiteboardDeletePath: function(model) {
+            var wb = whiteboard.whiteboardCollection.get(model.get('msg').whiteboardId);
+            var wbPaths = wb.paths.where({'pathId': model.get('msg').pathId});
+            if(1 == wbPaths.length) {
+                path = wbPaths[0];
+                path.trigger('destroy', path);
             }
         },
 

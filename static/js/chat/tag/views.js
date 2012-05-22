@@ -113,7 +113,6 @@ define([
     });
 
 
-
     /**
      * Chat tagger view.
      * @constructor
