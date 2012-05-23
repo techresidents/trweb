@@ -16,14 +16,9 @@ define([
 
         initialize: function() {
             whiteboardViews.WhiteboardView.prototype.initialize.call(this);
-
-            this.chatSessionToken = this.options.chatSessionToken;
-            this.userId = this.options.userId;
-
-            //this.chatMessageCollection = this.options.chatMessageCollection;
-            //this.chatMessageCollection.bind('reset', this.reset, this);
-            //this.chatMessageCollection.bind('add', this.added, this);
-            
+            //this.whiteboardId = this.options.id;
+            //this.chatSessionToken = this.options.chatSessionToken;
+            //this.userId = this.options.userId;
             this.serializer = new serialize.Serializer();
         },
 
@@ -31,18 +26,13 @@ define([
         },
 
         added: function(model) {
-            if(model.msgType() != 'whiteboard') {
-                return;
-            }
-            
             var msg = model.get('msg');
             this.paper.add(this.serializer.deserializeElement(msg.data));
         },
 
         onElementAdded: function(tool, element) {
-            /*
             whiteboardViews.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
-
+            /*
             var header = new messages.MessageHeader({
                     chatSessionToken: this.chatSessionToken,
                     userId: this.userId
@@ -66,6 +56,15 @@ define([
 
 
     /**
+     * Mediator.
+     * Responsible for coordinating and composing views together.
+     */
+    var ChatWhiteboardMediatorView = Backbone.View.extend({
+
+    });
+
+
+    /**
      * Whiteboard container view.
      * This view will be responsible for displaying all of the
      * tools and other whiteboard action buttons. This view
@@ -76,9 +75,9 @@ define([
 
         templateSelector: '#whiteboard-controls-template',
         events: {
-            "change #select-whiteboard": "selectionUpdate",
-            "click #whiteboard-add-button": "addButtonHandler",
-            "click #whiteboard-delete-button": "deleteButtonHandler"
+            "change #select-whiteboard": "drawSelectedWhiteboard",
+            "click #whiteboard-add-button": "addWhiteboardButtonHandler",
+            "click #whiteboard-delete-button": "deleteWhiteboardButtonHandler"
         },
 
         initialize: function() {
@@ -100,7 +99,9 @@ define([
                 whiteboard.save();
             }
 
-            // TODO not sure if I should do these two steps or not. Is it worthwhile if user doesn't have the data yet?
+            // TODO not sure if I need last part or not. Is it worthwhile if user doesn't have the data yet?
+            this.selected = null;
+            this.whiteboardViews = {};
             this.jsonWhiteboardList = {'whiteboardCollection': this.collection.toJSON()};
             //this.collection.each(this.added, this);
 
@@ -109,10 +110,14 @@ define([
             this.collection.bind("remove", this.removed, this);
         },
 
+        /**
+         * Render element to screen
+         */
         render: function() {
-            console.log('rendering control view');
-            console.log(this.collection.toJSON());
+            console.log('render() called');
             this.$el.html(this.template(this.jsonWhiteboardList));
+            this.whiteboardContainer = this.$('#whiteboard-container'); // can't do this in initialize b/c the DOM element won't exist yet
+            this.drawSelectedWhiteboard();
             return this;
         },
 
@@ -122,10 +127,23 @@ define([
          * @param model
          */
         added: function(model) {
+
+            // create new whiteboard view
+            var view = new ChatWhiteboardView();
+            this.whiteboardViews[model.id] = view;
             console.log('added() called');
-            //console.log(model.myWhiteboard); // TODO switch to new whiteboard if user added it
+            console.log(view.render().el);
+            console.log(this.whiteboardContainer);
+            //view.$el.toggle(false);
+            this.whiteboardContainer.append(view.render().el);
+
+            // refresh our json list of whiteboards in our collection and render the UI
             this.jsonWhiteboardList = {'whiteboardCollection': this.collection.toJSON()};
-            this.render();
+            //this.render(); //TODO left off here -- problem was calling render twice.
+
+            // TODO switch to new whiteboard if user added it
+            //console.log('myWhiteboard: ' + parseInt(model.myWhiteboard));
+            //this.selected = this.$el.find('#select-whiteboard').val();
         },
 
         /**
@@ -135,7 +153,10 @@ define([
          */
         removed: function(model) {
             console.log('removed() called');
+            // TODO define what happens when user deletes a whiteboard. Can user only delete the selected whiteboard? What happens after the delete? Which WB is shown?
+            this.whiteboardContainer.children().toggle(false);
             this.jsonWhiteboardList = {'whiteboardCollection': this.collection.toJSON()};
+            delete this.whiteboardViews[model.id];
             this.render();
         },
 
@@ -143,18 +164,28 @@ define([
          * Responsible for showing/hiding the appropriate whiteboard
          * when the user's WB selection changes.
          */
-        selectionUpdate: function(){
+        drawSelectedWhiteboard: function(){
+            /*
             this.selected = this.$el.find('#select-whiteboard').val();
-            console.log('selected whiteboard id: ' + this.selected);
-
+            console.log('currently selected whiteboard id: ' + this.selected);
+            this.whiteboardContainer.children().toggle(false);
+            if (null != this.selected){
+                console.log('current whiteboardViews state: ');
+                console.log(this.whiteboardViews);
+                var view = this.whiteboardViews[this.selected];
+                console.log('whiteboard view to be drawn: ');
+                console.log(view);
+                view.$el.toggle(true);
+            }
+            */
         },
 
 
         /**
-         * This button listens to the create-whiteboard modal dialog's
+         * This function listens to the create-whiteboard modal dialog's
          * success button.
          */
-        addButtonHandler: function() {
+        addWhiteboardButtonHandler: function() {
 
             // read input whiteboard name
             var wbNameInput = this.$('#whiteboard-name-input');
@@ -170,6 +201,7 @@ define([
 
             // max number of whiteboards is 10
             if (this.collection.length <= 10){
+                console.log('Creating whiteboard: ' + wbName);
                 var whiteboard = new whiteboardModels.Whiteboard({
                     name: wbName
                 });
@@ -180,7 +212,10 @@ define([
             this.$el.find('#create-whiteboard-modal').modal('hide');
         },
 
-        deleteButtonHandler: function() {
+        /**
+         * This function listens to the 'delete-whiteboard' button.
+         */
+        deleteWhiteboardButtonHandler: function() {
             // minimum number of whiteboards is 1
             if (this.collection.length > 1) {
                 var currentlySelectedWhiteboardId = this.$el.find('#select-whiteboard').val();
