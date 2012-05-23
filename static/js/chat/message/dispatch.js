@@ -104,7 +104,7 @@ define([
             });
             var wb = whiteboard.whiteboardCollection.get(model.get('msg').whiteboardId);
             if(wb) {
-                wb.paths.add(wbPath);
+                wb.paths().add(wbPath);
             }
         },
 

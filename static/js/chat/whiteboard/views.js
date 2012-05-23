@@ -50,7 +50,9 @@ define([
         addCollectionListener: function(model) {
 
             // create new whiteboard view
-            var view = new ChatWhiteboardView();
+            var view = new ChatWhiteboardView({
+                model : model
+            });
             this.whiteboardViews[model.id] = view;
 
             // add new whiteboard view to DOM
@@ -129,12 +131,60 @@ define([
 
         initialize: function() {
 
-            // call parent
-            whiteboardViews.WhiteboardView.prototype.initialize.call(this);
+            console.log('initialize()');
+            console.log(this.options.model);
 
+            whiteboardViews.WhiteboardView.prototype.initialize.call(this);
             this.serializer = new serialize.Serializer();
+            this.whiteboardModel = this.options.model;
+            this.pathCollection = this.options.model.paths();
+
+            // bindings
+            this.pathCollection.bind('reset', this.reset, this);
+            this.pathCollection.bind('add', this.addedPathCollectionListener, this);
+        },
+
+
+        /**
+         * TODO
+         */
+        reset: function(){
 
         },
+
+        /**
+         * Responsible for receiving WhiteboardCreatePath messages.
+         * This function will deserialze the msg data and draw the
+         * path on the user's screen.
+         * @param model
+         */
+        addedPathCollectionListener: function(model) {
+            console.log('WhiteboardPath message received');
+            this.paper.add(this.serializer.deserializeElement(model.pathData()));
+        },
+
+        /**
+         * @Override
+         * This method will capture data the user draws on their whiteboard,
+         * serialize the data and send out a message for the other chat participants
+         * to receive.
+         * @param tool
+         * @param element
+         */
+        onElementAdded: function(tool, element) {
+            console.log('onElementAdded() called');
+
+            // call super
+            whiteboardViews.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
+
+            // create path message and send (save())
+            var whiteboardPath = new whiteboardModels.WhiteboardPath({
+                whiteboardId : this.whiteboardModel.id,
+                //pathId : element.id,
+                pathData : this.serializer.serializeElement(element)
+            });
+            whiteboardPath.save();
+        }
 
     });
 
