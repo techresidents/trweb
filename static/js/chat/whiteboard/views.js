@@ -9,60 +9,159 @@ define([
 
 
     /**
+     * Mediator.
+     * Responsible for coordinating and composing views together.
+     */
+    var ChatWhiteboardMediatorView = Backbone.View.extend({
+
+        events: {
+            "change #select-whiteboard": "showSelectedWhiteboard"
+        },
+
+        initialize: function() {
+            this.setElement($("#whiteboard"));
+            this.rootWhiteboardNode = null;
+            this.whiteboardViews = {};
+            this.collection.bind("reset", this.render, this);
+            this.collection.bind("add", this.addCollectionListener, this);
+            this.collection.bind("remove", this.removeCollectionListener, this);
+        },
+
+        render: function() {
+
+            // instantiate whiteboard tools view
+            new ChatWhiteboardToolsView().render();
+
+            // instantiate controls view
+            new ChatWhiteboardControlsView({
+                collection: whiteboardModels.whiteboardCollection
+            }).render();
+
+            // instantiate whiteboard container view. This is where the whiteboard will be rendered
+            new ChatWhiteboardContainerView().render();
+            this.rootWhiteboardNode = this.$('#whiteboard-wrapper');
+        },
+
+        /**
+         * This method is responsible for creating a new view for
+         * each whiteboard when it is created.
+         * @param model
+         */
+        addCollectionListener: function(model) {
+
+            // create new whiteboard view
+            var view = new ChatWhiteboardView();
+            this.whiteboardViews[model.id] = view;
+
+            // add new whiteboard view to DOM
+            view.$el.toggle(false);
+            this.rootWhiteboardNode.append(view.render().el);
+
+            // if no whiteboard is being shown, then show the newly created whiteboard
+            if (this.$('#whiteboard-wrapper:first-child').is(':hidden')){
+                console.log('div is hidden, displaying the newly added whiteboard');
+                view.$el.toggle(true);
+            }
+
+            // TODO switch to new whiteboard if user added it
+            //console.log('myWhiteboard: ' + parseInt(model.myWhiteboard));
+            //this.selected = this.$el.find('#select-whiteboard').val();
+        },
+
+        /**
+         * This method is responsible for deleting the whiteboard's view object.
+         * @param model
+         */
+        removeCollectionListener: function(model) {
+            // TODO define what happens when user deletes a whiteboard. Can user only delete the selected whiteboard? What happens after the delete? Which WB is shown?
+            delete this.whiteboardViews[model.id];
+        },
+
+        /**
+         * Responsible for showing/hiding the appropriate whiteboard
+         * when the user's WB selection changes.
+         */
+        showSelectedWhiteboard: function(){
+
+            // determine which whiteboard is selected
+            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
+            console.log('currently selected whiteboard id: ' + selectedWhiteboardId);
+
+            // show the newly selected whitebaord
+            if (null != selectedWhiteboardId &&
+                selectedWhiteboardId in this.whiteboardViews)
+            {
+                // hide the previous whiteboard view
+                this.rootWhiteboardNode.children().toggle(false);
+
+                // show the newly selected whiteboard view
+                var newView = this.whiteboardViews[selectedWhiteboardId];
+                console.log('whiteboard view to be drawn: ');
+                console.log(newView);
+                newView.$el.toggle(true);
+            }
+        },
+    });
+
+
+    /**
      * Whiteboard view.
      * @constructor
      */
     var ChatWhiteboardView = whiteboardViews.WhiteboardView.extend({
 
         initialize: function() {
+
+            // call parent
             whiteboardViews.WhiteboardView.prototype.initialize.call(this);
-            //this.whiteboardId = this.options.id;
-            //this.chatSessionToken = this.options.chatSessionToken;
-            //this.userId = this.options.userId;
+
             this.serializer = new serialize.Serializer();
+
         },
 
-        reset: function() {
-        },
-
-        added: function(model) {
-            var msg = model.get('msg');
-            this.paper.add(this.serializer.deserializeElement(msg.data));
-        },
-
-        onElementAdded: function(tool, element) {
-            whiteboardViews.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
-            /*
-            var header = new messages.MessageHeader({
-                    chatSessionToken: this.chatSessionToken,
-                    userId: this.userId
-            });
-
-            var msg = new messages.WhiteboardCreateMessage({
-                    data: this.serializer.serializeElement(element)
-            });
-
-
-            var message = new models.ChatMessage({
-                    header: header,
-                    msg: msg
-            });
-
-            message.save();
-            //element.remove();
-            */
-        }
     });
 
 
     /**
-     * Mediator.
-     * Responsible for coordinating and composing views together.
+     * Whiteboard container layout.
+     * @constructor
      */
-    var ChatWhiteboardMediatorView = Backbone.View.extend({
+    var ChatWhiteboardContainerView = Backbone.View.extend({
+
+        templateSelector: '#whiteboard-container-template',
+
+        initialize: function() {
+            this.setElement($('#whiteboard-containerZ'));
+            this.template = _.template($(this.templateSelector).html());
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            return this;
+        },
 
     });
 
+    /**
+     * Whiteboard Tools View.
+     * This View is responsible for displaying the list
+     * of tools available for the user to use on the
+     * whiteboard.
+     */
+    var ChatWhiteboardToolsView = Backbone.View.extend({
+
+        templateSelector: '#whiteboard-tools-template',
+
+        initialize: function() {
+            this.setElement($("#whiteboard-tools"));
+            this.template = _.template($(this.templateSelector).html());
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            return this;
+        },
+    });
 
     /**
      * Whiteboard container view.
@@ -75,7 +174,6 @@ define([
 
         templateSelector: '#whiteboard-controls-template',
         events: {
-            "change #select-whiteboard": "drawSelectedWhiteboard",
             "click #whiteboard-add-button": "addWhiteboardButtonHandler",
             "click #whiteboard-delete-button": "deleteWhiteboardButtonHandler"
         },
@@ -101,85 +199,39 @@ define([
 
             // TODO not sure if I need last part or not. Is it worthwhile if user doesn't have the data yet?
             this.selected = null;
-            this.whiteboardViews = {};
             this.jsonWhiteboardList = {'whiteboardCollection': this.collection.toJSON()};
             //this.collection.each(this.added, this);
 
             this.collection.bind("reset", this.render, this);
-            this.collection.bind("add", this.added, this);
-            this.collection.bind("remove", this.removed, this);
+            this.collection.bind("add", this.addCollectionListener, this);
+            this.collection.bind("remove", this.removeCollectionListener, this);
         },
 
         /**
          * Render element to screen
          */
         render: function() {
-            console.log('render() called');
             this.$el.html(this.template(this.jsonWhiteboardList));
-            this.whiteboardContainer = this.$('#whiteboard-container'); // can't do this in initialize b/c the DOM element won't exist yet
-            this.drawSelectedWhiteboard();
             return this;
         },
 
         /**
-         * This method is responsible for updating the list of whiteboards and
-         * creating a new view for each whiteboard when it is created.
+         * This method is responsible for updating the list of whiteboards.
          * @param model
          */
-        added: function(model) {
-
-            // create new whiteboard view
-            var view = new ChatWhiteboardView();
-            this.whiteboardViews[model.id] = view;
-            console.log('added() called');
-            console.log(view.render().el);
-            console.log(this.whiteboardContainer);
-            //view.$el.toggle(false);
-            this.whiteboardContainer.append(view.render().el);
-
-            // refresh our json list of whiteboards in our collection and render the UI
+        addCollectionListener: function(model) {
             this.jsonWhiteboardList = {'whiteboardCollection': this.collection.toJSON()};
-            //this.render(); //TODO left off here -- problem was calling render twice.
-
-            // TODO switch to new whiteboard if user added it
-            //console.log('myWhiteboard: ' + parseInt(model.myWhiteboard));
-            //this.selected = this.$el.find('#select-whiteboard').val();
-        },
-
-        /**
-         * This method is responsible for updating the list of whiteboards and
-         * deleting the whiteboard's view object.
-         * @param model
-         */
-        removed: function(model) {
-            console.log('removed() called');
-            // TODO define what happens when user deletes a whiteboard. Can user only delete the selected whiteboard? What happens after the delete? Which WB is shown?
-            this.whiteboardContainer.children().toggle(false);
-            this.jsonWhiteboardList = {'whiteboardCollection': this.collection.toJSON()};
-            delete this.whiteboardViews[model.id];
             this.render();
         },
 
         /**
-         * Responsible for showing/hiding the appropriate whiteboard
-         * when the user's WB selection changes.
+         * This method is responsible for updating the list of whiteboards
+         * @param model
          */
-        drawSelectedWhiteboard: function(){
-            /*
-            this.selected = this.$el.find('#select-whiteboard').val();
-            console.log('currently selected whiteboard id: ' + this.selected);
-            this.whiteboardContainer.children().toggle(false);
-            if (null != this.selected){
-                console.log('current whiteboardViews state: ');
-                console.log(this.whiteboardViews);
-                var view = this.whiteboardViews[this.selected];
-                console.log('whiteboard view to be drawn: ');
-                console.log(view);
-                view.$el.toggle(true);
-            }
-            */
+        removeCollectionListener: function(model) {
+            this.jsonWhiteboardList = {'whiteboardCollection': this.collection.toJSON()};
+            this.render();
         },
-
 
         /**
          * This function listens to the create-whiteboard modal dialog's
@@ -239,10 +291,9 @@ define([
         },
 
         render: function() {
-            new ChatWhiteboardControlsView({
+            new ChatWhiteboardMediatorView({
                 collection: whiteboardModels.whiteboardCollection
             }).render();
-
         }
     });
 
