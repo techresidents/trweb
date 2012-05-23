@@ -74,7 +74,24 @@ define([
          */
         removeCollectionListener: function(model) {
             // TODO define what happens when user deletes a whiteboard. Can user only delete the selected whiteboard? What happens after the delete? Which WB is shown?
-            delete this.whiteboardViews[model.id];
+
+            if (model.id in this.whiteboardViews)
+            {
+                // Hide and delete the currently selected whiteboard
+                this.rootWhiteboardNode.children().toggle(false);
+                delete this.whiteboardViews[model.id];
+
+                // Select the default whiteboard
+                var whiteboards = this.collection.where({'name': 'Default Whiteboard'});
+                if (1 == whiteboards.length) {
+                    var defaultWhiteboard = whiteboards[0];
+                    if (null != defaultWhiteboard.id){
+                        this.$el.find('#select-whiteboard').val(defaultWhiteboard.id);
+                        this.$el.find('#select-whiteboard').trigger('change');
+                    }
+                }
+            }
+
         },
 
         /**
@@ -95,10 +112,10 @@ define([
                 this.rootWhiteboardNode.children().toggle(false);
 
                 // show the newly selected whiteboard view
-                var newView = this.whiteboardViews[selectedWhiteboardId];
+                var view = this.whiteboardViews[selectedWhiteboardId];
                 console.log('whiteboard view to be drawn: ');
-                console.log(newView);
-                newView.$el.toggle(true);
+                console.log(view);
+                view.$el.toggle(true);
             }
         },
     });
