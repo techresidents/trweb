@@ -101,6 +101,7 @@ define([
 
         },
 
+        // To be overridden by Views/Controllers to listen for this event
         onElementAdded: function(tool, element) {
 
         }
@@ -217,5 +218,8 @@ define([
     return {
         WhiteboardView: WhiteboardView,
         WhiteboardToolView: WhiteboardToolView,
+        Pen: Pen,
+        Rectangle: Rectangle,
+        Circle: Circle,
     }
 });

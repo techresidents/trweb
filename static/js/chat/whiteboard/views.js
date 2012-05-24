@@ -15,7 +15,11 @@ define([
     var ChatWhiteboardMediatorView = Backbone.View.extend({
 
         events: {
-            "change #select-whiteboard": "showSelectedWhiteboard"
+            'change #select-whiteboard': "showSelectedWhiteboard",
+            'click #tools-pen': 'penToolSelected',
+            'click #tools-rect': 'rectToolSelected',
+            'click #tools-circle': 'circleToolSelected',
+            'click #tools-clear': 'clearSelected',
         },
 
         initialize: function() {
@@ -115,11 +119,69 @@ define([
 
                 // show the newly selected whiteboard view
                 var view = this.whiteboardViews[selectedWhiteboardId];
-                console.log('whiteboard view to be drawn: ');
-                console.log(view);
                 view.$el.toggle(true);
             }
         },
+
+
+        clearSelected: function(){
+            console.log('clear tool selected');
+            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
+            if (null != selectedWhiteboardId &&
+                selectedWhiteboardId in this.whiteboardViews)
+            {
+                var whiteboardView = this.whiteboardViews[selectedWhiteboardId];
+                whiteboardView.clear();
+            }
+        },
+
+        penToolSelected: function(){
+            console.log('pen tool selected');
+            this.selectTool('Pen');
+        },
+
+        rectToolSelected: function(){
+            console.log('rectangle tool selected');
+            this.selectTool('Rect');
+        },
+
+        circleToolSelected: function(){
+            console.log('circle tool selected');
+            this.selectTool('Circle');
+        },
+
+        selectTool: function(toolName){
+
+            // determine which whiteboard is currently selected
+            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
+            console.log(selectedWhiteboardId);
+
+            // select the pen tool for this whiteboard
+            if (null != selectedWhiteboardId &&
+                selectedWhiteboardId in this.whiteboardViews)
+            {
+                var whiteboardView = this.whiteboardViews[selectedWhiteboardId];
+                console.log(whiteboardView);
+
+                var tool = null;
+                switch(toolName)
+                {
+                    case 'Pen':
+                        tool = new whiteboardViews.Pen(whiteboardView.paper);
+                        break;
+                    case 'Rect':
+                        tool = new whiteboardViews.Rectangle(whiteboardView.paper);
+                        break;
+                    case 'Circle':
+                        tool = new whiteboardViews.Circle(whiteboardView.paper);
+                        break;
+                    default:
+                        tool = new whiteboardViews.Pen(whiteboardView.paper);
+                }
+
+                whiteboardView.selectTool(tool);
+            }
+        }
     });
 
 
@@ -197,7 +259,6 @@ define([
         }
 
     });
-
 
     /**
      * Whiteboard container layout.
