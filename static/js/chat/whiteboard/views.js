@@ -160,7 +160,18 @@ define([
          */
         addedPathCollectionListener: function(model) {
             console.log('WhiteboardPath message received');
-            this.paper.add(this.serializer.deserializeElement(model.pathData()));
+            var elements = this.paper.add(this.serializer.deserializeElement(model.pathData()));
+
+            // After drawing the element, assign the element an ID so that we can use
+            // paper.getById() at a later point in time to delete or perform some other
+            // action on this element.
+            // TODO The elements var can contain multiple elements.  The assumption is that
+            // currently the createWhiteboardMessages will only contain one element.
+            if (elements.length > 1) {
+                elements[0].id = model.id;
+                //console.log(this.paper.getById(model.id));
+            }
+
         },
 
         /**
@@ -177,10 +188,9 @@ define([
             // call super
             whiteboardViews.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
 
-            // create path message and send (save())
+            // create path message and send via save()
             var whiteboardPath = new whiteboardModels.WhiteboardPath({
                 whiteboardId : this.whiteboardModel.id,
-                //pathId : element.id,
                 pathData : this.serializer.serializeElement(element)
             });
             whiteboardPath.save();
