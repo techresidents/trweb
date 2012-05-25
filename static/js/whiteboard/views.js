@@ -206,6 +206,8 @@ define([
     }
 
 
+
+
     var Rectangle = function(paper) {
         this.paper = paper;
         this.rect = null;
@@ -213,6 +215,8 @@ define([
 
     Rectangle.prototype.start = function(x, y) {
         this.rect = this.paper.rect(x, y, 0, 0, 5);
+        this.originX = x;
+        this.originY = y;
     }
 
     Rectangle.prototype.stop = function(x, y) {
@@ -220,12 +224,47 @@ define([
     }
 
     Rectangle.prototype.move = function(x, y) {
-        var originX = this.rect.attr('x');
-        var originY = this.rect.attr('y');
 
-        this.rect.attr('width', x - originX);
-        this.rect.attr('height', y - originY);
+        var width = x - this.originX;
+        var height = y - this.originY;
+
+        // user is drawing rectangle starting at top left corner
+        if (width > 0 && height > 0){
+            this.rect.attr('width', width);
+            this.rect.attr('height', height);
+        }
+
+        // user is drawing rectangle starting at top right corner
+        if (width < 0 && height > 0){
+            var widthValue = Math.abs(width);
+            this.rect.attr('x', this.originX - widthValue);
+            this.rect.attr('width', widthValue);
+            this.rect.attr('height', height);
+        }
+
+        // user is drawing rectangle starting at bottom left corner
+        if (width > 0 && height < 0){
+            var heightValue = Math.abs(height);
+            this.rect.attr('y', this.originY - heightValue);
+            this.rect.attr('width', width);
+            this.rect.attr('height', heightValue);
+        }
+
+        // user is drawing rectangle starting at bottom right corner
+        if (width < 0 && height < 0){
+            var widthValue = Math.abs(width);
+            var heightValue = Math.abs(height);
+            this.rect.attr('x', this.originX - widthValue);
+            this.rect.attr('y', this.originY - heightValue);
+            this.rect.attr('width', widthValue);
+            this.rect.attr('height', heightValue);
+        }
+
     }
+
+
+
+
 
 
     var Circle = function(paper) {
