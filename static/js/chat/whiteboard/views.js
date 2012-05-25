@@ -219,7 +219,8 @@ define([
          */
         resetPathCollectionListener: function(){
             console.log('resetPathCollectionListener() called');
-            this.pathCollection.reset();
+            this.paper.clear();
+
         },
 
         /**

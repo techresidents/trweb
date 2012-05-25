@@ -114,7 +114,8 @@ define([
             if ('reset' == pathId){
                 // treat a pathId of 'reset' as a trigger to clear the whiteboard
                 console.log('dispatch: triggering reset');
-                wb.paths.trigger('reset');
+                console.log(wb);
+                wb.paths().reset();
             }
             else {
                 // delete the specified path
