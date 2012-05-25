@@ -110,10 +110,18 @@ define([
 
         whiteboardDeletePath: function(model) {
             var wb = whiteboard.whiteboardCollection.get(model.get('msg').whiteboardId);
-            var wbPaths = wb.paths.where({'pathId': model.get('msg').pathId});
-            if(1 == wbPaths.length) {
-                path = wbPaths[0];
-                path.trigger('destroy', path);
+            var pathId = model.get('msg').pathId;
+            if ('reset' == pathId){
+                // treat a pathId of 'reset' as a trigger to clear the whiteboard
+                console.log('dispatch: triggering reset');
+                wb.paths.trigger('reset');
+            }
+            else {
+                // delete the specified path
+                var wbPath = wb.paths.get(pathId);
+                if(wbPath) {
+                    wbPath.trigger('destroy', wbPath);
+                }
             }
         },
 

@@ -16,10 +16,12 @@ define([
 
         events: {
             'change #select-whiteboard': "showSelectedWhiteboard",
+            'click #whiteboard-clear-button': 'clearButtonSelected',
             'click #tools-pen': 'penToolSelected',
+            'click #tools-arrow': 'arrowToolSelected',
             'click #tools-rect': 'rectToolSelected',
             'click #tools-circle': 'circleToolSelected',
-            'click #tools-clear': 'clearSelected',
+            'click #tools-text': 'textToolSelected'
         },
 
         initialize: function() {
@@ -108,7 +110,6 @@ define([
 
             // determine which whiteboard is selected
             var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
-            console.log('currently selected whiteboard id: ' + selectedWhiteboardId);
 
             // show the newly selected whitebaord
             if (null != selectedWhiteboardId &&
@@ -124,8 +125,8 @@ define([
         },
 
 
-        clearSelected: function(){
-            console.log('clear tool selected');
+
+        clearButtonSelected: function(){
             var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
             if (null != selectedWhiteboardId &&
                 selectedWhiteboardId in this.whiteboardViews)
@@ -136,44 +137,52 @@ define([
         },
 
         penToolSelected: function(){
-            console.log('pen tool selected');
             this.selectTool('Pen');
         },
 
+        arrowToolSelected: function(){
+            this.selectTool('Arrow');
+        },
+
         rectToolSelected: function(){
-            console.log('rectangle tool selected');
             this.selectTool('Rect');
         },
 
         circleToolSelected: function(){
-            console.log('circle tool selected');
             this.selectTool('Circle');
+        },
+
+        textToolSelected: function(){
+            this.selectTool('Text');
         },
 
         selectTool: function(toolName){
 
             // determine which whiteboard is currently selected
             var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
-            console.log(selectedWhiteboardId);
 
             // select the pen tool for this whiteboard
             if (null != selectedWhiteboardId &&
                 selectedWhiteboardId in this.whiteboardViews)
             {
                 var whiteboardView = this.whiteboardViews[selectedWhiteboardId];
-                console.log(whiteboardView);
-
                 var tool = null;
                 switch(toolName)
                 {
                     case 'Pen':
                         tool = new whiteboardViews.Pen(whiteboardView.paper);
                         break;
+                    case 'Arrow':
+                        tool = new whiteboardViews.Arrow(whiteboardView.paper);
+                        break;
                     case 'Rect':
                         tool = new whiteboardViews.Rectangle(whiteboardView.paper);
                         break;
                     case 'Circle':
                         tool = new whiteboardViews.Circle(whiteboardView.paper);
+                        break;
+                    case 'Text':
+                        tool = new whiteboardViews.Text(whiteboardView.paper);
                         break;
                     default:
                         tool = new whiteboardViews.Pen(whiteboardView.paper);
@@ -193,25 +202,24 @@ define([
 
         initialize: function() {
 
-            console.log('initialize()');
-            console.log(this.options.model);
-
             whiteboardViews.WhiteboardView.prototype.initialize.call(this);
             this.serializer = new serialize.Serializer();
             this.whiteboardModel = this.options.model;
             this.pathCollection = this.options.model.paths();
 
             // bindings
-            this.pathCollection.bind('reset', this.reset, this);
+            this.pathCollection.bind('reset', this.resetPathCollectionListener, this);
             this.pathCollection.bind('add', this.addedPathCollectionListener, this);
+            this.pathCollection.bind('destroy', this.removedPathCollectionListener, this);
         },
 
 
         /**
-         * TODO
+         *
          */
-        reset: function(){
-
+        resetPathCollectionListener: function(){
+            console.log('resetPathCollectionListener() called');
+            this.pathCollection.reset();
         },
 
         /**
@@ -221,7 +229,7 @@ define([
          * @param model
          */
         addedPathCollectionListener: function(model) {
-            console.log('WhiteboardPath message received');
+            console.log('WhiteboardCreatePath message received');
             var elements = this.paper.add(this.serializer.deserializeElement(model.pathData()));
 
             // After drawing the element, assign the element an ID so that we can use
@@ -229,11 +237,24 @@ define([
             // action on this element.
             // TODO The elements var can contain multiple elements.  The assumption is that
             // currently the createWhiteboardMessages will only contain one element.
-            if (elements.length > 1) {
+            if (elements.length > 0) {
                 elements[0].id = model.id;
                 //console.log(this.paper.getById(model.id));
             }
+        },
 
+        /**
+         * Responsible for receiving WhiteboardDeletePath messages.
+         * This function will remove the specified path on the user's screen.
+         * @param model
+         */
+        removedPathCollectionListener: function(model) {
+            console.log('WhiteboardDeletePath message received');
+            var whiteboardPathModel = this.pathCollection.get(model.id);
+            if (whiteboardPathModel){
+                console.log('wb path to be deleted found. destroying whiteboard path');
+                whiteboardPathModel.destroy();
+            }
         },
 
         /**
@@ -256,6 +277,43 @@ define([
                 pathData : this.serializer.serializeElement(element)
             });
             whiteboardPath.save();
+        },
+
+        /**
+         * @Override
+         * This method will capture data the user removed from their whiteboard,
+         * serialize the data and send out a message for the other chat participants
+         * to receive.
+         * @param tool
+         * @param element
+         */
+        onElementRemoved: function(element) {
+            console.log('onElementRemoved() called');
+
+            // call super
+            whiteboardViews.WhiteboardView.prototype.onElementRemoved.call(this, element);
+
+            // the model and the element share the same ID
+            var whiteboardPathModel = this.pathCollection.get(element.id);
+            if (whiteboardPathModel){
+                whiteboardPathModel.destroy();
+            }
+        },
+
+        // TODO this won't work since the url is based upon the pathId.
+        onBoardCleared: function() {
+            console.log('onBoardCleared() called');
+
+            // call super
+            whiteboardViews.WhiteboardView.prototype.onBoardCleared.call(this);
+
+            // create path message with unique pathID to indicate a board-clear operation
+            var whiteboardPath = new whiteboardModels.WhiteboardPath({
+                whiteboardId : this.whiteboardModel.id,
+                pathId : 'reset'
+            });
+            whiteboardPath.destroy();
+
         }
 
     });
@@ -414,6 +472,9 @@ define([
                 if (wb.name() != 'Default Whiteboard'){
                     console.log('Deleting whiteboard: ' + wb.name());
                     wb.destroy();
+
+                    // TODO I suspect that the whiteboard is not getting deleted in the other particpant's view.
+                    // I don't see a DeleteWhiteboardMessage ever being created and sent.
                 }
             }
         }

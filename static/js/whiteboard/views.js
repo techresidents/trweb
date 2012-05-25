@@ -64,6 +64,7 @@ define([
 
         clear: function() {
             this.paper.clear();
+            this.onBoardCleared();
         },
 
         adjustedCoordinates: function(event) {
@@ -104,7 +105,18 @@ define([
         // To be overridden by Views/Controllers to listen for this event
         onElementAdded: function(tool, element) {
 
+        },
+
+        // To be overridden by Views/Controllers to listen for this event
+        onElementRemoved: function(element){
+
+        },
+
+        // To be overridden by Views/Controllers to listen for this event
+        onBoardCleared: function(){
+
         }
+
     });
 
 
@@ -143,6 +155,7 @@ define([
             
     });
 
+
     var Pen = function(paper) {
         this.paper = paper;
         this.path = null;
@@ -151,6 +164,7 @@ define([
     Pen.prototype.start = function(x, y) {
         this.path = this.paper.path();
         this.path.attr('path', ['M', x, y].join(' '));
+        this.path.attr('stroke-width', '2');
     }
 
     Pen.prototype.stop = function(x, y) {
@@ -161,6 +175,34 @@ define([
         var path = this.path.attr('path');
         path += ['L', x, y].join(' ');
         this.path.attr('path', path);
+    }
+
+
+    // TODO use inheritance here. Create tool prototype. Arrow should inherit from Pen.
+    var Arrow = function(paper) {
+        this.paper = paper;
+        this.path = null;
+    }
+
+    Arrow.prototype.start = function(x, y) {
+        this.path = this.paper.path();
+        var pathData =[
+            ['M', x, y].join(' '),
+            ['L', x, y].join(' ')
+        ];
+        this.path.attr('path', pathData);
+        this.path.attr('stroke-width', 2);
+        this.path.attr('arrow-end', 'open');
+    }
+
+    Arrow.prototype.stop = function(x, y) {
+        return this.path;
+    }
+
+    Arrow.prototype.move = function(x, y) {
+        var pathData = this.path.attr('path');
+        pathData += ['L', x, y].join(' ');
+        this.path.attr('path', pathData);
     }
 
 
@@ -184,7 +226,6 @@ define([
         this.rect.attr('width', x - originX);
         this.rect.attr('height', y - originY);
     }
-
 
 
     var Circle = function(paper) {
@@ -215,11 +256,79 @@ define([
         this.circle.attr('r', radius);
     }
 
+
+
+
+
+
+    var Text = function(paper) {
+        this.paper = paper;
+        this.text = null;
+    }
+
+    Text.prototype.start = function(x, y) {
+
+        // show cursor for text input
+        // append to x y coordinate
+        // on enter, capture text, remove div
+        // send text to paper
+
+
+
+        var textInput = new ChatWhiteboardTextInputView();
+        console.log(textInput.render().el);
+        //$(textInput.render().el).insertAfter()
+        $('#whiteboard-wrapper').append(textInput.render().el);
+        //var offsetX = $('whiteboard-wrapper').offset().left;
+        //var offsetY = $('whiteboard-wrapper').offset().top;
+        $('.whiteboard-text-input').css('top', y + 'px');
+        $('.whiteboard-text-input').css('left', x + 'px');
+
+        this.text = this.paper.text(x, y, 'test');
+        //this.text.attr('font-size', 24);
+    }
+
+    Text.prototype.stop = function(x, y) {
+        return this.text;
+    }
+
+    Text.prototype.move = function(x, y) {
+        // no-op
+    }
+
+
+
+
+    /**
+     * Whiteboard text input layout.
+     * @constructor
+     */
+    var ChatWhiteboardTextInputView = Backbone.View.extend({
+
+        templateSelector: '#whiteboard-text-input-template',
+
+        initialize: function() {
+            this.template = _.template($(this.templateSelector).html());
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            return this;
+        },
+
+    });
+
+
+
+
+
     return {
         WhiteboardView: WhiteboardView,
         WhiteboardToolView: WhiteboardToolView,
         Pen: Pen,
+        Arrow: Arrow,
         Rectangle: Rectangle,
         Circle: Circle,
+        Text: Text,
     }
 });
