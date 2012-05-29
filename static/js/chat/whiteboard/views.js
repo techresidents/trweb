@@ -182,29 +182,30 @@ define([
                 selectedWhiteboardId in this.whiteboardViews)
             {
                 var whiteboardView = this.whiteboardViews[selectedWhiteboardId];
+                var attributes = {'stroke': whiteboardView.color};
                 var tool = null;
                 switch(toolName)
                 {
                     case 'Pen':
-                        tool = new whiteboardViews.Pen(whiteboardView.paper);
+                        tool = new whiteboardViews.Pen(whiteboardView.paper, attributes);
                         break;
                     case 'Arrow':
-                        tool = new whiteboardViews.Arrow(whiteboardView.paper);
+                        tool = new whiteboardViews.Arrow(whiteboardView.paper, attributes);
                         break;
                     case 'Rect':
-                        tool = new whiteboardViews.Rectangle(whiteboardView.paper);
+                        tool = new whiteboardViews.Rectangle(whiteboardView.paper, attributes);
                         break;
                     case 'Circle':
-                        tool = new whiteboardViews.Circle(whiteboardView.paper);
+                        tool = new whiteboardViews.Circle(whiteboardView.paper, attributes);
                         break;
                     case 'Text':
-                        tool = new whiteboardViews.Text(whiteboardView.paper);
+                        tool = new whiteboardViews.Text(whiteboardView.paper, attributes);
                         break;
                     case 'Erase':
-                        tool = new whiteboardViews.Erase(whiteboardView.paper);
+                        tool = new whiteboardViews.Erase(whiteboardView.paper, null);
                         break;
                     default:
-                        tool = new whiteboardViews.Pen(whiteboardView.paper);
+                        tool = new whiteboardViews.Pen(whiteboardView.paper, attributes);
                 }
 
                 whiteboardView.selectTool(tool);
