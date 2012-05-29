@@ -22,7 +22,8 @@ define([
             'click #tools-arrow': 'arrowToolSelected',
             'click #tools-rect': 'rectToolSelected',
             'click #tools-circle': 'circleToolSelected',
-            'click #tools-text': 'textToolSelected'
+            'click #tools-text': 'textToolSelected',
+            'click #tools-erase': 'eraseToolSelected',
         },
 
         initialize: function() {
@@ -167,6 +168,10 @@ define([
             this.selectTool('Text');
         },
 
+        eraseToolSelected: function(){
+            this.selectTool('Erase');
+        },
+
         selectTool: function(toolName){
 
             // determine which whiteboard is currently selected
@@ -195,6 +200,9 @@ define([
                     case 'Text':
                         tool = new whiteboardViews.Text(whiteboardView.paper);
                         break;
+                    case 'Erase':
+                        tool = new whiteboardViews.Erase(whiteboardView.paper);
+                        break;
                     default:
                         tool = new whiteboardViews.Pen(whiteboardView.paper);
                 }
@@ -207,6 +215,9 @@ define([
 
     /**
      * Whiteboard view.
+     * This view is really just extending the whiteboard base view
+     * with behavior.  It specifies what to do when an element is
+     * added or removed.
      * @constructor
      */
     var ChatWhiteboardView = whiteboardViews.WhiteboardView.extend({
@@ -240,14 +251,13 @@ define([
          * @param model
          */
         addedPathCollectionListener: function(model) {
-            console.log('WhiteboardCreatePath message received');
+
             var elementToAdd = this.serializer.deserializeElement(model.pathData());
             if (elementToAdd){
                 // check if this element already exists on the paper (meaning this user added this element to the paper)
                 var elementExists = this.paper.getById(model.id);
                 if (elementExists){
-                    // no op
-                    console.log('Add listener: user drew this element themselves, no need to add it to the paper again');
+                    // No-op. No need to add this element to the paper again.
                 } else {
 
                     // add element to the paper
@@ -271,7 +281,7 @@ define([
          * @param model
          */
         removedPathCollectionListener: function(model) {
-            console.log('WhiteboardDeletePath message received');
+
             var element = this.paper.getById(model.id);
             if (element) {
                 element.remove();
@@ -287,7 +297,7 @@ define([
          * @param element
          */
         onElementAdded: function(tool, element) {
-            console.log('onElementAdded invoked');
+
             // call super
             whiteboardViews.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
 
@@ -312,16 +322,6 @@ define([
             }});
         },
 
-        /*
-         Define a success callback function.
-         This function will:
-          1) add the newly created element to the user's undo cache, and
-          2) update the drawn element's ID attribute to match the model's ID.
-         */
-        //_.bind(this, this.function)
-        onWhiteboardPathSaveSuccess: function(model, response){
-
-        },
 
         /**
          * @Override

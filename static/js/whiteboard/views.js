@@ -298,8 +298,46 @@ define([
 
 
 
+    var Erase = function(paper) {
+        this.paper = paper;
+        this.path = null;
+        this.rect = null;
+    }
+
+    Erase.prototype.start = function(x, y) {
+
+        // draw eraser boundary
+        this.path = this.paper.path();
+        this.rect = this.paper.rect(x-25, y-25, 50, 50, 0);
+
+        this.path.attr('path', ['M', x, y].join(' '));
+        this.path.attr('stroke', '#F5F5F5');
+        this.path.attr('stroke-linecap', 'square');
+        this.path.attr('stroke-linejoin', 'round');
+        this.path.attr('stroke-width', '49');
+    }
+
+    Erase.prototype.stop = function(x, y) {
+        this.rect.remove();
+        return this.path;
+    }
+
+    Erase.prototype.move = function(x, y) {
+
+        var path = this.path.attr('path');
+        path += ['L', x, y].join(' ');
+        this.path.attr('path', path);
+
+        this.rect.attr('x', x-25);
+        this.rect.attr('y', y-25);
 
 
+    }
+
+
+
+
+    // TODO unfinished. Come back to this later.
     var Text = function(paper) {
         this.paper = paper;
         this.text = null;
@@ -369,5 +407,6 @@ define([
         Rectangle: Rectangle,
         Circle: Circle,
         Text: Text,
+        Erase: Erase
     }
 });
