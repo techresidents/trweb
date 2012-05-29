@@ -287,7 +287,7 @@ define([
          * @param element
          */
         onElementAdded: function(tool, element) {
-
+            console.log('onElementAdded invoked');
             // call super
             whiteboardViews.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
 
@@ -296,8 +296,10 @@ define([
                 whiteboardId : this.whiteboardModel.id,
                 pathData : this.serializer.serializeElement(element)
             });
+
             var that = this;
             whiteboardPath.save(null, {success: function(model, response){
+
                 var newlyDrawnElement = that.paper.getById(element.id);
                 if (newlyDrawnElement) {
 
@@ -305,7 +307,7 @@ define([
                     newlyDrawnElement.id = model.id;
 
                     // cache elements user added to the paper
-                    that.undoCache.push(model);
+                    that.undoCache.push(model.id);
                 }
             }});
         },
@@ -366,9 +368,12 @@ define([
         // Delete seems to be broken; in the process of debugging this in the dispatch view.
         undo: function() {
             if (this.undoCache.length > 0) {
-                var wbPathModel = this.undoCache.pop();
-                if (wbPathModel) {
-                    wbPathModel.destroy();
+                var wbPathModelId = this.undoCache.pop();
+                if (wbPathModelId) {
+                    var wbPathModel = this.pathCollection.get(wbPathModelId);
+                    if (wbPathModel){
+                        wbPathModel.destroy();
+                    }
                 }
             }
         }
