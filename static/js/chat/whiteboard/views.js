@@ -17,6 +17,7 @@ define([
         events: {
             'change #select-whiteboard': "showSelectedWhiteboard",
             'click #whiteboard-clear-button': 'clearButtonSelected',
+            'click #whiteboard-undo-button': 'undoButtonSelected',
             'click #tools-pen': 'penToolSelected',
             'click #tools-arrow': 'arrowToolSelected',
             'click #tools-rect': 'rectToolSelected',
@@ -136,6 +137,16 @@ define([
             }
         },
 
+        undoButtonSelected: function(){
+            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
+            if (null != selectedWhiteboardId &&
+                selectedWhiteboardId in this.whiteboardViews)
+            {
+                var whiteboardView = this.whiteboardViews[selectedWhiteboardId];
+                whiteboardView.undo();
+            }
+        },
+
         penToolSelected: function(){
             this.selectTool('Pen');
         },
@@ -203,6 +214,7 @@ define([
         initialize: function() {
 
             whiteboardViews.WhiteboardView.prototype.initialize.call(this);
+            this.undoCache = [ ];
             this.serializer = new serialize.Serializer();
             this.whiteboardModel = this.options.model;
             this.pathCollection = this.options.model.paths();
@@ -215,12 +227,10 @@ define([
 
 
         /**
-         *
+         * Responsible for receiving message that clears the whiteboard.
          */
         resetPathCollectionListener: function(){
-            console.log('resetPathCollectionListener() called');
             this.paper.clear();
-
         },
 
         /**
@@ -231,16 +241,27 @@ define([
          */
         addedPathCollectionListener: function(model) {
             console.log('WhiteboardCreatePath message received');
-            var elements = this.paper.add(this.serializer.deserializeElement(model.pathData()));
+            var elementToAdd = this.serializer.deserializeElement(model.pathData());
+            if (elementToAdd){
+                // check if this element already exists on the paper (meaning this user added this element to the paper)
+                var elementExists = this.paper.getById(model.id);
+                if (elementExists){
+                    // no op
+                    console.log('Add listener: user drew this element themselves, no need to add it to the paper again');
+                } else {
 
-            // After drawing the element, assign the element an ID so that we can use
-            // paper.getById() at a later point in time to delete or perform some other
-            // action on this element.
-            // TODO The elements var can contain multiple elements.  The assumption is that
-            // currently the createWhiteboardMessages will only contain one element.
-            if (elements.length > 0) {
-                elements[0].id = model.id;
-                //console.log(this.paper.getById(model.id));
+                    // add element to the paper
+                    var addedElements = this.paper.add(elementToAdd);
+
+                    /* After drawing the element, assign the element an ID so that we can use
+                     paper.getById() at a later point in time to delete or perform some other
+                     action on this element.
+                     */
+                    // TODO The elements var can contain multiple elements.  The assumption is that currently the createWhiteboardMessages will only contain one element.
+                    if (addedElements.length > 0) {
+                        addedElements[0].id = model.id;
+                    }
+                }
             }
         },
 
@@ -251,10 +272,9 @@ define([
          */
         removedPathCollectionListener: function(model) {
             console.log('WhiteboardDeletePath message received');
-            var whiteboardPathModel = this.pathCollection.get(model.id);
-            if (whiteboardPathModel){
-                console.log('wb path to be deleted found. destroying whiteboard path');
-                whiteboardPathModel.destroy();
+            var element = this.paper.getById(model.id);
+            if (element) {
+                element.remove();
             }
         },
 
@@ -267,7 +287,6 @@ define([
          * @param element
          */
         onElementAdded: function(tool, element) {
-            console.log('onElementAdded() called');
 
             // call super
             whiteboardViews.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
@@ -277,7 +296,29 @@ define([
                 whiteboardId : this.whiteboardModel.id,
                 pathData : this.serializer.serializeElement(element)
             });
-            whiteboardPath.save();
+            var that = this;
+            whiteboardPath.save(null, {success: function(model, response){
+                var newlyDrawnElement = that.paper.getById(element.id);
+                if (newlyDrawnElement) {
+
+                    // assign the model's ID to the element
+                    newlyDrawnElement.id = model.id;
+
+                    // cache elements user added to the paper
+                    that.undoCache.push(model);
+                }
+            }});
+        },
+
+        /*
+         Define a success callback function.
+         This function will:
+          1) add the newly created element to the user's undo cache, and
+          2) update the drawn element's ID attribute to match the model's ID.
+         */
+        //_.bind(this, this.function)
+        onWhiteboardPathSaveSuccess: function(model, response){
+
         },
 
         /**
@@ -289,7 +330,6 @@ define([
          * @param element
          */
         onElementRemoved: function(element) {
-            console.log('onElementRemoved() called');
 
             // call super
             whiteboardViews.WhiteboardView.prototype.onElementRemoved.call(this, element);
@@ -301,9 +341,12 @@ define([
             }
         },
 
-        // TODO this won't work since the url is based upon the pathId.
+        /**
+         * @Override
+         * This method captures when a user clears the whiteboard, and
+         * sends a message to the other chat participants to do the same.
+         */
         onBoardCleared: function() {
-            console.log('onBoardCleared() called');
 
             // call super
             whiteboardViews.WhiteboardView.prototype.onBoardCleared.call(this);
@@ -313,8 +356,21 @@ define([
                 whiteboardId : this.whiteboardModel.id,
                 pathId : 'reset'
             });
+            // send message to server
             whiteboardPath.destroy();
+        },
 
+
+        // I think there will a problem with this feature however since the path
+        // is being written twice with two different IDs by the user who drew the element.
+        // Delete seems to be broken; in the process of debugging this in the dispatch view.
+        undo: function() {
+            if (this.undoCache.length > 0) {
+                var wbPathModel = this.undoCache.pop();
+                if (wbPathModel) {
+                    wbPathModel.destroy();
+                }
+            }
         }
 
     });

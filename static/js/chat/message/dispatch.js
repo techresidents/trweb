@@ -105,6 +105,8 @@ define([
             var wb = whiteboard.whiteboardCollection.get(model.get('msg').whiteboardId);
             if(wb) {
                 wb.paths().add(wbPath);
+                console.log('dispatch: model added to path collection');
+                console.log(wb.paths());
             }
         },
 
@@ -113,13 +115,13 @@ define([
             var pathId = model.get('msg').pathId;
             if ('reset' == pathId){
                 // treat a pathId of 'reset' as a trigger to clear the whiteboard
-                console.log('dispatch: triggering reset');
-                console.log(wb);
                 wb.paths().reset();
             }
             else {
                 // delete the specified path
-                var wbPath = wb.paths.get(pathId);
+                console.log('dispatch: wbDeletePath()');
+                console.log(wb.paths());
+                var wbPath = wb.paths().get(pathId);
                 if(wbPath) {
                     wbPath.trigger('destroy', wbPath);
                 }
