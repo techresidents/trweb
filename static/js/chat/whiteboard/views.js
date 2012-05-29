@@ -207,7 +207,7 @@ define([
             new ChatWhiteboardControlsView({
                 collection: whiteboardModels.whiteboardCollection
             }).render();
-
+            return this;
         }
     });
 

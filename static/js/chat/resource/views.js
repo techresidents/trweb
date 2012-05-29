@@ -1,26 +1,28 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
-    'resource/models',
+    'core/view',
     'text!chat/resource/templates/resource_document.html',
     'text!chat/resource/templates/resource_select.html',
     'text!chat/resource/templates/resource_tab.html',
 ], function(
     $,
     _,
-    Backbone,
-    resource_models,
+    view,
     resource_document_template,
     resource_select_template,
     resource_tab_template) {
+
+    var EVENTS = {
+        SELECT: 'resource:Select',
+    };
 
     /**
      * Resource document view.
      * @constructor
      * @param {Object} options View options
      */
-    var ResourceDocumentView = Backbone.View.extend({
+    var ResourceDocumentView = view.View.extend({
 
         tagName: 'div',
 
@@ -45,30 +47,36 @@ define([
      *      object as the sole parameter. (optional)
      *   context: callback context (optional)
      */
-    var ResourceSelectView = Backbone.View.extend({
+    var ResourceSelectView = view.View.extend({
 
         tagName: 'select',
 
         events: {
-            'change': 'changed',
+            'change': 'onChangeEvent',
         },
         
         initialize: function() {
             this.template = _.template(resource_select_template);
-            this.onChange = this.options.onChange;
-            this.context = this.options.context;
+            //this.onChange = this.options.onChange;
+            //this.context = this.options.context;
+            this.model.on('change:selected', this.onChangeSelected, this);
         },
 
         render: function() {
-            this.$el.html(this.template({'resources': this.collection.toJSON()}));
+            this.$el.html(this.template({'resources': this.model.resources().toJSON()}));
             return this;
         },
 
-        changed: function(e) {
+        onChangeEvent: function(e) {
             var resourceId = e.currentTarget.value;
-            var resource = this.collection.get(resourceId);
-            if(this.onChange) {
-                this.onChange.call(this.context, resource);
+            var resource = this.model.resources().get(resourceId);
+            this.triggerEvent(EVENTS.SELECT, resource);
+        },
+
+        onChangeSelected: function(model) {
+            var resource = this.model.selected();
+            if(resource) {
+                this.$el.val(resource.id);
             }
         },
     });
@@ -80,7 +88,7 @@ define([
      *   documentSelector: el selector for ResourceDocumentView
      *   resourceSelectSelector: el selector for ResourceSelectView
      */
-    var ChatResourceTabView = Backbone.View.extend({
+    var ChatResourcesTabView = view.View.extend({
         
         resourceSelectSelector: '#resource-select',
 
@@ -90,6 +98,7 @@ define([
             this.template = _.template(resource_tab_template);
             this.resourceViews = {};
             this.currentResourceView = null;
+            this.model.on('change:selected', this.onChangeSelected, this);
         },
 
         render: function() {
@@ -98,16 +107,14 @@ define([
 
             new ResourceSelectView({
                 el: this.$(this.resourceSelectSelector),
-                collection: resource_models.resourceCollection,
-                onChange: this.resourceChanged,
-                context: this,
+                model: this.model,
             }).render();
-
 
             return this;
         },
 
-        resourceChanged: function(resource) {
+        onChangeSelected: function() {
+            var resource = this.model.selected();
             if(resource && this.resourceViews[resource.id]) {
                 this.currentResourceView.$el.toggle(false);
                 this.currentResourceView = this.resourceViews[resource.id];
@@ -126,9 +133,11 @@ define([
                 }
             }
         }
+
     });
 
     return {
-        ChatResourceTabView: ChatResourceTabView,
+        EVENTS: EVENTS,
+        ChatResourcesTabView: ChatResourcesTabView,
     };
 });

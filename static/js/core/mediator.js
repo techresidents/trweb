@@ -8,8 +8,8 @@ define([
     var Mediator = function(options) {
         this.facade = facade.getInstance();
         this.options = options || {};
-        this.initialize.apply(this, arguments);
         this.registerNotifications();
+        this.initialize.apply(this, arguments);
     };
 
     Mediator.extend = base.extend;
@@ -20,25 +20,41 @@ define([
 
         initialize: function() {},
 
-        notifications: {},
+        notifications: [],
 
         registerNotifications: function(notifications) {
-            notifications = notifications || this.notifications;
-            for(var key in notifications) {
-                var method = this[notifications[key]];
+            var notifications = notifications || base.getValue(this, 'notifications');
+            if(!_.isArray(notifications)) {
+                throw new Error('notifications must be array of [notificationName, methodName] tuples');
+            }
+
+            for(var index in notifications) {
+                var tuple = notifications[index];
+                var key = tuple[0];
+                var methodName = tuple[1];
+                var method = this[methodName];
+
                 if(!_.isFunction(method)) {
-                    throw new Error('Method "' + notifications[key] + '" does not exist');
+                    throw new Error('Method "' + methodName + '" does not exist');
                 }
                 facade.getInstance().on(key, method, this);
             }
         },
 
         unregisterNotifications: function(notifications) {
-            notifications = notifications || this.notifications;
-            for(var key in notifications) {
-                var method = this[notifications[key]];
+            var notifications = notifications || base.getValue(this, 'notifications');
+            if(!_.isArray(notifications)) {
+                throw new Error('notifications must be array of [notificationName, methodName] tuples');
+            }
+
+            for(var index in notifications) {
+                var tuple = notifications[index];
+                var key = tuple[0];
+                var methodName = tuple[1];
+                var method = this[methodName];
+
                 if(!_.isFunction(method)) {
-                    throw new Error('Method "' + notifications[key] + '" does not exist');
+                    throw new Error('Method "' + methodName + '" does not exist');
                 }
                 facade.getInstance().off(key, method, this);
             }

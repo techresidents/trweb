@@ -76,6 +76,7 @@ define([
             this.css = this.options.css;
             
             //bind events
+            /*
             this.user.bind('change', this.render, this);
             this.chatSession.bind('session:connected', this.sessionConnected, this);
             this.chatSession.bind('connection:created', this.connectionCreated, this);
@@ -83,6 +84,7 @@ define([
             this.chatSession.bind('stream:created', this.streamCreated, this);
             this.chatSession.bind('stream:destroyed', this.streamDestroyed, this);
             this.chatSession.bind('microphone:changed', this.microphoneChanged, this);
+            */
 
             //views
             this.headerView = new ChatUserHeaderView({
@@ -106,15 +108,18 @@ define([
             if(!this.user.isConnected()) {
                 this.$el.append(this.template(this.model.toJSON()));
                 this.$el.addClass(this.css);
-
+                /*
                 if(this.user.id == this.chatSession.getCurrentUser().id) {
                     this.spinner = new spin.Spinner({left: 200, top: 100}).spin(this.el);
                 }
+                */
 
             } else {
+                /*
                 if(this.user.id == this.chatSession.getCurrentUser().id) {
                     this.spinner.stop();
                 }
+                */
             }
             
             this.footerView.render();
@@ -152,6 +157,17 @@ define([
             }
 
             return null;
+        },
+
+        getStreamViewDetails: function() {
+            var container = this.$('.chat-user-container');
+
+            return {
+                elementId: 'user' + this.user.id,
+                width: container.width(),
+                height: container.height(),
+            };
+
         },
 
         sessionConnected: function(event) {

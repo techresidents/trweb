@@ -135,6 +135,6 @@ define([
 
     return {
         Minute: Minute,
-        minuteCollection: new MinuteCollection,
+        MinuteCollection: MinuteCollection,
     };
 });

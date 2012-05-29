@@ -1,0 +1,80 @@
+define([
+    'Underscore',
+    'common/notifications',
+    'core/mediator',
+    'chat/agenda/models',
+    'chat/agenda/proxies',
+    'chat/agenda/views',
+    'chat/tag/proxies',
+    'chat/user/proxies',
+], function(
+    _,
+    notifications,
+    mediator,
+    agenda_models,
+    agenda_proxies,
+    agenda_views,
+    tag_proxies,
+    user_proxies) {
+
+
+    var AgendaTabMediator = mediator.Mediator.extend({
+        name: function() {
+            return AgendaTabMediator.NAME;
+        },
+
+        notifications: [
+            [notifications.CHAT_TOPIC_CHANGED, 'onActiveChanged'],
+        ],
+
+        initialize: function(options) {
+            this.agendaProxy = this.facade.getProxy(agenda_proxies.ChatAgendaProxy.NAME);
+            this.tagsProxy = this.facade.getProxy(tag_proxies.ChatTagsProxy.NAME);
+            this.usersProxy = this.facade.getProxy(user_proxies.ChatUsersProxy.NAME);
+
+            this.view = new agenda_views.ChatAgendaTabView({
+                users: this.usersProxy.collection,
+                tags: this.tagsProxy.collection,
+                model: new agenda_models.AgendaValueObject({
+                    minutes: this.agendaProxy.minutesProxy.collection,
+                    topics: this.agendaProxy.topics(),
+                    active: this.agendaProxy.active(),
+                    selected: this.agendaProxy.topics().first(),
+                })
+            });
+
+            //add events listeners
+            this.view.addEventListener(agenda_views.EVENTS.NEXT, this.onNext, this);
+            this.view.addEventListener(agenda_views.EVENTS.SELECT, this.onSelect, this);
+            this.view.addEventListener(agenda_views.EVENTS.DELETE_TAG, this.onDeleteTag, this);
+
+            this.facade.trigger(notifications.VIEW_CREATED, 'AgendaTabView', this.view);
+        },
+
+        onActiveChanged: function(notification) {
+            this.view.model.activate(notification.topic);
+        },
+
+        onNext: function(e) {
+            this.facade.trigger(notifications.CHAT_NEXT_TOPIC);
+        },
+
+        onSelect: function(e, topicModel) {
+            this.view.model.select(topicModel);
+        },
+
+        onDeleteTag: function(e, tagModel) {
+            this.facade.trigger(notifications.TAG_DELETE, {
+                model: tagModel
+            });
+        },
+
+    }, {
+
+        NAME: 'AgendaTabMediator',
+    });
+
+    return {
+        AgendaTabMediator: AgendaTabMediator,
+    }
+});

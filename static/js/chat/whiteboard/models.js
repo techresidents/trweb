@@ -84,12 +84,6 @@ define([
                 name: response.msg.name,
             };
         },
-
-        toJSON: function() {
-            return _.extend(this.attributes, {
-                myWhiteboard: this.userId() === user.currentUser.id
-            });
-        }
     });
 
     /**
@@ -229,6 +223,7 @@ define([
 
     return {
         Whiteboard: Whiteboard,
+        WhiteboardCollection: WhiteboardCollection,
         whiteboardCollection: new WhiteboardCollection,
         WhiteboardPath: WhiteboardPath,
         WhiteboardPathCollection: WhiteboardPathCollection,

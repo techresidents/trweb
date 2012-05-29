@@ -1,0 +1,30 @@
+define([
+], function() { 
+    return {
+        APP_START: 'common:AppStart',
+        APP_STOP: 'common:AppStop',
+        CHAT_START: 'command:ChatStart',
+        CHAT_END: 'command:ChatEnd',
+        CHAT_NEXT_TOPIC: 'command:ChatNextTopic',
+        CHAT_TOPIC_CHANGED: 'command:ChatTopicChanged',
+        MESSAGE_MINUTE_CREATE: 'common:Message:MinuteCreate',
+        MESSAGE_MINUTE_UPDATE: 'common:MessageMinuteUpdate',
+        MESSAGE_TAG_CREATE: 'common:MessageTagCreate',
+        MESSAGE_TAG_DELETE: 'common:MessageTagDelete',
+        MESSAGE_WHITEBOARD_CREATE: 'common:MessageWhiteboardCreate',
+        MESSAGE_WHITEBOARD_DELETE: 'common:MessageWhiteboardDelete',
+        MESSAGE_WHITEBOARD_CREATE_PATH: 'common:MessageWhiteboardCreatePath',
+        MESSAGE_WHITEBOARD_DELETE_PATH: 'common:MessageWhiteboardDeletePath',
+        MINUTE_START: 'commandMinuteStart',
+        MINUTE_END: 'commandMinuteEnd',
+        RESOURCE_SHOW: 'common:ResourceShow',
+        TAG_CREATE: 'common:TagCreate',
+        TAG_DELETE: 'common:TagDelete',
+        VIEW_CREATED: 'common:ViewCreated',
+        VIEW_DESTROYED: 'common:ViewDestroyed',
+        WHITEBOARD_CREATE: 'common:WhiteboardCreate',
+        WHITEBOARD_DELETE: 'common:WhiteboardDelete',
+        WHITEBOARD_PATH_CREATE: 'common:WhiteboardPathCreate',
+        WHITEBOARD_PATH_DELETE: 'common:WhiteboardPathDelete',
+    };
+});

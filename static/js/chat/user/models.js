@@ -63,6 +63,14 @@ define([
         style: function() {
             return "user" + this.id;
         },
+
+        isCurrentUser: function() {
+            var result = false;
+            if(this.collection) {
+                result = this.collection.first().id === this.id;
+            } 
+            return result;
+        },
     });
 
 
@@ -78,7 +86,6 @@ define([
     });
 
     return {
-        users: new ChatUserCollection,
-        currentUser: new ChatUser,
+        ChatUserCollection: ChatUserCollection,
     }
 });
