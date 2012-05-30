@@ -8,7 +8,7 @@ define([
         name: 'ChatMessagesProxy',
 
         eventNotifications: {
-            'add': 'ChatMessages:add',
+            'add': notifications.MESSAGE_ADDED,
         },
 
         initialize: function(options) {

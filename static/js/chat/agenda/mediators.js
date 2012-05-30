@@ -24,7 +24,7 @@ define([
         },
 
         notifications: [
-            [notifications.CHAT_TOPIC_CHANGED, 'onActiveChanged'],
+            [notifications.CHAT_TOPIC_CHANGED, 'onChatTopicChanged'],
         ],
 
         initialize: function(options) {
@@ -51,7 +51,7 @@ define([
             this.facade.trigger(notifications.VIEW_CREATED, 'AgendaTabView', this.view);
         },
 
-        onActiveChanged: function(notification) {
+        onChatTopicChanged: function(notification) {
             this.view.model.activate(notification.topic);
         },
 

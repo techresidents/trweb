@@ -1,14 +1,15 @@
 define([
+    'common/notifications',
     'core/proxy',
-], function(proxy) {
+], function(notifications, proxy) {
 
     var DocumentsProxy = proxy.CollectionProxy.extend({
 
         name: 'DocumentsProxy',
 
         eventNotifications: {
-            'add': 'Documents:add',
-            'remove': 'Documents:remove',
+            'add': notifications.DOCUMENT_ADDED,
+            'remove': notifications.DOCUMENT_REMOVED,
         },
 
         initialize: function(options) {

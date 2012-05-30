@@ -11,6 +11,7 @@ define([
     'chat/proxies',
     'chat/message/commands',
     'chat/discuss/mediators',
+    'chat/resource/commands',
     'chat/resource/mediators',
     'chat/tag/commands',
     'chat/tag/mediators',
@@ -27,9 +28,10 @@ define([
     mediator,
     agenda_mediators,
     chat_commands,
-    proxies,
+    chat_proxies,
     message_commands,
     discuss_mediators,
+    resource_commands,
     resource_mediators,
     tag_commands,
     tag_mediators,
@@ -79,6 +81,18 @@ $(document).ready(function() {
                     break;
             }
         },
+        
+        showAgenda: function() {
+            this.$('a[href="#agenda"]').tab('show');
+        },
+
+        showWhiteboards: function() {
+            this.$('a[href="#whiteboard"]').tab('show');
+        },
+
+        showResources: function() {
+            this.$('a[href="#resources"]').tab('show');
+        },
 
     });
    
@@ -88,6 +102,9 @@ $(document).ready(function() {
         
         notifications: [
             [notifications.VIEW_CREATED, 'onViewCreated'],
+            [notifications.SHOW_AGENDA, 'onShowAgenda'],
+            [notifications.SHOW_RESOURCES, 'onShowResources'],
+            [notifications.SHOW_WHITEBOARDS, 'onShowWhiteboards'],
         ],
 
         initialize: function(options) {
@@ -106,12 +123,24 @@ $(document).ready(function() {
             this.view.addView(type, view);
         },
 
+        onShowAgenda: function(notification) {
+            this.view.showAgenda();
+        },
+
+        onShowResources: function(notification) {
+            this.view.showResources();
+        },
+
+        onShowWhiteboards: function(notification) {
+            this.view.showWhiteboards();
+        },
+
     });
 
     var InitModels = command.Command.extend({
 
         execute: function() {
-            this.facade.registerProxy(new proxies.ChatProxy(data));
+            this.facade.registerProxy(new chat_proxies.ChatProxy(data));
         }
     });
 
@@ -122,23 +151,12 @@ $(document).ready(function() {
         }
     });
 
-    var StartUpCommand = command.MacroCommand.extend({
+    var AppStartCommand = command.MacroCommand.extend({
 
         initialize: function() {
-            console.log('execute startup');
             this.addSubCommand(InitModels);
             this.addSubCommand(InitViews);
         },
-    });
-
-    var StartChatCommand = command.Command.extend({
-
-        execute: function() {
-            console.log('execute start chat');
-            var chatProxy = this.facade.getProxy(proxies.ChatProxy.NAME);
-            console.log('start');
-            chatProxy.start();
-        }
     });
 
 
@@ -146,8 +164,8 @@ $(document).ready(function() {
 
         initialize: function() {
             facade.setInstance(this);
-            this.registerCommand('StartUp', StartUpCommand);
-            this.registerCommand('StartChat', StartChatCommand);
+            this.registerCommand(notifications.APP_START, AppStartCommand);
+            this.registerCommand(notifications.CHAT_CONNECT, chat_commands.ChatConnectCommand);
             this.registerCommand(notifications.CHAT_NEXT_TOPIC, chat_commands.ChatNextTopicCommand);
             this.registerCommand(notifications.MESSAGE_MINUTE_CREATE, message_commands.MinuteCreateMessageCommand);
             this.registerCommand(notifications.MESSAGE_MINUTE_UPDATE, message_commands.MinuteUpdateMessageCommand);
@@ -157,6 +175,7 @@ $(document).ready(function() {
             this.registerCommand(notifications.MESSAGE_WHITEBOARD_DELETE, message_commands.WhiteboardDeleteMessageCommand);
             this.registerCommand(notifications.MESSAGE_WHITEBOARD_CREATE_PATH, message_commands.WhiteboardCreatePathMessageCommand);
             this.registerCommand(notifications.MESSAGE_WHITEBOARD_DELETE_PATH, message_commands.WhiteboardDeletePathMessageCommand);
+            this.registerCommand(notifications.SHOW_RESOURCE, resource_commands.ShowResourceCommand);
             this.registerCommand(notifications.TAG_CREATE, tag_commands.CreateTagCommand);
             this.registerCommand(notifications.TAG_DELETE, tag_commands.DeleteTagCommand);
             this.registerCommand(notifications.WHITEBOARD_CREATE, whiteboard_commands.CreateWhiteboardCommand);
@@ -165,18 +184,18 @@ $(document).ready(function() {
             this.registerCommand(notifications.WHITEBOARD_PATH_DELETE, whiteboard_commands.DeleteWhiteboardPathCommand);
         },
 
-        startUp: function() {
-            this.trigger('StartUp');
-            this.trigger('StartChat');
+        start: function() {
+            this.trigger(notifications.APP_START);
+            this.trigger(notifications.CHAT_CONNECT);
         },
 
-        shutdown: function() {
-            this.trigger('Shutdown');
+        stop: function() {
+            this.trigger(notifications.APP_STOP);
         }
     });
 
     var chatAppFacade = new ChatAppFacade();
-    chatAppFacade.startUp();
+    chatAppFacade.start();
 });
 
     

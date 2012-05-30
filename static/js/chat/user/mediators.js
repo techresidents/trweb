@@ -18,8 +18,8 @@ define([
         name: 'ChatUsersMediator',
 
         notifications: [
-            [user_proxies.ChatUsersProxy.USER_CONNECTED, 'onConnected'],
-            [user_proxies.ChatUsersProxy.USER_PUBLISHING,'onPublishing'],
+            [notifications.USER_CONNECTED, 'onConnected'],
+            [notifications.USER_PUBLISHING,'onPublishing'],
         ],
 
         initialize: function(options) {
@@ -40,8 +40,8 @@ define([
             this.facade.trigger(notifications.VIEW_CREATED, 'ChatUserView', view);
         },
 
-        onConnected: function(userModel) {
-            console.log('onConnected');
+        onConnected: function(notification) {
+            var userModel = notification.model;
             var view = this.views[userModel.id];
 
             //TODO if this is us - start publishing
@@ -55,8 +55,8 @@ define([
             });
         },
 
-        onPublishing: function(userModel) {
-            console.log('onPublishing');
+        onPublishing: function(notification) {
+            var userModel = notification.model;
             var view = this.views[userModel.id];
 
             //TODO if this is not us - subscribe to stream

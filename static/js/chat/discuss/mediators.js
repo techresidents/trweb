@@ -18,7 +18,7 @@ define([
         name: 'DiscussMediator',
         
         notifications: [
-            [notifications.CHAT_TOPIC_CHANGED, 'onActiveChanged'],
+            [notifications.CHAT_TOPIC_CHANGED, 'onChatTopicChanged'],
         ],
 
         initialize: function(options) {
@@ -38,7 +38,7 @@ define([
             this.facade.trigger(notifications.VIEW_CREATED, 'DiscussView', this.view);
         },
 
-        onActiveChanged: function(notification) {
+        onChatTopicChanged: function(notification) {
             this.view.model.setActiveTopic(notification.topic);
         },
 

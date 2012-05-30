@@ -1,6 +1,7 @@
 define([
+    'common/notifications',
     'core/proxy',
-], function(proxy) {
+], function(notifications, proxy) {
 
     var ChatTagsProxy = proxy.CollectionProxy.extend({
 
@@ -9,8 +10,8 @@ define([
         },
 
         eventNotifications: {
-            'add': 'ChatTags:add',
-            'remove': 'ChatTags:remove',
+            'add': notifications.TAG_ADDED,
+            'remove': notifications.TAG_REMOVED,
         },
 
         initialize: function(options) {

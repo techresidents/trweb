@@ -1,6 +1,7 @@
 define([
+    'common/notifications',
     'core/proxy',
-], function(proxy) {
+], function(notifications, proxy) {
 
     var ChatMinutesProxy = proxy.CollectionProxy.extend({
 
@@ -9,8 +10,8 @@ define([
         },
 
         eventNotifications: {
-            'add': 'ChatMinutes:add',
-            'change': 'ChatMinutes:change',
+            'add': notifications.MINUTE_STARTED,
+            'change:endTimestamp': notifications.MINUTE_ENDED,
         },
 
         initialize: function(options) {

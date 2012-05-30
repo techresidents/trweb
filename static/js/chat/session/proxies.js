@@ -1,9 +1,15 @@
 define([
     'Underscore',
+    'common/notifications',
     'core/proxy',
     'chat/user/models',
     'chat/user/proxies',
-], function(_, proxy, user_models, user_proxies) {
+], function(
+    _,
+    notifications,
+    proxy,
+    user_models,
+    user_proxies) {
     
     var ChatSessionProxy = proxy.Proxy.extend({
 
@@ -23,13 +29,12 @@ define([
             //make 'this' available for tokbox event listeners
             var that = this;
             
-            //tokbox event listeners defined inline delegate to ChatSession handlers with 'this' set properly.
-            this.session.addEventListener("sessionConnected", function(event) { that.sessionConnectedHandler.call(that, event); });
-            this.session.addEventListener("connectionCreated", function(event) { that.connectionCreatedHandler.call(that, event); });
-            this.session.addEventListener("connectionDestroyed", function(event) { that.connectionDestroyedHandler.call(that, event); });
-            this.session.addEventListener("streamCreated", function(event) { that.streamCreatedHandler.call(that, event); });
-            this.session.addEventListener("streamDestroyed", function(event) { that.streamDestroyedHandler.call(that, event); });
-            this.session.addEventListener("microphoneLevelChanged", function(event) { that.microphoneLevelHandler.call(that, event); });
+            this.session.addEventListener("sessionConnected", _.bind(this.sessionConnectedHandler, this));
+            this.session.addEventListener("connectionCreated", _.bind(this.connectionCreatedHandler, this));
+            this.session.addEventListener("connectionDestroyed", _.bind(this.connectionDestroyedHandler, this));
+            this.session.addEventListener("streamCreated", _.bind(this.streamCreatedHandler, this));
+            this.session.addEventListener("streamDestroyed", _.bind(this.streamDestroyedHandler, this));
+            this.session.addEventListener("microphoneLevelChanged", _.bind(this.microphoneLevelHandler, this));
         },
 
         getApiKey: function() {
@@ -68,7 +73,7 @@ define([
         },
 
         sessionConnectedHandler: function(event) {
-            this.facade.trigger(ChatSessionProxy.CONNECTED, event);
+            this.facade.trigger(notifications.SESSION_CONNECTED, event);
 
             for(var i = 0; i < event.connections.length; i++) {
                 var connection = event.connections[i];
@@ -81,7 +86,7 @@ define([
         },
 
         connectionCreatedHandler: function(event) {
-            this.facade.trigger(ChatSessionProxy.CONNECTED, event);
+            this.facade.trigger(notifications.SESSION_CONNECTION_CREATED, event);
 
             for(var i = 0; i < event.connections.length; i++) {
                 var connection = event.connections[i];
@@ -93,7 +98,7 @@ define([
         },
 
         connectionDestroyedHandler: function(event) {
-            this.facade.trigger(ChatSessionProxy.CONNECTION_DESTROYED, event);
+            this.facade.trigger(notifications.SESSION_CONNECTION_DESTROYED, event);
 
             for(var i = 0; i < event.connections.length; i++) {
                 var connection = event.connections[i];
@@ -106,7 +111,7 @@ define([
         },
 
         streamCreatedHandler: function(event) {
-            this.facade.trigger(ChatSessionProxy.STREAM_CREATED, event);
+            this.facade.trigger(notifications.SESSION_STREAM_CREATED, event);
 
             for(var i = 0; i < event.streams.length; i++) {
                 var stream = event.streams[i];
@@ -119,7 +124,7 @@ define([
         },
 
         streamDestroyedHandler: function(event) {
-            this.facade.trigger(ChatSessionProxy.STREAM_DESTROYED, event);
+            this.facade.trigger(notifications.SESSION_STREAM_DESTROYED, event);
 
             for(var i = 0; i < event.streams.length; i++) {
                 var stream = event.streams[i];
@@ -148,16 +153,6 @@ define([
     }, {
 
         NAME: 'ChatSessionProxy',
-
-        /* NOTIFICATIONS */
-
-        CONNECTED: 'ChatSession:connected',
-        CONNECTION_CREATED: 'ChatSession:connectionCreated',
-        CONNECTION_DESTROYED: 'ChatSession:connectionDestroyed',
-        STREAM_CREATED: 'ChatSession:streamCreated',
-        STREAM_DESTROYED: 'ChatSession:streamDestroyed',
-        MICROPHONE_LEVEL: 'ChatSession:microphoneLevel',
-
     });
 
     return {

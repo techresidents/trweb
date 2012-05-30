@@ -47,7 +47,7 @@ define([
 
     var CollectionProxy = Proxy.extend({
 
-        eventNotifications:  {},
+        eventNotifications:  [],
 
         constructor: function(options) {
             this.collection = options.collection;
@@ -82,7 +82,10 @@ define([
             var notifications = base.getValue(this, 'eventNotifications');
             var notificationName = notifications[eventName];
             if(notificationName) {
-                this.facade.trigger(notificationName, arguments[1]);
+                this.facade.trigger(notificationName, {
+                    collection: this.collection,
+                    model: arguments[1],
+                });
             }
         },
     });

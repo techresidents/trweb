@@ -2,6 +2,7 @@ define([
     'Underscore',
     'common/notifications',
     'core/command',
+    'chat/proxies',
     'chat/agenda/proxies',
     'chat/minute/models',
     'chat/minute/proxies',
@@ -9,10 +10,18 @@ define([
     _,
     notifications,
     command,
+    chat_proxies,
     agenda_proxies,
     minute_models,
     minute_proxies) {
     
+    var ChatConnectCommand = command.Command.extend({
+        execute: function(options) {
+            var chatProxy = this.facade.getProxy(chat_proxies.ChatProxy.NAME);
+            chatProxy.connect();
+        }
+    });
+
     var ChatStartCommand = command.Command.extend({
         execute: function(options) {
         }
@@ -117,6 +126,7 @@ define([
     });
 
     return {
+        ChatConnectCommand: ChatConnectCommand,
         ChatStartCommand: ChatStartCommand,
         ChatEndCommand: ChatEndCommand,
         ChatNextTopicCommand: ChatNextTopicCommand,

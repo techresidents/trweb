@@ -1,14 +1,15 @@
 define([
+    'common/notifications',
     'core/proxy',
-], function(proxy) {
+], function(notifications, proxy) {
 
     var ChatResourcesProxy = proxy.CollectionProxy.extend({
 
         name: 'ChatResourcesProxy',
 
         eventNotifications: {
-            'add': 'ChatResources:add',
-            'remove': 'ChatResources:remove',
+            'add': notifications.RESOURCE_ADDED,
+            'remove': notifications.RESOURCE_REMOVED,
         },
 
         initialize: function(options) {

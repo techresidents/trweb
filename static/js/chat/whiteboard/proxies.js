@@ -1,6 +1,7 @@
 define([
+    'common/notifications',
     'core/proxy',
-], function(proxy) {
+], function(notifications, proxy) {
 
     var ChatWhiteboardsProxy = proxy.CollectionProxy.extend({
 
@@ -9,8 +10,8 @@ define([
         },
 
         eventNotifications: {
-            'add': 'ChatWhiteboards:add',
-            'remove': 'ChatWhiteboards:remove',
+            'add': notifications.WHITEBOARD_ADDED,
+            'remove': notifications.WHITEBOARD_REMOVED,
         },
 
         initialize: function(options) {

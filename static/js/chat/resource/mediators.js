@@ -20,6 +20,7 @@ define([
         },
 
         notifications: [
+            [notifications.RESOURCE_SELECT, 'onResourceSelect'],
         ],
 
         initialize: function(options) {
@@ -38,9 +39,14 @@ define([
             this.facade.trigger(notifications.VIEW_CREATED, 'ResourcesTabView', this.view);
         },
 
+        onResourceSelect: function(notification) {
+            this.view.model.select(notification.resource);
+        },
+
         onSelect: function(e, resourceModel) {
             this.view.model.select(resourceModel);
         },
+
 
     }, {
 

@@ -1,6 +1,7 @@
 define([
+    'common/notifications',
     'core/proxy',
-], function(proxy) {
+], function(notifications, proxy) {
 
     var ChatUsersProxy = proxy.CollectionProxy.extend({
 
@@ -10,11 +11,11 @@ define([
 
         eventNotifications: function() {
             return {
-                'add': ChatUsersProxy.USER_ADDED,
-                'change': ChatUsersProxy.USER_CHANGED,
-                'change:isConnected': ChatUsersProxy.USER_CONNECTED,
-                'change:isPublishing': ChatUsersProxy.USER_PUBLISHING,
-                'remove': ChatUsersProxy.USER_REMOVED,
+                'add': notifications.USER_ADDED,
+                'change': notifications.USER_CHANGED,
+                'change:isConnected': notifications.USER_CONNECTED,
+                'change:isPublishing': notifications.USER_PUBLISHING,
+                'remove': notifications.USER_REMOVED,
             }
         },
 
@@ -28,13 +29,6 @@ define([
     }, {
         /* NAME */
         NAME: 'ChatUsersProxy',
-        
-        /* NOTIFICATIONS */
-        USER_ADDED: 'ChatUsers:userAdded',
-        USER_CHANGED: 'ChatUsers:userChanged',
-        USER_CONNECTED: 'ChatUsers:userConnected',
-        USER_PUBLISHING: 'ChatUsers:userPublishing',
-        USER_REMOVED: 'ChatUsers:userRemoved',
     });
     
     return {

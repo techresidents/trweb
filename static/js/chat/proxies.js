@@ -83,7 +83,7 @@ define([
             return this.chatMessagesProxy;
         },
 
-        start: function() {
+        connect: function() {
             //connect the chat and start polling for messages.
             this.getChatSessionProxy().connect();
             this.getChatMessagesProxy().longPoll();
