@@ -409,7 +409,7 @@ define([
      */
     var ChatWhiteboardToolsView = Backbone.View.extend({
 
-        templateSelector: '#whiteboard-tools-template',
+        templateSelector: '#whiteboard-tools-template-new',
 
         initialize: function() {
             this.setElement($("#whiteboard-tools"));
@@ -418,6 +418,7 @@ define([
 
         render: function() {
             this.$el.html(this.template());
+            this.$('.whiteboard-tool-button').tooltip(); //activate tooltips
             return this;
         },
     });

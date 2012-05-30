@@ -85,8 +85,8 @@
 {% endautoescape %}
 
 <!-- Templates -->
-
-    <script type="text/template" id="whiteboard-tools-template">
+<!--
+<script type="text/template" id="whiteboard-tools-template">
     <div class="span2">
         <div class="well">
             <ul class="nav nav-list">
@@ -102,6 +102,50 @@
         </div>
     </div>
  </script>
+ -->
+
+
+<script type="text/template" id="whiteboard-tools-template-new">
+    <div class="span2">
+        <div class="well">
+
+            <ul class="nav nav-list">
+                <li class="nav-header">Tools</li>
+            </ul>
+            <div class="btn-group" data-toggle="buttons-radio">
+                <button id="tools-pen" class="btn whiteboard-tool-button" title="Pen Tool"><i class="icon-pencil"></i></button>
+                <button id="tools-arrow" class="btn whiteboard-tool-button" title="Arrow Tool"><i class="icon-arrow-right"></i></button>
+                <button id="tools-rect" class="btn whiteboard-tool-button" title="Rectangle Tool"><i class="icon-retweet"></i></button>
+                <button id="tools-circle" class="btn whiteboard-tool-button" title="Circle Tool"><i class="icon-remove-circle"></i></button>
+                <button id="tools-erase" class="btn whiteboard-tool-button" title="Erase Tool"><i class="icon-edit"></i></button>
+            </div>
+
+            <ul class="nav nav-list">
+                <li class="nav-header">Color</li>
+            </ul>
+            <div class="btn-group">
+                <button class="btn btn-primary whiteboard-tool-button dropdown-toggle" title="Marker Color" data-toggle="dropdown"> Blue  <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a>Black</a></li>
+                    <li><a>Blue</a></li>
+                    <li><a>Green</a></li>
+                    <li><a>Red</a></li>
+                </ul>
+            </div>
+
+            <ul class="nav nav-list">
+                <li class="nav-header">Clear</li>
+            </ul>
+            <div class="btn-group">
+                <button id="whiteboard-clear-button" class="btn whiteboard-tool-button" title="Clear"><i class="icon-fullscreen"></i></button>
+                <button id="id="whiteboard-undo-button"" class="btn whiteboard-tool-button" title="Undo"><i class="icon-repeat"></i></button>
+            </div>
+
+        </div>
+    </div>
+</script>
+
+
 
 <script type="text/template" id="whiteboard-controls-template">
     <div class="span9">
@@ -113,8 +157,6 @@
             </select>
             <button class="btn btn-input" data-toggle="modal" href="#create-whiteboard-modal">Create</button>
             <button id="whiteboard-delete-button" class="btn btn-input">Delete</button>
-            <button id="whiteboard-clear-button" class="btn btn-input">Clear</button>
-            <button id="whiteboard-undo-button" class="btn btn-input">Undo</button>
 
             <div class="modal hide fade" id="create-whiteboard-modal">
                 <div class="modal-header">

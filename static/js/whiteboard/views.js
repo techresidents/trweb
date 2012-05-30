@@ -384,8 +384,6 @@ define([
 
         this.rect.attr('x', x-this.centerOffset);
         this.rect.attr('y', y-this.centerOffset);
-
-
     }
 
 
