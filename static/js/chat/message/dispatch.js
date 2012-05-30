@@ -104,16 +104,23 @@ define([
             });
             var wb = whiteboard.whiteboardCollection.get(model.get('msg').whiteboardId);
             if(wb) {
-                wb.paths.add(wbPath);
+                wb.paths().add(wbPath);
             }
         },
 
         whiteboardDeletePath: function(model) {
             var wb = whiteboard.whiteboardCollection.get(model.get('msg').whiteboardId);
-            var wbPaths = wb.paths.where({'pathId': model.get('msg').pathId});
-            if(1 == wbPaths.length) {
-                path = wbPaths[0];
-                path.trigger('destroy', path);
+            var pathId = model.get('msg').pathId;
+            if ('reset' == pathId){
+                // treat a pathId of 'reset' as a trigger to clear the whiteboard
+                wb.paths().reset();
+            }
+            else {
+                // delete the specified path
+                var wbPath = wb.paths().get(pathId);
+                if(wbPath) {
+                    wbPath.trigger('destroy', wbPath);
+                }
             }
         },
 

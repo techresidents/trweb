@@ -64,6 +64,7 @@ define([
 
         clear: function() {
             this.paper.clear();
+            this.onBoardCleared();
         },
 
         adjustedCoordinates: function(event) {
@@ -101,9 +102,21 @@ define([
 
         },
 
+        // To be overridden by Views/Controllers to listen for this event
         onElementAdded: function(tool, element) {
 
+        },
+
+        // To be overridden by Views/Controllers to listen for this event
+        onElementRemoved: function(element){
+
+        },
+
+        // To be overridden by Views/Controllers to listen for this event
+        onBoardCleared: function(){
+
         }
+
     });
 
 
@@ -142,6 +155,7 @@ define([
             
     });
 
+
     var Pen = function(paper) {
         this.paper = paper;
         this.path = null;
@@ -150,6 +164,7 @@ define([
     Pen.prototype.start = function(x, y) {
         this.path = this.paper.path();
         this.path.attr('path', ['M', x, y].join(' '));
+        this.path.attr('stroke-width', '2');
     }
 
     Pen.prototype.stop = function(x, y) {
@@ -163,6 +178,36 @@ define([
     }
 
 
+    // TODO use inheritance here. Create tool prototype. Arrow should inherit from Pen.
+    var Arrow = function(paper) {
+        this.paper = paper;
+        this.path = null;
+    }
+
+    Arrow.prototype.start = function(x, y) {
+        this.path = this.paper.path();
+        var pathData =[
+            ['M', x, y].join(' '),
+            ['L', x, y].join(' ')
+        ];
+        this.path.attr('path', pathData);
+        this.path.attr('stroke-width', 2);
+        this.path.attr('arrow-end', 'open');
+    }
+
+    Arrow.prototype.stop = function(x, y) {
+        return this.path;
+    }
+
+    Arrow.prototype.move = function(x, y) {
+        var pathData = this.path.attr('path');
+        pathData += ['L', x, y].join(' ');
+        this.path.attr('path', pathData);
+    }
+
+
+
+
     var Rectangle = function(paper) {
         this.paper = paper;
         this.rect = null;
@@ -170,6 +215,8 @@ define([
 
     Rectangle.prototype.start = function(x, y) {
         this.rect = this.paper.rect(x, y, 0, 0, 5);
+        this.originX = x;
+        this.originY = y;
     }
 
     Rectangle.prototype.stop = function(x, y) {
@@ -177,12 +224,46 @@ define([
     }
 
     Rectangle.prototype.move = function(x, y) {
-        var originX = this.rect.attr('x');
-        var originY = this.rect.attr('y');
 
-        this.rect.attr('width', x - originX);
-        this.rect.attr('height', y - originY);
+        var width = x - this.originX;
+        var height = y - this.originY;
+
+        // user is drawing rectangle starting at top left corner
+        if (width > 0 && height > 0){
+            this.rect.attr('width', width);
+            this.rect.attr('height', height);
+        }
+
+        // user is drawing rectangle starting at top right corner
+        if (width < 0 && height > 0){
+            var widthValue = Math.abs(width);
+            this.rect.attr('x', this.originX - widthValue);
+            this.rect.attr('width', widthValue);
+            this.rect.attr('height', height);
+        }
+
+        // user is drawing rectangle starting at bottom left corner
+        if (width > 0 && height < 0){
+            var heightValue = Math.abs(height);
+            this.rect.attr('y', this.originY - heightValue);
+            this.rect.attr('width', width);
+            this.rect.attr('height', heightValue);
+        }
+
+        // user is drawing rectangle starting at bottom right corner
+        if (width < 0 && height < 0){
+            var widthValue = Math.abs(width);
+            var heightValue = Math.abs(height);
+            this.rect.attr('x', this.originX - widthValue);
+            this.rect.attr('y', this.originY - heightValue);
+            this.rect.attr('width', widthValue);
+            this.rect.attr('height', heightValue);
+        }
+
     }
+
+
+
 
 
 
@@ -214,8 +295,118 @@ define([
         this.circle.attr('r', radius);
     }
 
+
+
+
+    var Erase = function(paper) {
+        this.paper = paper;
+        this.path = null;
+        this.rect = null;
+    }
+
+    Erase.prototype.start = function(x, y) {
+
+        // draw eraser boundary
+        this.path = this.paper.path();
+        this.rect = this.paper.rect(x-25, y-25, 50, 50, 0);
+
+        this.path.attr('path', ['M', x, y].join(' '));
+        this.path.attr('stroke', '#F5F5F5');
+        this.path.attr('stroke-linecap', 'square');
+        this.path.attr('stroke-linejoin', 'round');
+        this.path.attr('stroke-width', '49');
+    }
+
+    Erase.prototype.stop = function(x, y) {
+        this.rect.remove();
+        return this.path;
+    }
+
+    Erase.prototype.move = function(x, y) {
+
+        var path = this.path.attr('path');
+        path += ['L', x, y].join(' ');
+        this.path.attr('path', path);
+
+        this.rect.attr('x', x-25);
+        this.rect.attr('y', y-25);
+
+
+    }
+
+
+
+
+    // TODO unfinished. Come back to this later.
+    var Text = function(paper) {
+        this.paper = paper;
+        this.text = null;
+    }
+
+    Text.prototype.start = function(x, y) {
+
+        // show cursor for text input
+        // append to x y coordinate
+        // on enter, capture text, remove div
+        // send text to paper
+
+
+
+        var textInput = new ChatWhiteboardTextInputView();
+        console.log(textInput.render().el);
+        //$(textInput.render().el).insertAfter()
+        $('#whiteboard-wrapper').append(textInput.render().el);
+        //var offsetX = $('whiteboard-wrapper').offset().left;
+        //var offsetY = $('whiteboard-wrapper').offset().top;
+        $('.whiteboard-text-input').css('top', y + 'px');
+        $('.whiteboard-text-input').css('left', x + 'px');
+
+        this.text = this.paper.text(x, y, 'test');
+        //this.text.attr('font-size', 24);
+    }
+
+    Text.prototype.stop = function(x, y) {
+        return this.text;
+    }
+
+    Text.prototype.move = function(x, y) {
+        // no-op
+    }
+
+
+
+
+    /**
+     * Whiteboard text input layout.
+     * @constructor
+     */
+    var ChatWhiteboardTextInputView = Backbone.View.extend({
+
+        templateSelector: '#whiteboard-text-input-template',
+
+        initialize: function() {
+            this.template = _.template($(this.templateSelector).html());
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            return this;
+        },
+
+    });
+
+
+
+
+
     return {
         WhiteboardView: WhiteboardView,
         WhiteboardToolView: WhiteboardToolView,
+        Pen: Pen,
+        Arrow: Arrow,
+        Rectangle: Rectangle,
+        Circle: Circle,
+        Text: Text,
+        Erase: Erase
     }
 });

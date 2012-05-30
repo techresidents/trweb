@@ -65,9 +65,14 @@ define([
             return this;
         },
 
+        paths: function() {
+            return this.get('paths');
+        },
+
         urlRoot: function() {
             return this.header.url() + this.msg.url();
         },
+
 
         /**
          * Cross domain compatible sync.
@@ -145,8 +150,10 @@ define([
                 this.msg = options.msg;
                 optionsProvided = true;
             } else {
-                this.header = new messages.MessageHeader;
-                this.msg = new messages.WhiteboardCreatePathMessage;
+                this.header = new messages.MessageHeader();
+                this.msg = new messages.WhiteboardCreatePathMessage({
+                    whiteboardId : attributes.whiteboardId
+                });
             }
 
             if(optionsProvided) {

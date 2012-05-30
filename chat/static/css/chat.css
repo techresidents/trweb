@@ -125,3 +125,10 @@
 #tags li:hover .close-inline {
     display:inline;
 }
+
+.whiteboard-text-input {
+    position: absolute;
+    z-index: 900;
+    top: 150px;
+    left: 300px;
+}

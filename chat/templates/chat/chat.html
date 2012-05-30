@@ -56,9 +56,9 @@
                 <div id="agenda" class="tab-pane fade in active">
                 </div>
                 <div id="whiteboard" class="tab-pane fade">
-                    <div id="whiteboard-controls">
-
-                    </div>
+                    <div id="whiteboard-tools"></div>
+                    <div id="whiteboard-controls"></div>
+                    <div id="whiteboard-containerZ"></div>
                 </div>
                 <div id="resources" class="tab-pane fade">
                 </div>
@@ -85,24 +85,25 @@
 {% endautoescape %}
 
 <!-- Templates -->
-    
-<script type="text/template" id="whiteboard-controls-template">
+
+    <script type="text/template" id="whiteboard-tools-template">
     <div class="span2">
         <div class="well">
             <ul class="nav nav-list">
                 <li class="nav-header">Tools</li>
-                <li class="active"><a href="#">Pen</a></li>
-                <li><a href="#">Arrows</a></li>
-                <li><a href="#">Rectangle</a></li>
-                <li><a href="#">Circle</a></li>
-                <li><a href="#">Text</a></li>
-                <li><a href="#">Erase</a></li>
-                <li><a href="#">Clear</a></li>
+                <li><a href="#" id="tools-pen">Pen</a></li>
+                <li><a href="#" id="tools-arrow">Arrow</a></li>
+                <li><a href="#" id="tools-rect">Rectangle</a></li>
+                <li><a href="#" id="tools-circle">Circle</a></li>
+                <li><a href="#" id="tools-text">Text</a></li>
+                <li><a href="#" id="tools-erase">Erase</a></li>
                 <li><a href="#">Color Picker</a></li>
             </ul>
         </div>
     </div>
+ </script>
 
+<script type="text/template" id="whiteboard-controls-template">
     <div class="span9">
         <div id="nav-panel-whiteboard">
             <select id="select-whiteboard">
@@ -112,6 +113,8 @@
             </select>
             <button class="btn btn-input" data-toggle="modal" href="#create-whiteboard-modal">Create</button>
             <button id="whiteboard-delete-button" class="btn btn-input">Delete</button>
+            <button id="whiteboard-clear-button" class="btn btn-input">Clear</button>
+            <button id="whiteboard-undo-button" class="btn btn-input">Undo</button>
 
             <div class="modal hide fade" id="create-whiteboard-modal">
                 <div class="modal-header">
@@ -130,10 +133,19 @@
             </div>
 
         </div>
-        <div class="well" id="whiteboard-container">
+    </div>
+</script>
+
+<script type="text/template" id="whiteboard-container-template">
+    <div class="span9">
+        <div class="well" id="whiteboard-wrapper">
 
         </div>
     </div>
+</script>
+
+<script type="text/template" id="whiteboard-text-input-template">
+    <input class="span1 whiteboard-text-input" type="text" name="wb-text-input" />
 </script>
 
 {% endblock %}
