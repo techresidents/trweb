@@ -31,7 +31,7 @@ define([
         initialize: function(attributes, options) {
             var optionsProvided = false;
 
-            if(options) {
+            if(options && options.header && options.msg) {
                 this.header = options.header;
                 this.msg = options.msg;
                 optionsProvided = true;
@@ -97,8 +97,8 @@ define([
         sync: xdBackbone.sync,
 
         parse: function(response) {
-            this.header = response.header;
-            this.msg = response.msg;
+            this.header = new messages.MessageHeader(response.header);
+            this.msg = new messages.TagCreateMessage(response.msg);
 
             return {
                 tagId: response.msg.tagId,
@@ -106,12 +106,6 @@ define([
                 name: response.msg.name,
             };
         },
-
-        toJSON: function() {
-            return _.extend(this.attributes, {
-                myTag: this.userId() === user.currentUser.id
-            });
-        }
     });
 
     /**
@@ -129,6 +123,6 @@ define([
 
     return {
         Tag: Tag,
-        tagCollection: new TagCollection,
+        TagCollection: TagCollection,
     };
 });

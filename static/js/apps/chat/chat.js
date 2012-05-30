@@ -2,28 +2,45 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
+    'common/notifications',
+    'core/command',
+    'core/facade',
     'core/mediator',
-    'chat/models',
-    'chat/agenda/views',
-    'chat/discuss/views',
-    'chat/resource/views',
-    'chat/tag/views',
-    'chat/user/views',
-    'chat/whiteboard/views',
+    'chat/agenda/mediators',
+    'chat/commands',
+    'chat/proxies',
+    'chat/message/commands',
+    'chat/discuss/mediators',
+    'chat/resource/commands',
+    'chat/resource/mediators',
+    'chat/tag/commands',
+    'chat/tag/mediators',
+    'chat/user/mediators',
+    'chat/whiteboard/commands',
+    'chat/whiteboard/mediators',
 ], function(
     $,
     _,
     Backbone,
+    notifications,
+    command,
+    facade,
     mediator,
-    models,
-    agenda,
-    discuss,
-    resource,
-    tag,
-    user,
-    whiteboard) {
+    agenda_mediators,
+    chat_commands,
+    chat_proxies,
+    message_commands,
+    discuss_mediators,
+    resource_commands,
+    resource_mediators,
+    tag_commands,
+    tag_mediators,
+    user_mediators,
+    whiteboard_commands,
+    whiteboard_mediators) {
 
 $(document).ready(function() {
+
     
     /**
      * Chat application main view.
@@ -40,81 +57,145 @@ $(document).ready(function() {
         el: $('#chatapp'),
 
         initialize: function() {
-            this.chat = new models.Chat(null, {
-                chatAPIKey: this.options.chatAPIKey,
-                chatSessionToken: this.options.chatSessionToken,
-                chatUserToken: this.options.chatUserToken,
-                users: this.options.users,
-                topics: this.options.topics,
-                resources: this.options.resources,
-            });
-
-            //set chat model
-            models.chat = this.chat;
-            
-
-            //create a view for each user
-            this.chat.users().each(function(chatUser) {
-                var chatUserView = new user.ChatUserView({
-                        model: chatUser,
-                        id: chatUser.id,
-                        chatSession: this.chat.session(),
-                        css: 'span' + 12/this.chat.users().length
-                });
-                this.$('#chat').append(chatUserView.render().el);
-            }, this);
-
-            //create discuss view
-            var discussView = new discuss.DiscussView({
-                el: '#discuss'
-            });
-            discussView.render();
-
-            //create tagger view
-            var chatTaggerView = new tag.ChatTaggerView({
-                    el: '#tagger',
-            });
-            chatTaggerView.render();
-
-
-            //create tab views
-            var chatAgendaTabView = new agenda.ChatAgendaTabView({
-                el: $('#agenda'),
-            });
-            chatAgendaTabView.render();
-
-
-            var chatWhiteboardTabView = new whiteboard.ChatWhiteboardTabView({
-                el: $('#whiteboard'),
-            });
-            chatWhiteboardTabView.render();
-
-            var chatResourceTabView = new resource.ChatResourceTabView({
-                el: $('#resources'),
-            });
-            chatResourceTabView.render();
-
-
-            //connect the chat and start polling for messages.
-            this.chat.connect();
-            this.chat.messages().longPoll();
         },
+
+        addView: function(type, view) {
+            switch(type) {
+                case 'ChatUserView':
+                    this.$('#chat').append(view.render().el);
+                    break;
+                case 'DiscussView':
+                    this.$('#discuss').html(view.render().el);
+                    break;
+                case 'ChatTaggerView':
+                    this.$('#tagger').html(view.render().el);
+                    break;
+                case 'AgendaTabView':
+                    this.$('#agenda').html(view.render().el);
+                    break;
+                case 'WhiteboardTabView':
+                    this.$('#whiteboard').html(view.render().el);
+                    break;
+                case 'ResourcesTabView':
+                    this.$('#resources').html(view.render().el);
+                    break;
+            }
+        },
+        
+        showAgenda: function() {
+            this.$('a[href="#agenda"]').tab('show');
+        },
+
+        showWhiteboards: function() {
+            this.$('a[href="#whiteboard"]').tab('show');
+        },
+
+        showResources: function() {
+            this.$('a[href="#resources"]').tab('show');
+        },
+
     });
    
 
-    var ChatApp = mediator.Mediator.extend({
-
-        notifications: {
-        },
+    var ChatAppMediator = mediator.Mediator.extend({
+        name: 'ChatAppMediator',
+        
+        notifications: [
+            [notifications.VIEW_CREATED, 'onViewCreated'],
+            [notifications.SHOW_AGENDA, 'onShowAgenda'],
+            [notifications.SHOW_RESOURCES, 'onShowResources'],
+            [notifications.SHOW_WHITEBOARDS, 'onShowWhiteboards'],
+        ],
 
         initialize: function(options) {
             this.view = new ChatAppView(options);
+
+            //sub-mediators
+            this.facade.registerMediator(new user_mediators.ChatUsersMediator());
+            this.facade.registerMediator(new discuss_mediators.DiscussMediator());
+            this.facade.registerMediator(new tag_mediators.TaggerMediator());
+            this.facade.registerMediator(new agenda_mediators.AgendaTabMediator());
+            this.facade.registerMediator(new whiteboard_mediators.WhiteboardTabMediator());
+            this.facade.registerMediator(new resource_mediators.ResourcesTabMediator());
+        },
+
+        onViewCreated: function(type, view) {
+            this.view.addView(type, view);
+        },
+
+        onShowAgenda: function(notification) {
+            this.view.showAgenda();
+        },
+
+        onShowResources: function(notification) {
+            this.view.showResources();
+        },
+
+        onShowWhiteboards: function(notification) {
+            this.view.showWhiteboards();
         },
 
     });
 
-    //constuct main app 
-    app = new ChatApp(data);
+    var InitModels = command.Command.extend({
+
+        execute: function() {
+            this.facade.registerProxy(new chat_proxies.ChatProxy(data));
+        }
+    });
+
+    var InitViews = command.Command.extend({
+
+        execute: function() {
+            this.facade.registerMediator(new ChatAppMediator(data));
+        }
+    });
+
+    var AppStartCommand = command.MacroCommand.extend({
+
+        initialize: function() {
+            this.addSubCommand(InitModels);
+            this.addSubCommand(InitViews);
+        },
+    });
+
+
+    var ChatAppFacade = facade.Facade.extend({
+
+        initialize: function() {
+            facade.setInstance(this);
+            this.registerCommand(notifications.APP_START, AppStartCommand);
+            this.registerCommand(notifications.CHAT_CONNECT, chat_commands.ChatConnectCommand);
+            this.registerCommand(notifications.CHAT_NEXT_TOPIC, chat_commands.ChatNextTopicCommand);
+            this.registerCommand(notifications.MESSAGE_MINUTE_CREATE, message_commands.MinuteCreateMessageCommand);
+            this.registerCommand(notifications.MESSAGE_MINUTE_UPDATE, message_commands.MinuteUpdateMessageCommand);
+            this.registerCommand(notifications.MESSAGE_TAG_CREATE, message_commands.TagCreateMessageCommand);
+            this.registerCommand(notifications.MESSAGE_TAG_DELETE, message_commands.TagDeleteMessageCommand);
+            this.registerCommand(notifications.MESSAGE_WHITEBOARD_CREATE, message_commands.WhiteboardCreateMessageCommand);
+            this.registerCommand(notifications.MESSAGE_WHITEBOARD_DELETE, message_commands.WhiteboardDeleteMessageCommand);
+            this.registerCommand(notifications.MESSAGE_WHITEBOARD_CREATE_PATH, message_commands.WhiteboardCreatePathMessageCommand);
+            this.registerCommand(notifications.MESSAGE_WHITEBOARD_DELETE_PATH, message_commands.WhiteboardDeletePathMessageCommand);
+            this.registerCommand(notifications.SHOW_RESOURCE, resource_commands.ShowResourceCommand);
+            this.registerCommand(notifications.TAG_CREATE, tag_commands.CreateTagCommand);
+            this.registerCommand(notifications.TAG_DELETE, tag_commands.DeleteTagCommand);
+            this.registerCommand(notifications.WHITEBOARD_CREATE, whiteboard_commands.CreateWhiteboardCommand);
+            this.registerCommand(notifications.WHITEBOARD_DELETE, whiteboard_commands.DeleteWhiteboardCommand);
+            this.registerCommand(notifications.WHITEBOARD_PATH_CREATE, whiteboard_commands.CreateWhiteboardPathCommand);
+            this.registerCommand(notifications.WHITEBOARD_PATH_DELETE, whiteboard_commands.DeleteWhiteboardPathCommand);
+        },
+
+        start: function() {
+            this.trigger(notifications.APP_START);
+            this.trigger(notifications.CHAT_CONNECT);
+        },
+
+        stop: function() {
+            this.trigger(notifications.APP_STOP);
+        }
+    });
+
+    var chatAppFacade = new ChatAppFacade();
+    chatAppFacade.start();
 });
 
     

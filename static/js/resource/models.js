@@ -72,7 +72,6 @@ define([
                     result = new Resource(attributes, options);
                     break;
             }
-            console.log(result);
             return result;
         },
         
@@ -82,6 +81,7 @@ define([
     });
 
     return {
+        ResourceCollection: ResourceCollection,
         resourceCollection: new ResourceCollection
     }
 });

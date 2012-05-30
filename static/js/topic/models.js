@@ -144,6 +144,7 @@ define([
             return this.at(this.selectedIndex);
         },
 
+
         /**
          * Test if topic is leaf node.
          * @param {number} id Topic id

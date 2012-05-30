@@ -6,7 +6,7 @@ define([
 ], function($, _, Backbone, base) { 
 
     var Facade = function(options) {
-        this._events = Backbone.Events;
+        this._events = _.extend({}, Backbone.Events);
         this._commands = {};
         this._mediators = {};
         this._proxies = {};
@@ -28,17 +28,17 @@ define([
         },
 
         trigger: function(notification) {
-            return this._events.trigger(arguments);
+            return this._events.trigger.apply(this._events, arguments);
         },
         
         registerCommand: function(notification, commandClass) {
-            if(!this._commands[commandClass]) {
-                this._commands[commandClass] = function() {
+            if(!this._commands[notification]) {
+                this._commands[notification] = function() {
                     var command = new commandClass();
-                    command.execute(arguments);
+                    command.execute.apply(command, arguments);
                 }
             }
-            this.on(notification, this._commands[commandClass], this);
+            this.on(notification, this._commands[notification], this);
         },
 
         unregisterCommand: function(notification, commandClass) {
@@ -46,7 +46,7 @@ define([
         },
 
         registerMediator: function(mediator) {
-            var name = core.getValue(mediator, 'name');
+            var name = base.getValue(mediator, 'name');
             if(name) {
                 this._mediators[name] = mediator;
             } else {
@@ -63,7 +63,7 @@ define([
         },
 
         registerProxy: function(proxy) {
-            var name = core.getValue(proxy, 'name');
+            var name = base.getValue(proxy, 'name');
             if(name) {
                 this._proxies[name] = proxy;
             } else {
@@ -93,7 +93,7 @@ define([
         },
 
         setInstance: function(instance) {
-            if(_instance) {
+            if(this._instance) {
                 throw new Error("facade already set");
             }
             this._instance = instance;
