@@ -206,12 +206,6 @@ define([
                 pathData: response.msg.pathData,
             };
         },
-
-        toJSON: function() {
-            return _.extend(this.attributes, {
-                myPath: this.userId() === user.currentUser.id
-            });
-        }
     });
 
     /**

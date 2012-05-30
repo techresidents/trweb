@@ -87,6 +87,7 @@ define([
 
     var WhiteboardCreatePathMessageCommand = command.Command.extend({
         execute: function(options) {
+            console.log('execute');
             var proxy = this.facade.getProxy(whiteboard_proxies.ChatWhiteboardsProxy.NAME);
             var model = options.model;
             var whiteboardPath = new whiteboard_models.WhiteboardPath(null, {
@@ -96,7 +97,7 @@ define([
 
             var whiteboard = proxy.get(model.get('msg').whiteboardId);
             if(whiteboard) {
-                whiteboard.paths.add(whiteboardPath);
+                whiteboard.paths().add(whiteboardPath);
             }
         }
     });
@@ -106,10 +107,18 @@ define([
             var proxy = this.facade.getProxy(whiteboard_proxies.ChatWhiteboardsProxy.NAME);
             var model = options.model;
             var whiteboard = proxy.get(model.get('msg').whiteboardId);
-            var whiteboardPaths = whiteboard.paths.where({'pathId': model.get('msg').pathId});
-            if(1 == whiteboardPaths.length) {
-                var path = whiteboardPaths[0];
-                path.trigger('destroy', path);
+            var pathId = model.get('msg').pathId;
+
+            if ('reset' == pathId){
+                // treat a pathId of 'reset' as a trigger to clear the whiteboard
+                whiteboard.paths().reset();
+            }
+            else {
+                // delete the specified path
+                var whiteboardPath = whiteboard.paths().get(pathId);
+                if(whiteboardPath) {
+                    whiteboardPath.trigger('destroy', whiteboardPath);
+                }
             }
         }
     });

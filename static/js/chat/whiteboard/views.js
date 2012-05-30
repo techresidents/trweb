@@ -5,7 +5,25 @@ define([
     'whiteboard/views',
     'chat/whiteboard/models',
     'whiteboard/serialize',
-], function($, _, Backbone, whiteboardViews, whiteboardModels, serialize) {
+    'text!chat/whiteboard/templates/whiteboard_container.html',
+    'text!chat/whiteboard/templates/whiteboard_controls.html',
+    'text!chat/whiteboard/templates/whiteboard_mediator.html',
+    'text!chat/whiteboard/templates/whiteboard_tab.html',
+    'text!chat/whiteboard/templates/whiteboard_text_input.html',
+    'text!chat/whiteboard/templates/whiteboard_tools.html',
+], function(
+    $,
+    _,
+    Backbone,
+    whiteboardViews,
+    whiteboardModels,
+    serialize,
+    whiteboard_container_template,
+    whiteboard_controls_template,
+    whiteboard_mediator_template,
+    whiteboard_tab_template,
+    whiteboard_text_input_template,
+    whiteboard_tools_template) {
 
 
     /**
@@ -13,6 +31,12 @@ define([
      * Responsible for coordinating and composing views together.
      */
     var ChatWhiteboardMediatorView = Backbone.View.extend({
+        
+        containerSelector: '#whiteboard-container',
+
+        controlsSelector: '#whiteboard-controls',
+        
+        toolsSelector: '#whiteboard-tools',
 
         events: {
             'change #select-whiteboard': "showSelectedWhiteboard",
@@ -27,7 +51,7 @@ define([
         },
 
         initialize: function() {
-            this.setElement($("#whiteboard"));
+            this.template =  _.template(whiteboard_mediator_template);
             this.rootWhiteboardNode = null;
             this.whiteboardViews = {};
             this.collection.bind("reset", this.render, this);
@@ -36,17 +60,23 @@ define([
         },
 
         render: function() {
+            this.$el.html(this.template());
 
             // instantiate whiteboard tools view
-            new ChatWhiteboardToolsView().render();
+            new ChatWhiteboardToolsView({
+                el: this.$(this.toolsSelector)
+            }).render();
 
             // instantiate controls view
             new ChatWhiteboardControlsView({
-                collection: whiteboardModels.whiteboardCollection
+                el: this.$(this.controlsSelector),
+                collection: this.collection,
             }).render();
 
             // instantiate whiteboard container view. This is where the whiteboard will be rendered
-            new ChatWhiteboardContainerView().render();
+            new ChatWhiteboardContainerView({
+                el: this.$(this.containerSelector),
+            }).render();
             this.rootWhiteboardNode = this.$('#whiteboard-wrapper');
         },
 
@@ -386,11 +416,8 @@ define([
      */
     var ChatWhiteboardContainerView = Backbone.View.extend({
 
-        templateSelector: '#whiteboard-container-template',
-
         initialize: function() {
-            this.setElement($('#whiteboard-containerZ'));
-            this.template = _.template($(this.templateSelector).html());
+            this.template = _.template(whiteboard_container_template);
         },
 
         render: function() {
@@ -408,11 +435,8 @@ define([
      */
     var ChatWhiteboardToolsView = Backbone.View.extend({
 
-        templateSelector: '#whiteboard-tools-template',
-
         initialize: function() {
-            this.setElement($("#whiteboard-tools"));
-            this.template = _.template($(this.templateSelector).html());
+            this.template = _.template(whiteboard_tools_template);
         },
 
         render: function() {
@@ -430,15 +454,13 @@ define([
      */
     var ChatWhiteboardControlsView = Backbone.View.extend({
 
-        templateSelector: '#whiteboard-controls-template',
         events: {
             "click #whiteboard-add-button": "addWhiteboardButtonHandler",
             "click #whiteboard-delete-button": "deleteWhiteboardButtonHandler"
         },
 
         initialize: function() {
-            this.setElement($("#whiteboard-controls"));
-            this.template = _.template($(this.templateSelector).html());
+            this.template = _.template(whiteboard_controls_template);
 
             // Create a whiteboard if one doesn't already exist.
             // Note that this block of code could be invoked even
@@ -548,12 +570,18 @@ define([
      */
     var ChatWhiteboardTabView = Backbone.View.extend({
 
+        mediatorSelector: '#whiteboard-mediator',
+
         initialize: function() {
+            this.template =  _.template(whiteboard_tab_template);
         },
 
         render: function() {
+            this.$el.html(this.template());
+
             new ChatWhiteboardMediatorView({
-                collection: whiteboardModels.whiteboardCollection
+                el: this.$(this.mediatorSelector),
+                collection: this.collection,
             }).render();
             return this;
         }
