@@ -13,8 +13,8 @@ define([
             return {
                 'add': notifications.USER_ADDED,
                 'change': notifications.USER_CHANGED,
-                'change:isConnected': notifications.USER_CONNECTED,
-                'change:isPublishing': notifications.USER_PUBLISHING,
+                'change:isConnected': notifications.USER_CONNECTED_CHANGED,
+                'change:isPublishing': notifications.USER_PUBLISHING_CHANGED,
                 'remove': notifications.USER_REMOVED,
             }
         },

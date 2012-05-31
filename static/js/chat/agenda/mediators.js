@@ -48,7 +48,10 @@ define([
             this.view.addEventListener(agenda_views.EVENTS.SELECT, this.onSelect, this);
             this.view.addEventListener(agenda_views.EVENTS.DELETE_TAG, this.onDeleteTag, this);
 
-            this.facade.trigger(notifications.VIEW_CREATED, 'AgendaTabView', this.view);
+            this.facade.trigger(notifications.VIEW_CREATED, {
+                type: 'AgendaTabView',
+                view: this.view,
+            });
         },
 
         onChatTopicChanged: function(notification) {
@@ -59,8 +62,8 @@ define([
             this.facade.trigger(notifications.CHAT_NEXT_TOPIC);
         },
 
-        onSelect: function(e, topicModel) {
-            this.view.model.select(topicModel);
+        onSelect: function(e, eventBody) {
+            this.view.model.select(eventBody.topicModel);
         },
 
         onDeleteTag: function(e, tagModel) {

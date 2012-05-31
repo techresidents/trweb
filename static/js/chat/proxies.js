@@ -83,6 +83,14 @@ define([
             return this.chatMessagesProxy;
         },
 
+        isActive: function() {
+            if(this.agendaProxy.active()) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
         connect: function() {
             //connect the chat and start polling for messages.
             this.getChatSessionProxy().connect();

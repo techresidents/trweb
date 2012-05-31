@@ -31,8 +31,8 @@ define([
             });
 
             this.minuteCollection = new minute_models.MinuteCollection();
-            this.minuteCollection.bind('add', this._minuteAdded, this);
-            this.minuteCollection.bind('change', this._minuteChanged, this);
+            this.minuteCollection.bind('add', this._onMinuteStarted, this);
+            this.minuteCollection.bind('change:endTimestamp', this._onMinuteEnded, this);
             this.minutesProxy = new minute_proxies.ChatMinutesProxy({
                 collection: this.minuteCollection,
             });
@@ -88,11 +88,111 @@ define([
             return this.activeTopic;
         },
 
-        activate: function(topic) {
-            this.activeTopic = topic;
+        activateNext: function() {
+            var activeTopic = this.active();
+            var closeLevel = this._startMinutes(activeTopic);
+            if(activeTopic) {
+                this._endMinutes(activeTopic.rank(), closeLevel);
+            }
+        },
 
+        _activate: function(topic) {
+            if(topic && !this.activeTopic) {
+                this.facade.trigger(notifications.CHAT_STARTED);
+            }
+
+            this.activeTopic = topic;
             this.facade.trigger(notifications.CHAT_TOPIC_CHANGED, {
                 topic: topic
+            });
+
+            if(!topic) {
+                this.facade.trigger(notifications.CHAT_ENDED);
+            }
+        },
+
+        _onMinuteStarted: function(minute) {
+            var topic = this.topicsProxy.get(minute.topicId());
+            if(this.topicsProxy.isLeaf(topic)) {
+                this._activate(topic);
+            }
+        },
+
+        _onMinuteEnded: function(minute) {
+            var topic = this.topicsProxy.get(minute.topicId());
+            var nextTopic = this.next(topic);
+            if(!nextTopic) {
+                this._activate(null);
+            }
+        },
+
+        /**
+         * Start chat Minutes for next active Topic.
+         * This will result in the creation of chat Minute's
+         * for all topics following the currently active topic,
+         * up to and including the next leaft topic.
+         * @param {Topic} active Currently active Topic model.
+         * @return {number} Topic level for which preceding
+         * Minutes need to be closed. A level of 1 indicates
+         * that all Topics with rank <= active().rank() and
+         * and level >= 1 can be closed.
+         */
+        _startMinutes: function(active) {
+            //close level indicates the topic level for 
+            //which preceding topics (lower rank) need
+            //to have their Minute's closed.
+            var closeLevel = null;
+            if(active) {
+                closeLevel = active.level();
+            }
+
+            var topic = active;
+            while(true) {
+                topic = this.topicsProxy.next(topic);
+                if(topic) {
+                    var minute = new minute_models.Minute({
+                        topicId: topic.id
+                    });
+                    minute.save();
+
+                    if(this.topicsProxy.isLeaf(topic)) {
+                        //found leaf topic to activate, so break.
+                        break;
+                    } else {
+                        //found non-leaf topic, so make sure we close
+                        //minutes up to this level.
+                        closeLevel = Math.min(closeLevel, topic.level());
+                    }
+                } else {
+                    //No more topics, close all open Minute's.
+                    closeLevel = 0;
+                    break;
+                }
+            }
+            return closeLevel;
+        },
+    
+
+        /**
+         * End all open chat Minutes for given rank and level.
+         * This will update the model for the selected Minutes
+         * which will result in the server closing the Minute
+         * and giving it a valid endTimestamp.
+         */
+        _endMinutes: function(rank, level) {
+            var minutes = this.minutesProxy.collection.filter(function(minute) {
+               var topic = this.topicsProxy.get(minute.topicId()); 
+               if(!minute.get('endTimestamp') &&
+                  topic.rank() <= rank && 
+                  topic.level() >= level) {
+                       return true;
+               } else {
+                   return false;
+               }
+            }, this);
+
+            _.each(minutes, function(minute) {
+                minute.save();
             });
         },
 

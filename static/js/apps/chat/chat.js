@@ -119,8 +119,8 @@ $(document).ready(function() {
             this.facade.registerMediator(new resource_mediators.ResourcesTabMediator());
         },
 
-        onViewCreated: function(type, view) {
-            this.view.addView(type, view);
+        onViewCreated: function(notification) {
+            this.view.addView(notification.type, notification.view);
         },
 
         onShowAgenda: function(notification) {
@@ -166,6 +166,8 @@ $(document).ready(function() {
             facade.setInstance(this);
             this.registerCommand(notifications.APP_START, AppStartCommand);
             this.registerCommand(notifications.CHAT_CONNECT, chat_commands.ChatConnectCommand);
+            this.registerCommand(notifications.CHAT_START, chat_commands.ChatStartCommand);
+            this.registerCommand(notifications.CHAT_END, chat_commands.ChatEndCommand);
             this.registerCommand(notifications.CHAT_NEXT_TOPIC, chat_commands.ChatNextTopicCommand);
             this.registerCommand(notifications.MESSAGE_MINUTE_CREATE, message_commands.MinuteCreateMessageCommand);
             this.registerCommand(notifications.MESSAGE_MINUTE_UPDATE, message_commands.MinuteUpdateMessageCommand);

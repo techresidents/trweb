@@ -24,6 +24,8 @@ define([
                 msg: model.msg()
             });
             proxy.add(minute);
+
+            return true;
         }
     });
 
@@ -32,10 +34,12 @@ define([
             var proxy = this.facade.getProxy(minute_proxies.ChatMinutesProxy.NAME);
             var model = options.model;
             var minute = proxy.get(model.get('msg').minuteId);
-            minute.initialize(null, {
+            minute.reinitialize(null, {
                 header: model.header(),
                 msg: model.msg()
             });
+
+            return true;
         }
     });
 
@@ -48,6 +52,8 @@ define([
                 msg: model.msg()
             });
             proxy.add(tag);
+
+            return true;
         }
     });
 
@@ -59,6 +65,8 @@ define([
             if(tag) {
                 tag.trigger('destroy', tag);
             }
+
+            return true;
         }
     });
 
@@ -71,6 +79,8 @@ define([
                 msg: model.msg()
             });
             proxy.add(whiteboard);
+
+            return true;
         }
     });
 
@@ -82,12 +92,13 @@ define([
             if(whiteboard) {
                 whiteboard.trigger('destroy', whiteboard);
             }
+
+            return true;
         }
     });
 
     var WhiteboardCreatePathMessageCommand = command.Command.extend({
         execute: function(options) {
-            console.log('execute');
             var proxy = this.facade.getProxy(whiteboard_proxies.ChatWhiteboardsProxy.NAME);
             var model = options.model;
             var whiteboardPath = new whiteboard_models.WhiteboardPath(null, {
@@ -99,6 +110,8 @@ define([
             if(whiteboard) {
                 whiteboard.paths().add(whiteboardPath);
             }
+
+            return true;
         }
     });
 
@@ -120,6 +133,8 @@ define([
                     whiteboardPath.trigger('destroy', whiteboardPath);
                 }
             }
+
+            return true;
         }
     });
 

@@ -13,7 +13,7 @@ define([
         defaults: function() {
             return {
                 name: "",
-                streamId: null,
+                stream: null,
                 isSpeaking: false,
                 isConnected: false,
                 isPublishing: false
@@ -24,12 +24,12 @@ define([
             return this.get("name");
         },
 
-        streamId: function() {
-            return this.get("streamId");
+        stream: function() {
+            return this.get("stream");
         },
 
-        setStreamId: function(streamId) {
-            this.set({ streamId: streamId });
+        setStream: function(stream) {
+            this.set({ stream: stream });
             return this;
         },
 

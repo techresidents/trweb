@@ -35,7 +35,7 @@ define([
             if(!this._commands[notification]) {
                 this._commands[notification] = function() {
                     var command = new commandClass();
-                    command.execute.apply(command, arguments);
+                    command.run.apply(command, arguments);
                 }
             }
             this.on(notification, this._commands[notification], this);

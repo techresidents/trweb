@@ -23,7 +23,10 @@ define([
             return TaggerMediator.NAME;
         },
 
-        notifications: [],
+        notifications: [
+            [notifications.CHAT_STARTED, 'onChatStarted'],
+            [notifications.CHAT_ENDED, 'onChatEnded'],
+        ],
 
         initialize: function(options) {
             this.agendaProxy = this.facade.getProxy(agenda_proxies.ChatAgendaProxy.NAME);
@@ -35,25 +38,33 @@ define([
                 collection: this.tagsProxy.collection
             });
 
-            //TOOD - link enabling of view to chat start / end notifications
-            this.view.enable(true);
-
             //add events listeners
             this.view.addEventListener(tag_views.EVENTS.ADD_TAG, this.onAdd, this);
             this.view.addEventListener(tag_views.EVENTS.DELETE_TAG, this.onDelete, this);
 
-            this.facade.trigger(notifications.VIEW_CREATED, 'ChatTaggerView', this.view);
-        },
-
-        onAdd: function(e, tagValue) {
-            this.facade.trigger(notifications.TAG_CREATE, {
-                name: tagValue
+            this.facade.trigger(notifications.VIEW_CREATED, {
+                type: 'ChatTaggerView',
+                view: this.view
             });
         },
 
-        onDelete: function(e, tagModel) {
+        onChatStarted: function(notification) {
+            this.view.enable(true);
+        },
+
+        onChatEnded: function(notification) {
+            this.view.enable(false);
+        },
+
+        onAdd: function(e, eventBody) {
+            this.facade.trigger(notifications.TAG_CREATE, {
+                name: eventBody.tagValue
+            });
+        },
+
+        onDelete: function(e, eventBody) {
             this.facade.trigger(notifications.TAG_DELETE, {
-                model: tagModel
+                model: eventBody.tagModel
             });
         },
 

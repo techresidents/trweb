@@ -70,7 +70,9 @@ define([
         onChangeEvent: function(e) {
             var resourceId = e.currentTarget.value;
             var resource = this.model.resources().get(resourceId);
-            this.triggerEvent(EVENTS.SELECT, resource);
+            this.triggerEvent(EVENTS.SELECT, {
+                resourceModel: resource
+            });
         },
 
         onChangeSelected: function(model) {

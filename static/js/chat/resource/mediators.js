@@ -36,15 +36,18 @@ define([
             //add events listeners
             this.view.addEventListener(resource_views.EVENTS.SELECT, this.onSelect, this);
 
-            this.facade.trigger(notifications.VIEW_CREATED, 'ResourcesTabView', this.view);
+            this.facade.trigger(notifications.VIEW_CREATED, {
+                type: 'ResourcesTabView',
+                view: this.view
+            });
         },
 
         onResourceSelect: function(notification) {
             this.view.model.select(notification.resource);
         },
 
-        onSelect: function(e, resourceModel) {
-            this.view.model.select(resourceModel);
+        onSelect: function(e, eventBody) {
+            this.view.model.select(eventBody.resourceModel);
         },
 
 

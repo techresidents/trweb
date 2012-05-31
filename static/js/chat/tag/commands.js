@@ -21,6 +21,8 @@ define([
                 });
                 tag.save();
             }
+
+            return true;
         }
     });
 
@@ -32,6 +34,8 @@ define([
             if(activeMinute) {
                 options.model.destroy();
             }
+
+            return true;
         }
     });
 

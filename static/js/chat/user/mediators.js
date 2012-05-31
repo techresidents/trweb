@@ -18,8 +18,8 @@ define([
         name: 'ChatUsersMediator',
 
         notifications: [
-            [notifications.USER_CONNECTED, 'onConnected'],
-            [notifications.USER_PUBLISHING,'onPublishing'],
+            [notifications.USER_CONNECTED_CHANGED, 'onConnectedChanged'],
+            [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged'],
         ],
 
         initialize: function(options) {
@@ -36,30 +36,47 @@ define([
                 model: userModel,
                 css: 'span' + 12/this.usersProxy.collection.length,
             });
+
             this.views[userModel.id] = view;
-            this.facade.trigger(notifications.VIEW_CREATED, 'ChatUserView', view);
-        },
-
-        onConnected: function(notification) {
-            var userModel = notification.model;
-            var view = this.views[userModel.id];
-
-            //TODO if this is us - start publishing
-            var details = view.getStreamViewDetails();
-            this.sessionProxy.session.publish(details.elementId, {
-                width: details.width,
-                height: details.height,
-                encodedWidth: details.width,
-                encodedHeight: details.height,
-                reportMicLevels: true,
+            this.facade.trigger(notifications.VIEW_CREATED, {
+                type: 'ChatUserView',
+                view: view
             });
         },
 
-        onPublishing: function(notification) {
+        onConnectedChanged: function(notification) {
             var userModel = notification.model;
             var view = this.views[userModel.id];
+            
+            //Publish stream if this is the current user
+            if(userModel.isConnected() && userModel.isCurrentUser()) {
+                var details = view.getStreamViewDetails();
+                this.sessionProxy.session.publish(details.elementId, {
+                    width: details.width,
+                    height: details.height,
+                    encodedWidth: details.width,
+                    encodedHeight: details.height,
+                    reportMicLevels: true,
+                });
+            }
+        },
 
-            //TODO if this is not us - subscribe to stream
+        onPublishingChanged: function(notification) {
+            console.log('onPublishing');
+            var userModel = notification.model;
+            var view = this.views[userModel.id];
+            
+            //Subscribe to stream if it's not current user
+            if(userModel.isPublishing() && !userModel.isCurrentUser()) {
+                var details = view.getStreamViewDetails();
+                console.log(details);
+                this.sessionProxy.session.subscribe(userModel.stream(), details.elementId,  {
+                    width: details.width,
+                    height: details.height,
+                    encodedWidth: details.width,
+                    encodedHeight: details.height,
+                });
+            }
         },
 
     });

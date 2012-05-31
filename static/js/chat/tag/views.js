@@ -54,7 +54,9 @@ define([
         },
 
         destroy: function() {
-            this.triggerEvent(EVENTS.DELETE_TAG, this.model);
+            this.triggerEvent(EVENTS.DELETE_TAG, {
+                tagModel: this.model
+            });
         }
     });
 
@@ -169,7 +171,9 @@ define([
         addTag: function() {
             var value = this.tagInput.val();
             if(this.enabled && value) {
-                this.triggerEvent(EVENTS.ADD_TAG, value);
+                this.triggerEvent(EVENTS.ADD_TAG, {
+                    tagValue: value
+                });
                 this.tagInput.val(null);
                 this.tagInput.focus();
             }

@@ -29,6 +29,10 @@ define([
         },
         
         initialize: function(attributes, options) {
+            this.reinitialize(attributes, options);
+        },
+
+        reinitialize: function(attributes, options) {
             var optionsProvided = false;
 
             if(options && options.header && options.msg) {

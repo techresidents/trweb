@@ -35,7 +35,10 @@ define([
             this.view.addEventListener(discuss_views.EVENTS.NEXT, this.onNext, this);
             this.view.addEventListener(discuss_views.EVENTS.START, this.onStart, this);
             
-            this.facade.trigger(notifications.VIEW_CREATED, 'DiscussView', this.view);
+            this.facade.trigger(notifications.VIEW_CREATED, {
+                type: 'DiscussView',
+                view: this.view
+            });
         },
 
         onChatTopicChanged: function(notification) {

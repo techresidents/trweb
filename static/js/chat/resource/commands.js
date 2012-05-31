@@ -21,6 +21,8 @@ define([
             this.facade.trigger(notifications.RESOURCE_SELECT, {
                 resource: resource,
             });
+
+            return true;
         }
     });
 

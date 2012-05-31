@@ -31,7 +31,10 @@ define([
                 collection: this.whiteboardsProxy.collection,
             });
 
-            this.facade.trigger(notifications.VIEW_CREATED, 'WhiteboardTabView', this.view);
+            this.facade.trigger(notifications.VIEW_CREATED, {
+                type: 'WhiteboardTabView',
+                view: this.view
+            });
         },
 
     }, {

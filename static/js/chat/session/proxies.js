@@ -73,20 +73,32 @@ define([
         },
 
         sessionConnectedHandler: function(event) {
-            this.facade.trigger(notifications.SESSION_CONNECTED, event);
+            this.facade.trigger(notifications.SESSION_CONNECTED, {
+                event: event,
+            });
 
             for(var i = 0; i < event.connections.length; i++) {
                 var connection = event.connections[i];
                 var connectionData = JSON.parse(connection.data);
-                
                 var user = this.usersProxy.get(connectionData.id);
                 user.setConnected(true);
+            }
+
+            for(var i = 0; i < event.streams.length; i++) {
+                var stream = event.streams[i];
+                var connectionData = JSON.parse(stream.connection.data);
+                
+                var user = this.usersProxy.get(connectionData.id);
+                user.setStream(stream);
+                user.setPublishing(true);
             }
 
         },
 
         connectionCreatedHandler: function(event) {
-            this.facade.trigger(notifications.SESSION_CONNECTION_CREATED, event);
+            this.facade.trigger(notifications.SESSION_CONNECTION_CREATED, {
+                event: event,
+            });
 
             for(var i = 0; i < event.connections.length; i++) {
                 var connection = event.connections[i];
@@ -98,7 +110,9 @@ define([
         },
 
         connectionDestroyedHandler: function(event) {
-            this.facade.trigger(notifications.SESSION_CONNECTION_DESTROYED, event);
+            this.facade.trigger(notifications.SESSION_CONNECTION_DESTROYED, {
+                event: event,
+            });
 
             for(var i = 0; i < event.connections.length; i++) {
                 var connection = event.connections[i];
@@ -111,27 +125,31 @@ define([
         },
 
         streamCreatedHandler: function(event) {
-            this.facade.trigger(notifications.SESSION_STREAM_CREATED, event);
+            this.facade.trigger(notifications.SESSION_STREAM_CREATED, {
+                event: event,
+            });
 
             for(var i = 0; i < event.streams.length; i++) {
                 var stream = event.streams[i];
                 var connectionData = JSON.parse(stream.connection.data);
                 
                 var user = this.usersProxy.get(connectionData.id);
-                user.setStreamId(stream.id);
+                user.setStream(stream);
                 user.setPublishing(true);
             }
         },
 
         streamDestroyedHandler: function(event) {
-            this.facade.trigger(notifications.SESSION_STREAM_DESTROYED, event);
+            this.facade.trigger(notifications.SESSION_STREAM_DESTROYED, {
+                event: event,
+            });
 
             for(var i = 0; i < event.streams.length; i++) {
                 var stream = event.streams[i];
                 var connectionData = JSON.parse(stream.connection.data);
                 
                 var user = this.usersProxy.get(connectionData.id);
-                user.setStreamId(null);
+                user.setStream(null);
                 user.setPublishing(false);
             }
         },

@@ -79,7 +79,9 @@ define([
         },
         
         click: function() {
-            this.triggerEvent(EVENTS.SELECT, this.model);
+            this.triggerEvent(EVENTS.SELECT, {
+                topicModel: this.model,
+            });
         },
 
         selectedChange: function() {

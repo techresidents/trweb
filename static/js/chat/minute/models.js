@@ -28,15 +28,21 @@ define([
         },
         
         initialize: function(attributes, options) {
+            this.reinitialize(attributes, options);
+        },
+
+
+        reinitialize: function(attributes, options) {
+
             var optionsProvided = false;
 
-            if(options) {
+            if(options && options.header && options.msg) {
                 this.header = options.header;
                 this.msg = options.msg;
                 optionsProvided = true;
             } else {
-                this.header = new messages.MessageHeader;
-                this.msg = new messages.MinuteCreateMessage;
+                this.header = new messages.MessageHeader();
+                this.msg = new messages.MinuteCreateMessage();
             }
 
             if(optionsProvided) {
@@ -96,8 +102,8 @@ define([
         sync: xdBackbone.sync,
 
         parse: function(response) {
-            this.header = response.header;
-            this.msg = response.msg;
+            this.header = new messages.MessageHeader(response.header);
+            this.msg = new messages.MinuteCreateMessage(response.msg);
 
             return {
                 minuteId: response.msg.minuteId,

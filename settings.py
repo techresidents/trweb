@@ -207,8 +207,9 @@ REGISTRATION_REQUIRES_CODE = False
 TR_LOGIN_USING_HTTPS = False
 
 #Set the location of the cross domain (XD) server for use with easyXDM.
-TR_XD_REMOTE = 'http://localhost:6767/static/js/easyXDM/cors/index.html'
+#TR_XD_REMOTE = 'http://localhost:6767/static/js/easyXDM/cors/index.html'
 #TR_XD_REMOTE = 'http://iville.local:6767/static/js/easyXDM/cors/index.html'
+TR_XD_REMOTE = 'http://192.168.1.101:6767/static/js/easyXDM/cors/index.html'
 
 
 #Tokbox settings
