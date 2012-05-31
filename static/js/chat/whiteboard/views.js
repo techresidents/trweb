@@ -4,6 +4,7 @@ define([
     'Backbone',
     'whiteboard/views',
     'chat/whiteboard/models',
+    'color/views',
     'whiteboard/serialize',
     'text!chat/whiteboard/templates/whiteboard_container.html',
     'text!chat/whiteboard/templates/whiteboard_controls.html',
@@ -17,6 +18,7 @@ define([
     Backbone,
     whiteboardViews,
     whiteboardModels,
+    colorViews,
     serialize,
     whiteboard_container_template,
     whiteboard_controls_template,
@@ -47,7 +49,7 @@ define([
             'click #tools-rect': 'rectToolSelected',
             'click #tools-circle': 'circleToolSelected',
             'click #tools-text': 'textToolSelected',
-            'click #tools-erase': 'eraseToolSelected',
+            'click #tools-erase': 'eraseToolSelected'
         },
 
         initialize: function() {
@@ -57,6 +59,9 @@ define([
             this.collection.bind("reset", this.render, this);
             this.collection.bind("add", this.addCollectionListener, this);
             this.collection.bind("remove", this.removeCollectionListener, this);
+
+            //event listeners
+            this.addEventListener(colorViews.EVENTS.SELECT, this.onMarkerColorSelected, this);
         },
 
         render: function() {
@@ -207,7 +212,7 @@ define([
             // determine which whiteboard is currently selected
             var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
 
-            // select the pen tool for this whiteboard
+            // select the tool for this whiteboard
             if (null != selectedWhiteboardId &&
                 selectedWhiteboardId in this.whiteboardViews)
             {
@@ -240,7 +245,27 @@ define([
 
                 whiteboardView.selectTool(tool);
             }
+        },
+
+        onMarkerColorSelected: function(color){
+
+            console.log('onMarkerColorSelectd called');
+            console.log(color);
+
+            // TODO apply this color to all whiteboards.  Do the same for tool selection.
+
+            // determine which whiteboard is currently selected
+            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
+
+            // select the marker color for this whiteboard
+            if (null != selectedWhiteboardId &&
+                selectedWhiteboardId in this.whiteboardViews)
+            {
+                var whiteboardView = this.whiteboardViews[selectedWhiteboardId];
+                whiteboardView.selectColor(color);
+            }
         }
+
     });
 
 
@@ -436,7 +461,7 @@ define([
      */
     var ChatWhiteboardToolsView = Backbone.View.extend({
 
-        templateSelector: '#whiteboard-tools-template-new',
+        colorPickerSelector: '#color-picker-wrapper',
 
         initialize: function() {
             this.template = _.template(whiteboard_tools_template);
@@ -445,9 +470,16 @@ define([
         render: function() {
             this.$el.html(this.template());
             this.$('.whiteboard-tool-button').tooltip(); //activate tooltips
+
+            // instantiate color picker view
+            new colorViews.ColorPickerView({
+                el: this.$(this.colorPickerSelector)
+            }).render();
+
             return this;
         },
     });
+
 
     /**
      * Whiteboard container view.
