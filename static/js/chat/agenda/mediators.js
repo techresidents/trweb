@@ -66,9 +66,9 @@ define([
             this.view.model.select(eventBody.topicModel);
         },
 
-        onDeleteTag: function(e, tagModel) {
+        onDeleteTag: function(e, eventBody) {
             this.facade.trigger(notifications.TAG_DELETE, {
-                model: tagModel
+                model: eventBody.tagModel
             });
         },
 

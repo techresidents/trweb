@@ -1,2 +1,8 @@
-<p>Connected: <%= isConnected %> </p>
-<p>Publishing: <%= isPublishing %> </p>
+<h5><%= name %>
+    <% if(!isConnected) { %>
+        <small>waiting...</small>
+    <% } %>
+    <% if(isConnected && !isPublishing) { %>
+        <small>connecting...</small>
+    <% } %>
+</h5>
