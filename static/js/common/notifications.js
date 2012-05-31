@@ -2,6 +2,9 @@ define([
 ], function() { 
 
     return {
+        /* ALERT ACTIONS */
+        ALERT: 'notification:Alert',
+
         /* APP ACTIONS */
         APP_START: 'notification:AppStart',
         APP_STOP: 'notification:AppStop',
