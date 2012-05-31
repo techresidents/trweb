@@ -18,6 +18,7 @@ define([
     'chat/user/mediators',
     'chat/whiteboard/commands',
     'chat/whiteboard/mediators',
+    'text!apps/chat/chat.html',
 ], function(
     $,
     _,
@@ -37,10 +38,8 @@ define([
     tag_mediators,
     user_mediators,
     whiteboard_commands,
-    whiteboard_mediators) {
-
-$(document).ready(function() {
-
+    whiteboard_mediators,
+    chat_app_template) {
     
     /**
      * Chat application main view.
@@ -54,9 +53,13 @@ $(document).ready(function() {
      */
     var ChatAppView = Backbone.View.extend({
 
-        el: $('#chatapp'),
-
         initialize: function() {
+            this.template = _.template(chat_app_template);
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            return this;
         },
 
         addView: function(type, view) {
@@ -101,6 +104,7 @@ $(document).ready(function() {
         name: 'ChatAppMediator',
         
         notifications: [
+            [notifications.DOM_READY, 'onDomReady'],
             [notifications.VIEW_CREATED, 'onViewCreated'],
             [notifications.SHOW_AGENDA, 'onShowAgenda'],
             [notifications.SHOW_RESOURCES, 'onShowResources'],
@@ -109,6 +113,7 @@ $(document).ready(function() {
 
         initialize: function(options) {
             this.view = new ChatAppView(options);
+            this.view.render();
 
             //sub-mediators
             this.facade.registerMediator(new user_mediators.ChatUsersMediator());
@@ -117,6 +122,10 @@ $(document).ready(function() {
             this.facade.registerMediator(new agenda_mediators.AgendaTabMediator());
             this.facade.registerMediator(new whiteboard_mediators.WhiteboardTabMediator());
             this.facade.registerMediator(new resource_mediators.ResourcesTabMediator());
+        },
+
+        onDomReady: function(notification) {
+            $('#chatapp').append(this.view.el);
         },
 
         onViewCreated: function(notification) {
@@ -198,7 +207,9 @@ $(document).ready(function() {
 
     var chatAppFacade = new ChatAppFacade();
     chatAppFacade.start();
-});
-
     
+    $(document).ready(function() {
+        chatAppFacade.trigger(notifications.DOM_READY);
+    });
+
 });
