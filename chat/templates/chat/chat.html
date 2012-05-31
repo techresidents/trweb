@@ -67,7 +67,6 @@
     </div>
 </div>
 
-
 <!-- All of these data structures are generated on the server w/out user input, so it's safe -->
 {% autoescape off %}
 <script>
@@ -83,69 +82,5 @@
     };
 </script>
 {% endautoescape %}
-
-<!-- Templates -->
-
-    <script type="text/template" id="whiteboard-tools-template">
-    <div class="span2">
-        <div class="well">
-            <ul class="nav nav-list">
-                <li class="nav-header">Tools</li>
-                <li><a href="#" id="tools-pen">Pen</a></li>
-                <li><a href="#" id="tools-arrow">Arrow</a></li>
-                <li><a href="#" id="tools-rect">Rectangle</a></li>
-                <li><a href="#" id="tools-circle">Circle</a></li>
-                <li><a href="#" id="tools-text">Text</a></li>
-                <li><a href="#" id="tools-erase">Erase</a></li>
-                <li><a href="#">Color Picker</a></li>
-            </ul>
-        </div>
-    </div>
- </script>
-
-<script type="text/template" id="whiteboard-controls-template">
-    <div class="span9">
-        <div id="nav-panel-whiteboard">
-            <select id="select-whiteboard">
-                <%_.each(whiteboardCollection, function(whiteboard) { %>
-                    <option value="<%= whiteboard.whiteboardId %>"><%= whiteboard.name %></option>
-                <% }); %>
-            </select>
-            <button class="btn btn-input" data-toggle="modal" href="#create-whiteboard-modal">Create</button>
-            <button id="whiteboard-delete-button" class="btn btn-input">Delete</button>
-            <button id="whiteboard-clear-button" class="btn btn-input">Clear</button>
-            <button id="whiteboard-undo-button" class="btn btn-input">Undo</button>
-
-            <div class="modal hide fade" id="create-whiteboard-modal">
-                <div class="modal-header">
-                    <button class="close" data-dismiss="modal">×</button>
-                    <h3>Whiteboard Name</h3>
-                </div>
-                <div class="modal-body">
-                    <div id="create-whiteboard-name-input">
-                        <input type="text" class="input-xlarge" id="whiteboard-name-input">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a href="#" class="btn" data-dismiss="modal">Close</a>
-                    <a href="#" id="whiteboard-add-button" class="btn btn-primary">OK</a>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</script>
-
-<script type="text/template" id="whiteboard-container-template">
-    <div class="span9">
-        <div class="well" id="whiteboard-wrapper">
-
-        </div>
-    </div>
-</script>
-
-<script type="text/template" id="whiteboard-text-input-template">
-    <input class="span1 whiteboard-text-input" type="text" name="wb-text-input" />
-</script>
 
 {% endblock %}

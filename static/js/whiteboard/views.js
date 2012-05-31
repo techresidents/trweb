@@ -50,8 +50,11 @@ define([
                 paperWidth,
                 paperHeight);
 
+            this.color = '#0000FF';
 
-            this.tool = new Pen(this.paper);
+            var toolAttributes = {'stroke': this.color};
+            this.tool = new Pen(this.paper, toolAttributes);
+
         },
         
         render: function() {
@@ -60,6 +63,10 @@ define([
 
         selectTool: function(tool) {
             this.tool = tool;
+        },
+
+        selectColor: function(color) {
+            this.color = color;
         },
 
         clear: function() {
@@ -156,8 +163,11 @@ define([
     });
 
 
-    var Pen = function(paper) {
+
+
+    var Pen = function(paper, optionalAttributes) {
         this.paper = paper;
+        this.optionalAttributes = optionalAttributes;
         this.path = null;
     }
 
@@ -165,6 +175,11 @@ define([
         this.path = this.paper.path();
         this.path.attr('path', ['M', x, y].join(' '));
         this.path.attr('stroke-width', '2');
+
+        // override attributes with user defined attributes, if specified
+        if (this.optionalAttributes){
+            this.path.attr(this.optionalAttributes);
+        }
     }
 
     Pen.prototype.stop = function(x, y) {
@@ -178,9 +193,12 @@ define([
     }
 
 
+
+
     // TODO use inheritance here. Create tool prototype. Arrow should inherit from Pen.
-    var Arrow = function(paper) {
+    var Arrow = function(paper, optionalAttributes) {
         this.paper = paper;
+        this.optionalAttributes = optionalAttributes;
         this.path = null;
     }
 
@@ -193,6 +211,11 @@ define([
         this.path.attr('path', pathData);
         this.path.attr('stroke-width', 2);
         this.path.attr('arrow-end', 'open');
+
+        // override attributes with user defined attributes, if specified
+        if (this.optionalAttributes){
+            this.path.attr(this.optionalAttributes);
+        }
     }
 
     Arrow.prototype.stop = function(x, y) {
@@ -208,15 +231,22 @@ define([
 
 
 
-    var Rectangle = function(paper) {
+    var Rectangle = function(paper, optionalAttributes) {
         this.paper = paper;
+        this.optionalAttributes = optionalAttributes;
         this.rect = null;
     }
 
     Rectangle.prototype.start = function(x, y) {
         this.rect = this.paper.rect(x, y, 0, 0, 5);
+        this.rect.attr('stroke', this.color);
         this.originX = x;
         this.originY = y;
+
+        // override attributes with user defined attributes, if specified
+        if (this.optionalAttributes){
+            this.rect.attr(this.optionalAttributes);
+        }
     }
 
     Rectangle.prototype.stop = function(x, y) {
@@ -267,13 +297,19 @@ define([
 
 
 
-    var Circle = function(paper) {
+    var Circle = function(paper, optionalAttributes) {
         this.paper = paper;
+        this.optionalAttributes = optionalAttributes;
         this.circle = null;
     }
 
     Circle.prototype.start = function(x, y) {
         this.circle = this.paper.circle(x, y, 0);
+
+        // override attributes with user defined attributes, if specified
+        if (this.optionalAttributes){
+            this.circle.attr(this.optionalAttributes);
+        }
     }
 
     Circle.prototype.stop = function(x, y) {
@@ -298,23 +334,41 @@ define([
 
 
 
-    var Erase = function(paper) {
+    var Erase = function(paper, optionalAttributes) {
         this.paper = paper;
+        this.optionalAttributes = optionalAttributes;
+
+        // note that order of declaration of path and rect impacts z-order
         this.path = null;
         this.rect = null;
     }
 
     Erase.prototype.start = function(x, y) {
+        // constants
+        this.centerOffset = 25;
+        this.strokeWidth = 50;
+        this.cornerRadius = 0;
 
         // draw eraser boundary
         this.path = this.paper.path();
-        this.rect = this.paper.rect(x-25, y-25, 50, 50, 0);
+        this.rect = this.paper.rect(
+            x-this.centerOffset,
+            y-this.centerOffset,
+            this.strokeWidth,
+            this.strokeWidth,
+            this.cornerRadius);
 
+        // set pen attributes
         this.path.attr('path', ['M', x, y].join(' '));
-        this.path.attr('stroke', '#F5F5F5');
+        this.path.attr('stroke', '#F5F5F5'); // this color matches the Bootstrap 'well' background color
         this.path.attr('stroke-linecap', 'square');
         this.path.attr('stroke-linejoin', 'round');
         this.path.attr('stroke-width', '49');
+
+        // override attributes with user defined attributes, if specified
+        if (this.optionalAttributes){
+            this.path.attr(this.optionalAttributes);
+        }
     }
 
     Erase.prototype.stop = function(x, y) {
@@ -328,10 +382,8 @@ define([
         path += ['L', x, y].join(' ');
         this.path.attr('path', path);
 
-        this.rect.attr('x', x-25);
-        this.rect.attr('y', y-25);
-
-
+        this.rect.attr('x', x-this.centerOffset);
+        this.rect.attr('y', y-this.centerOffset);
     }
 
 
