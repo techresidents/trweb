@@ -21,6 +21,9 @@ define([
         DOCUMENT_ADDED: 'notification:DocumentAdded',
         DOCUMENT_REMOVED: 'notification:DocumentRemoved',
 
+        /* DOM NOTICES */
+        DOM_READY: 'notification:DomReady',
+
         /* MESSAGE ACTIONS */
         MESSAGE_MINUTE_CREATE: 'notification:Message:MinuteCreate',
         MESSAGE_MINUTE_UPDATE: 'notification:MessageMinuteUpdate',
