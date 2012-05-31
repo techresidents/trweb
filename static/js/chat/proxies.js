@@ -36,7 +36,8 @@ define([
         },
 
         initialize: function(options) {
-            //create chat session (not yet connected)
+
+            //chat session proxy
             this.chatSessionProxy = new session_proxies.ChatSessionProxy({
                 apiKey: options.chatAPIKey,
                 sessionToken: options.chatSessionToken,
@@ -44,9 +45,9 @@ define([
             });
             this.chatSessionProxy.getUsersProxy().reset(options.users);
             this.facade.registerProxy(this.chatSessionProxy);
-            this.facade.registerProxy(this.chatSessionProxy.getUsersProxy());
 
 
+            //chat messages proxy
             this.chatMessagesProxy = new message_proxies.ChatMessagesProxy({
                 collection: new message_models.ChatMessageCollection(null, {
                     chatSessionToken: options.chatSessionToken,
@@ -54,35 +55,35 @@ define([
                 })
             });
 
+
+            //chat resources proxy
             this.chatResourcesProxy = new resource_proxies.ChatResourcesProxy({
                 collection: new resource_models.ResourceCollection()
             });
             this.chatResourcesProxy.reset(options.resources);
             this.facade.registerProxy(this.chatResourcesProxy);
 
+
+            //chat agenda proxy
             this.chatAgendaProxy = new agenda_proxies.ChatAgendaProxy();
             this.chatAgendaProxy.topicsProxy.reset(options.topics);
             this.facade.registerProxy(this.chatAgendaProxy);
 
+
+            //chat tags proxy
             this.chatTagsProxy = new tag_proxies.ChatTagsProxy({
                 collection: new tag_models.TagCollection()
             });
             this.facade.registerProxy(this.chatTagsProxy);
 
+
+            //chat whiteboards proxy
             this.chatWhiteboardsProxy = new whiteboard_proxies.ChatWhiteboardsProxy({
                 collection: new whiteboard_models.WhiteboardCollection()
             });
             this.facade.registerProxy(this.chatWhiteboardsProxy);
         },
         
-        getChatSessionProxy: function() {
-            return this.chatSessionProxy;
-        },
-
-        getChatMessagesProxy: function() {
-            return this.chatMessagesProxy;
-        },
-
         isActive: function() {
             if(this.agendaProxy.active()) {
                 return true;
@@ -93,8 +94,8 @@ define([
 
         connect: function() {
             //connect the chat and start polling for messages.
-            this.getChatSessionProxy().connect();
-            this.getChatMessagesProxy().longPoll();
+            this.chatSessionProxy.connect();
+            this.chatMessagesProxy.longPoll();
         },
 
     }, {

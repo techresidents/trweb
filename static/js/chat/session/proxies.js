@@ -21,14 +21,14 @@ define([
             this.apiKey = options.apiKey;
             this.sessionToken = options.sessionToken;
             this.userToken = options.userToken;
+
             this.usersProxy = new user_proxies.ChatUsersProxy({
                 collection: new user_models.ChatUserCollection(),
             });
+            this.facade.registerProxy(this.usersProxy);
+
             this.session =  TB.initSession(this.sessionToken);
 
-            //make 'this' available for tokbox event listeners
-            var that = this;
-            
             this.session.addEventListener("sessionConnected", _.bind(this.sessionConnectedHandler, this));
             this.session.addEventListener("connectionCreated", _.bind(this.connectionCreatedHandler, this));
             this.session.addEventListener("connectionDestroyed", _.bind(this.connectionDestroyedHandler, this));
