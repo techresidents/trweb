@@ -38,9 +38,9 @@ define([
                 users: this.usersProxy.collection,
                 whiteboards: this.whiteboardsProxy.collection,
                 viewModel: new whiteboard_models.WhiteboardValueObject({
-                    selectedWhiteboard: null,
+                    selectedWhiteboardId: null,
                     selectedTool: null,
-                    selectedColor: null,
+                    selectedColor: null // TODO set appropriate defaults if possible. Need to coordinate with the WBView.
                 })
             });
 
@@ -51,8 +51,6 @@ define([
 
             this.view.addEventListener(whiteboard_views.EVENTS.ADD_WHITEBOARD, this.onAdd, this);
             this.view.addEventListener(whiteboard_views.EVENTS.DELETE_WHITEBOARD, this.onDelete, this);
-            this.view.addEventListener(whiteboard_views.EVENTS.CLEAR_WHITEBOARD, this.onClear, this);
-
 
 
             /*
@@ -87,7 +85,9 @@ define([
          * @param eventBody Expecting the attribute 'color' to be specified
          */
         onMarkerColorSelected: function(event, eventBody) {
-            this.view.viewModel.setSelectedColor(eventBody.color);
+            if (eventBody.color) {
+                this.view.viewModel.setSelectedColor(eventBody.color);
+            }
         },
 
         /**
@@ -97,7 +97,9 @@ define([
          * @param eventBody Expecting the attribute 'toolName' to be specified
          */
         onToolSelected: function(event, eventBody) {
-            this.view.viewModel.setSelectedTool(eventBody.toolName);
+            if (eventBody.toolName) {
+                this.view.viewModel.setSelectedTool(eventBody.toolName);
+            }
         },
 
         /**
@@ -106,7 +108,9 @@ define([
          * @param eventBody Expecting the attribute 'whiteboardId' to be specified
          */
         onWhiteboardSelected: function(event, eventBody) {
-            this.view.viewModel.setSelectedWhiteboard(eventBody.whiteboardId);
+            if (eventBody.whiteboardId) {
+                this.view.viewModel.setSelectedWhiteboard(eventBody.whiteboardId);
+            }
         },
 
         /**
@@ -126,33 +130,14 @@ define([
          * @param eventBody Expecting the attribute 'whiteboardId' to be specified
          */
         onDelete: function(event, eventBody) {
-            this.facade.trigger(notifications.WHITEBOARD_DELETE, {
-                whiteboardId: eventBody.whiteboardId
-            });
-        },
-
-        /**
-         * Handle when a  whiteboard is cleared.
-         * @param event
-         * @param eventBody
-         */
-        onClear: function(event, eventBody) {
-
-            // TODO Handle after the whiteboardView is refactored.
-            // The tricky part here is who should own the list of whiteboardViews? (the mapping of whiteboardIds to whiteboardViews)
-            //
-            /*
-            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
-            if (null != selectedWhiteboardId &&
-                selectedWhiteboardId in this.whiteboardViews)
-            {
-                var whiteboardView = this.whiteboardViews[selectedWhiteboardId];
-                whiteboardView.clear();
+            if (eventBody.whiteboardId) {
+                this.facade.trigger(notifications.WHITEBOARD_DELETE, {
+                    whiteboardId: eventBody.whiteboardId
+                });
             }
-            */
-
-
         },
+
+
 
 
 

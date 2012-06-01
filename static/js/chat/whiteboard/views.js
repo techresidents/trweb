@@ -35,6 +35,7 @@ define([
         DELETE_WHITEBOARD: 'whiteboard:deleteWhiteboard',
         SELECT_WHITEBOARD: 'whiteboard:selectWhiteboard',
         CLEAR_WHITEBOARD: 'whiteboard:clearWhiteboard',
+        UNDO: 'whiteboard:undo',
         SELECT_TOOL: 'whiteboard:selectTool',
     };
 
@@ -608,7 +609,6 @@ define([
          * This function listens on the 'clear' button
          */
         onClear: function(){
-            // TODO not finished yet. See mediator.
             this.triggerEvent(EVENTS.CLEAR_WHITEBOARD, {
                 whiteboardId: this.viewModel.getSelectedWhiteboardId()
             });
@@ -618,7 +618,9 @@ define([
          * This function listens on the 'undo' button.
          */
         onUndo: function(){
-            // TODO not finished yet.  Same problems as onClear.
+            this.triggerEvent(EVENTS.UNDO, {
+                whiteboardId: this.viewModel.getSelectedWhiteboardId()
+            });
         },
 
     });
@@ -653,6 +655,9 @@ define([
             //this.wbCollection.bind("reset", this.render, this); TODO
             this.wbCollection.bind("add", this.onWhiteboardAdded, this);
             this.wbCollection.bind("remove", this.onWhiteboardRemoved, this);
+
+            this.addEventListener(EVENTS.CLEAR_WHITEBOARD, this.onClear, this);
+            this.addEventListener(EVENTS.UNDO, this.onUndo, this);
 
         },
 
@@ -698,26 +703,35 @@ define([
          */
         onWhiteboardAdded: function(model) {
 
-            // create a new whiteboard view
-            var view = new ChatWhiteboardView({
-                model : model
-            });
+            if (model) {
 
-            // add the new view to the list of whiteboard views
-            this.whiteboardViews[model.id] = view;
+                // create a new whiteboard view
+                var view = new ChatWhiteboardView({
+                    model : model
+                });
 
-            // add new whiteboard view to DOM
-            view.$el.toggle(false);
-            this.rootWhiteboardNode.append(view.render().el);
+                // add the new view to the list of whiteboard views
+                this.whiteboardViews[model.id] = view;
 
-            // if no whiteboard is being shown, then show the newly created whiteboard
-            if (this.$('#whiteboard-wrapper:first-child').is(':hidden')){
-                console.log('div is hidden, displaying the newly added whiteboard');
-                view.$el.toggle(true);
+                // add new whiteboard view to DOM
+                view.$el.toggle(false);
+                this.rootWhiteboardNode.append(view.render().el);
+
+
+                // if no whiteboard is being shown, then show the newly created whiteboard
+                if (this.$('#whiteboard-wrapper:first-child').is(':hidden')){
+
+                    // display the whiteboard
+                    view.$el.toggle(true);
+
+                    // update the viewModel to indicate a new whiteboard has been selected
+                    this.viewModel.setSelectedWhiteboard(model.id);
+                }
+
+
+                // TODO switch to new whiteboard if user added it
+                //this.selected = this.$el.find('#select-whiteboard').val();
             }
-
-            // TODO switch to new whiteboard if user added it
-            //this.selected = this.$el.find('#select-whiteboard').val();
         },
 
         /**
@@ -793,7 +807,7 @@ define([
             // update the selected tool in each whiteboard
             // TODO ensure only the members I want to iterate over are happening
             for(var whiteboardId in this.whiteboardViews){
-                
+
                 var whiteboardView = this.whiteboardViews[whiteboardId];
                 if (whiteboardView) {
 
@@ -832,35 +846,46 @@ define([
             }
         },
 
+
         /**
-         * Handle when the user clears the whiteboard.
+         * Handle when a  whiteboard is cleared.
+         * @param event
+         * @param eventBody
          */
-        onClear: function(){
-            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
-            if (null != selectedWhiteboardId &&
-                selectedWhiteboardId in this.whiteboardViews)
-            {
-                var whiteboardView = this.whiteboardViews[selectedWhiteboardId];
-                whiteboardView.clear();
+        onClear: function(event, eventBody) {
+
+            // TODO
+            // The tricky part here is who should own the list of whiteboardViews? (the mapping of whiteboardIds to whiteboardViews)
+            // It might make more sense to store the whiteboardViews in the viewModel.
+
+            if (null != eventBody.whiteboardId){
+                var whiteboardId = eventBody.whiteboardId;
+                if (whiteboardId in this.whiteboardViews) {
+                    var whiteboardView = this.whiteboardViews[whiteboardId];
+                    if (whiteboardView) {
+                        whiteboardView.clear();
+                    }
+                }
             }
         },
 
         /**
-         * Handle undo
+         * Handle when a  whiteboard edit is undone
+         * @param event
+         * @param eventBody
          */
-        onUndo: function(){
-            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
-            if (null != selectedWhiteboardId &&
-                selectedWhiteboardId in this.whiteboardViews)
-            {
-                var whiteboardView = this.whiteboardViews[selectedWhiteboardId];
-                whiteboardView.undo();
+        onUndo: function(event, eventBody){
+
+            if (null != eventBody.whiteboardId){
+                var whiteboardId = eventBody.whiteboardId;
+                if (whiteboardId in this.whiteboardViews) {
+                    var whiteboardView = this.whiteboardViews[whiteboardId];
+                    if (whiteboardView) {
+                        whiteboardView.undo();
+                    }
+                }
             }
         },
-
-
-
-
 
 
 
