@@ -33,25 +33,24 @@ define([
 
         render: function() {
             this.$el.html(this.template());
-            // TODO lost my tooltip
+            // TODO lost my tooltip. Have to provide a function to specify/register a tooltip.
             return this;
         },
 
         blackColorPicked: function(){
-            console.log('black color select triggered');
-            this.triggerEvent(EVENTS.SELECT, {'color':'#000000'});
+            this.triggerEvent(EVENTS.SELECT, {color:'#000000'});
         },
 
         blueColorPicked: function(){
-            this.triggerEvent(EVENTS.SELECT, {'color':'#0000FF'});
+            this.triggerEvent(EVENTS.SELECT, {color:'#0000FF'});
         },
 
         greenColorPicked: function(){
-            this.triggerEvent(EVENTS.SELECT, {'color':'#00FF00'});
+            this.triggerEvent(EVENTS.SELECT, {color:'#00FF00'});
         },
 
         redColorPicked: function(){
-            this.triggerEvent(EVENTS.SELECT, {'color':'#FF0000'});
+            this.triggerEvent(EVENTS.SELECT, {color:'#FF0000'});
         }
     });
 

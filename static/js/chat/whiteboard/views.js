@@ -5,6 +5,7 @@ define([
     'whiteboard/views',
     'chat/whiteboard/models',
     'color/views',
+    'core/view',
     'whiteboard/serialize',
     'text!chat/whiteboard/templates/whiteboard_container.html',
     'text!chat/whiteboard/templates/whiteboard_controls.html',
@@ -18,7 +19,8 @@ define([
     Backbone,
     whiteboardViews,
     whiteboardModels,
-    colorViews,
+    color_views,
+    core_view,
     serialize,
     whiteboard_container_template,
     whiteboard_controls_template,
@@ -27,6 +29,14 @@ define([
     whiteboard_text_input_template,
     whiteboard_tools_template) {
 
+
+    var EVENTS = {
+        ADD_WHITEBOARD: 'whiteboard:addWhiteboard',
+        DELETE_WHITEBOARD: 'whiteboard:deleteWhiteboard',
+        SELECT_WHITEBOARD: 'whiteboard:selectWhiteboard',
+        CLEAR_WHITEBOARD: 'whiteboard:clearWhiteboard',
+        SELECT_TOOL: 'whiteboard:selectTool',
+    };
 
     /**
      * Mediator.
@@ -60,8 +70,7 @@ define([
             this.collection.bind("add", this.addCollectionListener, this);
             this.collection.bind("remove", this.removeCollectionListener, this);
 
-            //event listeners
-            this.addEventListener(colorViews.EVENTS.SELECT, this.onMarkerColorSelected, this);
+
         },
 
         render: function() {
@@ -247,24 +256,6 @@ define([
             }
         },
 
-        onMarkerColorSelected: function(color){
-
-            console.log('onMarkerColorSelectd called');
-            console.log(color);
-
-            // TODO apply this color to all whiteboards.  Do the same for tool selection.
-
-            // determine which whiteboard is currently selected
-            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
-
-            // select the marker color for this whiteboard
-            if (null != selectedWhiteboardId &&
-                selectedWhiteboardId in this.whiteboardViews)
-            {
-                var whiteboardView = this.whiteboardViews[selectedWhiteboardId];
-                whiteboardView.selectColor(color);
-            }
-        }
 
     });
 
@@ -440,7 +431,7 @@ define([
      * Whiteboard container layout.
      * @constructor
      */
-    var ChatWhiteboardContainerView = Backbone.View.extend({
+    var ChatWhiteboardContainerView = core_view.View.extend({
 
         initialize: function() {
             this.template = _.template(whiteboard_container_template);
@@ -459,9 +450,19 @@ define([
      * of tools available for the user to use on the
      * whiteboard.
      */
-    var ChatWhiteboardToolsView = Backbone.View.extend({
+    var ChatWhiteboardToolsView = core_view.View.extend({
 
         colorPickerSelector: '#color-picker-wrapper',
+
+        // Set DOM event listeners
+        events: {
+            'click #tools-pen':   'onPenToolSelected',
+            'click #tools-arrow': 'onArrowToolSelected',
+            'click #tools-rect':  'onRectToolSelected',
+            'click #tools-circle':'onCircleToolSelected',
+            'click #tools-text':  'onTextToolSelected',
+            'click #tools-erase': 'onEraseToolSelected'
+        },
 
         initialize: function() {
             this.template = _.template(whiteboard_tools_template);
@@ -472,55 +473,77 @@ define([
             this.$('.whiteboard-tool-button').tooltip(); //activate tooltips
 
             // instantiate color picker view
-            new colorViews.ColorPickerView({
+            new color_views.ColorPickerView({
                 el: this.$(this.colorPickerSelector)
             }).render();
 
             return this;
         },
+
+        onPenToolSelected: function(){
+            this._selectTool('Pen');
+        },
+
+        onArrowToolSelected: function(){
+            this._selectTool('Arrow');
+        },
+
+        onRectToolSelected: function(){
+            this._selectTool('Rect');
+        },
+
+        onCircleToolSelected: function(){
+            this._selectTool('Circle');
+        },
+
+        onTextToolSelected: function(){
+            this._selectTool('Text');
+        },
+
+        onEraseToolSelected: function(){
+            this._selectTool('Erase');
+        },
+
+        /**
+         * Responsible for selecting the tool
+         * that the user has selected.
+         * @param toolName
+         */
+        _selectTool: function(toolName){
+            if (toolName) {
+                this.triggerEvent(EVENTS.SELECT_TOOL, {toolName:toolName});
+            }
+        }
     });
 
-
     /**
-     * Whiteboard container view.
-     * This view will be responsible for displaying all of the
-     * tools and other whiteboard action buttons. This view
-     * will remain visible regardless of which specific whiteboard
+     * Whiteboard controls view.
+     * This view will be responsible for displaying the
+     * conrols responsible for selecting, creating, and deleting
+     * whiteboards.
+     * This view will remain visible regardless of which specific whiteboard
      * is being viewed.
      */
-    var ChatWhiteboardControlsView = Backbone.View.extend({
+    var ChatWhiteboardControlsView = core_view.View.extend({
 
         events: {
-            "click #whiteboard-add-button": "addWhiteboardButtonHandler",
-            "click #whiteboard-delete-button": "deleteWhiteboardButtonHandler"
+            'change #select-whiteboard': "onSelectWhiteboard",
+            "click #whiteboard-add-button": "onAddWhiteboard",
+            "click #whiteboard-delete-button": "onDeleteWhiteboard",
+            'click #whiteboard-clear-button': 'onClear',
+            'click #whiteboard-undo-button': 'onUndo'
         },
 
         initialize: function() {
             this.template = _.template(whiteboard_controls_template);
+            this.viewModel = this.options.viewModel;
+            this.wbCollection = this.options.wbCollection;
+            this.jsonWhiteboardList = {'whiteboardCollection': this.wbCollection.toJSON()};
 
-            // Create a whiteboard if one doesn't already exist.
-            // Note that this block of code could be invoked even
-            // if the collection is not empty due to the delay in
-            // receiving the chat data from the long poll.  For this
-            // reason, the WhiteboardCollection will not add models
-            // to the collection that have a duplicate name; thus, in
-            // this case, a duplicate default whiteboard will not be added.
-            if (this.collection.length < 1){
-                console.log('Creating a default whiteboard');
-                var whiteboard = new whiteboardModels.Whiteboard({
-                    name: 'Default Whiteboard',
-                });
-                whiteboard.save();
-            }
-
-            // TODO not sure if I need last part or not. Is it worthwhile if user doesn't have the data yet?
-            this.selected = null;
-            this.jsonWhiteboardList = {'whiteboardCollection': this.collection.toJSON()};
-            //this.collection.each(this.added, this);
-
-            this.collection.bind("reset", this.render, this);
-            this.collection.bind("add", this.addCollectionListener, this);
-            this.collection.bind("remove", this.removeCollectionListener, this);
+            // setup whiteboard collection listeners
+            this.wbCollection.bind("reset", this.render, this);
+            this.wbCollection.bind("add", this.refreshWhiteboardList, this);
+            this.wbCollection.bind("remove", this.refreshWhiteboardList, this);
         },
 
         /**
@@ -532,49 +555,41 @@ define([
         },
 
         /**
-         * This method is responsible for updating the list of whiteboards.
+         * This method is responsible for refreshing the list of whiteboards.
          * @param model
          */
-        addCollectionListener: function(model) {
-            this.jsonWhiteboardList = {'whiteboardCollection': this.collection.toJSON()};
+        refreshWhiteboardList: function(model) {
+            this.jsonWhiteboardList = {'whiteboardCollection': this.wbCollection.toJSON()};
             this.render();
         },
 
         /**
-         * This method is responsible for updating the list of whiteboards
-         * @param model
+         * Handle whiteboard selection.
          */
-        removeCollectionListener: function(model) {
-            this.jsonWhiteboardList = {'whiteboardCollection': this.collection.toJSON()};
-            this.render();
+        onSelectWhiteboard: function() {
+            // determine which whiteboard is selected
+            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
+            this.triggerEvent(EVENTS.SELECT_WHITEBOARD, {
+                whiteboardId: selectedWhiteboardId
+            });
         },
 
         /**
          * This function listens to the create-whiteboard modal dialog's
          * success button.
          */
-        addWhiteboardButtonHandler: function() {
+        onAddWhiteboard: function() {
 
-            // read input whiteboard name
+            // read the input whiteboard name
             var wbNameInput = this.$('#whiteboard-name-input');
             var wbName = wbNameInput.val();
 
-            // validate the input whiteboard name
-            if (wbName == '' || wbName.length == 0){
-                wbName = 'Whiteboard #' + parseInt(this.collection.length+1);
-            }
+            this.triggerEvent(EVENTS.ADD_WHITEBOARD, {
+                name: wbName
+            });
 
-            // clear name field
+            // clear the name input field
             wbNameInput.val('');
-
-            // max number of whiteboards is 10
-            if (this.collection.length <= 10){
-                console.log('Creating whiteboard: ' + wbName);
-                var whiteboard = new whiteboardModels.Whiteboard({
-                    name: wbName
-                });
-                whiteboard.save();
-            }
 
             // hide modal dialog when done
             this.$el.find('#create-whiteboard-modal').modal('hide');
@@ -583,47 +598,276 @@ define([
         /**
          * This function listens to the 'delete-whiteboard' button.
          */
-        deleteWhiteboardButtonHandler: function() {
-            // minimum number of whiteboards is 1
-            if (this.collection.length > 1) {
-                var currentlySelectedWhiteboardId = this.$el.find('#select-whiteboard').val();
-                var wb = this.collection.get(currentlySelectedWhiteboardId);
-                // don't allow users to delete the default whiteboard
-                if (wb.name() != 'Default Whiteboard'){
-                    console.log('Deleting whiteboard: ' + wb.name());
-                    wb.destroy();
+        onDeleteWhiteboard: function() {
+            this.triggerEvent(EVENTS.DELETE_WHITEBOARD, {
+                whiteboardId: this.viewModel.getSelectedWhiteboardId()
+            });
+        },
 
-                    // TODO I suspect that the whiteboard is not getting deleted in the other particpant's view.
-                    // I don't see a DeleteWhiteboardMessage ever being created and sent.
-                }
-            }
-        }
+        /**
+         * This function listens on the 'clear' button
+         */
+        onClear: function(){
+            // TODO not finished yet. See mediator.
+            this.triggerEvent(EVENTS.CLEAR_WHITEBOARD, {
+                whiteboardId: this.viewModel.getSelectedWhiteboardId()
+            });
+        },
+
+        /**
+         * This function listens on the 'undo' button.
+         */
+        onUndo: function(){
+            // TODO not finished yet.  Same problems as onClear.
+        },
+
     });
 
     /**
      * Whiteboard tab view.
      * @constructor
      */
-    var ChatWhiteboardTabView = Backbone.View.extend({
+    var ChatWhiteboardTabView = core_view.View.extend({
 
-        mediatorSelector: '#whiteboard-mediator',
+
+        // Set UI references
+        containerSelector: '#whiteboard-container',
+        controlsSelector: '#whiteboard-controls',
+        toolsSelector: '#whiteboard-tools',
+
 
         initialize: function() {
             this.template =  _.template(whiteboard_tab_template);
+
+            // init object to hold all of our whiteboard views
+            this.whiteboardViews = {};
+            this.rootWhiteboardNode = null;
+
+            // init event listeners
+            this.viewModel = this.options.viewModel;
+            this.viewModel.on('change:selectedColor', this.onColorSelected, this);
+            this.viewModel.on('change:selectedWhiteboardId', this.onWhiteboardSelected, this);
+            this.viewModel.on('change:selectedTool', this.onToolSelected, this);
+
+            this.wbCollection = this.options.whiteboards;
+            //this.wbCollection.bind("reset", this.render, this); TODO
+            this.wbCollection.bind("add", this.onWhiteboardAdded, this);
+            this.wbCollection.bind("remove", this.onWhiteboardRemoved, this);
+
         },
+
 
         render: function() {
             this.$el.html(this.template());
 
+            /*
             new ChatWhiteboardMediatorView({
                 el: this.$(this.mediatorSelector),
                 collection: this.collection,
             }).render();
+            */
+
+            // instantiate whiteboard tools view
+            new ChatWhiteboardToolsView({
+                el: this.$(this.toolsSelector),
+            }).render();
+
+            // instantiate controls view
+            new ChatWhiteboardControlsView({
+                el: this.$(this.controlsSelector),
+                wbCollection: this.wbCollection,
+                viewModel: this.viewModel
+            }).render();
+
+            // instantiate whiteboard container view. This is where the whiteboard will be rendered
+            new ChatWhiteboardContainerView({
+                el: this.$(this.containerSelector)
+            }).render();
+
+            // TODO
+            this.rootWhiteboardNode = this.$('#whiteboard-wrapper');
+
             return this;
-        }
+        },
+
+
+        /**
+         * This method is responsible for creating a new whiteboard view for
+         * each whiteboard when it is created.
+         * @param model
+         */
+        onWhiteboardAdded: function(model) {
+
+            // create a new whiteboard view
+            var view = new ChatWhiteboardView({
+                model : model
+            });
+
+            // add the new view to the list of whiteboard views
+            this.whiteboardViews[model.id] = view;
+
+            // add new whiteboard view to DOM
+            view.$el.toggle(false);
+            this.rootWhiteboardNode.append(view.render().el);
+
+            // if no whiteboard is being shown, then show the newly created whiteboard
+            if (this.$('#whiteboard-wrapper:first-child').is(':hidden')){
+                console.log('div is hidden, displaying the newly added whiteboard');
+                view.$el.toggle(true);
+            }
+
+            // TODO switch to new whiteboard if user added it
+            //this.selected = this.$el.find('#select-whiteboard').val();
+        },
+
+        /**
+         * This method is responsible for handling when a whiteboard is deleted.
+         * It will delete the whiteboard's view object.
+         * @param model
+         */
+        onWhiteboardRemoved: function(model) {
+
+            // TODO define what happens when user deletes a whiteboard. Can user only delete the selected whiteboard? What happens after the delete? Which WB is shown?
+
+            if (model.id in this.whiteboardViews)
+            {
+                // Hide and delete the currently selected whiteboard
+                this.rootWhiteboardNode.children().toggle(false);
+                delete this.whiteboardViews[model.id];
+
+                // Select the default whiteboard
+                var whiteboards = this.wbCollection.where({'name': 'Default Whiteboard'});
+                if (1 == whiteboards.length) {
+                    var defaultWhiteboard = whiteboards[0];
+                    if (null != defaultWhiteboard.id){
+                        this.triggerEvent(EVENTS.SELECT_WHITEBOARD, {
+                            whiteboardId: defaultWhiteboard.id
+                        });
+                    }
+                }
+            }
+        },
+
+        /**
+         * Handle when user changes the whiteboard marker color.
+         * The selected marker color will persist across all whiteboards.
+         */
+        onColorSelected: function(){
+            // update the selected color in each whiteboard
+            // TODO ensure only the members I want to iterate over are happening
+            for(var whiteboardId in this.whiteboardViews){
+                var whiteboardView = this.whiteboardViews[whiteboardId];
+                if (whiteboardView) {
+                    whiteboardView.selectColor(this.viewModel.selectedColor);
+                }
+            }
+        },
+
+        /**
+         * Handle when the user changes the whiteboard that they are viewing.
+         */
+        onWhiteboardSelected: function(){
+
+            // determine which whiteboard is selected
+            var selectedWhiteboardId = this.viewModel.getSelectedWhiteboardId();
+
+            // show the newly selected whitebaord
+            if (null != selectedWhiteboardId &&
+                selectedWhiteboardId in this.whiteboardViews)
+            {
+                // hide the previous whiteboard view
+                // TODO handle rootNote crap.
+                this.rootWhiteboardNode.children().toggle(false);
+
+                // show the newly selected whiteboard view
+                var view = this.whiteboardViews[selectedWhiteboardId];
+                view.$el.toggle(true);
+            }
+        },
+
+        /**
+         * Handle when user changes the whiteboard tool
+         * The selected tool will persist across all whiteboards.
+         */
+        onToolSelected: function(){
+            // update the selected tool in each whiteboard
+            // TODO ensure only the members I want to iterate over are happening
+            for(var whiteboardId in this.whiteboardViews){
+                
+                var whiteboardView = this.whiteboardViews[whiteboardId];
+                if (whiteboardView) {
+
+                    // TODO come back to this and see if I can simplify how color is handled
+                    var attributes = {'stroke': whiteboardView.color};
+                    var tool = null;
+
+                    switch(this.viewModel.getSelectedTool())
+                    {
+                        case 'Pen':
+                            tool = new whiteboardViews.Pen(whiteboardView.paper, attributes);
+                            break;
+                        case 'Arrow':
+                            tool = new whiteboardViews.Arrow(whiteboardView.paper, attributes);
+                            break;
+                        case 'Rect':
+                            tool = new whiteboardViews.Rectangle(whiteboardView.paper, attributes);
+                            break;
+                        case 'Circle':
+                            tool = new whiteboardViews.Circle(whiteboardView.paper, attributes);
+                            break;
+                        case 'Text':
+                            tool = new whiteboardViews.Text(whiteboardView.paper, attributes);
+                            break;
+                        case 'Erase':
+                            tool = new whiteboardViews.Erase(whiteboardView.paper, null);
+                            break;
+                        default:
+                            tool = new whiteboardViews.Pen(whiteboardView.paper, attributes);
+                    }
+
+                    if (null != tool) {
+                        whiteboardView.selectTool(tool);
+                    }
+                }
+            }
+        },
+
+        /**
+         * Handle when the user clears the whiteboard.
+         */
+        onClear: function(){
+            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
+            if (null != selectedWhiteboardId &&
+                selectedWhiteboardId in this.whiteboardViews)
+            {
+                var whiteboardView = this.whiteboardViews[selectedWhiteboardId];
+                whiteboardView.clear();
+            }
+        },
+
+        /**
+         * Handle undo
+         */
+        onUndo: function(){
+            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
+            if (null != selectedWhiteboardId &&
+                selectedWhiteboardId in this.whiteboardViews)
+            {
+                var whiteboardView = this.whiteboardViews[selectedWhiteboardId];
+                whiteboardView.undo();
+            }
+        },
+
+
+
+
+
+
+
     });
 
     return {
+        EVENTS: EVENTS,
         ChatWhiteboardTabView: ChatWhiteboardTabView
     }
 });

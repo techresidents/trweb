@@ -226,11 +226,63 @@ define([
     });
 
 
+    /**
+     * Model to store whiteboard UI state.
+     */
+    var WhiteboardValueObject = Backbone.Model.extend({
+
+        localStorage: new Backbone.LocalStorage('WhiteboardValueObject'),
+
+        defaults: function() {
+            return {
+                selectedWhiteboardId: null,
+                selectedTool: null,        // refs tool name string
+                selectedColor: null,       // refs color hex value string
+            };
+        },
+
+        initialize: function(attributes, options) {
+        },
+
+        whiteboards: function() {
+            return this.get('whiteboards');
+        },
+
+        getSelectedWhiteboardId: function() {
+            return this.get('selectedWhiteboardId');
+        },
+
+        setSelectedWhiteboard: function(whiteboardId) {
+            this.set({selectedWhiteboardId: whiteboardId});
+            return this;
+        },
+
+        getSelectedTool: function() {
+            return this.get('selectedTool');
+        },
+
+        setSelectedTool: function(toolName) {
+            this.set({selectedTool: toolName});
+            return this;
+        },
+
+        getSelectedColor: function() {
+            return this.get('selectedColor');
+        },
+
+        setSelectedColor: function(colorValue) {
+            this.set({selectedColor: colorValue});
+            return this;
+        },
+    });
+
+
     return {
         Whiteboard: Whiteboard,
         WhiteboardCollection: WhiteboardCollection,
         whiteboardCollection: new WhiteboardCollection,
         WhiteboardPath: WhiteboardPath,
         WhiteboardPathCollection: WhiteboardPathCollection,
+        WhiteboardValueObject: WhiteboardValueObject,
     };
 });
