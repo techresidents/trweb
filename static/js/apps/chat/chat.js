@@ -2,6 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
+    'alert/mediators',
     'common/notifications',
     'core/command',
     'core/facade',
@@ -23,6 +24,7 @@ define([
     $,
     _,
     Backbone,
+    alert_mediators,
     notifications,
     command,
     facade,
@@ -64,11 +66,14 @@ define([
 
         addView: function(type, view) {
             switch(type) {
+                case 'AlertView':
+                    this.$('#alerts').append(view.render().el);
+                    break;
                 case 'ChatUserView':
                     this.$('#chat').append(view.render().el);
                     break;
                 case 'DiscussView':
-                    this.$('#discuss').html(view.render().el);
+                    this.$('#discuss').append(view.render().el);
                     break;
                 case 'ChatTaggerView':
                     this.$('#tagger').html(view.render().el);
@@ -116,6 +121,7 @@ define([
             this.view.render();
 
             //sub-mediators
+            this.facade.registerMediator(new alert_mediators.AlertMediator());
             this.facade.registerMediator(new user_mediators.ChatUsersMediator());
             this.facade.registerMediator(new discuss_mediators.DiscussMediator());
             this.facade.registerMediator(new tag_mediators.TaggerMediator());
