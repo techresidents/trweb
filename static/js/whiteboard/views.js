@@ -66,6 +66,8 @@ define([
         },
 
         selectColor: function(color) {
+            console.log('whiteboard app: selectColor invoked');
+            console.log(color);
             this.color = color;
         },
 
