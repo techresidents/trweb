@@ -150,10 +150,9 @@ define([
             while(true) {
                 topic = this.topicsProxy.next(topic);
                 if(topic) {
-                    var minute = new minute_models.Minute({
+                    this.facade.trigger(notifications.MINUTE_START, {
                         topicId: topic.id
                     });
-                    minute.save();
 
                     if(this.topicsProxy.isLeaf(topic)) {
                         //found leaf topic to activate, so break.
@@ -191,8 +190,11 @@ define([
                }
             }, this);
 
+            var that = this;
             _.each(minutes, function(minute) {
-                minute.save();
+                that.facade.trigger(notifications.MINUTE_END, {
+                    minute: minute,
+                });
             });
         },
 
