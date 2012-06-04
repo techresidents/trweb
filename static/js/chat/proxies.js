@@ -1,7 +1,6 @@
 define([
     'core/proxy',
     'chat/agenda/proxies',
-    'chat/message/dispatch',
     'chat/message/models',
     'chat/message/proxies',
     'chat/minute/models',
@@ -16,7 +15,6 @@ define([
 ], function(
     proxy,
     agenda_proxies,
-    message_dispatch,
     message_models,
     message_proxies,
     minute_models,

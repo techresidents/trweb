@@ -11,6 +11,7 @@ define([
     'chat/commands',
     'chat/proxies',
     'chat/message/commands',
+    'chat/minute/commands',
     'chat/discuss/mediators',
     'chat/resource/commands',
     'chat/resource/mediators',
@@ -33,6 +34,7 @@ define([
     chat_commands,
     chat_proxies,
     message_commands,
+    minute_commands,
     discuss_mediators,
     resource_commands,
     resource_mediators,
@@ -192,6 +194,8 @@ define([
             this.registerCommand(notifications.MESSAGE_WHITEBOARD_DELETE, message_commands.WhiteboardDeleteMessageCommand);
             this.registerCommand(notifications.MESSAGE_WHITEBOARD_CREATE_PATH, message_commands.WhiteboardCreatePathMessageCommand);
             this.registerCommand(notifications.MESSAGE_WHITEBOARD_DELETE_PATH, message_commands.WhiteboardDeletePathMessageCommand);
+            this.registerCommand(notifications.MINUTE_START, minute_commands.StartMinuteCommand);
+            this.registerCommand(notifications.MINUTE_END, minute_commands.EndMinuteCommand);
             this.registerCommand(notifications.SHOW_RESOURCE, resource_commands.ShowResourceCommand);
             this.registerCommand(notifications.TAG_CREATE, tag_commands.CreateTagCommand);
             this.registerCommand(notifications.TAG_DELETE, tag_commands.DeleteTagCommand);
