@@ -1,15 +1,93 @@
 define([
     'Underscore',
     'common/notifications',
+    'core/array',
+    'core/base',
     'core/proxy',
     'chat/user/models',
     'chat/user/proxies',
 ], function(
     _,
     notifications,
+    array,
+    base,
     proxy,
     user_models,
     user_proxies) {
+
+    var StreamSample = base.Base.extend({
+        initialize: function(options) {
+            this.id = options.id || _.uniqueId('StreamSample_');
+            console.log(this.id);
+            this.volume = options.volume;
+            this.timestamp = new Date().valueOf() / 1000;
+        },
+
+        compareVolume: function(a, b) {
+            var result = 0;
+            if(a.volume > b.volume) {
+                result = 1;
+            } else if(a.volume < b.volume) {
+                result = -1;
+            }
+            return result;
+        },
+    });
+
+    var Stream = base.Base.extend({
+
+        initialize: function(options) {
+            this.period = 60;
+            this.maxSamples = this.period * 2;
+            this.samples = [];
+
+            this.user = options.user;
+        },
+        
+        addSample: function (sample) {
+            array.binaryInsert(this.samples, sample, sample.compareVolume);
+            if(this.samples.length > this.maxSamples) {
+                this.samples.pop();
+            }
+        },
+        
+        average: function() {
+            var expiredTimestamp = (new Date().valueOf() / 1000) - this.period;
+
+            var minSamples = [];
+            var garbageCollect = [];
+
+            for(var i = 0; i < this.samples.length; i++) {
+                var sample = this.samples[i];
+                if(sample.timestamp < expiredTimestamp) {
+                    garbageCollect.push(i);
+                } else {
+                    if(minSamples.length < 12) {
+                        minSamples.push(sample);
+                    } else {
+                        break;
+                    }
+                }
+            }
+            
+            console.log('gc len');
+            console.log(garbageCollect.length);
+            for(i = 0; i < garbageCollect.length; i++) {
+                this.samples.splice(garbageCollect[i] - i, 1);
+            }
+
+            var avg = 0;
+            if(minSamples.length) {
+                for(i = 0; i < minSamples.length; i++) {
+                    avg += minSamples[i].volume;
+                }
+                avg /= minSamples.length;
+            }
+
+            return avg;
+        },
+
+    });
     
     var ChatSessionProxy = proxy.Proxy.extend({
 
@@ -21,12 +99,13 @@ define([
             this.apiKey = options.apiKey;
             this.sessionToken = options.sessionToken;
             this.userToken = options.userToken;
+            this.streams = {};
 
             this.usersProxy = new user_proxies.ChatUsersProxy({
                 collection: new user_models.ChatUserCollection(),
             });
             this.facade.registerProxy(this.usersProxy);
-
+            
             this.session =  TB.initSession(this.sessionToken);
 
             this.session.addEventListener("sessionConnected", _.bind(this.sessionConnectedHandler, this));
@@ -91,6 +170,9 @@ define([
                 var user = this.usersProxy.get(connectionData.id);
                 user.setStream(stream);
                 user.setPublishing(true);
+                this.streams[stream.streamId] = new Stream({
+                    user: user
+                });
             }
 
         },
@@ -136,6 +218,9 @@ define([
                 var user = this.usersProxy.get(connectionData.id);
                 user.setStream(stream);
                 user.setPublishing(true);
+                this.streams[stream.streamId] = new Stream({
+                    user: user
+                });
             }
         },
 
@@ -151,21 +236,29 @@ define([
                 var user = this.usersProxy.get(connectionData.id);
                 user.setStream(null);
                 user.setPublishing(false);
+                delete this.streams[stream.streamId];
             }
         },
 
         microphoneLevelHandler: function(event) {
-            /*
-            var user = this.getUsers().where({streamId: event.streamId})[0];
-            if(event.volume > 1) {
-                user.setSpeaking(true);
-                console.log("speaking");
+            var stream = this.streams[event.streamId];
+            var average = stream.average();
+
+            console.log('vol');
+            console.log(event.volume);
+            console.log('avg');
+            console.log(average);
+
+            if(event.volume > average + 1) {
+                stream.user.setSpeaking(true);
+                console.log('speaking');
             } else {
-                user.setSpeaking(false);
-                console.log("not speaking");
+                stream.user.setSpeaking(false);
             }
-            this.trigger("microphone:changed", event);
-            */
+
+            stream.addSample(new StreamSample({
+                volume: event.volume
+            }));
         },
 
     }, {

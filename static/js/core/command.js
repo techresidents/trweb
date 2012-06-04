@@ -32,6 +32,79 @@ define([
         },
     });
 
+    var AsyncCommand = Command.extend({
+
+        execute: function() {},
+
+        asyncCallbackArgs: [],
+
+        asyncSuccessCallbackArgs: [],
+
+        asyncErrorCallbackArgs: [],
+
+        run: function(options) {
+            this.options = options;
+            this.execute.apply(this, arguments);
+        },
+
+        onSuccess: function() {
+            if(this.options.onSuccess) {
+                
+                var argNames;
+                if(this.asyncCallbackArgs > this.asyncSuccessCallbackArgs) {
+                    argNames= this.asyncCallbackArgs;
+                } else {
+                    argNames = this.asyncSuccessCallbackArgs;
+                }
+
+                var result = {
+                    status: true,
+                    result: this._argsToObject(argNames, arguments),
+                };
+
+                this.options.onSuccess.call(
+                    this.options.context || this,
+                    this.options,
+                    result);
+            }
+        },
+
+        onError: function() {
+            if(this.options.onError) {
+
+                var argNames;
+                if(this.asyncCallbackArgs > this.asyncErrorCallbackArgs) {
+                    argNames= this.asyncCallbackArgs;
+                } else {
+                    argNames = this.asyncErrorCallbackArgs;
+                }
+
+                var result = {
+                    status: false,
+                    result: this._argsToObject(argNames, arguments),
+                };
+
+                this.options.onError.call(
+                    this.options.context || this,
+                    this.options,
+                    result);
+            }
+        },
+
+        _argsToObject: function(argNames, args) {
+            var result = {};
+            if(argNames && argNames.length && args && args.length) {
+                var length = argNames.length <= args.length ? argNames.length : args.length;
+                for(var i = 0; i < length; i++) {
+                    result[argNames[i]] = args[i];
+                }
+            }
+
+            return result;
+        }
+
+    });
+
 
     var MacroCommand = Command.extend({
 
@@ -53,8 +126,11 @@ define([
         },
     });
 
+
     return {
         Command: Command,
+        AsyncCommand: AsyncCommand,
         MacroCommand: MacroCommand,
     };
+
 });

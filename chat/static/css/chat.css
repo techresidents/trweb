@@ -3,6 +3,10 @@
     padding-bottom: 30px;
 }
 
+.chat-user-container.speaking {
+    border-width: 8px;
+}
+
 #agenda-list {
     height: 200px;
     overflow-y: auto;

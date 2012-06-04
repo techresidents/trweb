@@ -68,6 +68,10 @@ define([
      */
     var ChatUserView = Backbone.View.extend({
 
+        chatContainerSelector: '.chat-user-container',
+
+        speakingStyle: 'speaking',
+
         initialize: function() {
             this.template = _.template(user_template);
 
@@ -81,6 +85,7 @@ define([
             //bind events
             this.user.bind('change:isConnected', this.render, this);
             this.user.bind('change:isPublishing', this.render, this);
+            this.user.bind('change:isSpeaking', this.onSpeakingChanged, this);
 
             //views
             this.headerView = new ChatUserHeaderView({
@@ -117,11 +122,19 @@ define([
             this.footerView.render();
             this.$(this.footerSelector).html(this.footerView.el);
             
+            console.log('isSpeaking');
+            console.log(this.user.isSpeaking());
+            this.$('chat-user-container').toggleClass('speaking', this.user.isSpeaking());
+            
             return this;
         },
 
+        onSpeakingChanged: function() {
+            this.$(this.chatContainerSelector).toggleClass(this.speakingStyle, this.user.isSpeaking());
+        },
+
         getStreamViewDetails: function() {
-            var container = this.$('.chat-user-container');
+            var container = this.$(this.chatContainerSelector);
 
             return {
                 elementId: 'user' + this.user.id,

@@ -41,11 +41,13 @@ define([
         return child;
     };
 
+
     var extend = function(prototypeProperties, staticProperties) {
         var child = inherits(this, prototypeProperties, staticProperties);
         child.extend = extend;
         return child;
     };
+
 
     var getValue = function(object, property) {
         var result = null;
@@ -55,10 +57,22 @@ define([
         return result;
     }
 
+
+    var Base = function() {
+        this.initialize.apply(this, arguments);
+    };
+    Base.extend = extend;
+
+    _.extend(Base.prototype, {
+
+        initialize: function() {},
+    });
+
     return {
         extend: extend,
         getValue: getValue,
         inherits: inherits,
+        Base: Base,
     };
 
 });

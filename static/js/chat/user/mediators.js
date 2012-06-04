@@ -62,7 +62,6 @@ define([
         },
 
         onPublishingChanged: function(notification) {
-            console.log('onPublishing');
             var userModel = notification.model;
             var view = this.views[userModel.id];
             
