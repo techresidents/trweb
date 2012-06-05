@@ -51,7 +51,7 @@ define([
             if(this.options.onSuccess) {
                 
                 var argNames;
-                if(this.asyncCallbackArgs > this.asyncSuccessCallbackArgs) {
+                if(this.asyncCallbackArgs.length > this.asyncSuccessCallbackArgs.length) {
                     argNames= this.asyncCallbackArgs;
                 } else {
                     argNames = this.asyncSuccessCallbackArgs;
@@ -73,7 +73,7 @@ define([
             if(this.options.onError) {
 
                 var argNames;
-                if(this.asyncCallbackArgs > this.asyncErrorCallbackArgs) {
+                if(this.asyncCallbackArgs.length > this.asyncErrorCallbackArgs.length) {
                     argNames= this.asyncCallbackArgs;
                 } else {
                     argNames = this.asyncErrorCallbackArgs;

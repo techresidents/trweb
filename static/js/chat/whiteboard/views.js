@@ -2,26 +2,26 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'whiteboard/views',
     'chat/whiteboard/models',
     'color/views',
     'core/view',
     'whiteboard/serialize',
+    'whiteboard/views',
     'text!chat/whiteboard/templates/whiteboard_container.html',
     'text!chat/whiteboard/templates/whiteboard_controls.html',
     'text!chat/whiteboard/templates/whiteboard_mediator.html',
     'text!chat/whiteboard/templates/whiteboard_tab.html',
     'text!chat/whiteboard/templates/whiteboard_text_input.html',
-    'text!chat/whiteboard/templates/whiteboard_tools.html',
+    'text!chat/whiteboard/templates/whiteboard_tools.html'
 ], function(
     $,
     _,
     Backbone,
-    whiteboardViews,
     whiteboardModels,
     color_views,
     core_view,
     serialize,
+    whiteboard_views,
     whiteboard_container_template,
     whiteboard_controls_template,
     whiteboard_mediator_template,
@@ -31,12 +31,19 @@ define([
 
 
     var EVENTS = {
-        ADD_WHITEBOARD: 'whiteboard:addWhiteboard',
+
+        CREATE_WHITEBOARD: 'whiteboard:addWhiteboard',
         DELETE_WHITEBOARD: 'whiteboard:deleteWhiteboard',
+
+        CREATE_WHITEBOARD_PATH: 'whiteboard:createWhiteboardPath',
+        DELETE_WHITEBOARD_PATH: 'whiteboard:deleteWhiteboardPath',
+
         SELECT_WHITEBOARD: 'whiteboard:selectWhiteboard',
         CLEAR_WHITEBOARD: 'whiteboard:clearWhiteboard',
         UNDO: 'whiteboard:undo',
-        SELECT_TOOL: 'whiteboard:selectTool',
+
+        SELECT_TOOL: 'whiteboard:selectTool'
+
     };
 
     /**
@@ -232,25 +239,25 @@ define([
                 switch(toolName)
                 {
                     case 'Pen':
-                        tool = new whiteboardViews.Pen(whiteboardView.paper, attributes);
+                        tool = new whiteboard_views.Pen(whiteboardView.paper, attributes);
                         break;
                     case 'Arrow':
-                        tool = new whiteboardViews.Arrow(whiteboardView.paper, attributes);
+                        tool = new whiteboard_views.Arrow(whiteboardView.paper, attributes);
                         break;
                     case 'Rect':
-                        tool = new whiteboardViews.Rectangle(whiteboardView.paper, attributes);
+                        tool = new whiteboard_views.Rectangle(whiteboardView.paper, attributes);
                         break;
                     case 'Circle':
-                        tool = new whiteboardViews.Circle(whiteboardView.paper, attributes);
+                        tool = new whiteboard_views.Circle(whiteboardView.paper, attributes);
                         break;
                     case 'Text':
-                        tool = new whiteboardViews.Text(whiteboardView.paper, attributes);
+                        tool = new whiteboard_views.Text(whiteboardView.paper, attributes);
                         break;
                     case 'Erase':
-                        tool = new whiteboardViews.Erase(whiteboardView.paper, null);
+                        tool = new whiteboard_views.Erase(whiteboardView.paper, null);
                         break;
                     default:
-                        tool = new whiteboardViews.Pen(whiteboardView.paper, attributes);
+                        tool = new whiteboard_views.Pen(whiteboardView.paper, attributes);
                 }
 
                 whiteboardView.selectTool(tool);
@@ -268,41 +275,44 @@ define([
      * added or removed.
      * @constructor
      */
-    var ChatWhiteboardView = whiteboardViews.WhiteboardView.extend({
+    var ChatWhiteboardView = whiteboard_views.WhiteboardView.extend({
 
         initialize: function() {
 
-            whiteboardViews.WhiteboardView.prototype.initialize.call(this);
+            whiteboard_views.WhiteboardView.prototype.initialize.call(this);
             this.undoCache = [ ];
             this.serializer = new serialize.Serializer();
             this.whiteboardModel = this.options.model;
             this.pathCollection = this.options.model.paths();
 
-            // bindings
-            this.pathCollection.bind('reset', this.resetPathCollectionListener, this);
-            this.pathCollection.bind('add', this.addedPathCollectionListener, this);
-            this.pathCollection.bind('destroy', this.removedPathCollectionListener, this);
+            // init event listeners
+            this.pathCollection.bind('reset', this.onWbPathCollectionReset, this);
+            this.pathCollection.bind('add', this.onWbPathAdded, this);
+            this.pathCollection.bind('destroy', this.onWbPathRemoved, this);
         },
 
 
         /**
-         * Responsible for receiving message that clears the whiteboard.
+         * Responsible for handling a path collection reset.
+         * This method will clear the paper for this event.
          */
-        resetPathCollectionListener: function(){
+        onWbPathCollectionReset: function(){
             this.paper.clear();
         },
 
         /**
-         * Responsible for receiving WhiteboardCreatePath messages.
-         * This function will deserialze the msg data and draw the
-         * path on the user's screen.
-         * @param model
+         * Responsible for handling when a new path is added to the path collection.
+         * This function will deserialze the input msg data and draw the
+         * path element on the user's screen.
+         * @param model WhiteboardPath model
          */
-        addedPathCollectionListener: function(model) {
+        onWbPathAdded: function(model) {
 
             var elementToAdd = this.serializer.deserializeElement(model.pathData());
             if (elementToAdd){
-                // check if this element already exists on the paper (meaning this user added this element to the paper)
+
+                // Check if this element already exists on the paper.
+                // This implies that this user was responsible for adding this element to the paper.
                 var elementExists = this.paper.getById(model.id);
                 if (elementExists){
                     // No-op. No need to add this element to the paper again.
@@ -324,11 +334,11 @@ define([
         },
 
         /**
-         * Responsible for receiving WhiteboardDeletePath messages.
+         * Responsible for handling when a path is removed from the path collection.
          * This function will remove the specified path on the user's screen.
-         * @param model
+         * @param model WhiteboardPath model
          */
-        removedPathCollectionListener: function(model) {
+        onWbPathRemoved: function(model) {
 
             var element = this.paper.getById(model.id);
             if (element) {
@@ -337,90 +347,81 @@ define([
         },
 
         /**
-         * @Override
-         * This method will capture data the user draws on their whiteboard,
-         * serialize the data and send out a message for the other chat participants
-         * to receive.
-         * @param tool
-         * @param element
+         * Define a callback to be invoked when a WhiteboardPath
+         * instance is successfully created.
+         * @param elementId the Raphael element ID that the user created
+         * @param modelId the WhiteboardPath model ID which represents the Raphael element
          */
-        onElementAdded: function(tool, element) {
+        onSuccessfulPathCreation: function(elementId, modelId) {
 
-            // call super
-            whiteboardViews.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
+            if (elementId && modelId) {
 
-            // create path message and send via save()
-            var whiteboardPath = new whiteboardModels.WhiteboardPath({
-                whiteboardId : this.whiteboardModel.id,
-                pathData : this.serializer.serializeElement(element)
-            });
-
-            var that = this;
-            whiteboardPath.save(null, {success: function(model, response){
-
-                var newlyDrawnElement = that.paper.getById(element.id);
+                var newlyDrawnElement = this.paper.getById(elementId);
                 if (newlyDrawnElement) {
 
                     // assign the model's ID to the element
-                    newlyDrawnElement.id = model.id;
+                    newlyDrawnElement.id = modelId;
 
                     // cache elements user added to the paper
-                    that.undoCache.push(model.id);
+                    this.undoCache.push(modelId);
                 }
-            }});
-        },
-
-
-        /**
-         * @Override
-         * This method will capture data the user removed from their whiteboard,
-         * serialize the data and send out a message for the other chat participants
-         * to receive.
-         * @param tool
-         * @param element
-         */
-        onElementRemoved: function(element) {
-
-            // call super
-            whiteboardViews.WhiteboardView.prototype.onElementRemoved.call(this, element);
-
-            // the model and the element share the same ID
-            var whiteboardPathModel = this.pathCollection.get(element.id);
-            if (whiteboardPathModel){
-                whiteboardPathModel.destroy();
             }
         },
 
         /**
          * @Override
-         * This method captures when a user clears the whiteboard, and
-         * sends a message to the other chat participants to do the same.
+         * This method will capture data the user draws on their whiteboard,
+         * serialize the data and send out a message for the other chat participants
+         * to receive.
+         * @param tool the tool name that was used to create the element
+         * @param element the Raphael element that was added to the Raphael paper
          */
-        onBoardCleared: function() {
+        onElementAdded: function(tool, element) {
 
             // call super
-            whiteboardViews.WhiteboardView.prototype.onBoardCleared.call(this);
+            whiteboard_views.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
 
-            // create path message with unique pathID to indicate a board-clear operation
-            var whiteboardPath = new whiteboardModels.WhiteboardPath({
-                whiteboardId : this.whiteboardModel.id,
-                pathId : 'reset'
+            // trigger whiteboard path create event
+            this.triggerEvent(EVENTS.CREATE_WHITEBOARD_PATH, {
+                whiteboardId: this.viewModel.getSelectedWhiteboardId(),
+                elementId: element.id,
+                serializedPathData: this.serializer.serializeElement(element),
+                onSuccess: this.onSuccessfulPathCreation
             });
-            // send message to server
-            whiteboardPath.destroy();
+        },
+
+        /**
+         * @Override
+         * This method will capture data the user removed from their whiteboard,
+         * and send out a message for the other chat participants to receive.
+         * @param element The Raphael element that was removed from the paper
+         */
+        onElementRemoved: function(element) {
+
+            // call super
+            whiteboard_views.WhiteboardView.prototype.onElementRemoved.call(this, element);
+
+            // trigger path delete event
+            this.triggerEvent(EVENTS.DELETE_WHITEBOARD_PATH, {
+                whiteboardId: this.viewModel.getSelectedWhiteboardId(),
+                pathId: element.id
+            });
         },
 
 
-        // I think there will a problem with this feature however since the path
-        // is being written twice with two different IDs by the user who drew the element.
-        // Delete seems to be broken; in the process of debugging this in the dispatch view.
+        /**
+         * This method will 'undo' the user's actions on the whiteboard.
+         */
         undo: function() {
             if (this.undoCache.length > 0) {
                 var wbPathModelId = this.undoCache.pop();
                 if (wbPathModelId) {
                     var wbPathModel = this.pathCollection.get(wbPathModelId);
                     if (wbPathModel){
-                        wbPathModel.destroy();
+                        this.triggerEvent(EVENTS.DELETE_WHITEBOARD_PATH, {
+                            whiteboardId: this.viewModel.getSelectedWhiteboardId(),
+                            pathId: wbPathModelId
+                        });
                     }
                 }
             }
@@ -450,6 +451,7 @@ define([
      * This View is responsible for displaying the list
      * of tools available for the user to use on the
      * whiteboard.
+     * @constructor
      */
     var ChatWhiteboardToolsView = core_view.View.extend({
 
@@ -520,16 +522,17 @@ define([
     /**
      * Whiteboard controls view.
      * This view will be responsible for displaying the
-     * conrols responsible for selecting, creating, and deleting
+     * controls responsible for selecting, creating, and deleting
      * whiteboards.
      * This view will remain visible regardless of which specific whiteboard
      * is being viewed.
+     * @constructor
      */
     var ChatWhiteboardControlsView = core_view.View.extend({
 
         events: {
             'change #select-whiteboard': "onSelectWhiteboard",
-            "click #whiteboard-add-button": "onAddWhiteboard",
+            "click #whiteboard-add-button": "onCreateWhiteboard",
             "click #whiteboard-delete-button": "onDeleteWhiteboard",
             'click #whiteboard-clear-button': 'onClear',
             'click #whiteboard-undo-button': 'onUndo'
@@ -579,13 +582,13 @@ define([
          * This function listens to the create-whiteboard modal dialog's
          * success button.
          */
-        onAddWhiteboard: function() {
+        onCreateWhiteboard: function() {
 
             // read the input whiteboard name
             var wbNameInput = this.$('#whiteboard-name-input');
             var wbName = wbNameInput.val();
 
-            this.triggerEvent(EVENTS.ADD_WHITEBOARD, {
+            this.triggerEvent(EVENTS.CREATE_WHITEBOARD, {
                 name: wbName
             });
 
@@ -665,13 +668,6 @@ define([
         render: function() {
             this.$el.html(this.template());
 
-            /*
-            new ChatWhiteboardMediatorView({
-                el: this.$(this.mediatorSelector),
-                collection: this.collection,
-            }).render();
-            */
-
             // instantiate whiteboard tools view
             new ChatWhiteboardToolsView({
                 el: this.$(this.toolsSelector),
@@ -737,11 +733,13 @@ define([
         /**
          * This method is responsible for handling when a whiteboard is deleted.
          * It will delete the whiteboard's view object.
-         * @param model
+         *
+         * Users can only delete the displayed whiteboard.
+         * After the delete, the default whiteboard will be selected and displayed.
+         *
+         * @param model  The Whiteboard model that was deleted
          */
         onWhiteboardRemoved: function(model) {
-
-            // TODO define what happens when user deletes a whiteboard. Can user only delete the selected whiteboard? What happens after the delete? Which WB is shown?
 
             if (model.id in this.whiteboardViews)
             {
@@ -790,7 +788,6 @@ define([
                 selectedWhiteboardId in this.whiteboardViews)
             {
                 // hide the previous whiteboard view
-                // TODO handle rootNote crap.
                 this.rootWhiteboardNode.children().toggle(false);
 
                 // show the newly selected whiteboard view
@@ -818,25 +815,25 @@ define([
                     switch(this.viewModel.getSelectedTool())
                     {
                         case 'Pen':
-                            tool = new whiteboardViews.Pen(whiteboardView.paper, attributes);
+                            tool = new whiteboard_views.Pen(whiteboardView.paper, attributes);
                             break;
                         case 'Arrow':
-                            tool = new whiteboardViews.Arrow(whiteboardView.paper, attributes);
+                            tool = new whiteboard_views.Arrow(whiteboardView.paper, attributes);
                             break;
                         case 'Rect':
-                            tool = new whiteboardViews.Rectangle(whiteboardView.paper, attributes);
+                            tool = new whiteboard_views.Rectangle(whiteboardView.paper, attributes);
                             break;
                         case 'Circle':
-                            tool = new whiteboardViews.Circle(whiteboardView.paper, attributes);
+                            tool = new whiteboard_views.Circle(whiteboardView.paper, attributes);
                             break;
                         case 'Text':
-                            tool = new whiteboardViews.Text(whiteboardView.paper, attributes);
+                            tool = new whiteboard_views.Text(whiteboardView.paper, attributes);
                             break;
                         case 'Erase':
-                            tool = new whiteboardViews.Erase(whiteboardView.paper, null);
+                            tool = new whiteboard_views.Erase(whiteboardView.paper, null);
                             break;
                         default:
-                            tool = new whiteboardViews.Pen(whiteboardView.paper, attributes);
+                            tool = new whiteboard_views.Pen(whiteboardView.paper, attributes);
                     }
 
                     if (null != tool) {
@@ -875,6 +872,14 @@ define([
          * @param eventBody
          */
         onUndo: function(event, eventBody){
+
+            // TODO
+            /*
+                The reason that this method is acting on the whiteboardView object
+                is because this TabView is the owner of the whiteboardViews map.
+                It seems like this behavior should be defined in the mediator.
+                Discuss with Jeff in review.
+             */
 
             if (null != eventBody.whiteboardId){
                 var whiteboardId = eventBody.whiteboardId;
