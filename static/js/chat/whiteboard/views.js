@@ -47,6 +47,7 @@ define([
     };
 
     /**
+     * TODO delete
      * Mediator.
      * Responsible for coordinating and composing views together.
      */
@@ -270,9 +271,8 @@ define([
 
     /**
      * Whiteboard view.
-     * This view is really just extending the whiteboard base view
-     * with behavior.  It specifies what to do when an element is
-     * added or removed.
+     * This view extends the whiteboard base view
+     * with behavior that the chat whiteboard needs.
      * @constructor
      */
     var ChatWhiteboardView = whiteboard_views.WhiteboardView.extend({
@@ -283,6 +283,7 @@ define([
             this.undoCache = [ ];
             this.serializer = new serialize.Serializer();
             this.whiteboardModel = this.options.model;
+            this.viewModel = this.options.viewModel;
             this.pathCollection = this.options.model.paths();
 
             // init event listeners
@@ -293,16 +294,16 @@ define([
 
 
         /**
-         * Responsible for handling a path collection reset.
-         * This method will clear the paper for this event.
+         * Responsible for handling a whiteboard path collection reset.
+         * This method will clear the paper on this event.
          */
         onWbPathCollectionReset: function(){
             this.paper.clear();
         },
 
         /**
-         * Responsible for handling when a new path is added to the path collection.
-         * This function will deserialze the input msg data and draw the
+         * Responsible for handling when a new whiteboard path is added to the path collection.
+         * This function will deserialize the received msg data and draw the
          * path element on the user's screen.
          * @param model WhiteboardPath model
          */
@@ -311,13 +312,12 @@ define([
             var elementToAdd = this.serializer.deserializeElement(model.pathData());
             if (elementToAdd){
 
-                // Check if this element already exists on the paper.
-                // This implies that this user was responsible for adding this element to the paper.
+                // Check if this element already exists on the paper. If the element already exists,
+                // it implies that this user was responsible for adding the element to the paper.
                 var elementExists = this.paper.getById(model.id);
                 if (elementExists){
                     // No-op. No need to add this element to the paper again.
                 } else {
-
                     // add element to the paper
                     var addedElements = this.paper.add(elementToAdd);
 
@@ -325,7 +325,9 @@ define([
                      paper.getById() at a later point in time to delete or perform some other
                      action on this element.
                      */
-                    // TODO The elements var can contain multiple elements.  The assumption is that currently the createWhiteboardMessages will only contain one element.
+
+                    // The elements var can contain multiple elements.
+                    // The assumption is that currently the createWhiteboardMessages will only contain one element.
                     if (addedElements.length > 0) {
                         addedElements[0].id = model.id;
                     }
@@ -334,12 +336,11 @@ define([
         },
 
         /**
-         * Responsible for handling when a path is removed from the path collection.
+         * Responsible for handling when a whiteboard path is removed from the path collection.
          * This function will remove the specified path on the user's screen.
          * @param model WhiteboardPath model
          */
         onWbPathRemoved: function(model) {
-
             var element = this.paper.getById(model.id);
             if (element) {
                 element.remove();
@@ -348,18 +349,22 @@ define([
 
         /**
          * Define a callback to be invoked when a WhiteboardPath
-         * instance is successfully created.
+         * instance is successfully created.  This wil only be called
+         * locally for the user that was resonsible for creating the new
+         * whiteboard path.
+         *
          * @param elementId the Raphael element ID that the user created
          * @param modelId the WhiteboardPath model ID which represents the Raphael element
          */
         onSuccessfulPathCreation: function(elementId, modelId) {
 
             if (elementId && modelId) {
-
                 var newlyDrawnElement = this.paper.getById(elementId);
                 if (newlyDrawnElement) {
 
-                    // assign the model's ID to the element
+                    // Assign the model's ID to the element.
+                    // Doing this will facilitate accessing this element for
+                    // further action e.g. delete, move, etc.
                     newlyDrawnElement.id = modelId;
 
                     // cache elements user added to the paper
@@ -370,9 +375,10 @@ define([
 
         /**
          * @Override
-         * This method will capture data the user draws on their whiteboard,
-         * serialize the data and send out a message for the other chat participants
+         * This method will capture elements the user draws on their whiteboard,
+         * serialize the data, and send out a message for the other chat participants
          * to receive.
+         *
          * @param tool the tool name that was used to create the element
          * @param element the Raphael element that was added to the Raphael paper
          */
@@ -381,18 +387,22 @@ define([
             // call super
             whiteboard_views.WhiteboardView.prototype.onElementAdded.call(this, tool, element);
 
-            // trigger whiteboard path create event
-            this.triggerEvent(EVENTS.CREATE_WHITEBOARD_PATH, {
-                whiteboardId: this.viewModel.getSelectedWhiteboardId(),
-                elementId: element.id,
-                serializedPathData: this.serializer.serializeElement(element),
-                onSuccess: this.onSuccessfulPathCreation
-            });
+            if (element) {
+
+                // trigger whiteboard path create event
+                this.triggerEvent(EVENTS.CREATE_WHITEBOARD_PATH, {
+                    context: this,
+                    whiteboardId: this.viewModel.getSelectedWhiteboardId(),
+                    elementId: element.id,
+                    serializedPathData: this.serializer.serializeElement(element),
+                    onSuccess: this.onSuccessfulPathCreation
+                });
+            }
         },
 
         /**
          * @Override
-         * This method will capture data the user removed from their whiteboard,
+         * This method will capture the element the user removed from their whiteboard,
          * and send out a message for the other chat participants to receive.
          * @param element The Raphael element that was removed from the paper
          */
@@ -401,11 +411,13 @@ define([
             // call super
             whiteboard_views.WhiteboardView.prototype.onElementRemoved.call(this, element);
 
-            // trigger path delete event
-            this.triggerEvent(EVENTS.DELETE_WHITEBOARD_PATH, {
-                whiteboardId: this.viewModel.getSelectedWhiteboardId(),
-                pathId: element.id
-            });
+            if (element) {
+                // trigger path delete event
+                this.triggerEvent(EVENTS.DELETE_WHITEBOARD_PATH, {
+                    whiteboardId: this.viewModel.getSelectedWhiteboardId(),
+                    pathId: element.id
+                });
+            }
         },
 
 
@@ -431,6 +443,8 @@ define([
 
     /**
      * Whiteboard container layout.
+     * This is a thin wrapper that will house the whiteboard
+     * chat view.
      * @constructor
      */
     var ChatWhiteboardContainerView = core_view.View.extend({
@@ -443,7 +457,6 @@ define([
             this.$el.html(this.template());
             return this;
         },
-
     });
 
     /**
@@ -523,12 +536,15 @@ define([
      * Whiteboard controls view.
      * This view will be responsible for displaying the
      * controls responsible for selecting, creating, and deleting
-     * whiteboards.
-     * This view will remain visible regardless of which specific whiteboard
+     * whiteboards. This view will remain visible regardless of which specific whiteboard
      * is being viewed.
      * @constructor
      */
     var ChatWhiteboardControlsView = core_view.View.extend({
+
+        whiteboardSelector: '#select-whiteboard',
+        whiteboardNameInputSelector: '#whiteboard-name-input',
+        createWhiteboardModalSelector: '#create-whiteboard-modal',
 
         events: {
             'change #select-whiteboard': "onSelectWhiteboard",
@@ -548,6 +564,9 @@ define([
             this.wbCollection.bind("reset", this.render, this);
             this.wbCollection.bind("add", this.refreshWhiteboardList, this);
             this.wbCollection.bind("remove", this.refreshWhiteboardList, this);
+
+            // setup viewModel listeners
+            this.viewModel.on('change:selectedWhiteboardId', this.onWhiteboardSelected, this);
         },
 
         /**
@@ -555,6 +574,7 @@ define([
          */
         render: function() {
             this.$el.html(this.template(this.jsonWhiteboardList));
+            this.onWhiteboardSelected();
             return this;
         },
 
@@ -568,14 +588,21 @@ define([
         },
 
         /**
-         * Handle whiteboard selection.
+         * Handle when a user clicks the whiteboard select drop-down.
          */
         onSelectWhiteboard: function() {
             // determine which whiteboard is selected
-            var selectedWhiteboardId = this.$el.find('#select-whiteboard').val();
+            var selectedWhiteboardId = this.$el.find(this.whiteboardSelector).val();
             this.triggerEvent(EVENTS.SELECT_WHITEBOARD, {
                 whiteboardId: selectedWhiteboardId
             });
+        },
+
+        /**
+         * Ensure that this controls view matches the viewModel.
+         */
+        onWhiteboardSelected: function() {
+            this.$(this.whiteboardSelector).val(this.viewModel.getSelectedWhiteboardId());
         },
 
         /**
@@ -585,7 +612,7 @@ define([
         onCreateWhiteboard: function() {
 
             // read the input whiteboard name
-            var wbNameInput = this.$('#whiteboard-name-input');
+            var wbNameInput = this.$(this.whiteboardNameInputSelector);
             var wbName = wbNameInput.val();
 
             this.triggerEvent(EVENTS.CREATE_WHITEBOARD, {
@@ -596,7 +623,7 @@ define([
             wbNameInput.val('');
 
             // hide modal dialog when done
-            this.$el.find('#create-whiteboard-modal').modal('hide');
+            this.$el.find(this.createWhiteboardModalSelector).modal('hide');
         },
 
         /**
@@ -703,7 +730,8 @@ define([
 
                 // create a new whiteboard view
                 var view = new ChatWhiteboardView({
-                    model : model
+                    model : model,
+                    viewModel: this.viewModel
                 });
 
                 // add the new view to the list of whiteboard views
@@ -713,20 +741,6 @@ define([
                 view.$el.toggle(false);
                 this.rootWhiteboardNode.append(view.render().el);
 
-
-                // if no whiteboard is being shown, then show the newly created whiteboard
-                if (this.$('#whiteboard-wrapper:first-child').is(':hidden')){
-
-                    // display the whiteboard
-                    view.$el.toggle(true);
-
-                    // update the viewModel to indicate a new whiteboard has been selected
-                    this.viewModel.setSelectedWhiteboard(model.id);
-                }
-
-
-                // TODO switch to new whiteboard if user added it
-                //this.selected = this.$el.find('#select-whiteboard').val();
             }
         },
 
@@ -782,6 +796,10 @@ define([
 
             // determine which whiteboard is selected
             var selectedWhiteboardId = this.viewModel.getSelectedWhiteboardId();
+
+            console.log('TabView:onWhiteboardSelected');
+            console.log(selectedWhiteboardId);
+            console.trace();
 
             // show the newly selected whitebaord
             if (null != selectedWhiteboardId &&

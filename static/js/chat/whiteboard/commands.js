@@ -1,12 +1,15 @@
 define([
+    'Underscore',
     'core/command',
     'chat/whiteboard/models',
     'chat/whiteboard/proxies',
 ], function(
+    _,
     command,
     whiteboard_models,
     whiteboard_proxies) {
-    
+
+    // TODO convert to async commands
     var CreateWhiteboardCommand = command.Command.extend({
         execute: function(options) {
 
@@ -24,7 +27,7 @@ define([
             }
 
             // create a new whiteboard
-            if (whiteboardCollectionProxy.collection.length <= MAX_WHITEBOARDS){
+            if (whiteboardCollectionProxy.collection.length < MAX_WHITEBOARDS){
                 var whiteboard = new whiteboard_models.Whiteboard({
                     name: whiteboardName
                 });
@@ -70,6 +73,7 @@ define([
 
     // TODO This command hasn't been setup throughout the rest of the architecture.
     var ClearWhiteboardCommand = command.Command.extend({
+
         execute: function(options) {
 
             var ret = false;
@@ -115,7 +119,9 @@ define([
         }
     });
 
-    var DeleteWhiteboardPathCommand = command.Command.extend({
+    var DeleteWhiteboardPathCommand = command.AsyncCommand.extend({
+
+        asyncCallbackArgs: ['model', 'response'],
 
         execute: function(options) {
 
@@ -131,7 +137,10 @@ define([
                     // the whiteboard path model and the corresponding element share the same ID
                     var whiteboardPathModel = whiteboard.paths().get(options.pathId);
                     if (whiteboardPathModel){
-                        whiteboardPathModel.destroy();
+                        whiteboardPathModel.destroy(null, {
+                            success: _.bind(this.onSuccess, this),
+                            error: _.bind(this.onError, this)
+                        });
                     }
                 }
             }

@@ -25,6 +25,7 @@ define([
 
         // specify which notifications we want to listen to
         notifications: [
+            [notifications.WHITEBOARD_ADDED, 'onWhiteboardAdded'],
         ],
 
         initialize: function(options) {
@@ -83,6 +84,22 @@ define([
         },
 
         /**
+         * This function listens for a notification when a whiteboard
+         * has finished being added to the whiteboard collection.
+         *
+         * @param notificationBody Expecting the attributes 'collection' and 'model' to be provided
+         */
+        onWhiteboardAdded: function(notificationBody) {
+
+            // This will ensure that a whiteboard will always be displayed
+            if (notificationBody.model) {
+                if (this.view.viewModel.getSelectedWhiteboardId() == null) {
+                    this.view.viewModel.setSelectedWhiteboard(notificationBody.model.id);
+                }
+            }
+        },
+
+        /**
          * Handle when user selects a new marker color
          * to draw on the whiteboard.
          * @param event The DOM event
@@ -118,7 +135,7 @@ define([
         },
 
         /**
-         * Handle an event to add a new whiteboard to the whiteboard collection.
+         * Handle an event to create a new whiteboard
          * @param event The DOM event
          * @param eventBody Expecting the attribute 'name' to be specified
          */
@@ -129,7 +146,7 @@ define([
         },
 
         /**
-         * Handle an event to remove a whiteboard from the whiteboard collection.
+         * Handle an event to delete a whiteboard from the whiteboard collection.
          * @param event The DOM event
          * @param eventBody Expecting the attribute 'whiteboardId' to be specified
          */
@@ -147,11 +164,12 @@ define([
          * @param event The DOM event
          * @param eventBody Expecting the attribute 'whiteboardId' to be specified
          */
-            // TODO
+        // TODO add clear functionality to architecture
         onClearWhiteboard: function(event, eventBody) {
             if (eventBody.whiteboardId) {
-                this.facade.trigger(notifications.WHITEBOARD_CLEAR, {
-                    whiteboardId: eventBody.whiteboardId
+                this.facade.trigger(notifications.WHITEBOARD_PATH_CREATE, {
+                    whiteboardId: eventBody.whiteboardId,
+                    pathId: eventBody.pathId
                 });
             }
         },
@@ -159,19 +177,26 @@ define([
         /**
          * Handle an event to add a new whiteboard path.
          * @param event The DOM event
-         * @param eventBody TODO
+         * @param eventBody Expecting the attributes:
+         *        'whiteboardId': the whiteboardID that the element was added to,
+         *        'elementId': the newly drawn element's ID,
+         *        'serializedPathData': the serialized element,
+         *        'onSuccess': callback to invoke upon successful creation of WhiteboardPath model
+         *                     which represents the newly drawn element.
          */
         onCreateWhiteboardPath: function(event, eventBody) {
-            if (eventBody.whiteboardId &&
+            if (eventBody.context &&
+                eventBody.whiteboardId &&
                 eventBody.elementId &&
                 eventBody.serializedPathData &&
                 eventBody.onSuccess)
             {
-                this.facade.trigger(notifications.WHITEBOARD_CREATE_PATH, {
+                this.facade.trigger(notifications.WHITEBOARD_PATH_CREATE, {
+                    context: eventBody.context,
                     whiteboardId: eventBody.whiteboardId,
                     serializedPathData: eventBody.serializedPathData,
-                    onSuccess: function(options, result) {
-                        eventBody.onSuccess(eventBody.elementId, result.model.id);
+                    onSuccess: function(options, ret) {
+                        eventBody.onSuccess.call(this, eventBody.elementId, ret.result.model.id);
                     }
                 });
             }
@@ -179,21 +204,18 @@ define([
 
 
         /**
-         * Handle an event to remove a whiteboard path.
+         * Handle an event to delete a whiteboard path.
          * @param event The DOM event
          * @param eventBody Expecting the attributes 'whiteboardId' and 'pathId' to be specified
          */
         onDeleteWhiteboardPath: function(event, eventBody) {
             if (eventBody.whiteboardId) {
-                this.facade.trigger(notifications.WHITEBOARD_DELETE_PATH, {
+                this.facade.trigger(notifications.WHITEBOARD_PATH_DELETE, {
                     whiteboardId: eventBody.whiteboardId,
                     pathId: eventBody.pathId
                 });
             }
         },
-
-
-
 
 
     }, {

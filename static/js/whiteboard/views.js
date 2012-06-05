@@ -9,6 +9,8 @@ define([
 
     /**
      * Whiteboard view.
+     * This view is a wrapper around the Raphael library.
+     *
      * @constructor
      * @param {Object} options
      *   width: whiteboard width
