@@ -1,12 +1,15 @@
 define([
+    'Underscore',
     'core/command',
     'chat/whiteboard/models',
     'chat/whiteboard/proxies',
 ], function(
+    _,
     command,
     whiteboard_models,
     whiteboard_proxies) {
-    
+
+    // TODO convert to async commands
     var CreateWhiteboardCommand = command.Command.extend({
         execute: function(options) {
 
@@ -20,11 +23,11 @@ define([
             if (whiteboardName == null ||
                 whiteboardName == ''   ||
                 whiteboardName.length == 0) {
-                    whiteboardName = 'Whiteboard #' + parseInt(whiteboardCollectionProxy.length + 1);
+                    whiteboardName = 'Whiteboard #' + parseInt(whiteboardCollectionProxy.collection.length + 1);
             }
 
             // create a new whiteboard
-            if (whiteboardCollectionProxy.collection.length <= MAX_WHITEBOARDS){
+            if (whiteboardCollectionProxy.collection.length < MAX_WHITEBOARDS){
                 var whiteboard = new whiteboard_models.Whiteboard({
                     name: whiteboardName
                 });
@@ -68,17 +71,82 @@ define([
         }
     });
 
-    var CreateWhiteboardPathCommand = command.Command.extend({
+    // TODO This command hasn't been setup throughout the rest of the architecture.
+    var ClearWhiteboardCommand = command.Command.extend({
+
         execute: function(options) {
-            //TODO - create whiteboard path
-            return false;
+
+            var ret = false;
+
+            if (options.whiteboardId) {
+                var whiteboardPath = new whiteboard_models.WhiteboardPath({
+                    whiteboardId : options.whiteboardId,
+                    pathId : 'reset'
+                });
+                // send message to server
+                whiteboardPath.destroy();
+                ret = true;
+            }
+
+            // TODO handle when false is returned in the mediator
+            return ret;
         }
     });
 
-    var DeleteWhiteboardPathCommand = command.Command.extend({
+    var CreateWhiteboardPathCommand = command.AsyncCommand.extend({
+
+        asyncCallbackArgs: ['model', 'response'],
+
         execute: function(options) {
-            //TODO - delete whiteboard path
-            return false;
+
+            var ret = false;
+
+            if (options.whiteboardId && options.serializedPathData) {
+
+                // create path message and send via save()
+                var whiteboardPath = new whiteboard_models.WhiteboardPath({
+                    whiteboardId : options.whiteboardId,
+                    pathData : options.serializedPathData
+                });
+
+                whiteboardPath.save(null, {
+                    success: _.bind(this.onSuccess, this),
+                    error: _.bind(this.onError, this)
+                });
+            }
+
+            return ret;
+        }
+    });
+
+    var DeleteWhiteboardPathCommand = command.AsyncCommand.extend({
+
+        asyncCallbackArgs: ['model', 'response'],
+
+        execute: function(options) {
+
+            var ret = false;
+
+            // Delete the whiteboard path
+            if (options.whiteboardId && options.pathId){
+
+                var whiteboardCollectionProxy = this.facade.getProxy(whiteboard_proxies.ChatWhiteboardsProxy.NAME);
+                var whiteboard = whiteboardCollectionProxy.collection.get(options.whiteboardId);
+                if (whiteboard){
+
+                    // the whiteboard path model and the corresponding element share the same ID
+                    var whiteboardPathModel = whiteboard.paths().get(options.pathId);
+                    if (whiteboardPathModel){
+                        whiteboardPathModel.destroy(null, {
+                            success: _.bind(this.onSuccess, this),
+                            error: _.bind(this.onError, this)
+                        });
+                    }
+                }
+            }
+
+            // TODO handle when false is returned in the mediator
+            return ret;
         }
     });
 

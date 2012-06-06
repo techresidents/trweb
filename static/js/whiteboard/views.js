@@ -3,17 +3,20 @@ define([
     'Underscore',
     'Backbone',
     'raphael',
-], function($, _, Backbone, Raphael) {
+    'core/view',
+], function($, _, Backbone, Raphael, view) {
 
 
     /**
      * Whiteboard view.
+     * This view is a wrapper around the Raphael library.
+     *
      * @constructor
      * @param {Object} options
      *   width: whiteboard width
      *   height: whiteboard height
      */
-    var WhiteboardView = Backbone.View.extend({
+    var WhiteboardView = view.View.extend({
         tagName: 'div',
         
         events: {
@@ -66,14 +69,11 @@ define([
         },
 
         selectColor: function(color) {
-            console.log('whiteboard app: selectColor invoked');
-            console.log(color);
             this.color = color;
         },
 
         clear: function() {
             this.paper.clear();
-            this.onBoardCleared();
         },
 
         adjustedCoordinates: function(event) {
@@ -120,11 +120,6 @@ define([
         onElementRemoved: function(element){
 
         },
-
-        // To be overridden by Views/Controllers to listen for this event
-        onBoardCleared: function(){
-
-        }
 
     });
 
