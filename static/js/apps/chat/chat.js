@@ -10,6 +10,8 @@ define([
     'chat/agenda/mediators',
     'chat/commands',
     'chat/proxies',
+    'chat/marker/commands',
+    'chat/marker/mediators',
     'chat/message/commands',
     'chat/minute/commands',
     'chat/discuss/mediators',
@@ -33,6 +35,8 @@ define([
     agenda_mediators,
     chat_commands,
     chat_proxies,
+    marker_commands,
+    marker_mediators,
     message_commands,
     minute_commands,
     discuss_mediators,
@@ -124,6 +128,7 @@ define([
 
             //sub-mediators
             this.facade.registerMediator(new alert_mediators.AlertMediator());
+            this.facade.registerMediator(new marker_mediators.ChatMarkersMediator());
             this.facade.registerMediator(new user_mediators.ChatUsersMediator());
             this.facade.registerMediator(new discuss_mediators.DiscussMediator());
             this.facade.registerMediator(new tag_mediators.TaggerMediator());
@@ -186,6 +191,11 @@ define([
             this.registerCommand(notifications.CHAT_START, chat_commands.ChatStartCommand);
             this.registerCommand(notifications.CHAT_END, chat_commands.ChatEndCommand);
             this.registerCommand(notifications.CHAT_NEXT_TOPIC, chat_commands.ChatNextTopicCommand);
+            this.registerCommand(notifications.MARKER_CREATE, marker_commands.CreateMarkerCommand);
+            this.registerCommand(notifications.MARKER_CONNECTED_CREATE, marker_commands.CreateConnectedMarkerCommand);
+            this.registerCommand(notifications.MARKER_PUBLISHING_CREATE, marker_commands.CreatePublishingMarkerCommand);
+            this.registerCommand(notifications.MARKER_SPEAKING_CREATE, marker_commands.CreateSpeakingMarkerCommand);
+            this.registerCommand(notifications.MESSAGE_MARKER_CREATE, message_commands.MarkerCreateMessageCommand);
             this.registerCommand(notifications.MESSAGE_MINUTE_CREATE, message_commands.MinuteCreateMessageCommand);
             this.registerCommand(notifications.MESSAGE_MINUTE_UPDATE, message_commands.MinuteUpdateMessageCommand);
             this.registerCommand(notifications.MESSAGE_TAG_CREATE, message_commands.TagCreateMessageCommand);

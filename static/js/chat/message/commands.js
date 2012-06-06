@@ -1,5 +1,6 @@
 define([
     'core/command',
+    'chat/marker/proxies',
     'chat/minute/models',
     'chat/minute/proxies',
     'chat/tag/models',
@@ -8,12 +9,26 @@ define([
     'chat/whiteboard/proxies',
 ], function(
     command,
+    marker_proxies,
     minute_models,
     minute_proxies,
     tag_models,
     tag_proxies,
     whiteboard_models,
     whiteboard_proxies) {
+
+    var MarkerCreateMessageCommand = command.Command.extend({
+        execute: function(options) {
+            var proxy = this.facade.getProxy(marker_proxies.ChatMarkersProxy.NAME);
+            var model = options.model;
+            var marker = proxy.collection.model(null, {
+                header: model.header(),
+                msg: model.msg()
+            });
+
+            return true;
+        }
+    });
     
     var MinuteCreateMessageCommand = command.Command.extend({
         execute: function(options) {
@@ -139,6 +154,7 @@ define([
     });
 
     return {
+        MarkerCreateMessageCommand: MarkerCreateMessageCommand,
         MinuteCreateMessageCommand: MinuteCreateMessageCommand,
         MinuteUpdateMessageCommand: MinuteUpdateMessageCommand,
         TagCreateMessageCommand: TagCreateMessageCommand,

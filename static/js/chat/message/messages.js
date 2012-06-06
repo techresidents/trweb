@@ -36,6 +36,24 @@ define([
 
 
     /**
+     * Marker create message.
+     */
+    var MarkerCreateMessage = function(attributes) {
+        this.markerId = null;
+        this.marker = null;
+        _.extend(this, attributes);
+    };
+
+    _.extend(MarkerCreateMessage.prototype, {
+        type: "MARKER_CREATE",
+
+        url: function() {
+            return "/marker";
+        }
+    });
+
+
+    /**
      * Chat Minute create message.
      */
     var MinuteCreateMessage = function(attributes) {
@@ -201,6 +219,7 @@ define([
     return {
         messageFactory: new MessageFactory(),
         MessageHeader: MessageHeader,
+        MarkerCreateMessage: MarkerCreateMessage,
         MinuteCreateMessage: MinuteCreateMessage,
         TagCreateMessage: TagCreateMessage,
         TagDeleteMessage: TagDeleteMessage,

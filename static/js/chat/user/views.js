@@ -122,8 +122,6 @@ define([
             this.footerView.render();
             this.$(this.footerSelector).html(this.footerView.el);
             
-            console.log('isSpeaking');
-            console.log(this.user.isSpeaking());
             this.$('chat-user-container').toggleClass('speaking', this.user.isSpeaking());
             
             return this;

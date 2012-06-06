@@ -8,6 +8,11 @@
 // persistence. Models are given GUIDS, and saved into a JSON object. Simple
 // as that.
 
+// Hold reference to Underscore.js and Backbone.js in the closure in order
+// to make things work even if they are removed from the global namespace
+var _ = this._;
+var Backbone = this.Backbone;
+
 // Generate four random hex digits.
 function S4() {
    return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
@@ -37,7 +42,10 @@ _.extend(Backbone.LocalStorage.prototype, {
   // Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
   // have an id of it's own.
   create: function(model) {
-    if (!model.id) model.id = model.attributes[model.idAttribute] = guid();
+    if (!model.id) {
+        model.id = guid();
+        model.set(model.idAttribute, model.id);
+    }
     this.localStorage().setItem(this.name+"-"+model.id, JSON.stringify(model));
     this.records.push(model.id.toString());
     this.save();

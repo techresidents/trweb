@@ -18,7 +18,6 @@ define([
     var StreamSample = base.Base.extend({
         initialize: function(options) {
             this.id = options.id || _.uniqueId('StreamSample_');
-            console.log(this.id);
             this.volume = options.volume;
             this.timestamp = new Date().valueOf() / 1000;
         },
@@ -70,8 +69,6 @@ define([
                 }
             }
             
-            console.log('gc len');
-            console.log(garbageCollect.length);
             for(i = 0; i < garbageCollect.length; i++) {
                 this.samples.splice(garbageCollect[i] - i, 1);
             }
@@ -243,17 +240,19 @@ define([
         microphoneLevelHandler: function(event) {
             var stream = this.streams[event.streamId];
             var average = stream.average();
-
-            console.log('vol');
-            console.log(event.volume);
-            console.log('avg');
-            console.log(average);
+            
+            //console.log('sample');
+            //console.log(average);
+            //console.log(event.volume);
 
             if(event.volume > average + 1) {
-                stream.user.setSpeaking(true);
-                console.log('speaking');
+                if(!stream.user.isSpeaking()) {
+                    stream.user.setSpeaking(true);
+                }
             } else {
-                stream.user.setSpeaking(false);
+                if(stream.user.isSpeaking()) {
+                    stream.user.setSpeaking(false);
+                }
             }
 
             stream.addSample(new StreamSample({

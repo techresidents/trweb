@@ -68,7 +68,6 @@ define([
             //Subscribe to stream if it's not current user
             if(userModel.isPublishing() && !userModel.isCurrentUser()) {
                 var details = view.getStreamViewDetails();
-                console.log(details);
                 this.sessionProxy.session.subscribe(userModel.stream(), details.elementId,  {
                     width: details.width,
                     height: details.height,

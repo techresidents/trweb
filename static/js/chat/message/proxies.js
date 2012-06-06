@@ -14,6 +14,7 @@ define([
         initialize: function(options) {
 
             this.msgNotificationMap = {
+                'MARKER_CREATE': notifications.MESSAGE_MARKER_CREATE,
                 'MINUTE_CREATE': notifications.MESSAGE_MINUTE_CREATE,
                 'MINUTE_UPDATE': notifications.MESSAGE_MINUTE_UPDATE,
                 'TAG_CREATE': notifications.MESSAGE_TAG_CREATE,

@@ -122,8 +122,6 @@ define([
                 var asOf = last ? last.attributes.header.timestamp : 0;
 
                 var data = {
-                    chatSessionToken: this.chatSessionToken,
-                    userId: this.userId,
                     asOf: asOf
                 };
 

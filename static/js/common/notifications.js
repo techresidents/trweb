@@ -27,7 +27,17 @@ define([
         /* DOM NOTICES */
         DOM_READY: 'notification:DomReady',
 
+        /* MARKER NOTICES */
+        MARKER_ADDED: 'notification:MarkerAdded',
+
+        /* MARKER ACTIONSS */
+        MARKER_CREATE: 'notification:MarkerCreate',
+        MARKER_CONNECTED_CREATE: 'notification:MarkerConnectedCreate',
+        MARKER_PUBLISHING_CREATE: 'notification:MarkerPublishingCreate',
+        MARKER_SPEAKING_CREATE: 'notification:MarkerSpeakingCreate',
+
         /* MESSAGE ACTIONS */
+        MESSAGE_MARKER_CREATE: 'notification:Message:MarkerCreate',
         MESSAGE_MINUTE_CREATE: 'notification:Message:MinuteCreate',
         MESSAGE_MINUTE_UPDATE: 'notification:MessageMinuteUpdate',
         MESSAGE_TAG_CREATE: 'notification:MessageTagCreate',
@@ -87,6 +97,7 @@ define([
         USER_CHANGED: 'notification:UserChanged',
         USER_CONNECTED_CHANGED: 'notification:UserConnectedChanged',
         USER_PUBLISHING_CHANGED: 'notification:UserPublishingChanged',
+        USER_SPEAKING_CHANGED: 'notification:UserSpeakingChanged',
         USER_REMOVED: 'notification:UserRemoved',
 
         /* VIEW NOTICES */

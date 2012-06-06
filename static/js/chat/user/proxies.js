@@ -15,6 +15,7 @@ define([
                 'change': notifications.USER_CHANGED,
                 'change:isConnected': notifications.USER_CONNECTED_CHANGED,
                 'change:isPublishing': notifications.USER_PUBLISHING_CHANGED,
+                'change:isSpeaking': notifications.USER_SPEAKING_CHANGED,
                 'remove': notifications.USER_REMOVED,
             }
         },

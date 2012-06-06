@@ -32,7 +32,6 @@ $(document).ready(function() {
             this.topicFormView = new views.TopicFormView(args);
 
             if(this.options.data.topic_json.length > 0) {
-                console.log(this.options.data.topic_json);
                 this.topicCollection.reset(this.options.data.topic_json);
             } else {
                 //add root topic

@@ -1,6 +1,8 @@
 define([
     'core/proxy',
     'chat/agenda/proxies',
+    'chat/marker/models',
+    'chat/marker/proxies',
     'chat/message/models',
     'chat/message/proxies',
     'chat/minute/models',
@@ -15,6 +17,8 @@ define([
 ], function(
     proxy,
     agenda_proxies,
+    marker_models,
+    marker_proxies,
     message_models,
     message_proxies,
     minute_models,
@@ -44,7 +48,7 @@ define([
             this.chatSessionProxy.getUsersProxy().reset(options.users);
             this.facade.registerProxy(this.chatSessionProxy);
 
-
+            
             //chat messages proxy
             this.chatMessagesProxy = new message_proxies.ChatMessagesProxy({
                 collection: new message_models.ChatMessageCollection(null, {
@@ -52,6 +56,12 @@ define([
                     userId: this.chatSessionProxy.getCurrentUser().id,
                 })
             });
+
+            //chat markers proxy
+            this.chatMarkersProxy = new marker_proxies.ChatMarkersProxy({
+                collection: new marker_models.MarkerCollection()
+            });
+            this.facade.registerProxy(this.chatMarkersProxy);
 
 
             //chat resources proxy
