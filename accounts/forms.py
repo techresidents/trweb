@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.template import Context
+from django.utils import timezone
 
 from techresidents_web.common.forms import JSONField
 from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType, Location
@@ -23,6 +24,16 @@ EMAIL_MAX_LEN = 75
 PASSWORD_MIN_LEN = 4
 PASSWORD_MAX_LEN = 30
 JSON_FIELD_MAX_LEN = 2048
+
+TIME_ZONE_CHOICES = [
+    ("US/Hawaii", "(GMT-10:00) Hawaii Time"),
+    ("US/Alaska", "(GMT-09:00) Alaska Time"),
+    ("US/Pacific", "(GMT-08:00) Pacific Time"),
+    ("US/Mountain", "(GMT-07:00) Mountain Time"),
+    ("US/Arizona", "(GMT-07:00) Mountain Time - Arizona"),
+    ("US/Central", "(GMT-06:00) Central Time"),
+    ("US/Eastern", "(GMT-05:00) Eastern Time"),
+]
 
 
 class AccountRequestForm(forms.ModelForm):
@@ -52,6 +63,7 @@ class RegisterUserForm(forms.ModelForm):
     username = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, required=True)
     password = forms.CharField(label="Password", min_length=PASSWORD_MIN_LEN, max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
     password_confirmation  = forms.CharField(label="Re-enter password", min_length=PASSWORD_MIN_LEN,  max_length=PASSWORD_MAX_LEN, widget=forms.PasswordInput, required=True)
+    timezone = forms.ChoiceField(label="Time zone", choices=TIME_ZONE_CHOICES, required=True)
 
     class Meta:
         model = User
@@ -97,6 +109,13 @@ class RegisterUserForm(forms.ModelForm):
         user.set_password(self.cleaned_data['password'])
         if commit:
             user.save()
+            
+            #user object must be saved prior to accessing profile
+            #since the profile is not created in db until this point.
+            user_profile = user.get_profile()
+            user_profile.timezone = self.cleaned_data['timezone']
+            user_profile.save()
+
         return user
 
     def create_registration_code(self, registration_code=None):
@@ -165,7 +184,7 @@ class RegistrationActivationForm(forms.Form):
         code = Code.objects.get(type__type='REGISTRATION', code=registration_code)
 
         if not code.used:
-            code.used = datetime.datetime.now()
+            code.used = timezone.now()
             code.save()
 
 class LoginForm(forms.Form):
@@ -286,17 +305,20 @@ class ResetPasswordForm(forms.Form):
         code.user.set_password(self.cleaned_data['password'])
         code.user.save()
 
-        code.used = datetime.datetime.now()
+        code.used = timezone.now()
         code.save()
 
 class ProfileAccountForm(forms.Form):
-    years_experience_range = reversed(range(datetime.datetime.now().year - 50, datetime.datetime.now().year))
+    #year choices
+    years_experience_range = reversed(range(timezone.now().year - 50, timezone.now().year))
     years_experience_choices = [(year, year) for year in years_experience_range]
     years_experience_choices.insert(0,('', ''))  # insert blank default value
 
+    #fields
     first_name = forms.CharField(label="First Name", max_length=NAME_MAX_LEN, widget=forms.TextInput, required=True)
     last_name = forms.CharField(label="Last Name", max_length=NAME_MAX_LEN, widget=forms.TextInput, required=True)
     email_address = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, widget=forms.TextInput, required=False)
+    timezone = forms.ChoiceField(label="Time zone", choices=TIME_ZONE_CHOICES, required=True)
     developer_since = forms.ChoiceField(label="Proud Developer Since", choices=years_experience_choices, required=False)
 
     def __init__(self, request=None, *args, **kwargs):
@@ -304,15 +326,20 @@ class ProfileAccountForm(forms.Form):
         super(ProfileAccountForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
+        #user model
         user = self.request.user
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
+        
+        #user profile model
         user_profile = self.request.user.get_profile()
+        user_profile.timezone = self.cleaned_data['timezone']
         year = self.cleaned_data['developer_since'] # returns year as a string when not empty
         if year:
             user_profile.developer_since = datetime.date(int(year),1,1)
         else:
             user_profile.developer_since = None
+
         if commit:
             user.save()
             user_profile.save()

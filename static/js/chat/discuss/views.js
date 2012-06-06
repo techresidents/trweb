@@ -1,10 +1,16 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'core/view',
     'chat/agenda/models',
     'timer/views',
-], function($, _, Backbone, models, timer) {
+    'text!chat/discuss/templates/discuss.html',
+], function($, _, view, models, timer, discuss_template) {
+
+    var EVENTS = {
+        NEXT: 'discuss:Next',
+        START: 'discuss:Start',
+    };
 
     /**
      * Disucss view.
@@ -13,66 +19,50 @@ define([
      *   templateSelector: html template selector (optional)
      *   timerSelector: selector for timer view (optional)
      */
-    var DiscussView = Backbone.View.extend({
-
-        templateSelector: '#discuss-template',
+    var DiscussView = view.View.extend({
 
         timerSelector: '#discuss-timer',
 
         events: {
             "click .next": "next",
+            "click .start": "start",
         },
 
         initialize: function() {
-            this.timerSelector = this.options.timerSelector || this.timerSelector;
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html());
-            this.model = models.agenda;
-            this.model.bind('change:active', this.render, this);
-
-            this.rootTopic = this.model.topics().first();
+            this.template = _.template(discuss_template);
+            this.model.bind('change:activeTopic', this.render, this);
             this.timer = null;
         },
 
         render: function() {
-            if(this.timer) {
-                this.timer.stop();
-            }
 
-            var topic = this.model.active();
-            if(topic) {
-                if(!this.model.isLeaf(topic)) {
-                    return;
-                }
-
-                attributes = _.extend(topic.toJSON(), {
-                    root: this.rootTopic.toJSON()
-                });
-                this.$el.html(this.template(attributes));
-
+            this.$el.html(this.template(this.model.toJSON()));
+            
+            var activeTopic = this.model.activeTopic();
+            if(activeTopic) {
                 this.timer = new timer.DurationTimerView({
-                    el: this.timerSelector,
-                    duration: topic.durationMs(),
+                    el: this.$(this.timerSelector),
+                    duration: activeTopic.durationMs(),
                     interval: 500,
                 });
                 this.timer.render();
                 this.timer.start();
-
-            } else {
-                var nextActive = this.model.nextActive();
-                attributes = _.extend(nextActive.toJSON(), {
-                    root: this.rootTopic.toJSON()
-                });
-                this.$el.html(this.template(attributes));
-            }
+            } 
+            return this;
         },
 
         next: function() {
-            this.model.activateNext();
+            this.triggerEvent(EVENTS.NEXT);
         },
+
+        start: function() {
+            this.triggerEvent(EVENTS.START);
+        },
+
     });
     
     return {
+        EVENTS: EVENTS,
         DiscussView: DiscussView,
     };
 });

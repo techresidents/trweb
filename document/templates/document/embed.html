@@ -11,7 +11,7 @@
 {% block content %}
 
 <div class="container">
-    {% if not is_code_doc %}
+    {% if is_code_doc %}
         <div class="row">
             <div class="span12">
                 {% filter pygmentize %}

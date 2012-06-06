@@ -1,0 +1,15 @@
+<div class="span1">
+    <h3>Discuss</h3>
+</div>
+<% if(activeTopic) { %>
+<div class="span7">
+    <h3><%= rootTopic.title %>: <%= activeTopic.title %></h3>
+</div>
+<button class="btn btn-input next">Next</button>
+<% } else { %>
+<div class="span7">
+    <h3><%= rootTopic.title %>: <%= nextTopic.title %></h3>
+</div>
+<button class="btn btn-input start">Start</button>
+<% } %>
+<span id="discuss-timer"/>

@@ -1,7 +1,5 @@
 import json
 
-from datetime import datetime
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -9,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils import timezone
 
 import OpenTokSDK
 
@@ -52,7 +51,7 @@ def chat(request,chat_session_id):
     chat_session = models.ChatSession.objects.select_related("chat").get(
             id=chat_session_id,
             users=request.user,
-            chat__start__lte=datetime.now())
+            chat__start__lte=timezone.now())
     
     #Get the associated chat_user and use that token if it exists, otherwise create it.
     chat_user = models.ChatUser.objects.get(chat_session=chat_session, user=request.user)
@@ -66,15 +65,17 @@ def chat(request,chat_session_id):
     # Create JSON user objects and pass down to the javascript app through template
     users = []
     for user in chat_session.users.all():
-        user = {
+        user_json = {
             'id': user.id,
+            'name': user.first_name,
+            'imageUrl': request.build_absolute_uri('%simg/person.jpg' % settings.STATIC_URL),
         }    
         
         #Add the current to the head of the list
-        if request.user.id == user["id"]:
-            users.insert(0, user)
+        if request.user.id == user.id:
+            users.insert(0, user_json)
         else:
-            users.append(user)
+            users.append(user_json)
 
     # Update the session with active chat information to make it available to chatsvc
     request.session["chat_session"] = {
@@ -84,10 +85,30 @@ def chat(request,chat_session_id):
     }
     request.session.modified = True
     
+    #resources
+    resources = []
+
     #topics
     topics = []
     topic_tree = Topic.objects.topic_tree(chat_session.chat.topic_id)
     for topic in topic_tree:
+        
+        #TODO optimize resources queries
+        topic_resources = []
+        for resource in topic.resources.all():
+            topic_resources.append(resource.id)
+            print resource.documentresource.document.path
+            resource_json = {
+                "id": resource.id,
+                "type": resource.type.name,
+                "document": {
+                    "id": resource.documentresource.document.id,
+                    "name": resource.documentresource.document.name,
+                    "documentUrl": request.build_absolute_uri("/document/embed/%s" % resource.documentresource.document.id),
+                }
+            }
+            resources.append(resource_json)
+
         topics.append({
             "id": topic.id,
             "parentId": topic.parent_id,
@@ -96,9 +117,10 @@ def chat(request,chat_session_id):
             "description": topic.description,
             "duration": topic.duration,
             "rank": topic.rank,
-            "userId": topic.user_id
+            "userId": topic.user_id,
+            "resources": topic_resources,
         })
-    
+
     context = {
         'TR_XD_REMOTE': settings.TR_XD_REMOTE,
         'chat_api_key': settings.TOKBOX_API_KEY,
@@ -107,6 +129,7 @@ def chat(request,chat_session_id):
         'users' : users_by_id,
         'users_json': json.dumps(users),
         'topics_json': json.dumps(topics),
+        'resources_json': json.dumps(resources),
     }
     
     return render_to_response('chat/chat.html', context, context_instance=RequestContext(request))
@@ -132,7 +155,7 @@ def create(request):
             topic = Topic.objects.all()[0]
 
             #create chat
-            chat = models.Chat.objects.create(topic=topic, start=datetime.now(), end=datetime.now()) 
+            chat = models.Chat.objects.create(topic=topic, start=timezone.now(), end=timezone.now()) 
 
             #create chat session
             chat_session = models.ChatSession.objects.create(chat=chat, token=session.session_id) 

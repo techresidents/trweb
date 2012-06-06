@@ -78,7 +78,7 @@ def embed(request, document_id):
     is_code_doc = True
     if document.mime_type.extension in [".doc", ".docx", ".pdf", ".xls", ".xlsx"]:
         is_code_doc = False
-
+    
     context = {
         "is_code_doc": is_code_doc,
         "doc": document.path,

@@ -217,7 +217,6 @@ define([
 
         clickedMinSalary: function() {
             var minSalary = this.$el.find('.min-salary-option').val();
-            console.log(minSalary);
             this.model.setMinSalary(parseInt(minSalary));
         },
 

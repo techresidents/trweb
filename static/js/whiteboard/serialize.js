@@ -13,7 +13,7 @@ define([
     };
 
     Serializer.prototype.serializeElement = function(element) {
-        result = { type: element. type };
+        result = { type: element.type};
         _.extend(result, element.attrs);
 
         return JSON.stringify([result]);

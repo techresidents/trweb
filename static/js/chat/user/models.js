@@ -13,7 +13,7 @@ define([
         defaults: function() {
             return {
                 name: "",
-                streamId: null,
+                stream: null,
                 isSpeaking: false,
                 isConnected: false,
                 isPublishing: false
@@ -24,12 +24,12 @@ define([
             return this.get("name");
         },
 
-        streamId: function() {
-            return this.get("streamId");
+        stream: function() {
+            return this.get("stream");
         },
 
-        setStreamId: function(streamId) {
-            this.set({ streamId: streamId });
+        setStream: function(stream) {
+            this.set({ stream: stream });
             return this;
         },
 
@@ -63,6 +63,14 @@ define([
         style: function() {
             return "user" + this.id;
         },
+
+        isCurrentUser: function() {
+            var result = false;
+            if(this.collection) {
+                result = this.collection.first().id === this.id;
+            } 
+            return result;
+        },
     });
 
 
@@ -78,7 +86,6 @@ define([
     });
 
     return {
-        users: new ChatUserCollection,
-        currentUser: new ChatUser,
+        ChatUserCollection: ChatUserCollection,
     }
 });

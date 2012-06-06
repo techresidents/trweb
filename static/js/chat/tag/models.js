@@ -22,14 +22,20 @@ define([
             return {
                 tagId: null,
                 userId: null,
+                minuteId: null,
                 name: null,
+                tagReferenceId: null,
             };
         },
         
         initialize: function(attributes, options) {
+            this.reinitialize(attributes, options);
+        },
+
+        reinitialize: function(attributes, options) {
             var optionsProvided = false;
 
-            if(options) {
+            if(options && options.header && options.msg) {
                 this.header = options.header;
                 this.msg = options.msg;
                 optionsProvided = true;
@@ -42,7 +48,9 @@ define([
                 this.set({
                     tagId: this.msg.tagId,
                     userId: this.header.userId,
+                    minuteId: this.msg.minuteId,
                     name: this.msg.name,
+                    tagReferenceId: this.msg.tagReferenceId,
                 });
             }
         },
@@ -65,6 +73,24 @@ define([
             return this;
         },
 
+        minuteId: function() {
+            return this.get('minuteId');
+        },
+
+        setMinuteId: function(minuteId) {
+            this.set({minuteId: minuteId});
+            return this;
+        },
+
+        tagReferenceId: function() {
+            return this.get('tagReferenceId');
+        },
+
+        setTagReferenceId: function(tagReferenceId) {
+            this.set({tagReferenceId: tagReferenceId});
+            return this;
+        },
+
         urlRoot: function() {
             return this.header.url() + this.msg.url();
         },
@@ -75,8 +101,8 @@ define([
         sync: xdBackbone.sync,
 
         parse: function(response) {
-            this.header = response.header;
-            this.msg = response.msg;
+            this.header = new messages.MessageHeader(response.header);
+            this.msg = new messages.TagCreateMessage(response.msg);
 
             return {
                 tagId: response.msg.tagId,
@@ -84,12 +110,6 @@ define([
                 name: response.msg.name,
             };
         },
-
-        toJSON: function() {
-            return _.extend(this.attributes, {
-                myTag: this.userId() === user.currentUser.id
-            });
-        }
     });
 
     /**
@@ -107,6 +127,6 @@ define([
 
     return {
         Tag: Tag,
-        tagCollection: new TagCollection,
+        TagCollection: TagCollection,
     };
 });

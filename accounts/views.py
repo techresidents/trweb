@@ -4,13 +4,13 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.contrib.csrf.middleware import csrf_exempt
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 
 from techresidents_web.accounts import forms
 from techresidents_web.accounts.models import Skill
@@ -46,6 +46,9 @@ def login(request):
 
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
+            
+            #set timezone in session so it's available to TimezoneMiddleware
+            request.session['timezone'] = request.user.get_profile().timezone
 
             return HttpResponseRedirect(redirect_to)
     else:
@@ -110,7 +113,7 @@ def register(request, account_request_code=None):
             #TODO should user be authenticated and send to home page
             return HttpResponseRedirect("/")
     else:
-        user_form = forms.RegisterUserForm(request, account_request_code)
+        user_form = forms.RegisterUserForm(request, account_request_code, initial={'timezone': settings.TIME_ZONE})
     
     context = {
         'user_form' : user_form,
@@ -193,6 +196,11 @@ def profile_account(request):
         if form.is_valid():
             form.save(commit=True)
             messages.success(request, "Save successful")
+
+            #update timezone in session so user sees changes
+            #without having to re-login.
+            request.session['timezone'] = form.cleaned_data['timezone']
+
             return HttpResponseRedirect(reverse('accounts.views.profile_account'))
     else:
         user = request.user
@@ -200,14 +208,15 @@ def profile_account(request):
         form_data = {
             'first_name':user.first_name,
             'last_name':user.last_name,
-            'email_address':user.email
+            'email_address':user.email,
+            'timezone': user_profile.timezone or settings.TIME_ZONE,
         }
         if user_profile.developer_since is not None:
             form_data['developer_since'] = user_profile.developer_since.year
         form = forms.ProfileAccountForm(request, data=form_data)
 
     context = {
-        'form': form
+        'form': form,
     }
 
     return render_to_response('accounts/profile_account.html', context,  context_instance=RequestContext(request))

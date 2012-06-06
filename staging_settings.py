@@ -29,6 +29,9 @@ EMAIL_PORT = 25
 #EMAIL_HOST_PASSWORD = 'password'
 DEFAULT_FROM_EMAIL = 'Tech Residents Support <jmullins@techresidents.com>'
 
+#Riak Session Cache
+RIAK_HOST = 'localhost'
+
 #Landing settings
 LANDING_PLACEHOLDER = True
 

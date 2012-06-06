@@ -21,8 +21,37 @@ define([
     _.extend(MessageHeader.prototype, {
         url: function() {
             return "/chat/message";
+        },
+
+        timestamp_as_date: function() {
+            if(this.timestamp) {
+                var date = new Date();
+                date.setTime(this.timestamp * 1000.0);
+                return date;
+            } else {
+                return null;
+            }
         }
     });
+
+
+    /**
+     * Marker create message.
+     */
+    var MarkerCreateMessage = function(attributes) {
+        this.markerId = null;
+        this.marker = null;
+        _.extend(this, attributes);
+    };
+
+    _.extend(MarkerCreateMessage.prototype, {
+        type: "MARKER_CREATE",
+
+        url: function() {
+            return "/marker";
+        }
+    });
+
 
     /**
      * Chat Minute create message.
@@ -85,6 +114,7 @@ define([
     var WhiteboardCreateMessage = function(attributes) {
         this.type = "WHITEBOARD_CREATE";
         this.whiteboardId = null;
+        this.name = null;
 
         _.extend(this, attributes);
     };
@@ -116,6 +146,45 @@ define([
         }
     });
 
+    /**
+     * Chat Whiteboard Path create message.
+     */
+    var WhiteboardCreatePathMessage = function(attributes) {
+        this.type = "WHITEBOARD_CREATE_PATH";
+        this.whiteboardId = null;
+        this.pathId = null;
+        this.pathData = null;
+
+        _.extend(this, attributes);
+    };
+
+    _.extend(WhiteboardCreatePathMessage.prototype, {
+        type: "WHITEBOARD_CREATE_PATH",
+
+        url: function() {
+            return "/whiteboard/" + this.whiteboardId + "/path";
+        }
+    });
+
+
+    /**
+     * Chat Whiteboard Path delete message.
+     */
+    var WhiteboardDeletePathMessage = function(attributes) {
+        this.type = "WHITEBOARD_DELETE_PATH";
+        this.whiteboardId = null;
+        this.pathId = null;
+
+        _.extend(this, attributes);
+    };
+
+    _.extend(WhiteboardDeletePathMessage.prototype, {
+        type: "WHITEBOARD_DELETE_PATH",
+
+        url: function() {
+            return "/whiteboard/" + this.whiteboardId + "/path";
+        }
+    });
    
     /**
      * Map message types to constructors
@@ -126,6 +195,8 @@ define([
         "TAG_DELETE": TagDeleteMessage,
         "WHITEBOARD_CREATE": WhiteboardCreateMessage,
         "WHITEBOARD_DELETE": WhiteboardDeleteMessage,
+        "WHITEBOARD_CREATE_PATH": WhiteboardCreatePathMessage,
+        "WHITEBOARD_DELETE_PATH": WhiteboardDeletePathMessage,
     };
 
     /**
@@ -148,11 +219,14 @@ define([
     return {
         messageFactory: new MessageFactory(),
         MessageHeader: MessageHeader,
+        MarkerCreateMessage: MarkerCreateMessage,
         MinuteCreateMessage: MinuteCreateMessage,
         TagCreateMessage: TagCreateMessage,
         TagDeleteMessage: TagDeleteMessage,
         WhiteboardCreateMessage: WhiteboardCreateMessage,
         WhiteboardDeleteMessage: WhiteboardDeleteMessage,
+        WhiteboardCreatePathMessage: WhiteboardCreatePathMessage,
+        WhiteboardDeletePathMessage: WhiteboardDeletePathMessage,
     };
 
 });

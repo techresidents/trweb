@@ -144,6 +144,7 @@ define([
             return this.at(this.selectedIndex);
         },
 
+
         /**
          * Test if topic is leaf node.
          * @param {number} id Topic id
@@ -237,7 +238,6 @@ define([
             current.set({ parentId: parentItem.id, level: parentItem.level() + 1 }, { silent: true });   
 
             this.sort();
-            console.log(JSON.stringify(this.toJSON()));
         },
 
         /**
@@ -272,7 +272,6 @@ define([
             var parentItem = this.findPrevLevelSibling(current.id, current.level());
 
             current.set({ parentId: parentItem.id, level: current.level() + 1 });
-            console.log(current.parentId());
 
             var children = this.findChildren(id);
 
@@ -296,8 +295,6 @@ define([
             var parentItem = this.findPrevLevelSibling(current.id, current.level() - 2);
 
             current.set({ parentId: parentItem.id, level: current.level() - 1 });
-            console.log(current.parentId());
-
 
             var children = this.findChildren(id);
 

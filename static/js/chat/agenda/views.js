@@ -1,11 +1,34 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
-    'chat/agenda/models',
+    'core/view',
+    'chat/tag/views',
     'timer/views',
     'timer/util',
-], function($, _, Backbone, models, timer_views, timer_util) {
+    'text!chat/agenda/templates/agenda_control.html',
+    'text!chat/agenda/templates/agenda_detail.html',
+    'text!chat/agenda/templates/agenda_item.html',
+    'text!chat/agenda/templates/agenda_tab.html',
+    'text!chat/agenda/templates/agenda_tag.html',
+], function(
+    $,
+    _,
+    view,
+    tag_views,
+    timer_views,
+    timer_util,
+    agenda_control_template,
+    agenda_detail_template,
+    agenda_item_template,
+    agenda_tab_template,
+    agenda_tag_template) {
+
+
+    var EVENTS = {
+        NEXT: 'agenda:Next',
+        SELECT: 'agenda:Select',
+        DELETE_TAG: tag_views.EVENTS.DELETE_TAG,
+    };
 
     
     /**
@@ -17,13 +40,10 @@ define([
      *   model: Topic model (required)
      *   selectedClass: style to add when selected (optional)
      *   activeClass: style to add when active (optional)
-     *   templateSelector: html template selector (optional)
      */
-    var AgendaItemView = Backbone.View.extend({
+    var AgendaItemView = view.View.extend({
 
         tagName: 'li',
-
-        templateSelector: '#agenda-item-template',
 
         events: {
             'click': 'click',
@@ -33,8 +53,7 @@ define([
             this.agenda = this.options.agenda;
             this.selectedClass = this.options.selectedClass || 'selected'
             this.activeClass = this.options.activeClass || 'active'
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html());
+            this.template = _.template(agenda_item_template);
 
             this.agenda.bind('change:selected', this.selectedChange, this);
             this.agenda.bind('change:active', this.activeChange, this);
@@ -60,7 +79,9 @@ define([
         },
         
         click: function() {
-            this.agenda.select(this.model);
+            this.triggerEvent(EVENTS.SELECT, {
+                topicModel: this.model,
+            });
         },
 
         selectedChange: function() {
@@ -87,7 +108,7 @@ define([
      * @param {Object} options View options
      *   model: Agenda model (required) 
      */
-    var AgendaListView = Backbone.View.extend({
+    var AgendaListView = view.View.extend({
 
         tagName: 'ul',
 
@@ -114,15 +135,11 @@ define([
      * Agenda detail view.
      * @constructor
      * @param {Object} options View options
-     *   templateSelector: html template selector (optional)
      */
-    var AgendaDetailView = Backbone.View.extend({
-
-        templateSelector: '#agenda-detail-template',
+    var AgendaDetailView = view.View.extend({
 
         initialize: function() {
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html());
+            this.template = _.template(agenda_detail_template);
             this.model.bind('change:selected', this.render, this);
         },
 
@@ -140,18 +157,73 @@ define([
         }
     });
 
+    /**
+     * Agenda tag view.
+     * @constructor
+     * @param {Object} options View options
+     */
+    var AgendaTagView = view.View.extend({
+
+        listSelector: 'ul',
+
+        initialize: function() {
+            this.template = _.template(agenda_tag_template);
+            this.users = this.options.users;
+            this.minutes = this.options.minutes;
+            this.tags = this.options.tags;
+            this.model.bind('change:selected', this.selectedChange, this);
+            this.listView = null;
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+
+            this.listView = new tag_views.ChatTaggerListView({
+                el: this.$(this.listSelector),
+                collection: this.tags,
+                users: this.users,
+                filter: this.listViewTagFilter,
+                context: this,
+            }).render();
+
+            return this;
+        },
+
+        selectedChange: function() {
+            if(this.listView) {
+                this.listView.applyFilter();
+            }
+        },
+
+        listViewTagFilter: function(tag) {
+            var result = false;
+
+            var tagMinute = this.minutes.get(tag.minuteId());
+            var tagTopic = this.model.topics().get(tagMinute.topicId());
+            var selectedTopic = this.model.selected();
+            
+            var topic = tagTopic;
+            while(topic) {
+                if(topic.id === selectedTopic.id) {
+                    result = true;
+                    break;
+                }
+                topic = this.model.topics().get(topic.parentId());
+            }
+
+            return result;
+        },
+    });
+
 
     /**
      * Agenda control view.
      * @constructor
      * @param {Object} options View options
      *   model: Agenda model (required)
-     *   templateSelector: html template selector (optional)
      *   timerSelector: el selector for timer view (optional)
      */
-    var AgendaControlView = Backbone.View.extend({
-
-        templateSelector: '#agenda-control-template',
+    var AgendaControlView = view.View.extend({
 
         timerSelector: '#agenda-control-timer',
 
@@ -160,9 +232,7 @@ define([
         },
 
         initialize: function() {
-            this.timerSelector = this.options.timerSelector || this.timerSelector;
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html());
+            this.template = _.template(agenda_control_template);
             this.timer = null;
             this.model.bind('change:active', this.activeChanged, this);
         },
@@ -173,7 +243,7 @@ define([
                 this.$el.html(this.template(topic.toJSON()));
 
                 this.timer = new timer_views.DurationTimerView({
-                    el: this.timerSelector,
+                    el: this.$(this.timerSelector),
                     duration: topic.durationMs(),
                     interval: 500,
                 }).render();
@@ -183,13 +253,13 @@ define([
         },
 
         next: function() {
-            this.model.activateNext();
+            this.triggerEvent(EVENTS.NEXT);
         },
 
         activeChanged: function() {
             var topic = this.model.active();
             if(topic) {
-                if(topic.rank() === 0) {
+                if(this.timer.running === false) {
                     this.timer.start();
                 }
             } else {
@@ -203,40 +273,48 @@ define([
      * Agenda tab view.
      * @constructor
      * @param {Object} options View options
-     *   controlSelector: el selector for AgendaControlView
-     *   detailSelector: el selector for AgendaDetailView
-     *   listSelect: el selector for AgendaListView
      */
-    var ChatAgendaTabView = Backbone.View.extend({
+    var ChatAgendaTabView = view.View.extend({
 
         controlSelector: '#agenda-control',
 
         detailSelector: '#agenda-detail',
 
-        listSelector: 'ul',
+        listSelector: '#agenda-list',
+
+        tagSelector: '#agenda-tag',
         
         initialize: function() {
-            this.controlSelector = this.options.controlSelector || this.controlSelector;
-            this.listSelector = this.options.listSelector || this.listSelector;
-            this.detailSelector = this.options.detailSelector || this.detailSelector;
+            this.template = _.template(agenda_tab_template);
+            this.users = this.options.users;
+            this.tags = this.options.tags;
         },
 
         render: function() {
-            models.agenda.selectNext();
+
+            this.$el.html(this.template());
 
             new AgendaControlView({
                 el: this.$(this.controlSelector),
-                model: models.agenda
+                model: this.model,
             }).render();
-
+            
             new AgendaListView({
                 el: this.$(this.listSelector),
-                model: models.agenda
+                model: this.model,
             }).render();
-
+            
             new AgendaDetailView({
                 el: this.$(this.detailSelector),
-                model: models.agenda
+                model: this.model,
+            }).render();
+            
+            new AgendaTagView({
+                el: this.$(this.tagSelector),
+                model: this.model,
+                minutes: this.model.minutes(),
+                tags: this.tags,
+                users: this.users,
             }).render();
 
             return this;
@@ -244,6 +322,7 @@ define([
     });
 
     return {
+        EVENTS: EVENTS,
         ChatAgendaTabView: ChatAgendaTabView,
     };
 });

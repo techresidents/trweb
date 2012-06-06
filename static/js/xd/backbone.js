@@ -23,9 +23,11 @@ define([
     var sync = function(method, model, options) {
 
         var type = methodMap[method];
+        var processData = type === 'GET' ? true : false;
 
         var params = _.extend({
-                timeout: 60000
+                timeout: 60000,
+                headers: {},
         }, options);
         
         if(!params.url) {
@@ -33,14 +35,17 @@ define([
         }
 
         if(!params.data && model && (method == 'create' || method == 'update')) {
-            params.data = model.toJSON();
-        }
+            params.data = JSON.stringify(model.toJSON());
+            params.headers['Content-Type'] = 'application/json';
+        } 
 
         xd.xhr.request({
             url: params.url,
             method: type,
             timeout: params.timeout,
+            headers: params.headers,
             data: params.data,
+            processData: processData,
         }, function(response) {
             params.success(JSON.parse(response.data), response.status);
             if(params.complete) {

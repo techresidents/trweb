@@ -1,0 +1,4 @@
+<option>Select a resource</option>
+<%_.each(resources, function(resource) { %>
+    <option value="<%=resource.id%>"><%=resource.document.name%></option>
+<% }); %>

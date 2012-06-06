@@ -1,44 +1,62 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
-    'chat/tag/models',
+    'core/view',
     'lookup/views',
-], function($, _, Backbone, models, lookup, user) {
-
+    'text!chat/tag/templates/tagger.html',
+    'text!chat/tag/templates/tagger_item.html',
+], function(
+    $,
+    _,
+    view,
+    lookup,
+    tagger_template,
+    tagger_item_template) {
+    
+    
+    var EVENTS = {
+        ADD_TAG: 'tag:addTag',
+        DELETE_TAG: 'tag:deleteTag',
+    };
 
     /**
      * Chat tagger list item view.
      * @constructor
      * @param {Object} options
      *   model: Tag model (required)
-     *   templateSelector: html template selector (optional)
      */
-    var ChatTaggerItemView = Backbone.View.extend({
+    var ChatTaggerItemView = view.View.extend({
 
         tagName: 'li',
-
-        templateSelector: '#tagger-item-template',
 
         events: {
             'click .destroy': 'destroy',
         },
 
         initialize: function() {
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html());
+            this.template = _.template(tagger_item_template);
+            this.users = this.options.users;
             this.model.bind('destroy', this.remove, this);
         },
 
         
         render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
+            var timestamp = this.model.header.timestamp_as_date();
+            var user = this.users.get(this.model.userId());
+            var state = _.extend(this.model.toJSON(), {
+                user: user.toJSON(),
+                myTag: user.isCurrentUser(),
+                time: timestamp.getHours() + ':' + timestamp.getMinutes()
+            });
+            this.$el.html(this.template(state));
             this.$('[rel=tooltip]').tooltip();
             return this;
         },
 
         destroy: function() {
-            this.model.destroy();
+            this.triggerEvent(EVENTS.DELETE_TAG, {
+                tagModel: this.model
+            });
         }
     });
 
@@ -48,40 +66,63 @@ define([
      * @constructor
      * @param {Object} options
      *   collection: TagCollection (required)
+     *   filter: callback method to filter displayed
+     *      tags. Method will receive the Tag object
+     *      as its sole parameter and should return
+     *      a boolean indicated whether the tag
+     *      should be displayed (optional)
+     *   context: callback context (optional)
      */
-    var ChatTaggerListView = Backbone.View.extend({
+    var ChatTaggerListView = view.View.extend({
 
         tagName: 'ul',
         
         initialize: function() {
+            this.users = this.options.users;
+            this.filter = this.options.filter || this._passThroughFilter;
+            this.context = this.options.context || this;
             this.collection.bind('reset', this.render, this);
             this.collection.bind('add', this.added, this);
+            this.itemViews = [];
         },
 
         render: function() {
             this.collection.each(this.added, this);
+            return this;
         },
         
         added: function(model) {
-            view = new ChatTaggerItemView({model: model}).render();
+            var view = new ChatTaggerItemView({
+                users: this.users,
+                model: model,
+            }).render();
+
             view.$el.fadeTo(1000, 1);
             this.$el.prepend(view.el);
-        }
-    });
+            view.$el.toggle(this.filter.call(this.context, view.model));
+            this.itemViews.push(view);
+        },
 
+        applyFilter: function() {
+            var that=this;
+            _.each(this.itemViews, function(view) {
+                view.$el.toggle(that.filter.call(that.context, view.model));
+            });
+        },
+
+        _passThroughFilter: function(tag) {
+            return true;
+        },
+    });
 
 
     /**
      * Chat tagger view.
      * @constructor
      * @param {Object} options
-     *   templateSelector: html template selector (optional)
-     *   inputSelector: el input selector for LookupView (optional)
-     *   listSelector: el selector for ChatTaggerListView (optional)
+     *   collection: {TagCollection} (required)
      */
-    var ChatTaggerView = Backbone.View.extend({
-
-        templateSelector: '#tagger-template',
+    var ChatTaggerView = view.View.extend({
 
         inputSelector: 'input',
 
@@ -92,16 +133,20 @@ define([
         },
 
         initialize: function() {
-            this.inputSelector = this.options.inputSelector || this.inputSelector;
-            this.listSelector = this.options.listSelector || this.listSelector;
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template =  _.template($(this.templateSelector).html());
-
+            this.template =  _.template(tagger_template);
+            this.users = this.options.users;
+            this.enabled = false;
             this.tagInput = null;
         },
 
+        enable: function(enabled) {
+            this.enabled = enabled;
+            this.render();
+        },
+
         render: function() {
-            this.$el.html(this.template());
+            var state = { enabled: this.enabled };
+            this.$el.html(this.template(state));
 
             this.tagInput = this.$(this.inputSelector);
 
@@ -115,24 +160,21 @@ define([
             });
 
             new ChatTaggerListView({
-                    el: this.$(this.listSelector),
-                    collection: models.tagCollection
+                el: this.$(this.listSelector),
+                users: this.users,
+                collection: this.collection,
             }).render();
+
+            return this;
         },
         
         addTag: function() {
             var value = this.tagInput.val();
-
-            if(value) {
-                var tag = new models.Tag({
-                        name: value
+            if(this.enabled && value) {
+                this.triggerEvent(EVENTS.ADD_TAG, {
+                    tagValue: value
                 });
-                tag.save();
-
                 this.tagInput.val(null);
-                this.tagInput.focus();
-
-            } else {
                 this.tagInput.focus();
             }
         },
@@ -142,92 +184,9 @@ define([
         }
     });
 
-    /**
-     * Chat tag list item view.
-     * @constructor
-     * @param {Object} options
-     *   model: Tag model (required)
-     *   templateSelector: html template selector (optional)
-     */
-    var ChatTagItemView = Backbone.View.extend({
-
-        tagName: 'li',
-
-        templateSelector: '#tag-item-template',
-
-        events: {
-            'click .destroy': 'destroy',
-        },
-
-        initialize: function() {
-            this.templateSelector = this.options.templateSelector || this.templateSelector;
-            this.template = _.template($(this.templateSelector).html());
-            this.model.bind('destroy', this.remove, this);
-        },
-
-        render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
-            return this;
-        },
-
-        destroy: function() {
-            this.model.destroy();
-        }
-    });
-
-    /**
-     * Chat tag list view.
-     * @constructor
-     * @param {Object} options
-     *   collection: TagCollection (required)
-     */
-    var ChatTagListView = Backbone.View.extend({
-
-        tagName: 'ul',
-        
-        initialize: function() {
-            this.collection.bind("reset", this.render, this);
-            this.collection.bind("add", this.added, this);
-        },
-
-        render: function() {
-            this.collection.each(this.added, this);
-        },
-        
-        added: function(model) {
-            var view = new ChatTagItemView({model: model}).render();
-            view.$el.fadeTo(1000, 1);
-            this.$el.prepend(view.el);
-        }
-    });
-
-
-    /**
-     * Chat tag tab view.
-     * @constructor
-     * @param {Object} options
-     *   templateSelector: html template selector (optional)
-     *   listSelector: el selector for ChatTagListView (optional)
-     */
-    var ChatTagTabView = Backbone.View.extend({
-
-        listSelector: 'ul',
-
-        initialize: function() {
-            this.listSelector = this.options.listSelector || this.listSelector;
-        },
-
-        render: function() {
-            new ChatTagListView({
-                el: this.$(this.listSelector),
-                collection: models.tagCollection
-            }).render();
-        },
-    });
-
-
     return {
-        ChatTagTabView: ChatTagTabView,
+        EVENTS: EVENTS,
         ChatTaggerView: ChatTaggerView,
+        ChatTaggerListView: ChatTaggerListView,
     }
 });

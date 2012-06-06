@@ -12,7 +12,7 @@ define([
      * Whiteboard model.
      */
     var Whiteboard = Backbone.Model.extend({
-            
+
         idAttribute: 'whiteboardId',
 
         defaults: function() {
@@ -20,19 +20,24 @@ define([
                 whiteboardId: null,
                 userId: null,
                 name: null,
+                paths: new WhiteboardPathCollection(),
             };
         },
-        
+
         initialize: function(attributes, options) {
+            this.reinitialize(attributes, options);
+        },
+
+        reinitialize: function(attributes, options) {
             var optionsProvided = false;
 
-            if(options) {
+            if(options && options.header && options.msg) {
                 this.header = options.header;
                 this.msg = options.msg;
                 optionsProvided = true;
             } else {
-                this.header = new messages.MessageHeader;
-                this.msg = new messages.WhiteboardCreateMessage;
+                this.header = new messages.MessageHeader();
+                this.msg = new messages.WhiteboardCreateMessage();
             }
 
             if(optionsProvided) {
@@ -43,6 +48,8 @@ define([
                 });
             }
         },
+
+        // TODO Need getter/setter for whiteboardId? paths?
 
         userId: function() {
             return this.get('userId');
@@ -62,6 +69,127 @@ define([
             return this;
         },
 
+        paths: function() {
+            return this.get('paths');
+        },
+
+        urlRoot: function() {
+            return this.header.url() + this.msg.url();
+        },
+
+
+        /**
+         * Cross domain compatible sync.
+         */
+        sync: xdBackbone.sync,
+
+        parse: function(response) {
+            this.header = new messages.MessageHeader(response.header);
+            this.msg = new messages.WhiteboardCreateMessage(response.msg);
+
+            return {
+                whiteboardId: response.msg.whiteboardId,
+                userId: response.header.userId,
+                name: response.msg.name,
+            };
+        },
+    });
+
+    /**
+     * Whiteboard collection.
+     */
+    var WhiteboardCollection = Backbone.Collection.extend({
+
+        model: Whiteboard,
+
+        /**
+         * Override the 'add' method in order to enforce that
+         * a whiteboard's name is unique.
+         *
+         * This will solve the race-condition problem
+         * when user's first join a chat and a default
+         * whiteboard is created if none exists.
+         * @param models
+         * @param options
+         */
+        add: function(model, options) {
+            // if model.name is not already in then collection, then add it
+            var whiteboards = this.where({'name': model.name()});
+            if (whiteboards.length > 0){
+                console.log('Warning: Duplicate model tried to be added the whiteboard collection.');
+                return this;
+            } else {
+                // return this.__super__.add.apply(this, arguments);
+                return Backbone.Collection.prototype.add.call(this, model, options);
+            }
+        },
+
+        /**
+         * Cross domain compatible sync.
+         */
+        sync: xdBackbone.sync,
+    });
+
+    /**
+     * Whiteboard Path model
+     */
+    var WhiteboardPath = Backbone.Model.extend({
+
+        idAttribute: 'pathId',
+
+        defaults: function() {
+            return {
+                pathId: null,
+                whiteboardId: null,
+                userId: null,
+                pathData: null,
+            };
+        },
+
+        initialize: function(attributes, options) {
+            var optionsProvided = false;
+
+            if(options) {
+                this.header = options.header;
+                this.msg = options.msg;
+                optionsProvided = true;
+            } else {
+                this.header = new messages.MessageHeader();
+                this.msg = new messages.WhiteboardCreatePathMessage({
+                    whiteboardId : attributes.whiteboardId
+                });
+            }
+
+            if(optionsProvided) {
+                this.set({
+                    pathId: this.msg.pathId,
+                    whiteboardId: this.msg.whiteboardId,
+                    userId: this.header.userId,
+                    pathData: this.msg.pathData,
+                });
+            }
+        },
+
+        // TODO Do we need getters/setters for whiteboardId and pathId?
+
+        userId: function() {
+            return this.get('userId');
+        },
+
+        setUserId: function(userId) {
+            this.set({userId: userId});
+            return this;
+        },
+
+        pathData: function() {
+            return this.get('pathData');
+        },
+
+        setPathData: function(pathData) {
+            this.set({pathData: pathData});
+            return this;
+        },
+
         urlRoot: function() {
             return this.header.url() + this.msg.url();
         },
@@ -76,34 +204,85 @@ define([
             this.msg = response.msg;
 
             return {
+                pathId: response.msg.pathId,
                 whiteboardId: response.msg.whiteboardId,
                 userId: response.header.userId,
-                name: response.msg.name,
+                pathData: response.msg.pathData,
             };
         },
-
-        toJSON: function() {
-            return _.extend(this.attributes, {
-                myWhiteboard: this.userId() === user.currentUser.id
-            });
-        }
     });
 
     /**
-     * Whiteboard collection.
+     * Whiteboard Path collection.
      */
-    var WhiteboardCollection = Backbone.Collection.extend({
+    var WhiteboardPathCollection = Backbone.Collection.extend({
 
-        model: Whiteboard,
-        
+        model: WhiteboardPath,
+
         /**
          * Cross domain compatible sync.
          */
         sync: xdBackbone.sync,
     });
 
+
+    /**
+     * Model to store whiteboard UI state.
+     */
+    var WhiteboardValueObject = Backbone.Model.extend({
+
+        localStorage: new Backbone.LocalStorage('WhiteboardValueObject'),
+
+        defaults: function() {
+            return {
+                selectedWhiteboardId: null,
+                selectedTool: null,        // refs tool name string
+                selectedColor: null,       // refs color hex value string
+            };
+        },
+
+        initialize: function(attributes, options) {
+        },
+
+        whiteboards: function() {
+            return this.get('whiteboards');
+        },
+
+        getSelectedWhiteboardId: function() {
+            return this.get('selectedWhiteboardId');
+        },
+
+        setSelectedWhiteboard: function(whiteboardId) {
+            this.set({selectedWhiteboardId: whiteboardId});
+            return this;
+        },
+
+        getSelectedTool: function() {
+            return this.get('selectedTool');
+        },
+
+        setSelectedTool: function(toolName) {
+            this.set({selectedTool: toolName});
+            return this;
+        },
+
+        getSelectedColor: function() {
+            return this.get('selectedColor');
+        },
+
+        setSelectedColor: function(colorValue) {
+            this.set({selectedColor: colorValue});
+            return this;
+        },
+    });
+
+
     return {
         Whiteboard: Whiteboard,
+        WhiteboardCollection: WhiteboardCollection,
         whiteboardCollection: new WhiteboardCollection,
+        WhiteboardPath: WhiteboardPath,
+        WhiteboardPathCollection: WhiteboardPathCollection,
+        WhiteboardValueObject: WhiteboardValueObject,
     };
 });
