@@ -358,7 +358,7 @@ define([
          */
         onSuccessfulPathCreation: function(elementId, modelId) {
 
-            if (elementId && modelId) {
+            if (modelId) {
                 var newlyDrawnElement = this.paper.getById(elementId);
                 if (newlyDrawnElement) {
 
@@ -797,10 +797,6 @@ define([
             // determine which whiteboard is selected
             var selectedWhiteboardId = this.viewModel.getSelectedWhiteboardId();
 
-            console.log('TabView:onWhiteboardSelected');
-            console.log(selectedWhiteboardId);
-            console.trace();
-
             // show the newly selected whitebaord
             if (null != selectedWhiteboardId &&
                 selectedWhiteboardId in this.whiteboardViews)
@@ -864,14 +860,10 @@ define([
 
         /**
          * Handle when a  whiteboard is cleared.
-         * @param event
+         * @param event The DOM event
          * @param eventBody
          */
         onClear: function(event, eventBody) {
-
-            // TODO
-            // The tricky part here is who should own the list of whiteboardViews? (the mapping of whiteboardIds to whiteboardViews)
-            // It might make more sense to store the whiteboardViews in the viewModel.
 
             if (null != eventBody.whiteboardId){
                 var whiteboardId = eventBody.whiteboardId;
@@ -886,18 +878,10 @@ define([
 
         /**
          * Handle when a  whiteboard edit is undone
-         * @param event
-         * @param eventBody
+         * @param event The DOM event
+         * @param eventBody Expecting the attribute 'whiteboardId' to be provided
          */
         onUndo: function(event, eventBody){
-
-            // TODO
-            /*
-                The reason that this method is acting on the whiteboardView object
-                is because this TabView is the owner of the whiteboardViews map.
-                It seems like this behavior should be defined in the mediator.
-                Discuss with Jeff in review.
-             */
 
             if (null != eventBody.whiteboardId){
                 var whiteboardId = eventBody.whiteboardId;

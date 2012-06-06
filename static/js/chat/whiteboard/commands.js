@@ -23,7 +23,7 @@ define([
             if (whiteboardName == null ||
                 whiteboardName == ''   ||
                 whiteboardName.length == 0) {
-                    whiteboardName = 'Whiteboard #' + parseInt(whiteboardCollectionProxy.length + 1);
+                    whiteboardName = 'Whiteboard #' + parseInt(whiteboardCollectionProxy.collection.length + 1);
             }
 
             // create a new whiteboard
