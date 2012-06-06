@@ -48,12 +48,15 @@ define([
         },
         
         urlRoot: function() {
-            return this.header().url() + this.msg().url();
+            return "/chat/message";
+            //return this.header().url() + this.msg().url();
         },
-
+        
+        /*
         toJSON: function() {
             return _.extend({}, this.header(), this.msg());
         },
+        */
         
         parse: function(response) {
             return {

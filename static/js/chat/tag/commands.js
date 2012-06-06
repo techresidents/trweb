@@ -1,15 +1,17 @@
 define([
     'Underscore',
     'core/command',
+    'chat/message/messages',
+    'chat/message/models',
     'chat/minute/proxies',
     'chat/tag/models',
-    'chat/tag/proxies',
 ], function(
     _,
     command,
+    messages,
+    message_models,
     minute_proxies,
-    tag_models,
-    tag_proxies) {
+    tag_models) {
     
     var CreateTagCommand = command.AsyncCommand.extend({
 
@@ -25,7 +27,12 @@ define([
                     minuteId: activeMinute.id
                 });
 
-                tag.save(null, {
+                var message = new message_models.ChatMessage({
+                    header: new messages.MessageHeader(),
+                    msg: new messages.TagCreateMessage(tag.attributes),
+                });
+
+                message.save(null, {
                     success: _.bind(this.onSuccess, this),
                     error: _.bind(this.onError, this),
                 });
@@ -45,7 +52,13 @@ define([
             var activeMinute = minutesProxy.collection.active();
 
             if(activeMinute) {
-                options.model.destroy(null, {
+
+                var message = new message_models.ChatMessage({
+                    header: new messages.MessageHeader(),
+                    msg: new messages.TagDeleteMessage(options.model.attributes)
+                });
+
+                message.save(null, {
                     success: _.bind(this.onSuccess, this),
                     error: _.bind(this.onError, this),
                 });

@@ -2,23 +2,29 @@ define([
     'Underscore',
     'core/command',
     'chat/marker/models',
-    'chat/marker/proxies',
+    'chat/message/messages',
+    'chat/message/models',
 ], function(
     _,
     command,
     marker_models,
-    marker_proxies) {
+    messages,
+    message_models) {
     
     var CreateMarkerCommand = command.AsyncCommand.extend({
 
         asyncCallbackArgs: ['model', 'response'],
 
         execute: function(options) {
-            var markersProxy = this.facade.getProxy(marker_proxies.ChatMarkersProxy.NAME);
 
-            var marker = new markersProxy.collection.model(options);
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: options,
+                }),
+            });
 
-            marker.save(null, {
+            message.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this),
             });
@@ -33,14 +39,18 @@ define([
         asyncCallbackArgs: ['model', 'response'],
 
         execute: function(options) {
-            var markersProxy = this.facade.getProxy(marker_proxies.ChatMarkersProxy.NAME);
-
-            var marker = new marker_models.ConnectedMarker({
-                userId: options.userId,
-                isConnected: options.isConnected,
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: {
+                        type: marker_models.ConnectedMarker.TYPE,
+                        userId: options.userId,
+                        isConnected: options.isConnected,
+                    }
+                }),
             });
 
-            marker.save(null, {
+            message.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this),
             });
@@ -55,14 +65,18 @@ define([
         asyncCallbackArgs: ['model', 'response'],
 
         execute: function(options) {
-            var markersProxy = this.facade.getProxy(marker_proxies.ChatMarkersProxy.NAME);
-
-            var marker = new marker_models.PublishingMarker({
-                userId: options.userId,
-                isPublishing: options.isPublishing,
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: {
+                        type: marker_models.PublishingMarker.TYPE,
+                        userId: options.userId,
+                        isPublishing: options.isPublishing,
+                    }
+                }),
             });
 
-            marker.save(null, {
+            message.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this),
             });
@@ -77,19 +91,21 @@ define([
         asyncCallbackArgs: ['model', 'response'],
 
         execute: function(options) {
-            var markersProxy = this.facade.getProxy(marker_proxies.ChatMarkersProxy.NAME);
-
-            var marker = new marker_models.SpeakingMarker({
-                userId: options.userId,
-                isSpeaking: options.isSpeaking,
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: {
+                        type: marker_models.SpeakingMarker.TYPE,
+                        userId: options.userId,
+                        isSpeaking: options.isSpeaking,
+                    }
+                }),
             });
 
-            marker.save(null, {
+            message.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this),
             });
-
-            return true;
         },
 
     });
