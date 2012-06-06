@@ -2,11 +2,16 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'xd/xd',
     'xd/backbone',
     'chat/message/messages',
-    'chat/user/models',
-], function($, _, Backbone, xd, xdBackbone, messages, user) {
+    'chat/message/models',
+], function(
+    $,
+    _,
+    Backbone,
+    xdBackbone,
+    messages,
+    message_models) {
     
     /**
      * Chat Marker model.
@@ -14,9 +19,11 @@ define([
      * @param {Object} attributes Optional model attributes.
      * @param {Object} options Optional options
      */
-    var Marker = Backbone.Model.extend({
+    var Marker = message_models.ChatMessageBaseModel.extend({
             
         idAttribute: 'markerId',
+
+        message: messages.MarkerCreateMessage,
 
         defaults: function() {
             return {
@@ -29,26 +36,6 @@ define([
             this.reinitialize(attributes, options);
         },
 
-        reinitialize: function(attributes, options) {
-            var optionsProvided = false;
-
-            if(options && options.header && options.msg) {
-                this.header = options.header;
-                this.msg = options.msg;
-                optionsProvided = true;
-            } else {
-                this.header = new messages.MessageHeader;
-                this.msg = new messages.MarkerCreateMessage;
-            }
-
-            if(optionsProvided) {
-                this.set({
-                    markerId: this.msg.markerId,
-                    marker: this.msg.marker,
-                });
-            }
-        },
-
         marker: function() {
             return this.get('marker');
         },
@@ -58,24 +45,21 @@ define([
             return this;
         },
 
-        urlRoot: function() {
-            return this.header.url() + this.msg.url();
-        },
-
-        /**
-         * Cross domain compatible sync.
-         */
-       sync: xdBackbone.sync,
-
-        parse: function(response) {
-            this.header = new messages.MessageHeader(response.header);
-            this.msg = new messages.MarkerCreateMessage(response.msg);
-
-            return {
-                markerId: response.msg.markerId,
-                marker: response.msg.marker,
+        toJSON: function() {
+            var result = {
+                markerId: this.attributes.markerId,
+                marker: {},
             };
+
+            for(var key in this.defaults()) {
+                if(key !== 'markerId') {
+                    result.marker[key] = this.attributes[key];
+                }
+            }
+
+            return result;
         },
+
     });
 
 
@@ -92,49 +76,6 @@ define([
 
         initialize: function(attributes, options) {
             this.reinitialize(attributes, options);
-        },
-
-        reinitialize: function(attributes, options) {
-            var optionsProvided = false;
-
-            if(options && options.header && options.msg) {
-                this.header = options.header;
-                this.msg = options.msg;
-                optionsProvided = true;
-            } else {
-                this.header = new messages.MessageHeader;
-                this.msg = new messages.MarkerCreateMessage;
-            }
-
-            if(optionsProvided) {
-                this.set({
-                    markerId: this.msg.markerId,
-                    userId: this.msg.marker.userId,
-                    isConnected: this.msg.marker.isConnected,
-                });
-            }
-        },
-
-        toJSON: function() {
-            return {
-                markerId: this.attributes.markerId,
-                marker: {
-                    type: this.attributes.type,
-                    userId: this.attributes.userId,
-                    isConnected: this.attributes.isConnected,
-                }
-            };
-        },
-        
-        parse: function(response) {
-            this.header = new messages.MessageHeader(response.header);
-            this.msg = new messages.MarkerCreateMessage(response.msg);
-
-            return {
-                markerId: response.msg.markerId,
-                userId: response.msg.marker.userId,
-                isConnected: response.msg.marker.isConnected,
-            };
         },
 
     }, {
@@ -157,49 +98,6 @@ define([
             this.reinitialize(attributes, options);
         },
 
-        reinitialize: function(attributes, options) {
-            var optionsProvided = false;
-
-            if(options && options.header && options.msg) {
-                this.header = options.header;
-                this.msg = options.msg;
-                optionsProvided = true;
-            } else {
-                this.header = new messages.MessageHeader;
-                this.msg = new messages.MarkerCreateMessage;
-            }
-
-            if(optionsProvided) {
-                this.set({
-                    markerId: this.msg.markerId,
-                    userId: this.msg.marker.userId,
-                    isPublishing: this.msg.marker.isPublishing,
-                });
-            }
-        },
-
-        toJSON: function() {
-            return {
-                markerId: this.attributes.markerId,
-                marker: {
-                    type: this.attributes.type,
-                    userId: this.attributes.userId,
-                    isPublishing: this.attributes.isPublishing,
-                }
-            };
-        },
-        
-        parse: function(response) {
-            this.header = new messages.MessageHeader(response.header);
-            this.msg = new messages.MarkerCreateMessage(response.msg);
-
-            return {
-                markerId: response.msg.markerId,
-                userId: response.msg.marker.userId,
-                isPublishing: response.msg.marker.isPublishing,
-            };
-        },
-
     }, {
         TYPE: 'PUBLISHING_MARKER',
     });
@@ -218,49 +116,6 @@ define([
 
         initialize: function(attributes, options) {
             this.reinitialize(attributes, options);
-        },
-
-        reinitialize: function(attributes, options) {
-            var optionsProvided = false;
-
-            if(options && options.header && options.msg) {
-                this.header = options.header;
-                this.msg = options.msg;
-                optionsProvided = true;
-            } else {
-                this.header = new messages.MessageHeader;
-                this.msg = new messages.MarkerCreateMessage;
-            }
-
-            if(optionsProvided) {
-                this.set({
-                    markerId: this.msg.markerId,
-                    userId: this.msg.marker.userId,
-                    isSpeaking: this.msg.marker.isSpeaking,
-                });
-            }
-        },
-
-        toJSON: function() {
-            return {
-                markerId: this.attributes.markerId,
-                marker: {
-                    type: this.attributes.type,
-                    userId: this.attributes.userId,
-                    isSpeaking: this.attributes.isSpeaking,
-                }
-            };
-        },
-        
-        parse: function(response) {
-            this.header = new messages.MessageHeader(response.header);
-            this.msg = new messages.MarkerCreateMessage(response.msg);
-
-            return {
-                markerId: response.msg.markerId,
-                userId: response.msg.marker.userId,
-                isSpeaking: response.msg.marker.isSpeaking,
-            };
         },
 
     }, {

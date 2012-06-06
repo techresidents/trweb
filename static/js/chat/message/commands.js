@@ -21,7 +21,7 @@ define([
         execute: function(options) {
             var proxy = this.facade.getProxy(marker_proxies.ChatMarkersProxy.NAME);
             var model = options.model;
-            var marker = proxy.collection.model(null, {
+            var marker = new proxy.collection.model(null, {
                 header: model.header(),
                 msg: model.msg()
             });

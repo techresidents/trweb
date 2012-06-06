@@ -5,15 +5,18 @@ define([
     'xd/xd',
     'xd/backbone',
     'chat/message/messages',
+    'chat/message/models',
     'chat/user/models',
-], function($, _, Backbone, xd, xdBackbone, messages, user) {
+], function($, _, Backbone, xd, xdBackbone, messages, message_models, user) {
  
     /**
      * Whiteboard model.
      */
-    var Whiteboard = Backbone.Model.extend({
+    var Whiteboard = message_models.ChatMessageBaseModel.extend({
 
         idAttribute: 'whiteboardId',
+        
+        message: messages.WhiteboardCreateMessage,
 
         defaults: function() {
             return {
@@ -26,27 +29,6 @@ define([
 
         initialize: function(attributes, options) {
             this.reinitialize(attributes, options);
-        },
-
-        reinitialize: function(attributes, options) {
-            var optionsProvided = false;
-
-            if(options && options.header && options.msg) {
-                this.header = options.header;
-                this.msg = options.msg;
-                optionsProvided = true;
-            } else {
-                this.header = new messages.MessageHeader();
-                this.msg = new messages.WhiteboardCreateMessage();
-            }
-
-            if(optionsProvided) {
-                this.set({
-                    whiteboardId: this.msg.whiteboardId,
-                    userId: this.header.userId,
-                    name: this.msg.name,
-                });
-            }
         },
 
         // TODO Need getter/setter for whiteboardId? paths?
@@ -72,28 +54,8 @@ define([
         paths: function() {
             return this.get('paths');
         },
-
-        urlRoot: function() {
-            return this.header.url() + this.msg.url();
-        },
-
-
-        /**
-         * Cross domain compatible sync.
-         */
-        sync: xdBackbone.sync,
-
-        parse: function(response) {
-            this.header = new messages.MessageHeader(response.header);
-            this.msg = new messages.WhiteboardCreateMessage(response.msg);
-
-            return {
-                whiteboardId: response.msg.whiteboardId,
-                userId: response.header.userId,
-                name: response.msg.name,
-            };
-        },
     });
+
 
     /**
      * Whiteboard collection.
@@ -133,9 +95,11 @@ define([
     /**
      * Whiteboard Path model
      */
-    var WhiteboardPath = Backbone.Model.extend({
+    var WhiteboardPath = message_models.ChatMessageBaseModel.extend({
 
         idAttribute: 'pathId',
+
+        message: messages.WhiteboardCreatePathMessage,
 
         defaults: function() {
             return {
@@ -147,27 +111,7 @@ define([
         },
 
         initialize: function(attributes, options) {
-            var optionsProvided = false;
-
-            if(options) {
-                this.header = options.header;
-                this.msg = options.msg;
-                optionsProvided = true;
-            } else {
-                this.header = new messages.MessageHeader();
-                this.msg = new messages.WhiteboardCreatePathMessage({
-                    whiteboardId : attributes.whiteboardId
-                });
-            }
-
-            if(optionsProvided) {
-                this.set({
-                    pathId: this.msg.pathId,
-                    whiteboardId: this.msg.whiteboardId,
-                    userId: this.header.userId,
-                    pathData: this.msg.pathData,
-                });
-            }
+            this.reinitialize(attributes, options);
         },
 
         // TODO Do we need getters/setters for whiteboardId and pathId?
@@ -193,24 +137,8 @@ define([
         urlRoot: function() {
             return this.header.url() + this.msg.url();
         },
-
-        /**
-         * Cross domain compatible sync.
-         */
-        sync: xdBackbone.sync,
-
-        parse: function(response) {
-            this.header = response.header;
-            this.msg = response.msg;
-
-            return {
-                pathId: response.msg.pathId,
-                whiteboardId: response.msg.whiteboardId,
-                userId: response.header.userId,
-                pathData: response.msg.pathData,
-            };
-        },
     });
+
 
     /**
      * Whiteboard Path collection.

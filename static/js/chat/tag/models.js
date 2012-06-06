@@ -2,11 +2,18 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'xd/xd',
     'xd/backbone',
     'chat/message/messages',
+    'chat/message/models',
     'chat/user/models',
-], function($, _, Backbone, xd, xdBackbone, messages, user) {
+], function(
+    $,
+    _,
+    Backbone,
+    xdBackbone,
+    messages,
+    message_models,
+    user) {
     
     /**
      * Chat Tag model.
@@ -14,9 +21,11 @@ define([
      * @param {Object} attributes Optional model attributes.
      * @param {Object} options Optional options
      */
-    var Tag = Backbone.Model.extend({
+    var Tag = message_models.ChatMessageBaseModel.extend({
             
         idAttribute: 'tagId',
+
+        message: messages.TagCreateMessage,
 
         defaults: function() {
             return {
@@ -28,33 +37,6 @@ define([
             };
         },
         
-        initialize: function(attributes, options) {
-            this.reinitialize(attributes, options);
-        },
-
-        reinitialize: function(attributes, options) {
-            var optionsProvided = false;
-
-            if(options && options.header && options.msg) {
-                this.header = options.header;
-                this.msg = options.msg;
-                optionsProvided = true;
-            } else {
-                this.header = new messages.MessageHeader;
-                this.msg = new messages.TagCreateMessage;
-            }
-
-            if(optionsProvided) {
-                this.set({
-                    tagId: this.msg.tagId,
-                    userId: this.header.userId,
-                    minuteId: this.msg.minuteId,
-                    name: this.msg.name,
-                    tagReferenceId: this.msg.tagReferenceId,
-                });
-            }
-        },
-
         userId: function() {
             return this.get('userId');
         },
@@ -90,27 +72,8 @@ define([
             this.set({tagReferenceId: tagReferenceId});
             return this;
         },
-
-        urlRoot: function() {
-            return this.header.url() + this.msg.url();
-        },
-
-        /**
-         * Cross domain compatible sync.
-         */
-        sync: xdBackbone.sync,
-
-        parse: function(response) {
-            this.header = new messages.MessageHeader(response.header);
-            this.msg = new messages.TagCreateMessage(response.msg);
-
-            return {
-                tagId: response.msg.tagId,
-                userId: response.header.userId,
-                name: response.msg.name,
-            };
-        },
     });
+
 
     /**
      * Chat Tag collection.

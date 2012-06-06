@@ -1,24 +1,25 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
-], function($, _, Backbone) {
+    'core/base',
+], function($, _, base) {
 
 
     /**
      * Chat message header.
      * Header is common to all chat messages.
      */
-    var MessageHeader = function(attributes) {
-        this.id = null;
-        this.type = null;
-        this.chatSessionToken = null;
-        this.userId = null;
-        this.timestamp = null;
-        _.extend(this, attributes);
-    };
+    var MessageHeader = base.Base.extend({
 
-    _.extend(MessageHeader.prototype, {
+        initialize: function(attributes) {
+            this.id = null;
+            this.type = null;
+            this.chatSessionToken = null;
+            this.userId = null;
+            this.timestamp = null;
+            _.extend(this, attributes);
+        },
+
         url: function() {
             return "/chat/message";
         },
@@ -34,18 +35,44 @@ define([
         }
     });
 
+    
+    /** Message base class.
+     *
+     */
+    var MessageBase = base.Base.extend({
+
+        initialize: function(attributes) {
+            var defaults = base.getValue(this, 'defaults');
+
+            _.extend(this, defaults);
+
+            if(attributes) {
+                for(var key in defaults) {
+                    if(attributes.hasOwnProperty(key)) {
+                        this[key] = attributes[key];
+                    }
+                }
+            }
+
+        },
+
+        type: null,
+
+        url: function() {},
+    });
+
 
     /**
      * Marker create message.
      */
-    var MarkerCreateMessage = function(attributes) {
-        this.markerId = null;
-        this.marker = null;
-        _.extend(this, attributes);
-    };
+    var MarkerCreateMessage = MessageBase.extend({
 
-    _.extend(MarkerCreateMessage.prototype, {
         type: "MARKER_CREATE",
+
+        defaults: {
+            markerId: null,
+            marker: null,
+        },
 
         url: function() {
             return "/marker";
@@ -56,16 +83,16 @@ define([
     /**
      * Chat Minute create message.
      */
-    var MinuteCreateMessage = function(attributes) {
-        this.minuteId = null;
-        this.topicId = null;
-        this.start = null;
-        this.end = null;
-        _.extend(this, attributes);
-    };
+    var MinuteCreateMessage = MessageBase.extend({
 
-    _.extend(MinuteCreateMessage.prototype, {
         type: "MINUTE_CREATE",
+
+        defaults: {
+            minuteId: null,
+            topicId: null,
+            startTimestamp: null,
+            endTimestamp: null,
+        },
 
         url: function() {
             return "/minute";
@@ -76,14 +103,16 @@ define([
     /**
      * Chat Tag create message.
      */
-    var TagCreateMessage = function(attributes) {
-        this.tagId = null;
-        this.name = null;
-        _.extend(this, attributes);
-    };
+    var TagCreateMessage = MessageBase.extend({
 
-    _.extend(TagCreateMessage.prototype, {
         type: "TAG_CREATE",
+
+        defaults: {
+            tagId: null,
+            tagReferenceId: null,
+            name: null,
+            minuteId: null,
+        },
 
         url: function() {
             return "/tag";
@@ -94,13 +123,13 @@ define([
     /**
      * Chat Tag delete message.
      */
-    var TagDeleteMessage = function(attributes) {
-        this.tagId = null;
-        _.extend(this, attributes);
-    };
+    var TagDeleteMessage = MessageBase.extend({
 
-    _.extend(TagDeleteMessage.prototype, {
         type: "TAG_DELETE",
+        
+        defaults: {
+            tagId: null,
+        },
 
         url: function() {
             return "/tag";
@@ -111,16 +140,14 @@ define([
     /**
      * Chat Whiteboard create message.
      */
-    var WhiteboardCreateMessage = function(attributes) {
-        this.type = "WHITEBOARD_CREATE";
-        this.whiteboardId = null;
-        this.name = null;
+    var WhiteboardCreateMessage = MessageBase.extend({
 
-        _.extend(this, attributes);
-    };
-
-    _.extend(WhiteboardCreateMessage.prototype, {
         type: "WHITEBOARD_CREATE",
+
+        defaults: {
+            whiteboardId: null,
+            name: null,
+        },
 
         url: function() {
             return "/whiteboard";
@@ -131,35 +158,32 @@ define([
     /**
      * Chat Whiteboard delete message.
      */
-    var WhiteboardDeleteMessage = function(attributes) {
-        this.type = "WHITEBOARD_DELETE";
-        this.whiteboardId = null;
+    var WhiteboardDeleteMessage = MessageBase.extend({
 
-        _.extend(this, attributes);
-    };
-
-    _.extend(WhiteboardDeleteMessage.prototype, {
         type: "WHITEBOARD_DELETE",
+        
+        defaults: {
+            whiteboardId: null,
+        },
 
         url: function() {
             return "/whiteboard";
         }
     });
 
+
     /**
      * Chat Whiteboard Path create message.
      */
-    var WhiteboardCreatePathMessage = function(attributes) {
-        this.type = "WHITEBOARD_CREATE_PATH";
-        this.whiteboardId = null;
-        this.pathId = null;
-        this.pathData = null;
+    var WhiteboardCreatePathMessage = MessageBase.extend({
 
-        _.extend(this, attributes);
-    };
-
-    _.extend(WhiteboardCreatePathMessage.prototype, {
         type: "WHITEBOARD_CREATE_PATH",
+
+        defaults: {
+            whiteboardId: null,
+            pathId: null,
+            pathData: null,
+        },
 
         url: function() {
             return "/whiteboard/" + this.whiteboardId + "/path";
@@ -170,26 +194,26 @@ define([
     /**
      * Chat Whiteboard Path delete message.
      */
-    var WhiteboardDeletePathMessage = function(attributes) {
-        this.type = "WHITEBOARD_DELETE_PATH";
-        this.whiteboardId = null;
-        this.pathId = null;
+    var WhiteboardDeletePathMessage = MessageBase.extend({
 
-        _.extend(this, attributes);
-    };
-
-    _.extend(WhiteboardDeletePathMessage.prototype, {
         type: "WHITEBOARD_DELETE_PATH",
+
+        defaults: {
+            whiteboardId: null,
+            pathId:  null,
+        },
 
         url: function() {
             return "/whiteboard/" + this.whiteboardId + "/path";
         }
     });
+
    
     /**
      * Map message types to constructors
      */
     var messageTypeMap = {
+        "MARKER_CREATE": MarkerCreateMessage,
         "MINUTE_CREATE": MinuteCreateMessage,
         "TAG_CREATE": TagCreateMessage,
         "TAG_DELETE": TagDeleteMessage,
