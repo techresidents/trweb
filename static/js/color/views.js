@@ -58,18 +58,23 @@ define([
 
             var color = this.viewModel.getSelectedColor();
             var colorClass = null;
+            var colorText = null;
 
             switch(color) {
                 case whiteboard_models.WhiteboardValueObject.COLORS.BLACK:
+                    colorText = 'Black';
                     colorClass = 'btn-inverse';
                     break;
                 case whiteboard_models.WhiteboardValueObject.COLORS.BLUE:
+                    colorText = 'Blue';
                     colorClass = 'btn-primary';
                     break;
                 case whiteboard_models.WhiteboardValueObject.COLORS.GREEN:
+                    colorText = 'Green';
                     colorClass = 'btn-success';
                     break;
                 case whiteboard_models.WhiteboardValueObject.COLORS.RED:
+                    colorText = 'Red';
                     colorClass = 'btn-danger';
                     break;
                 default:
@@ -77,17 +82,16 @@ define([
                     break;
             }
 
-            if (null != color &&
+            if (null != colorText &&
                 null != colorClass)
             {
                 // change the text & color of the button
-                this.$(this.colorSelector).html(this._getColorHtmlString(color));
+                this.$(this.colorSelector).html(this._getColorHtmlString(colorText));
                 this.$(this.colorSelector).removeClass(this.buttonClasses).addClass(colorClass);
             }
         },
 
         blackColorPicked: function(){
-            // trigger a color change event
             this.triggerEvent(EVENTS.SELECT, {color: whiteboard_models.WhiteboardValueObject.COLORS.BLACK});
         },
 
