@@ -179,7 +179,6 @@ define([
                 whiteboardId: eventBody.whiteboardId,
                 serializedPathData: eventBody.serializedPathData,
                 onSuccess: function(options, ret) {
-                    console.log(ret.result.model.msg().pathId);
                     eventBody.onSuccess.call(
                         eventBody.context,
                         eventBody.elementId,

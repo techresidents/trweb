@@ -31,6 +31,7 @@ define([
             return {
                 tagId: null,
                 userId: null,
+                timestamp: null,
                 minuteId: null,
                 name: null,
                 tagReferenceId: null,
@@ -71,6 +72,26 @@ define([
         setTagReferenceId: function(tagReferenceId) {
             this.set({tagReferenceId: tagReferenceId});
             return this;
+        },
+
+        timestamp: function() {
+            return this.get('timestamp');
+        },
+
+        setTimestamp: function(timestamp) {
+            this.set({timestamp: timestamp});
+            return this;
+        },
+
+        timestamp_as_date: function() {
+            var timestamp = this.timestamp();
+            if(timestamp) {
+                var date = new Date();
+                date.setTime(timestamp * 1000.0);
+                return date;
+            } else {
+                return null;
+            }
         },
     });
 

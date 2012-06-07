@@ -2,16 +2,10 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'xd/backbone',
-    'chat/message/messages',
-    'chat/message/models',
 ], function(
     $,
     _,
-    Backbone,
-    xdBackbone,
-    messages,
-    message_models) {
+    Backbone) {
     
     /**
      * Chat Marker model.
@@ -19,11 +13,11 @@ define([
      * @param {Object} attributes Optional model attributes.
      * @param {Object} options Optional options
      */
-    var Marker = message_models.ChatMessageBaseModel.extend({
-            
+    var Marker = Backbone.Model.extend({
+
         idAttribute: 'markerId',
 
-        message: messages.MarkerCreateMessage,
+        localStorage: new Backbone.LocalStorage('Marker'),
 
         defaults: function() {
             return {
@@ -33,7 +27,6 @@ define([
         },
         
         initialize: function(attributes, options) {
-            this.reinitialize(attributes, options);
         },
 
         marker: function() {
@@ -75,7 +68,6 @@ define([
         },
 
         initialize: function(attributes, options) {
-            this.reinitialize(attributes, options);
         },
 
     }, {
@@ -95,7 +87,6 @@ define([
         },
 
         initialize: function(attributes, options) {
-            this.reinitialize(attributes, options);
         },
 
     }, {
@@ -115,7 +106,6 @@ define([
         },
 
         initialize: function(attributes, options) {
-            this.reinitialize(attributes, options);
         },
 
     }, {
@@ -129,16 +119,8 @@ define([
     var MarkerCollection = Backbone.Collection.extend({
 
         model: function(attributes, options) {
-            var type;
             var result;
-
-            if(attributes && attributes.type) {
-                type = attributes.type;
-            } else if(options && options.msg && options.msg.marker) {
-                type = options.msg.marker.type;
-            }
-
-            switch(type) {
+            switch(options.type) {
                 case ConnectedMarker.TYPE: 
                     result = new ConnectedMarker(attributes, options);
                     break;
@@ -155,11 +137,8 @@ define([
 
             return result;
         },
-        
-        /**
-         * Cross domain compatible sync.
-         */
-        sync: xdBackbone.sync,
+
+        localStorage: new Backbone.LocalStorage('MarkerCollection'),
     });
 
     return {

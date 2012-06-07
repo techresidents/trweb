@@ -41,7 +41,7 @@ define([
 
         
         render: function() {
-            var timestamp = this.model.header.timestamp_as_date();
+            var timestamp = this.model.timestamp_as_date();
             var user = this.users.get(this.model.userId());
             var state = _.extend(this.model.toJSON(), {
                 user: user.toJSON(),
