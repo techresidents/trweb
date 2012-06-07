@@ -13,10 +13,17 @@ define([
     discuss_models,
     discuss_views) {
 
-
+    /**
+     * Discuss Mediator
+     * @constructor
+     * @param {Object} options
+     */
     var DiscussMediator = mediator.Mediator.extend({
         name: 'DiscussMediator',
         
+        /**
+         * Notification handlers
+         */
         notifications: [
             [notifications.CHAT_TOPIC_CHANGED, 'onChatTopicChanged'],
         ],
@@ -31,10 +38,11 @@ define([
                 })
             });
 
-            //event listeners
+            //vew event listeners
             this.view.addEventListener(discuss_views.EVENTS.NEXT, this.onNext, this);
             this.view.addEventListener(discuss_views.EVENTS.START, this.onStart, this);
             
+            //notify system of view creation
             this.facade.trigger(notifications.VIEW_CREATED, {
                 type: 'DiscussView',
                 view: this.view

@@ -13,7 +13,9 @@ define([
     tagger_template,
     tagger_item_template) {
     
-    
+    /**
+     * Tag View Events
+     */
     var EVENTS = {
         ADD_TAG: 'tag:addTag',
         DELETE_TAG: 'tag:deleteTag',

@@ -52,12 +52,7 @@ define([
     /**
      * Chat application main view.
      * @constructor
-     * @param {options} 
-     *   chatAPIKey: Tokbox API Key (required) 
-     *   chatSessionToken: Tokbox session token (required)
-     *   chatUserToken: Tokbox user token (required)
-     *   users: users participating in chat (required)
-     *   topics: chat topics (required)
+     * @param {Object} options 
      */
     var ChatAppView = Backbone.View.extend({
 
@@ -111,9 +106,17 @@ define([
     });
    
 
+    /**
+     * Chat App Mediator
+     * @constructor
+     * @param {Object} options
+     */
     var ChatAppMediator = mediator.Mediator.extend({
         name: 'ChatAppMediator',
         
+        /**
+         * Notification handlers
+         */
         notifications: [
             [notifications.DOM_READY, 'onDomReady'],
             [notifications.VIEW_CREATED, 'onViewCreated'],
@@ -126,7 +129,7 @@ define([
             this.view = new ChatAppView(options);
             this.view.render();
 
-            //sub-mediators
+            //create and register sub-mediators
             this.facade.registerMediator(new alert_mediators.AlertMediator());
             this.facade.registerMediator(new marker_mediators.ChatMarkersMediator());
             this.facade.registerMediator(new user_mediators.ChatUsersMediator());
@@ -159,6 +162,12 @@ define([
 
     });
 
+    /**
+     * Init Models Command
+     * @constructor
+     * Registers the ChatProxy, which in turn, registers
+     * sub-proxies.
+     */
     var InitModels = command.Command.extend({
 
         execute: function() {
@@ -166,6 +175,12 @@ define([
         }
     });
 
+    /**
+     * Init Views Command
+     * @constructor
+     * Creates ChatAppMediator main app view and sub-mediators
+     * which in turn create additional views.
+     */
     var InitViews = command.Command.extend({
 
         execute: function() {
@@ -173,6 +188,11 @@ define([
         }
     });
 
+    /**
+     * App Start Command
+     * @constructor
+     * Initializes models (proxies) and views (mediators)
+     */
     var AppStartCommand = command.MacroCommand.extend({
 
         initialize: function() {
@@ -182,10 +202,21 @@ define([
     });
 
 
+    /**
+     * Chat App Facade
+     * Concrete applicaion facade which facilitates communication
+     * between disparate parts of the system through notifications.
+     * 
+     * This facade must be instantiated first.
+     * (before any commands, mediators, or proxies).
+     */
     var ChatAppFacade = facade.Facade.extend({
 
         initialize: function() {
+            //register facade instance
             facade.setInstance(this);
+
+            //register commands
             this.registerCommand(notifications.APP_START, AppStartCommand);
             this.registerCommand(notifications.CHAT_CONNECT, chat_commands.ChatConnectCommand);
             this.registerCommand(notifications.CHAT_START, chat_commands.ChatStartCommand);
@@ -214,20 +245,30 @@ define([
             this.registerCommand(notifications.WHITEBOARD_PATH_CREATE, whiteboard_commands.CreateWhiteboardPathCommand);
             this.registerCommand(notifications.WHITEBOARD_PATH_DELETE, whiteboard_commands.DeleteWhiteboardPathCommand);
         },
-
+        
+        /**
+         * Start the application and connect chat.
+         */
         start: function() {
             this.trigger(notifications.APP_START);
             this.trigger(notifications.CHAT_CONNECT);
         },
-
+        
+        /**
+         * Stop the application.
+         */
         stop: function() {
             this.trigger(notifications.APP_STOP);
         }
     });
-
+    
+    //one and only concrete facade
     var chatAppFacade = new ChatAppFacade();
+
+    //start the app
     chatAppFacade.start();
     
+    //DOM ready notification
     $(document).ready(function() {
         chatAppFacade.trigger(notifications.DOM_READY);
     });

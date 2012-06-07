@@ -14,14 +14,25 @@ define([
     proxy,
     user_models,
     user_proxies) {
-
+    
+    /**
+     * Chat Stream Sample
+     * @constructor
+     * @param {Object} options
+     *   {string} optional sample id
+     *   {number} volume
+     *   {number} timestamp seconds since epoch
+     *
+     * Represents a sample from one the chat steams.
+     * Each samples captures the microphone level.
+     */
     var StreamSample = base.Base.extend({
         initialize: function(options) {
             this.id = options.id || _.uniqueId('StreamSample_');
             this.volume = options.volume;
             this.timestamp = new Date().valueOf() / 1000;
         },
-
+        
         compareVolume: function(a, b) {
             var result = 0;
             if(a.volume > b.volume) {
@@ -33,35 +44,74 @@ define([
         },
     });
 
+    /**
+     * Chat Stream
+     * @constructor
+     * @param {Object} options
+     *   {integer} period sampling period in seconds
+     *
+     * Represents a chat stream and a small history of StreamSample
+     * objects. These samples are used to determine the average
+     * minimum microhpone volume for last period seconds.
+     * 
+     * This average is extremely useful for determining if
+     * a user is speaking or not.
+     */
     var Stream = base.Base.extend({
 
         initialize: function(options) {
-            this.period = 60;
+            this.period = options.period || 60;
+
+            //max samples to keep
             this.maxSamples = this.period * 2;
+
+            //minimum number of samples needed to compute
+            //minimum microhpone volume average
+            this.minSampleSize = this.maxSamples / 10;
+
+            //StreamSample's sorted by volume
             this.samples = [];
 
             this.user = options.user;
         },
         
-        addSample: function (sample) {
+        /**
+         * Add a Stream sample
+         * @param {StreamSample} sample
+         */
+        addSample: function(sample) {
+            //insert StreamSample into samples array and keep sorted by volume
             array.binaryInsert(this.samples, sample, sample.compareVolume);
+
+            //make sure we store at most maxSamples
             if(this.samples.length > this.maxSamples) {
                 this.samples.pop();
             }
         },
         
-        average: function() {
+        /**
+         * Compute the minimum microhpone volume average for current period
+         * @return {number}
+         */
+        minVolumeAverage: function() {
+            //skip StreamSample's with a timestamp greater than this
             var expiredTimestamp = (new Date().valueOf() / 1000) - this.period;
-
+            
+            //Samples with the smallest volumes
             var minSamples = [];
-            var garbageCollect = [];
 
+            //Expried samples that need to be removed
+            var garbageCollect = [];
+            
+            //Find the smallest non-expired samples (minSampleSize many)
             for(var i = 0; i < this.samples.length; i++) {
                 var sample = this.samples[i];
+
+                //if the sample is expired, skip it and add it gc
                 if(sample.timestamp < expiredTimestamp) {
                     garbageCollect.push(i);
                 } else {
-                    if(minSamples.length < 12) {
+                    if(minSamples.length < this.minSampleSize) {
                         minSamples.push(sample);
                     } else {
                         break;
@@ -69,10 +119,12 @@ define([
                 }
             }
             
+            //clean up gc samples
             for(i = 0; i < garbageCollect.length; i++) {
                 this.samples.splice(garbageCollect[i] - i, 1);
             }
-
+            
+            //compute the min microhpone average volume
             var avg = 0;
             if(minSamples.length) {
                 for(i = 0; i < minSamples.length; i++) {
@@ -85,7 +137,18 @@ define([
         },
 
     });
-    
+   
+    /**
+     * Chat Session Proxy
+     * @constructor
+     * @param {Object} options
+     *   {string} apiKey Tokbox API Key
+     *   {string} sessionToken Tokbox session token
+     *   {string} userToken Tokbox user token
+     *
+     * Maintains chat session and converts Tokbox events
+     * into system notifications.
+     */
     var ChatSessionProxy = proxy.Proxy.extend({
 
         name: function() {
@@ -96,15 +159,20 @@ define([
             this.apiKey = options.apiKey;
             this.sessionToken = options.sessionToken;
             this.userToken = options.userToken;
-            this.streams = {};
 
+            //user id to Stream map
+            this.streams = {};
+            
+            //create and register ChatUsersProxy
             this.usersProxy = new user_proxies.ChatUsersProxy({
                 collection: new user_models.ChatUserCollection(),
             });
             this.facade.registerProxy(this.usersProxy);
             
+            //initialize Tokbox session
             this.session =  TB.initSession(this.sessionToken);
-
+            
+            //add Tokbox event handlers
             this.session.addEventListener("sessionConnected", _.bind(this.sessionConnectedHandler, this));
             this.session.addEventListener("connectionCreated", _.bind(this.connectionCreatedHandler, this));
             this.session.addEventListener("connectionDestroyed", _.bind(this.connectionDestroyedHandler, this));
@@ -133,7 +201,12 @@ define([
             return this.usersProxy;
         },
         
+        /**
+         * Get the current user.
+         * @return {User}
+         */
         getCurrentUser: function() {
+            //current user is always stored first in collection
             return this.getUsersProxy().collection.first();
         },
         
@@ -155,6 +228,8 @@ define([
 
             for(var i = 0; i < event.connections.length; i++) {
                 var connection = event.connections[i];
+
+                //connection data set on server side
                 var connectionData = JSON.parse(connection.data);
                 var user = this.usersProxy.get(connectionData.id);
                 user.setConnected(true);
@@ -181,6 +256,8 @@ define([
 
             for(var i = 0; i < event.connections.length; i++) {
                 var connection = event.connections[i];
+
+                //connection data set on server side
                 var connectionData = JSON.parse(connection.data);
 
                 var user = this.usersProxy.get(connectionData.id);
@@ -195,6 +272,8 @@ define([
 
             for(var i = 0; i < event.connections.length; i++) {
                 var connection = event.connections[i];
+
+                //connection data set on server side
                 var connectionData = JSON.parse(connection.data);
 
                 var user = this.usersProxy.get(connectionData.id);
@@ -210,6 +289,8 @@ define([
 
             for(var i = 0; i < event.streams.length; i++) {
                 var stream = event.streams[i];
+
+                //connection data set on server side
                 var connectionData = JSON.parse(stream.connection.data);
                 
                 var user = this.usersProxy.get(connectionData.id);
@@ -228,6 +309,8 @@ define([
 
             for(var i = 0; i < event.streams.length; i++) {
                 var stream = event.streams[i];
+
+                //connection data set on server side
                 var connectionData = JSON.parse(stream.connection.data);
                 
                 var user = this.usersProxy.get(connectionData.id);
@@ -239,12 +322,12 @@ define([
 
         microphoneLevelHandler: function(event) {
             var stream = this.streams[event.streamId];
-            var average = stream.average();
-            
-            //console.log('sample');
-            //console.log(average);
-            //console.log(event.volume);
 
+            //get the minimum microhpone volume average
+            var average = stream.minVolumeAverage();
+            
+            //tenative threshold comparision to determine
+            //if user is speaking.
             if(event.volume > average + 1) {
                 if(!stream.user.isSpeaking()) {
                     stream.user.setSpeaking(true);

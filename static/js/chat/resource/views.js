@@ -12,7 +12,10 @@ define([
     resource_document_template,
     resource_select_template,
     resource_tab_template) {
-
+    
+    /**
+     * Resource View Events
+     */
     var EVENTS = {
         SELECT: 'resource:Select',
     };

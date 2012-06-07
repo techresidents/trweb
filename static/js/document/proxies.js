@@ -3,6 +3,12 @@ define([
     'core/proxy',
 ], function(notifications, proxy) {
 
+    /**
+     * Documents Collection Proxy
+     * @constructor
+     * @param {Object} options
+     *   {DocumentCollection} collection
+     */
     var DocumentsProxy = proxy.CollectionProxy.extend({
 
         name: 'DocumentsProxy',

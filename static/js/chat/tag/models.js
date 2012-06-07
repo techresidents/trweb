@@ -2,18 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'xd/backbone',
-    'chat/message/messages',
-    'chat/message/models',
-    'chat/user/models',
-], function(
-    $,
-    _,
-    Backbone,
-    xdBackbone,
-    messages,
-    message_models,
-    user) {
+], function($, _, Backbone) {
     
     /**
      * Chat Tag model.
@@ -21,11 +10,9 @@ define([
      * @param {Object} attributes Optional model attributes.
      * @param {Object} options Optional options
      */
-    var Tag = message_models.ChatMessageBaseModel.extend({
+    var Tag = Backbone.Model.extend({
             
         idAttribute: 'tagId',
-
-        message: messages.TagCreateMessage,
 
         defaults: function() {
             return {
@@ -102,11 +89,6 @@ define([
     var TagCollection = Backbone.Collection.extend({
 
         model: Tag,
-        
-        /**
-         * Cross domain compatible sync.
-         */
-        sync: xdBackbone.sync,
     });
 
     return {

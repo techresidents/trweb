@@ -2,11 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'xd/xd',
-    'xd/backbone',
-    'chat/message/messages',
-    'chat/message/models',
-], function($, _, Backbone, xd, xdBackbone, messages, message_models) {
+], function($, _, Backbone) {
     
     /**
      * Chat Minute model.
@@ -14,11 +10,9 @@ define([
      * @param {Object} attributes Optional model attributes
      * @param {Object} options Optional options
      */
-    var Minute = message_models.ChatMessageBaseModel.extend({
+    var Minute = Backbone.Model.extend({
             
         idAttribute: 'minuteId',
-
-        message: messages.MinuteCreateMessage,
 
         defaults: function() {
             return {
@@ -31,7 +25,6 @@ define([
         },
         
         initialize: function(attributes, options) {
-            this.reinitialize(attributes, options);
         },
 
 
@@ -80,12 +73,6 @@ define([
 
         model: Minute,
         
-        /**
-         * Cross domain compatible sync function.
-         */
-        sync: xdBackbone.sync,
-
-
         /**
          * Return the currently active Minute. 
          */

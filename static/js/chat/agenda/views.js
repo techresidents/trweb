@@ -23,7 +23,9 @@ define([
     agenda_tab_template,
     agenda_tag_template) {
 
-
+    /**
+     * Agenda View Events
+     */
     var EVENTS = {
         NEXT: 'agenda:Next',
         SELECT: 'agenda:Select',

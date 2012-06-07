@@ -3,16 +3,31 @@ define([
     'core/proxy',
 ], function(notifications, proxy) {
 
+
+    /**
+     * Chat Messages Collection Proxy.
+     * @constructor
+     * @param {Object} options
+     *   {ChatMessageCollection} collection
+     *
+     * Proxy acts as the message pump for the chat by
+     * long polling for new chat messages and dispatching
+     * the associated notifications to trigger system actions.
+     */
     var ChatMessagesProxy = proxy.CollectionProxy.extend({
 
         name: 'ChatMessagesProxy',
-
+        
+        /**
+         * Map collection events to notifications
+         */
         eventNotifications: {
             'add': notifications.MESSAGE_ADDED,
         },
 
         initialize: function(options) {
-
+            
+            // Message name to notification map
             this.msgNotificationMap = {
                 'MARKER_CREATE': notifications.MESSAGE_MARKER_CREATE,
                 'MINUTE_CREATE': notifications.MESSAGE_MINUTE_CREATE,
@@ -43,11 +58,17 @@ define([
 
             this.collection.on('add', this.onMessageAdded, this);
         },
-
+        
+        /**
+         * Start long polling for chat messages
+         */
         longPoll: function() {
             this.collection.fetch({add: true, silent: false, complete: this.longPollCallback});
         },
-
+        
+        /**
+         * New Messaege handler
+         */
         onMessageAdded: function(chatMessageModel) {
             var notificationName = this.msgNotificationMap[chatMessageModel.msgType()];
             this.facade.trigger(notificationName, {

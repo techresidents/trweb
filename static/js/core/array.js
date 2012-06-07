@@ -3,11 +3,25 @@ define([
 ], function(
     base) {
 
-    
+    /**
+     * Default compare function for array.
+     * @return 1 if a > b,
+     *         0 if a === b,
+     *         -1 if a < b 
+     */
     var defaultCompare = function(a, b) {
         return a > b ? 1 : a < b ? -1: 0;
     };
 
+    /**
+     * Binary search array for target using compareFunction.
+     * @param {array} array
+     * @param {Object} target
+     * @param {function} compareFunction conforming to defaultCompare.
+     *
+     * @return {number} index of target if found,
+     *                  insertion index as (-index -1) otherwise
+     */
     var binarySearch = function(array, target, compareFunction) {
         compareFunction = compareFunction || defaultCompare;
 
@@ -30,6 +44,14 @@ define([
         return found ? start : -start -1;
     };
 
+    /**
+     * Binary insert target into array using compareFunction.
+     * @param {array} array
+     * @param {Object} target to insert
+     * @param {function} compareFunction conforming to defaultCompare.
+     *
+     * @return {number} insertion index
+     */
     var binaryInsert = function(array, target, compareFunction) {
         compareFunction = compareFunction || defaultCompare;
 

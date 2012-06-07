@@ -10,9 +10,17 @@ define([
     marker_models,
     messages,
     message_models) {
-    
-    var CreateMarkerCommand = command.AsyncCommand.extend({
 
+    /**
+     * Create Marker Command
+     * @constructor
+     *
+     * Creates a chat marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
+    var CreateMarkerCommand = command.AsyncCommand.extend({
+        
+        //argument names for onSuccess and onError paramaters
         asyncCallbackArgs: ['model', 'response'],
 
         execute: function(options) {
@@ -23,7 +31,8 @@ define([
                     marker: options,
                 }),
             });
-
+            
+            //send message
             message.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this),
@@ -34,10 +43,28 @@ define([
 
     });
 
+
+    /**
+     * Create Connected Marker Command
+     * @constructor
+     *
+     * Creates a chat connected marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
     var CreateConnectedMarkerCommand = command.AsyncCommand.extend({
 
+        //argument names for onSuccess and onError paramaters
         asyncCallbackArgs: ['model', 'response'],
-
+        
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {integer} userId 
+         *   {boolean} isConnected
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         */
         execute: function(options) {
             var message = new message_models.ChatMessage({
                 header: new messages.MessageHeader(),
@@ -49,7 +76,8 @@ define([
                     }
                 }),
             });
-
+            
+            //send message
             message.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this),
@@ -60,10 +88,28 @@ define([
 
     });
 
+
+    /**
+     * Create Publishing Marker Command
+     * @constructor
+     *
+     * Creates a chat publishing marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
     var CreatePublishingMarkerCommand = command.AsyncCommand.extend({
 
+        //argument names for onSuccess and onError paramaters
         asyncCallbackArgs: ['model', 'response'],
 
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {integer} userId 
+         *   {boolean} isPublishing
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         */
         execute: function(options) {
             var message = new message_models.ChatMessage({
                 header: new messages.MessageHeader(),
@@ -76,6 +122,7 @@ define([
                 }),
             });
 
+            //send message
             message.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this),
@@ -86,10 +133,28 @@ define([
 
     });
 
+
+    /**
+     * Create Speaking Marker Command
+     * @constructor
+     *
+     * Creates a chat speaking marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
     var CreateSpeakingMarkerCommand = command.AsyncCommand.extend({
 
+        //argument names for onSuccess and onError paramaters
         asyncCallbackArgs: ['model', 'response'],
 
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {integer} userId 
+         *   {boolean} isSpeaking
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         */
         execute: function(options) {
             var message = new message_models.ChatMessage({
                 header: new messages.MessageHeader(),

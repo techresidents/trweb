@@ -12,8 +12,26 @@ define([
     command,
     chat_proxies,
     agenda_proxies) {
-    
+
+    /**
+     * Chat Connect Command
+     * @constructor
+     *
+     * Connect users in the chat and allow chat messages to flowing.
+     * Note that the chat is not started until one of the users
+     * explicitly starts it.
+     */
     var ChatConnectCommand = command.Command.extend({
+
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         *
+         * @return {boolean} true on success, false otherwise.
+         */
         execute: function(options) {
             var chatProxy = this.facade.getProxy(chat_proxies.ChatProxy.NAME);
             chatProxy.connect();
@@ -21,7 +39,23 @@ define([
         }
     });
     
+    /**
+     * Chat Start Command
+     * @constructor
+     *
+     * Start the chat (conversation).
+     */
     var ChatStartCommand = command.Command.extend({
+
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         *
+         * @return {boolean} true on success, false otherwise.
+         */
         execute: function(options) {
             var result = false;
             this.chatProxy = this.facade.getProxy(chat_proxies.ChatProxy.NAME);
@@ -34,7 +68,23 @@ define([
         }
     });
 
+    /**
+     * Chat End Command
+     * @constructor
+     *
+     * End the chat (conversation).
+     */
     var ChatEndCommand = command.Command.extend({
+
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         *
+         * @return {boolean} true on success, false otherwise.
+         */
         execute: function(options) {
             //TODO
             return false;
@@ -42,6 +92,16 @@ define([
     });
 
     var ChatNextTopicCommand = command.Command.extend({
+
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         *
+         * @return {boolean} true on success, false otherwise.
+         */
         execute: function(options) {
             this.agendaProxy = this.facade.getProxy(agenda_proxies.ChatAgendaProxy.NAME);
             this.agendaProxy.activateNext();

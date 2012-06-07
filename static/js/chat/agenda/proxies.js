@@ -15,7 +15,16 @@ define([
     topic_models,
     topic_proxies) {
     
-
+    /**
+     * Chat Agenda Proxy
+     * @constructor
+     * @param {Object} attributes
+     * @param {Object} options
+     *
+     * ChatAgendaProxy is responsible for managing the active topic
+     * for the chat. Additionally the proxy will start and end
+     * chat minutes as the topic is advanced.
+     */
     var ChatAgendaProxy = proxy.Proxy.extend({
 
         name: function() {
@@ -25,11 +34,15 @@ define([
         initialize: function(attributes, options) {
             this.activeTopic = null;
             
+            //create and register topics proxy
             this.topicCollection = new topic_models.TopicCollection();
             this.topicsProxy = new topic_proxies.TopicsProxy({
                 collection: this.topicCollection,
             });
+            this.facade.registerProxy(this.topicsProxy);
+            
 
+            //create and register chat minutes proxy
             this.minuteCollection = new minute_models.MinuteCollection();
             this.minuteCollection.bind('add', this._onMinuteStarted, this);
             this.minuteCollection.bind('change:endTimestamp', this._onMinuteEnded, this);
@@ -87,7 +100,11 @@ define([
         active: function() {
             return this.activeTopic;
         },
-
+        
+        /**
+         * Activate the next chat topic.
+         *
+         */
         activateNext: function() {
             var activeTopic = this.active();
             var closeLevel = this._startMinutes(activeTopic);
@@ -95,7 +112,11 @@ define([
                 this._endMinutes(activeTopic.rank(), closeLevel);
             }
         },
-
+        
+        /**
+         * Activate the given topic.
+         * @param {Topic} topic
+         */
         _activate: function(topic) {
             if(topic && !this.activeTopic) {
                 this.facade.trigger(notifications.CHAT_STARTED);
@@ -110,14 +131,22 @@ define([
                 this.facade.trigger(notifications.CHAT_ENDED);
             }
         },
-
+        
+        /**
+         * Minute started handler
+         * @param {Minute} minute
+         */
         _onMinuteStarted: function(minute) {
             var topic = this.topicsProxy.get(minute.topicId());
             if(this.topicsProxy.isLeaf(topic)) {
                 this._activate(topic);
             }
         },
-
+    
+        /**
+         * Minute ended handler
+         * @param {Minute} minute
+         */
         _onMinuteEnded: function(minute) {
             var topic = this.topicsProxy.get(minute.topicId());
             var nextTopic = this.next(topic);

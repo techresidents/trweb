@@ -13,10 +13,16 @@ define([
     user_views,
     user_proxies) {
 
-
+    /**
+     * Chat Users Mediator
+     * @constructor
+     */
     var ChatUsersMediator = mediator.Mediator.extend({
         name: 'ChatUsersMediator',
-
+        
+        /**
+         * Notification handlers
+         */
         notifications: [
             [notifications.USER_CONNECTED_CHANGED, 'onConnectedChanged'],
             [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged'],
@@ -38,6 +44,7 @@ define([
             });
 
             this.views[userModel.id] = view;
+
             this.facade.trigger(notifications.VIEW_CREATED, {
                 type: 'ChatUserView',
                 view: view

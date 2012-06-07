@@ -4,6 +4,10 @@ define([
     'Backbone',
 ], function($, _, Backbone) {
 
+    /**
+     * View base class.
+     * @constructor
+     */
     var View = Backbone.View.extend({
 
         triggerEvent: function(eventName, args) {
