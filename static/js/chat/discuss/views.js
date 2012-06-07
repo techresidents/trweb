@@ -7,6 +7,9 @@ define([
     'text!chat/discuss/templates/discuss.html',
 ], function($, _, view, models, timer, discuss_template) {
 
+    /**
+     * Discuss View Events
+     */
     var EVENTS = {
         NEXT: 'discuss:Next',
         START: 'discuss:Start',

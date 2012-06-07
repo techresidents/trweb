@@ -5,6 +5,14 @@ define([
     'core/base',
 ], function($, _, Backbone, base) { 
 
+    /**
+     * Facde class.
+     * @constructor
+     * 
+     * There is only one instance of the facade per application.
+     * It is responsible for facilitating communication between
+     * the disparate parts of the system.
+     */
     var Facade = function(options) {
         this._events = _.extend({}, Backbone.Events);
         this._commands = {};

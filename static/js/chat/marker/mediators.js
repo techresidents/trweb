@@ -9,10 +9,20 @@ define([
     mediator,
     user_proxies) {
 
-
+    /**
+     * Chat Markers Mediator
+     * @constructor
+     * @param {Object} options
+     *
+     * Mediator is responsible for mapping system notifications to chat markers.
+     * This mediator does not manage a view.
+     */
     var ChatMarkersMediator = mediator.Mediator.extend({
         name: 'ChatMarkersMediator',
 
+        /**
+         * Notification handlers
+         */
         notifications: [
             [notifications.USER_CONNECTED_CHANGED, 'onConnectedChanged'],
             [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged'],

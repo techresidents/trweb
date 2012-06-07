@@ -5,6 +5,10 @@ define([
     'core/facade',
 ], function($, _, base, facade) { 
 
+    /**
+     * Mediator base class.
+     * @constructor
+     */
     var Mediator = function(options) {
         this.facade = facade.getInstance();
         this.options = options || {};
@@ -15,11 +19,21 @@ define([
     Mediator.extend = base.extend;
 
     _.extend(Mediator.prototype, {
-
+        
+        /**
+         * Overriden in subclass.
+         */
         name: null,
-
+        
+        /**
+         * Overriden in subclass.
+         */
         initialize: function() {},
 
+        /**
+         * Overriden in subclass.
+         * Notitifcation handler tuples, i.e. [ ['NOTIFCATION_NAME', 'handler'], ]
+         */
         notifications: [],
 
         registerNotifications: function(notifications) {

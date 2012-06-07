@@ -1,11 +1,15 @@
 define([
     'Underscore',
     'core/command',
+    'chat/message/messages',
+    'chat/message/models',
     'chat/whiteboard/models',
     'chat/whiteboard/proxies',
 ], function(
     _,
     command,
+    messages,
+    message_models,
     whiteboard_models,
     whiteboard_proxies) {
 
@@ -31,7 +35,22 @@ define([
                 var whiteboard = new whiteboard_models.Whiteboard({
                     name: whiteboardName
                 });
-                whiteboard.save();
+
+                var message = new message_models.ChatMessage({
+                    header: new messages.MessageHeader(),
+                    msg: new messages.WhiteboardCreateMessage(whiteboard.attributes),
+                });
+              
+                //TODO replace message.save() with async version below
+                message.save();
+                /*
+                message.save(null, {
+                    success: _.bind(this.onSuccess, this),
+                    error: _.bind(this.onError, this),
+                });
+                */
+                
+
                 ret = true;
             }
 
@@ -58,7 +77,21 @@ define([
 
                         // Don't allow users to delete the default whiteboard
                         if (whiteboard.name() != DEFAULT_WHITEBOARD_NAME){
-                            whiteboard.destroy();
+
+                            var message = new message_models.ChatMessage({
+                                header: new messages.MessageHeader(),
+                                msg: new messages.WhiteboardDeleteMessage(whiteboard.attributes),
+                            });
+
+                            //TODO replace message.save() with async version below
+                            message.save();
+                            /*
+                            message.save(null, {
+                                success: _.bind(this.onSuccess, this),
+                                error: _.bind(this.onError, this),
+                            });
+                            */
+
                             ret = true;
                             // TODO I suspect that the whiteboard is not getting deleted in the other particpant's view.  I don't see a DeleteWhiteboardMessage ever being created and sent.
                         }
@@ -83,8 +116,21 @@ define([
                     whiteboardId : options.whiteboardId,
                     pathId : 'reset'
                 });
-                // send message to server
-                whiteboardPath.destroy();
+
+                var message = new message_models.ChatMessage({
+                    header: new messages.MessageHeader(),
+                    msg: new messages.WhiteboardCreatePathMessage(whiteboardPath.attributes),
+                });
+
+                //TODO replace message.save() with async version below
+                message.save();
+                /*
+                message.save(null, {
+                    success: _.bind(this.onSuccess, this),
+                    error: _.bind(this.onError, this),
+                });
+                */
+
                 ret = true;
             }
 
@@ -109,9 +155,14 @@ define([
                     pathData : options.serializedPathData
                 });
 
-                whiteboardPath.save(null, {
+                var message = new message_models.ChatMessage({
+                    header: new messages.MessageHeader(),
+                    msg: new messages.WhiteboardCreatePathMessage(whiteboardPath.attributes),
+                });
+
+                message.save(null, {
                     success: _.bind(this.onSuccess, this),
-                    error: _.bind(this.onError, this)
+                    error: _.bind(this.onError, this),
                 });
             }
 
@@ -137,9 +188,15 @@ define([
                     // the whiteboard path model and the corresponding element share the same ID
                     var whiteboardPathModel = whiteboard.paths().get(options.pathId);
                     if (whiteboardPathModel){
-                        whiteboardPathModel.destroy(null, {
+
+                        var message = new message_models.ChatMessage({
+                            header: new messages.MessageHeader(),
+                            msg: new messages.WhiteboardDeletePathMessage(whiteboardPathModel.attributes),
+                        });
+
+                        message.save(null, {
                             success: _.bind(this.onSuccess, this),
-                            error: _.bind(this.onError, this)
+                            error: _.bind(this.onError, this),
                         });
                     }
                 }

@@ -2,28 +2,22 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'xd/backbone',
-    'chat/message/messages',
-    'chat/message/models',
 ], function(
     $,
     _,
-    Backbone,
-    xdBackbone,
-    messages,
-    message_models) {
+    Backbone) {
     
     /**
-     * Chat Marker model.
+     * Chat Marker base model.
      * @constructor
      * @param {Object} attributes Optional model attributes.
      * @param {Object} options Optional options
      */
-    var Marker = message_models.ChatMessageBaseModel.extend({
-            
+    var Marker = Backbone.Model.extend({
+
         idAttribute: 'markerId',
 
-        message: messages.MarkerCreateMessage,
+        localStorage: new Backbone.LocalStorage('Marker'),
 
         defaults: function() {
             return {
@@ -33,7 +27,6 @@ define([
         },
         
         initialize: function(attributes, options) {
-            this.reinitialize(attributes, options);
         },
 
         marker: function() {
@@ -44,7 +37,12 @@ define([
             this.set({marker: marker});
             return this;
         },
-
+        
+        /**
+         * Convert markers to JSON.
+         * This method should be compatible with all subclasses.
+         * @return {Object} - JSON representation.
+         */
         toJSON: function() {
             var result = {
                 markerId: this.attributes.markerId,
@@ -63,6 +61,12 @@ define([
     });
 
 
+    /**
+     * Chat Connected Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
     var ConnectedMarker = Marker.extend({
 
         defaults: function() {
@@ -75,7 +79,6 @@ define([
         },
 
         initialize: function(attributes, options) {
-            this.reinitialize(attributes, options);
         },
 
     }, {
@@ -83,6 +86,12 @@ define([
     });
 
 
+    /**
+     * Chat Publishing Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
     var PublishingMarker = Marker.extend({
 
         defaults: function() {
@@ -95,7 +104,6 @@ define([
         },
 
         initialize: function(attributes, options) {
-            this.reinitialize(attributes, options);
         },
 
     }, {
@@ -103,6 +111,12 @@ define([
     });
 
 
+    /**
+     * Chat Speaking Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
     var SpeakingMarker = Marker.extend({
 
         defaults: function() {
@@ -115,7 +129,6 @@ define([
         },
 
         initialize: function(attributes, options) {
-            this.reinitialize(attributes, options);
         },
 
     }, {
@@ -125,20 +138,20 @@ define([
 
     /**
      * Chat Marker collection.
+     * @constructor
      */
     var MarkerCollection = Backbone.Collection.extend({
 
+        /**
+         * Create concrete Marker based on options.type.
+         * @param {Object} attributes
+         * @param {Object} options
+         *   type Marker type (required)
+         * @return {Marker} subclass.
+         */
         model: function(attributes, options) {
-            var type;
             var result;
-
-            if(attributes && attributes.type) {
-                type = attributes.type;
-            } else if(options && options.msg && options.msg.marker) {
-                type = options.msg.marker.type;
-            }
-
-            switch(type) {
+            switch(options.type) {
                 case ConnectedMarker.TYPE: 
                     result = new ConnectedMarker(attributes, options);
                     break;
@@ -155,11 +168,8 @@ define([
 
             return result;
         },
-        
-        /**
-         * Cross domain compatible sync.
-         */
-        sync: xdBackbone.sync,
+
+        localStorage: new Backbone.LocalStorage('MarkerCollection'),
     });
 
     return {

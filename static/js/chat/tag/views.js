@@ -13,7 +13,9 @@ define([
     tagger_template,
     tagger_item_template) {
     
-    
+    /**
+     * Tag View Events
+     */
     var EVENTS = {
         ADD_TAG: 'tag:addTag',
         DELETE_TAG: 'tag:deleteTag',
@@ -41,7 +43,7 @@ define([
 
         
         render: function() {
-            var timestamp = this.model.header.timestamp_as_date();
+            var timestamp = this.model.timestamp_as_date();
             var user = this.users.get(this.model.userId());
             var state = _.extend(this.model.toJSON(), {
                 user: user.toJSON(),

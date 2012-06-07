@@ -5,11 +5,16 @@ define([
 ], function($, _, Backbone) {
     
     /**
-     * Discuss View Model.
+     * Discuss View VO Model.
      * @constructor
+     * @param {Object} attributes
+     * @param {Object} options
      */
     var DiscussValueObject = Backbone.Model.extend({
-
+        
+        /**
+         * Store model in local storage
+         */
         localStorage: new Backbone.LocalStorage("DiscussViewModel"),
 
         defaults: function() {

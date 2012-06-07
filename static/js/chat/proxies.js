@@ -31,6 +31,17 @@ define([
     whiteboard_proxies,
     resource_models) {
 
+    /**
+     * Chat Proxy
+     * @constructor
+     * @param {Object} options
+     *   {string} apiKey Tokbox api key
+     *   {string} sessionToken Tokbox session token
+     *   {string} userToken Tokbox user token
+     *
+     * This is the main proxy for the chat. 
+     * It's responsible for creating sub-proxies.
+     */
     var ChatProxy = proxy.Proxy.extend({
         
         name: function() {
@@ -92,6 +103,11 @@ define([
             this.facade.registerProxy(this.chatWhiteboardsProxy);
         },
         
+        /**
+         * Determine if chat is currently active.
+         * Note that the chat can be connected but not yet active.
+         * @return {boolean} true if active, false otherwise
+         */
         isActive: function() {
             if(this.agendaProxy.active()) {
                 return true;
@@ -99,7 +115,10 @@ define([
                 return false;
             }
         },
-
+        
+        /**
+         * Connect the chat.
+         */
         connect: function() {
             //connect the chat and start polling for messages.
             this.chatSessionProxy.connect();

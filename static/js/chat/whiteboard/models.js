@@ -2,22 +2,15 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'xd/xd',
-    'xd/backbone',
-    'chat/message/messages',
-    'chat/message/models',
-    'chat/user/models',
-], function($, _, Backbone, xd, xdBackbone, messages, message_models, user) {
+], function($, _, Backbone) {
  
     /**
      * Whiteboard model.
      */
-    var Whiteboard = message_models.ChatMessageBaseModel.extend({
+    var Whiteboard = Backbone.Model.extend({
 
         idAttribute: 'whiteboardId',
         
-        message: messages.WhiteboardCreateMessage,
-
         defaults: function() {
             return {
                 whiteboardId: null,
@@ -28,7 +21,6 @@ define([
         },
 
         initialize: function(attributes, options) {
-            this.reinitialize(attributes, options);
         },
 
         // TODO Need getter/setter for whiteboardId? paths?
@@ -85,21 +77,14 @@ define([
                 return Backbone.Collection.prototype.add.call(this, model, options);
             }
         },
-
-        /**
-         * Cross domain compatible sync.
-         */
-        sync: xdBackbone.sync,
     });
 
     /**
      * Whiteboard Path model
      */
-    var WhiteboardPath = message_models.ChatMessageBaseModel.extend({
+    var WhiteboardPath = Backbone.Model.extend({
 
         idAttribute: 'pathId',
-
-        message: messages.WhiteboardCreatePathMessage,
 
         defaults: function() {
             return {
@@ -111,7 +96,6 @@ define([
         },
 
         initialize: function(attributes, options) {
-            this.reinitialize(attributes, options);
         },
 
         // TODO Do we need getters/setters for whiteboardId and pathId?
@@ -146,11 +130,6 @@ define([
     var WhiteboardPathCollection = Backbone.Collection.extend({
 
         model: WhiteboardPath,
-
-        /**
-         * Cross domain compatible sync.
-         */
-        sync: xdBackbone.sync,
     });
 
 

@@ -36,8 +36,8 @@ define([
     });
 
     
-    /** Message base class.
-     *
+    /** 
+     * Message Base Class
      */
     var MessageBase = base.Base.extend({
 
@@ -86,6 +86,26 @@ define([
     var MinuteCreateMessage = MessageBase.extend({
 
         type: "MINUTE_CREATE",
+
+        defaults: {
+            minuteId: null,
+            topicId: null,
+            startTimestamp: null,
+            endTimestamp: null,
+        },
+
+        url: function() {
+            return "/minute";
+        }
+    });
+
+
+    /**
+     * Chat Minute update message.
+     */
+    var MinuteUpdateMessage = MessageBase.extend({
+
+        type: "MINUTE_UPDATE",
 
         defaults: {
             minuteId: null,
@@ -215,6 +235,7 @@ define([
     var messageTypeMap = {
         "MARKER_CREATE": MarkerCreateMessage,
         "MINUTE_CREATE": MinuteCreateMessage,
+        "MINUTE_UPDATE": MinuteUpdateMessage,
         "TAG_CREATE": TagCreateMessage,
         "TAG_DELETE": TagDeleteMessage,
         "WHITEBOARD_CREATE": WhiteboardCreateMessage,
@@ -245,6 +266,7 @@ define([
         MessageHeader: MessageHeader,
         MarkerCreateMessage: MarkerCreateMessage,
         MinuteCreateMessage: MinuteCreateMessage,
+        MinuteUpdateMessage: MinuteUpdateMessage,
         TagCreateMessage: TagCreateMessage,
         TagDeleteMessage: TagDeleteMessage,
         WhiteboardCreateMessage: WhiteboardCreateMessage,

@@ -3,6 +3,12 @@ define([
     'core/proxy',
 ], function(notifications, proxy) {
 
+    /**
+     * Topics Collection Proxy
+     * @constructor
+     * @param {Object} options
+     *   {TopicCollection} collection
+     */
     var TopicsProxy = proxy.CollectionProxy.extend({
 
         name: 'TopicsProxy',

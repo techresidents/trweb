@@ -2,23 +2,38 @@ define([
     'Underscore',
     'core/command',
     'chat/marker/models',
-    'chat/marker/proxies',
+    'chat/message/messages',
+    'chat/message/models',
 ], function(
     _,
     command,
     marker_models,
-    marker_proxies) {
-    
-    var CreateMarkerCommand = command.AsyncCommand.extend({
+    messages,
+    message_models) {
 
+    /**
+     * Create Marker Command
+     * @constructor
+     *
+     * Creates a chat marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
+    var CreateMarkerCommand = command.AsyncCommand.extend({
+        
+        //argument names for onSuccess and onError paramaters
         asyncCallbackArgs: ['model', 'response'],
 
         execute: function(options) {
-            var markersProxy = this.facade.getProxy(marker_proxies.ChatMarkersProxy.NAME);
 
-            var marker = new markersProxy.collection.model(options);
-
-            marker.save(null, {
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: options,
+                }),
+            });
+            
+            //send message
+            message.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this),
             });
@@ -28,19 +43,42 @@ define([
 
     });
 
+
+    /**
+     * Create Connected Marker Command
+     * @constructor
+     *
+     * Creates a chat connected marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
     var CreateConnectedMarkerCommand = command.AsyncCommand.extend({
 
+        //argument names for onSuccess and onError paramaters
         asyncCallbackArgs: ['model', 'response'],
-
+        
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {integer} userId 
+         *   {boolean} isConnected
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         */
         execute: function(options) {
-            var markersProxy = this.facade.getProxy(marker_proxies.ChatMarkersProxy.NAME);
-
-            var marker = new marker_models.ConnectedMarker({
-                userId: options.userId,
-                isConnected: options.isConnected,
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: {
+                        type: marker_models.ConnectedMarker.TYPE,
+                        userId: options.userId,
+                        isConnected: options.isConnected,
+                    }
+                }),
             });
-
-            marker.save(null, {
+            
+            //send message
+            message.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this),
             });
@@ -50,19 +88,42 @@ define([
 
     });
 
+
+    /**
+     * Create Publishing Marker Command
+     * @constructor
+     *
+     * Creates a chat publishing marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
     var CreatePublishingMarkerCommand = command.AsyncCommand.extend({
 
+        //argument names for onSuccess and onError paramaters
         asyncCallbackArgs: ['model', 'response'],
 
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {integer} userId 
+         *   {boolean} isPublishing
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         */
         execute: function(options) {
-            var markersProxy = this.facade.getProxy(marker_proxies.ChatMarkersProxy.NAME);
-
-            var marker = new marker_models.PublishingMarker({
-                userId: options.userId,
-                isPublishing: options.isPublishing,
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: {
+                        type: marker_models.PublishingMarker.TYPE,
+                        userId: options.userId,
+                        isPublishing: options.isPublishing,
+                    }
+                }),
             });
 
-            marker.save(null, {
+            //send message
+            message.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this),
             });
@@ -72,24 +133,44 @@ define([
 
     });
 
+
+    /**
+     * Create Speaking Marker Command
+     * @constructor
+     *
+     * Creates a chat speaking marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
     var CreateSpeakingMarkerCommand = command.AsyncCommand.extend({
 
+        //argument names for onSuccess and onError paramaters
         asyncCallbackArgs: ['model', 'response'],
 
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {integer} userId 
+         *   {boolean} isSpeaking
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         */
         execute: function(options) {
-            var markersProxy = this.facade.getProxy(marker_proxies.ChatMarkersProxy.NAME);
-
-            var marker = new marker_models.SpeakingMarker({
-                userId: options.userId,
-                isSpeaking: options.isSpeaking,
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: {
+                        type: marker_models.SpeakingMarker.TYPE,
+                        userId: options.userId,
+                        isSpeaking: options.isSpeaking,
+                    }
+                }),
             });
 
-            marker.save(null, {
+            message.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this),
             });
-
-            return true;
         },
 
     });
