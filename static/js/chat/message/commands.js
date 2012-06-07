@@ -1,4 +1,6 @@
 define([
+    'Underscore',
+    'core/base',
     'core/command',
     'chat/marker/proxies',
     'chat/minute/models',
@@ -8,6 +10,8 @@ define([
     'chat/whiteboard/models',
     'chat/whiteboard/proxies',
 ], function(
+    _,
+    base,
     command,
     marker_proxies,
     minute_models,
@@ -16,15 +20,36 @@ define([
     tag_proxies,
     whiteboard_models,
     whiteboard_proxies) {
+    
+    var _setModelValues = function(messageModel, model) {
+        attributes = {};
+        var msg = messageModel.msg();
+        var header = messageModel.header();
+
+        for(var key in base.getValue(model, 'defaults')) {
+            if(msg.hasOwnProperty(key)) {
+                attributes[key] = msg[key];
+            } else if(header.hasOwnProperty(key)) {
+                attributes[key] = header[key];
+            }
+        }
+        model.set(attributes);
+        return model;
+    };
 
     var MarkerCreateMessageCommand = command.Command.extend({
         execute: function(options) {
             var proxy = this.facade.getProxy(marker_proxies.ChatMarkersProxy.NAME);
             var model = options.model;
-            var marker = proxy.collection.model(null, {
-                header: model.header(),
-                msg: model.msg()
+
+            var attributes = _.extend({}, {
+                markerId: options.model.msg().markerId,
+            }, options.model.msg().marker);
+
+            var marker = new proxy.collection.model(attributes, {
+                type: options.model.msg().marker.type
             });
+            proxy.add(marker);
 
             return true;
         }
@@ -34,10 +59,8 @@ define([
         execute: function(options) {
             var proxy = this.facade.getProxy(minute_proxies.ChatMinutesProxy.NAME);
             var model = options.model;
-            var minute = new minute_models.Minute(null, {
-                header: model.header(),
-                msg: model.msg()
-            });
+            var minute = new minute_models.Minute();
+            _setModelValues(model, minute);
             proxy.add(minute);
 
             return true;
@@ -49,10 +72,7 @@ define([
             var proxy = this.facade.getProxy(minute_proxies.ChatMinutesProxy.NAME);
             var model = options.model;
             var minute = proxy.get(model.get('msg').minuteId);
-            minute.reinitialize(null, {
-                header: model.header(),
-                msg: model.msg()
-            });
+            _setModelValues(model, minute);
 
             return true;
         }
@@ -62,10 +82,8 @@ define([
         execute: function(options) {
             var proxy = this.facade.getProxy(tag_proxies.ChatTagsProxy.NAME);
             var model = options.model;
-            var tag = new tag_models.Tag(null, {
-                header: model.header(),
-                msg: model.msg()
-            });
+            var tag = new tag_models.Tag();
+            _setModelValues(model, tag);
             proxy.add(tag);
 
             return true;
@@ -89,10 +107,8 @@ define([
         execute: function(options) {
             var proxy = this.facade.getProxy(whiteboard_proxies.ChatWhiteboardsProxy.NAME);
             var model = options.model;
-            var whiteboard = new whiteboard_models.Whiteboard(null, {
-                header: model.header(),
-                msg: model.msg()
-            });
+            var whiteboard = new whiteboard_models.Whiteboard();
+            _setModelValues(model, whiteboard);
             proxy.add(whiteboard);
 
             return true;
@@ -116,10 +132,8 @@ define([
         execute: function(options) {
             var proxy = this.facade.getProxy(whiteboard_proxies.ChatWhiteboardsProxy.NAME);
             var model = options.model;
-            var whiteboardPath = new whiteboard_models.WhiteboardPath(null, {
-                header: model.header(),
-                msg: model.msg()
-            });
+            var whiteboardPath = new whiteboard_models.WhiteboardPath();
+            _setModelValues(model, whiteboardPath);
 
             var whiteboard = proxy.get(model.get('msg').whiteboardId);
             if(whiteboard) {

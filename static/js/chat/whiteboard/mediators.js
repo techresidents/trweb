@@ -179,7 +179,10 @@ define([
                 whiteboardId: eventBody.whiteboardId,
                 serializedPathData: eventBody.serializedPathData,
                 onSuccess: function(options, ret) {
-                    eventBody.onSuccess.call(eventBody.context, eventBody.elementId, ret.result.model.id);
+                    eventBody.onSuccess.call(
+                        eventBody.context,
+                        eventBody.elementId,
+                        ret.result.model.msg().pathId);
                 }
             });
 

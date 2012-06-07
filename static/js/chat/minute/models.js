@@ -5,7 +5,8 @@ define([
     'xd/xd',
     'xd/backbone',
     'chat/message/messages',
-], function($, _, Backbone, xd, xdBackbone, messages) {
+    'chat/message/models',
+], function($, _, Backbone, xd, xdBackbone, messages, message_models) {
     
     /**
      * Chat Minute model.
@@ -13,9 +14,11 @@ define([
      * @param {Object} attributes Optional model attributes
      * @param {Object} options Optional options
      */
-    var Minute = Backbone.Model.extend({
+    var Minute = message_models.ChatMessageBaseModel.extend({
             
         idAttribute: 'minuteId',
+
+        message: messages.MinuteCreateMessage,
 
         defaults: function() {
             return {
@@ -31,30 +34,6 @@ define([
             this.reinitialize(attributes, options);
         },
 
-
-        reinitialize: function(attributes, options) {
-
-            var optionsProvided = false;
-
-            if(options && options.header && options.msg) {
-                this.header = options.header;
-                this.msg = options.msg;
-                optionsProvided = true;
-            } else {
-                this.header = new messages.MessageHeader();
-                this.msg = new messages.MinuteCreateMessage();
-            }
-
-            if(optionsProvided) {
-                this.set({
-                    minuteId: this.msg.minuteId,
-                    userId: this.header.userId,
-                    topicId: this.msg.topicId,
-                    startTimestamp: this.msg.startTimestamp,
-                    endTimestamp: this.msg.endTimestamp,
-                });
-            }
-        },
 
         userId: function() {
             return this.get('userId');
@@ -91,29 +70,8 @@ define([
             this.set({endTimestamp: endTimestamp});
             return this;
         },
-
-        urlRoot: function() {
-            return this.header.url() + this.msg.url();
-        },
-
-        /**
-         * Cross domain compatible sync function.
-         */
-        sync: xdBackbone.sync,
-
-        parse: function(response) {
-            this.header = new messages.MessageHeader(response.header);
-            this.msg = new messages.MinuteCreateMessage(response.msg);
-
-            return {
-                minuteId: response.msg.minuteId,
-                userId: response.header.userId,
-                topicId: response.msg.topicId,
-                startTimestamp: response.msg.startTimestamp,
-                endTimestamp: response.msg.endTimestamp,
-            };
-        },
     });
+
 
     /**
      * Chat Minute collection.
