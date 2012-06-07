@@ -40,8 +40,8 @@ define([
                 whiteboards: this.whiteboardsProxy.collection,
                 viewModel: new whiteboard_models.WhiteboardValueObject({
                     selectedWhiteboardId: null,
-                    selectedTool: null,
-                    selectedColor: null // TODO set appropriate defaults if possible. Need to coordinate with the WBView.
+                    selectedTool: whiteboard_models.WhiteboardValueObject.TOOLS.PEN,
+                    selectedColor: whiteboard_models.WhiteboardValueObject.COLORS.BLUE
                 })
             });
 
@@ -74,7 +74,6 @@ define([
                     name: 'Default Whiteboard'
                 });
             }
-
 
             // send out notification that view has been created
             this.facade.trigger(notifications.VIEW_CREATED, {

@@ -164,9 +164,31 @@ define([
         defaults: function() {
             return {
                 selectedWhiteboardId: null,
-                selectedTool: null,        // refs tool name string
-                selectedColor: null,       // refs color hex value string
+                selectedTool: WhiteboardValueObject.TOOLS.PEN,     // refs tool name string
+                selectedColor: WhiteboardValueObject.COLORS.BLUE   // refs color name string
             };
+        },
+
+        validate: function(attrs) {
+
+            var tool = attrs.selectedTool;
+            if (tool != WhiteboardValueObject.TOOLS.PEN &&
+                tool != WhiteboardValueObject.TOOLS.ARROW &&
+                tool != WhiteboardValueObject.TOOLS.RECTANGLE &&
+                tool != WhiteboardValueObject.TOOLS.CIRCLE &&
+                tool != WhiteboardValueObject.TOOLS.ERASE)
+            {
+                return 'WhiteboardValueObject: Invalid tool value';
+            }
+
+            var color = attrs.selectedColor;
+            if (color != WhiteboardValueObject.COLORS.BLACK &&
+                color != WhiteboardValueObject.COLORS.BLUE &&
+                color != WhiteboardValueObject.COLORS.GREEN &&
+                color != WhiteboardValueObject.COLORS.RED)
+            {
+                return 'WhiteboardValueObject: Invalid color value';
+            }
         },
 
         initialize: function(attributes, options) {
@@ -201,7 +223,23 @@ define([
         setSelectedColor: function(colorValue) {
             this.set({selectedColor: colorValue});
             return this;
+        }
+    }, {
+        // class properties
+        COLORS: {
+            BLACK: 'BLACK',
+            BLUE: 'BLUE',
+            GREEN: 'GREEN',
+            RED: 'RED'
         },
+
+        TOOLS: {
+            PEN: 'PEN',
+            ARROW: 'ARROW',
+            RECTANGLE: 'RECTANGLE',
+            CIRCLE: 'CIRCLE',
+            ERASE: 'ERASE'
+        }
     });
 
 

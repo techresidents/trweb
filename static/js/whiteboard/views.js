@@ -64,12 +64,26 @@ define([
             return this;
         },
 
+        /**
+         * Set the selected whiteboard tool.
+         *
+         * @param tool The newly selected tool.
+         */
         selectTool: function(tool) {
-            this.tool = tool;
+            this.tool = tool
         },
 
+        /**
+         * Set the selected color
+         * @param color color as hex string e.g. '#00FF00'
+         */
         selectColor: function(color) {
             this.color = color;
+
+            // update the currently selected tool color as well
+            var attrs = this.tool.optionalAttributes;
+            attrs['stroke'] = color;
+            this.tool.optionalAttributes = attrs;
         },
 
         clear: function() {
@@ -191,7 +205,6 @@ define([
 
 
 
-
     // TODO use inheritance here. Create tool prototype. Arrow should inherit from Pen.
     var Arrow = function(paper, optionalAttributes) {
         this.paper = paper;
@@ -227,7 +240,6 @@ define([
 
 
 
-
     var Rectangle = function(paper, optionalAttributes) {
         this.paper = paper;
         this.optionalAttributes = optionalAttributes;
@@ -236,7 +248,6 @@ define([
 
     Rectangle.prototype.start = function(x, y) {
         this.rect = this.paper.rect(x, y, 0, 0, 5);
-        this.rect.attr('stroke', this.color);
         this.originX = x;
         this.originY = y;
 
@@ -291,9 +302,6 @@ define([
 
 
 
-
-
-
     var Circle = function(paper, optionalAttributes) {
         this.paper = paper;
         this.optionalAttributes = optionalAttributes;
@@ -327,8 +335,6 @@ define([
 
         this.circle.attr('r', radius);
     }
-
-
 
 
     var Erase = function(paper, optionalAttributes) {
@@ -365,6 +371,7 @@ define([
         // override attributes with user defined attributes, if specified
         if (this.optionalAttributes){
             this.path.attr(this.optionalAttributes);
+            this.path.attr('stroke', '#F5F5F5'); // disallow changing this color
         }
     }
 
@@ -382,7 +389,6 @@ define([
         this.rect.attr('x', x-this.centerOffset);
         this.rect.attr('y', y-this.centerOffset);
     }
-
 
 
 
@@ -421,7 +427,6 @@ define([
     Text.prototype.move = function(x, y) {
         // no-op
     }
-
 
 
 
