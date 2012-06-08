@@ -25,7 +25,7 @@ define([
 
         // specify which notifications we want to listen to
         notifications: [
-            [notifications.WHITEBOARD_ADDED, 'onWhiteboardAdded'],
+            [notifications.WHITEBOARD_ADDED, 'onWhiteboardAdded']
         ],
 
         initialize: function(options) {

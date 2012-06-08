@@ -618,8 +618,12 @@ define([
 
             if (model.id in this.whiteboardViews)
             {
-                // Hide and delete the currently selected whiteboard
-                this.rootWhiteboardNode.children().toggle(false);
+                // Hide the whiteboard if it's currently displayed
+                if (this.viewModel.getSelectedWhiteboardId() == model.id) {
+                    this.rootWhiteboardNode.children().toggle(false);
+                }
+
+                // Delete the whiteboard view
                 delete this.whiteboardViews[model.id];
 
                 // Select the default whiteboard
@@ -632,6 +636,7 @@ define([
                         });
                     }
                 }
+
             }
         },
 

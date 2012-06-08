@@ -13,8 +13,11 @@ define([
     whiteboard_models,
     whiteboard_proxies) {
 
-    // TODO convert to async commands
-    var CreateWhiteboardCommand = command.Command.extend({
+
+    var CreateWhiteboardCommand = command.AsyncCommand.extend({
+
+        asyncCallbackArgs: ['model', 'response'],
+
         execute: function(options) {
 
             var MAX_WHITEBOARDS = 10;
@@ -26,40 +29,40 @@ define([
             var whiteboardName = options.name;
             if (whiteboardName == null ||
                 whiteboardName == ''   ||
-                whiteboardName.length == 0) {
-                    whiteboardName = 'Whiteboard #' + parseInt(whiteboardCollectionProxy.collection.length + 1);
+                whiteboardName.length == 0)
+            {
+                // provide a default name if the provided name is invalid
+                whiteboardName = 'Whiteboard #' + parseInt(whiteboardCollectionProxy.collection.length + 1);
             }
 
             // create a new whiteboard
             if (whiteboardCollectionProxy.collection.length < MAX_WHITEBOARDS){
+
                 var whiteboard = new whiteboard_models.Whiteboard({
                     name: whiteboardName
                 });
 
                 var message = new message_models.ChatMessage({
                     header: new messages.MessageHeader(),
-                    msg: new messages.WhiteboardCreateMessage(whiteboard.attributes),
+                    msg: new messages.WhiteboardCreateMessage(whiteboard.attributes)
                 });
-              
-                //TODO replace message.save() with async version below
-                message.save();
-                /*
+
                 message.save(null, {
                     success: _.bind(this.onSuccess, this),
                     error: _.bind(this.onError, this),
                 });
-                */
-                
 
                 ret = true;
             }
 
-            // TODO Handle returning false if MAX_WHITEBOARDS has been reached.
             return ret;
         }
     });
 
-    var DeleteWhiteboardCommand = command.Command.extend({
+    var DeleteWhiteboardCommand = command.AsyncCommand.extend({
+
+        asyncCallbackArgs: ['model', 'response'],
+
         execute: function(options) {
 
             var MIN_WHITEBOARDS = 1;
@@ -72,34 +75,29 @@ define([
             if (whiteboardCollectionProxy.collection.length > MIN_WHITEBOARDS) {
 
                 if (options.whiteboardId){
+
                     var whiteboard = whiteboardCollectionProxy.collection.get(options.whiteboardId);
                     if (whiteboard){
 
                         // Don't allow users to delete the default whiteboard
-                        if (whiteboard.name() != DEFAULT_WHITEBOARD_NAME){
+                        if (whiteboard.name() != DEFAULT_WHITEBOARD_NAME) {
 
                             var message = new message_models.ChatMessage({
                                 header: new messages.MessageHeader(),
-                                msg: new messages.WhiteboardDeleteMessage(whiteboard.attributes),
+                                msg: new messages.WhiteboardDeleteMessage(whiteboard.attributes)
                             });
 
-                            //TODO replace message.save() with async version below
-                            message.save();
-                            /*
                             message.save(null, {
                                 success: _.bind(this.onSuccess, this),
                                 error: _.bind(this.onError, this),
                             });
-                            */
 
                             ret = true;
-                            // TODO I suspect that the whiteboard is not getting deleted in the other particpant's view.  I don't see a DeleteWhiteboardMessage ever being created and sent.
                         }
                     }
                 }
             }
 
-            // TODO handle when false is returned in the mediator
             return ret;
         }
     });
@@ -202,7 +200,6 @@ define([
                 }
             }
 
-            // TODO handle when false is returned in the mediator
             return ret;
         }
     });
