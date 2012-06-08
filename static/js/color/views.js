@@ -46,7 +46,6 @@ define([
             // read the view model to determine which color to show as currently selected
             this.onColorChange();
 
-            // TODO lost my tooltip. Have to provide a function to specify/register a tooltip.
             return this;
         },
 

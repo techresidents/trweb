@@ -211,8 +211,8 @@ define([
 
         /**
          * Define a callback to be invoked when a WhiteboardPath
-         * instance is successfully created.  This wil only be called
-         * locally for the user that was resonsible for creating the new
+         * instance is successfully created.  This will only be called
+         * locally for the user that was responsible for creating the new
          * whiteboard path.
          *
          * @param elementId the Raphael element ID that the user created
@@ -425,7 +425,7 @@ define([
             this.wbCollection.bind("remove", this.refreshWhiteboardList, this);
 
             // setup viewModel listeners
-            this.viewModel.on('change:selectedWhiteboardId', this.onWhiteboardSelected, this);
+            this.viewModel.on('change:selectedWhiteboardId', this.onSelectedWhiteboardChange, this);
         },
 
         /**
@@ -433,7 +433,10 @@ define([
          */
         render: function() {
             this.$el.html(this.template(this.jsonWhiteboardList));
-            this.onWhiteboardSelected();
+
+            // ensure the displayed view matches the underlying data model
+            this.onSelectedWhiteboardChange();
+
             return this;
         },
 
@@ -458,9 +461,10 @@ define([
         },
 
         /**
-         * Ensure that this controls view matches the viewModel.
+         * This method is invoked when the underlying viewModel data changes.
+         * It ensures that this controls view matches the viewModel at all times.
          */
-        onWhiteboardSelected: function() {
+        onSelectedWhiteboardChange: function() {
             this.$(this.whiteboardSelector).val(this.viewModel.getSelectedWhiteboardId());
         },
 
@@ -523,6 +527,7 @@ define([
 
         // Set UI references
         containerSelector: '#whiteboard-container',
+        whiteboardRoot: '#whiteboard-wrapper',
         controlsSelector: '#whiteboard-controls',
         toolsSelector: '#whiteboard-tools',
 
@@ -539,7 +544,7 @@ define([
             this.viewModel.on('change:selectedWhiteboardId', this.onWhiteboardSelected, this);
 
             this.wbCollection = this.options.whiteboards;
-            //this.wbCollection.bind("reset", this.render, this); TODO
+            this.wbCollection.bind("reset", this.render, this);
             this.wbCollection.bind("add", this.onWhiteboardAdded, this);
             this.wbCollection.bind("remove", this.onWhiteboardRemoved, this);
 
@@ -569,9 +574,7 @@ define([
             new ChatWhiteboardContainerView({
                 el: this.$(this.containerSelector)
             }).render();
-
-            // TODO
-            this.rootWhiteboardNode = this.$('#whiteboard-wrapper');
+            this.rootWhiteboardNode = this.$(this.whiteboardRoot);
 
             return this;
         },

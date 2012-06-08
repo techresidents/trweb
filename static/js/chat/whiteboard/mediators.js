@@ -151,7 +151,7 @@ define([
          * Handle an event to clear the whiteboard.
          * Trigger a notification to clear the specified whiteboard.
          * @param event The DOM event
-         * @param eventBody Expecting the attribute 'whiteboardId' to be specified
+         * @param eventBody Expecting the attribute 'whiteboardId' and 'pathId' to be specified
          */
         // TODO add clear functionality to architecture
         onClearWhiteboard: function(event, eventBody) {
@@ -168,10 +168,11 @@ define([
          * @param event The DOM event
          * @param eventBody Expecting the attributes:
          *        'whiteboardId': the whiteboardID that the element was added to,
-         *        'elementId': the newly drawn element's ID,
          *        'serializedPathData': the serialized element,
          *        'onSuccess': callback to invoke upon successful creation of WhiteboardPath model
          *                     which represents the newly drawn element.
+         *        'context': the context for the success callback to run in
+         *        'elementId': the newly drawn element's ID,
          */
         onCreateWhiteboardPath: function(event, eventBody) {
             this.facade.trigger(notifications.WHITEBOARD_PATH_CREATE, {

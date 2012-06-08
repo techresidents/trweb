@@ -391,68 +391,6 @@ define([
     }
 
 
-
-    // TODO unfinished. Come back to this later.
-    var Text = function(paper) {
-        this.paper = paper;
-        this.text = null;
-    }
-
-    Text.prototype.start = function(x, y) {
-
-        // show cursor for text input
-        // append to x y coordinate
-        // on enter, capture text, remove div
-        // send text to paper
-
-
-
-        var textInput = new ChatWhiteboardTextInputView();
-        console.log(textInput.render().el);
-        //$(textInput.render().el).insertAfter()
-        $('#whiteboard-wrapper').append(textInput.render().el);
-        //var offsetX = $('whiteboard-wrapper').offset().left;
-        //var offsetY = $('whiteboard-wrapper').offset().top;
-        $('.whiteboard-text-input').css('top', y + 'px');
-        $('.whiteboard-text-input').css('left', x + 'px');
-
-        this.text = this.paper.text(x, y, 'test');
-        //this.text.attr('font-size', 24);
-    }
-
-    Text.prototype.stop = function(x, y) {
-        return this.text;
-    }
-
-    Text.prototype.move = function(x, y) {
-        // no-op
-    }
-
-
-
-    /**
-     * Whiteboard text input layout.
-     * @constructor
-     */
-    var ChatWhiteboardTextInputView = Backbone.View.extend({
-
-        templateSelector: '#whiteboard-text-input-template',
-
-        initialize: function() {
-            this.template = _.template($(this.templateSelector).html());
-        },
-
-        render: function() {
-            this.$el.html(this.template());
-            return this;
-        },
-
-    });
-
-
-
-
-
     return {
         WhiteboardView: WhiteboardView,
         WhiteboardToolView: WhiteboardToolView,
@@ -460,7 +398,6 @@ define([
         Arrow: Arrow,
         Rectangle: Rectangle,
         Circle: Circle,
-        Text: Text,
         Erase: Erase
     }
 });
