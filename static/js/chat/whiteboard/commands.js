@@ -102,8 +102,8 @@ define([
         }
     });
 
-    // TODO This command hasn't been setup throughout the rest of the architecture.
-    var ClearWhiteboardCommand = command.Command.extend({
+    // TODO Setup throughout the rest of the architecture.
+    var ClearWhiteboardCommand = command.AsyncCommand.extend({
 
         execute: function(options) {
 
@@ -120,19 +120,15 @@ define([
                     msg: new messages.WhiteboardDeletePathMessage(whiteboardPath.attributes),
                 });
 
-                //TODO replace message.save() with async version below
-                message.save();
-                /*
+
                 message.save(null, {
                     success: _.bind(this.onSuccess, this),
-                    error: _.bind(this.onError, this),
+                    error: _.bind(this.onError, this)
                 });
-                */
 
                 ret = true;
             }
 
-            // TODO handle when false is returned in the mediator
             return ret;
         }
     });

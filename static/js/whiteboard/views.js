@@ -20,6 +20,7 @@ define([
      *   paperHeight: logical (scrollable) whiteboard height
      */
     var WhiteboardView = view.View.extend({
+
         tagName: 'div',
         
         events: {
@@ -69,7 +70,7 @@ define([
         },
 
         /**
-         * Set the selected whiteboard tool.
+         * Set the selected whiteboard tool object.
          *
          * @param tool The newly selected tool.
          */
@@ -78,7 +79,7 @@ define([
         },
 
         /**
-         * Set the selected color
+         * Set the color to be used to draw whiteboard elements
          * @param color color as hex string e.g. '#00FF00'
          */
         selectColor: function(color) {
@@ -90,14 +91,23 @@ define([
             this.tool.optionalAttributes = attrs;
         },
 
+        /**
+         * Clear the paper and remove all elements.
+         */
         clear: function() {
             this.paper.clear();
         },
 
+        /**
+         * Calculate the X,Y position of an event relative to the document.
+         * This function takes into account scroll bars.
+         * @param event
+         * @return {Object} The adjusted x,y components of the event
+         */
         adjustedCoordinates: function(event) {
-            //TODO deal with clientX/ClientY if pageX/pageY are unaavailable.
-            //This will requuire adjusting for the page scrollbar position.
-            
+
+            // jQuery does work to normalize the pageX and pageY properties
+            // to make them available in all browsers.
             var offset = $(this.el).offset();
             return {
                 x: event.pageX - offset.left + $(this.el).scrollLeft(),
@@ -105,13 +115,24 @@ define([
             };
         },
 
+        /**
+         * Invoked on a mousedown event.
+         * Start capturing data when mouse is depressed.
+         * @param event
+         */
         mousedown: function(event) {
             var coordinates = this.adjustedCoordinates(event);
             this.tool.start(coordinates.x, coordinates.y);
             this.capturing = true;
         },
 
+        /**
+         * Invoked on a mouse move event.
+         * Capture drawn elements.
+         * @param event
+         */
         mousemove: function(event) {
+
             if(!this.capturing) {
                 return;
             }
@@ -120,6 +141,11 @@ define([
             this.tool.move(coordinates.x, coordinates.y);
         },
 
+        /**
+         * Invoked on a mouseup event.
+         * Stop capturing data.
+         * @param event
+         */
         mouseup: function(event) {
             var coordinates = this.adjustedCoordinates(event);
             var element = this.tool.stop(coordinates.x, coordinates.y);
@@ -137,7 +163,7 @@ define([
         // To be overridden by Views/Controllers to listen for this event
         onElementRemoved: function(element){
 
-        },
+        }
 
     });
 
