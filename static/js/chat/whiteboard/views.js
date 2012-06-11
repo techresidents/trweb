@@ -594,9 +594,9 @@ define([
                     model : model,
                     viewModel: this.viewModel,
                     width: 785,       // width of whiteboard. matches well size.
-                    paperWidth: 1500, // scrollable width
+                    paperWidth: 785,  // scrollable width
                     height: 600,      // height of whiteboard
-                    paperHeight: 800 // scrollable height
+                    paperHeight: 600  // scrollable height
                 });
 
                 // add the new view to the list of whiteboard views
