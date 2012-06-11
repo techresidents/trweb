@@ -3,8 +3,9 @@ define([
     'Underscore',
     'Backbone',
     'raphael',
+    'core/base',
     'core/view',
-], function($, _, Backbone, Raphael, view) {
+], function($, _, Backbone, Raphael, base, view) {
 
 
     /**
@@ -15,6 +16,8 @@ define([
      * @param {Object} options
      *   width: whiteboard width
      *   height: whiteboard height
+     *   paperWidth: logical (scrollable) whiteboard width
+     *   paperHeight: logical (scrollable) whiteboard height
      */
     var WhiteboardView = view.View.extend({
         tagName: 'div',
@@ -26,13 +29,13 @@ define([
         },
 
         initialize: function() {
+
             this.capturing = false;
 
             //set width and height
             if(this.options.width) {
                 $(this.el).width(this.options.width);
             }
-            
             if(this.options.height) {
                 $(this.el).height(this.options.height);
             }
@@ -44,7 +47,6 @@ define([
             
             // if paper size size is larger than element size, set overflow for scrolling
             if(paperWidth > $(this.el).width() || paperHeight > $(this.el).height()) {
-                var paperWidth = this.options.paperWidth || $(this.el).width();
                 $(this.el).css('overflow', 'auto');
             }
             
@@ -53,8 +55,10 @@ define([
                 paperWidth,
                 paperHeight);
 
+            // init whiteboard marker color
             this.color = '#0000FF';
 
+            // init whiteboard tool selection
             var toolAttributes = {'stroke': this.color};
             this.tool = new Pen(this.paper, toolAttributes);
 
@@ -174,7 +178,29 @@ define([
     });
 
 
+    /**
+     * Whiteboard Tool View Base Class
+     */
+    var ToolViewBase = base.Base.extend({
 
+        initialize: function(attributes) {
+            this.paper = null;
+            this.element = null;
+            this.optionalAttributes = null;
+            _.extend(this, attributes);
+        },
+
+        start: function(x, y) {},
+
+        stop: function(x, y) {},
+
+        move: function(x, y) {}
+    });
+
+    // TODO in progress...
+    var Pen2 = ToolViewBase.extend({
+
+    });
 
     var Pen = function(paper, optionalAttributes) {
         this.paper = paper;

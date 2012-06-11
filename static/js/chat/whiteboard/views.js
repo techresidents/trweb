@@ -56,7 +56,7 @@ define([
 
         initialize: function() {
 
-            whiteboard_views.WhiteboardView.prototype.initialize.call(this);
+            whiteboard_views.WhiteboardView.prototype.initialize.call(this, this.options);
             this.undoCache = [ ];
             this.serializer = new serialize.Serializer();
             this.whiteboardModel = this.options.model;
@@ -592,7 +592,11 @@ define([
                 // create a new whiteboard view
                 var view = new ChatWhiteboardView({
                     model : model,
-                    viewModel: this.viewModel
+                    viewModel: this.viewModel,
+                    width: 785,       // width of whiteboard. matches well size.
+                    paperWidth: 1500, // scrollable width
+                    height: 600,      // height of whiteboard
+                    paperHeight: 800 // scrollable height
                 });
 
                 // add the new view to the list of whiteboard views
