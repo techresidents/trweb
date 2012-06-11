@@ -151,14 +151,14 @@ define([
          * Handle an event to clear the whiteboard.
          * Trigger a notification to clear the specified whiteboard.
          * @param event The DOM event
-         * @param eventBody Expecting the attribute 'whiteboardId' and 'pathId' to be specified
+         * @param eventBody Expecting the attribute 'whiteboardId' to be specified
          */
-        // TODO add clear functionality to architecture
         onClearWhiteboard: function(event, eventBody) {
             if (eventBody.whiteboardId) {
-                this.facade.trigger(notifications.WHITEBOARD_PATH_CREATE, {
+                this.facade.trigger(notifications.WHITEBOARD_PATH_DELETE, {
                     whiteboardId: eventBody.whiteboardId,
-                    pathId: eventBody.pathId
+                    pathId: 'reset' // Pass a hard-coded string to indicate the board should be cleared
+                                    // instead of deleting a single path.
                 });
             }
         },
