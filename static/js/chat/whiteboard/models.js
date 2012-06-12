@@ -23,8 +23,6 @@ define([
         initialize: function(attributes, options) {
         },
 
-        // TODO Need getter/setter for whiteboardId? paths?
-
         userId: function() {
             return this.get('userId');
         },
@@ -97,8 +95,6 @@ define([
 
         initialize: function(attributes, options) {
         },
-
-        // TODO Do we need getters/setters for whiteboardId and pathId?
 
         userId: function() {
             return this.get('userId');

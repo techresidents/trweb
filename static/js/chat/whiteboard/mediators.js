@@ -25,7 +25,7 @@ define([
 
         // specify which notifications we want to listen to
         notifications: [
-            [notifications.WHITEBOARD_ADDED, 'onWhiteboardAdded'],
+            [notifications.WHITEBOARD_ADDED, 'onWhiteboardAdded']
         ],
 
         initialize: function(options) {
@@ -153,12 +153,12 @@ define([
          * @param event The DOM event
          * @param eventBody Expecting the attribute 'whiteboardId' to be specified
          */
-        // TODO add clear functionality to architecture
         onClearWhiteboard: function(event, eventBody) {
             if (eventBody.whiteboardId) {
-                this.facade.trigger(notifications.WHITEBOARD_PATH_CREATE, {
+                this.facade.trigger(notifications.WHITEBOARD_PATH_DELETE, {
                     whiteboardId: eventBody.whiteboardId,
-                    pathId: eventBody.pathId
+                    pathId: 'reset' // Pass a hard-coded string to indicate the board should be cleared
+                                    // instead of deleting a single path.
                 });
             }
         },
@@ -168,10 +168,11 @@ define([
          * @param event The DOM event
          * @param eventBody Expecting the attributes:
          *        'whiteboardId': the whiteboardID that the element was added to,
-         *        'elementId': the newly drawn element's ID,
          *        'serializedPathData': the serialized element,
          *        'onSuccess': callback to invoke upon successful creation of WhiteboardPath model
          *                     which represents the newly drawn element.
+         *        'context': the context for the success callback to run in
+         *        'elementId': the newly drawn element's ID,
          */
         onCreateWhiteboardPath: function(event, eventBody) {
             this.facade.trigger(notifications.WHITEBOARD_PATH_CREATE, {

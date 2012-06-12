@@ -3,8 +3,9 @@ define([
     'Underscore',
     'Backbone',
     'raphael',
+    'core/base',
     'core/view',
-], function($, _, Backbone, Raphael, view) {
+], function($, _, Backbone, Raphael, base, view) {
 
 
     /**
@@ -15,8 +16,11 @@ define([
      * @param {Object} options
      *   width: whiteboard width
      *   height: whiteboard height
+     *   paperWidth: logical (scrollable) whiteboard width
+     *   paperHeight: logical (scrollable) whiteboard height
      */
     var WhiteboardView = view.View.extend({
+
         tagName: 'div',
         
         events: {
@@ -26,14 +30,14 @@ define([
         },
 
         initialize: function() {
+
             this.capturing = false;
 
             //set width and height
-            if(this.options.width) {
+            if (this.options.width) {
                 $(this.el).width(this.options.width);
             }
-            
-            if(this.options.height) {
+            if (this.options.height) {
                 $(this.el).height(this.options.height);
             }
             
@@ -44,7 +48,6 @@ define([
             
             // if paper size size is larger than element size, set overflow for scrolling
             if(paperWidth > $(this.el).width() || paperHeight > $(this.el).height()) {
-                var paperWidth = this.options.paperWidth || $(this.el).width();
                 $(this.el).css('overflow', 'auto');
             }
             
@@ -53,8 +56,10 @@ define([
                 paperWidth,
                 paperHeight);
 
+            // init whiteboard marker color
             this.color = '#0000FF';
 
+            // init whiteboard tool selection
             var toolAttributes = {'stroke': this.color};
             this.tool = new Pen(this.paper, toolAttributes);
 
@@ -65,7 +70,7 @@ define([
         },
 
         /**
-         * Set the selected whiteboard tool.
+         * Set the selected whiteboard tool object.
          *
          * @param tool The newly selected tool.
          */
@@ -74,7 +79,7 @@ define([
         },
 
         /**
-         * Set the selected color
+         * Set the color to be used to draw whiteboard elements
          * @param color color as hex string e.g. '#00FF00'
          */
         selectColor: function(color) {
@@ -86,14 +91,23 @@ define([
             this.tool.optionalAttributes = attrs;
         },
 
+        /**
+         * Clear the paper and remove all elements.
+         */
         clear: function() {
             this.paper.clear();
         },
 
+        /**
+         * Calculate the X,Y position of an event relative to the document.
+         * This function takes into account scroll bars.
+         * @param event
+         * @return {Object} The adjusted x,y components of the event
+         */
         adjustedCoordinates: function(event) {
-            //TODO deal with clientX/ClientY if pageX/pageY are unaavailable.
-            //This will requuire adjusting for the page scrollbar position.
-            
+
+            // jQuery does work to normalize the pageX and pageY properties
+            // to make them available in all browsers.
             var offset = $(this.el).offset();
             return {
                 x: event.pageX - offset.left + $(this.el).scrollLeft(),
@@ -101,13 +115,24 @@ define([
             };
         },
 
+        /**
+         * Invoked on a mousedown event.
+         * Start capturing data when mouse is depressed.
+         * @param event
+         */
         mousedown: function(event) {
             var coordinates = this.adjustedCoordinates(event);
             this.tool.start(coordinates.x, coordinates.y);
             this.capturing = true;
         },
 
+        /**
+         * Invoked on a mouse move event.
+         * Capture drawn elements.
+         * @param event
+         */
         mousemove: function(event) {
+
             if(!this.capturing) {
                 return;
             }
@@ -116,6 +141,11 @@ define([
             this.tool.move(coordinates.x, coordinates.y);
         },
 
+        /**
+         * Invoked on a mouseup event.
+         * Stop capturing data.
+         * @param event
+         */
         mouseup: function(event) {
             var coordinates = this.adjustedCoordinates(event);
             var element = this.tool.stop(coordinates.x, coordinates.y);
@@ -133,7 +163,7 @@ define([
         // To be overridden by Views/Controllers to listen for this event
         onElementRemoved: function(element){
 
-        },
+        }
 
     });
 
@@ -174,7 +204,29 @@ define([
     });
 
 
+    /**
+     * Whiteboard Tool View Base Class
+     */
+    var ToolViewBase = base.Base.extend({
 
+        initialize: function(attributes) {
+            this.paper = null;
+            this.element = null;
+            this.optionalAttributes = null;
+            _.extend(this, attributes);
+        },
+
+        start: function(x, y) {},
+
+        stop: function(x, y) {},
+
+        move: function(x, y) {}
+    });
+
+    // TODO in progress...
+    var Pen2 = ToolViewBase.extend({
+
+    });
 
     var Pen = function(paper, optionalAttributes) {
         this.paper = paper;
@@ -205,7 +257,6 @@ define([
 
 
 
-    // TODO use inheritance here. Create tool prototype. Arrow should inherit from Pen.
     var Arrow = function(paper, optionalAttributes) {
         this.paper = paper;
         this.optionalAttributes = optionalAttributes;
@@ -248,6 +299,7 @@ define([
 
     Rectangle.prototype.start = function(x, y) {
         this.rect = this.paper.rect(x, y, 0, 0, 5);
+        this.rect.attr('stroke-width', 2);
         this.originX = x;
         this.originY = y;
 
@@ -310,6 +362,7 @@ define([
 
     Circle.prototype.start = function(x, y) {
         this.circle = this.paper.circle(x, y, 0);
+        this.circle.attr('stroke-width', 2);
 
         // override attributes with user defined attributes, if specified
         if (this.optionalAttributes){
@@ -391,68 +444,6 @@ define([
     }
 
 
-
-    // TODO unfinished. Come back to this later.
-    var Text = function(paper) {
-        this.paper = paper;
-        this.text = null;
-    }
-
-    Text.prototype.start = function(x, y) {
-
-        // show cursor for text input
-        // append to x y coordinate
-        // on enter, capture text, remove div
-        // send text to paper
-
-
-
-        var textInput = new ChatWhiteboardTextInputView();
-        console.log(textInput.render().el);
-        //$(textInput.render().el).insertAfter()
-        $('#whiteboard-wrapper').append(textInput.render().el);
-        //var offsetX = $('whiteboard-wrapper').offset().left;
-        //var offsetY = $('whiteboard-wrapper').offset().top;
-        $('.whiteboard-text-input').css('top', y + 'px');
-        $('.whiteboard-text-input').css('left', x + 'px');
-
-        this.text = this.paper.text(x, y, 'test');
-        //this.text.attr('font-size', 24);
-    }
-
-    Text.prototype.stop = function(x, y) {
-        return this.text;
-    }
-
-    Text.prototype.move = function(x, y) {
-        // no-op
-    }
-
-
-
-    /**
-     * Whiteboard text input layout.
-     * @constructor
-     */
-    var ChatWhiteboardTextInputView = Backbone.View.extend({
-
-        templateSelector: '#whiteboard-text-input-template',
-
-        initialize: function() {
-            this.template = _.template($(this.templateSelector).html());
-        },
-
-        render: function() {
-            this.$el.html(this.template());
-            return this;
-        },
-
-    });
-
-
-
-
-
     return {
         WhiteboardView: WhiteboardView,
         WhiteboardToolView: WhiteboardToolView,
@@ -460,7 +451,6 @@ define([
         Arrow: Arrow,
         Rectangle: Rectangle,
         Circle: Circle,
-        Text: Text,
         Erase: Erase
     }
 });

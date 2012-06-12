@@ -130,19 +130,19 @@
     display:inline;
 }
 
-.whiteboard-text-input {
-    position: absolute;
-    z-index: 900;
-    top: 150px;
-    left: 300px;
+#whiteboard-wrapper {
+    padding: 0px
 }
 
-.whiteboard-tool-button-span1 {
-
+#whiteboard-tools-well {
+    padding: 10px;
 }
 
-.whiteboard-tool-button-span2 {
-
+.whiteboard-tool-header {
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 18px;
+    color: #999;
+    text-transform: uppercase;
 }
-
 
