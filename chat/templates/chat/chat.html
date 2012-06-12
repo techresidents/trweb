@@ -21,7 +21,7 @@
     {% endfor %}
 </style>
 
-<script src="http://staging.tokbox.com/v0.91/js/TB.min.js" ></script>
+<script src="{{TOKBOX_JS_URL}}"></script>
 
 <script>
     var require = {
@@ -43,6 +43,7 @@
 
     data =  {
         chatAPIKey: "{{chat_api_key}}",
+        chatSessionId: "{{chat_session_id}}",
         chatSessionToken: "{{chat_session_token}}",
         chatUserToken: "{{chat_user_token}}",
         users: {{users_json}},

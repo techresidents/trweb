@@ -142,6 +142,7 @@ define([
      * Chat Session Proxy
      * @constructor
      * @param {Object} options
+     *   {string} sessionId Chat Session Id
      *   {string} apiKey Tokbox API Key
      *   {string} sessionToken Tokbox session token
      *   {string} userToken Tokbox user token
@@ -156,6 +157,7 @@ define([
         },
 
         initialize: function(options) {
+            this.sessionId = options.sessionId;
             this.apiKey = options.apiKey;
             this.sessionToken = options.sessionToken;
             this.userToken = options.userToken;

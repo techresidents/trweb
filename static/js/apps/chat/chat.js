@@ -10,6 +10,7 @@ define([
     'chat/agenda/mediators',
     'chat/commands',
     'chat/proxies',
+    'chat/feedback/commands',
     'chat/marker/commands',
     'chat/marker/mediators',
     'chat/message/commands',
@@ -35,6 +36,7 @@ define([
     agenda_mediators,
     chat_commands,
     chat_proxies,
+    feedback_commands,
     marker_commands,
     marker_mediators,
     message_commands,
@@ -221,6 +223,7 @@ define([
             this.registerCommand(notifications.CHAT_CONNECT, chat_commands.ChatConnectCommand);
             this.registerCommand(notifications.CHAT_START, chat_commands.ChatStartCommand);
             this.registerCommand(notifications.CHAT_END, chat_commands.ChatEndCommand);
+            this.registerCommand(notifications.CHAT_ENDED, chat_commands.ChatEndedCommand);
             this.registerCommand(notifications.CHAT_NEXT_TOPIC, chat_commands.ChatNextTopicCommand);
             this.registerCommand(notifications.MARKER_CREATE, marker_commands.CreateMarkerCommand);
             this.registerCommand(notifications.MARKER_CONNECTED_CREATE, marker_commands.CreateConnectedMarkerCommand);
@@ -237,6 +240,7 @@ define([
             this.registerCommand(notifications.MESSAGE_WHITEBOARD_DELETE_PATH, message_commands.WhiteboardDeletePathMessageCommand);
             this.registerCommand(notifications.MINUTE_START, minute_commands.StartMinuteCommand);
             this.registerCommand(notifications.MINUTE_END, minute_commands.EndMinuteCommand);
+            this.registerCommand(notifications.SHOW_FEEDBACK, feedback_commands.ShowFeedbackCommand);
             this.registerCommand(notifications.SHOW_RESOURCE, resource_commands.ShowResourceCommand);
             this.registerCommand(notifications.TAG_CREATE, tag_commands.CreateTagCommand);
             this.registerCommand(notifications.TAG_DELETE, tag_commands.DeleteTagCommand);

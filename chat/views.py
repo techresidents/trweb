@@ -8,12 +8,14 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
 import OpenTokSDK
 
-import forms
-import models
-from common.models import Topic
+from trpycore.encode.basic import basic_encode, basic_decode
+from techresidents_web.chat import forms
+from techresidents_web.chat import models
+from techresidents_web.common.models import Topic
 
 
 @login_required
@@ -21,12 +23,12 @@ def list(request):
     """ List all chats """
 
     #Get all chat sessions for the current user
-    chat_sessions = models.ChatSession.objects.filter(users=request.user).select_related("chat", "chat__topic")
+    chat_sessions = models.ChatSession.objects.filter(users=request.user).select_related("chat", "chat__topic").order_by("-chat.start")
 
     chat_session_contexts = []
     for chat_session in chat_sessions:
         chat_session_contexts.append({
-            "id": chat_session.id,
+            "id": basic_encode(chat_session.id),
             "topic": chat_session.chat.topic,
             "start": chat_session.chat.start
         })
@@ -38,8 +40,10 @@ def list(request):
     return render_to_response('chat/list.html', context, context_instance=RequestContext(request))
 
 @login_required
-def chat(request,chat_session_id):
+def chat(request, encoded_chat_session_id):
     """Commence a chat"""
+    
+    chat_session_id = basic_decode(encoded_chat_session_id)
 
     opentok = OpenTokSDK.OpenTokSDK(
             settings.TOKBOX_API_KEY,
@@ -97,7 +101,6 @@ def chat(request,chat_session_id):
         topic_resources = []
         for resource in topic.resources.all():
             topic_resources.append(resource.id)
-            print resource.documentresource.document.path
             resource_json = {
                 "id": resource.id,
                 "type": resource.type.name,
@@ -122,8 +125,10 @@ def chat(request,chat_session_id):
         })
 
     context = {
+        'TOKBOX_JS_URL': settings.TOKBOX_JS_URL,
         'TR_XD_REMOTE': settings.TR_XD_REMOTE,
         'chat_api_key': settings.TOKBOX_API_KEY,
+        'chat_session_id': basic_encode(chat_session.id),
         'chat_session_token': chat_session.token,
         'chat_user_token': chat_user.token,
         'users' : users_by_id,
@@ -176,3 +181,21 @@ def create(request):
     }
 
     return render_to_response('chat/create.html', context,  context_instance=RequestContext(request))
+
+
+#Marking feedback form csrf exempt for now,
+#This should be changed to support CSRF in the 
+#future, but the risk is very low, since this
+#view only allows the submission of chat feedback.
+@csrf_exempt
+@login_required
+def feedback(request, encoded_chat_session_id):
+    chat_session_id = basic_decode(encoded_chat_session_id)
+
+    if request.method == 'POST':
+        form = forms.ChatFeedbackForm(request, chat_session_id, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
+        else:
+            return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)

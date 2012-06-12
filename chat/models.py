@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from techresidents_web.common.models import Resource, Tag, Topic
+from techresidents_web.common.models import Quality, Resource, Tag, Topic
 
 class Chat(models.Model):
     class Meta:
@@ -68,7 +68,10 @@ class ChatArchive(models.Model):
 class ChatFeedback(models.Model):
     class Meta:
         db_table = "chat_feedback"
+        unique_together = ("chat_session", "user")
 
     chat_session = models.ForeignKey(ChatSession, related_name="chat_feedbacks")
     user = models.ForeignKey(User)
+    overall_quality = models.ForeignKey(Quality, related_name="+")
+    technical_quality = models.ForeignKey(Quality, related_name="+")
 
