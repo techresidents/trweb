@@ -34,10 +34,10 @@ define([
             this.capturing = false;
 
             //set width and height
-            if(this.options.width) {
+            if (this.options.width) {
                 $(this.el).width(this.options.width);
             }
-            if(this.options.height) {
+            if (this.options.height) {
                 $(this.el).height(this.options.height);
             }
             
@@ -257,7 +257,6 @@ define([
 
 
 
-    // TODO use inheritance here. Create tool prototype. Arrow should inherit from Pen.
     var Arrow = function(paper, optionalAttributes) {
         this.paper = paper;
         this.optionalAttributes = optionalAttributes;
@@ -300,6 +299,7 @@ define([
 
     Rectangle.prototype.start = function(x, y) {
         this.rect = this.paper.rect(x, y, 0, 0, 5);
+        this.rect.attr('stroke-width', 2);
         this.originX = x;
         this.originY = y;
 
@@ -362,6 +362,7 @@ define([
 
     Circle.prototype.start = function(x, y) {
         this.circle = this.paper.circle(x, y, 0);
+        this.circle.attr('stroke-width', 2);
 
         // override attributes with user defined attributes, if specified
         if (this.optionalAttributes){
