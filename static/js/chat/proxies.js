@@ -35,9 +35,10 @@ define([
      * Chat Proxy
      * @constructor
      * @param {Object} options
-     *   {string} apiKey Tokbox api key
-     *   {string} sessionToken Tokbox session token
-     *   {string} userToken Tokbox user token
+     *   {string} chatSessionId Chat Session Id
+     *   {string} chatApiKey Tokbox api key
+     *   {string} chatSessionToken Tokbox session token
+     *   {string} chatUserToken Tokbox user token
      *
      * This is the main proxy for the chat. 
      * It's responsible for creating sub-proxies.
@@ -52,6 +53,7 @@ define([
 
             //chat session proxy
             this.chatSessionProxy = new session_proxies.ChatSessionProxy({
+                sessionId: options.chatSessionId,
                 apiKey: options.chatAPIKey,
                 sessionToken: options.chatSessionToken,
                 userToken: options.chatUserToken,
@@ -109,7 +111,7 @@ define([
          * @return {boolean} true if active, false otherwise
          */
         isActive: function() {
-            if(this.agendaProxy.active()) {
+            if(this.chatAgendaProxy.active()) {
                 return true;
             } else {
                 return false;
@@ -123,6 +125,26 @@ define([
             //connect the chat and start polling for messages.
             this.chatSessionProxy.connect();
             this.chatMessagesProxy.longPoll();
+        },
+
+        /**
+         * Start the chat
+         */
+        start: function() {
+            if(!this.isActive()) {
+                this.chatAgendaProxy.activateNext();
+            }
+        },
+
+        /**
+         * End the chat
+         */
+        end: function() {
+            var nextActive = this.chatAgendaProxy.nextActive();
+            while(nextActive) {
+                this.chatAgendaProxy.activateNext();
+                nextActive = this.chatAgendaProxy.nextActive();
+            }
         },
 
     }, {

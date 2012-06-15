@@ -42,3 +42,7 @@ REGISTRATION_REQUIRES_CODE = True
 #but POSTS to the login page using https in non-development environments.
 TR_LOGIN_USING_HTTPS = True
 TR_XD_REMOTE = 'http://techresidents.com:6767/static/js/easyXDM/cors/index.html'
+
+#Tokbox Settings
+TOKBOX_JS_URL = 'http://static.opentok.com/v0.91/js/TB.min.js'
+TOKBOX_IS_STAGING = False

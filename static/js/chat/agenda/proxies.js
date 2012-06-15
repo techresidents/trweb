@@ -112,7 +112,7 @@ define([
                 this._endMinutes(activeTopic.rank(), closeLevel);
             }
         },
-        
+
         /**
          * Activate the given topic.
          * @param {Topic} topic

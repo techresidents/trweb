@@ -159,3 +159,11 @@ class Organization(models.Model):
 
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=1024)
+
+class Quality(models.Model):
+    """Quality model"""
+    class Meta:
+        db_table = "quality"
+
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1024)

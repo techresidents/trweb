@@ -1,7 +1,8 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls.defaults import patterns, url
 
 urlpatterns = patterns('chat.views',
     url(r'^$', 'list'),
-    url(r'^(?P<chat_session_id>\d+)$', 'chat'),
-    url(r'^create/$', 'create'),
+    url(r'^create$', 'create'),
+    url(r'^(?P<encoded_chat_session_id>\w+)$', 'chat'),
+    url(r'^(?P<encoded_chat_session_id>\w+)/feedback$', 'feedback'),
 )

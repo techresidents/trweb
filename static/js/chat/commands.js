@@ -58,10 +58,10 @@ define([
          */
         execute: function(options) {
             var result = false;
-            this.chatProxy = this.facade.getProxy(chat_proxies.ChatProxy.NAME);
+            var chatProxy = this.facade.getProxy(chat_proxies.ChatProxy.NAME);
 
-            if(!this.chatProxy.isActive()) {
-                this.facade.trigger(notifications.CHAT_NEXT_TOPIC);
+            if(!chatProxy.isActive()) {
+                chatProxy.start();
                 result = true;
             }
             return result;
@@ -86,8 +86,13 @@ define([
          * @return {boolean} true on success, false otherwise.
          */
         execute: function(options) {
-            //TODO
-            return false;
+            var chatProxy = this.facade.getProxy(chat_proxies.ChatProxy.NAME);
+
+            if(chatProxy.isActive()) {
+                chatProxy.end();
+                result = true;
+            }
+            return true;
         }
     });
 
@@ -103,18 +108,48 @@ define([
          * @return {boolean} true on success, false otherwise.
          */
         execute: function(options) {
-            this.agendaProxy = this.facade.getProxy(agenda_proxies.ChatAgendaProxy.NAME);
-            this.agendaProxy.activateNext();
+            var chatProxy = this.facade.getProxy(chat_proxies.ChatProxy.NAME);
+            var agendaProxy = this.facade.getProxy(agenda_proxies.ChatAgendaProxy.NAME);
+
+            if(chatProxy.isActive()) {
+                if(agendaProxy.nextActive()) {
+                    agendaProxy.activateNext();
+                } else {
+                    this.facade.trigger(notifications.CHAT_END);
+                }
+            } else {
+                this.facade.trigger(notifications.CHAT_START);
+            }
             return true;
         },
+    });
 
+    /**
+     * Chat Ended Command
+     * @constructor
+     */
+    var ChatEndedCommand = command.Command.extend({
 
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         *
+         * @return {boolean} true on success, false otherwise.
+         */
+        execute: function(options) {
+            this.facade.trigger(notifications.SHOW_FEEDBACK);
+            return true;
+        }
     });
 
     return {
         ChatConnectCommand: ChatConnectCommand,
         ChatStartCommand: ChatStartCommand,
         ChatEndCommand: ChatEndCommand,
+        ChatEndedCommand: ChatEndedCommand,
         ChatNextTopicCommand: ChatNextTopicCommand,
     };
 });

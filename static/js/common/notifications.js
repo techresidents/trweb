@@ -75,6 +75,7 @@ define([
 
         /* SHOW ACTIONS */
         SHOW_AGENDA: 'notification:ShowAgenda',
+        SHOW_FEEDBACK: 'notification:ShowFeedback',
         SHOW_RESOURCES: 'notification:ShowResources',
         SHOW_RESOURCE: 'notification:ShowResource',
         SHOW_WHITEBOARDS: 'notification:ShowWhiteboards',
