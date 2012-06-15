@@ -9,7 +9,6 @@ define([
     'whiteboard/views',
     'text!chat/whiteboard/templates/whiteboard_container.html',
     'text!chat/whiteboard/templates/whiteboard_controls.html',
-    'text!chat/whiteboard/templates/whiteboard_mediator.html',
     'text!chat/whiteboard/templates/whiteboard_tab.html',
     'text!chat/whiteboard/templates/whiteboard_text_input.html',
     'text!chat/whiteboard/templates/whiteboard_tools.html'
@@ -24,7 +23,6 @@ define([
     whiteboard_views,
     whiteboard_container_template,
     whiteboard_controls_template,
-    whiteboard_mediator_template,
     whiteboard_tab_template,
     whiteboard_text_input_template,
     whiteboard_tools_template) {
