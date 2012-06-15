@@ -1,97 +1,140 @@
-{% extends "base.html" %}
 {% load url from future %}
 
-{% block title %}Welcome to Tech Residents{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block extrahead %}
-<script src="{{STATIC_URL}}/js/3ps/swfobject/swfobject.js"></script>
-<script type="text/javascript">
-var videoID = "ylLzyHk54Z0"
-var params = { allowScriptAccess: "always" };
-var atts = { id: "ytPlayer" };
-swfobject.embedSWF("http://www.youtube.com/v/" + videoID + "?version=3&enablejsapi=1&playerapiid=player1&modestbranding=1",
-                   "videoDiv", "480", "295", "9", null, null, params, atts);
-</script>
-        
-{% endblock %}
+    <head>
+        <meta charset="utf-8">
+        <title>Welcome to Tech Residents</title>
+        <meta name="description" content="">
+        <meta name="author" content="">
 
-{% block content %}
+        <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+        <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
 
-<div class="container">
-    <div class="row">
-        <div class="span8">
-            <a class="logo" href="/"></a>
-        </div/>
-        <div class="span4">
-            <form class="form-horizontal pull-right" method="post" action="{{ LOGIN_URL }}">
-                {% csrf_token %}
-                <div class="control-group banner-control-group">
-                    {{ form.username.label_tag }}
-                    <div class="controls">
-                        {{ form.username }}
+        <!-- Le styles -->
+        <link href="{{STATIC_URL}}css/3ps/bootstrap/css/bootstrap.css" rel="stylesheet">
+        <link href="{{STATIC_URL}}css/techresidents.css" rel="stylesheet">
+        <link href="{{STATIC_URL}}css/landing.css" rel="stylesheet">
+
+        <!-- Le fav and touch icons -->
+        <link rel="shortcut icon" type="image/x-icon" href="{{STATIC_URL}}favicon.ico">
+    </head>
+
+    <body>
+
+        <div id="landing-blue-stripe">
+
+            <div id="landing-blue-stripe-top-right">
+                <div class="container">
+                    <div class="row">
+                        <div class="span1 offset11">
+                            <h2>
+                                <a id="landing-login-button" class="landing-text" href="{% url 'accounts.views.login'%}">Login</a>
+                            </h2>
+                        </div>
                     </div>
                 </div>
-                <div class="control-group banner-control-group">
-                    {{ form.password.label_tag }}
-                    <div class="controls">
-                        {{ form.password }}
+            </div>
+            <div id="landing-blue-stripe-middle">
+                <div class="container landing-messaging-container">
+                    <div class="row">
+                        <div class="span8">
+                            <h1 class="landing-text landing-messaging-text">
+                                Discuss. Learn. Network.
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span8 offset2">
+                            <h1 class="landing-text landing-messaging-text">
+                                Get Hired.
+                            </h1>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="control-group banner-control-group">
-                    <div class="controls">
-                        <input type="submit" value="Login" class="btn inline" />
-                        <label class="checkbox inline">
-                            {{ form.remember_me }}
-                            {{ form.remember_me.label }}
-                        </label>
+                <div class="container landing-details-container">
+                    <div class="row">
+                        <div class="span7">
+                            <span class="landing-text landing-messaging-details-text">
+                                A free platform for software developers to talk tech with fellow developers to showcase their talents to our network of hiring companies.
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="page-header">
-            <h1>
-                Join the conversation
-                <small>It's free</small>
-                <a class="btn btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
-            </h1>
-        </div>
-    </div>
-    <div class="row">
-        <div id="videoDiv"/>
-    </div>
-    <div class="row">
-        <div class="page-header">
-        </div>
-        <div class="span4">
-            <h2>Discuss</h2>
-            <ul>
-                <li>Interactive technical discussions</li>
-                <li>Open educational environment</li>
-                <li>Diverse skillsets and ideas</li>
-            </ul>
-            <a class="btn btn-primary" href="{% url 'common.views.learn_more' %}">Learn More</a>
-        </div>
-        <div class="span4">
-            <h2>Expand Your Network</h2>
-            <ul>
-                <li>Networking the natural way</li>
-                <li>Open community</li>
-                <li>Connect with developers near and far</li>
-            </ul>
-            <a class="btn btn-primary" href="{% url 'common.views.learn_more' %}">Learn More</a>
-        </div>
-        <div class="span4">
-            <h2>Connect</h2>
-            <ul>
-                <li>Ready for a change?</li>
-                <li>Connect with our network of employers and recruiters on your terms</li>
-            </ul>
-            <a class="btn btn-primary" href="{% url 'common.views.learn_more' %}">Learn More</a>
-        </div>
-    </div>
-</div>
 
-{% endblock %}
+        <div id="landing-white-stripe">
+            <div class="container landing-signup-container">
+                <div class="row">
+                    <div class="span7 offset2">
+                        <h1 class="landing-messaging-text">
+                            Join the conversation
+                        </h1>
+                    </div>
+                    <div class="span2">
+                        <a class="btn btn-large btn-success landing-signup-button" href="{% url 'accounts.views.register'%}">Sign Up</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span2 offset7">
+                        <h1 class="landing-signup-details-text">
+                            It's free
+                        </h1>
+                    </div>
+                    <div class="span2">
+                        <a class="btn btn-primary btn-large landing-learn-more-button" href="{% url 'common.views.learn_more'%}">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!--
+        <div class="row-fluid">
+            <div class="span12 landing-image">
+                <h1>Test</h1>
+            </div>
+        </div>
+        -->
+
+        <!--
+        <img src="static/img/landing-background.png" class="landing2">
+        -->
+
+        <!--
+        <div id="landing-container">
+
+            <div class="container">
+                <div class="row">
+                    <div class="span1 offset11">
+                        <h2>
+                            <a id="landing-login" href="{% url 'accounts.views.login'%}">Login</a>
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="page-header">
+                        <h1>
+                            Join the conversation
+                            <small>It's free</small>
+                            <a class="btn btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
+                        </h1>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        -->
+
+    </body>
+
+</html>
+
