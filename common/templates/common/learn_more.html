@@ -10,7 +10,7 @@
 
 {% block content %}
 
-<div class="container chat-bubbles-background">
+<div class="container">
 
     <div class="row">
         <div class="page-header">
@@ -63,23 +63,24 @@
     </div>
 
     <div>
-        <div id="learn-more-signup-container">
+        <div id="learn-more-signup-container" class="chat-bubbles-background">
             <div class="row">
-                <div class="span6 offset2">
+                <div class="span6 offset1">
                     <h1 class="learn-more-signup-text">
                         Join the conversation
                     </h1>
                 </div>
-                <div class="span2">
-                    <a id="landing-signup-button" class="btn btn-large btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
-                </div>
+            </div>
+            <div class="span2 offset2">
+                <h1 class="learn-more-signup-details-text">
+                    It's free
+                </h1>
             </div>
             <div class="row">
-                <div class="span2 offset6">
-                    <h1 class="landing-signup-details-text">
-                        It's free
-                    </h1>
+                <div class="span2">
+                    <a id="learn-more-signup-button" class="btn btn-large btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
                 </div>
+
             </div>
         </div>
     </div>
