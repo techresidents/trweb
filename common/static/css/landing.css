@@ -1,51 +1,11 @@
-.landing-banner {
-    background-color: #2A73A7;
-}
-
-.landing-image {
-
-    /* This doesn't scale the img, which is good.
-       The problem is when the bounds of the image are expanding, the bg is white instead of blue.
-    */
-    background-image: url(../img/landing-background-blue-stripe-only.png);
-    background-repeat: no-repeat;
-
-}
-
-.landing1 {
-    /* This scales the image.  Top of image is cutoff. */
-    background-image: url(../img/landing-background-full.png);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center center;
-    webkit-background-size: cover;
-    moz-background-size: cover;
-    o-background-size: cover;
-    background-size: cover;
-}
-
-.landing2 {
-    /* Used with an img element.
-       This looks nice and uses a img element.
-       This scales the image. */
-    min-height: 100%;
-    min-width: 1280px;
-
-    width: 100%;
-    height: auto;
-
-    position: fixed;
-    top: 0;
-    left: 0;
-}
-
-
 #landing-blue-stripe {
     height: 528px;
     background-color: #2A73A7;
     background-image: url(../img/landing-background-blue-stripe-only.png);
     background-repeat: no-repeat;
 }
+
+
 
 #landing-blue-stripe-top-right {
     padding-top: 45px;
@@ -56,23 +16,25 @@
     padding-top: 60px;
 }
 
-.landing-signup-container {
+#landing-signup-container {
     padding-top: 20px;
 }
 
-.landing-messaging-container {
+#landing-messaging-container {
     margin-left: 50px;
     margin-right: 0px;
     margin-top: 0px;
     margin-bottom: 0px;
 }
 
-.landing-details-container {
+#landing-details-container {
     margin-left: 80px;
     margin-right: 0px;
     margin-top: 30px;
     margin-bottom: 0px;
 }
+
+
 
 .landing-text {
     color: white;
@@ -96,18 +58,20 @@
     color: #999;
 }
 
+
+
 #landing-login-button:hover {
     color: #EA8F00;
     text-decoration: none;
 }
 
-.landing-signup-button {
+#landing-signup-button {
     font-size: 25px;
     padding-top: 18px;
     padding-bottom: 18px;
 }
 
-.landing-learn-more-button {
+#landing-learn-more-button {
     margin-top: 10px;
     padding-left: 21px;
     padding-right: 21px;

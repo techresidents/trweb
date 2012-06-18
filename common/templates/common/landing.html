@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div id="landing-blue-stripe-middle">
-                <div class="container landing-messaging-container">
+                <div id="landing-messaging-container" class="container">
                     <div class="row">
                         <div class="span8">
                             <h1 class="landing-text landing-messaging-text">
@@ -55,7 +55,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="container landing-details-container">
+                <div id="landing-details-container" class="container">
                     <div class="row">
                         <div class="span7">
                             <span class="landing-text landing-messaging-details-text">
@@ -68,7 +68,7 @@
         </div>
 
         <div id="landing-white-stripe">
-            <div class="container landing-signup-container">
+            <div id="landing-signup-container" class="container">
                 <div class="row">
                     <div class="span7 offset2">
                         <h1 class="landing-messaging-text">
@@ -76,7 +76,7 @@
                         </h1>
                     </div>
                     <div class="span2">
-                        <a class="btn btn-large btn-success landing-signup-button" href="{% url 'accounts.views.register'%}">Sign Up</a>
+                        <a id="landing-signup-button" class="btn btn-large btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
                     </div>
                 </div>
                 <div class="row">
@@ -86,53 +86,11 @@
                         </h1>
                     </div>
                     <div class="span2">
-                        <a class="btn btn-primary btn-large landing-learn-more-button" href="{% url 'common.views.learn_more'%}">Learn More</a>
+                        <a id="landing-learn-more-button" class="btn btn-primary btn-large" href="{% url 'common.views.learn_more'%}">Learn More</a>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
-
-        <!--
-        <div class="row-fluid">
-            <div class="span12 landing-image">
-                <h1>Test</h1>
-            </div>
-        </div>
-        -->
-
-        <!--
-        <img src="static/img/landing-background.png" class="landing2">
-        -->
-
-        <!--
-        <div id="landing-container">
-
-            <div class="container">
-                <div class="row">
-                    <div class="span1 offset11">
-                        <h2>
-                            <a id="landing-login" href="{% url 'accounts.views.login'%}">Login</a>
-                        </h2>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="page-header">
-                        <h1>
-                            Join the conversation
-                            <small>It's free</small>
-                            <a class="btn btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
-                        </h1>
-                    </div>
-                </div>
-
-
-            </div>
-        </div>
-        -->
 
     </body>
 
