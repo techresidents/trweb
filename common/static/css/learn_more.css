@@ -1,0 +1,17 @@
+.chat-bubbles-background {
+    height: 968px;
+    background-image: url(../img/chat-bubbles.png);
+    background-repeat: no-repeat;
+    background-position: right center
+}
+
+#learn-more-signup-container {
+    padding-top: 50px;
+}
+
+.learn-more-signup-text {
+    font-weight: bold;
+    font-family: Arial;
+    font-size: 40px;
+    line-height: 48pt;
+}

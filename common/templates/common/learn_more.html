@@ -3,38 +3,87 @@
 
 {% block title %}Welcome to Tech Residents - Learn more{% endblock %}
 
+{% block extrahead %}
+    <link href="{{STATIC_URL}}css/landing.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}css/learn_more.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 
-<div class="container">
+<div class="container chat-bubbles-background">
+
     <div class="row">
         <div class="page-header">
             <h1>Learn more</h1>
         </div>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
-        <div>
-            <h3>Discussions</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <div class="span4">
+            <h3>What is it?</h3>
+            <p>
+                Tech Residents is a free platform for software developers to discuss curated technical topics with fellow developers.
+                <br/><br/>
+                The goal of the platform is to streamline and improve the process of hiring software professionals for both developers and companies.
+                <br/><br/>
+                The platform works by recording the technical discussions, making them anonymous for your privacy and protection, and finally making them available to our network of hiring companies.
+            </p>
         </div>
 
-        <div>
-            <h3>Expand your network</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <div class="span4">
+            <h3>Who is it for?</h3>
+            <p>
+                Tech Residents is for software professionals who are looking for a new challenge or opportunity in their career.
+                If you're not actively looking for a new position, or are not quite ready to jump into a new opportunity, that's
+                okay too.
+                <br/><br/>
+                Sign up now to discuss technology to improve your skills and network with fellow developers.  When
+                the time is right, you can change your preferences to indicate that you're ready to be contacted by our network
+                of hiring companies.
+            </p>
         </div>
 
-        <div>
-            <h3>Connect</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        </div>
-
-        <div>
-            <h3>
-            Join the conversation
-            <small>It's free</small>
-            <a class="btn btn-success" href="{% url 'accounts.views.register' %}">Sign Up</a>
-            </h3>
+        <div class="span4">
+            <h3>Why join?</h3>
+            <p>
+                Join Tech Residents to showcase your talent and let companies find you.  Other reasons to join
+                include:
+            </p>
+            <ul>
+                <li>
+                    Improve your technical breadth and depth by talking with developers who
+                    possess diverse backgrounds and skills.
+                </li>
+                <li>
+                    Improve your communication skills.
+                </li>
+                <li>
+                    Network with fellow developers.
+                </li>
+            </ul>
         </div>
     </div>
+
+    <div>
+        <div id="learn-more-signup-container">
+            <div class="row">
+                <div class="span6 offset2">
+                    <h1 class="learn-more-signup-text">
+                        Join the conversation
+                    </h1>
+                </div>
+                <div class="span2">
+                    <a id="landing-signup-button" class="btn btn-large btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span2 offset6">
+                    <h1 class="landing-signup-details-text">
+                        It's free
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 {% endblock %}
