@@ -1,8 +1,12 @@
 .chat-bubbles-background {
-    height: 484px;
+    height: 194px;
     background-image: url(../img/chat-bubbles.png);
     background-repeat: no-repeat;
-    background-position: right top
+    background-position: center center
+}
+
+.learn-more-column-title h3 {
+    text-align: center;
 }
 
 #learn-more-signup-container {
@@ -17,14 +21,11 @@
 }
 
 .learn-more-signup-details-text {
-    padding-top: 10px;
-    padding-left: 30px;
     color: #999;
 }
 
 #learn-more-signup-button {
     font-size: 25px;
-    margin-left: 10px;
     padding-top: 18px;
     padding-bottom: 18px;
 }
