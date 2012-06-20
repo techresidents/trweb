@@ -446,12 +446,16 @@ define([
         initialize: function() {
             this.setElement($('#technology-add'));
 
+            this.lookupValue = null;
+            this.lookupData = null;
+
             new lookup.LookupView({
                 el: this.$("#technology-input"),
                 scope: 'technology',
                 property: 'name',
                 forceSelection: true,
                 onenter: this.updateOnEnter,
+                onselect: this.updateOnSelect,
                 context: this
             });
 
@@ -459,7 +463,48 @@ define([
             this.technologyInput = this.$("#technology-input");
         },
 
-        addTechnology: function(data) {
+        /**
+         * Listen to the 'Add' button.
+         */
+        addTechnology: function() {
+            var value = this.technologyInput.val();
+            if (value.toLowerCase() == this.lookupValue.toLowerCase()) {
+                // If this check passes, it implies that the value of this.lookupValue & this.lookupData
+                // are up-to-date and accurate.
+                this._add(this.lookupData);
+            }
+        },
+
+        /**
+         * Callback to be invoked when enter is pressed on the LookupView
+         *
+         * @param name  the string in the LookupView input
+         * @param data  the LookupResult.matches object which is scope/category specific
+         */
+        updateOnEnter: function(name, data) {
+            this._add(data);
+        },
+
+        /**
+         * Callback to be invoked when a LookupView result is selected
+         * either explicitly through the menu or implicitly
+         * when focus is lost.
+         *
+         * @param value the string in the LookupView input
+         * @param data LookupResult.matches object which is scope/category specific
+         */
+        updateOnSelect: function(value, data) {
+            // keep a record of what was in the lookupView
+            this.lookupValue = value;
+            this.lookupData = data;
+        },
+
+        /**
+         * Method to add a technology to the collection
+         * @param data
+         * @private
+         */
+        _add: function(data) {
             var technologyName = data.name;
             if (technologyName) {
                 //only add if entry doesn't already exist in user's position prefs
@@ -476,10 +521,6 @@ define([
             }
             this.technologyInput.focus();
         },
-
-        updateOnEnter: function(name, data) {
-            this.addTechnology(data);
-        }
 
     });
 
@@ -601,12 +642,16 @@ define([
         initialize: function() {
             this.setElement($('#location-add'));
 
+            this.lookupValue = null;
+            this.lookupData = null;
+
             new lookup.LookupView({
                 el: this.$("#location-input"),
                 scope: 'location',
                 property: 'name',
                 forceSelection: true,
                 onenter: this.updateOnEnter,
+                onselect: this.updateOnSelect,
                 context: this
             });
 
@@ -614,7 +659,49 @@ define([
             this.locationInput = this.$("#location-input");
         },
 
-        addLocation: function(data) {
+        /**
+         * Listen to the 'Add' button.
+         */
+        addLocation: function() {
+            var value = this.locationInput.val();
+            if (value.toLowerCase() == this.lookupData.name.toLowerCase()) {
+                // If this check passes, it implies that the value of this.lookupValue & this.lookupData
+                // are up-to-date and accurate.
+                this._add(this.lookupData);
+            }
+        },
+
+        /**
+         * Callback to be invoked when enter is pressed on the LookupView
+         *
+         * @param value  the string in the LookupView input
+         * @param data  the LookupResult.matches object which is scope/category specific
+         */
+        updateOnEnter: function(value, data) {
+            this._add(data);
+        },
+
+        /**
+         * Callback to be invoked when a LookupView result is selected
+         * either explicitly through the menu or implicitly
+         * when focus is lost.
+         *
+         * @param value the string in the LookupView input
+         * @param data LookupResult.matches object which is scope/category specific
+         */
+        updateOnSelect: function(value, data) {
+            // keep a record of what was in the lookupView
+            this.lookupValue = value;
+            this.lookupData = data;
+        },
+
+        /**
+         * Method to add a location to the collection
+         * @param data
+         * @private
+         */
+        _add: function(data) {
+            console.log(data);
             if (data) {
                 //only add if entry doesn't already exist in user's location prefs
                 var locationPrefs = this.locationCollection.where({'locationId': data.id});
@@ -632,10 +719,6 @@ define([
             }
             this.locationInput.focus();
         },
-
-        updateOnEnter: function(name, data) {
-            this.addLocation(data);
-        }
 
     });
 
