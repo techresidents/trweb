@@ -177,7 +177,7 @@
 }
 
 .chat-background-color {
-    background-color: #7db9e8;
+    background-color: #2A73A7;
 }
 
 .tagger-label {
@@ -188,3 +188,6 @@
     margin-right: 15px;
 }
 
+#discuss-timer.expired {
+    color: red;
+}
