@@ -62,12 +62,14 @@ define([
                 model: this.model,
             }).render();
 
-
-            new tag_views.ChatTaggerView({
+            // Keep a reference to the tagger view so that we can invoke
+            // the enabled() method from the mediator.
+            this.taggerView = new tag_views.ChatTaggerView({
                 el: this.$(this.tagSelector),
                 users: this.users,
                 collection: this.tags
-            }).render();
+            });
+            this.taggerView.render();
 
             return this;
         },

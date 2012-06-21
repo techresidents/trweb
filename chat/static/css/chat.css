@@ -103,22 +103,22 @@
   margin-left: 45px;
 }
 
-#tagger ul {
+.tagger ul {
     display: inline;
     margin: 0 0 5px 5px;
 }
 
-#tagger li {
+.tagger li {
     display: inline;
     list-style-type:none;
     padding-right: 8px;
 }
 
-#tagger li .close-inline {
+.tagger li .close-inline {
     display: none;
 }
 
-#tagger li:hover .close-inline {
+.tagger li:hover .close-inline {
     display:inline;
 }
 
@@ -172,7 +172,7 @@
     padding-bottom: 10px;
 }
 
-.discuss-tagger {
+#discussion-tagger {
     margin-top: 65px;
 }
 
