@@ -3,6 +3,7 @@ define([
     'Underscore',
     'core/view',
     'chat/agenda/models',
+    'chat/tag/views',
     'timer/views',
     'text!chat/discuss/templates/discuss.html',
     'text!chat/discuss/templates/discuss_title.html',
@@ -12,6 +13,7 @@ define([
     _,
     view,
     models,
+    tag_views,
     timer,
     discuss_parent_template,
     discuss_title_template,
@@ -37,7 +39,7 @@ define([
 
         controlsSelector: '#discussion-controls',
 
-        tagSelector: '',
+        tagSelector: '#discussion-tagger',
 
         initialize: function() {
             this.template = _.template(discuss_parent_template);
@@ -60,15 +62,12 @@ define([
                 model: this.model,
             }).render();
 
-            /*
-            new TagView({
+
+            new tag_views.ChatTaggerView({
                 el: this.$(this.tagSelector),
-                model: this.model,
-                minutes: this.model.minutes(),
-                tags: this.tags,
                 users: this.users,
+                collection: this.tags
             }).render();
-            */
 
             return this;
         },
@@ -142,6 +141,10 @@ define([
             this.triggerEvent(EVENTS.START);
         },
     });
+
+
+
+
 
     /**
      * Disucss view.

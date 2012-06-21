@@ -155,6 +155,7 @@
 }
 
 .discuss-title-text {
+    padding-top: 15px;
     font-size: 25px;
 }
 
@@ -166,12 +167,24 @@
 
 .discuss-button {
     margin-top: 5px;
-    font-size: 20px;
+    font-size: 18px;
     padding-top: 10px;
     padding-bottom: 10px;
 }
 
+.discuss-tagger {
+    margin-top: 65px;
+}
+
 .chat-background-color {
     background-color: #7db9e8;
+}
+
+.tagger-label {
+    font-weight: bold;
+    line-height: 27px;
+    font-size: 20px;
+    color: #333;
+    margin-right: 15px;
 }
 
