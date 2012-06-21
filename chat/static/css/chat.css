@@ -1,6 +1,6 @@
 #chat {
     padding-top: 5px;
-    padding-bottom: 30px;
+    padding-bottom: 5px;
 }
 
 .chat-user-container.speaking {
@@ -148,6 +148,11 @@
 
 
 
+.chat-well {
+    background-color: #FFFFFF;
+    border-color: #000000;
+    padding-bottom: 5px;
+}
 
 .discuss-title-text {
     font-size: 25px;
@@ -157,11 +162,6 @@
     font-weight: bold;
     font-size: 20px;
     line-height: 35px;
-}
-
-.discussion-well {
-    background-color: #FFFFFF;
-    border-color: #000000;
 }
 
 .discuss-button {
