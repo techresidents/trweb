@@ -146,3 +146,32 @@
     text-transform: uppercase;
 }
 
+
+
+
+.discuss-title-text {
+    font-size: 25px;
+}
+
+.discuss-time-text {
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 35px;
+}
+
+.discussion-well {
+    background-color: #FFFFFF;
+    border-color: #000000;
+}
+
+.discuss-button {
+    margin-top: 5px;
+    font-size: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.chat-background-color {
+    background-color: #7db9e8;
+}
+
