@@ -1,4 +1,5 @@
 {% extends "menu_base.html" %}
+{% load staticfiles %}
 {% load url from future %}
 
 {% block title %}Tech Residents Whiteboard{% endblock %}
@@ -9,7 +10,7 @@
         baseUrl: '/static/js',
     };
 </script>
-<script data-main="{{STATIC_URL}}js/apps/whiteboard/main.js" src="{{STATIC_URL}}js/3ps/require/require.js"></script>
+<script data-main="{% static "js/apps/whiteboard/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
 
 {%endblock %}
 

@@ -1,13 +1,14 @@
-import json
-
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-import forms
 
-@login_required
+from techresidents_web.common.decorators import staff_required
+from techresidents_web.topic import forms
+
+
+@staff_required
 def create(request):
     """Create chat session"""
     
