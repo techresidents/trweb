@@ -295,11 +295,6 @@ define([
         render: function() {
 
             this.$el.html(this.template());
-
-            new AgendaControlView({
-                el: this.$(this.controlSelector),
-                model: this.model,
-            }).render();
             
             new AgendaListView({
                 el: this.$(this.listSelector),

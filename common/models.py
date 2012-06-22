@@ -139,11 +139,12 @@ class Location(models.Model):
         db_table = "location"
 
     country = models.CharField(max_length=100)
-    state = models.CharField(max_length=100)
+    zip = models.CharField(max_length=50)
     city = models.CharField(max_length=100)
-    zip = models.CharField(max_length=25)
+    state = models.CharField(max_length=100)
     county = models.CharField(max_length=100)
-    #TODO add longitude and latitude.  Research how best to store this data within the db.
+    latitude = models.CharField(max_length=50)
+    longitude = models.CharField(max_length=50)
 
 class Organization(models.Model):
     """Represents an organization such as RSA or Bloomberg"""

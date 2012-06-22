@@ -5,10 +5,10 @@
                 <option value="<%= whiteboard.whiteboardId %>"><%= whiteboard.name %></option>
             <% }); %>
         </select>
-        <button class="btn btn-input" data-toggle="modal" href="#create-whiteboard-modal">Create</button>
-        <button id="whiteboard-delete-button" class="btn btn-input">Delete</button>
-        <button id="whiteboard-clear-button" class="btn btn-input">Clear</button>
-        <button id="whiteboard-undo-button" class="btn btn-input">Undo</button>
+        <button class="btn btn-input btn-success" data-toggle="modal" href="#create-whiteboard-modal"><i class="icon-plus icon-white"></i> Create</button>
+        <button id="whiteboard-delete-button" class="btn btn-input btn-danger"><i class="icon-minus icon-white"></i> Delete</button>
+        <button id="whiteboard-clear-button" class="btn btn-input btn-info">Clear</button>
+        <button id="whiteboard-undo-button" class="btn btn-input btn-info">Undo</button>
 
         <div class="modal hide fade" id="create-whiteboard-modal">
             <div class="modal-header">

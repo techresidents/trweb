@@ -78,9 +78,6 @@ define([
                 case 'DiscussView':
                     this.$('#discuss').append(view.render().el);
                     break;
-                case 'ChatTaggerView':
-                    this.$('#tagger').html(view.render().el);
-                    break;
                 case 'AgendaTabView':
                     this.$('#agenda').html(view.render().el);
                     break;

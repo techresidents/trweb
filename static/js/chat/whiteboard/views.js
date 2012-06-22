@@ -9,7 +9,6 @@ define([
     'whiteboard/views',
     'text!chat/whiteboard/templates/whiteboard_container.html',
     'text!chat/whiteboard/templates/whiteboard_controls.html',
-    'text!chat/whiteboard/templates/whiteboard_mediator.html',
     'text!chat/whiteboard/templates/whiteboard_tab.html',
     'text!chat/whiteboard/templates/whiteboard_text_input.html',
     'text!chat/whiteboard/templates/whiteboard_tools.html'
@@ -24,7 +23,6 @@ define([
     whiteboard_views,
     whiteboard_container_template,
     whiteboard_controls_template,
-    whiteboard_mediator_template,
     whiteboard_tab_template,
     whiteboard_text_input_template,
     whiteboard_tools_template) {
@@ -404,6 +402,7 @@ define([
         whiteboardSelector: '#select-whiteboard',
         whiteboardNameInputSelector: '#whiteboard-name-input',
         createWhiteboardModalSelector: '#create-whiteboard-modal',
+        deleteWhiteboardButtonSelector: '#whiteboard-delete-button',
 
         events: {
             'change #select-whiteboard': 'onSelectWhiteboard',
@@ -466,6 +465,22 @@ define([
          */
         onSelectedWhiteboardChange: function() {
             this.$(this.whiteboardSelector).val(this.viewModel.getSelectedWhiteboardId());
+
+            // If the default whiteboard is selected, disable the 'delete' button
+            // The default whiteboard is the first whiteboard in the whiteboard collection
+            var defaultWhiteboard = this.wbCollection.at(0);
+            var selectedWhiteboard = this.wbCollection.get(this.viewModel.getSelectedWhiteboardId());
+            if (selectedWhiteboard != null &&
+                selectedWhiteboard != undefined)
+            {
+                if ( selectedWhiteboard == defaultWhiteboard) {
+                    this.$(this.deleteWhiteboardButtonSelector).attr('disabled', 'disabled');
+                    this.$(this.deleteWhiteboardButtonSelector).removeClass('btn-danger');
+                } else {
+                    this.$(this.deleteWhiteboardButtonSelector).removeAttr('disabled');
+                    this.$(this.deleteWhiteboardButtonSelector).addClass('btn-danger');
+                }
+            }
         },
 
         /**
@@ -524,6 +539,7 @@ define([
      */
     var ChatWhiteboardTabView = core_view.View.extend({
 
+        DEFAULT_WHITEBOARD_NAME: 'Default Whiteboard',
 
         // Set UI references
         containerSelector: '#whiteboard-container',
@@ -631,7 +647,7 @@ define([
                 delete this.whiteboardViews[model.id];
 
                 // Select the default whiteboard
-                var whiteboards = this.wbCollection.where({'name': 'Default Whiteboard'});
+                var whiteboards = this.wbCollection.where({'name': this.DEFAULT_WHITEBOARD_NAME});
                 if (1 == whiteboards.length) {
                     var defaultWhiteboard = whiteboards[0];
                     if (null != defaultWhiteboard.id){
