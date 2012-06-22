@@ -7,8 +7,10 @@
     width: 300px;
     height: 225px;
     background-image: url("../img/person.png");
-    background-size: 80%;
     background-repeat: no-repeat;
+    background-size: 90%;
+    background-color: white; 
+    background-position: center;
 }
 
 .chat-participant-container.speaking {
