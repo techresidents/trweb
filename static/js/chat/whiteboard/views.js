@@ -539,6 +539,7 @@ define([
      */
     var ChatWhiteboardTabView = core_view.View.extend({
 
+        DEFAULT_WHITEBOARD_NAME: 'Default Whiteboard',
 
         // Set UI references
         containerSelector: '#whiteboard-container',
@@ -646,7 +647,7 @@ define([
                 delete this.whiteboardViews[model.id];
 
                 // Select the default whiteboard
-                var whiteboards = this.wbCollection.where({'name': 'Default Whiteboard'});
+                var whiteboards = this.wbCollection.where({'name': this.DEFAULT_WHITEBOARD_NAME});
                 if (1 == whiteboards.length) {
                     var defaultWhiteboard = whiteboards[0];
                     if (null != defaultWhiteboard.id){

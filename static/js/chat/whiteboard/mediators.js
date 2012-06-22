@@ -71,7 +71,7 @@ define([
              */
             if (this.whiteboardsProxy.collection.length < 1) {
                 this.onCreateWhiteboard(whiteboard_views.EVENTS.CREATE_WHITEBOARD, {
-                    name: 'Default Whiteboard'
+                    name: whiteboard_views.ChatWhiteboardTabView.DEFAULT_WHITEBOARD_NAME
                 });
             }
 
