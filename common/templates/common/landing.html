@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% load url from future %}
 
 {% block title %}Welcome to Tech Residents{% endblock %}
 
 {% block extrahead %}
-<script src="{{STATIC_URL}}/js/3ps/swfobject/swfobject.js"></script>
+<script src="{% static "js/3ps/swfobject/swfobject.js" %}"></script>
 <script type="text/javascript">
 var videoID = "ylLzyHk54Z0"
 var params = { allowScriptAccess: "always" };

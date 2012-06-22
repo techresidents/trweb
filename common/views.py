@@ -8,6 +8,21 @@ import version as version_num
 from accounts.forms import LoginForm
 
 @never_cache
+def http403(request):
+    context = {}
+    return render_to_response('common/403.html', context,  context_instance=RequestContext(request))
+
+@never_cache
+def http404(request):
+    context = {}
+    return render_to_response('common/404.html', context,  context_instance=RequestContext(request))
+
+@never_cache
+def http500(request):
+    context = {}
+    return render_to_response('common/500.html', context,  context_instance=RequestContext(request))
+
+@never_cache
 def version(request):
     context = {
             'version': version_num.VERSION,
@@ -56,3 +71,4 @@ def about(request):
 def contact(request):
     context = {}
     return render_to_response('common/contact.html', context,  context_instance=RequestContext(request))
+
