@@ -227,6 +227,7 @@ define([
             this.registerCommand(notifications.CHAT_NEXT_TOPIC, chat_commands.ChatNextTopicCommand);
             this.registerCommand(notifications.MARKER_CREATE, marker_commands.CreateMarkerCommand);
             this.registerCommand(notifications.MARKER_CONNECTED_CREATE, marker_commands.CreateConnectedMarkerCommand);
+            this.registerCommand(notifications.MARKER_JOINED_CREATE, marker_commands.CreateJoinedMarkerCommand);
             this.registerCommand(notifications.MARKER_PUBLISHING_CREATE, marker_commands.CreatePublishingMarkerCommand);
             this.registerCommand(notifications.MARKER_SPEAKING_CREATE, marker_commands.CreateSpeakingMarkerCommand);
             this.registerCommand(notifications.MESSAGE_MARKER_CREATE, message_commands.MarkerCreateMessageCommand);

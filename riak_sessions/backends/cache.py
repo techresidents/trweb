@@ -100,12 +100,14 @@ class SessionStore(SessionBase):
         
         #Riak bucket data
         
-        #Only store the user id and session expiry unencoded for consumption
+        #Only store necessary data unencoded for consumption
         #in non-django applications.
-        unencoded_session_data = {}
+        unencoded_session_data = {"user_id": None}
         for key in ["_auth_user_id", "_session_expiry", "chat_session"]:
             if key in session_data:
                 unencoded_session_data[key] = session_data[key]
+                if key == "_auth_user_id":
+                    unencoded_session_data["user_id"] = session_data[key]
 
         #expire_time is stored in epoch time, since datetime() objects are not JSON serializable.
         #self.get_expiry_date() is in UTC time and must use calendar.timegm to properly convert
@@ -114,6 +116,7 @@ class SessionStore(SessionBase):
         data = {
             "session_data": unencoded_session_data,
             "encoded_session_data": encoded_session_data,
+            "user_id": unencoded_session_data["user_id"],
             "expire_time": calendar.timegm(self.get_expiry_date().timetuple())
         }
         

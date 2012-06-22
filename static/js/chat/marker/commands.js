@@ -45,6 +45,50 @@ define([
 
 
     /**
+     * Create Joined Marker Command
+     * @constructor
+     *
+     * Creates a chat joined marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
+    var CreateJoinedMarkerCommand = command.AsyncCommand.extend({
+
+        //argument names for onSuccess and onError paramaters
+        asyncCallbackArgs: ['model', 'response'],
+        
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {integer} userId 
+         *   {boolean} isConnected
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         */
+        execute: function(options) {
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: {
+                        type: marker_models.JoinedMarker.TYPE,
+                        userId: options.userId,
+                        name: options.name,
+                    }
+                }),
+            });
+            
+            //send message
+            message.save(null, {
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this),
+            });
+
+            return true;
+        },
+
+    });
+
+    /**
      * Create Connected Marker Command
      * @constructor
      *
@@ -178,6 +222,7 @@ define([
     return {
         CreateMarkerCommand: CreateMarkerCommand,
         CreateConnectedMarkerCommand: CreateConnectedMarkerCommand,
+        CreateJoinedMarkerCommand: CreateJoinedMarkerCommand,
         CreatePublishingMarkerCommand: CreatePublishingMarkerCommand,
         CreateSpeakingMarkerCommand: CreateSpeakingMarkerCommand,
     };

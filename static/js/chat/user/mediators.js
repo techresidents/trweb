@@ -24,6 +24,7 @@ define([
          * Notification handlers
          */
         notifications: [
+            [notifications.USER_ADDED, 'onUserAdded'],
             [notifications.USER_CONNECTED_CHANGED, 'onConnectedChanged'],
             [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged'],
         ],
@@ -40,7 +41,8 @@ define([
             var view = new user_views.ChatUserView({
                 id: userModel.id,
                 model: userModel,
-                css: 'span' + 12/this.usersProxy.collection.length,
+                //css: 'span' + 12/this.usersProxy.collection.length,
+                css: 'span' + 12/3,
             });
 
             this.views[userModel.id] = view;
@@ -49,12 +51,21 @@ define([
                 type: 'ChatUserView',
                 view: view
             });
+
+            return view;
+        },
+
+        onUserAdded: function(notification) {
+            var userModel = notification.model;
+            if(!this.views.hasOwnProperty(userModel.id)) {
+                this.createView(userModel);
+            }
         },
 
         onConnectedChanged: function(notification) {
             var userModel = notification.model;
             var view = this.views[userModel.id];
-            
+
             //Publish stream if this is the current user
             if(userModel.isConnected() && userModel.isCurrentUser()) {
                 var details = view.getStreamViewDetails();

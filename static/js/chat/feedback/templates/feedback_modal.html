@@ -1,4 +1,4 @@
-<form class="form-horizontal" action="/chat/<%= model.chatSessionId %>/feedback" method="post">
+<form class="form-horizontal" action="/chat/session/<%= model.chatSessionId %>/feedback" method="post">
     <fieldset>
         <div class="control-group <%= errors.overallQuality ? 'error' : '' %>">
             <label for="overall_quality">Overall Chat Quality</label>

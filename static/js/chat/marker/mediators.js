@@ -31,6 +31,13 @@ define([
 
         initialize: function(options) {
             this.usersProxy = this.facade.getProxy(user_proxies.ChatUsersProxy.NAME);
+
+            //create JOINED_MARKER now
+            var currentUser = this.usersProxy.currentUser();
+            this.facade.trigger(notifications.MARKER_JOINED_CREATE, {
+                userId: currentUser.id,
+                name: currentUser.name(),
+            });
         },
 
         onConnectedChanged: function(notification) {

@@ -99,13 +99,6 @@ class Topic(models.Model):
 
     objects = TopicManager()
 
-class TopicResource(models.Model):
-    class Meta:
-        db_table = "topic_resource"
-    topic = models.ForeignKey(Topic)
-    resource = models.ForeignKey(Resource)
-
-
 class Tag(models.Model):
     class Meta:
         db_table = "tag"

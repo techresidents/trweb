@@ -55,6 +55,14 @@ MEDIA_ROOT = '/tmp/media/'
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = 'http://localhost:8000/'
 
+# The file storage engine to use with staticfiles static template tag.
+# Additionally the post_process method will be called during
+# the collectstatic process, so static files can be properly 
+# distributed (filesystem, cloud, etc...)
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+#STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
+#STATICFILES_STORAGE = 'common.staticfiles.CacheBustingStaticFilesStorage'
+
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
@@ -223,3 +231,17 @@ TOKBOX_IS_STAGING = True
 #Django message settings
 #MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
+#Anonymous Usernames
+ANONYMOUS_USERNAMES = [
+    'anonymous1@techresidents.com',
+    'anonymous2@techresidents.com',
+    'anonymous3@techresidents.com',
+    'anonymous4@techresidents.com',
+    'anonymous5@techresidents.com',
+    'anonymous6@techresidents.com',
+    'anonymous7@techresidents.com',
+    'anonymous8@techresidents.com',
+    'anonymous9@techresidents.com',
+    'anonymous10@techresidents.com',
+]

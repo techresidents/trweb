@@ -16,7 +16,9 @@ define([
                 stream: null,
                 isSpeaking: false,
                 isConnected: false,
-                isPublishing: false
+                isPublishing: false,
+                imageUrl: null,
+                participant: null,
             };
         },
 
@@ -59,9 +61,18 @@ define([
             this.set({ isPublishing: isPublishing });
             return this;
         },
+        
+        participant: function() {
+            return this.get("participant");
+        },
+
+        setParticipant: function(participant) {
+            this.set({participant: participant});
+            return this;
+        },
 
         style: function() {
-            return "user" + this.id;
+            return "participant" + this.participant();
         },
 
         isCurrentUser: function() {

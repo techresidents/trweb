@@ -35,6 +35,7 @@ define([
         execute: function(options) {
             var chatProxy = this.facade.getProxy(chat_proxies.ChatProxy.NAME);
             chatProxy.connect();
+            //chatProxy.startRecording();
             return true;
         }
     });
@@ -140,6 +141,11 @@ define([
          * @return {boolean} true on success, false otherwise.
          */
         execute: function(options) {
+            var chatProxy = this.facade.getProxy(chat_proxies.ChatProxy.NAME);
+
+            //disconnect chat which will stop any recording in progress.
+            chatProxy.disconnect();
+
             this.facade.trigger(notifications.SHOW_FEEDBACK);
             return true;
         }

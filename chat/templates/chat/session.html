@@ -1,25 +1,10 @@
 {% extends "menu_base.html" %}
-{% load url from future %}
-{% load verbatim %}
+{% load staticfiles %}
 
 {% block title %}Tech Residents Chat{% endblock %}
 
 {% block extrahead %}
-<link href="{{STATIC_URL}}css/chat.css" rel="stylesheet">
-
-<style type="text/css">
-    {% for user in users %}
-    .user{{user.id}} {
-        color: {% cycle '#00A651' '#00AEEF' '#F15A29' '#231F20' as usercolor %};
-    }
-    
-    .user{{user.id}}-border {
-        border-style: solid;
-        border-color: {{ usercolor }};
-        border-width: 5px;
-    }
-    {% endfor %}
-</style>
+<link href="{% static "css/chat.css" %}" rel="stylesheet">
 
 <script src="{{TOKBOX_JS_URL}}"></script>
 
@@ -28,7 +13,7 @@
         baseUrl: '/static/js',
     };
 </script>
-<script data-main="{{STATIC_URL}}js/apps/chat/main.js" src="{{STATIC_URL}}js/3ps/require/require.js"></script>
+<script data-main="{% static "js/apps/chat/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
 {% endblock %}
 
 {% block content %}

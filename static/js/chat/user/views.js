@@ -68,7 +68,7 @@ define([
      */
     var ChatUserView = Backbone.View.extend({
 
-        chatContainerSelector: '.chat-user-container',
+        chatContainerSelector: '.chat-participant-container',
 
         speakingStyle: 'speaking',
 
@@ -79,8 +79,8 @@ define([
             this.chatSession = this.options.chatSession;
             this.css = this.options.css;
 
-            this.headerSelector = '#user' + this.user.id + '-header';
-            this.footerSelector = '#user' + this.user.id + '-footer';
+            this.headerSelector = '#participant' + this.user.participant() + '-header';
+            this.footerSelector = '#participant' + this.user.participant() + '-footer';
             
             //bind events
             this.user.bind('change:isConnected', this.render, this);
@@ -122,7 +122,7 @@ define([
             this.footerView.render();
             this.$(this.footerSelector).html(this.footerView.el);
             
-            this.$('chat-user-container').toggleClass('speaking', this.user.isSpeaking());
+            this.$(this.chatContainerSelector).toggleClass('speaking', this.user.isSpeaking());
             
             return this;
         },
@@ -135,7 +135,7 @@ define([
             var container = this.$(this.chatContainerSelector);
 
             return {
-                elementId: 'user' + this.user.id,
+                elementId: 'participant' + this.user.participant(),
                 width: container.width(),
                 height: container.height(),
             };

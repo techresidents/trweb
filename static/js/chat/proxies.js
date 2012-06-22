@@ -128,6 +128,27 @@ define([
         },
 
         /**
+         * Disconnect the chat.
+         */
+        disconnect: function() {
+            this.chatSessionProxy.disconnect();
+        },
+    
+        /**
+         * Start recording the chat
+         */
+        startRecording: function() {
+            this.chatSessionProxy.startRecording();
+        },
+
+        /**
+         * Stop recording the chat
+         */
+        stopRecording: function() {
+            this.chatSessionProxy.stopRecording();
+        },
+
+        /**
          * Start the chat
          */
         start: function() {

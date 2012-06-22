@@ -62,6 +62,31 @@ define([
 
 
     /**
+     * Chat Joined Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
+    var JoinedMarker = Marker.extend({
+
+        defaults: function() {
+            return {
+                markerId: null,
+                type: JoinedMarker.TYPE,
+                userId: null,
+                name: null,
+            };
+        },
+
+        initialize: function(attributes, options) {
+        },
+
+    }, {
+        TYPE: 'JOINED_MARKER',
+    });
+
+
+    /**
      * Chat Connected Marker.
      * @constructor
      * @param {Object} attributes Optional model attributes.
@@ -176,6 +201,7 @@ define([
         Marker: Marker,
         MarkerCollection: MarkerCollection,
         ConnectedMarker: ConnectedMarker,
+        JoinedMarker: JoinedMarker,
         PublishingMarker: PublishingMarker,
         SpeakingMarker: SpeakingMarker,
     };

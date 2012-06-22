@@ -1,40 +1,59 @@
-{% extends "base.html" %}
+{% extends "menu_base.html" %}
 {% load url from future %}
 
-{% block title %}tech residents{% endblock %}
+{% block title %}Tech Residents - Create Chat{% endblock %}
 
 {% block content %}
 
 <div class="container">
     <div class="row">
-        <div class="span12">
-            <h1>Tech Residents</h1>
-        </div/>
+        <div class="page-header">
+            <h1>Create chat</h1>
+        </div>
     </div>
+
     <div class="row">
         <div class="span12">
-            <form class="form-horizontal" method="post" action="{% url 'chat.views.create' %}">
-                {% csrf_token %}
-                <div class="control-group{% if form.username.errors %} error{% endif %}">
-                    {{ form.username.label_tag }}
-                    <div class="controls">
-                        {{ form.username }}
-                        {% for error in form.username.errors %}
-                            <span class="help-inline">{{error}}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="controls">
-                    <input type="submit" value="Submit" class="btn btn-primary" />
+            <div class="well">
+                {% if messages %}
+                   {% for message in messages %}
+                       {% if message.tags == 'success' %}
+                            <div class="alert alert-success">
+                                <span>{{message}}</span>
+                           </div>
+                       {% endif %}
+                   {% endfor %}
+                {% else %}
+                    <form class="form-horizontal" method="post" action="{% url 'chat.views.create' %}">
+                        {% csrf_token %}
 
-                    {% if user_form.non_field_errors %}
-                        <div class="alert-message alert-error">
-                            {% for error in form.non_field_errors%}
-                                <span>{{error}}</span>
+                        <fieldset>
+                            {% for field in form %}
+                                <div class="control-group{% if field.errors %} error{% endif %}">
+                                    {{ field.label_tag }}
+                                    <div class="controls">
+                                        {{ field }}
+                                        {% for error in field.errors %}
+                                            <span class="help-inline">{{error}}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
                             {% endfor %}
-                    {% endif %}
-                </div>
-            </form>
+
+                            <div class="controls">
+                                <input type="submit" value="Submit" class="btn btn-primary" />
+
+                                {% if user_form.non_field_errors %}
+                                    <div class="alert-message alert-error">
+                                        {% for error in form.non_field_errors%}
+                                            <span>{{error}}</span>
+                                        {% endfor %}
+                                {% endif %}
+                            </div>
+                        </fieldset>
+                    </form>
+                {% endif %}                    
+            </div>
         </div>
     </div>
 

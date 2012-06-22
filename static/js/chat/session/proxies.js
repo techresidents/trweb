@@ -171,8 +171,12 @@ define([
             });
             this.facade.registerProxy(this.usersProxy);
             
-            //initialize Tokbox session
+            //initialize Tokbox session / archive
             this.session =  TB.initSession(this.sessionToken);
+            this.archive = null;
+            this.perSessionRecording = true; //perSession or perStream
+            this.record = false;    //target recording status
+            this.recording = false; //current recording status
             
             //add Tokbox event handlers
             this.session.addEventListener("sessionConnected", _.bind(this.sessionConnectedHandler, this));
@@ -181,6 +185,27 @@ define([
             this.session.addEventListener("streamCreated", _.bind(this.streamCreatedHandler, this));
             this.session.addEventListener("streamDestroyed", _.bind(this.streamDestroyedHandler, this));
             this.session.addEventListener("microphoneLevelChanged", _.bind(this.microphoneLevelHandler, this));
+            this.session.addEventListener("archiveCreated", _.bind(this.archiveCreatedHandler, this));
+            this.session.addEventListener("archiveClosed", _.bind(this.archiveClosedHandler, this));
+            this.session.addEventListener("sessionNotRecording", _.bind(this.sessionNotRecordingHandler, this));
+            this.session.addEventListener("sessionRecordingInProgress", _.bind(this.sessionRecordingInProgressHandler, this));
+            this.session.addEventListener("sessionRecordingStarted", _.bind(this.sessionRecordingStartedHandler, this));
+            this.session.addEventListener("sessionRecordingStopped", _.bind(this.sessionRecordingStoppedHandler, this));
+            this.session.addEventListener("streamNotRecording", _.bind(this.streamNotRecordingHandler, this));
+            this.session.addEventListener("streamRecordingInProgress", _.bind(this.streamRecordingInProgressHandler, this));
+            this.session.addEventListener("streamRecordingStarted", _.bind(this.streamRecordingStartedHandler, this));
+            this.session.addEventListener("streamRecordingStopped", _.bind(this.streamRecordingStoppedHandler, this));
+        },
+
+        _getOrCreateUser: function(connectionData) {
+            var id = connectionData.id;
+            var user = this.usersProxy.get(id);
+            if(!user) {
+                console.log(connectionData);
+                this.usersProxy.add(connectionData);
+                user = this.usersProxy.get(id);
+            }
+            return user;
         },
 
         getApiKey: function() {
@@ -223,32 +248,101 @@ define([
             session.connect(apiKey, userToken);
         },
 
+        /**
+         * Disconnect chat session.
+         */
+        disconnect: function() {
+            if(this.recording) {
+                this.stopRecording();
+            }
+
+            if(this.archive) {
+                this.session.closeArchive(this.archive);
+            }
+            
+            if(this.session.connected) {
+                this.session.disconnect();
+                this.session.cleanup();
+            }
+        },
+
+        startRecording: function() {
+            this.record = true;
+
+            if(this.session.connected && !this.recording) {
+                if(!this.archive) {
+                    this.session.createArchive(
+                            this.getApiKey(),
+                            this.perSessionRecording ? 'perSession' : 'perStream',
+                            this.sessionId);
+                } else {
+                    if(this.perSessionRecording) {
+                        this.session.startRecording(this.archive);
+                    } else {
+                        var stream = this.getCurrentUser().stream();
+                        if(stream) {
+                            this.getCurrentUser().stream().startRecording(this.archive);
+                        }
+                    }
+                }
+            }
+        },
+
+        stopRecording: function() {
+            this.record = false;
+            if(this.recording) {
+                if(this.perSessionRecording) {
+                    this.session.stopRecording(this.archive);
+                } else {
+                    var stream = this.getCurrentUser().stream();
+                    if(stream) {
+                        this.getCurrentUser().stream().stopRecording(this.archive);
+                    }
+                }
+            }
+        },
+
         sessionConnectedHandler: function(event) {
+            //store the tokbox session archive prior to dispatching
+            //the SESSION_CONNECTED notification, since this is likely
+            //to trigger the start of the recording which will require
+            //the archive.
+            if(event.archives.length) {
+                this.archive = event.archives[0];
+            } 
+            
             this.facade.trigger(notifications.SESSION_CONNECTED, {
                 event: event,
             });
+
 
             for(var i = 0; i < event.connections.length; i++) {
                 var connection = event.connections[i];
 
                 //connection data set on server side
                 var connectionData = JSON.parse(connection.data);
-                var user = this.usersProxy.get(connectionData.id);
+                var user = this._getOrCreateUser(connectionData);
                 user.setConnected(true);
             }
 
             for(var i = 0; i < event.streams.length; i++) {
                 var stream = event.streams[i];
                 var connectionData = JSON.parse(stream.connection.data);
-                
-                var user = this.usersProxy.get(connectionData.id);
+                var user = this._getOrCreateUser(connectionData);
                 user.setStream(stream);
                 user.setPublishing(true);
                 this.streams[stream.streamId] = new Stream({
                     user: user
                 });
             }
-
+            
+            //start recording if requested and we're not already recording.
+            //this will start recording for perSession type recording.
+            //perStream recording cannot be initiated until the
+            //stream is created (which happens after this event)
+            if(this.record && !this.recording) {
+                this.startRecording();
+            }
         },
 
         connectionCreatedHandler: function(event) {
@@ -262,7 +356,7 @@ define([
                 //connection data set on server side
                 var connectionData = JSON.parse(connection.data);
 
-                var user = this.usersProxy.get(connectionData.id);
+                var user = this._getOrCreateUser(connectionData);
                 user.setConnected(true);
             }
         },
@@ -289,6 +383,7 @@ define([
                 event: event,
             });
 
+
             for(var i = 0; i < event.streams.length; i++) {
                 var stream = event.streams[i];
 
@@ -301,6 +396,12 @@ define([
                 this.streams[stream.streamId] = new Stream({
                     user: user
                 });
+            }
+
+            //start recording if requested and we're not already recording.
+            //this will start recording for perStream type recording.
+            if(this.record && !this.recording) {
+                this.startRecording();
             }
         },
 
@@ -321,6 +422,9 @@ define([
                 delete this.streams[stream.streamId];
             }
         },
+
+
+        /* Internal handlers which do not trigger notifications */
 
         microphoneLevelHandler: function(event) {
             var stream = this.streams[event.streamId];
@@ -343,6 +447,49 @@ define([
             stream.addSample(new StreamSample({
                 volume: event.volume
             }));
+        },
+
+        archiveCreatedHandler: function(event) {
+            this.archive = event.archives[0];
+            if(this.record && !this.recording) {
+                this.startRecording();
+            }
+        },
+
+        archiveClosedHandler: function(event) {
+            this.archive = null;
+        },
+
+        sessionNotRecordingHandler: function() {
+            this.recording = false;
+        },
+
+        sessionRecordingInProgressHandler: function() {
+            this.recording = true;
+        },
+
+        sessionRecordingStartedHandler: function() {
+            this.recording = true;
+        },
+
+        sessionRecordingStoppedHandler: function() {
+            this.recording = false;
+        },
+
+        streamNotRecordingHandler: function() {
+            this.recording = false;
+        },
+
+        streamRecordingInProgressHandler: function() {
+            this.recording = true;
+        },
+
+        streamRecordingStartedHandler: function() {
+            this.recording = true;
+        },
+
+        streamRecordingStoppedHandler: function() {
+            this.recording = false;
         },
 
     }, {
