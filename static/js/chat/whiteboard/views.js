@@ -402,6 +402,7 @@ define([
         whiteboardSelector: '#select-whiteboard',
         whiteboardNameInputSelector: '#whiteboard-name-input',
         createWhiteboardModalSelector: '#create-whiteboard-modal',
+        deleteWhiteboardButtonSelector: '#whiteboard-delete-button',
 
         events: {
             'change #select-whiteboard': 'onSelectWhiteboard',
@@ -464,6 +465,22 @@ define([
          */
         onSelectedWhiteboardChange: function() {
             this.$(this.whiteboardSelector).val(this.viewModel.getSelectedWhiteboardId());
+
+            // If the default whiteboard is selected, disable the 'delete' button
+            // The default whiteboard is the first whiteboard in the whiteboard collection
+            var defaultWhiteboard = this.wbCollection.at(0);
+            var selectedWhiteboard = this.wbCollection.get(this.viewModel.getSelectedWhiteboardId());
+            if (selectedWhiteboard != null &&
+                selectedWhiteboard != undefined)
+            {
+                if ( selectedWhiteboard == defaultWhiteboard) {
+                    this.$(this.deleteWhiteboardButtonSelector).attr('disabled', 'disabled');
+                    this.$(this.deleteWhiteboardButtonSelector).removeClass('btn-danger');
+                } else {
+                    this.$(this.deleteWhiteboardButtonSelector).removeAttr('disabled');
+                    this.$(this.deleteWhiteboardButtonSelector).addClass('btn-danger');
+                }
+            }
         },
 
         /**
