@@ -26,7 +26,7 @@ define([
         var seconds = Math.floor(durationMs / 1000);
         
         var result;
-        if(hours && minutes && seconds) {
+        if(hours) {
             result = pad2(hours) + ':' + pad2(minutes) + ':' + pad2(seconds);
         } else {
             result = pad2(minutes) + ':' + pad2(seconds);
