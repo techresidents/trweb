@@ -3,6 +3,19 @@
     padding-bottom: 5px;
 }
 
+.chat-background {
+    background-color: #2A73A7;
+    /*&background-image: url(../img/word-texture.png);*/
+}
+
+#chat h5 {
+    color: #EA8F00;
+}
+
+#chat h5 small {
+    color: #FFFFFF;
+}
+
 .chat-user-container.speaking {
     border-width: 8px;
 }
@@ -151,7 +164,15 @@
 .chat-well {
     background-color: #FFFFFF;
     border-color: #000000;
-    padding-bottom: 5px;
+    padding-bottom: 10px;
+    margin-bottom: 7px;
+}
+
+.discuss-controls-well {
+    background-color: #FFFFFF;
+    border-color: #000000;
+    margin-left: 0px;
+    padding-bottom: 10px;
 }
 
 .discuss-title-text {
@@ -174,10 +195,6 @@
 
 #discussion-tagger {
     margin-top: 65px;
-}
-
-.chat-background-color {
-    background-color: #2A73A7;
 }
 
 .tagger-label {
