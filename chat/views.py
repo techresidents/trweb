@@ -105,7 +105,7 @@ def home(request):
 
     registered_chat_contexts = []
     for registered_chat in registered_chats:
-        if registered_chat.chat.expired:
+        if not registered_chat.chat.expired:
             chat_duration = registered_chat.chat.end - registered_chat.chat.start
             chat_duration_secs = chat_duration.seconds
             chat_duration_mins = chat_duration_secs/60
@@ -118,6 +118,7 @@ def home(request):
             })
 
     context = {
+        "no_registered_chats_msg": "You are not registered for any chats",
         "registered_chats": registered_chat_contexts
     }
 

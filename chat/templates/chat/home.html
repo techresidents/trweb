@@ -32,18 +32,24 @@
                             </tr>
                         </thead>
                         <tbody>
+
                             {% for registered_chat in registered_chats %}
-                            <tr>
-                                <td>{{registered_chat.duration}} mins</td>
-                                <td>
-                                    <a href={%url 'chat.views.session' encoded_chat_session_id=registered_chat.id%}>
-                                        {{registered_chat.topic.title}}
-                                    </a>
-                                </td>
-                                <td> {{registered_chat.start_date}} at {{registered_chat.start_time}}</td>
-                                <td><button class="btn btn-small btn-primary">Check-in</button></td>
-                            </tr>
+                                <tr>
+                                    <td>{{registered_chat.duration}} mins</td>
+                                    <td>
+                                        <a href={%url 'chat.views.session' encoded_chat_session_id=registered_chat.id%}>
+                                            {{registered_chat.topic.title}}
+                                        </a>
+                                    </td>
+                                    <td> {{registered_chat.start_date}} at {{registered_chat.start_time}}</td>
+                                    <td><a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registered_chat.id%}>Check-in</a></td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td> <em>{{ no_registered_chats_msg }}</em> </td>
+                                </tr>
                             {%endfor %}
+
                         </tbody>
                     </table>
 
