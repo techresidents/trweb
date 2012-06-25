@@ -21,18 +21,32 @@
                 <h2>Registered Chats</h2>
 
                 <div class="well">
-                    <ul>
-                        {% for registered_chat in registered_chats %}
-                            <li>
-                                ({{registered_chat.duration}} mins)
-                                <a href={%url 'chat.views.session' encoded_chat_session_id=registered_chat.id%}>
-                                    {{registered_chat.topic.title}}
-                                </a>
-                                on {{registered_chat.start_date}} at {{registered_chat.start_time}}
-                                <button class="btn btn-small btn-primary chat-home-button">Check-in</button>
-                            </li>
-                        {%endfor %}
-                    </ul>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Duration</th>
+                                <th>Title</th>
+                                <th>Start Time</th>
+                                <th>Check-in</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registered_chat in registered_chats %}
+                            <tr>
+                                <td>{{registered_chat.duration}} mins</td>
+                                <td>
+                                    <a href={%url 'chat.views.session' encoded_chat_session_id=registered_chat.id%}>
+                                        {{registered_chat.topic.title}}
+                                    </a>
+                                </td>
+                                <td> {{registered_chat.start_date}} at {{registered_chat.start_time}}</td>
+                                <td><button class="btn btn-small btn-primary">Check-in</button></td>
+                            </tr>
+                            {%endfor %}
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
         </div>
