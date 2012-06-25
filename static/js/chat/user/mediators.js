@@ -41,8 +41,8 @@ define([
             var view = new user_views.ChatUserView({
                 id: userModel.id,
                 model: userModel,
-                //css: 'span' + 12/this.usersProxy.collection.length,
-                css: 'span' + 12/3,
+                collection: this.usersProxy.collection,
+                css: 'span3',
             });
 
             this.views[userModel.id] = view;

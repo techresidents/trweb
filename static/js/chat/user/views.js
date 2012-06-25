@@ -63,8 +63,7 @@ define([
      * @constructor
      * @param {Object} options
      *   model: User model (required)
-     *   chatSession: ChatSession model (required)
-     *   css: style to add to view (optional)
+     *   collection: Users collection (required)
      */
     var ChatUserView = Backbone.View.extend({
 
@@ -76,16 +75,18 @@ define([
             this.template = _.template(user_template);
 
             this.user = this.model;
-            this.chatSession = this.options.chatSession;
-            this.css = this.options.css;
+            this.users = this.collection;
+            this.usersLength = null;
 
-            this.headerSelector = '#participant' + this.user.participant() + '-header';
-            this.footerSelector = '#participant' + this.user.participant() + '-footer';
+            this.headerSelector = '.chat-participant-header';
+            this.footerSelector = '.chat-participant-footer';
             
             //bind events
             this.user.bind('change:isConnected', this.render, this);
             this.user.bind('change:isPublishing', this.render, this);
             this.user.bind('change:isSpeaking', this.onSpeakingChanged, this);
+            this.users.bind('add', this.render, this);
+            this.users.bind('remove', this.render, this);
 
             //views
             this.headerView = new ChatUserHeaderView({
@@ -122,7 +123,17 @@ define([
             this.footerView.render();
             this.$(this.footerSelector).html(this.footerView.el);
             
+            //add speaking style
             this.$(this.chatContainerSelector).toggleClass('speaking', this.user.isSpeaking());
+            
+            //add style indicating number of chat participants.
+            //this is useful for sizing the view through css
+            if(this.usersLength != this.users.length) {
+                this.$el.removeClass('chat-participants' + this.usersLength);
+
+                this.usersLength = this.users.length;
+                this.$el.addClass('chat-participants' + this.usersLength);
+            }
             
             return this;
         },
