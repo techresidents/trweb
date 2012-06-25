@@ -1,0 +1,40 @@
+{% extends "menu_base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block title %}Tech Residents - Chat Home{% endblock %}
+
+{% block extrahead %}
+    <link href="{% static "css/chat_home.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <div class="page-header">
+            <h1> Chats </h1>
+        </div>
+
+        <div class="row">
+            <div class="span7">
+                <h2>Registered Chats</h2>
+
+                <div class="well">
+                    <ul>
+                        {% for registered_chat in registered_chats %}
+                            <li>
+                                ({{registered_chat.duration}} mins)
+                                <a href={%url 'chat.views.session' encoded_chat_session_id=registered_chat.id%}>
+                                    {{registered_chat.topic.title}}
+                                </a>
+                                on {{registered_chat.start_date}} at {{registered_chat.start_time}}
+                                <button class="btn btn-small btn-primary chat-home-button">Check-in</button>
+                            </li>
+                        {%endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

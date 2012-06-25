@@ -1,3 +1,4 @@
+from datetime import timedelta
 import json
 
 from django.conf import settings
@@ -95,6 +96,32 @@ def create(request):
 
     return render_to_response('chat/create.html', context,  context_instance=RequestContext(request))
 
+@login_required
+def home(request):
+    """ List all all upcoming chats and all chats the user has registered for."""
+
+    #Get all upcoming chats the user has registered for
+    registered_chats = ChatRegistration.objects.filter(user=request.user).select_related("chat", "chat__topic").order_by("-chat.start")
+
+    registered_chat_contexts = []
+    for registered_chat in registered_chats:
+        if registered_chat.chat.expired:
+            chat_duration = registered_chat.chat.end - registered_chat.chat.start
+            chat_duration_secs = chat_duration.seconds
+            chat_duration_mins = chat_duration_secs/60
+            registered_chat_contexts.append({
+                "id": basic_encode(registered_chat.id),
+                "topic": registered_chat.chat.topic,
+                "start_date": registered_chat.chat.start.strftime('%m/%d'),
+                "start_time": registered_chat.chat.start.strftime('%I:%M %p %Z'),
+                "duration": chat_duration_mins
+            })
+
+    context = {
+        "registered_chats": registered_chat_contexts
+    }
+
+    return render_to_response('chat/home.html', context, context_instance=RequestContext(request))
 
 @login_required
 def list(request):
@@ -129,6 +156,7 @@ def register(request, encoded_chat_id):
                         user=request.user,
                         checked_in=False)
                 registration.save()
+            # TODO return to a registration success page
             return HttpResponseRedirect(reverse("chat.views.wait", args=[encoded_chat_id]))
         else:
             return HttpResponseForbidden("registration closed")
