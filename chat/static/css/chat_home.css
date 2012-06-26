@@ -1,5 +1,23 @@
-.chat-home-button {
-    margin-left: 40px;
-    margin-top: 5px;
-    margin-bottom: 5px;
+.chat-table {
+    table-layout: fixed;
+}
+
+.chat-table-duration {
+    width: 10%;
+}
+
+.chat-table-title {
+    width: 20%;
+}
+
+.chat-table-description {
+    width: 30%;
+}
+
+.chat-table-date {
+    width: 20%;
+}
+
+.chat-table-button {
+    width: 20%;
 }

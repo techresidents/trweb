@@ -17,18 +17,19 @@
         </div>
 
         <div class="row">
-            <div class="span7">
+            <div class="span11">
                 <h2>Registered Chats</h2>
 
                 <div class="well">
 
-                    <table class="table">
+                    <table class="table chat-table">
                         <thead>
                             <tr>
-                                <th>Duration</th>
-                                <th>Title</th>
-                                <th>Start Time</th>
-                                <th>Check-in</th>
+                                <th class="chat-table-duration">Duration</th>
+                                <th class="chat-table-title">Title</th>
+                                <th class="chat-table-description">Description</th>
+                                <th class="chat-table-date">Start Time</th>
+                                <th class="chat-table-button">Check-In</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -41,12 +42,28 @@
                                             {{registered_chat.topic.title}}
                                         </a>
                                     </td>
-                                    <td> {{registered_chat.start_date}} at {{registered_chat.start_time}}</td>
-                                    <td><a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registered_chat.id%}>Check-in</a></td>
+                                    <td>{{ registered_chat.topic.description }}</td>
+                                    <td> {{ registered_chat.chat.start|date:"m/d e" }} at <br> {{ registered_chat.chat.start|date:"h:i a e" }}</td>
+                                    <td>
+                                        {% if registered_chat.chat.checked_in %}
+                                            Checked-In
+                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registered_chat.id%}>Join Chat</a>
+                                        {% elif registered_chat.chat.checkin_open %}
+                                            Open
+                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registered_chat.id%}>Check-in</a>
+                                        {% elif registered_chat.chat.checkin_expired %}
+                                            The check-in window has expired
+                                        {% else %}
+                                            Opens {{ registered_chat.chat.start|date:"m/d e" }} at <br> {{ registered_chat.chat.checkin_start|date:"h:i a e" }}
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             {% empty %}
                                 <tr>
                                     <td> <em>{{ no_registered_chats_msg }}</em> </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                             {%endfor %}
 

@@ -89,6 +89,14 @@ class Chat(models.Model):
         return result
 
     @property
+    def checkin_expired(self):
+        result = False
+        if self.checkin_start and self.checkin_end:
+            now = timezone.now()
+            result = now > self.checkin_end
+        return result
+
+    @property
     def open(self):
         result = False
         now = timezone.now()

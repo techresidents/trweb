@@ -9,6 +9,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpRespons
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 import OpenTokSDK
 
@@ -100,20 +101,28 @@ def create(request):
 def home(request):
     """ List all all upcoming chats and all chats the user has registered for."""
 
-    #Get all upcoming chats the user has registered for
-    registered_chats = ChatRegistration.objects.filter(user=request.user).select_related("chat", "chat__topic").order_by("-chat.start")
+    # Get all upcoming chats the user has registered for where
+    # the current time is not later than the chat's end-time.
+    registered_chats = ChatRegistration.objects.\
+        filter(user=request.user, chat__end__gt=timezone.now()).\
+        select_related("chat", "chat__topic").\
+        order_by("chat.start")
 
     registered_chat_contexts = []
     for registered_chat in registered_chats:
+
+        # Only display unexpired chats that the user registered for
         if not registered_chat.chat.expired:
+
+            # Compute chat duration
             chat_duration = registered_chat.chat.end - registered_chat.chat.start
             chat_duration_secs = chat_duration.seconds
             chat_duration_mins = chat_duration_secs/60
+
             registered_chat_contexts.append({
                 "id": basic_encode(registered_chat.id),
+                "chat": registered_chat.chat,
                 "topic": registered_chat.chat.topic,
-                "start_date": registered_chat.chat.start.strftime('%m/%d'),
-                "start_time": registered_chat.chat.start.strftime('%I:%M %p %Z'),
                 "duration": chat_duration_mins
             })
 
