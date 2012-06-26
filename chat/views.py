@@ -1,3 +1,4 @@
+from datetime import timedelta
 import json
 
 from django.conf import settings
@@ -8,6 +9,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpRespons
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 import OpenTokSDK
 
@@ -95,6 +97,72 @@ def create(request):
 
     return render_to_response('chat/create.html', context,  context_instance=RequestContext(request))
 
+@login_required
+def home(request):
+    """ List all all upcoming chats and all chats the user has registered for."""
+
+    # Get all upcoming chats the user has registered for where
+    # the current time is not later than the chat's end-time.
+    chat_registrations = ChatRegistration.objects.\
+        filter(user=request.user, chat__end__gt=timezone.now()).\
+        select_related("chat", "chat__topic").\
+        order_by("chat.start")
+
+    chat_registration_ids = []
+    chat_registration_contexts = []
+    for registration in chat_registrations:
+
+        # Only display unexpired chats that the user registered for
+        if not registration.chat.expired:
+
+            chat_registration_ids.append(registration.chat.id)
+
+            # Compute chat duration
+            chat_duration = registration.chat.end - registration.chat.start
+            chat_duration_secs = chat_duration.seconds
+            chat_duration_mins = chat_duration_secs/60
+
+            chat_registration_contexts.append({
+                "encoded_id": basic_encode(registration.chat.id),
+                "registration": registration,
+                "chat": registration.chat,
+                "topic": registration.chat.topic,
+                "duration": chat_duration_mins
+            })
+
+    # Get all upcoming chats that the user can register for where
+    # the current time is not later than the chat's end-time.
+    # Do not get chats the user is already registered for.
+    upcoming_chats = Chat.objects.\
+    filter(registration_end__gt=timezone.now()).\
+    exclude(id__in=chat_registration_ids).\
+    select_related("chat__topic").\
+    order_by("start")
+
+    chat_contexts = []
+    for chat in upcoming_chats:
+
+        # Only display unexpired chats that the user has not registered for
+        if not chat.expired:
+
+            # Compute chat duration
+            chat_duration = chat.end - chat.start
+            chat_duration_secs = chat_duration.seconds
+            chat_duration_mins = chat_duration_secs/60
+
+            chat_contexts.append({
+                "encoded_id": basic_encode(chat.id),
+                "chat": chat,
+                "topic": chat.topic,
+                "duration": chat_duration_mins
+            })
+
+    context = {
+        "chat_registrations": chat_registration_contexts,
+        "upcoming_chats": chat_contexts
+    }
+
+    return render_to_response('chat/home.html', context, context_instance=RequestContext(request))
 
 @login_required
 def list(request):
@@ -129,7 +197,7 @@ def register(request, encoded_chat_id):
                         user=request.user,
                         checked_in=False)
                 registration.save()
-            return HttpResponseRedirect(reverse("chat.views.wait", args=[encoded_chat_id]))
+            return HttpResponseRedirect(reverse("chat.views.home"))
         else:
             return HttpResponseForbidden("registration closed")
 
@@ -139,6 +207,7 @@ def register(request, encoded_chat_id):
 @login_required
 def checkin(request, encoded_chat_id):
     chat_id = basic_decode(encoded_chat_id)
+    print chat_id
     try:
         chat = Chat.objects.get(id=chat_id)
         registration = ChatRegistration.objects.get(chat=chat, user=request.user)
