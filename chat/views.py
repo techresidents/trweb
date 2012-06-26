@@ -134,7 +134,7 @@ def home(request):
     # the current time is not later than the chat's end-time.
     # Do not get chats the user is already registered for.
     upcoming_chats = Chat.objects.\
-    filter(end__gt=timezone.now(), registration_start__isnull=False, registration_end__isnull=False).\
+    filter(registration_end__gt=timezone.now()).\
     exclude(id__in=chat_registration_ids).\
     select_related("chat__topic").\
     order_by("start")

@@ -49,10 +49,10 @@
                                             Checked-In <br>
                                             <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration.encoded_id%}>Join Chat</a>
                                         {% elif registration.chat.checkin_open %}
-                                            Open <br>
+                                            Check-in Open <br>
                                             <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration.encoded_id%}>Check-in</a>
                                         {% elif registration.chat.checkin_closed %}
-                                            The check-in window has closed
+                                            Check-in Closed
                                         {% else %}
                                             Opens {{ registration.chat.checkin_start|date:"m/d e" }} at <br> {{ registration.chat.checkin_start|date:"h:i a e" }}
                                         {% endif %}
@@ -103,7 +103,7 @@
                                         {% elif chat_ctx.chat.registration_closed %}
                                             Registration Closed
                                         {% else %}
-                                            Registration opens {{ chat_ctx.chat.registration_start|date:"m/d e" }} at <br> {{ chat_ctx.chat.registration_start|date:"h:i a e" }}
+                                            Opens {{ chat_ctx.chat.registration_start|date:"m/d e" }} at <br> {{ chat_ctx.chat.registration_start|date:"h:i a e" }}
                                         {% endif %}
                                     </td>
                                 </tr>
