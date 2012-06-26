@@ -197,7 +197,7 @@ def register(request, encoded_chat_id):
                         user=request.user,
                         checked_in=False)
                 registration.save()
-            return HttpResponseRedirect(reverse("chat.views.home", args=[encoded_chat_id]))
+            return HttpResponseRedirect(reverse("chat.views.home"))
         else:
             return HttpResponseForbidden("registration closed")
 
