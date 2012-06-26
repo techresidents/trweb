@@ -103,32 +103,33 @@ def home(request):
 
     # Get all upcoming chats the user has registered for where
     # the current time is not later than the chat's end-time.
-    registered_chats = ChatRegistration.objects.\
+    chat_registrations = ChatRegistration.objects.\
         filter(user=request.user, chat__end__gt=timezone.now()).\
         select_related("chat", "chat__topic").\
         order_by("chat.start")
 
-    registered_chat_contexts = []
-    for registered_chat in registered_chats:
+    chat_registration_contexts = []
+    for registration in chat_registrations:
 
         # Only display unexpired chats that the user registered for
-        if not registered_chat.chat.expired:
+        if not registration.chat.expired:
 
             # Compute chat duration
-            chat_duration = registered_chat.chat.end - registered_chat.chat.start
+            chat_duration = registration.chat.end - registration.chat.start
             chat_duration_secs = chat_duration.seconds
             chat_duration_mins = chat_duration_secs/60
 
-            registered_chat_contexts.append({
-                "id": basic_encode(registered_chat.id),
-                "chat": registered_chat.chat,
-                "topic": registered_chat.chat.topic,
+            chat_registration_contexts.append({
+                "encoded_id": basic_encode(registration.chat.id),
+                "registration": registration,
+                "chat": registration.chat,
+                "topic": registration.chat.topic,
                 "duration": chat_duration_mins
             })
 
     context = {
         "no_registered_chats_msg": "You are not registered for any chats",
-        "registered_chats": registered_chat_contexts
+        "chat_registrations": chat_registration_contexts
     }
 
     return render_to_response('chat/home.html', context, context_instance=RequestContext(request))
@@ -177,6 +178,7 @@ def register(request, encoded_chat_id):
 @login_required
 def checkin(request, encoded_chat_id):
     chat_id = basic_decode(encoded_chat_id)
+    print chat_id
     try:
         chat = Chat.objects.get(id=chat_id)
         registration = ChatRegistration.objects.get(chat=chat, user=request.user)
