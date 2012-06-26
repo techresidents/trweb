@@ -74,6 +74,7 @@ define([
      *      a boolean indicated whether the tag
      *      should be displayed (optional)
      *   context: callback context (optional)
+     *   maxItems: max number of visibile items (optional)
      */
     var ChatTaggerListView = view.View.extend({
 
@@ -83,6 +84,7 @@ define([
             this.users = this.options.users;
             this.filter = this.options.filter || this._passThroughFilter;
             this.context = this.options.context || this;
+            this.maxItems = this.options.maxItems;
             this.collection.bind('reset', this.render, this);
             this.collection.bind('add', this.added, this);
             this.itemViews = [];
@@ -103,6 +105,8 @@ define([
             this.$el.prepend(view.el);
             view.$el.toggle(this.filter.call(this.context, view.model));
             this.itemViews.push(view);
+
+            this._enforceMaxItems();
         },
 
         applyFilter: function() {
@@ -110,10 +114,28 @@ define([
             _.each(this.itemViews, function(view) {
                 view.$el.toggle(that.filter.call(that.context, view.model));
             });
+
+            this._enforceMaxItems();
         },
 
         _passThroughFilter: function(tag) {
             return true;
+        },
+
+        _enforceMaxItems: function() {
+            var visibleItems = 0;
+            if(this.maxItems) {
+                for(var i = this.itemViews.length - 1; i >= 0; i--) {
+                    var view = this.itemViews[i];
+                    if(view.$el.is(':visible')) {
+                        if(visibleItems >=  this.maxItems) {
+                            view.$el.toggle(false);
+                        } else {
+                            visibleItems++;
+                        }
+                    }
+                }
+            }
         },
     });
 
@@ -123,6 +145,7 @@ define([
      * @constructor
      * @param {Object} options
      *   collection: {TagCollection} (required)
+     *   maxItems: maximum tags to show (optional)
      */
     var ChatTaggerView = view.View.extend({
 
@@ -137,8 +160,10 @@ define([
         initialize: function() {
             this.template =  _.template(tagger_template);
             this.users = this.options.users;
+            this.maxItems = this.options.maxItems;
             this.enabled = false;
             this.tagInput = null;
+            this.lastSelectedTag = null;
         },
 
         enable: function(enabled) {
@@ -155,9 +180,10 @@ define([
             new lookup.LookupView({
                 el: this.tagInput,
                 scope: 'tag',
-                property: 'value',
+                property: 'name',
                 forceSelection: false,
                 onenter: this.updateOnEnter,
+                onselect: this.onSelect,
                 context: this
             });
 
@@ -165,25 +191,43 @@ define([
                 el: this.$(this.listSelector),
                 users: this.users,
                 collection: this.collection,
+                maxItems: this.maxItems,
             }).render();
 
             return this;
         },
-        
+
         addTag: function() {
             var value = this.tagInput.val();
             if(this.enabled && value) {
-                this.triggerEvent(EVENTS.ADD_TAG, {
+                event = {
+                    tagReferenceId: null,
+                    conceptId: null,
                     tagValue: value
-                });
+                }
+
+                if(this.lastSelectedTag &&
+                   this.lastSelectedTag.name === value) {
+                    _.extend(event, {
+                        tagReferenceId: this.lastSelectedTag.id,
+                        conceptId: this.lastSelectedTag.conceptId,
+                    });
+                }
+
+                this.triggerEvent(EVENTS.ADD_TAG, event);
                 this.tagInput.val(null);
                 this.tagInput.focus();
             }
         },
 
         updateOnEnter: function(value, data) {
+            this.lastSelectedTag = data;
             this.addTag();
-        }
+        },
+
+        onSelect: function(value, data) {
+            this.lastSelectedTag = data;
+        },
     });
 
     return {

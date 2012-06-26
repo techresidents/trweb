@@ -67,7 +67,8 @@ define([
             this.taggerView = new tag_views.ChatTaggerView({
                 el: this.$(this.tagSelector),
                 users: this.users,
-                collection: this.tags
+                collection: this.tags,
+                maxItems: 8,
             });
             this.taggerView.render();
 
@@ -123,14 +124,17 @@ define([
             this.$el.html(this.template(this.model.toJSON()));
 
             var activeTopic = this.model.activeTopic();
-            if(activeTopic) {
+            var activeMinute = this.model.activeMinute();
+            if(activeTopic && activeMinute) {
+                var startTime = new Date(activeMinute.startTimestamp() * 1000.0);
+
                 this.timer = new timer.DurationTimerView({
                     el: this.$(this.timerSelector),
                     duration: activeTopic.durationMs(),
                     interval: 500,
                 });
                 this.timer.render();
-                this.timer.start();
+                this.timer.start(startTime);
             }
             return this;
         },
@@ -144,58 +148,6 @@ define([
         },
     });
 
-
-
-
-
-    /**
-     * Disucss view.
-     * @constructor
-     * @param {Object} options
-     *   templateSelector: html template selector (optional)
-     *   timerSelector: selector for timer view (optional)
-     */
-    var DiscussOldView = view.View.extend({
-
-        timerSelector: '#discuss-timer',
-
-        events: {
-            "click .next": "next",
-            "click .start": "start",
-        },
-
-        initialize: function() {
-            this.template = _.template(discuss_parent_template);
-            this.model.bind('change:activeTopic', this.render, this);
-            this.timer = null;
-        },
-
-        render: function() {
-
-            this.$el.html(this.template(this.model.toJSON()));
-            
-            var activeTopic = this.model.activeTopic();
-            if(activeTopic) {
-                this.timer = new timer.DurationTimerView({
-                    el: this.$(this.timerSelector),
-                    duration: activeTopic.durationMs(),
-                    interval: 500,
-                });
-                this.timer.render();
-                this.timer.start();
-            } 
-            return this;
-        },
-
-        next: function() {
-            this.triggerEvent(EVENTS.NEXT);
-        },
-
-        start: function() {
-            this.triggerEvent(EVENTS.START);
-        },
-
-    });
     
     return {
         EVENTS: EVENTS,

@@ -25,6 +25,13 @@ define([
 
         initialize: function(options) {
         },
+        
+        /**
+         * Return currently active minute.
+         */
+        active: function() {
+            return this.collection.active();
+        },
 
     }, {
 

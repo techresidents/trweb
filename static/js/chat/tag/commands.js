@@ -43,6 +43,7 @@ define([
             if(activeMinute) {
                 var tag = new tag_models.Tag({
                     name: options.name,
+                    tagReferenceId: options.tagReferenceId,
                     minuteId: activeMinute.id
                 });
 

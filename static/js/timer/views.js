@@ -41,14 +41,25 @@ define([
             return this;
         },
         
+        /**
+         * Set the timer duration.
+         * @param {Number} duration in ms
+         */
         setDuration: function(duration) {
             this.duration = duration;
             return this;
         },
-
-        start: function() {
+       
+        /**
+         * Start the timer.
+         * @param {Date} startTime optional start time. If provided,
+         * the timer will behave as if the timer was started at
+         * the time provided. If not provided, start time is assumed
+         * to be the current time.
+         */
+        start: function(startTime) {
             this.running = true;
-            this.startTime = Date.now();
+            this.startTime = startTime || Date.now();
             this.stopTime = null;
             this.$el.addClass(this.runningClass);
 
@@ -58,6 +69,9 @@ define([
             }, this.interval);
         },
 
+        /**
+         * Stop the timer.
+         */
         stop: function() {
             if(this.running) {
                 this.running = false;
@@ -70,6 +84,9 @@ define([
             }
         },
 
+        /**
+         * Update the timer display.
+         */
         updateTimer: function() {
             var remaining = this.duration - (new Date() - this.startTime);
             if(remaining < 0) {

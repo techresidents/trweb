@@ -66,7 +66,9 @@ define([
 
         onAdd: function(e, eventBody) {
             this.facade.trigger(notifications.TAG_CREATE, {
-                name: eventBody.tagValue
+                name: eventBody.tagValue,
+                tagReferenceId: eventBody.tagReferenceId,
+                conceptId: eventBody.conceptId,
             });
         },
 

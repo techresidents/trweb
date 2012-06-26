@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.db import connection, models, transaction
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -158,9 +156,9 @@ class ChatMinute(models.Model):
 class ChatTag(models.Model):
     class Meta:
         db_table = "chat_tag"
-
     chat_minute = models.ForeignKey(ChatMinute, related_name="chat_tags")
-    tag = models.ForeignKey(Tag)
+    tag = models.ForeignKey(Tag, null=True)
+    name = models.CharField(max_length=1024)
 
 class ChatArchive(models.Model):
     class Meta:

@@ -50,6 +50,7 @@ define([
                     rootTopic: this.agendaProxy.topics().first(),
                     activeTopic: this.agendaProxy.active(),
                     nextTopic: this.agendaProxy.nextActive(),
+                    activeMinute: this.agendaProxy.minutesProxy.active(),
                 })
             });
 
@@ -67,6 +68,7 @@ define([
         },
 
         onChatTopicChanged: function(notification) {
+            this.view.model.setActiveMinute(this.agendaProxy.minutesProxy.active());
             this.view.model.setActiveTopic(notification.topic);
         },
 
@@ -88,7 +90,9 @@ define([
 
         onAddTag: function(e, eventBody) {
             this.facade.trigger(notifications.TAG_CREATE, {
-                name: eventBody.tagValue
+                name: eventBody.tagValue,
+                tagReferenceId: eventBody.tagReferenceId,
+                conceptId: eventBody.conceptId,
             });
         },
 

@@ -7,7 +7,7 @@
     background-image: url("../img/person.png");
     background-repeat: no-repeat;
     background-color: white; 
-    background-size: 90%;
+    background-size: 80%;
     background-position: center;
 }
 
@@ -19,13 +19,13 @@
 .chat-participants1 {
     float: left;
     margin-left: 20px;
-    width: 400px;
+    width: 300px;
 }
 .chat-participants1 .chat-participant-container, 
 .chat-participants1 .chat-person-logo,
 .chat-participants1 object {
-    width: 400px;
-    height: 300px;
+    width: 300px;
+    height: 225px;
 }
 
 .chat-participants2 {
