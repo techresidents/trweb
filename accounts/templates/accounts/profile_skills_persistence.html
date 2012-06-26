@@ -28,12 +28,12 @@
     <div class="container">
         <div class="row">
 
-            {% include 'accounts/navigation_panel.html' with isPersistencePageActive="active" %}
+            {% include 'accounts/navigation_panel.html' with isPersistencePageActive="active" navPanelMessage="Tell us what databases and other persistence technologies you've used. <br><br> This info will be used to best match you with our network of hiring companies."%}
 
             <div class="span9">
                 <div class="well">
                     <fieldset>
-                        <legend>Update your persistence skills</legend>
+                        <legend>Update your database skills</legend>
 
                         {% if messages %}
                             {% for message in messages %}
@@ -51,7 +51,7 @@
                     <div id="table-wrap">
                         <table id="table" class="table">
                             <thead>
-                            <th>Persistence</th>
+                            <th>DB Technology</th>
                             <th>Expertise Level</th>
                             <th>Yrs Professional Experience</th>
                             </thead>
@@ -63,14 +63,14 @@
                     <div class="form-horizontal well">
 
                         <div id="skill-add" class="control-group">
-                            <label for="skill-input">Add Persistence</label>
+                            <label for="skill-input">Add DB Technology</label>
                             <div class="controls">
-                                <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off" placeholder="Persistence Name ( e.g. MySQL )">
+                                <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off" placeholder="Technology Name ( e.g. MySQL )">
                                 <button id="skill-add-button" type="button" class="btn-primary">Add</button>
                             </div>
                             <div class="controls">
                                 <span class="help">
-                                    <a href="mailto:{{ support_email }}?Subject=Add%20Persistence%20Request">Persistence not listed?</a>
+                                    <a href="mailto:{{ support_email }}?Subject=Add%20Persistence%20Request">Technology not listed?</a>
                                 </span>
                             </div>
                         </div>
