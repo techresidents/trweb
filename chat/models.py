@@ -79,6 +79,14 @@ class Chat(models.Model):
             now = timezone.now()
             result = (now > self.registration_start) and (now < self.registration_end)
         return result
+
+    @property
+    def registration_closed(self):
+        result = False
+        if self.registration_end:
+            now = timezone.now()
+            result = now > self.registration_end
+        return result
     
     @property
     def checkin_open(self):
@@ -89,9 +97,9 @@ class Chat(models.Model):
         return result
 
     @property
-    def checkin_expired(self):
+    def checkin_closed(self):
         result = False
-        if self.checkin_start and self.checkin_end:
+        if self.checkin_end:
             now = timezone.now()
             result = now > self.checkin_end
         return result

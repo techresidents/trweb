@@ -21,20 +21,20 @@
                 <h2>Registered Chats</h2>
 
                 <div class="well">
-
                     <table class="table chat-table">
-                        <thead>
-                            <tr>
-                                <th class="chat-table-duration">Duration</th>
-                                <th class="chat-table-title">Title</th>
-                                <th class="chat-table-description">Description</th>
-                                <th class="chat-table-date">Start Time</th>
-                                <th class="chat-table-button">Check-In</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            {% for registration in chat_registrations %}
+                        {% for registration in chat_registrations %}
+                            {% if forloop.first %}
+                                <thead>
+                                    <tr>
+                                        <th class="chat-table-duration">Duration</th>
+                                        <th class="chat-table-title">Title</th>
+                                        <th class="chat-table-description">Description</th>
+                                        <th class="chat-table-date">Start Time</th>
+                                        <th class="chat-table-button">Check-In</th>
+                                    </tr>
+                                </thead>
+                            {% endif %}
+                            <tbody>
                                 <tr>
                                     <td>{{registration.duration}} mins</td>
                                     <td>
@@ -51,26 +51,73 @@
                                         {% elif registration.chat.checkin_open %}
                                             Open <br>
                                             <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration.encoded_id%}>Check-in</a>
-                                        {% elif registration.chat.checkin_expired %}
+                                        {% elif registration.chat.checkin_closed %}
                                             The check-in window has closed
                                         {% else %}
-                                            Opens {{ registration.chat.start|date:"m/d e" }} at <br> {{ registration.chat.checkin_start|date:"h:i a e" }}
+                                            Opens {{ registration.chat.checkin_start|date:"m/d e" }} at <br> {{ registration.chat.checkin_start|date:"h:i a e" }}
                                         {% endif %}
                                     </td>
                                 </tr>
-                            {% empty %}
+                            </tbody>
+                        {% empty %}
+                            <tbody>
                                 <tr>
-                                    <td> <em>{{ no_registered_chats_msg }}</em> </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <em>You are not registered for any chats at this time</em>
                                 </tr>
-                            {%endfor %}
-
-                        </tbody>
+                            </tbody>
+                        {%endfor %}
                     </table>
-
                 </div>
+
+
+                <h2>Upcoming Chats</h2>
+
+                <div class="well">
+                    <table class="table chat-table">
+                        {% for chat_ctx in upcoming_chats %}
+                            {% if forloop.first %}
+                                <thead>
+                                    <tr>
+                                        <th class="chat-table-duration">Duration</th>
+                                        <th class="chat-table-title">Title</th>
+                                        <th class="chat-table-description">Description</th>
+                                        <th class="chat-table-date">Start Time</th>
+                                        <th class="chat-table-button">Registration</th>
+                                    </tr>
+                                </thead>
+                            {% endif %}
+                            <tbody>
+                                <tr>
+                                    <td>{{chat_ctx.duration}} mins</td>
+                                    <td>
+                                        <a href={%url 'chat.views.session' encoded_chat_session_id=chat_ctx.encoded_id%}>
+                                            {{chat_ctx.topic.title}}
+                                        </a>
+                                    </td>
+                                    <td>{{ chat_ctx.topic.description }}</td>
+                                    <td> {{ chat_ctx.chat.start|date:"m/d e" }} at <br> {{ chat_ctx.chat.start|date:"h:i a e" }}</td>
+                                    <td>
+                                        {% if chat_ctx.chat.registration_open %}
+                                            Registration Open <br>
+                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.register' encoded_chat_id=chat_ctx.encoded_id%}>Register</a>
+                                        {% elif chat_ctx.chat.registration_closed %}
+                                            Registration Closed
+                                        {% else %}
+                                            Registration opens {{ chat_ctx.chat.registration_start|date:"m/d e" }} at <br> {{ chat_ctx.chat.registration_start|date:"h:i a e" }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        {% empty %}
+                            <tbody>
+                                <tr>
+                                    <em>There are no upcoming chats at this time</em>
+                                </tr>
+                            </tbody>
+                        {%endfor %}
+                    </table>
+                </div>
+
             </div>
         </div>
 

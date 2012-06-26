@@ -108,11 +108,14 @@ def home(request):
         select_related("chat", "chat__topic").\
         order_by("chat.start")
 
+    chat_registration_ids = []
     chat_registration_contexts = []
     for registration in chat_registrations:
 
         # Only display unexpired chats that the user registered for
         if not registration.chat.expired:
+
+            chat_registration_ids.append(registration.chat.id)
 
             # Compute chat duration
             chat_duration = registration.chat.end - registration.chat.start
@@ -127,9 +130,36 @@ def home(request):
                 "duration": chat_duration_mins
             })
 
+    # Get all upcoming chats that the user can register for where
+    # the current time is not later than the chat's end-time.
+    # Do not get chats the user is already registered for.
+    upcoming_chats = Chat.objects.\
+    filter(end__gt=timezone.now(), registration_start__isnull=False, registration_end__isnull=False).\
+    exclude(id__in=chat_registration_ids).\
+    select_related("chat__topic").\
+    order_by("start")
+
+    chat_contexts = []
+    for chat in upcoming_chats:
+
+        # Only display unexpired chats that the user has not registered for
+        if not chat.expired:
+
+            # Compute chat duration
+            chat_duration = chat.end - chat.start
+            chat_duration_secs = chat_duration.seconds
+            chat_duration_mins = chat_duration_secs/60
+
+            chat_contexts.append({
+                "encoded_id": basic_encode(chat.id),
+                "chat": chat,
+                "topic": chat.topic,
+                "duration": chat_duration_mins
+            })
+
     context = {
-        "no_registered_chats_msg": "You are not registered for any chats",
-        "chat_registrations": chat_registration_contexts
+        "chat_registrations": chat_registration_contexts,
+        "upcoming_chats": chat_contexts
     }
 
     return render_to_response('chat/home.html', context, context_instance=RequestContext(request))
@@ -167,8 +197,7 @@ def register(request, encoded_chat_id):
                         user=request.user,
                         checked_in=False)
                 registration.save()
-            # TODO return to a registration success page
-            return HttpResponseRedirect(reverse("chat.views.wait", args=[encoded_chat_id]))
+            return HttpResponseRedirect(reverse("chat.views.home", args=[encoded_chat_id]))
         else:
             return HttpResponseForbidden("registration closed")
 
