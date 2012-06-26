@@ -4,17 +4,64 @@
 }
 
 .chat-person-logo {
-    width: 300px;
-    height: 225px;
     background-image: url("../img/person.png");
     background-repeat: no-repeat;
-    background-size: 90%;
     background-color: white; 
+    background-size: 90%;
     background-position: center;
 }
 
 .chat-participant-container.speaking {
     border-width: 8px;
+}
+
+
+.chat-participants1 {
+    float: left;
+    margin-left: 20px;
+    width: 400px;
+}
+.chat-participants1 .chat-participant-container, 
+.chat-participants1 .chat-person-logo,
+.chat-participants1 object {
+    width: 400px;
+    height: 300px;
+}
+
+.chat-participants2 {
+    float: left;
+    margin-left: 20px;
+    width: 300px;
+}
+.chat-participants2 .chat-participant-container,
+.chat-participants2 .chat-person-logo,
+.chat-participants2 object {
+    width: 300px;
+    height: 225px;
+}
+
+.chat-participants3 {
+    float: left;
+    margin-left: 20px;
+    width: 300px;
+}
+.chat-participants3 .chat-participant-container,
+.chat-participants3 .chat-person-logo,
+.chat-participants3 object {
+    width: 300px;
+    height: 225px;
+}
+
+.chat-participants4 {
+    float: left;
+    margin-left: 20px;
+    width: 220px;
+}
+.chat-participants4 .chat-participant-container,
+.chat-participants4 .chat-person-logo,
+.chat-participants4 object {
+    width: 220px;
+    height: 165px;
 }
 
 .chat-participant1 {
