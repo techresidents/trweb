@@ -34,3 +34,16 @@
 .learn-more-title {
     padding-bottom: 10px;
 }
+
+.learn-more-step {
+    background-color: #EA8F00;
+    color: white;
+    font-size: 18px;
+
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#learn-more-steps {
+    padding-top: 50px;
+}
