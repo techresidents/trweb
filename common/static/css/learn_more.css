@@ -25,3 +25,19 @@
     padding-top: 18px;
     padding-bottom: 18px;
 }
+
+.learn-more-bullet {
+    font-size: 16px;
+    line-height: 25px;
+}
+
+.learn-more-title {
+    padding-bottom: 20px;
+}
+
+.blue-bubble-background {
+    height: 121px;
+    background-image: url(../img/blue-chat-bubble-200.png);
+    background-repeat: no-repeat;
+    background-position: center center
+}
