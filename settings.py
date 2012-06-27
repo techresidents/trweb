@@ -200,7 +200,7 @@ EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
 #EMAIL_HOST_USER = 'user'
 #EMAIL_HOST_PASSWORD = 'password'
-DEFAULT_FROM_EMAIL = 'Tech Residents Support <jmullins@techresidents.com>'
+DEFAULT_FROM_EMAIL = 'Tech Residents Support <support@techresidents.com>'
 DEFAULT_SUPPORT_EMAIL = 'Tech Residents Support <support@techresidents.com>'
 
 #Landing settings
@@ -223,8 +223,6 @@ TR_XD_REMOTE = 'http://localhost:6767/static/js/easyXDM/cors/index.html'
 TOKBOX_API_KEY = '15889991'
 TOKBOX_API_SECRET = '19a6fb225790a2cf3e048c58ef2fdcc425e7b599'
 TOKBOX_JS_URL = 'http://staging.tokbox.com/v0.91/js/TB.min.js'
-#TOKBOX_API_KEY = '11557552'
-#TOKBOX_API_SECRET = 'a3fc9c8a0e37bd9fa04018132e55b4141195ce2b'
 TOKBOX_IS_STAGING = True
 
 
