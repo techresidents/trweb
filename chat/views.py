@@ -207,7 +207,6 @@ def register(request, encoded_chat_id):
 @login_required
 def checkin(request, encoded_chat_id):
     chat_id = basic_decode(encoded_chat_id)
-    print chat_id
     try:
         chat = Chat.objects.get(id=chat_id)
         registration = ChatRegistration.objects.get(chat=chat, user=request.user)
