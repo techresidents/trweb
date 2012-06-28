@@ -276,9 +276,9 @@ def profile_jobs(request):
         forms.ProfileJobsForm.SALARY_MAX,
         10000)
 
-    # Create data to populate the Positions field autocomplete
+    # Create data to populate the Positions field
     position_types = PositionType.objects.all()
-    json_position_names = [p.name for p in position_types]
+    position_names = [p.name for p in position_types]
     json_position_types = [ {
         'id': p.id,
         'name': p.name,
@@ -322,8 +322,8 @@ def profile_jobs(request):
         'json_location_prefs' : json.dumps(json_location_prefs),
         'json_technology_prefs': json.dumps(json_technology_prefs),
         'json_user_positions': json.dumps(json_position_prefs),
-        'json_autocomplete_positions': json.dumps(json_position_names),
         'json_position_types': json.dumps(json_position_types),
+        'position_names': position_names,
         'min_salary_options': min_salary_options,
         'support_email': settings.DEFAULT_SUPPORT_EMAIL,
         'TR_XD_REMOTE': settings.TR_XD_REMOTE

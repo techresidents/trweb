@@ -283,14 +283,6 @@ define([
 
         initialize: function() {
             this.setElement($("#position-add"));
-            this.typeaheadView = new typeahead.TypeaheadView({
-                el: this.$("#position-input"),
-                maxResults: 5,
-                forceSelection: true,
-                onenter: this.updateOnEnter,
-                context: this
-            });
-
             this.positionTypeCollection = this.options.positionTypeCollection;
             this.positionCollection = this.options.positionCollection;
             this.positionInput = this.$("#position-input");
@@ -298,6 +290,7 @@ define([
 
         addPosition: function() {
             var positionName = this.positionInput.val();
+            console.log(positionName);
             var positionTypeId = null;
             if (positionName) {
                 var positions = this.positionTypeCollection.where({'name': positionName});
@@ -321,10 +314,6 @@ define([
             }
             this.positionInput.focus();
         },
-
-        updateOnEnter: function(value) {
-            this.addPosition();
-        }
 
     });
 
