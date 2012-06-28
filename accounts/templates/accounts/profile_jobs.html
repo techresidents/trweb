@@ -82,7 +82,11 @@
                                 <label for="position-input">Add Position</label>
                                 <div class="controls">
                                     <div id="position-add" class="input-append">
-                                        <input id="position-input" data-source='{{ json_autocomplete_positions }}' maxlength="1024" type="text" name="position" autocomplete="off" placeholder="e.g. Developer or Manager">
+                                        <select id="position-input">
+                                            {% for option in position_names %}
+                                                <option value={{ option }}>{{ option }}</option>
+                                            {% endfor %}
+                                        </select>
                                         <button id="position-add-button" class="btn">Add</button>
                                     </div>
                                 </div>
