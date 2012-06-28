@@ -70,6 +70,6 @@ done
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(-, thirty, thirty)
+%defattr(-, tr, tr)
 /%{__prefix}/*
 
