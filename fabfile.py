@@ -24,35 +24,35 @@ def localdev():
 
     env.hosts = ["localdev"]
     env.project_environment="localdev"
-    env.project_install_root="/opt/30and30/www/%s/install" % (env.project_site)
-    env.project_deploy_root="/opt/30and30/www/%s/%s" % (env.project_site, env.project_environment)
+    env.project_install_root="/opt/tr/www/%s/install" % (env.project_site)
+    env.project_deploy_root="/opt/tr/www/%s/%s" % (env.project_site, env.project_environment)
 
     #Add additional convenience root for localdev deploy
-    env.project_localdev_deploy_root="/opt/30and30/www/localdev.com/%s" % env.project_environment
+    env.project_localdev_deploy_root="/opt/tr/www/localdev.com/%s" % env.project_environment
 
 def integration():
     """Configure environment for integration """
 
-    env.hosts = ["dev.30and30.com"]
+    env.hosts = ["dev.techresidents.com"]
     env.project_environment="integration"
-    env.project_install_root="/opt/30and30/www/%s/install" % (env.project_site)
-    env.project_deploy_root="/opt/30and30/www/%s/%s" % (env.project_site, env.project_environment)
+    env.project_install_root="/opt/tr/www/%s/install" % (env.project_site)
+    env.project_deploy_root="/opt/tr/www/%s/%s" % (env.project_site, env.project_environment)
 
 def staging():
     """Configure environment for staging """
 
-    env.hosts = ["dev.30and30.com"]
+    env.hosts = ["dev.techresidents.com"]
     env.project_environment="staging"
-    env.project_install_root="/opt/30and30/www/%s/install" % (env.project_site)
-    env.project_deploy_root="/opt/30and30/www/%s/%s" % (env.project_site, env.project_environment)
+    env.project_install_root="/opt/tr/www/%s/install" % (env.project_site)
+    env.project_deploy_root="/opt/tr/www/%s/%s" % (env.project_site, env.project_environment)
 
 def prod():
     """Configure environment for staging """
 
-    env.hosts = ["dev.30and30.com"]
+    env.hosts = ["dev.techresidents.com"]
     env.project_environment="prod"
-    env.project_install_root="/opt/30and30/www/%s/install" % (env.project_site)
-    env.project_deploy_root="/opt/30and30/www/%s/%s" % (env.project_site, env.project_environment)
+    env.project_install_root="/opt/tr/www/%s/install" % (env.project_site)
+    env.project_deploy_root="/opt/tr/www/%s/%s" % (env.project_site, env.project_environment)
 
 
 
@@ -79,7 +79,7 @@ def _create_app_tarball(tag="HEAD", release="1", arch="x86_64"):
             local("tar -C %s -cLzf %s %s" % (tempdir_name, tarball, versioned_project))
 
     else:
-        #git archive --format=tar --prefix=techresidents_web-0.1/thirty_web/ HEAD |gzip > thirty_web-0.1.tar.gz
+        #git archive --format=tar --prefix=techresidents_web-0.1/techresidents_web/ HEAD |gzip > techresidents_web-0.1.tar.gz
         local("git archive --format=tar --prefix={0}-{1}/{0}/ {2} |gzip > {3}".format(env.project, env.project_version, tag, tarball))
 
         #Check that the version in the local version.py matches the archive
@@ -186,8 +186,8 @@ def deploy(version):
     
     with settings(user="root"):
         run("mkdir -p %s" % os.path.join(env.project_deploy_root, "log"))
-        run("chown thirty %s" % os.path.join(env.project_deploy_root, "log"))
-        run("chgrp thirty %s" % os.path.join(env.project_deploy_root, "log"))
+        run("chown tr %s" % os.path.join(env.project_deploy_root, "log"))
+        run("chgrp tr %s" % os.path.join(env.project_deploy_root, "log"))
         run("ln -fns %s %s" % (target, os.path.join(env.project_deploy_root, env.project)))
         
         #If deploying to localdev also adjust the following convenience symlink
