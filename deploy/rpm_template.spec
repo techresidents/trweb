@@ -5,18 +5,18 @@
 
 #Non-template defines
 %define app_buildroot $RPM_BUILD_ROOT/%{__prefix}/%{name}-%{version}/%{name}
-%define __prefix /opt/30and30/www/techresidents.com/install
+%define __prefix /opt/tr/www/techresidents.com/install
 %define app_installroot %{__prefix}/%{name}-%{version}/%{name}
 
-Summary: 30and30 Django Web Application 
+Summary: Tech Residents Django Web Application 
 Name: %{name}
 Version: %{version}
 Release: %{release}
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_topdir}/tmp/%{name}-%{version}-buildroot
-Group: 30and30
-Packager: 30and30
-License: 30and30
+Group: tr
+Packager: Tech Residents 
+License: Tech Residents
 
 
 %description 
