@@ -111,8 +111,8 @@ class Location(models.Model):
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     county = models.CharField(max_length=100)
-    latitude = models.CharField(max_length=50)
-    longitude = models.CharField(max_length=50)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
 
 class Organization(models.Model):
     """Represents an organization such as RSA or Bloomberg"""
