@@ -106,6 +106,7 @@ def details(request, encoded_chat_id):
 
     context = {
         "chat": chat,
+        "encoded_chat_id": basic_encode(chat.id),
         "topic": chat.topic,
         "topic_tree": topic_tree
         }

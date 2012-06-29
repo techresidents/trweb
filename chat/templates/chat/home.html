@@ -90,7 +90,7 @@
                                 <tr>
                                     <td>{{chat_ctx.duration}} mins</td>
                                     <td>
-                                        <a href={%url 'chat.views.session' encoded_chat_session_id=chat_ctx.encoded_chat_id%}>
+                                        <a href={%url 'chat.views.details' encoded_chat_id=chat_ctx.encoded_chat_id %}>
                                             {{chat_ctx.topic.title}}
                                         </a>
                                     </td>
