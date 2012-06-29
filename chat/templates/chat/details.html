@@ -1,0 +1,33 @@
+{% extends "menu_base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block title %}Tech Residents - Chat Details{% endblock %}
+
+{% block extrahead %}
+    <link href="{% static "css/chat_details.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <div class="page-header">
+            <h1> Chat Details </h1>
+        </div>
+
+        <div id="chat-details" class="row">
+            <div class="span12">
+
+                {% for topic in topic_tree %}
+                    <p class="level{{ topic.level }}">
+                        {{ topic.title }}
+                    </p>
+                {% endfor %}
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

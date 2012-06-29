@@ -38,7 +38,7 @@
                                 <tr>
                                     <td>{{registration.duration}} mins</td>
                                     <td>
-                                        <a href={%url 'chat.views.session' encoded_chat_session_id=registration.encoded_id%}>
+                                        <a href={%url 'chat.views.details' encoded_chat_id=registration.encoded_chat_id%}>
                                             {{registration.topic.title}}
                                         </a>
                                     </td>
@@ -47,10 +47,10 @@
                                     <td>
                                         {% if registration.registration.checked_in %}
                                             Checked-In <br>
-                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration.encoded_id%}>Join Chat</a>
+                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration.encoded_chat_id%}>Join Chat</a>
                                         {% elif registration.chat.checkin_open %}
                                             Check-in Open <br>
-                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration.encoded_id%}>Check-in</a>
+                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration.encoded_chat_id%}>Check-in</a>
                                         {% elif registration.chat.checkin_closed %}
                                             Check-in Closed
                                         {% else %}
@@ -90,7 +90,7 @@
                                 <tr>
                                     <td>{{chat_ctx.duration}} mins</td>
                                     <td>
-                                        <a href={%url 'chat.views.session' encoded_chat_session_id=chat_ctx.encoded_id%}>
+                                        <a href={%url 'chat.views.session' encoded_chat_session_id=chat_ctx.encoded_chat_id%}>
                                             {{chat_ctx.topic.title}}
                                         </a>
                                     </td>
@@ -99,7 +99,7 @@
                                     <td>
                                         {% if chat_ctx.chat.registration_open %}
                                             Registration Open <br>
-                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.register' encoded_chat_id=chat_ctx.encoded_id%}>Register</a>
+                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.register' encoded_chat_id=chat_ctx.encoded_chat_id%}>Register</a>
                                         {% elif chat_ctx.chat.registration_closed %}
                                             Registration Closed
                                         {% else %}

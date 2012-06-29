@@ -97,6 +97,25 @@ def create(request):
 
     return render_to_response('chat/create.html', context,  context_instance=RequestContext(request))
 
+
+
+
+@login_required
+def details(request, encoded_chat_id):
+    chat_id = basic_decode(encoded_chat_id)
+    chat = Chat.objects.select_related("chat__topic").get(id=chat_id)
+    topic_tree = Topic.objects.topic_tree(chat.topic.id)
+
+    context = {
+        "topic": chat.topic,
+        "topic_tree": topic_tree
+        }
+
+    return render_to_response('chat/details.html', context, context_instance=RequestContext(request))
+
+
+
+
 @login_required
 def home(request):
     """ List all all upcoming chats and all chats the user has registered for."""
@@ -123,7 +142,7 @@ def home(request):
             chat_duration_mins = chat_duration_secs/60
 
             chat_registration_contexts.append({
-                "encoded_id": basic_encode(registration.chat.id),
+                "encoded_chat_id": basic_encode(registration.chat.id),
                 "registration": registration,
                 "chat": registration.chat,
                 "topic": registration.chat.topic,
@@ -151,7 +170,7 @@ def home(request):
             chat_duration_mins = chat_duration_secs/60
 
             chat_contexts.append({
-                "encoded_id": basic_encode(chat.id),
+                "encoded_chat_id": basic_encode(chat.id),
                 "chat": chat,
                 "topic": chat.topic,
                 "duration": chat_duration_mins
