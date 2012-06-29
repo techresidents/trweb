@@ -16,24 +16,36 @@
             <h1> Chat Details </h1>
         </div>
 
+        <div class="row">
+            <div class="span7">
+                <h2>
+                    Title: <em>{{ chat.topic.title }}</em>
+                </h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="span7">
+                <h2>
+                    When: <em> {{ chat.start|date:"m/d e" }} at {{ chat.start|date:"h:i a e" }} </em>
+                </h2>
+            </div>
+        </div>
+
         <div id="chat-details" class="row">
             <div class="span7">
 
                 {% for topic in topic_tree %}
 
+                    <h2 class="level{{ topic.level }}">
+                        {{ topic.title }}
+                        <small>({{topic.duration}} mins)</small>
+                    </h2>
+
                     {% if forloop.first %}
-                        <h2 class="level{{ topic.level }}">
-                            {{ topic.title }}
-                            <small>({{topic.duration}} mins)</small>
-                        </h2>
                         <p class="description">
                             {{ topic.description }}
                         </p>
-                    {% else %}
-                        <h3 class="level{{ topic.level }}">
-                            {{ topic.title }}
-                            <small>({{topic.duration}} mins)</small>
-                        </h3>
                     {% endif %}
 
                 {% endfor %}

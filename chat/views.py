@@ -105,6 +105,7 @@ def details(request, encoded_chat_id):
     topic_tree = Topic.objects.topic_tree(chat.topic.id)
 
     context = {
+        "chat": chat,
         "topic": chat.topic,
         "topic_tree": topic_tree
         }
