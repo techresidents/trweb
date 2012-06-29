@@ -17,12 +17,25 @@
         </div>
 
         <div id="chat-details" class="row">
-            <div class="span12">
+            <div class="span7">
 
                 {% for topic in topic_tree %}
-                    <p class="level{{ topic.level }}">
-                        {{ topic.title }}
-                    </p>
+
+                    {% if forloop.first %}
+                        <h2 class="level{{ topic.level }}">
+                            {{ topic.title }}
+                            <small>({{topic.duration}} mins)</small>
+                        </h2>
+                        <p class="description">
+                            {{ topic.description }}
+                        </p>
+                    {% else %}
+                        <h3 class="level{{ topic.level }}">
+                            {{ topic.title }}
+                            <small>({{topic.duration}} mins)</small>
+                        </h3>
+                    {% endif %}
+
                 {% endfor %}
 
             </div>

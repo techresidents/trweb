@@ -98,8 +98,6 @@ def create(request):
     return render_to_response('chat/create.html', context,  context_instance=RequestContext(request))
 
 
-
-
 @login_required
 def details(request, encoded_chat_id):
     chat_id = basic_decode(encoded_chat_id)
@@ -112,8 +110,6 @@ def details(request, encoded_chat_id):
         }
 
     return render_to_response('chat/details.html', context, context_instance=RequestContext(request))
-
-
 
 
 @login_required
