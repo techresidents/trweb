@@ -21,10 +21,17 @@
         <div id="chat-details" class="row">
             <div class="span6">
                 {% for topic in topic_tree %}
-                    <h2 class="level{{ topic.level }}">
-                        {{ topic.title }}
-                        <small>({{topic.duration}} mins)</small>
-                    </h2>
+                    {% if forloop.first %}
+                        <h2 class="level{{ topic.level }}">
+                            {{ topic.title }}
+                            <small>({{topic.duration}} mins)</small>
+                        </h2>
+                    {% else %}
+                        <h3 class="level{{ topic.level }}">
+                            {{ topic.title }}
+                            <small>({{topic.duration}} mins)</small>
+                        </h3>
+                    {% endif %}
                     <p class="description level{{ topic.level }}">
                         {{ topic.description }}
                     </p>
