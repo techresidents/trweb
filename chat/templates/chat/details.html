@@ -19,32 +19,6 @@
                 <small>
                     {{ chat.start|date:"m/d e" }} at {{ chat.start|date:"h:i a e" }}
                 </small>
-
-                &nbsp;
-                &nbsp;
-
-                <small>
-                    {% if not is_registered %}
-                        {% if chat.registration_open %}
-                            <a class="btn btn-large btn-primary" href={%url 'chat.views.register' encoded_chat_id=encoded_chat_id%}>Register</a>
-                        {% elif chat.registration_closed %}
-                            Registration Closed
-                        {% else %}
-                            Registration Opens at...
-                        {% endif %}
-                    {% else %}
-                        {% if is_checked_in %}
-                            <a class="btn btn-large btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=encoded_chat_id%}>Join Chat</a>
-                        {% elif chat.checkin_open %}
-                            <a class="btn btn-large btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=encoded_chat_id%}>Check-in</a>
-                        {% elif chat.checkin_closed %}
-                            Check-In Closed
-                        {% else %}
-                            Check-In Opens at...
-                        {% endif %}
-                    {% endif %}
-                </small>
-
             </h1>
         </div>
 
@@ -65,7 +39,30 @@
                     {% endif %}
 
                 {% endfor %}
-
+            </div>
+            <div class="span4 offset1 well">
+                {% if not is_registered %}
+                    {% if chat.registration_open %}
+                        <h2>Registration is Open</h2>
+                        <a class="btn btn-primary" href={%url 'chat.views.register' encoded_chat_id=encoded_chat_id%}>Register</a>
+                    {% elif chat.registration_closed %}
+                        <h2>Registration Closed</h2>
+                    {% else %}
+                        <h2>Registration Opens at...</h2>
+                    {% endif %}
+                {% else %}
+                    {% if is_checked_in %}
+                        <h2>Join the Conversation</h2>
+                        <a class="btn btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=encoded_chat_id%}>Join Chat</a>
+                    {% elif chat.checkin_open %}
+                        <h2>Check-In Now</h2>
+                        <a class="btn btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=encoded_chat_id%}>Check-in</a>
+                    {% elif chat.checkin_closed %}
+                        <h2>Check-In Closed</h2>
+                    {% else %}
+                        <h2>Check-In Opens at...</h2>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
 
