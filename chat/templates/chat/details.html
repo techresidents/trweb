@@ -25,11 +25,9 @@
                         {{ topic.title }}
                         <small>({{topic.duration}} mins)</small>
                     </h2>
-                    {% if forloop.first %}
-                        <p class="description">
-                            {{ topic.description }}
-                        </p>
-                    {% endif %}
+                    <p class="description level{{ topic.level }}">
+                        {{ topic.description }}
+                    </p>
                 {% endfor %}
             </div>
 
@@ -51,9 +49,8 @@
                     {% else %}
                         <h3>
                             <em>
-                                Registration Opens <br>
-                                {{ chat.registration_start|date:"m/d e" }} at
-                                {{ chat.registration_start|date:"h:i a e" }}
+                                Registration opens <br>
+                                {{ chat.registration_start|date:"m/d e" }} at {{ chat.registration_start|date:"h:i a e" }}
                             </em>
                         </h3>
                     {% endif %}
@@ -67,9 +64,8 @@
                     {% else %}
                         <h4>
                             <em>
-                                Check-In Opens <br>
-                                {{ chat.checkin_start|date:"m/d e" }} at
-                                {{ chat.checkin_start|date:"h:i a e" }}
+                                Check-In opens <br>
+                                {{ chat.checkin_start|date:"m/d e" }} at {{ chat.checkin_start|date:"h:i a e" }}
                                 </em>
                         </h4>
                     {% endif %}
