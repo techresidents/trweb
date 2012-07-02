@@ -5,6 +5,10 @@
     background-position: center center
 }
 
+#learn-more-how-it-works {
+    padding-top: 30px;
+}
+
 .learn-more-number-block {
     background-color: #EA8F00;
     color: white;
