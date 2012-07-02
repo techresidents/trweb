@@ -20,22 +20,19 @@
 
         <div id="chat-details" class="row">
             <div class="span6">
-
                 {% for topic in topic_tree %}
-
                     <h2 class="level{{ topic.level }}">
                         {{ topic.title }}
                         <small>({{topic.duration}} mins)</small>
                     </h2>
-
                     {% if forloop.first %}
                         <p class="description">
                             {{ topic.description }}
                         </p>
                     {% endif %}
-
                 {% endfor %}
             </div>
+
             <div class="span4 offset1 well">
                 <h2>
                     {{ chat.topic.title }}
@@ -50,9 +47,15 @@
                     {% if chat.registration_open %}
                         <a class="btn btn-large btn-primary" href={%url 'chat.views.register' encoded_chat_id=encoded_chat_id%}>Register</a>
                     {% elif chat.registration_closed %}
-                        <h3><em>Registration Closed</em></h3>
+                        <h4><em>Registration Closed</em></h4>
                     {% else %}
-                        <h3>Registration Opens at...</h3>
+                        <h3>
+                            <em>
+                                Registration Opens <br>
+                                {{ chat.registration_start|date:"m/d e" }} at
+                                {{ chat.registration_start|date:"h:i a e" }}
+                            </em>
+                        </h3>
                     {% endif %}
                 {% else %}
                     {% if is_checked_in %}
@@ -60,9 +63,15 @@
                     {% elif chat.checkin_open %}
                         <a class="btn btn-large btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=encoded_chat_id%}>Check-in</a>
                     {% elif chat.checkin_closed %}
-                        <h3><em>Check-In Closed</em></h3>
+                        <h4><em>Check-In Closed</em></h4>
                     {% else %}
-                        <h3>Check-In Opens at...</h3>
+                        <h4>
+                            <em>
+                                Check-In Opens <br>
+                                {{ chat.checkin_start|date:"m/d e" }} at
+                                {{ chat.checkin_start|date:"h:i a e" }}
+                                </em>
+                        </h4>
                     {% endif %}
                 {% endif %}
             </div>
