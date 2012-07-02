@@ -24,10 +24,24 @@
                 &nbsp;
 
                 <small>
-                    {% if chat.registration_open %}
-                        <a class="btn btn-large btn-primary" href={%url 'chat.views.register' encoded_chat_id=encoded_chat_id%}>Register</a>
-                    {% elif chat.checkin_open %}
-                        <a class="btn btn-large btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=encoded_chat_id%}>Check-in</a>
+                    {% if not is_registered %}
+                        {% if chat.registration_open %}
+                            <a class="btn btn-large btn-primary" href={%url 'chat.views.register' encoded_chat_id=encoded_chat_id%}>Register</a>
+                        {% elif chat.registration_closed %}
+                            Registration Closed
+                        {% else %}
+                            Registration Opens at...
+                        {% endif %}
+                    {% else %}
+                        {% if is_checked_in %}
+                            <a class="btn btn-large btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=encoded_chat_id%}>Join Chat</a>
+                        {% elif chat.checkin_open %}
+                            <a class="btn btn-large btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=encoded_chat_id%}>Check-in</a>
+                        {% elif chat.checkin_closed %}
+                            Check-In Closed
+                        {% else %}
+                            Check-In Opens at...
+                        {% endif %}
                     {% endif %}
                 </small>
 
@@ -53,7 +67,6 @@
                 {% endfor %}
 
             </div>
-
         </div>
 
     </div>

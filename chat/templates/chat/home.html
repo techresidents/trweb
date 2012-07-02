@@ -22,7 +22,7 @@
 
                 <div class="well">
                     <table class="table chat-table">
-                        {% for registration in chat_registrations %}
+                        {% for registration_ctx in chat_registrations %}
                             {% if forloop.first %}
                                 <thead>
                                     <tr>
@@ -36,25 +36,25 @@
                             {% endif %}
                             <tbody>
                                 <tr>
-                                    <td>{{registration.duration}} mins</td>
+                                    <td>{{registration_ctx.duration}} mins</td>
                                     <td>
-                                        <a href={%url 'chat.views.details' encoded_chat_id=registration.encoded_chat_id%}>
-                                            {{registration.topic.title}}
+                                        <a href={%url 'chat.views.details' encoded_chat_id=registration_ctx.encoded_chat_id%}>
+                                            {{registration_ctx.topic.title}}
                                         </a>
                                     </td>
-                                    <td>{{ registration.topic.description }}</td>
-                                    <td> {{ registration.chat.start|date:"m/d e" }} at <br> {{ registration.chat.start|date:"h:i a e" }}</td>
+                                    <td>{{ registration_ctx.topic.description }}</td>
+                                    <td> {{ registration_ctx.chat.start|date:"m/d e" }} at <br> {{ registration_ctx.chat.start|date:"h:i a e" }}</td>
                                     <td>
-                                        {% if registration.registration.checked_in %}
+                                        {% if registration_ctx.registration.checked_in %}
                                             Checked-In <br>
-                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration.encoded_chat_id%}>Join Chat</a>
-                                        {% elif registration.chat.checkin_open %}
+                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration_ctx.encoded_chat_id%}>Join Chat</a>
+                                        {% elif registration_ctx.chat.checkin_open %}
                                             Check-in Open <br>
-                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration.encoded_chat_id%}>Check-in</a>
-                                        {% elif registration.chat.checkin_closed %}
+                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration_ctx.encoded_chat_id%}>Check-in</a>
+                                        {% elif registration_ctx.chat.checkin_closed %}
                                             Check-in Closed
                                         {% else %}
-                                            Opens {{ registration.chat.checkin_start|date:"m/d e" }} at <br> {{ registration.chat.checkin_start|date:"h:i a e" }}
+                                            Opens {{ registration_ctx.chat.checkin_start|date:"m/d e" }} at <br> {{ registration_ctx.chat.checkin_start|date:"h:i a e" }}
                                         {% endif %}
                                     </td>
                                 </tr>
