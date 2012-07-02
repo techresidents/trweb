@@ -1,0 +1,38 @@
+<form class="form-horizontal" action="/chat/session/<%= model.chatSessionId %>/feedback" method="post">
+    <fieldset>
+        <div class="control-group <%= errors.overallQuality ? 'error' : '' %>">
+            <label for="overall_quality">Overall Chat Quality</label>
+            <div class="controls">
+                <select id="overall_quality" name="overall_quality">
+                    <option></option>
+                    <option value="EXCELLENT">Excellent</option>
+                    <option value="GOOD">Good</option>
+                    <option value="AVERAGE">Average</option>
+                    <option value="FAIR">Fair</option>
+                    <option value="POOR">Poor</option>
+                </select>
+                <% if(errors.overallQuality) { %>
+                <span class="help-inline"><%= errors.overallQuality %></span>
+                <% } %>
+            </div>
+        </div>
+        <div class="control-group <%= errors.technicalQuality ? 'error' : '' %>">
+            <label for="technical_quality">Technical Quality</label>
+            <div class="controls">
+                <select id="technical_quality" name="technical_quality">
+                    <option></option>
+                    <option value="EXCELLENT">Excellent</option>
+                    <option value="GOOD">Good</option>
+                    <option value="AVERAGE">Average</option>
+                    <option value="FAIR">Fair</option>
+                    <option value="POOR">Poor</option>
+                </select>
+
+                <% if(errors.technicalQuality) { %>
+                <span class="help-inline"><%= errors.technicalQuality %></span>
+                <% } %>
+            </div>
+        </div>
+
+    </fieldset>
+</form>

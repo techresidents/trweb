@@ -1,0 +1,60 @@
+{% extends "menu_base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block title %}Tech Residents - Chat Details{% endblock %}
+
+{% block extrahead %}
+    <link href="{% static "css/chat_details.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <div class="page-header">
+            <h1> Chat Details </h1>
+        </div>
+
+        <div class="row">
+                <div class="span7">
+                    <h2>
+                        Title: <em>{{ chat.topic.title }}</em>
+                    </h2>
+                    <h2>
+                        When: <em> {{ chat.start|date:"m/d e" }} at {{ chat.start|date:"h:i a e" }} </em>
+                    </h2>
+                </div>
+                <div class="span4">
+                    {% if chat.registration_open %}
+                        <a class="btn btn-large btn-primary" href={%url 'chat.views.register' encoded_chat_id=encoded_chat_id%}>Register</a>
+                    {% elif chat.checkin_open %}
+                        <a class="btn btn-large btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=encoded_chat_id%}>Check-in</a>
+                    {% endif %}
+                </div>
+        </div>
+
+        <div id="chat-details" class="row">
+            <div class="span7">
+
+                {% for topic in topic_tree %}
+
+                    <h2 class="level{{ topic.level }}">
+                        {{ topic.title }}
+                        <small>({{topic.duration}} mins)</small>
+                    </h2>
+
+                    {% if forloop.first %}
+                        <p class="description">
+                            {{ topic.description }}
+                        </p>
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

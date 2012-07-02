@@ -23,7 +23,9 @@ define([
     agenda_tab_template,
     agenda_tag_template) {
 
-
+    /**
+     * Agenda View Events
+     */
     var EVENTS = {
         NEXT: 'agenda:Next',
         SELECT: 'agenda:Select',
@@ -293,11 +295,6 @@ define([
         render: function() {
 
             this.$el.html(this.template());
-
-            new AgendaControlView({
-                el: this.$(this.controlSelector),
-                model: this.model,
-            }).render();
             
             new AgendaListView({
                 el: this.$(this.listSelector),

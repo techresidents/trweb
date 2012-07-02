@@ -1,0 +1,78 @@
+#landing-blue-stripe {
+    height: 528px;
+    background-color: #2A73A7;
+    background-image: url(../img/landing-background-blue-stripe-only.png);
+    background-repeat: no-repeat;
+}
+
+
+
+#landing-blue-stripe-top-right {
+    padding-top: 45px;
+    padding-left: 205px;
+}
+
+#landing-blue-stripe-middle {
+    padding-top: 60px;
+}
+
+#landing-signup-container {
+    padding-top: 20px;
+}
+
+#landing-messaging-container {
+    margin-left: 50px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+#landing-details-container {
+    margin-left: 80px;
+    margin-right: 0px;
+    margin-top: 30px;
+    margin-bottom: 0px;
+}
+
+
+
+.landing-text {
+    color: white;
+}
+
+.landing-messaging-text {
+    font-weight: bold;
+    font-family: Arial;
+    font-size: 50px;
+    line-height: 48pt;
+}
+
+.landing-messaging-details-text {
+    font-weight: lighter;
+    font-family: Helvetica;
+    font-size: 30px;
+    line-height: 33pt;
+}
+
+.landing-signup-details-text {
+    color: #999;
+}
+
+
+
+#landing-login-button:hover {
+    color: #EA8F00;
+    text-decoration: none;
+}
+
+#landing-signup-button {
+    font-size: 25px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+}
+
+#landing-learn-more-button {
+    margin-top: 10px;
+    padding-left: 21px;
+    padding-right: 21px;
+}

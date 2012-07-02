@@ -31,6 +31,18 @@ define([
     whiteboard_proxies,
     resource_models) {
 
+    /**
+     * Chat Proxy
+     * @constructor
+     * @param {Object} options
+     *   {string} chatSessionId Chat Session Id
+     *   {string} chatApiKey Tokbox api key
+     *   {string} chatSessionToken Tokbox session token
+     *   {string} chatUserToken Tokbox user token
+     *
+     * This is the main proxy for the chat. 
+     * It's responsible for creating sub-proxies.
+     */
     var ChatProxy = proxy.Proxy.extend({
         
         name: function() {
@@ -41,6 +53,7 @@ define([
 
             //chat session proxy
             this.chatSessionProxy = new session_proxies.ChatSessionProxy({
+                sessionId: options.chatSessionId,
                 apiKey: options.chatAPIKey,
                 sessionToken: options.chatSessionToken,
                 userToken: options.chatUserToken,
@@ -92,18 +105,67 @@ define([
             this.facade.registerProxy(this.chatWhiteboardsProxy);
         },
         
+        /**
+         * Determine if chat is currently active.
+         * Note that the chat can be connected but not yet active.
+         * @return {boolean} true if active, false otherwise
+         */
         isActive: function() {
-            if(this.agendaProxy.active()) {
+            if(this.chatAgendaProxy.active()) {
                 return true;
             } else {
                 return false;
             }
         },
-
+        
+        /**
+         * Connect the chat.
+         */
         connect: function() {
             //connect the chat and start polling for messages.
             this.chatSessionProxy.connect();
             this.chatMessagesProxy.longPoll();
+        },
+
+        /**
+         * Disconnect the chat.
+         */
+        disconnect: function() {
+            this.chatSessionProxy.disconnect();
+        },
+    
+        /**
+         * Start recording the chat
+         */
+        startRecording: function() {
+            this.chatSessionProxy.startRecording();
+        },
+
+        /**
+         * Stop recording the chat
+         */
+        stopRecording: function() {
+            this.chatSessionProxy.stopRecording();
+        },
+
+        /**
+         * Start the chat
+         */
+        start: function() {
+            if(!this.isActive()) {
+                this.chatAgendaProxy.activateNext();
+            }
+        },
+
+        /**
+         * End the chat
+         */
+        end: function() {
+            var nextActive = this.chatAgendaProxy.nextActive();
+            while(nextActive) {
+                this.chatAgendaProxy.activateNext();
+                nextActive = this.chatAgendaProxy.nextActive();
+            }
         },
 
     }, {

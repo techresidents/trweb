@@ -33,6 +33,7 @@ define([
         /* MARKER ACTIONSS */
         MARKER_CREATE: 'notification:MarkerCreate',
         MARKER_CONNECTED_CREATE: 'notification:MarkerConnectedCreate',
+        MARKER_JOINED_CREATE: 'notification:MarkerJoinedCreate',
         MARKER_PUBLISHING_CREATE: 'notification:MarkerPublishingCreate',
         MARKER_SPEAKING_CREATE: 'notification:MarkerSpeakingCreate',
 
@@ -75,6 +76,7 @@ define([
 
         /* SHOW ACTIONS */
         SHOW_AGENDA: 'notification:ShowAgenda',
+        SHOW_FEEDBACK: 'notification:ShowFeedback',
         SHOW_RESOURCES: 'notification:ShowResources',
         SHOW_RESOURCE: 'notification:ShowResource',
         SHOW_WHITEBOARDS: 'notification:ShowWhiteboards',

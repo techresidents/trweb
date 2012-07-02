@@ -2,7 +2,7 @@
 {% load tz %}
 {% load url from future %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}Tech Residents - Profile{% endblock %}
 
 {% block extrahead %}
 
@@ -21,7 +21,7 @@
     <div class="container">
         <div class="row">
 
-            {% include 'accounts/navigation_panel.html' with isAccountPageActive="active" %}
+            {% include 'accounts/navigation_panel.html' with isAccountPageActive="active" navPanelMessage="Basic Account Info" %}
 
             <div class="span9">
                 <!--Body content-->

@@ -9,10 +9,20 @@ define([
     mediator,
     user_proxies) {
 
-
+    /**
+     * Chat Markers Mediator
+     * @constructor
+     * @param {Object} options
+     *
+     * Mediator is responsible for mapping system notifications to chat markers.
+     * This mediator does not manage a view.
+     */
     var ChatMarkersMediator = mediator.Mediator.extend({
         name: 'ChatMarkersMediator',
 
+        /**
+         * Notification handlers
+         */
         notifications: [
             [notifications.USER_CONNECTED_CHANGED, 'onConnectedChanged'],
             [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged'],
@@ -21,6 +31,13 @@ define([
 
         initialize: function(options) {
             this.usersProxy = this.facade.getProxy(user_proxies.ChatUsersProxy.NAME);
+
+            //create JOINED_MARKER now
+            var currentUser = this.usersProxy.currentUser();
+            this.facade.trigger(notifications.MARKER_JOINED_CREATE, {
+                userId: currentUser.id,
+                name: currentUser.name(),
+            });
         },
 
         onConnectedChanged: function(notification) {

@@ -15,7 +15,7 @@
         <div class="span16">
             <ul>
                 {% for chat_session in chat_sessions %}
-                    <li><a href={%url 'chat.views.chat' chat_session_id=chat_session.id%}>{{chat_session.start}}</a></li>
+                <li><a href={%url 'chat.views.session' encoded_chat_session_id=chat_session.id%}>{{chat_session.topic.title}} - {{chat_session.start}}</a></li>
                 {%endfor %}
             </ul>
         </div/>

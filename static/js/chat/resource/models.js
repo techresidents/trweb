@@ -4,7 +4,13 @@ define([
     'Backbone',
 ], function($, _, Backbone) {
     
-
+    /**
+     * Resources Value Object Model
+     * @constructor
+     * @param {Object} attributes
+     *   {ResourceCollection} resources
+     *   {Resource} selected
+     */
     var ResourcesValueObject = Backbone.Model.extend({
         
         localStorage: new Backbone.LocalStorage('ResourcesValueObject'),

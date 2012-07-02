@@ -1,11 +1,12 @@
 {% extends "menu_base.html" %}
+{% load staticfiles %}
 {% load url from future %}
 {% load pygmentize %}
 
 {% block title %}Tech Residents Document Upload{% endblock %}
 
 {% block extrahead %}
-    <link href="{{STATIC_URL}}css/pygmentize.css" rel="stylesheet">
+    <link href="{% static "css/pygmentize.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}

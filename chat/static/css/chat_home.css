@@ -1,0 +1,23 @@
+.chat-table {
+    table-layout: fixed;
+}
+
+.chat-table-duration {
+    width: 10%;
+}
+
+.chat-table-title {
+    width: 20%;
+}
+
+.chat-table-description {
+    width: 30%;
+}
+
+.chat-table-date {
+    width: 20%;
+}
+
+.chat-table-button {
+    width: 20%;
+}

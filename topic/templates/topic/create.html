@@ -1,16 +1,17 @@
 {% extends "menu_base.html" %}
+{% load staticfiles %}
 {% load url from future %}
 
 {% block title %}Tech Residents Topic{% endblock %}
 
 {% block extrahead %}
-<link href="{{STATIC_URL}}css/topic.css" rel="stylesheet">
+<link href="{% static "css/topic.css" %}" rel="stylesheet">
 <script>
     var require = {
         baseUrl: '/static/js',
     };
 </script>
-<script data-main="{{STATIC_URL}}js/apps/topic/main.js" src="{{STATIC_URL}}js/3ps/require/require.js"></script>
+<script data-main="{%static "js/apps/topic/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
 {%endblock %}
 
 {% block content %}

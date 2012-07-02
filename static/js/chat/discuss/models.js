@@ -5,11 +5,16 @@ define([
 ], function($, _, Backbone) {
     
     /**
-     * Discuss View Model.
+     * Discuss View VO Model.
      * @constructor
+     * @param {Object} attributes
+     * @param {Object} options
      */
     var DiscussValueObject = Backbone.Model.extend({
-
+        
+        /**
+         * Store model in local storage
+         */
         localStorage: new Backbone.LocalStorage("DiscussViewModel"),
 
         defaults: function() {
@@ -47,11 +52,21 @@ define([
             return this;
         },
 
+        activeMinute: function() {
+            return this.get('activeMinute');
+        },
+
+        setActiveMinute: function(activeMinute) {
+            this.set({ activeMinute: activeMinute });
+            return this;
+        },
+
         toJSON: function() {
             return _.extend({}, {
                 rootTopic: this.rootTopic() ? this.rootTopic().toJSON() : null,
                 activeTopic: this.activeTopic() ? this.activeTopic().toJSON() : null,
                 nextTopic: this.nextTopic() ? this.nextTopic().toJSON() : null,
+                activeMinute: this.activeMinute() ? this.activeMinute().toJSON() : null,
             });
         },
     });

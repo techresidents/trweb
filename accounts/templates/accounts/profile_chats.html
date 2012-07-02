@@ -1,7 +1,7 @@
 {% extends "menu_base.html" %}
 {% load url from future %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}Tech Residents - Profile{% endblock %}
 
 {% block extrahead %}
 
@@ -20,7 +20,7 @@
     <div class="container">
         <div class="row">
 
-            {% include 'accounts/navigation_panel.html' with isChatsPageActive="active" %}
+            {% include 'accounts/navigation_panel.html' with isChatsPageActive="active" navPanelMessage="Basic Account Info" %}
 
             <div class="span9">
                 <form class="form-horizontal well" method="post" action="{% url 'accounts.views.profile_chats' %}">

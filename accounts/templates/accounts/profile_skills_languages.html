@@ -1,19 +1,18 @@
 {% extends "menu_base.html" %}
+{% load staticfiles %}
 {% load url from future %}
 {% load verbatim %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}Tech Residents - Profile{% endblock %}
 
 {% block extrahead %}
-    <link href="{{STATIC_URL}}css/profile_jobs.css" rel="stylesheet">
-    <script src="{{STATIC_URL}}js/3ps/jquery/jquery.js"></script>
-    <script src="{{STATIC_URL}}js/3ps/bootstrap/bootstrap.js"></script>
+    <link href="{% static "css/profile_jobs.css" %}" rel="stylesheet">
     <script>
         var require = {
             baseUrl: '/static/js',
         };
     </script>
-    <script data-main="{{STATIC_URL}}js/apps/profile/main.js" src="{{STATIC_URL}}js/3ps/require/require.js"></script>
+    <script data-main="{% static "js/apps/profile/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
 {%endblock %}
 
 {% block content %}
@@ -29,7 +28,7 @@
     <div class="container">
         <div class="row">
 
-            {% include 'accounts/navigation_panel.html' with isLanguagesPageActive="active" %}
+            {% include 'accounts/navigation_panel.html' with isLanguagesPageActive="active" navPanelMessage="Tell us what programming language skills you have so we can better match you with our network of hiring companies."%}
 
             <div class="span9">
                 <div class="well">
@@ -50,7 +49,7 @@
 
                     </fieldset>
 
-                    <div id="table-wrap" class="well">
+                    <div id="table-wrap">
                         <table id="table" class="table">
                             <thead>
                             <th>Language</th>
@@ -62,7 +61,7 @@
                         </table>
                     </div>
 
-                    <div class="form-horizontal">
+                    <div class="form-horizontal well">
 
                         <div id="skill-add" class="control-group">
                             <label for="skill-input">Add Language</label>

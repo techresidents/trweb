@@ -1,0 +1,28 @@
+{% extends "menu_base.html" %}
+
+{% load url from future %}
+{% load verbatim %}
+
+{% block title %}Tech Residents - Waiting Room{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1> Chat Waiting Room </h1>
+    </div>
+
+    <div class="row">
+        <div class="span16">
+            <h3>{{chat_title}} - {{chat_start|date:"P"}}   <small>will be begin shortly...</small></h3>
+        </div/>
+    </div>
+</div>
+
+
+<script>
+    setInterval(function() {
+        location.reload();
+    }, 15000);
+</script>
+
+{% endblock %}

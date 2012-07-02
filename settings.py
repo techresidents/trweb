@@ -55,6 +55,14 @@ MEDIA_ROOT = '/tmp/media/'
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = 'http://localhost:8000/'
 
+# The file storage engine to use with staticfiles static template tag.
+# Additionally the post_process method will be called during
+# the collectstatic process, so static files can be properly 
+# distributed (filesystem, cloud, etc...)
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+#STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
+#STATICFILES_STORAGE = 'common.staticfiles.CacheBustingStaticFilesStorage'
+
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
@@ -192,7 +200,7 @@ EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
 #EMAIL_HOST_USER = 'user'
 #EMAIL_HOST_PASSWORD = 'password'
-DEFAULT_FROM_EMAIL = 'Tech Residents Support <jmullins@techresidents.com>'
+DEFAULT_FROM_EMAIL = 'Tech Residents Support <support@techresidents.com>'
 DEFAULT_SUPPORT_EMAIL = 'Tech Residents Support <support@techresidents.com>'
 
 #Landing settings
@@ -212,11 +220,26 @@ TR_XD_REMOTE = 'http://localhost:6767/static/js/easyXDM/cors/index.html'
 
 
 #Tokbox settings
-TOKBOX_API_KEY = '11557552'
-TOKBOX_API_SECRET = 'a3fc9c8a0e37bd9fa04018132e55b4141195ce2b'
+TOKBOX_API_KEY = '15889991'
+TOKBOX_API_SECRET = '19a6fb225790a2cf3e048c58ef2fdcc425e7b599'
+TOKBOX_JS_URL = 'http://staging.tokbox.com/v0.91/js/TB.min.js'
 TOKBOX_IS_STAGING = True
 
 
 #Django message settings
 #MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
+#Anonymous Usernames
+ANONYMOUS_USERNAMES = [
+    'anonymous1@techresidents.com',
+    'anonymous2@techresidents.com',
+    'anonymous3@techresidents.com',
+    'anonymous4@techresidents.com',
+    'anonymous5@techresidents.com',
+    'anonymous6@techresidents.com',
+    'anonymous7@techresidents.com',
+    'anonymous8@techresidents.com',
+    'anonymous9@techresidents.com',
+    'anonymous10@techresidents.com',
+]

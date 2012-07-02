@@ -1,6 +1,28 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from techresidents_web.common.managers import TreeManager
+
+class TopicManager(TreeManager):
+    def topic_tree(self, topic_id):
+        return self.tree_by_rank(topic_id)
+
+    def create_topic_tree(self, user, topics):
+        return self.create_tree(topics)
+
+
+class Concept(models.Model):
+    """Concept model."""
+    class Meta:
+        db_table = "concept"
+    
+    #Self referential concept hierarchy, root 's parent id must be null
+    parent = models.ForeignKey("self", null=True)   
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1024)
+
+    objects = TreeManager()
+
 class ResourceType(models.Model):
     class Meta:
         db_table = "resource_type"
@@ -12,61 +34,6 @@ class Resource(models.Model):
         db_table = "resource"
     type = models.ForeignKey(ResourceType)
 
-class TopicManager(models.Manager):
-
-    def topic_tree(self, topic_id):
-        topics = self.raw("""with recursive q as 
-                            ( select t.*, 1 as level from topic t where id = %s
-                              union all
-                              select tc.*, level + 1 from q
-                              join topic tc on tc.parent_id = q.id
-                            )
-                            select * from q order by rank
-                          """, [topic_id])
-        return topics
-
-    def create_topic_tree(self, user, topics):
-
-        if not topics or len(topics) < 2:
-            raise ValueError("topic tree must have at least two items")
-
-        root = topics[0]
-
-        if root.parent or root.parent_id:
-            raise ValueError("root parent and parent_id must be None")
-        
-        # Save the root topic first
-        root.id = None
-        root.save()
-
-        # Map to store all topics that have been sent to the database
-        # and now have a proper id that can be used in child topics
-        topic_map = { root.id: root }
-        
-        # Loop through each child topic
-        # 1) Replace parent_id with db id from topic_map
-        # 2) Save topic to db and add it topic map
-        # Note this could be optimized to do a single insert for all
-        # topics at the same level.
-
-        for topic in topics[1:]:
-            parent_id = topic.parent.id
-            
-            # Parents must come before children in adjacency list
-            # If we have not seen the parent yet raise an execption.
-            if parent_id not in topic_map:
-                raise ValueError("parent must exist prior to child in adjacency list")
-            
-            # Django will not automatically update the parent_id 
-            # when the attachend parent.id is updated, so do it.
-            topic.parent_id = parent_id
-            topic.id = None
-            topic.save()
-
-            topic_map[topic.id] = topic
-    
-    def update_topic_tree(self, user, topics):
-        pass
 
 class TopicType(models.Model):
     class Meta:
@@ -99,18 +66,12 @@ class Topic(models.Model):
 
     objects = TopicManager()
 
-class TopicResource(models.Model):
-    class Meta:
-        db_table = "topic_resource"
-    topic = models.ForeignKey(Topic)
-    resource = models.ForeignKey(Resource)
-
-
 class Tag(models.Model):
     class Meta:
         db_table = "tag"
 
     name = models.CharField(max_length=100, unique=True)
+    concept = models.ForeignKey(Concept)
 
 class TechnologyType(models.Model):
     """Represents a technology type such as framework, programming language, etc"""
@@ -146,11 +107,12 @@ class Location(models.Model):
         db_table = "location"
 
     country = models.CharField(max_length=100)
-    state = models.CharField(max_length=100)
+    zip = models.CharField(max_length=50)
     city = models.CharField(max_length=100)
-    zip = models.CharField(max_length=25)
+    state = models.CharField(max_length=100)
     county = models.CharField(max_length=100)
-    #TODO add longitude and latitude.  Research how best to store this data within the db.
+    latitude = models.FloatField()
+    longitude = models.FloatField()
 
 class Organization(models.Model):
     """Represents an organization such as RSA or Bloomberg"""
@@ -159,3 +121,12 @@ class Organization(models.Model):
 
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=1024)
+
+class Quality(models.Model):
+    """Quality model"""
+    class Meta:
+        db_table = "quality"
+
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1024)
+

@@ -8,7 +8,7 @@ define([
     Backbone) {
     
     /**
-     * Chat Marker model.
+     * Chat Marker base model.
      * @constructor
      * @param {Object} attributes Optional model attributes.
      * @param {Object} options Optional options
@@ -37,7 +37,12 @@ define([
             this.set({marker: marker});
             return this;
         },
-
+        
+        /**
+         * Convert markers to JSON.
+         * This method should be compatible with all subclasses.
+         * @return {Object} - JSON representation.
+         */
         toJSON: function() {
             var result = {
                 markerId: this.attributes.markerId,
@@ -56,6 +61,37 @@ define([
     });
 
 
+    /**
+     * Chat Joined Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
+    var JoinedMarker = Marker.extend({
+
+        defaults: function() {
+            return {
+                markerId: null,
+                type: JoinedMarker.TYPE,
+                userId: null,
+                name: null,
+            };
+        },
+
+        initialize: function(attributes, options) {
+        },
+
+    }, {
+        TYPE: 'JOINED_MARKER',
+    });
+
+
+    /**
+     * Chat Connected Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
     var ConnectedMarker = Marker.extend({
 
         defaults: function() {
@@ -75,6 +111,12 @@ define([
     });
 
 
+    /**
+     * Chat Publishing Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
     var PublishingMarker = Marker.extend({
 
         defaults: function() {
@@ -94,6 +136,12 @@ define([
     });
 
 
+    /**
+     * Chat Speaking Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
     var SpeakingMarker = Marker.extend({
 
         defaults: function() {
@@ -115,9 +163,17 @@ define([
 
     /**
      * Chat Marker collection.
+     * @constructor
      */
     var MarkerCollection = Backbone.Collection.extend({
 
+        /**
+         * Create concrete Marker based on options.type.
+         * @param {Object} attributes
+         * @param {Object} options
+         *   type Marker type (required)
+         * @return {Marker} subclass.
+         */
         model: function(attributes, options) {
             var result;
             switch(options.type) {
@@ -145,6 +201,7 @@ define([
         Marker: Marker,
         MarkerCollection: MarkerCollection,
         ConnectedMarker: ConnectedMarker,
+        JoinedMarker: JoinedMarker,
         PublishingMarker: PublishingMarker,
         SpeakingMarker: SpeakingMarker,
     };

@@ -5,6 +5,10 @@ define([
     'core/facade',
 ], function($, _, base, facade) { 
 
+    /**
+     * Proxy base class.
+     * @constructor.
+     */
     var Proxy = function(options) {
         this.facade = facade.getInstance();
         this.options = options || {};
@@ -14,13 +18,29 @@ define([
     Proxy.extend = base.extend;
 
     _.extend(Proxy.prototype, {
-
+        
+        /**
+         * Overriden in subclass.
+         */
         name: null,
 
+        /**
+         * Overriden in subclass.
+         */
         initialize: function() {},
     });
 
+    /**
+     * Model Proxy base class.
+     * @constructor
+     */
     var ModelProxy = Proxy.extend({
+
+        /**
+         * Overriden in subclass.
+         * Map model events to notifications, i.e. {'change': 'NOTIFICATION_NAME' }
+         */
+        eventNotifications:  [],
 
         constructor: function(options) {
             this.model = options.model;
@@ -45,8 +65,16 @@ define([
         },
     });
 
+    /**
+     * Collection Proxy base class.
+     * @constructor
+     */
     var CollectionProxy = Proxy.extend({
 
+        /**
+         * Overriden in subclass.
+         * Map collection events to notifications, i.e. {'change': 'NOTIFICATION_NAME' }
+         */
         eventNotifications:  [],
 
         constructor: function(options) {
@@ -60,8 +88,14 @@ define([
             CollectionProxy.__super__.constructor.apply(this, arguments);
         },
 
+        /**
+         * Overriden in subclass.
+         */
         initialize: function(options) {},
 
+
+        //convenience methods
+        
         add: function() {
             return this.collection.add.apply(this.collection, arguments);
         },

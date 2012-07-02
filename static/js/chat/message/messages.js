@@ -36,8 +36,8 @@ define([
     });
 
     
-    /** Message base class.
-     *
+    /** 
+     * Message Base Class
      */
     var MessageBase = base.Base.extend({
 

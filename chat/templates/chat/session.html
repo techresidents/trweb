@@ -1,39 +1,26 @@
-{% extends "menu_base.html" %}
+{% extends "chat/chat_menu_base.html" %}
+{% load staticfiles %}
 {% load url from future %}
 {% load verbatim %}
 
-{% block title %}Tech Residents Chat{% endblock %}
+{% block title %}Tech Residents - Chat{% endblock %}
 
 {% block extrahead %}
-<link href="{{STATIC_URL}}css/chat.css" rel="stylesheet">
+<link href="{% static "css/chat.css" %}" rel="stylesheet">
 
-<style type="text/css">
-    {% for user in users %}
-    .user{{user.id}} {
-        color: {% cycle '#00A651' '#00AEEF' '#F15A29' '#231F20' as usercolor %};
-    }
-    
-    .user{{user.id}}-border {
-        border-style: solid;
-        border-color: {{ usercolor }};
-        border-width: 5px;
-    }
-    {% endfor %}
-</style>
-
-<script src="http://staging.tokbox.com/v0.91/js/TB.min.js" ></script>
+<script src="{{TOKBOX_JS_URL}}"></script>
 
 <script>
     var require = {
         baseUrl: '/static/js',
     };
 </script>
-<script data-main="{{STATIC_URL}}js/apps/chat/main.js" src="{{STATIC_URL}}js/3ps/require/require.js"></script>
+<script data-main="{% static "js/apps/chat/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
 {% endblock %}
 
 {% block content %}
 
-<div id="chatapp">
+<div id="chatapp" class="chat-background">
 </div>
 
 <!-- All of these data structures are generated on the server w/out user input, so it's safe -->
@@ -43,6 +30,7 @@
 
     data =  {
         chatAPIKey: "{{chat_api_key}}",
+        chatSessionId: "{{chat_session_id}}",
         chatSessionToken: "{{chat_session_token}}",
         chatUserToken: "{{chat_user_token}}",
         users: {{users_json}},

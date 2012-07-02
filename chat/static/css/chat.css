@@ -3,8 +3,105 @@
     padding-bottom: 30px;
 }
 
-.chat-user-container.speaking {
+.chat-person-logo {
+    background-image: url("../img/person.png");
+    background-repeat: no-repeat;
+    background-color: white; 
+    background-size: 80%;
+    background-position: center;
+}
+
+.chat-participant-container.speaking {
     border-width: 8px;
+}
+
+
+.chat-participants1 {
+    float: left;
+    margin-left: 20px;
+    width: 300px;
+}
+.chat-participants1 .chat-participant-container, 
+.chat-participants1 .chat-person-logo,
+.chat-participants1 object {
+    width: 300px;
+    height: 225px;
+}
+
+.chat-participants2 {
+    float: left;
+    margin-left: 20px;
+    width: 300px;
+}
+.chat-participants2 .chat-participant-container,
+.chat-participants2 .chat-person-logo,
+.chat-participants2 object {
+    width: 300px;
+    height: 225px;
+}
+
+.chat-participants3 {
+    float: left;
+    margin-left: 20px;
+    width: 300px;
+}
+.chat-participants3 .chat-participant-container,
+.chat-participants3 .chat-person-logo,
+.chat-participants3 object {
+    width: 300px;
+    height: 225px;
+}
+
+.chat-participants4 {
+    float: left;
+    margin-left: 20px;
+    width: 220px;
+}
+.chat-participants4 .chat-participant-container,
+.chat-participants4 .chat-person-logo,
+.chat-participants4 object {
+    width: 220px;
+    height: 165px;
+}
+
+.chat-participant1 {
+    color: #00A651;
+}
+
+.chat-participant2 {
+    color: #00AEEF;
+}
+
+.chat-participant3 {
+    color: #F15A29;
+}
+
+.chat-participant4 {
+    color: #231F20;
+}
+
+.chat-participant1-border {
+    border-style: solid;
+    border-width: 5px;
+    border-color: #00A651;
+}
+
+.chat-participant2-border {
+    border-style: solid;
+    border-width: 5px;
+    border-color: #00AEEF;
+}
+
+.chat-participant3-border {
+    border-style: solid;
+    border-width: 5px;
+    border-color: #F15A29;
+}
+
+.chat-participant4-border {
+    border-style: solid;
+    border-width: 5px;
+    border-color: #231F20;
 }
 
 #agenda-list {
@@ -75,6 +172,71 @@
     display:inline;
 }
 
+#chat {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#chat h5 {
+    color: #EA8F00;
+}
+
+#chat h5 small {
+    color: #FFFFFF;
+}
+
+.chat-background {
+    background-color: #2A73A7;
+}
+
+.chat-user-container.speaking {
+    border-width: 8px;
+}
+
+
+/* make so that it includes well */
+.chat-well {
+    background-color: #FFFFFF;
+    border-color: #000000;
+    padding-bottom: 10px;
+    margin-bottom: 7px;
+}
+
+.discuss-controls-well {
+    background-color: #FFFFFF;
+    border-color: #000000;
+    margin-left: 0px;
+    padding-bottom: 10px;
+}
+
+#discussion-tagger {
+    margin-top: 65px;
+}
+
+.discuss-time-text {
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 45px;
+}
+
+#discuss-timer.expired {
+    color: red;
+}
+
+.discuss-title-text {
+    padding-top: 15px;
+    font-size: 25px;
+}
+
+.tagger-label {
+    font-weight: bold;
+    line-height: 27px;
+    font-size: 20px;
+    color: #333;
+    margin-right: 15px;
+}
+
+
 #tags ul {
     height: 200px;
     overflow-y: auto;
@@ -103,22 +265,22 @@
   margin-left: 45px;
 }
 
-#tagger ul {
+.tagger ul {
     display: inline;
     margin: 0 0 5px 5px;
 }
 
-#tagger li {
+.tagger li {
     display: inline;
     list-style-type:none;
     padding-right: 8px;
 }
 
-#tagger li .close-inline {
+.tagger li .close-inline {
     display: none;
 }
 
-#tagger li:hover .close-inline {
+.tagger li:hover .close-inline {
     display:inline;
 }
 
@@ -130,19 +292,18 @@
     display:inline;
 }
 
-.whiteboard-text-input {
-    position: absolute;
-    z-index: 900;
-    top: 150px;
-    left: 300px;
+#whiteboard-wrapper {
+    padding: 0px
 }
 
-.whiteboard-tool-button-span1 {
-
+#whiteboard-tools-well {
+    padding: 10px;
 }
 
-.whiteboard-tool-button-span2 {
-
+.whiteboard-tool-header {
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 18px;
+    color: #999;
+    text-transform: uppercase;
 }
-
-

@@ -3,12 +3,21 @@ define([
     'core/proxy',
 ], function(notifications, proxy) {
 
+    /**
+     * Chat Users Collection Proxy
+     * @constructor
+     * @param {Object} options
+     *   {ChatUserCollection} collection
+     */
     var ChatUsersProxy = proxy.CollectionProxy.extend({
 
         name: function() {
             return ChatUsersProxy.NAME;
         },
-
+        
+        /**
+         * Map collection events to notifications
+         */
         eventNotifications: function() {
             return {
                 'add': notifications.USER_ADDED,
@@ -23,7 +32,12 @@ define([
         initialize: function(options) {
         },
         
+        /**
+         * Return the current user.
+         * @return {User}
+         */
         currentUser: function() {
+            //current user is always first
             return this.collection.first();
         },
 

@@ -11,7 +11,7 @@
 }
 
 .banner {
-    background-image: url("/static/img/banner.png");
+    background-image: url(../img/banner.png);
     background-repeat: repeat-x;
 }
 
@@ -38,15 +38,15 @@
 .logo {
     display: block;
     height: 120px;
-    width: 552px;
-    background-image: url("/static/img/logo.png");
+    width: 700px;
+    background-image: url(../img/logo.png);
 }
 
 .logo-small {
     display: block;
     height: 30px;
     width: 31px;
-    background-image: url("/static/img/logo-small.png");
+    background-image: url(../img/logo-small.png);
 }
 
 .logo-brand {

@@ -5,10 +5,11 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
+from techresidents_web.common.decorators import staff_required
 from techresidents_web.document.forms import UploadForm
 from techresidents_web.document.models import Document
 
-@login_required
+@staff_required
 def upload(request):
     """Upload document"""
 
@@ -67,7 +68,6 @@ def embed(request, document_id):
     
     width = int(request.GET.get("width", 800))
     height = int(request.GET.get("height", 600))
-    print width
 
     try:
         document = Document.objects.select_related("mime_type").get(id=document_id)

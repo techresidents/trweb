@@ -17,12 +17,19 @@ define([
     tag_proxies,
     user_proxies) {
 
-
+    /**
+     * Agenda Tab Mediator
+     * @constructor
+     * @param {Object} options
+     */
     var AgendaTabMediator = mediator.Mediator.extend({
         name: function() {
             return AgendaTabMediator.NAME;
         },
 
+        /**
+         * Notification handlers
+         */
         notifications: [
             [notifications.CHAT_TOPIC_CHANGED, 'onChatTopicChanged'],
         ],
@@ -31,7 +38,8 @@ define([
             this.agendaProxy = this.facade.getProxy(agenda_proxies.ChatAgendaProxy.NAME);
             this.tagsProxy = this.facade.getProxy(tag_proxies.ChatTagsProxy.NAME);
             this.usersProxy = this.facade.getProxy(user_proxies.ChatUsersProxy.NAME);
-
+            
+            //create tab view
             this.view = new agenda_views.ChatAgendaTabView({
                 users: this.usersProxy.collection,
                 tags: this.tagsProxy.collection,
@@ -43,11 +51,12 @@ define([
                 })
             });
 
-            //add events listeners
+            //add view events listeners
             this.view.addEventListener(agenda_views.EVENTS.NEXT, this.onNext, this);
             this.view.addEventListener(agenda_views.EVENTS.SELECT, this.onSelect, this);
             this.view.addEventListener(agenda_views.EVENTS.DELETE_TAG, this.onDeleteTag, this);
 
+            //notify system that view is created
             this.facade.trigger(notifications.VIEW_CREATED, {
                 type: 'AgendaTabView',
                 view: this.view,

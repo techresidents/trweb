@@ -1,8 +1,8 @@
 #localdev settings
 from techresidents_web.settings import *
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+DEBUG = False
+TEMPLATE_DEBUG = False
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -21,13 +21,23 @@ DATABASES = {
     }
 }
 
+#Static files settings
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
+
+#Django message settings
+#MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
 #Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
 #EMAIL_HOST_USER = 'user'
 #EMAIL_HOST_PASSWORD = 'password'
-DEFAULT_FROM_EMAIL = 'Tech Residents Support <jmullins@techresidents.com>'
+DEFAULT_FROM_EMAIL = 'Tech Residents Support <support@techresidents.com>'
+
+#Riak Session Cache
+RIAK_HOST = 'localhost'
 
 #Landing settings
 LANDING_PLACEHOLDER = False

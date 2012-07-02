@@ -3,38 +3,206 @@
 
 {% block title %}Welcome to Tech Residents - Learn more{% endblock %}
 
+{% block extrahead %}
+    <link href="{{STATIC_URL}}css/learn_more.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 
 <div class="container">
+
     <div class="row">
         <div class="page-header">
-            <h1>Learn more</h1>
-        </div>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-        <div>
-            <h3>Discussions</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        </div>
-
-        <div>
-            <h3>Expand your network</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        </div>
-
-        <div>
-            <h3>Connect</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        </div>
-
-        <div>
-            <h3>
-            Join the conversation
-            <small>It's free</small>
-            <a class="btn btn-success" href="{% url 'accounts.views.register' %}">Sign Up</a>
-            </h3>
+            <h1>
+                Join the conversation
+                <a class="btn btn-large btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
+            </h1>
+            <h1>
+                <small>Don't let your resumè do all the talking</small>
+            </h1>
         </div>
     </div>
+
+
+    <div class="row">
+        <div class="span4">
+            <h2 class="learn-more-title">What is it?</h2>
+        </div>
+        <div class="span4">
+            <h2 class="learn-more-title">Who is it for?</h2>
+        </div>
+        <div class="span4">
+            <h2 class="learn-more-title">Why join?</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span4">
+            <ul>
+                <li>
+                    <p class="learn-more-text">
+                        A free platform for software developers to discuss curated technical topics with fellow developers
+                    </p>
+                </li>
+                <li>
+                    <p class="learn-more-text">
+                        Allows developers to effectively and efficiently showcase themselves to hiring companies through technical conversations
+                    </p>
+                </li>
+            </ul>
+        </div>
+
+        <div class="span4">
+            <ul>
+                <li>
+                    <p class="learn-more-text">
+                        Software professionals who are looking for new career opportunities
+                    </p>
+                </li>
+                <li>
+                    <p class="learn-more-text">
+                        Software professionals of all skill and experience levels, from new grads to veteran developers
+                    </p>
+                </li>
+            </ul>
+
+        </div>
+
+        <div class="span4">
+            <ul>
+                <li>
+                    <p class="learn-more-text">
+
+                        Efficiently showcase your talent and connect with great companies on your terms
+                    </p>
+                </li>
+                <li>
+                    <p class="learn-more-text">
+                        Expand your network
+                    </p>
+                </li>
+                <li>
+                    <p class="learn-more-text">
+                        Improve your communication skills
+                    </p>
+                </li>
+                <li>
+                    <p class="learn-more-text">
+                        Improve your technical breadth and depth
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="page-header">
+            <h1>
+                How it works
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span3">
+            <p class="learn-more-text">
+                <span class="learn-more-number-block">1</span>
+                Create a profile
+            </p>
+        </div>
+        <div class="span3">
+            <p class="learn-more-text">
+                <span class="learn-more-number-block">2</span>
+                Schedule a chat
+            </p>
+        </div>
+        <div class="span3">
+            <p class="learn-more-text">
+                <span class="learn-more-number-block">3</span>
+                Discuss technical topics
+            </p>
+        </div>
+        <div class="span3">
+            <p class="learn-more-text">
+                <span class="learn-more-number-block">4</span>
+                Connect with companies
+            </p>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="row learn-more-step-details">
+        <div class="span1">
+            <span class="learn-more-number-block-large">1</span>
+        </div>
+        <div class="span10">
+            <h2>
+                Create a profile
+            </h2>
+        </div>
+        <div class="span7 offset1">
+            <p class="learn-more-text">
+                Create a short profile that describes your skills and the type of position you're seeking.
+            </p>
+        </div>
+    </div>
+
+    <div class="row learn-more-step-details">
+        <div class="span1">
+            <span class="learn-more-number-block-large">2</span>
+        </div>
+        <div class="span10">
+            <h2>
+                Schedule a chat
+            </h2>
+        </div>
+        <div class="span7 offset1">
+            <p class="learn-more-text">
+                Recruit friends and colleagues to join you in a conversation, or sign up for a chat with members of the Tech Residents community.
+            </p>
+        </div>
+    </div>
+
+    <div class="row learn-more-step-details">
+        <div class="span1">
+            <span class="learn-more-number-block-large">3</span>
+        </div>
+        <div class="span10">
+            <h2>
+                Discuss technical topics
+            </h2>
+        </div>
+        <div class="span7 offset1">
+            <p class="learn-more-text">
+                Showcase your talent naturally by discussing real-world technical topics with fellow developers.
+            </p>
+        </div>
+    </div>
+
+    <div class="row learn-more-step-details">
+        <div class="span1">
+            <span class="learn-more-number-block-large">4</span>
+        </div>
+        <div class="span10">
+            <h2>
+                Connect with companies
+            </h2>
+        </div>
+        <div class="span7 offset1">
+            <p class="learn-more-text">
+                Anonymized audio recordings of your chat will be made available to hiring companies.
+                Interested companies will contact you through Tech Residents. Your identity will remain
+                anonymous unless <em>you</em> follow up.
+            </p>
+        </div>
+    </div>
+
+
 </div>
 
 {% endblock %}

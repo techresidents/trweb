@@ -1,3 +1,5 @@
+{% load staticfiles %}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -12,11 +14,11 @@
         <![endif]-->
 
         <!-- Le styles -->
-        <link href="{{STATIC_URL}}css/3ps/bootstrap/css/bootstrap.css" rel="stylesheet">
-        <link href="{{STATIC_URL}}css/techresidents.css" rel="stylesheet">
+        <link href="{% static "css/3ps/bootstrap/css/bootstrap.css" %}" rel="stylesheet">
+        <link href="{% static "css/techresidents.css" %}" rel="stylesheet">
 
         <!-- Le fav and touch icons -->
-        <link rel="shortcut icon" type="image/x-icon" href="{{STATIC_URL}}favicon.ico">
+        <link rel="shortcut icon" type="image/x-icon" href="{% static "favicon.ico" %}">
         {% block extrahead %}{% endblock %}
     </head>
 
@@ -30,10 +32,8 @@
                     <a class="brand" href="#">Tech Residents</a>
 
                     <ul class="nav">
-                        <li><a href="/chat">Chat</a></li>
-                        <li><a href="/topic/create">Topics</a></li>
-                        <li><a href="/whiteboard">Whiteboard</a></li>
                         <li><a href={% url accounts.views.profile_account %}>Profile</a></li>
+                        <li><a href="/chat">Chat</a></li>
                     </ul>
 
                     <ul class="nav pull-right">

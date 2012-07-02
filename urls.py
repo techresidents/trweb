@@ -25,6 +25,11 @@ urlpatterns = patterns('',
 
 )
 
+#Error handlers
+handler404 = 'common.views.http404'
+handler403 = 'common.views.http403'
+handler500 = 'common.views.http500'
+
 #Landing page
 if settings.LANDING_PLACEHOLDER:
     urlpatterns += patterns('', url(r'^$', 'common.views.landing_placeholder'))
@@ -33,4 +38,4 @@ else:
 
 #This is for development purposes only.
 #It will only work if DEBUG is set to true.
-urlpatterns += staticfiles_urlpatterns()
+#urlpatterns += staticfiles_urlpatterns()
