@@ -13,29 +13,29 @@
     <div class="container">
 
         <div class="page-header">
-            <h1> Chat Details </h1>
-        </div>
+            <h1>
+                {{ chat.topic.title }}
 
-        <div class="row">
-                <div class="span7">
-                    <h2>
-                        Title: <em>{{ chat.topic.title }}</em>
-                    </h2>
-                    <h2>
-                        When: <em> {{ chat.start|date:"m/d e" }} at {{ chat.start|date:"h:i a e" }} </em>
-                    </h2>
-                </div>
-                <div class="span4">
+                <small>
+                    {{ chat.start|date:"m/d e" }} at {{ chat.start|date:"h:i a e" }}
+                </small>
+
+                &nbsp;
+                &nbsp;
+
+                <small>
                     {% if chat.registration_open %}
                         <a class="btn btn-large btn-primary" href={%url 'chat.views.register' encoded_chat_id=encoded_chat_id%}>Register</a>
                     {% elif chat.checkin_open %}
                         <a class="btn btn-large btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=encoded_chat_id%}>Check-in</a>
                     {% endif %}
-                </div>
+                </small>
+
+            </h1>
         </div>
 
         <div id="chat-details" class="row">
-            <div class="span7">
+            <div class="span6">
 
                 {% for topic in topic_tree %}
 
@@ -53,6 +53,7 @@
                 {% endfor %}
 
             </div>
+
         </div>
 
     </div>
