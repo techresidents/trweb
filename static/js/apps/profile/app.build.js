@@ -1,7 +1,7 @@
 ({
         appDir: ".",
         baseUrl: "../../",
-        dir: "../../../../static_collected/js/apps/profile",
+        dir: "../../../../static_minified/js/apps/profile",
         modules: [
                 { name: "apps/profile/main" }
         ],
