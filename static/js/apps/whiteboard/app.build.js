@@ -1,7 +1,7 @@
 ({
         appDir: ".",
         baseUrl: "../../",
-        dir: "../../../../static_collected/js/apps/whiteboard",
+        dir: "../../../../static_minified/js/apps/whiteboard",
         modules: [
                 { name: "apps/whiteboard/main" }
         ],
