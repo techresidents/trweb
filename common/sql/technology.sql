@@ -1,89 +1,120 @@
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Django', 1, True, 'django description will go here');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Ruby on Rails', 1, True, 'rails description will go here');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Symfony', 1, True, 'Symfony description goes here');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Spring', 1, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Struts', 1, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Qt', 1, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('.Net', 1, False, '');
 
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Zepto', 1, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('DynamicX', 1, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Sencha', 1, False, '');
-
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Assembly', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('C', 2, False, 'C description goes here');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('C++', 2, True, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('C#', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Clojure', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('COBOL', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('CoffeeScript', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('ColdFusion', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('D', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Dart', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Erlang', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('F', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('F#', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Flex', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Fortran', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Go', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Groovy', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Haskell', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Java', 2, True, 'Java description goes here');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Javascript', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('JavaFX Script', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('LaTeX', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Lua', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('make', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('MATLAB', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Objective-C', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Pascal', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Perl', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('PHP', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Pico', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('PostScript', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Python', 2, True, 'Python description goes here');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('QtScript', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('R', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Ruby', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Rust', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Scala', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Scheme', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Smalltalk', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Tcl', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('TeX', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Unix shell', 2, False, '');
-
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('VBScript', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Verilog', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('VHDL', 2, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Visual Basic', 2, False, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Android SDK', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Blackberry SDK', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Cocoa', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Django', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('DynamicX', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Flex', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Grails', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Hadoop', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('iOS SDK', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('JQuery', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('JQuery Mobile', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('.Net', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('PhoneGap', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Pyramid', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Qt', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Rhomobile', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Ruby on Rails', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Sencha', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Sinatra', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Spring', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Struts', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Symbian SDK', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Symfony', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Titanium', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Tornado', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('TurboGears', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('UIQ', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Windows Mobile SDK', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Windows Phone SDK', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Windows SDK', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('web2py', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Zepto', 1, '');
 
 
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Android', 3, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('IDAPro', 4, False, '');
+INSERT INTO technology (name, type_id, description) VALUES ('ActionScript', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Ada', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Assembly', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Awk', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Bash', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('C', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('C++', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('C#', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Clojure', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('COBOL', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('CoffeeScript', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('ColdFusion', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('CSS', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('D', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Dart', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Erlang', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('F', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('F#', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Flex', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Fortran', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Go', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Groovy', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Haskell', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('HTML5', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Java', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Javascript', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('JavaFX Script', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('LaTeX', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Lisp', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Logo', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Lua', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('make', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('MATLAB', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Objective-C', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Object Pascal', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Pascal', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Perl', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('PHP', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Pico', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('PostScript', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Prolog', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Python', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('QtScript', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('R', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Ruby', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Rust', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Scala', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Scheme', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Smalltalk', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('SQL', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Tcl', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('TeX', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('VBScript', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Verilog', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('VHDL', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Visual Basic', 2, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Visual Basic .NET', 2, '');
 
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('CouchDB', 5, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Hadoop', 5, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('MongoDB', 5, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('MySQL', 5, True, 'MySQL description goes here');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('PosgreSQL', 5, True, 'PosgreSQL description goes here');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('Oracle', 5, True, 'Oracel description goes here');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('OrientDB', 5, False, '');
-INSERT INTO technology (name, type_id, is_profile_default, description) VALUES ('SimpleDB', 5, False, '');
+
+INSERT INTO technology (name, type_id, description) VALUES ('Android OS', 3, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Blackberry OS', 3, '');
+INSERT INTO technology (name, type_id, description) VALUES ('iOS', 3, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Linux', 3, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Mac OSX', 3, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Symbian', 3, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Unix', 3, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Windows OS', 3, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Windows Mobile', 3, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Windows Phone', 3, '');
+
+
+INSERT INTO technology (name, type_id, description) VALUES ('IDAPro', 4, '');
+
+
+INSERT INTO technology (name, type_id, description) VALUES ('Cassandra', 5, '');
+INSERT INTO technology (name, type_id, description) VALUES ('CouchDB', 5, '');
+INSERT INTO technology (name, type_id, description) VALUES ('MongoDB', 5, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Mnesia', 5, '');
+INSERT INTO technology (name, type_id, description) VALUES ('MySQL', 5, '');
+INSERT INTO technology (name, type_id, description) VALUES ('PosgreSQL', 5, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Oracle', 5, '');
+INSERT INTO technology (name, type_id, description) VALUES ('OrientDB', 5, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Riak', 5, '');
+INSERT INTO technology (name, type_id, description) VALUES ('SimpleDB', 5, '');
+INSERT INTO technology (name, type_id, description) VALUES ('SQLite', 5, '');
