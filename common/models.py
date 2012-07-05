@@ -105,7 +105,7 @@ class Location(models.Model):
         db_table = "location"
 
     country = models.CharField(max_length=100)
-    zip = models.CharField(max_length=50)
+    zip = models.CharField(max_length=50, null=True)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     county = models.CharField(max_length=100)
