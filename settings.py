@@ -59,8 +59,8 @@ MEDIA_URL = 'http://localhost:8000/'
 # Additionally the post_process method will be called during
 # the collectstatic process, so static files can be properly 
 # distributed (filesystem, cloud, etc...)
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-#STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
+#STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
 #STATICFILES_STORAGE = 'common.staticfiles.CacheBustingStaticFilesStorage'
 
 # Absolute path to the directory static files should be collected to.

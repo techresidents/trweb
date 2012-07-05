@@ -36,8 +36,24 @@ virtualenv --no-site-packages $RPM_BUILD_ROOT/env
 %install
 source $RPM_BUILD_ROOT/env/bin/activate
 python %{app_buildroot}/bootstrap.py --requirements %{app_buildroot}/requirements/requirements.txt
-python %{app_buildroot}/manage.py collectstatic --noinput
+
+#optimize and minify js files 
+#optimized files will be output to static_minified
+cp -r %{app_buildroot}/static %{app_buildroot}/static_minified
 find %{app_buildroot}/static -name app.build.js -exec r.js -o {} \; 
+
+#move original static files for safe keeping
+mv %{app_buildroot}/static %{app_buildroot}/static.old
+
+#move static_minified to static in preparation for collectstatic
+mv %{app_buildroot}/static_minified %{app_buildroot}/static
+
+#collect static
+python %{app_buildroot}/manage.py collectstatic --noinput
+
+#restore static and static_minified
+mv %{app_buildroot}/static %{app_buildroot}/static_minified
+mv %{app_buildroot}/static.old %{app_buildroot}/static
 
 # fix the #! line in installed python files
 find "$RPM_BUILD_ROOT" -type f -print0 |
