@@ -5,7 +5,7 @@ define([
     'easyXDM',
 ], function($, _, Backbone, easyXDM) {
     
-    var remote = "http://techresidents.com:6767/static/js/easyXDM/cors/index.html"
+    var remote = "http://api.techresidents.com/static/js/easyXDM/cors/index.html"
     
     if(window.TR && window.TR.XD && window.TR.XD.remote) {
         remote = TR.XD.remote;
