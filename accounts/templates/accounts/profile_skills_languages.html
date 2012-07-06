@@ -7,12 +7,21 @@
 
 {% block extrahead %}
     <link href="{% static "css/profile_jobs.css" %}" rel="stylesheet">
+
+    {% autoescape off %}
+        <script>
+            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
+        </script>
+    {% endautoescape %}
+
     <script>
         var require = {
             baseUrl: '/static/js',
         };
     </script>
+
     <script data-main="{% static "js/apps/profile/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
+
 {%endblock %}
 
 {% block content %}
@@ -116,7 +125,6 @@
 
     {% autoescape off %}
         <script>
-            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
             var data = {{json_skills}};
             var app = {'name':'skills'}
         </script>

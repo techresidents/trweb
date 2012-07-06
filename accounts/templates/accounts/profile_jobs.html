@@ -9,6 +9,14 @@
 
 {% block extrahead %}
     <link href="{% static "css/profile_jobs.css" %}" rel="stylesheet">
+
+
+    {% autoescape off %}
+        <script>
+            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
+        </script>
+    {% endautoescape %}
+
     <script>
         var require = {
             baseUrl: '/static/js',
@@ -209,7 +217,6 @@
 
     {% autoescape off %}
     <script>
-        TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
         var notifications = {{ json_notification_prefs }};
         var positions = {{json_user_positions}};
         var positionTypes = {{json_position_types}};
