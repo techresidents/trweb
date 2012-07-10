@@ -114,7 +114,6 @@
                             <thead>
                             <th>City</th>
                             <th>State</th>
-                            <th>Zip</th>
                             <th>Country</th>
                             <th></th>
                             </thead>
@@ -128,7 +127,7 @@
                                 <label for="location-input">Add Location</label>
                                 <div class="controls">
                                     <div id="location-add" class="input-append">
-                                        <input id="location-input" maxlength="1024" type="text" name="location" autocomplete="off" placeholder="City, State or Zip">
+                                        <input id="location-input" maxlength="1024" type="text" name="location" autocomplete="off" placeholder="City or State">
                                         <button id="location-add-button" class="btn">Add</button>
                                     </div>
                                 </div>
@@ -259,13 +258,10 @@
 
     <script type="text/template" id="location-item-template">
         <td>
-            <span> <%= city %> </span>
+            <span> <%= city || '' %> </span>
         </td>
         <td>
             <span> <%= state %> </span>
-        </td>
-        <td>
-            <span> <%= zip %> </span>
         </td>
         <td>
             <span> <%= country %> </span>
