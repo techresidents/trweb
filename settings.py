@@ -117,6 +117,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'techresidents_web.common.middleware.TimezoneMiddleware',
+    'techresidents_web.common.middleware.TLSRequestMiddleware',
 )
 
 ROOT_URLCONF = 'techresidents_web.urls'
@@ -161,7 +162,13 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '%(asctime)s %(levelname)s: %(name)s %(message)s'
+            'format': '%(asctime)s %(levelname)s [session=%(session)s userId=%(user)s] %(name)s: %(message)s'
+        }
+    },
+
+    'filters': {
+        'request_filter': {
+            '()': 'techresidents_web.common.logutil.RequestFilter'
         }
     },
 
@@ -187,7 +194,8 @@ LOGGING = {
             'filename': 'techresidents_web.default.log',
             'when': 'midnight',
             'interval': 1,
-            'backupCount': 7
+            'backupCount': 7,
+            'filters': ['request_filter'],
         }
     },
 
@@ -208,13 +216,13 @@ LOGGING = {
             'handlers': ['null_handler'],
             'propagate': False,
             'level': 'DEBUG'
-        },
-        # Logger responsible for capturing all techresidents web log messages.
-        'tr.web': {
-            'handlers':['tr_web_file_handler'],
-            'propagate': False,
-            'level':'DEBUG'
         }
+    },
+
+    # Logger responsible for capturing all techresidents web log messages.
+    'root': {
+        'handlers': ['tr_web_file_handler'],
+        'level':'DEBUG'
     }
 }
 
