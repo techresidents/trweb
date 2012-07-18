@@ -212,6 +212,7 @@ LOGGING = {
             'propagate': False,
             'level': 'DEBUG'
         },
+        # The django.db.backends logger is only applied if the var DEBUG=True
         'django.db.backends': {
             'handlers': ['null_handler'],
             'propagate': False,
