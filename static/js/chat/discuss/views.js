@@ -116,13 +116,12 @@ define([
         initialize: function() {
             this.template = _.template(discuss_controls_template);
             this.model.bind('change:activeTopic', this.render, this);
+            this.model.bind('change:nextTopic', this.render, this);
             this.timer = null;
         },
 
         render: function() {
-
             this.$el.html(this.template(this.model.toJSON()));
-
             var activeTopic = this.model.activeTopic();
             var activeMinute = this.model.activeMinute();
             if(activeTopic && activeMinute) {
