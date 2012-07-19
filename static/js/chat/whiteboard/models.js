@@ -68,7 +68,6 @@ define([
             // if model.name is not already in then collection, then add it
             var whiteboards = this.where({'name': model.name()});
             if (whiteboards.length > 0){
-                console.log('Warning: Duplicate model tried to be added the whiteboard collection.');
                 return this;
             } else {
                 // return this.__super__.add.apply(this, arguments);

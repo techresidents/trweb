@@ -88,6 +88,7 @@ define([
         initialize: function() {
             this.template = _.template(discuss_title_template);
             this.model.bind('change:activeTopic', this.render, this);
+            this.model.bind('change:nextTopic', this.render, this);
         },
 
         render: function() {
