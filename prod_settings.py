@@ -53,3 +53,74 @@ TR_XD_REMOTE = 'http://techresidents.com:6767/static/js/easyXDM/cors/index.html'
 #Tokbox Settings
 TOKBOX_JS_URL = 'http://static.opentok.com/v0.91/js/TB.min.js'
 TOKBOX_IS_STAGING = False
+
+#Logging settings
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(levelname)s [session=%(session)s userId=%(user)s] %(name)s: %(message)s'
+        }
+    },
+
+    'filters': {
+        'request_filter': {
+            '()': 'techresidents_web.common.logutil.RequestFilter'
+        }
+    },
+
+    'handlers': {
+        # The null handler has no formatting or output (a no-op).
+        'null_handler': {
+            'level':'DEBUG',
+            'class':'django.utils.log.NullHandler'
+        },
+        # Note that outputting logs to stdout or stderr will result in log messages
+        # showing up in the Apache logs because Apache is responsible for
+        # starting the Django process.
+        'console_handler': {
+            'level': 'WARNING',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+            'stream': 'ext://sys.stdout'
+        },
+        'tr_web_file_handler': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': '/opt/tr/www/techresidents.com/prod/log/techresidents_web.prod.log',
+            'when': 'midnight',
+            'interval': 1,
+            'backupCount': 7,
+            'filters': ['request_filter'],
+            }
+    },
+
+    'loggers': {
+        # This is the Django catch-all logger; no messages are logged directly
+        # with this logger.
+        'django': {
+            'handlers':['tr_web_file_handler'],
+            'propagate': False,
+            'level':'WARNING'
+        },
+        'django.request': {
+            'handlers': ['tr_web_file_handler'],
+            'propagate': False,
+            'level': 'WARNING'
+        },
+        # The django.db.backends logger is only applied if the var DEBUG=True
+        'django.db.backends': {
+            'handlers': ['null_handler'],
+            'propagate': False,
+            'level': 'DEBUG'
+        }
+    },
+
+    # Logger responsible for capturing all techresidents web log messages.
+    'root': {
+        'handlers': ['tr_web_file_handler'],
+        'level':'WARNING'
+    }
+}

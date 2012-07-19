@@ -70,6 +70,7 @@ define([
         onChatTopicChanged: function(notification) {
             this.view.model.setActiveMinute(this.agendaProxy.minutesProxy.active());
             this.view.model.setActiveTopic(notification.topic);
+            this.view.model.setNextTopic(this.agendaProxy.nextActive(notification.topic));
         },
 
         onChatStarted: function(notification) {

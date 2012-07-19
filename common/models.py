@@ -88,8 +88,6 @@ class Technology(models.Model):
 
     name = models.CharField(max_length=100)
     type = models.ForeignKey(TechnologyType)
-    is_profile_default = models.BooleanField(default=False)
-    #is_profile_default is a flag to indicate if this technology should show up in the default list of technologies
     description = models.CharField(max_length=1024, blank=True)
 
 class ExpertiseType(models.Model):
@@ -107,10 +105,10 @@ class Location(models.Model):
         db_table = "location"
 
     country = models.CharField(max_length=100)
-    zip = models.CharField(max_length=50)
-    city = models.CharField(max_length=100)
+    zip = models.CharField(max_length=50, null=True)
+    city = models.CharField(max_length=100, null=True)
     state = models.CharField(max_length=100)
-    county = models.CharField(max_length=100)
+    county = models.CharField(max_length=100, null=True)
     latitude = models.FloatField()
     longitude = models.FloatField()
 

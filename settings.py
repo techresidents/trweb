@@ -117,6 +117,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'techresidents_web.common.middleware.TimezoneMiddleware',
+    'techresidents_web.common.middleware.TLSRequestMiddleware',
 )
 
 ROOT_URLCONF = 'techresidents_web.urls'
@@ -154,28 +155,78 @@ INSTALLED_APPS = (
     'techresidents_web.whiteboard',
 )
 
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
+
+#Logging settings
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler'
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(levelname)s [session=%(session)s userId=%(user)s] %(name)s: %(message)s'
         }
     },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
+
+    'filters': {
+        'request_filter': {
+            '()': 'techresidents_web.common.logutil.RequestFilter'
+        }
+    },
+
+    'handlers': {
+        # The null handler has no formatting or output (a no-op).
+        'null_handler': {
+            'level':'DEBUG',
+            'class':'django.utils.log.NullHandler'
         },
+        # Note that outputting logs to stdout or stderr will result in log messages
+        # showing up in the Apache logs because Apache is responsible for
+        # starting the Django process.
+        'console_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+            'stream': 'ext://sys.stdout'
+        },
+        'tr_web_file_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': 'techresidents_web.default.log',
+            'when': 'midnight',
+            'interval': 1,
+            'backupCount': 7,
+            'filters': ['request_filter'],
+        }
+    },
+
+    'loggers': {
+        # This is the Django catch-all logger; no messages are logged directly
+        # with this logger.
+        'django': {
+            'handlers':['tr_web_file_handler'],
+            'propagate': False,
+            'level':'DEBUG'
+        },
+        'django.request': {
+            'handlers': ['tr_web_file_handler'],
+            'propagate': False,
+            'level': 'DEBUG'
+        },
+        # The django.db.backends logger is only applied if the var DEBUG=True
+        'django.db.backends': {
+            'handlers': ['null_handler'],
+            'propagate': False,
+            'level': 'DEBUG'
+        }
+    },
+
+    # Logger responsible for capturing all techresidents web log messages.
+    'root': {
+        'handlers': ['tr_web_file_handler'],
+        'level':'DEBUG'
     }
 }
+
 
 #Session settings
 SESSION_COOKIE_AGE = 1209600  #2 weeks

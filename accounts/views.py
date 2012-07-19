@@ -404,7 +404,7 @@ def profile_skills_common(request, technology_type_name):
     yrs_experience_options = range(0,21)
 
     # Retrieve list of user's language skills from db and create json data to populate UI
-    user_skills = Skill.objects.filter(technology__type=skill_technology_type).select_related('technology').select_related('expertise_type')
+    user_skills = Skill.objects.filter(user=request.user, technology__type=skill_technology_type).select_related('technology').select_related('expertise_type')
     user_skills_list = [ {'name': skill.technology.name,
                           'expertise': skill.expertise_type.name,
                           'yrs_experience': skill.yrs_experience} for skill in user_skills]

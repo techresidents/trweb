@@ -655,7 +655,9 @@ define([
             var value = this.locationInput.val();
             if (value.toLowerCase() == this.lookupData.name.toLowerCase()) {
                 // If this check passes, it implies that the value of this.lookupValue & this.lookupData
-                // are up-to-date and accurate.
+                // are up-to-date and accurate.  This is to prevent a time-of-check versus time-of-use
+                // bug.  This could occur if the user had selected an option in from the drop down menu,
+                // then edited the location data within the field and finally pressed the 'add' button.
                 this._add(this.lookupData);
             }
         },
@@ -679,7 +681,7 @@ define([
          * @param data LookupResult.matches object which is scope/category specific
          */
         updateOnSelect: function(value, data) {
-            // keep a record of what was in the lookupView
+            // keep track of what was in the lookupView
             this.lookupValue = value;
             this.lookupData = data;
         },
@@ -690,7 +692,6 @@ define([
          * @private
          */
         _add: function(data) {
-            console.log(data);
             if (data) {
                 //only add if entry doesn't already exist in user's location prefs
                 var locationPrefs = this.locationCollection.where({'locationId': data.id});

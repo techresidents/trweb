@@ -9,6 +9,14 @@
 
 {% block extrahead %}
     <link href="{% static "css/profile_jobs.css" %}" rel="stylesheet">
+
+
+    {% autoescape off %}
+        <script>
+            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
+        </script>
+    {% endautoescape %}
+
     <script>
         var require = {
             baseUrl: '/static/js',
@@ -106,7 +114,6 @@
                             <thead>
                             <th>City</th>
                             <th>State</th>
-                            <th>Zip</th>
                             <th>Country</th>
                             <th></th>
                             </thead>
@@ -120,7 +127,7 @@
                                 <label for="location-input">Add Location</label>
                                 <div class="controls">
                                     <div id="location-add" class="input-append">
-                                        <input id="location-input" maxlength="1024" type="text" name="location" autocomplete="off" placeholder="City, State or Zip">
+                                        <input id="location-input" maxlength="1024" type="text" name="location" autocomplete="off" placeholder="City or State">
                                         <button id="location-add-button" class="btn">Add</button>
                                     </div>
                                 </div>
@@ -139,7 +146,6 @@
                         <table id="technology-table" class="table">
                             <thead>
                             <th>Name</th>
-                            <th>Description</th>
                             <th></th>
                             </thead>
                             <tbody id="jobs-technology-list">
@@ -210,7 +216,6 @@
 
     {% autoescape off %}
     <script>
-        TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
         var notifications = {{ json_notification_prefs }};
         var positions = {{json_user_positions}};
         var positionTypes = {{json_position_types}};
@@ -253,13 +258,10 @@
 
     <script type="text/template" id="location-item-template">
         <td>
-            <span> <%= city %> </span>
+            <span> <%= city || '' %> </span>
         </td>
         <td>
             <span> <%= state %> </span>
-        </td>
-        <td>
-            <span> <%= zip %> </span>
         </td>
         <td>
             <span> <%= country %> </span>
@@ -272,9 +274,6 @@
     <script type="text/template" id="technology-item-template">
         <td>
             <span> <%= name %> </span>
-        </td>
-        <td>
-            <span> <%= description %> </span>
         </td>
         <td>
             <a class="close">x</a>

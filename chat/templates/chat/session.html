@@ -6,38 +6,42 @@
 {% block title %}Tech Residents - Chat{% endblock %}
 
 {% block extrahead %}
-<link href="{% static "css/chat.css" %}" rel="stylesheet">
+    <link href="{% static "css/chat.css" %}" rel="stylesheet">
 
-<script src="{{TOKBOX_JS_URL}}"></script>
+    <script src="{{TOKBOX_JS_URL}}"></script>
 
-<script>
-    var require = {
-        baseUrl: '/static/js',
-    };
-</script>
-<script data-main="{% static "js/apps/chat/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
+    {% autoescape off %}
+        <script>
+            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
+        </script>
+    {% endautoescape %}
+
+    <script>
+        var require = {
+            baseUrl: '/static/js',
+        };
+    </script>
+    <script data-main="{% static "js/apps/chat/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
+
 {% endblock %}
 
 {% block content %}
 
-<div id="chatapp" class="chat-background">
-</div>
+    <div id="chatapp" class="chat-background"></div>
 
-<!-- All of these data structures are generated on the server w/out user input, so it's safe -->
-{% autoescape off %}
-<script>
-    TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
-
-    data =  {
-        chatAPIKey: "{{chat_api_key}}",
-        chatSessionId: "{{chat_session_id}}",
-        chatSessionToken: "{{chat_session_token}}",
-        chatUserToken: "{{chat_user_token}}",
-        users: {{users_json}},
-        topics: {{topics_json}},
-        resources: {{resources_json}},
-    };
-</script>
-{% endautoescape %}
+    <!-- All of these data structures are generated on the server w/out user input, so it's safe -->
+    {% autoescape off %}
+        <script>
+            data =  {
+                chatAPIKey: "{{chat_api_key}}",
+                chatSessionId: "{{chat_session_id}}",
+                chatSessionToken: "{{chat_session_token}}",
+                chatUserToken: "{{chat_user_token}}",
+                users: {{users_json}},
+                topics: {{topics_json}},
+                resources: {{resources_json}},
+            };
+        </script>
+    {% endautoescape %}
 
 {% endblock %}

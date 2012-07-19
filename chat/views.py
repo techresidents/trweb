@@ -104,11 +104,21 @@ def details(request, encoded_chat_id):
     chat = Chat.objects.select_related("chat__topic").get(id=chat_id)
     topic_tree = Topic.objects.topic_tree(chat.topic.id)
 
+    try:
+        registration = ChatRegistration.objects.get(user=request.user, chat=chat)
+        is_registered = True
+        is_checked_in = registration.checked_in
+    except ChatRegistration.DoesNotExist:
+        is_registered = False
+        is_checked_in = False
+
     context = {
-        "chat": chat,
         "encoded_chat_id": basic_encode(chat.id),
+        "chat": chat,
         "topic": chat.topic,
-        "topic_tree": topic_tree
+        "topic_tree": topic_tree,
+        "is_registered": is_registered,
+        "is_checked_in": is_checked_in
         }
 
     return render_to_response('chat/details.html', context, context_instance=RequestContext(request))
