@@ -71,20 +71,34 @@ define([
 
         
         /**
-         * Get the Topic model which follows topic.
-         * @param {Topic} topic - Topic model.
+         * Get the next Topic.
+         * @param {Topic} topic - Optional Topic model for
+         *      which to calculate the next topic. If not
+         *      provided the nex topic relative the currently
+         *      active topic will be returned. Note that this
+         *      topic may be a parent topic and not a leaf
+         *      node.
+         *
          * @return {Topic} Returns topic model if exists, null otherwise.
          */
         next: function(topic) {
+            topic = topic || this.activeTopic;
             return this.topicsProxy.next(topic);
         },
 
         /**
-         * Get the Topic is next inline to become active.
-         * @param {Topic} topic - Topic model.
+         * Get the Topic next inline to become active.
+         * @param {Topic} topic - Optional Topic model for which
+         *      to calculate the next active topic. If not provided,
+         *      the next active topic relative to the currently
+         *      active topic will be returned. Note that this will
+         *      return the next leaf topic which will be active,
+         *      skipping any parent topics.
          * @return {Topic} Returns topic model if exists, null otherwise.
          */
         nextActive: function(topic) {
+            topic = topic || this.activeTopic;
+
             if(topic) {
                 return this.topics().findLeaf(topic.id);
             } else {
