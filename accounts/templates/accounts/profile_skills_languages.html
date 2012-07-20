@@ -141,9 +141,9 @@
     </script>
 
     <script type="text/template" id="skill-item-template">
-        <td>
-            <span> <%= name %> </span>
-        </td>
+        {% verbatim %}
+            <td><span><%- name %></span></td>
+        {% endverbatim %}
         <td>
             <select class="skill-expertise">
                 {% for option in expertise_options %}

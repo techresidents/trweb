@@ -225,6 +225,8 @@
     </script>
     {% endautoescape %}
 
+
+
     <!-- Templates -->
     <script type="text/template" id="item-hint-template">
         <td>
@@ -236,12 +238,14 @@
     </script>
 
     <script type="text/template" id="position-item-template">
-        <td>
-            <span> <%= name %> </span>
-        </td>
-        <td>
-            <span> <%= description %> </span>
-        </td>
+        {% verbatim %}
+            <td>
+                <span> <%- name %> </span>
+            </td>
+            <td>
+                <span> <%- description %> </span>
+            </td>
+        {% endverbatim %}
         <td>
             <select class="min-salary-option">
                 {% for option in min_salary_options %}
@@ -257,24 +261,28 @@
     </script>
 
     <script type="text/template" id="location-item-template">
-        <td>
-            <span> <%= city || '' %> </span>
-        </td>
-        <td>
-            <span> <%= state %> </span>
-        </td>
-        <td>
-            <span> <%= country %> </span>
-        </td>
+        {% verbatim %}
+            <td>
+                <span> <%- city || '' %> </span>
+            </td>
+            <td>
+                <span> <%- state %> </span>
+            </td>
+            <td>
+                <span> <%- country %> </span>
+            </td>
+        {% endverbatim %}
         <td>
             <a class="close">x</a>
         </td>
     </script>
 
     <script type="text/template" id="technology-item-template">
-        <td>
-            <span> <%= name %> </span>
-        </td>
+        {% verbatim %}
+            <td>
+                <span> <%- name %> </span>
+            </td>
+        {% endverbatim %}
         <td>
             <a class="close">x</a>
         </td>
