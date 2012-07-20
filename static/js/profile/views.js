@@ -290,7 +290,6 @@ define([
 
         addPosition: function() {
             var positionName = this.positionInput.val();
-            console.log(positionName);
             var positionTypeId = null;
             if (positionName) {
                 var positions = this.positionTypeCollection.where({'name': positionName});
