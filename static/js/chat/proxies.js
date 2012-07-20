@@ -161,8 +161,21 @@ define([
          * End the chat
          */
         end: function() {
-            while(this.isActive()) {
+            var nextActive;
+
+            if(this.isActive()) {
+                nextActive = this.chatAgendaProxy.nextActive();
                 this.chatAgendaProxy.activateNext();
+
+                while(nextActive) {
+                    //note that nextActive() must be calculated relative
+                    //to the current value of nextActive since the
+                    //above activateNext() will take time to propagate
+                    //the new active topic, since this requires
+                    //a network request.
+                    nextActive = this.chatAgendaProxy.nextActive(nextActive);
+                    this.chatAgendaProxy.activateNext();
+                }
             }
         }
 
