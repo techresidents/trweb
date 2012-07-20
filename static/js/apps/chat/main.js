@@ -7,11 +7,11 @@ require.config({
         Highcharts: 'loader/highcharts',
         easyXDM: 'loader/easyXDM',
         raphael: 'loader/raphael',
-        spin: 'loader/spin',
+        spin: 'loader/spin'
     }
 });
 
 require([
-    'apps/chat/chat',
+    'apps/chat/chat'
 ], function() {
 });

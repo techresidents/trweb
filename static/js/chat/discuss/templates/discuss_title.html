@@ -4,10 +4,16 @@
             Discuss:  &nbsp;&nbsp; <em> <%= rootTopic.title %> - <%= activeTopic.title %> </em>
         </h3>
     </div>
-<% } else { %>
+<% } else if(nextTopic) { %>
     <div class="span9">
         <h3 class="discuss-title-text">
             Discuss:  &nbsp;&nbsp; <em> <%= rootTopic.title %> - <%= nextTopic.title %> </em>
+        </h3>
+    </div>
+<% } else { %>
+    <div class="span9">
+        <h3 class="discuss-title-text">
+            Discuss:  &nbsp;&nbsp; <em> <%= rootTopic.title %> </em>
         </h3>
     </div>
 <% } %>

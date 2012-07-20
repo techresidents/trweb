@@ -4,11 +4,11 @@ require.config({
         jQuery: 'loader/jquery',
         Underscore: 'loader/underscore',
         Backbone: 'loader/backbone',
-        Highcharts: 'loader/highcharts',
+        Highcharts: 'loader/highcharts'
     }
 });
 
 require([
-    'apps/topic/topic',
+    'apps/topic/topic'
 ], function() {
 });

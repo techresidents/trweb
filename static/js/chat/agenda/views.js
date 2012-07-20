@@ -9,7 +9,7 @@ define([
     'text!chat/agenda/templates/agenda_detail.html',
     'text!chat/agenda/templates/agenda_item.html',
     'text!chat/agenda/templates/agenda_tab.html',
-    'text!chat/agenda/templates/agenda_tag.html',
+    'text!chat/agenda/templates/agenda_tag.html'
 ], function(
     $,
     _,
@@ -29,7 +29,7 @@ define([
     var EVENTS = {
         NEXT: 'agenda:Next',
         SELECT: 'agenda:Select',
-        DELETE_TAG: tag_views.EVENTS.DELETE_TAG,
+        DELETE_TAG: tag_views.EVENTS.DELETE_TAG
     };
 
     
@@ -48,13 +48,13 @@ define([
         tagName: 'li',
 
         events: {
-            'click': 'click',
+            'click': 'click'
         },
 
         initialize: function() {
             this.agenda = this.options.agenda;
-            this.selectedClass = this.options.selectedClass || 'selected'
-            this.activeClass = this.options.activeClass || 'active'
+            this.selectedClass = this.options.selectedClass || 'selected';
+            this.activeClass = this.options.activeClass || 'active';
             this.template = _.template(agenda_item_template);
 
             this.agenda.bind('change:selected', this.selectedChange, this);
@@ -82,7 +82,7 @@ define([
         
         click: function() {
             this.triggerEvent(EVENTS.SELECT, {
-                topicModel: this.model,
+                topicModel: this.model
             });
         },
 
@@ -100,7 +100,7 @@ define([
             } else {
                 this.$el.removeClass(this.activeClass);
             }
-        },
+        }
     });
 
 
@@ -185,7 +185,7 @@ define([
                 collection: this.tags,
                 users: this.users,
                 filter: this.listViewTagFilter,
-                context: this,
+                context: this
             }).render();
 
             return this;
@@ -214,7 +214,7 @@ define([
             }
 
             return result;
-        },
+        }
     });
 
 
@@ -230,7 +230,7 @@ define([
         timerSelector: '#agenda-control-timer',
 
         events: {
-            "click .next": "next", 
+            "click .next": "next"
         },
 
         initialize: function() {
@@ -247,7 +247,7 @@ define([
                 this.timer = new timer_views.DurationTimerView({
                     el: this.$(this.timerSelector),
                     duration: topic.durationMs(),
-                    interval: 500,
+                    interval: 500
                 }).render();
             }
 
@@ -267,7 +267,7 @@ define([
             } else {
                 this.timer.stop();
             }
-        },
+        }
     });
     
 
@@ -298,12 +298,12 @@ define([
             
             new AgendaListView({
                 el: this.$(this.listSelector),
-                model: this.model,
+                model: this.model
             }).render();
             
             new AgendaDetailView({
                 el: this.$(this.detailSelector),
-                model: this.model,
+                model: this.model
             }).render();
             
             new AgendaTagView({
@@ -311,15 +311,15 @@ define([
                 model: this.model,
                 minutes: this.model.minutes(),
                 tags: this.tags,
-                users: this.users,
+                users: this.users
             }).render();
 
             return this;
-        },
+        }
     });
 
     return {
         EVENTS: EVENTS,
-        ChatAgendaTabView: ChatAgendaTabView,
+        ChatAgendaTabView: ChatAgendaTabView
     };
 });

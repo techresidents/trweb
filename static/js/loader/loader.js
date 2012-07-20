@@ -4,7 +4,7 @@ define([
     'order!3ps/underscore/underscore',
     'order!3ps/backbone/backbone',
     'order!3ps/backbone/localStorage',
-    'order!3ps/highcharts/js/highcharts',
+    'order!3ps/highcharts/js/highcharts'
 ], function() {
     return {
         $ : jQuery.noConflict(),

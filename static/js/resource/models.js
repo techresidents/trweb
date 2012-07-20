@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'document/models',
+    'document/models'
 ], function($, _, Backbone, document_models) {
 
     /**
@@ -13,7 +13,7 @@ define([
 
         defaults: function() {
             return {
-                type: null,
+                type: null
             };
         },
 
@@ -24,14 +24,14 @@ define([
         setType: function(type) {
             this.set({type: type});
             return this;
-        },
+        }
     });
 
     var DocumentResource = Resource.extend({
 
         defaults: function() {
             return {
-                document: null,
+                document: null
             };
         },
 
@@ -76,12 +76,12 @@ define([
         },
         
         initialize: function() {
-        },
+        }
         
     });
 
     return {
         ResourceCollection: ResourceCollection,
-        resourceCollection: new ResourceCollection
-    }
+        resourceCollection: new ResourceCollection()
+    };
 });

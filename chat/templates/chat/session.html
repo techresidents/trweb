@@ -7,22 +7,6 @@
 
 {% block extrahead %}
     <link href="{% static "css/chat.css" %}" rel="stylesheet">
-
-    <script src="{{TOKBOX_JS_URL}}"></script>
-
-    {% autoescape off %}
-        <script>
-            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
-        </script>
-    {% endautoescape %}
-
-    <script>
-        var require = {
-            baseUrl: '/static/js',
-        };
-    </script>
-    <script data-main="{% static "js/apps/chat/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
-
 {% endblock %}
 
 {% block content %}
@@ -39,9 +23,24 @@
                 chatUserToken: "{{chat_user_token}}",
                 users: {{users_json}},
                 topics: {{topics_json}},
-                resources: {{resources_json}},
+                resources: {{resources_json}}
             };
         </script>
     {% endautoescape %}
+
+    <script src="{{TOKBOX_JS_URL}}"></script>
+
+    {% autoescape off %}
+        <script>
+            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
+        </script>
+    {% endautoescape %}
+
+    <script>
+        var require = {
+            baseUrl: '/static/js'
+        };
+    </script>
+    <script data-main="{% static "js/apps/chat/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
 
 {% endblock %}

@@ -1,6 +1,6 @@
 define([
     'common/notifications',
-    'core/proxy',
+    'core/proxy'
 ], function(notifications, proxy) {
 
     /**
@@ -16,7 +16,7 @@ define([
         eventNotifications: {
             'add': notifications.TOPIC_ADDED,
             'change': notifications.TOPIC_CHANGED,
-            'remove': notifications.TOPIC_REMOVED,
+            'remove': notifications.TOPIC_REMOVED
         },
 
         initialize: function(options) {
@@ -42,11 +42,11 @@ define([
             } else {
                 return false;
             }
-        },
+        }
 
     });
     
     return {
-        TopicsProxy: TopicsProxy,
-    }
+        TopicsProxy: TopicsProxy
+    };
 });

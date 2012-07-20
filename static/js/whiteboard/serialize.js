@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'raphael',
+    'raphael'
 ], function($, _, Backbone, Raphael) {
 
     /**
@@ -25,6 +25,6 @@ define([
 
     return {
         Serializer: Serializer
-    }
+    };
 
 });

@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'xd/xd',
+    'xd/xd'
 ], function($, _, Backbone, xd) {
     
     var methodMap = {
@@ -27,14 +27,14 @@ define([
 
         var params = _.extend({
                 timeout: 60000,
-                headers: {},
+                headers: {}
         }, options);
         
         if(!params.url) {
             params.url = getUrl(model);
         }
 
-        if(!params.data && model && (method == 'create' || method == 'update')) {
+        if(!params.data && model && (method === 'create' || method === 'update')) {
             params.data = JSON.stringify(model.toJSON());
             params.headers['Content-Type'] = 'application/json';
         } 
@@ -45,7 +45,7 @@ define([
             timeout: params.timeout,
             headers: params.headers,
             data: params.data,
-            processData: processData,
+            processData: processData
         }, function(response) {
             params.success(JSON.parse(response.data), response.status);
             if(params.complete) {
@@ -61,6 +61,6 @@ define([
     };
     
     return {
-        sync: sync,
-    }
+        sync: sync
+    };
 });

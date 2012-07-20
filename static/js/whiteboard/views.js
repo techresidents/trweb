@@ -4,7 +4,7 @@ define([
     'Backbone',
     'raphael',
     'core/base',
-    'core/view',
+    'core/view'
 ], function($, _, Backbone, Raphael, base, view) {
 
 
@@ -26,7 +26,7 @@ define([
         events: {
             'mousedown': 'mousedown',
             'mousemove': 'mousemove',
-            'mouseup': 'mouseup',
+            'mouseup': 'mouseup'
         },
 
         initialize: function() {
@@ -75,7 +75,7 @@ define([
          * @param tool The newly selected tool.
          */
         selectTool: function(tool) {
-            this.tool = tool
+            this.tool = tool;
         },
 
         /**
@@ -87,7 +87,7 @@ define([
 
             // update the currently selected tool color as well
             var attrs = this.tool.optionalAttributes;
-            attrs['stroke'] = color;
+            attrs.stroke = color;
             this.tool.optionalAttributes = attrs;
         },
 
@@ -175,7 +175,7 @@ define([
             'click #pen-button': 'selectPen',
             'click #rect-button': 'selectRect',
             'click #circle-button': 'selectCircle',
-            'click #clear-button': 'clear',
+            'click #clear-button': 'clear'
         },
 
         initialize: function() {
@@ -232,7 +232,7 @@ define([
         this.paper = paper;
         this.optionalAttributes = optionalAttributes;
         this.path = null;
-    }
+    };
 
     Pen.prototype.start = function(x, y) {
         this.path = this.paper.path();
@@ -243,17 +243,17 @@ define([
         if (this.optionalAttributes){
             this.path.attr(this.optionalAttributes);
         }
-    }
+    };
 
     Pen.prototype.stop = function(x, y) {
         return this.path;
-    }
+    };
 
     Pen.prototype.move = function(x, y) {
         var path = this.path.attr('path');
         path += ['L', x, y].join(' ');
         this.path.attr('path', path);
-    }
+    };
 
 
 
@@ -261,7 +261,7 @@ define([
         this.paper = paper;
         this.optionalAttributes = optionalAttributes;
         this.path = null;
-    }
+    };
 
     Arrow.prototype.start = function(x, y) {
         this.path = this.paper.path();
@@ -277,17 +277,17 @@ define([
         if (this.optionalAttributes){
             this.path.attr(this.optionalAttributes);
         }
-    }
+    };
 
     Arrow.prototype.stop = function(x, y) {
         return this.path;
-    }
+    };
 
     Arrow.prototype.move = function(x, y) {
         var pathData = this.path.attr('path');
         pathData += ['L', x, y].join(' ');
         this.path.attr('path', pathData);
-    }
+    };
 
 
 
@@ -295,7 +295,7 @@ define([
         this.paper = paper;
         this.optionalAttributes = optionalAttributes;
         this.rect = null;
-    }
+    };
 
     Rectangle.prototype.start = function(x, y) {
         this.rect = this.paper.rect(x, y, 0, 0, 5);
@@ -307,11 +307,11 @@ define([
         if (this.optionalAttributes){
             this.rect.attr(this.optionalAttributes);
         }
-    }
+    };
 
     Rectangle.prototype.stop = function(x, y) {
         return this.rect;
-    }
+    };
 
     Rectangle.prototype.move = function(x, y) {
 
@@ -350,7 +350,7 @@ define([
             this.rect.attr('height', heightValue);
         }
 
-    }
+    };
 
 
 
@@ -358,7 +358,7 @@ define([
         this.paper = paper;
         this.optionalAttributes = optionalAttributes;
         this.circle = null;
-    }
+    };
 
     Circle.prototype.start = function(x, y) {
         this.circle = this.paper.circle(x, y, 0);
@@ -368,11 +368,11 @@ define([
         if (this.optionalAttributes){
             this.circle.attr(this.optionalAttributes);
         }
-    }
+    };
 
     Circle.prototype.stop = function(x, y) {
         return this.circle;
-    }
+    };
 
     Circle.prototype.move = function(x, y) {
         var originX = this.circle.attr('cx');
@@ -387,7 +387,7 @@ define([
         var radius = Math.sqrt(xs + ys);
 
         this.circle.attr('r', radius);
-    }
+    };
 
 
     var Erase = function(paper, optionalAttributes) {
@@ -397,7 +397,7 @@ define([
         // note that order of declaration of path and rect impacts z-order
         this.path = null;
         this.rect = null;
-    }
+    };
 
     Erase.prototype.start = function(x, y) {
         // constants
@@ -426,12 +426,12 @@ define([
             this.path.attr(this.optionalAttributes);
             this.path.attr('stroke', '#F5F5F5'); // disallow changing this color
         }
-    }
+    };
 
     Erase.prototype.stop = function(x, y) {
         this.rect.remove();
         return this.path;
-    }
+    };
 
     Erase.prototype.move = function(x, y) {
 
@@ -441,7 +441,7 @@ define([
 
         this.rect.attr('x', x-this.centerOffset);
         this.rect.attr('y', y-this.centerOffset);
-    }
+    };
 
 
     return {
@@ -452,5 +452,5 @@ define([
         Rectangle: Rectangle,
         Circle: Circle,
         Erase: Erase
-    }
+    };
 });

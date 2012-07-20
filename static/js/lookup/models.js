@@ -3,7 +3,7 @@ define([
     'Underscore',
     'Backbone',
     'xd/xd',
-    'xd/backbone',
+    'xd/backbone'
 ], function($, _, Backbone, xd, xdBackbone) {
 
     /**
@@ -27,7 +27,7 @@ define([
                 category: null,
                 query: '',
                 timestamp: new Date().getTime(),
-                matches: [],
+                matches: []
             };
         },
 
@@ -61,7 +61,7 @@ define([
 
         //Use cross domain aware backbone sync function.
         sync: function(method, collection, options) {
-            if(method == 'read') {
+            if(method === 'read') {
                 var data = {
                     query: this.query()
                 };
@@ -69,7 +69,7 @@ define([
                 options.data = data;
             }
             return xdBackbone.sync(method, collection, options);
-        },
+        }
     });
 
     /**
@@ -125,7 +125,7 @@ define([
                this.lastResult &&
                this.lastResult.query().length &&
                this.lastResult.matches().length < this.maxResults &&
-               query.indexOf(this.lastResult.query()) == 0) {
+               query.indexOf(this.lastResult.query()) === 0) {
                    return true;
            } else {
                return false;
@@ -187,6 +187,6 @@ define([
 
     return {
         LookupResult: LookupResult,
-        LookupCache: LookupCache,
-    }
+        LookupCache: LookupCache
+    };
 });

@@ -5,7 +5,7 @@ define([
     'chat/feedback/models',
     'chat/feedback/views',
     'chat/session/proxies',
-    'modal/views',
+    'modal/views'
 ], function(
     _,
     notifications,
@@ -37,18 +37,18 @@ define([
                 exitOnEscapeKey: false,
                 view: new feedback_views.FeedbackModalView({
                     model: new feedback_models.Feedback({
-                        chatSessionId: this.proxy.sessionId,
-                    }),
-                }),
+                        chatSessionId: this.proxy.sessionId
+                    })
+                })
             });
         },
         
         display: function() {
             this.view.render();
-        },
+        }
     });
 
     return {
-        FeedbackMediator: FeedbackMediator,
-    }
+        FeedbackMediator: FeedbackMediator
+    };
 });

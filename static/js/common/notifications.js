@@ -114,6 +114,6 @@ define([
 
         /* WHITEBOARD NOTICES */
         WHITEBOARD_ADDED: 'notification:WhiteboardAdded',
-        WHITEBOARD_REMOVED: 'notification:WhiteboardRemoved',
+        WHITEBOARD_REMOVED: 'notification:WhiteboardRemoved'
     };
 });

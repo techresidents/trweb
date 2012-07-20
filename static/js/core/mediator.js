@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'core/base',
-    'core/facade',
+    'core/facade'
 ], function($, _, base, facade) { 
 
     /**
@@ -37,12 +37,14 @@ define([
         notifications: [],
 
         registerNotifications: function(notifications) {
-            var notifications = notifications || base.getValue(this, 'notifications');
+            var index;
+
+            notifications = notifications || base.getValue(this, 'notifications');
             if(!_.isArray(notifications)) {
                 throw new Error('notifications must be array of [notificationName, methodName] tuples');
             }
 
-            for(var index in notifications) {
+            for(index = 0; index <  notifications.length; index++) {
                 var tuple = notifications[index];
                 var key = tuple[0];
                 var methodName = tuple[1];
@@ -56,12 +58,14 @@ define([
         },
 
         unregisterNotifications: function(notifications) {
-            var notifications = notifications || base.getValue(this, 'notifications');
+            var index;
+
+            notifications = notifications || base.getValue(this, 'notifications');
             if(!_.isArray(notifications)) {
                 throw new Error('notifications must be array of [notificationName, methodName] tuples');
             }
 
-            for(var index in notifications) {
+            for(index = 0; index <  notifications.length; index++) {
                 var tuple = notifications[index];
                 var key = tuple[0];
                 var methodName = tuple[1];
@@ -72,11 +76,11 @@ define([
                 }
                 facade.getInstance().off(key, method, this);
             }
-        },
+        }
         
     });
 
     return {
-        Mediator: Mediator,
+        Mediator: Mediator
     };
 });

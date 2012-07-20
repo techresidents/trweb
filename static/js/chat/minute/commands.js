@@ -4,7 +4,7 @@ define([
     'chat/message/messages',
     'chat/message/models',
     'chat/minute/models',
-    'chat/minute/proxies',
+    'chat/minute/proxies'
 ], function(
     _,
     command,
@@ -40,18 +40,18 @@ define([
             var message = new message_models.ChatMessage({
                 header: new messages.MessageHeader(),
                 msg: new messages.MinuteCreateMessage({
-                    topicId: options.topicId,
-                }),
+                    topicId: options.topicId
+                })
             });
             
             //send message
             message.save(null, {
                 success: _.bind(this.onSuccess, this),
-                error: _.bind(this.onError, this),
+                error: _.bind(this.onError, this)
             });
 
             return true;
-        },
+        }
 
     });
 
@@ -91,13 +91,13 @@ define([
             if(minute) {
                 var message = new message_models.ChatMessage({
                     header: new messages.MessageHeader(),
-                    msg: new messages.MinuteUpdateMessage(minute.attributes),
+                    msg: new messages.MinuteUpdateMessage(minute.attributes)
                 });
                 
                 //send message
                 message.save(null, {
                     success: _.bind(this.onSuccess, this),
-                    error: _.bind(this.onError, this),
+                    error: _.bind(this.onError, this)
                 });
             }
 
@@ -107,6 +107,6 @@ define([
 
     return {
         StartMinuteCommand: StartMinuteCommand,
-        EndMinuteCommand: EndMinuteCommand,
+        EndMinuteCommand: EndMinuteCommand
     };
 });

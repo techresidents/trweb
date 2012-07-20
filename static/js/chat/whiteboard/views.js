@@ -110,7 +110,7 @@ define([
                     break;
             }
 
-            if (null != colorHex) {
+            if (null !== colorHex) {
                 this.selectColor(colorHex);
             }
         },
@@ -146,7 +146,7 @@ define([
                     // NO OP
             }
 
-            if (null != tool) {
+            if (null !== tool) {
                 this.selectTool(tool);
             }
         },
@@ -316,7 +316,7 @@ define([
         render: function() {
             this.$el.html(this.template());
             return this;
-        },
+        }
     });
 
     /**
@@ -470,10 +470,10 @@ define([
             // The default whiteboard is the first whiteboard in the whiteboard collection
             var defaultWhiteboard = this.wbCollection.at(0);
             var selectedWhiteboard = this.wbCollection.get(this.viewModel.getSelectedWhiteboardId());
-            if (selectedWhiteboard != null &&
-                selectedWhiteboard != undefined)
+            if (selectedWhiteboard !== null &&
+                selectedWhiteboard !== undefined)
             {
-                if ( selectedWhiteboard == defaultWhiteboard) {
+                if ( selectedWhiteboard === defaultWhiteboard) {
                     this.$(this.deleteWhiteboardButtonSelector).attr('disabled', 'disabled');
                     this.$(this.deleteWhiteboardButtonSelector).removeClass('btn-danger');
                 } else {
@@ -529,7 +529,7 @@ define([
             this.triggerEvent(EVENTS.UNDO, {
                 whiteboardId: this.viewModel.getSelectedWhiteboardId()
             });
-        },
+        }
 
     });
 
@@ -639,7 +639,7 @@ define([
             if (model.id in this.whiteboardViews)
             {
                 // Hide the whiteboard if it's currently displayed
-                if (this.viewModel.getSelectedWhiteboardId() == model.id) {
+                if (this.viewModel.getSelectedWhiteboardId() === model.id) {
                     this.rootWhiteboardNode.children().toggle(false);
                 }
 
@@ -648,9 +648,9 @@ define([
 
                 // Select the default whiteboard
                 var whiteboards = this.wbCollection.where({'name': this.DEFAULT_WHITEBOARD_NAME});
-                if (1 == whiteboards.length) {
+                if (1 === whiteboards.length) {
                     var defaultWhiteboard = whiteboards[0];
-                    if (null != defaultWhiteboard.id){
+                    if (null !== defaultWhiteboard.id){
                         this.triggerEvent(EVENTS.SELECT_WHITEBOARD, {
                             whiteboardId: defaultWhiteboard.id
                         });
@@ -669,7 +669,7 @@ define([
             var selectedWhiteboardId = this.viewModel.getSelectedWhiteboardId();
 
             // show the newly selected whitebaord
-            if (null != selectedWhiteboardId &&
+            if (null !== selectedWhiteboardId &&
                 selectedWhiteboardId in this.whiteboardViews)
             {
                 // hide the previous whiteboard view
@@ -688,7 +688,7 @@ define([
          */
         onClear: function(event, eventBody) {
 
-            if (null != eventBody.whiteboardId){
+            if (null !== eventBody.whiteboardId){
                 var whiteboardId = eventBody.whiteboardId;
                 if (whiteboardId in this.whiteboardViews) {
                     var whiteboardView = this.whiteboardViews[whiteboardId];
@@ -706,7 +706,7 @@ define([
          */
         onUndo: function(event, eventBody){
 
-            if (null != eventBody.whiteboardId){
+            if (null !== eventBody.whiteboardId){
                 var whiteboardId = eventBody.whiteboardId;
                 if (whiteboardId in this.whiteboardViews) {
                     var whiteboardView = this.whiteboardViews[whiteboardId];
@@ -715,12 +715,12 @@ define([
                     }
                 }
             }
-        },
+        }
 
     });
 
     return {
         EVENTS: EVENTS,
         ChatWhiteboardTabView: ChatWhiteboardTabView
-    }
+    };
 });

@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
     
     var pad2 = function(value) {
@@ -40,6 +40,6 @@ define([
     };
 
     return {
-        formatTimer: formatTimer,
+        formatTimer: formatTimer
     };
 });

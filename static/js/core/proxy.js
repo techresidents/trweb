@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'core/base',
-    'core/facade',
+    'core/facade'
 ], function($, _, base, facade) { 
 
     /**
@@ -27,7 +27,7 @@ define([
         /**
          * Overriden in subclass.
          */
-        initialize: function() {},
+        initialize: function() {}
     });
 
     /**
@@ -62,7 +62,7 @@ define([
             if(notificationName) {
                 this.facade.trigger(notificationName);
             }
-        },
+        }
     });
 
     /**
@@ -118,15 +118,15 @@ define([
             if(notificationName) {
                 this.facade.trigger(notificationName, {
                     collection: this.collection,
-                    model: arguments[1],
+                    model: arguments[1]
                 });
             }
-        },
+        }
     });
 
     return {
         Proxy: Proxy,
         ModelProxy: ModelProxy,
-        CollectionProxy: CollectionProxy,
+        CollectionProxy: CollectionProxy
     };
 });

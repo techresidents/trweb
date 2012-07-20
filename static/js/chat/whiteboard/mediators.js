@@ -6,7 +6,7 @@ define([
     'chat/whiteboard/models',
     'chat/whiteboard/proxies',
     'chat/whiteboard/views',
-    'chat/user/proxies',
+    'chat/user/proxies'
 ], function(
     _,
     color_views,
@@ -90,7 +90,7 @@ define([
          */
         onWhiteboardAdded: function(notificationBody) {
             // This will ensure that a whiteboard will always be displayed
-            if (this.view.viewModel.getSelectedWhiteboardId() == null) {
+            if (this.view.viewModel.getSelectedWhiteboardId() === null) {
                 this.view.viewModel.setSelectedWhiteboard(notificationBody.model.id);
             }
         },
@@ -200,15 +200,15 @@ define([
                 pathId: eventBody.pathId
             });
 
-        },
+        }
 
 
     }, {
 
-        NAME: 'WhiteboardTabMediator',
+        NAME: 'WhiteboardTabMediator'
     });
 
     return {
-        WhiteboardTabMediator: WhiteboardTabMediator,
-    }
+        WhiteboardTabMediator: WhiteboardTabMediator
+    };
 });

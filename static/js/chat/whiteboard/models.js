@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
  
     /**
@@ -16,7 +16,7 @@ define([
                 whiteboardId: null,
                 userId: null,
                 name: null,
-                paths: new WhiteboardPathCollection(),
+                paths: new WhiteboardPathCollection()
             };
         },
 
@@ -43,7 +43,7 @@ define([
 
         paths: function() {
             return this.get('paths');
-        },
+        }
     });
 
 
@@ -68,13 +68,12 @@ define([
             // if model.name is not already in then collection, then add it
             var whiteboards = this.where({'name': model.name()});
             if (whiteboards.length > 0){
-                console.log('Warning: Duplicate model tried to be added the whiteboard collection.');
                 return this;
             } else {
                 // return this.__super__.add.apply(this, arguments);
                 return Backbone.Collection.prototype.add.call(this, model, options);
             }
-        },
+        }
     });
 
     /**
@@ -89,7 +88,7 @@ define([
                 pathId: null,
                 whiteboardId: null,
                 userId: null,
-                pathData: null,
+                pathData: null
             };
         },
 
@@ -116,7 +115,7 @@ define([
 
         urlRoot: function() {
             return this.header.url() + this.msg.url();
-        },
+        }
     });
 
 
@@ -125,7 +124,7 @@ define([
      */
     var WhiteboardPathCollection = Backbone.Collection.extend({
 
-        model: WhiteboardPath,
+        model: WhiteboardPath
     });
 
 
@@ -147,20 +146,20 @@ define([
         validate: function(attrs) {
 
             var tool = attrs.selectedTool;
-            if (tool != WhiteboardValueObject.TOOLS.PEN &&
-                tool != WhiteboardValueObject.TOOLS.ARROW &&
-                tool != WhiteboardValueObject.TOOLS.RECTANGLE &&
-                tool != WhiteboardValueObject.TOOLS.CIRCLE &&
-                tool != WhiteboardValueObject.TOOLS.ERASE)
+            if (tool !== WhiteboardValueObject.TOOLS.PEN &&
+                tool !== WhiteboardValueObject.TOOLS.ARROW &&
+                tool !== WhiteboardValueObject.TOOLS.RECTANGLE &&
+                tool !== WhiteboardValueObject.TOOLS.CIRCLE &&
+                tool !== WhiteboardValueObject.TOOLS.ERASE)
             {
                 return 'WhiteboardValueObject: Invalid tool value';
             }
 
             var color = attrs.selectedColor;
-            if (color != WhiteboardValueObject.COLORS.BLACK &&
-                color != WhiteboardValueObject.COLORS.BLUE &&
-                color != WhiteboardValueObject.COLORS.GREEN &&
-                color != WhiteboardValueObject.COLORS.RED)
+            if (color !== WhiteboardValueObject.COLORS.BLACK &&
+                color !== WhiteboardValueObject.COLORS.BLUE &&
+                color !== WhiteboardValueObject.COLORS.GREEN &&
+                color !== WhiteboardValueObject.COLORS.RED)
             {
                 return 'WhiteboardValueObject: Invalid color value';
             }
@@ -221,9 +220,9 @@ define([
     return {
         Whiteboard: Whiteboard,
         WhiteboardCollection: WhiteboardCollection,
-        whiteboardCollection: new WhiteboardCollection,
+        whiteboardCollection: new WhiteboardCollection(),
         WhiteboardPath: WhiteboardPath,
         WhiteboardPathCollection: WhiteboardPathCollection,
-        WhiteboardValueObject: WhiteboardValueObject,
+        WhiteboardValueObject: WhiteboardValueObject
     };
 });

@@ -1,7 +1,7 @@
 define([
     'common/notifications',
     'core/command',
-    'chat/resource/proxies',
+    'chat/resource/proxies'
 ], function(
     notifications,
     command,
@@ -40,7 +40,7 @@ define([
 
             //select the indicated resource
             this.facade.trigger(notifications.RESOURCE_SELECT, {
-                resource: resource,
+                resource: resource
             });
 
             return true;
@@ -48,6 +48,6 @@ define([
     });
 
     return {
-        ShowResourceCommand: ShowResourceCommand,
+        ShowResourceCommand: ShowResourceCommand
     };
 });

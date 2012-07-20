@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
     
     /**
@@ -18,7 +18,7 @@ define([
         defaults: function() {
             return {
                 resources: null,
-                selected: null,
+                selected: null
             };
         },
         
@@ -35,10 +35,10 @@ define([
 
         select: function(resource) {
             return this.set({selected: resource});
-        },
+        }
     });
 
     return {
-        ResourcesValueObject: ResourcesValueObject,
+        ResourcesValueObject: ResourcesValueObject
     };
 });

@@ -6,7 +6,7 @@ define([
     'chat/agenda/proxies',
     'chat/agenda/views',
     'chat/tag/proxies',
-    'chat/user/proxies',
+    'chat/user/proxies'
 ], function(
     _,
     notifications,
@@ -31,7 +31,7 @@ define([
          * Notification handlers
          */
         notifications: [
-            [notifications.CHAT_TOPIC_CHANGED, 'onChatTopicChanged'],
+            [notifications.CHAT_TOPIC_CHANGED, 'onChatTopicChanged']
         ],
 
         initialize: function(options) {
@@ -47,7 +47,7 @@ define([
                     minutes: this.agendaProxy.minutesProxy.collection,
                     topics: this.agendaProxy.topics(),
                     active: this.agendaProxy.active(),
-                    selected: this.agendaProxy.topics().first(),
+                    selected: this.agendaProxy.topics().first()
                 })
             });
 
@@ -59,7 +59,7 @@ define([
             //notify system that view is created
             this.facade.trigger(notifications.VIEW_CREATED, {
                 type: 'AgendaTabView',
-                view: this.view,
+                view: this.view
             });
         },
 
@@ -79,14 +79,14 @@ define([
             this.facade.trigger(notifications.TAG_DELETE, {
                 model: eventBody.tagModel
             });
-        },
+        }
 
     }, {
 
-        NAME: 'AgendaTabMediator',
+        NAME: 'AgendaTabMediator'
     });
 
     return {
-        AgendaTabMediator: AgendaTabMediator,
-    }
+        AgendaTabMediator: AgendaTabMediator
+    };
 });

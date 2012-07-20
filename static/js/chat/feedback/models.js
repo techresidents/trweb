@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
    
     var QUALITY = {
@@ -9,8 +9,8 @@ define([
         GOOD: 'Good',
         AVERAGE: 'Average',
         FAIR: 'Fair',
-        POOR: 'Poor',
-    }
+        POOR: 'Poor'
+    };
 
     /**
      * Feedback Model
@@ -25,7 +25,7 @@ define([
             return {
                 chatSessionId: null,
                 overallQuality: null,
-                technicalQuality: null,
+                technicalQuality: null
             };
         },
         
@@ -36,7 +36,7 @@ define([
             var result = {
                 status: true,
                 errors: {},
-                valids: {},
+                valids: {}
             };
             
             var keys = ['overallQuality', 'technicalQuality'];
@@ -83,11 +83,11 @@ define([
         setTechnicalQuality: function(quality) {
             this.set({technicalQuality: quality});
             return this;
-        },
+        }
        
     });
 
     return {
-        Feedback: Feedback,
+        Feedback: Feedback
     };
 });

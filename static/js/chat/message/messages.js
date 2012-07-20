@@ -43,11 +43,12 @@ define([
 
         initialize: function(attributes) {
             var defaults = base.getValue(this, 'defaults');
+            var key;
 
             _.extend(this, defaults);
 
             if(attributes) {
-                for(var key in defaults) {
+                for(key in defaults) {
                     if(attributes.hasOwnProperty(key)) {
                         this[key] = attributes[key];
                     }
@@ -58,7 +59,7 @@ define([
 
         type: null,
 
-        url: function() {},
+        url: function() {}
     });
 
 
@@ -71,7 +72,7 @@ define([
 
         defaults: {
             markerId: null,
-            marker: null,
+            marker: null
         },
 
         url: function() {
@@ -91,7 +92,7 @@ define([
             minuteId: null,
             topicId: null,
             startTimestamp: null,
-            endTimestamp: null,
+            endTimestamp: null
         },
 
         url: function() {
@@ -111,7 +112,7 @@ define([
             minuteId: null,
             topicId: null,
             startTimestamp: null,
-            endTimestamp: null,
+            endTimestamp: null
         },
 
         url: function() {
@@ -131,7 +132,7 @@ define([
             tagId: null,
             tagReferenceId: null,
             name: null,
-            minuteId: null,
+            minuteId: null
         },
 
         url: function() {
@@ -148,7 +149,7 @@ define([
         type: "TAG_DELETE",
         
         defaults: {
-            tagId: null,
+            tagId: null
         },
 
         url: function() {
@@ -166,7 +167,7 @@ define([
 
         defaults: {
             whiteboardId: null,
-            name: null,
+            name: null
         },
 
         url: function() {
@@ -183,7 +184,7 @@ define([
         type: "WHITEBOARD_DELETE",
         
         defaults: {
-            whiteboardId: null,
+            whiteboardId: null
         },
 
         url: function() {
@@ -202,7 +203,7 @@ define([
         defaults: {
             whiteboardId: null,
             pathId: null,
-            pathData: null,
+            pathData: null
         },
 
         url: function() {
@@ -220,7 +221,7 @@ define([
 
         defaults: {
             whiteboardId: null,
-            pathId:  null,
+            pathId:  null
         },
 
         url: function() {
@@ -241,7 +242,7 @@ define([
         "WHITEBOARD_CREATE": WhiteboardCreateMessage,
         "WHITEBOARD_DELETE": WhiteboardDeleteMessage,
         "WHITEBOARD_CREATE_PATH": WhiteboardCreatePathMessage,
-        "WHITEBOARD_DELETE_PATH": WhiteboardDeletePathMessage,
+        "WHITEBOARD_DELETE_PATH": WhiteboardDeletePathMessage
     };
 
     /**
@@ -272,7 +273,7 @@ define([
         WhiteboardCreateMessage: WhiteboardCreateMessage,
         WhiteboardDeleteMessage: WhiteboardDeleteMessage,
         WhiteboardCreatePathMessage: WhiteboardCreatePathMessage,
-        WhiteboardDeletePathMessage: WhiteboardDeletePathMessage,
+        WhiteboardDeletePathMessage: WhiteboardDeletePathMessage
     };
 
 });

@@ -4,7 +4,7 @@ define([
     'Backbone',
     'xd/xd',
     'xd/backbone',
-    'chat/message/messages',
+    'chat/message/messages'
 ], function($, _, Backbone, xd, xdBackbone, messages) {
     
     /**
@@ -102,7 +102,7 @@ define([
         },
 
         sync: function(method, collection, options) {
-            if(method == 'read') {
+            if(method === 'read') {
                 var last = this.last();
                 var asOf = last ? last.attributes.header.timestamp : 0;
 
@@ -114,11 +114,11 @@ define([
             }
 
             return xdBackbone.sync(method, collection, options);
-        },
+        }
     });
 
     return {
         ChatMessage: ChatMessage,
-        ChatMessageCollection: ChatMessageCollection,
-    }
+        ChatMessageCollection: ChatMessageCollection
+    };
 });

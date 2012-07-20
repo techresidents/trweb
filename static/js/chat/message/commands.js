@@ -8,7 +8,7 @@ define([
     'chat/tag/models',
     'chat/tag/proxies',
     'chat/whiteboard/models',
-    'chat/whiteboard/proxies',
+    'chat/whiteboard/proxies'
 ], function(
     _,
     base,
@@ -35,8 +35,9 @@ define([
         attributes = {};
         var msg = messageModel.msg();
         var header = messageModel.header();
+        var key;
 
-        for(var key in base.getValue(model, 'defaults')) {
+        for(key in base.getValue(model, 'defaults')) {
             if(msg.hasOwnProperty(key)) {
                 attributes[key] = msg[key];
             } else if(header.hasOwnProperty(key)) {
@@ -71,7 +72,7 @@ define([
             var model = options.model;
 
             var attributes = _.extend({}, {
-                markerId: options.model.msg().markerId,
+                markerId: options.model.msg().markerId
             }, options.model.msg().marker);
 
             var marker = new proxy.collection.model(attributes, {
@@ -329,7 +330,7 @@ define([
             var whiteboard = proxy.get(model.get('msg').whiteboardId);
             var pathId = model.get('msg').pathId;
 
-            if ('reset' == pathId){
+            if ('reset' === pathId){
                 // treat a pathId of 'reset' as a trigger to clear the whiteboard
                 whiteboard.paths().reset();
             }
@@ -354,6 +355,6 @@ define([
         WhiteboardCreateMessageCommand: WhiteboardCreateMessageCommand,
         WhiteboardDeleteMessageCommand: WhiteboardDeleteMessageCommand,
         WhiteboardCreatePathMessageCommand: WhiteboardCreatePathMessageCommand,
-        WhiteboardDeletePathMessageCommand: WhiteboardDeletePathMessageCommand,
+        WhiteboardDeletePathMessageCommand: WhiteboardDeletePathMessageCommand
     };
 });

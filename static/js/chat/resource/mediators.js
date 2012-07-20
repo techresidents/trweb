@@ -4,7 +4,7 @@ define([
     'core/mediator',
     'chat/resource/models',
     'chat/resource/proxies',
-    'chat/resource/views',
+    'chat/resource/views'
 ], function(
     _,
     notifications,
@@ -27,7 +27,7 @@ define([
          * Notification handlers
          */
         notifications: [
-            [notifications.RESOURCE_SELECT, 'onResourceSelect'],
+            [notifications.RESOURCE_SELECT, 'onResourceSelect']
         ],
 
         initialize: function(options) {
@@ -37,7 +37,7 @@ define([
             this.view = new resource_views.ChatResourcesTabView({
                 model: new resource_models.ResourcesValueObject({
                     resources: this.resourcesProxy.collection,
-                    selected: null,
+                    selected: null
                 })
             });
 
@@ -57,15 +57,15 @@ define([
 
         onSelect: function(e, eventBody) {
             this.view.model.select(eventBody.resourceModel);
-        },
+        }
 
 
     }, {
 
-        NAME: 'ResourcesTabMediator',
+        NAME: 'ResourcesTabMediator'
     });
 
     return {
-        ResourcesTabMediator: ResourcesTabMediator,
-    }
+        ResourcesTabMediator: ResourcesTabMediator
+    };
 });

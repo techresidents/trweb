@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'topic/models',
+    'topic/models'
 ], function($, _, Backbone, models) {
 
     var TopicView = Backbone.View.extend({
@@ -12,7 +12,7 @@ define([
 
         events: {
             'click': 'clicked',
-            'click .toggle-expanded': 'toggleExpanded',
+            'click .toggle-expanded': 'toggleExpanded'
         },
 
         initialize: function() {
@@ -99,10 +99,10 @@ define([
         },
 
         updateButton: function(button, enable) {
-            if(enable == true) {
-                button.removeClass('disabled')
+            if(enable === true) {
+                button.removeClass('disabled');
             } else {
-                button.addClass('disabled')
+                button.addClass('disabled');
             }
         },
 
@@ -168,7 +168,7 @@ define([
         },
 
         addTopicView: function(topic) {
-            if(this.includeRoot || topic.get('rank') != 0) {
+            if(this.includeRoot || topic.get('rank') !== 0) {
             
                 var view = new TopicView({
                         model: topic,
@@ -177,7 +177,7 @@ define([
 
                 this.$el.append(view.render().el);
             }
-        },
+        }
     });
 
     var TopicAddView = Backbone.View.extend({
@@ -216,7 +216,7 @@ define([
         },
 
         updateOnEnter: function(e) {
-            if(e.keyCode == 13) {
+            if(e.keyCode === 13) {
                 this.addTopic();
             }
         }
@@ -247,5 +247,5 @@ define([
         TopicFormView: TopicFormView,
         TopicListView: TopicListView,
         TopicView: TopicView
-    }
+    };
 });

@@ -23,7 +23,7 @@ define([
     'chat/user/mediators',
     'chat/whiteboard/commands',
     'chat/whiteboard/mediators',
-    'text!apps/chat/chat.html',
+    'text!apps/chat/chat.html'
 ], function(
     $,
     _,
@@ -100,7 +100,7 @@ define([
 
         showResources: function() {
             this.$('a[href="#resources"]').tab('show');
-        },
+        }
 
     });
    
@@ -121,7 +121,7 @@ define([
             [notifications.VIEW_CREATED, 'onViewCreated'],
             [notifications.SHOW_AGENDA, 'onShowAgenda'],
             [notifications.SHOW_RESOURCES, 'onShowResources'],
-            [notifications.SHOW_WHITEBOARDS, 'onShowWhiteboards'],
+            [notifications.SHOW_WHITEBOARDS, 'onShowWhiteboards']
         ],
 
         initialize: function(options) {
@@ -157,7 +157,7 @@ define([
 
         onShowWhiteboards: function(notification) {
             this.view.showWhiteboards();
-        },
+        }
 
     });
 
@@ -197,7 +197,7 @@ define([
         initialize: function() {
             this.addSubCommand(InitModels);
             this.addSubCommand(InitViews);
-        },
+        }
     });
 
 

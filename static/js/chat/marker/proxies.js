@@ -1,6 +1,6 @@
 define([
     'common/notifications',
-    'core/proxy',
+    'core/proxy'
 ], function(notifications, proxy) {
 
     /**
@@ -19,18 +19,18 @@ define([
          * Map collection events to notifications
          */
         eventNotifications: {
-            'add': notifications.MARKER_ADDED,
+            'add': notifications.MARKER_ADDED
         },
 
         initialize: function(options) {
-        },
+        }
 
     }, {
 
-        NAME: 'ChatMarkersProxy',
+        NAME: 'ChatMarkersProxy'
     });
     
     return {
-        ChatMarkersProxy: ChatMarkersProxy,
-    }
+        ChatMarkersProxy: ChatMarkersProxy
+    };
 });

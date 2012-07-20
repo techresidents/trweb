@@ -3,7 +3,7 @@ define([
     'Underscore',
     'chat/whiteboard/models',
     'core/view',
-    'text!color/templates/color_picker.html',
+    'text!color/templates/color_picker.html'
 ], function(
     $,
     _,
@@ -29,7 +29,7 @@ define([
             'click #black-btn': 'blackColorPicked',
             'click #blue-btn': 'blueColorPicked',
             'click #green-btn': 'greenColorPicked',
-            'click #red-btn': 'redColorPicked',
+            'click #red-btn': 'redColorPicked'
         },
 
         initialize: function() {
@@ -81,8 +81,8 @@ define([
                     break;
             }
 
-            if (null != colorText &&
-                null != colorClass)
+            if (null !== colorText &&
+                null !== colorClass)
             {
                 // change the text & color of the button
                 this.$(this.colorSelector).html(this._getColorHtmlString(colorText));
@@ -119,7 +119,7 @@ define([
 
     return {
         EVENTS: EVENTS,
-        ColorPickerView: ColorPickerView,
+        ColorPickerView: ColorPickerView
     };
 
 });

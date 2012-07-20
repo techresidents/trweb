@@ -35,7 +35,7 @@ define([
         notifications: [
             [notifications.CHAT_TOPIC_CHANGED, 'onChatTopicChanged'],
             [notifications.CHAT_STARTED, 'onChatStarted'],
-            [notifications.CHAT_ENDED, 'onChatEnded'],
+            [notifications.CHAT_ENDED, 'onChatEnded']
         ],
 
         initialize: function(options) {
@@ -50,7 +50,7 @@ define([
                     rootTopic: this.agendaProxy.topics().first(),
                     activeTopic: this.agendaProxy.active(),
                     nextTopic: this.agendaProxy.nextActive(),
-                    activeMinute: this.agendaProxy.minutesProxy.active(),
+                    activeMinute: this.agendaProxy.minutesProxy.active()
                 })
             });
 
@@ -93,7 +93,7 @@ define([
             this.facade.trigger(notifications.TAG_CREATE, {
                 name: eventBody.tagValue,
                 tagReferenceId: eventBody.tagReferenceId,
-                conceptId: eventBody.conceptId,
+                conceptId: eventBody.conceptId
             });
         },
 
@@ -101,13 +101,13 @@ define([
             this.facade.trigger(notifications.TAG_DELETE, {
                 model: eventBody.tagModel
             });
-        },
+        }
 
     },{
-        NAME: 'DiscussMediator',
+        NAME: 'DiscussMediator'
     });
 
     return {
-        DiscussMediator: DiscussMediator,
-    }
+        DiscussMediator: DiscussMediator
+    };
 });

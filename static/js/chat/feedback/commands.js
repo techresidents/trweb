@@ -1,7 +1,7 @@
 define([
     'common/notifications',
     'core/command',
-    'chat/feedback/mediators',
+    'chat/feedback/mediators'
 ], function(
     notifications,
     command,
@@ -32,6 +32,6 @@ define([
     });
 
     return {
-        ShowFeedbackCommand: ShowFeedbackCommand,
+        ShowFeedbackCommand: ShowFeedbackCommand
     };
 });

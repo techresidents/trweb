@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
 
     /**
@@ -44,10 +44,10 @@ define([
         removeEventListeners: function() {
             var namespace = '.eventListener' + this.cid;
             this.$el.unbind(namespace);
-        },
+        }
     });
     
     return {
-        View: View,
+        View: View
     };
 });

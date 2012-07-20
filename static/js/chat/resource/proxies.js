@@ -1,6 +1,6 @@
 define([
     'common/notifications',
-    'core/proxy',
+    'core/proxy'
 ], function(notifications, proxy) {
 
     /**
@@ -18,18 +18,18 @@ define([
          */
         eventNotifications: {
             'add': notifications.RESOURCE_ADDED,
-            'remove': notifications.RESOURCE_REMOVED,
+            'remove': notifications.RESOURCE_REMOVED
         },
 
         initialize: function(options) {
-        },
+        }
 
     }, {
 
-        NAME: 'ChatResourcesProxy',
+        NAME: 'ChatResourcesProxy'
     });
     
     return {
-        ChatResourcesProxy: ChatResourcesProxy,
-    }
+        ChatResourcesProxy: ChatResourcesProxy
+    };
 });

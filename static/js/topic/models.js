@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
 
     /**
@@ -26,7 +26,7 @@ define([
         },
 
         initialize: function() {
-            if(this.get('id') == null) {
+            if(this.get('id') === null) {
                 this.set({ id: this.cid });
             }
         },
@@ -91,7 +91,7 @@ define([
         setDurationMs: function(durationMs) {
             this.set({duration: durationMs / 60 / 1000});
             return this;
-        },
+        }
     });
 
 
@@ -151,7 +151,7 @@ define([
          * @return {boolean} true if leaf, false otherwise.
          */
         isLeaf: function(id) {
-            return this.findChildren(id).length == 0;
+            return this.findChildren(id).length === 0;
         },
 
 
@@ -176,7 +176,7 @@ define([
          */
         isShiftDownAllowed: function(id) {
             var topic = this.get(id);
-            if(topic.rank() == this.length - 1) {
+            if(topic.rank() === this.length - 1) {
                 return false;
             } else {
                 return true;
@@ -190,7 +190,7 @@ define([
          */
         isShiftLeftAllowed: function(id) {
             var topic = this.get(id);
-            if(topic.level() == 1) {
+            if(topic.level() === 1) {
                 return false;
             } else {
                 return true;
@@ -207,7 +207,7 @@ define([
             var index = this.indexOf(topic);
             var sibling = this.findPrevLevelSibling(topic.id, topic.level());
 
-            return sibling != null;
+            return sibling !== null;
         },
 
         /**
@@ -313,7 +313,7 @@ define([
             var topic = this.get(id);
 
             return this.filter(function(item) {
-                return item.parentId() == topic.id;
+                return item.parentId() === topic.id;
 
             }, this);
         },
@@ -373,7 +373,7 @@ define([
             var topic = this.get(id);
 
             var siblings = this.filter(function(item) {
-                if(item.rank() < topic.rank() && item.level() == level) {
+                if(item.rank() < topic.rank() && item.level() === level) {
                     return true;
                 } else {
                     return false;
@@ -403,5 +403,5 @@ define([
     return {
         Topic: Topic,
         TopicCollection: TopicCollection
-    }
+    };
 });

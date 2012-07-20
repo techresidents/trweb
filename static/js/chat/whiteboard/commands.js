@@ -4,7 +4,7 @@ define([
     'chat/message/messages',
     'chat/message/models',
     'chat/whiteboard/models',
-    'chat/whiteboard/proxies',
+    'chat/whiteboard/proxies'
 ], function(
     _,
     command,
@@ -27,12 +27,12 @@ define([
 
             // validate the input whiteboard name
             var whiteboardName = options.name;
-            if (whiteboardName == null ||
-                whiteboardName == ''   ||
-                whiteboardName.length == 0)
+            if (!whiteboardName ||
+                whiteboardName === ''   ||
+                whiteboardName.length === 0)
             {
                 // provide a default name if the provided name is invalid
-                whiteboardName = 'Whiteboard #' + parseInt(whiteboardCollectionProxy.collection.length + 1);
+                whiteboardName = 'Whiteboard #' + parseInt(whiteboardCollectionProxy.collection.length + 1, 10);
             }
 
             // create a new whiteboard
@@ -49,7 +49,7 @@ define([
 
                 message.save(null, {
                     success: _.bind(this.onSuccess, this),
-                    error: _.bind(this.onError, this),
+                    error: _.bind(this.onError, this)
                 });
 
                 ret = true;
@@ -80,7 +80,7 @@ define([
                     if (whiteboard){
 
                         // Don't allow users to delete the default whiteboard
-                        if (whiteboard.name() != DEFAULT_WHITEBOARD_NAME) {
+                        if (whiteboard.name() !== DEFAULT_WHITEBOARD_NAME) {
 
                             var message = new message_models.ChatMessage({
                                 header: new messages.MessageHeader(),
@@ -89,7 +89,7 @@ define([
 
                             message.save(null, {
                                 success: _.bind(this.onSuccess, this),
-                                error: _.bind(this.onError, this),
+                                error: _.bind(this.onError, this)
                             });
 
                             ret = true;
@@ -117,7 +117,7 @@ define([
 
                 var message = new message_models.ChatMessage({
                     header: new messages.MessageHeader(),
-                    msg: new messages.WhiteboardDeletePathMessage(whiteboardPath.attributes),
+                    msg: new messages.WhiteboardDeletePathMessage(whiteboardPath.attributes)
                 });
 
 
@@ -151,12 +151,12 @@ define([
 
                 var message = new message_models.ChatMessage({
                     header: new messages.MessageHeader(),
-                    msg: new messages.WhiteboardCreatePathMessage(whiteboardPath.attributes),
+                    msg: new messages.WhiteboardCreatePathMessage(whiteboardPath.attributes)
                 });
 
                 message.save(null, {
                     success: _.bind(this.onSuccess, this),
-                    error: _.bind(this.onError, this),
+                    error: _.bind(this.onError, this)
                 });
             }
 
@@ -169,23 +169,23 @@ define([
         asyncCallbackArgs: ['model', 'response'],
 
         execute: function(options) {
-
             var ret = false;
+            var message;
 
             // Delete the whiteboard path
             if (options.whiteboardId && options.pathId){
 
                 // TODO temporary if-block to handle whiteboard clearing. This should be moved into the ClearWhiteboardCommand.
-                if ('reset' == options.pathId) {
+                if ('reset' === options.pathId) {
 
                     var whiteboardPath = new whiteboard_models.WhiteboardPath({
                         whiteboardId : options.whiteboardId,
                         pathId : 'reset'
                     });
 
-                    var message = new message_models.ChatMessage({
+                    message = new message_models.ChatMessage({
                         header: new messages.MessageHeader(),
-                        msg: new messages.WhiteboardDeletePathMessage(whiteboardPath.attributes),
+                        msg: new messages.WhiteboardDeletePathMessage(whiteboardPath.attributes)
                     });
 
                     message.save(null, {
@@ -198,20 +198,21 @@ define([
                 else {
                     var whiteboardCollectionProxy = this.facade.getProxy(whiteboard_proxies.ChatWhiteboardsProxy.NAME);
                     var whiteboard = whiteboardCollectionProxy.collection.get(options.whiteboardId);
+
                     if (whiteboard){
 
                         // the whiteboard path model and the corresponding element share the same ID
                         var whiteboardPathModel = whiteboard.paths().get(options.pathId);
                         if (whiteboardPathModel){
 
-                            var message = new message_models.ChatMessage({
+                            message = new message_models.ChatMessage({
                                 header: new messages.MessageHeader(),
-                                msg: new messages.WhiteboardDeletePathMessage(whiteboardPathModel.attributes),
+                                msg: new messages.WhiteboardDeletePathMessage(whiteboardPathModel.attributes)
                             });
 
                             message.save(null, {
                                 success: _.bind(this.onSuccess, this),
-                                error: _.bind(this.onError, this),
+                                error: _.bind(this.onError, this)
                             });
 
                             ret = true;
@@ -228,6 +229,6 @@ define([
         CreateWhiteboardCommand: CreateWhiteboardCommand,
         DeleteWhiteboardCommand: DeleteWhiteboardCommand,
         CreateWhiteboardPathCommand: CreateWhiteboardPathCommand,
-        DeleteWhiteboardPathCommand: DeleteWhiteboardPathCommand,
+        DeleteWhiteboardPathCommand: DeleteWhiteboardPathCommand
     };
 });

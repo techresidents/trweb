@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'core/base',
-    'core/facade',
+    'core/facade'
 ], function($, _, base, facade) { 
 
     /**
@@ -68,7 +68,7 @@ define([
             }
 
             return result;
-        },
+        }
     });
 
     /**
@@ -141,7 +141,7 @@ define([
 
                 var result = {
                     status: true,
-                    result: this._argsToObject(argNames, arguments),
+                    result: this._argsToObject(argNames, arguments)
                 };
 
                 this.options.onSuccess.call(
@@ -163,7 +163,7 @@ define([
 
                 var result = {
                     status: false,
-                    result: this._argsToObject(argNames, arguments),
+                    result: this._argsToObject(argNames, arguments)
                 };
 
                 this.options.onError.call(
@@ -175,9 +175,11 @@ define([
 
         _argsToObject: function(argNames, args) {
             var result = {};
+            var i;
+
             if(argNames && argNames.length && args && args.length) {
                 var length = argNames.length <= args.length ? argNames.length : args.length;
-                for(var i = 0; i < length; i++) {
+                for(i = 0; i < length; i++) {
                     result[argNames[i]] = args[i];
                 }
             }
@@ -205,7 +207,8 @@ define([
         },
 
         executeSubCommands: function() {
-            for(var i =0; i < this.subCommands.length; i++) {
+            var i;
+            for(i =0; i < this.subCommands.length; i++) {
                 var command = new this.subCommands[i]();
                 command.execute.apply(command, arguments);
             }
@@ -213,14 +216,14 @@ define([
 
         execute: function() {
             this.executeSubCommands.apply(this, arguments);
-        },
+        }
     });
 
 
     return {
         Command: Command,
         AsyncCommand: AsyncCommand,
-        MacroCommand: MacroCommand,
+        MacroCommand: MacroCommand
     };
 
 });

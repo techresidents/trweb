@@ -2,7 +2,7 @@ define([
     'Underscore',
     'common/notifications',
     'core/mediator',
-    'chat/user/proxies',
+    'chat/user/proxies'
 ], function(
     _,
     notifications,
@@ -26,7 +26,7 @@ define([
         notifications: [
             [notifications.USER_CONNECTED_CHANGED, 'onConnectedChanged'],
             [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged'],
-            [notifications.USER_SPEAKING_CHANGED,'onSpeakingChanged'],
+            [notifications.USER_SPEAKING_CHANGED,'onSpeakingChanged']
         ],
 
         initialize: function(options) {
@@ -36,34 +36,34 @@ define([
             var currentUser = this.usersProxy.currentUser();
             this.facade.trigger(notifications.MARKER_JOINED_CREATE, {
                 userId: currentUser.id,
-                name: currentUser.name(),
+                name: currentUser.name()
             });
         },
 
         onConnectedChanged: function(notification) {
             this.facade.trigger(notifications.MARKER_CONNECTED_CREATE, {
                 userId: notification.model.id,
-                isConnected: notification.model.isConnected(),
+                isConnected: notification.model.isConnected()
             });
         },
 
         onPublishingChanged: function(notification) {
             this.facade.trigger(notifications.MARKER_PUBLISHING_CREATE, {
                 userId: notification.model.id,
-                isPublishing: notification.model.isPublishing(),
+                isPublishing: notification.model.isPublishing()
             });
         },
 
         onSpeakingChanged: function(notification) {
             this.facade.trigger(notifications.MARKER_SPEAKING_CREATE, {
                 userId: notification.model.id,
-                isSpeaking: notification.model.isSpeaking(),
+                isSpeaking: notification.model.isSpeaking()
             });
-        },
+        }
         
     });
 
     return {
-        ChatMarkersMediator: ChatMarkersMediator,
-    }
+        ChatMarkersMediator: ChatMarkersMediator
+    };
 });

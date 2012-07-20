@@ -5,38 +5,40 @@
 {% block title %}Tech Residents Whiteboard{% endblock %}
 
 {% block extrahead %}
-<script>
-    var require = {
-        baseUrl: '/static/js',
-    };
-</script>
-<script data-main="{% static "js/apps/whiteboard/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
-
 {%endblock %}
 
 {% block content %}
 
-<div class="container">
-    <div class="row">
-        <div class="page-header">
-            <h1>Whiteboard</h1>
-        </div>
-        <div id="whiteboard-app" class="well">
-            <div id="whiteboard">
+    <div class="container">
+        <div class="row">
+            <div class="page-header">
+                <h1>Whiteboard</h1>
             </div>
-        </div>
+            <div id="whiteboard-app" class="well">
+                <div id="whiteboard">
+                </div>
+            </div>
 
-    </div>
-    <div class="row">
-        <div id="whiteboard-tools" class="well">
-            <div class="btn-group">
-                <a id="pen-button" class="btn">Pen</a>
-                <a id="rect-button" class="btn">Rectcangle</a>
-                <a id="circle-button" class="btn">Circle</a>
-                <a id="clear-button" class="btn">Clear</a>
+        </div>
+        <div class="row">
+            <div id="whiteboard-tools" class="well">
+                <div class="btn-group">
+                    <a id="pen-button" class="btn">Pen</a>
+                    <a id="rect-button" class="btn">Rectcangle</a>
+                    <a id="circle-button" class="btn">Circle</a>
+                    <a id="clear-button" class="btn">Clear</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+
+
+    <script>
+        var require = {
+            baseUrl: '/static/js'
+        };
+    </script>
+    <script data-main="{% static "js/apps/whiteboard/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
 
 {% endblock %}

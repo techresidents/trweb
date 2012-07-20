@@ -1,6 +1,6 @@
 define([
     'common/notifications',
-    'core/proxy',
+    'core/proxy'
 ], function(notifications, proxy) {
 
     /**
@@ -20,7 +20,7 @@ define([
          */
         eventNotifications: {
             'add': notifications.MINUTE_STARTED,
-            'change:endTimestamp': notifications.MINUTE_ENDED,
+            'change:endTimestamp': notifications.MINUTE_ENDED
         },
 
         initialize: function(options) {
@@ -31,14 +31,14 @@ define([
          */
         active: function() {
             return this.collection.active();
-        },
+        }
 
     }, {
 
-        NAME: 'ChatMinutesProxy',
+        NAME: 'ChatMinutesProxy'
     });
     
     return {
-        ChatMinutesProxy: ChatMinutesProxy,
-    }
+        ChatMinutesProxy: ChatMinutesProxy
+    };
 });

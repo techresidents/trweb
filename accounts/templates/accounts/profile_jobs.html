@@ -9,20 +9,6 @@
 
 {% block extrahead %}
     <link href="{% static "css/profile_jobs.css" %}" rel="stylesheet">
-
-
-    {% autoescape off %}
-        <script>
-            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
-        </script>
-    {% endautoescape %}
-
-    <script>
-        var require = {
-            baseUrl: '/static/js',
-        };
-    </script>
-    <script data-main="{% static "js/apps/profile/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
 {%endblock %}
 
 {% block content %}
@@ -219,11 +205,13 @@
         var notifications = {{ json_notification_prefs }};
         var positions = {{json_user_positions}};
         var positionTypes = {{json_position_types}};
-        var technologies = {{ json_technology_prefs }}
-        var locations = {{ json_location_prefs }}
+        var technologies = {{ json_technology_prefs }};
+        var locations = {{ json_location_prefs }};
         var app = {'name':'jobs'};
     </script>
     {% endautoescape %}
+
+
 
     <!-- Templates -->
     <script type="text/template" id="item-hint-template">
@@ -236,12 +224,14 @@
     </script>
 
     <script type="text/template" id="position-item-template">
-        <td>
-            <span> <%= name %> </span>
-        </td>
-        <td>
-            <span> <%= description %> </span>
-        </td>
+        {% verbatim %}
+            <td>
+                <span> <%- name %> </span>
+            </td>
+            <td>
+                <span> <%- description %> </span>
+            </td>
+        {% endverbatim %}
         <td>
             <select class="min-salary-option">
                 {% for option in min_salary_options %}
@@ -257,27 +247,45 @@
     </script>
 
     <script type="text/template" id="location-item-template">
-        <td>
-            <span> <%= city || '' %> </span>
-        </td>
-        <td>
-            <span> <%= state %> </span>
-        </td>
-        <td>
-            <span> <%= country %> </span>
-        </td>
+        {% verbatim %}
+            <td>
+                <span> <%- city || '' %> </span>
+            </td>
+            <td>
+                <span> <%- state %> </span>
+            </td>
+            <td>
+                <span> <%- country %> </span>
+            </td>
+        {% endverbatim %}
         <td>
             <a class="close">x</a>
         </td>
     </script>
 
     <script type="text/template" id="technology-item-template">
-        <td>
-            <span> <%= name %> </span>
-        </td>
+        {% verbatim %}
+            <td>
+                <span> <%- name %> </span>
+            </td>
+        {% endverbatim %}
         <td>
             <a class="close">x</a>
         </td>
     </script>
+
+
+    {% autoescape off %}
+        <script>
+            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
+        </script>
+    {% endautoescape %}
+
+    <script>
+        var require = {
+            baseUrl: '/static/js'
+        };
+    </script>
+    <script data-main="{% static "js/apps/profile/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
 
 {% endblock %}

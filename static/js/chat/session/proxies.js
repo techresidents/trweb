@@ -5,7 +5,7 @@ define([
     'core/base',
     'core/proxy',
     'chat/user/models',
-    'chat/user/proxies',
+    'chat/user/proxies'
 ], function(
     _,
     notifications,
@@ -41,7 +41,7 @@ define([
                 result = -1;
             }
             return result;
-        },
+        }
     });
 
     /**
@@ -103,8 +103,9 @@ define([
             //Expried samples that need to be removed
             var garbageCollect = [];
             
+            var i;
             //Find the smallest non-expired samples (minSampleSize many)
-            for(var i = 0; i < this.samples.length; i++) {
+            for(i = 0; i < this.samples.length; i++) {
                 var sample = this.samples[i];
 
                 //if the sample is expired, skip it and add it gc
@@ -134,7 +135,7 @@ define([
             }
 
             return avg;
-        },
+        }
 
     });
    
@@ -167,7 +168,7 @@ define([
             
             //create and register ChatUsersProxy
             this.usersProxy = new user_proxies.ChatUsersProxy({
-                collection: new user_models.ChatUserCollection(),
+                collection: new user_models.ChatUserCollection()
             });
             this.facade.registerProxy(this.usersProxy);
             
@@ -201,7 +202,6 @@ define([
             var id = connectionData.id;
             var user = this.usersProxy.get(id);
             if(!user) {
-                console.log(connectionData);
                 this.usersProxy.add(connectionData);
                 user = this.usersProxy.get(id);
             }
@@ -303,32 +303,34 @@ define([
         },
 
         sessionConnectedHandler: function(event) {
+            var i, connection, connectionData, stream;
+
             //store the tokbox session archive prior to dispatching
             //the SESSION_CONNECTED notification, since this is likely
             //to trigger the start of the recording which will require
             //the archive.
+
             if(event.archives.length) {
                 this.archive = event.archives[0];
             } 
             
             this.facade.trigger(notifications.SESSION_CONNECTED, {
-                event: event,
+                event: event
             });
 
-
-            for(var i = 0; i < event.connections.length; i++) {
-                var connection = event.connections[i];
+            for(i = 0; i < event.connections.length; i++) {
+                connection = event.connections[i];
 
                 //connection data set on server side
-                var connectionData = JSON.parse(connection.data);
-                var user = this._getOrCreateUser(connectionData);
+                connectionData = JSON.parse(connection.data);
+                user = this._getOrCreateUser(connectionData);
                 user.setConnected(true);
             }
 
-            for(var i = 0; i < event.streams.length; i++) {
-                var stream = event.streams[i];
-                var connectionData = JSON.parse(stream.connection.data);
-                var user = this._getOrCreateUser(connectionData);
+            for(i = 0; i < event.streams.length; i++) {
+                stream = event.streams[i];
+                connectionData = JSON.parse(stream.connection.data);
+                user = this._getOrCreateUser(connectionData);
                 user.setStream(stream);
                 user.setPublishing(true);
                 this.streams[stream.streamId] = new Stream({
@@ -346,11 +348,13 @@ define([
         },
 
         connectionCreatedHandler: function(event) {
-            this.facade.trigger(notifications.SESSION_CONNECTION_CREATED, {
-                event: event,
-            });
+            var i;
 
-            for(var i = 0; i < event.connections.length; i++) {
+            this.facade.trigger(notifications.SESSION_CONNECTION_CREATED, {
+                event: event
+            });
+            
+            for(i = 0; i < event.connections.length; i++) {
                 var connection = event.connections[i];
 
                 //connection data set on server side
@@ -362,11 +366,13 @@ define([
         },
 
         connectionDestroyedHandler: function(event) {
-            this.facade.trigger(notifications.SESSION_CONNECTION_DESTROYED, {
-                event: event,
-            });
+            var i;
 
-            for(var i = 0; i < event.connections.length; i++) {
+            this.facade.trigger(notifications.SESSION_CONNECTION_DESTROYED, {
+                event: event
+            });
+            
+            for(i = 0; i < event.connections.length; i++) {
                 var connection = event.connections[i];
 
                 //connection data set on server side
@@ -379,12 +385,13 @@ define([
         },
 
         streamCreatedHandler: function(event) {
+            var i;
+
             this.facade.trigger(notifications.SESSION_STREAM_CREATED, {
-                event: event,
+                event: event
             });
 
-
-            for(var i = 0; i < event.streams.length; i++) {
+            for(i = 0; i < event.streams.length; i++) {
                 var stream = event.streams[i];
 
                 //connection data set on server side
@@ -406,15 +413,17 @@ define([
         },
 
         streamDestroyedHandler: function(event) {
+            var i, connectionData, stream;
+
             this.facade.trigger(notifications.SESSION_STREAM_DESTROYED, {
-                event: event,
+                event: event
             });
 
-            for(var i = 0; i < event.streams.length; i++) {
-                var stream = event.streams[i];
+            for(i = 0; i < event.streams.length; i++) {
+                stream = event.streams[i];
 
                 //connection data set on server side
-                var connectionData = JSON.parse(stream.connection.data);
+                connectionData = JSON.parse(stream.connection.data);
                 
                 var user = this.usersProxy.get(connectionData.id);
                 user.setStream(null);
@@ -490,14 +499,14 @@ define([
 
         streamRecordingStoppedHandler: function() {
             this.recording = false;
-        },
+        }
 
     }, {
 
-        NAME: 'ChatSessionProxy',
+        NAME: 'ChatSessionProxy'
     });
 
     return {
-        ChatSessionProxy: ChatSessionProxy,
-    }
+        ChatSessionProxy: ChatSessionProxy
+    };
 });

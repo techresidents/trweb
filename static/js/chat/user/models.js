@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
     
     /**
@@ -18,7 +18,7 @@ define([
                 isConnected: false,
                 isPublishing: false,
                 imageUrl: null,
-                participant: null,
+                participant: null
             };
         },
 
@@ -81,7 +81,7 @@ define([
                 result = this.collection.first().id === this.id;
             } 
             return result;
-        },
+        }
     });
 
 
@@ -97,6 +97,6 @@ define([
     });
 
     return {
-        ChatUserCollection: ChatUserCollection,
-    }
+        ChatUserCollection: ChatUserCollection
+    };
 });
