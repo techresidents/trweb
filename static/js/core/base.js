@@ -1,6 +1,6 @@
 define([
     'jQuery',
-    'Underscore',
+    'Underscore'
 ], function($, _) {
 
     /**
@@ -84,11 +84,12 @@ define([
      */
     var getValue = function(object, property) {
         var result = null;
+        
         if(object && object[property]) {
             result = _.isFunction(object[property]) ? object[property]() : object[property];
         }
         return result;
-    }
+    };
 
     /**
      * Base class with propagating extend method.
@@ -105,14 +106,14 @@ define([
         /**
          * Initialize method to be overriden in sublcasses.
          */
-        initialize: function() {},
+        initialize: function() {}
     });
 
     return {
         extend: extend,
         getValue: getValue,
         inherits: inherits,
-        Base: Base,
+        Base: Base
     };
 
 });

@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'core/view',
-    'text!chat/feedback/templates/feedback_modal.html',
+    'text!chat/feedback/templates/feedback_modal.html'
 ], function($, _, view, modal_template) {
 
     /**
@@ -30,7 +30,7 @@ define([
         render: function() {
             this.$el.html(this.template({
                 model: this.model.toJSON(),
-                errors: this.errors,
+                errors: this.errors
             }));
 
             //select current values
@@ -47,7 +47,7 @@ define([
         onSave: function() {
             var values = {
                 overallQuality: this.$(this.overallQualitySelector).val(),
-                technicalQuality: this.$(this.technicalQualitySelector).val(),
+                technicalQuality: this.$(this.technicalQualitySelector).val()
             };
 
             var validation = this.model.validate(values);
@@ -64,11 +64,11 @@ define([
             }
 
             return validation.result;
-        },
+        }
 
     });
     
     return {
-        FeedbackModalView: FeedbackModalView,
+        FeedbackModalView: FeedbackModalView
     };
 });

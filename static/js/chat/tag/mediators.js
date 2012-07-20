@@ -6,7 +6,7 @@ define([
     'chat/tag/models',
     'chat/tag/proxies',
     'chat/tag/views',
-    'chat/user/proxies',
+    'chat/user/proxies'
 ], function(
     _,
     notifications,
@@ -31,7 +31,7 @@ define([
          */
         notifications: [
             [notifications.CHAT_STARTED, 'onChatStarted'],
-            [notifications.CHAT_ENDED, 'onChatEnded'],
+            [notifications.CHAT_ENDED, 'onChatEnded']
         ],
 
         initialize: function(options) {
@@ -68,7 +68,7 @@ define([
             this.facade.trigger(notifications.TAG_CREATE, {
                 name: eventBody.tagValue,
                 tagReferenceId: eventBody.tagReferenceId,
-                conceptId: eventBody.conceptId,
+                conceptId: eventBody.conceptId
             });
         },
 
@@ -76,14 +76,14 @@ define([
             this.facade.trigger(notifications.TAG_DELETE, {
                 model: eventBody.tagModel
             });
-        },
+        }
 
     }, {
 
-        NAME: 'TaggerMediator',
+        NAME: 'TaggerMediator'
     });
 
     return {
-        TaggerMediator: TaggerMediator,
-    }
+        TaggerMediator: TaggerMediator
+    };
 });

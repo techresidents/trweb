@@ -4,7 +4,7 @@ define([
     'core/view',
     'lookup/views',
     'text!chat/tag/templates/tagger.html',
-    'text!chat/tag/templates/tagger_item.html',
+    'text!chat/tag/templates/tagger_item.html'
 ], function(
     $,
     _,
@@ -18,7 +18,7 @@ define([
      */
     var EVENTS = {
         ADD_TAG: 'tag:addTag',
-        DELETE_TAG: 'tag:deleteTag',
+        DELETE_TAG: 'tag:deleteTag'
     };
 
     /**
@@ -32,7 +32,7 @@ define([
         tagName: 'li',
 
         events: {
-            'click .destroy': 'destroy',
+            'click .destroy': 'destroy'
         },
 
         initialize: function() {
@@ -98,7 +98,7 @@ define([
         added: function(model) {
             var view = new ChatTaggerItemView({
                 users: this.users,
-                model: model,
+                model: model
             }).render();
 
             view.$el.fadeTo(1000, 1);
@@ -123,9 +123,10 @@ define([
         },
 
         _enforceMaxItems: function() {
+            var i;
             var visibleItems = 0;
             if(this.maxItems) {
-                for(var i = this.itemViews.length - 1; i >= 0; i--) {
+                for(i = this.itemViews.length - 1; i >= 0; i--) {
                     var view = this.itemViews[i];
                     if(view.$el.is(':visible')) {
                         if(visibleItems >=  this.maxItems) {
@@ -136,7 +137,7 @@ define([
                     }
                 }
             }
-        },
+        }
     });
 
 
@@ -154,7 +155,7 @@ define([
         listSelector: 'ul',
 
         events: {
-            'click .add': 'addTag',
+            'click .add': 'addTag'
         },
 
         initialize: function() {
@@ -191,7 +192,7 @@ define([
                 el: this.$(this.listSelector),
                 users: this.users,
                 collection: this.collection,
-                maxItems: this.maxItems,
+                maxItems: this.maxItems
             }).render();
 
             return this;
@@ -204,13 +205,13 @@ define([
                     tagReferenceId: null,
                     conceptId: null,
                     tagValue: value
-                }
+                };
 
                 if(this.lastSelectedTag &&
                    this.lastSelectedTag.name === value) {
                     _.extend(event, {
                         tagReferenceId: this.lastSelectedTag.id,
-                        conceptId: this.lastSelectedTag.conceptId,
+                        conceptId: this.lastSelectedTag.conceptId
                     });
                 }
 
@@ -227,12 +228,12 @@ define([
 
         onSelect: function(value, data) {
             this.lastSelectedTag = data;
-        },
+        }
     });
 
     return {
         EVENTS: EVENTS,
         ChatTaggerView: ChatTaggerView,
-        ChatTaggerListView: ChatTaggerListView,
-    }
+        ChatTaggerListView: ChatTaggerListView
+    };
 });

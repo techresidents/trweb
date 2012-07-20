@@ -25,7 +25,7 @@ define([
      */
     var EVENTS = {
         NEXT: 'discuss:Next',
-        START: 'discuss:Start',
+        START: 'discuss:Start'
     };
 
     /**
@@ -53,13 +53,13 @@ define([
 
             new DiscussTitleView({
                 el: this.$(this.titleSelector),
-                model: this.model,
+                model: this.model
             }).render();
 
 
             new DiscussControlsView({
                 el: this.$(this.controlsSelector),
-                model: this.model,
+                model: this.model
             }).render();
 
             // Keep a reference to the tagger view so that we can invoke
@@ -68,12 +68,12 @@ define([
                 el: this.$(this.tagSelector),
                 users: this.users,
                 collection: this.tags,
-                maxItems: 8,
+                maxItems: 8
             });
             this.taggerView.render();
 
             return this;
-        },
+        }
     });
 
     /**
@@ -111,7 +111,7 @@ define([
 
         events: {
             "click .next": "next",
-            "click .start": "start",
+            "click .start": "start"
         },
 
         initialize: function() {
@@ -131,7 +131,7 @@ define([
                 this.timer = new timer.DurationTimerView({
                     el: this.$(this.timerSelector),
                     duration: activeTopic.durationMs(),
-                    interval: 500,
+                    interval: 500
                 });
                 this.timer.render();
                 this.timer.start(startTime);
@@ -145,12 +145,12 @@ define([
 
         start: function() {
             this.triggerEvent(EVENTS.START);
-        },
+        }
     });
 
     
     return {
         EVENTS: EVENTS,
-        DiscussView: DiscussView,
+        DiscussView: DiscussView
     };
 });

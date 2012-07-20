@@ -1,5 +1,5 @@
 define([
-    'core/base',
+    'core/base'
 ], function(
     base) {
 
@@ -66,6 +66,6 @@ define([
     return {
         binarySearch: binarySearch,
         binaryInsert: binaryInsert,
-        defaultCompare: defaultCompare,
-    }
+        defaultCompare: defaultCompare
+    };
 });

@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
     
     /**
@@ -21,7 +21,7 @@ define([
             return {
                 rootTopic: null,
                 activeTopic: null,
-                nextTopic: null,
+                nextTopic: null
             };
         },
 
@@ -66,13 +66,13 @@ define([
                 rootTopic: this.rootTopic() ? this.rootTopic().toJSON() : null,
                 activeTopic: this.activeTopic() ? this.activeTopic().toJSON() : null,
                 nextTopic: this.nextTopic() ? this.nextTopic().toJSON() : null,
-                activeMinute: this.activeMinute() ? this.activeMinute().toJSON() : null,
+                activeMinute: this.activeMinute() ? this.activeMinute().toJSON() : null
             });
-        },
+        }
     });
 
 
     return {
-        DiscussValueObject: DiscussValueObject,
-    }
+        DiscussValueObject: DiscussValueObject
+    };
 });

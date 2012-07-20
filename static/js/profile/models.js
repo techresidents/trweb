@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
 
     /**
@@ -290,5 +290,5 @@ define([
         LocationPreference: LocationPreference,
         LocationPrefCollection: LocationPrefCollection,
         NotificationPreference: NotificationPreference
-    }
+    };
 });

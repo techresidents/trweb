@@ -1,6 +1,6 @@
 define([
     'common/notifications',
-    'core/proxy',
+    'core/proxy'
 ], function(notifications, proxy) {
 
     /**
@@ -20,11 +20,11 @@ define([
          */
         eventNotifications: {
             'add': notifications.TAG_ADDED,
-            'remove': notifications.TAG_REMOVED,
+            'remove': notifications.TAG_REMOVED
         },
 
         initialize: function(options) {
-        },
+        }
 
     }, {
 
@@ -32,6 +32,6 @@ define([
     });
     
     return {
-        ChatTagsProxy: ChatTagsProxy,
-    }
+        ChatTagsProxy: ChatTagsProxy
+    };
 });

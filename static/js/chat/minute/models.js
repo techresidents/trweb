@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
     
     /**
@@ -20,7 +20,7 @@ define([
                 userId: null,
                 topicId: null,
                 startTimestamp: null,
-                endTimestamp: null,
+                endTimestamp: null
             };
         },
         
@@ -62,7 +62,7 @@ define([
         setEndTimestamp: function(endTimestamp) {
             this.set({endTimestamp: endTimestamp});
             return this;
-        },
+        }
     });
 
 
@@ -78,7 +78,7 @@ define([
          */
         active: function() {
             var minutes = this.where({
-                endTimestamp: null,
+                endTimestamp: null
             });
             return _.last(minutes);
         }
@@ -86,6 +86,6 @@ define([
 
     return {
         Minute: Minute,
-        MinuteCollection: MinuteCollection,
+        MinuteCollection: MinuteCollection
     };
 });

@@ -4,7 +4,7 @@ define([
     'core/mediator',
     'chat/session/proxies',
     'chat/user/views',
-    'chat/user/proxies',
+    'chat/user/proxies'
 ], function(
     _,
     notifications,
@@ -26,7 +26,7 @@ define([
         notifications: [
             [notifications.USER_ADDED, 'onUserAdded'],
             [notifications.USER_CONNECTED_CHANGED, 'onConnectedChanged'],
-            [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged'],
+            [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged']
         ],
 
         initialize: function(options) {
@@ -41,8 +41,7 @@ define([
             var view = new user_views.ChatUserView({
                 id: userModel.id,
                 model: userModel,
-                collection: this.usersProxy.collection,
-                css: 'span3',
+                collection: this.usersProxy.collection
             });
 
             this.views[userModel.id] = view;
@@ -74,7 +73,7 @@ define([
                     height: details.height,
                     encodedWidth: details.width,
                     encodedHeight: details.height,
-                    reportMicLevels: true,
+                    reportMicLevels: true
                 });
             }
         },
@@ -90,14 +89,14 @@ define([
                     width: details.width,
                     height: details.height,
                     encodedWidth: details.width,
-                    encodedHeight: details.height,
+                    encodedHeight: details.height
                 });
             }
-        },
+        }
 
     });
 
     return {
-        ChatUsersMediator: ChatUsersMediator,
-    }
+        ChatUsersMediator: ChatUsersMediator
+    };
 });

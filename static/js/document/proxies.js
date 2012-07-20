@@ -1,6 +1,6 @@
 define([
     'common/notifications',
-    'core/proxy',
+    'core/proxy'
 ], function(notifications, proxy) {
 
     /**
@@ -15,15 +15,15 @@ define([
 
         eventNotifications: {
             'add': notifications.DOCUMENT_ADDED,
-            'remove': notifications.DOCUMENT_REMOVED,
+            'remove': notifications.DOCUMENT_REMOVED
         },
 
         initialize: function(options) {
-        },
+        }
 
     });
     
     return {
-        DocumentsProxy: DocumentsProxy,
-    }
+        DocumentsProxy: DocumentsProxy
+    };
 });

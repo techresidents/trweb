@@ -3,7 +3,7 @@ define([
     'core/command',
     'chat/marker/models',
     'chat/message/messages',
-    'chat/message/models',
+    'chat/message/models'
 ], function(
     _,
     command,
@@ -28,18 +28,18 @@ define([
             var message = new message_models.ChatMessage({
                 header: new messages.MessageHeader(),
                 msg: new messages.MarkerCreateMessage({
-                    marker: options,
-                }),
+                    marker: options
+                })
             });
             
             //send message
             message.save(null, {
                 success: _.bind(this.onSuccess, this),
-                error: _.bind(this.onError, this),
+                error: _.bind(this.onError, this)
             });
 
             return true;
-        },
+        }
 
     });
 
@@ -72,19 +72,19 @@ define([
                     marker: {
                         type: marker_models.JoinedMarker.TYPE,
                         userId: options.userId,
-                        name: options.name,
+                        name: options.name
                     }
-                }),
+                })
             });
             
             //send message
             message.save(null, {
                 success: _.bind(this.onSuccess, this),
-                error: _.bind(this.onError, this),
+                error: _.bind(this.onError, this)
             });
 
             return true;
-        },
+        }
 
     });
 
@@ -116,19 +116,19 @@ define([
                     marker: {
                         type: marker_models.ConnectedMarker.TYPE,
                         userId: options.userId,
-                        isConnected: options.isConnected,
+                        isConnected: options.isConnected
                     }
-                }),
+                })
             });
             
             //send message
             message.save(null, {
                 success: _.bind(this.onSuccess, this),
-                error: _.bind(this.onError, this),
+                error: _.bind(this.onError, this)
             });
 
             return true;
-        },
+        }
 
     });
 
@@ -161,19 +161,19 @@ define([
                     marker: {
                         type: marker_models.PublishingMarker.TYPE,
                         userId: options.userId,
-                        isPublishing: options.isPublishing,
+                        isPublishing: options.isPublishing
                     }
-                }),
+                })
             });
 
             //send message
             message.save(null, {
                 success: _.bind(this.onSuccess, this),
-                error: _.bind(this.onError, this),
+                error: _.bind(this.onError, this)
             });
 
             return true;
-        },
+        }
 
     });
 
@@ -206,16 +206,16 @@ define([
                     marker: {
                         type: marker_models.SpeakingMarker.TYPE,
                         userId: options.userId,
-                        isSpeaking: options.isSpeaking,
+                        isSpeaking: options.isSpeaking
                     }
-                }),
+                })
             });
 
             message.save(null, {
                 success: _.bind(this.onSuccess, this),
-                error: _.bind(this.onError, this),
+                error: _.bind(this.onError, this)
             });
-        },
+        }
 
     });
 
@@ -224,6 +224,6 @@ define([
         CreateConnectedMarkerCommand: CreateConnectedMarkerCommand,
         CreateJoinedMarkerCommand: CreateJoinedMarkerCommand,
         CreatePublishingMarkerCommand: CreatePublishingMarkerCommand,
-        CreateSpeakingMarkerCommand: CreateSpeakingMarkerCommand,
+        CreateSpeakingMarkerCommand: CreateSpeakingMarkerCommand
     };
 });

@@ -3,7 +3,7 @@ define([
     'Underscore',
     'core/view',
     'alert/models',
-    'text!alert/templates/alert.html',
+    'text!alert/templates/alert.html'
 ], function(
     $,
     _,
@@ -24,7 +24,7 @@ define([
     var AlertView = view.View.extend({
 
         events: {
-            'click .destroy': 'onDestroy',
+            'click .destroy': 'onDestroy'
         },
 
         initialize: function() {
@@ -38,10 +38,10 @@ define([
 
         onDestroy: function() {
             this.$el.remove();
-        },
+        }
     });
     
     return {
-        AlertView: AlertView,
+        AlertView: AlertView
     };
 });

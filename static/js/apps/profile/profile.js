@@ -3,7 +3,7 @@ define([
     'Underscore',
     'Backbone',
     'profile/models',
-    'profile/views',
+    'profile/views'
 ], function($, _, Backbone, models, views) {
 
 $(document).ready(function() {
@@ -88,7 +88,7 @@ $(document).ready(function() {
     });
 
     if (window.app) {
-        if (window.app.name == 'jobs') {
+        if (window.app.name === 'jobs') {
             app = new JobsAppView({
                 notifications: window.notifications,
                 positions: window.positions,
@@ -97,7 +97,7 @@ $(document).ready(function() {
                 locations: window.locations
             });
         }
-        else if (window.app.name == 'skills') {
+        else if (window.app.name === 'skills') {
             app = new SkillsAppView({data: window.data});
         }
     }

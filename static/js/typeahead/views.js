@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
     
     /*
@@ -43,7 +43,7 @@ define([
 
         events: {
             'keypress': 'keypress',
-            'blur': 'blur',
+            'blur': 'blur'
         },
 
         initialize: function(options) {
@@ -65,7 +65,7 @@ define([
                 items: this.maxResults,
                 onselect: function(value) {
                     that.selected.call(that, value);
-                },
+                }
             });
             
             //store the actual typeahead plugin so we can make
@@ -86,9 +86,9 @@ define([
         matchesLastSelected: function(value) {
             if(value && this.lastSelected) {
                 if(this.property) {
-                    return this.lastSelected[this.property] == value;
+                    return this.lastSelected[this.property] === value;
                 } else {
-                    return this.lastSelected == value;
+                    return this.lastSelected === value;
                 }
             } else {
                 return false;
@@ -125,7 +125,7 @@ define([
             this.lastValue = this.$el.val();
 
             //if enter is pressed and the typeahead menu is not visible, process.
-            if(e.keyCode == 13 && !this.typeahead.shown) {
+            if(e.keyCode === 13 && !this.typeahead.shown) {
                 value = this.$el.val();
                 
                 if(value && this.onenter) {
@@ -168,9 +168,9 @@ define([
                 var that = this;
                 match = _.find(this.source, function(source) {
                     if(that.property) {
-                        return source[that.property] == value;
+                        return source[that.property] === value;
                     } else {
-                        return source == value;
+                        return source === value;
                     }
                 });
                 if(match) {
@@ -189,6 +189,6 @@ define([
     });
 
     return {
-        TypeaheadView: TypeaheadView,
-    }
+        TypeaheadView: TypeaheadView
+    };
 });

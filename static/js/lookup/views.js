@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'lookup/models',
+    'lookup/models'
 ], function($, _, Backbone, models) {
     
     /*
@@ -45,7 +45,7 @@ define([
 
         events: {
             'keypress': 'keypress',
-            'blur': 'blur',
+            'blur': 'blur'
         },
 
         initialize: function(options) {
@@ -71,7 +71,7 @@ define([
                     that.selected.call(that, object.value, object);
                 },
 
-                property: this.property,
+                property: this.property
             });
             
             //store the actual typeahead plugin so we can make
@@ -140,18 +140,18 @@ define([
          */
         keypress: function(e) {
             //if enter is pressed and the typeahead menu is not visible, process.
-            if(e.keyCode == 13 && !this.typeahead.shown) {
+            if(e.keyCode === 13 && !this.typeahead.shown) {
                 value = this.$el.val();
 
                 if(value && this.onenter) {
                     object = null;
-                    if(this.lastSelected && this.lastSelected[this.property] == value) {
+                    if(this.lastSelected && this.lastSelected[this.property] === value) {
                         object = this.lastSelected;
                     }
                     //only invoke onenter callback if forceSelection is false
                     //or typeahead value matches an autocomplete option.
                     if(!this.forceSelection ||
-                       (this.lastSelected && this.lastSelected[this.property] == value)) {
+                       (this.lastSelected && this.lastSelected[this.property] === value)) {
                         this.onenter.call(this.context, value, object);
                     }
                 }
@@ -171,7 +171,7 @@ define([
             //we need to directly access the plugin object and determine
             //if the text value in the input is a match and trigger the
             //selected event manually.
-            if(!this.lastSelected || this.lastSelected[this.property] != value) {
+            if(!this.lastSelected || this.lastSelected[this.property] !== value) {
                 //get the result from the lookup cache.
                 //this is guaranteed to be a cache hit, so we
                 //can count on a return value.
@@ -180,7 +180,7 @@ define([
                 if(result) {
                     //see if the input value matches one of the autocomplete options.
                     //if it does trigger the selected event.
-                    match = _.find(result.matches(), function(m) { return m[this.property] == value; });
+                    match = _.find(result.matches(), function(m) { return m[this.property] === value; });
                     if(match) {
                         this.selected(match[this.property], match);
                     }
@@ -190,7 +190,7 @@ define([
             //Null out the typeahead input if forceSelection is true and the
             //value in the input does not match an autocomplete option.
             if(this.forceSelection) {
-                if(!this.lastSelected || this.lastSelected[this.property] != value) {
+                if(!this.lastSelected || this.lastSelected[this.property] !== value) {
                     this.$el.val(null);
                 }
             }
@@ -198,6 +198,6 @@ define([
     });
 
     return {
-        LookupView: LookupView,
-    }
+        LookupView: LookupView
+    };
 });

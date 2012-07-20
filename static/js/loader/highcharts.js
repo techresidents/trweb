@@ -1,5 +1,5 @@
 define([
-    'Loader',
+    'Loader'
 ], function(Loader) {
     return Loader.Highcharts;
 });

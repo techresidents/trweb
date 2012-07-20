@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
 
     /**
@@ -13,7 +13,7 @@ define([
         defaults: function() {
             return {
                 name: null,
-                documentUrl: null,
+                documentUrl: null
             };
         },
 
@@ -33,7 +33,7 @@ define([
         setDocumentUrl: function(documentUrl) {
             this.set({documentUrl: documentUrl});
             return this;
-        },
+        }
     });
 
     /**
@@ -42,12 +42,12 @@ define([
      */
     var DocumentCollection = Backbone.Collection.extend({
 
-        model: Document,
+        model: Document
         
     });
 
     return {
         Document: Document,
-        DocumentCollection: DocumentCollection,
-    }
+        DocumentCollection: DocumentCollection
+    };
 });

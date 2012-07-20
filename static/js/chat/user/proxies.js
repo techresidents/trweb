@@ -1,6 +1,6 @@
 define([
     'common/notifications',
-    'core/proxy',
+    'core/proxy'
 ], function(notifications, proxy) {
 
     /**
@@ -25,8 +25,8 @@ define([
                 'change:isConnected': notifications.USER_CONNECTED_CHANGED,
                 'change:isPublishing': notifications.USER_PUBLISHING_CHANGED,
                 'change:isSpeaking': notifications.USER_SPEAKING_CHANGED,
-                'remove': notifications.USER_REMOVED,
-            }
+                'remove': notifications.USER_REMOVED
+            };
         },
 
         initialize: function(options) {
@@ -39,14 +39,14 @@ define([
         currentUser: function() {
             //current user is always first
             return this.collection.first();
-        },
+        }
 
     }, {
         /* NAME */
-        NAME: 'ChatUsersProxy',
+        NAME: 'ChatUsersProxy'
     });
     
     return {
-        ChatUsersProxy: ChatUsersProxy,
-    }
+        ChatUsersProxy: ChatUsersProxy
+    };
 });

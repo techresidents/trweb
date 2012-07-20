@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'core/base',
+    'core/base'
 ], function($, _, Backbone, base) { 
 
     /**
@@ -44,7 +44,7 @@ define([
                 this._commands[notification] = function() {
                     var command = new commandClass();
                     command.run.apply(command, arguments);
-                }
+                };
             }
             this.on(notification, this._commands[notification], this);
         },
@@ -85,7 +85,7 @@ define([
 
         getProxy: function(name) {
             return this._proxies[name];
-        },
+        }
 
     });
    
@@ -105,12 +105,12 @@ define([
                 throw new Error("facade already set");
             }
             this._instance = instance;
-        },
+        }
     });
 
     return {
         getInstance: facadeManager.getInstance,
         setInstance: facadeManager.setInstance,
-        Facade: Facade,
+        Facade: Facade
     };
 });

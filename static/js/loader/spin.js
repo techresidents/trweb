@@ -6,5 +6,5 @@ define([
 
     return {
         Spinner: Spinner
-    }
+    };
 });

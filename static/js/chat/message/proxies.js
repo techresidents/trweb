@@ -1,6 +1,6 @@
 define([
     'common/notifications',
-    'core/proxy',
+    'core/proxy'
 ], function(notifications, proxy) {
 
 
@@ -22,7 +22,7 @@ define([
          * Map collection events to notifications
          */
         eventNotifications: {
-            'add': notifications.MESSAGE_ADDED,
+            'add': notifications.MESSAGE_ADDED
         },
 
         initialize: function(options) {
@@ -37,10 +37,10 @@ define([
                 'WHITEBOARD_CREATE': notifications.MESSAGE_WHITEBOARD_CREATE,
                 'WHITEBOARD_DELETE': notifications.MESSAGE_WHITEBOARD_DELETE,
                 'WHITEBOARD_CREATE_PATH': notifications.MESSAGE_WHITEBOARD_CREATE_PATH,
-                'WHITEBOARD_DELETE_PATH': notifications.MESSAGE_WHITEBOARD_DELETE_PATH,
+                'WHITEBOARD_DELETE_PATH': notifications.MESSAGE_WHITEBOARD_DELETE_PATH
             };
 
-            this.longPollErrorDelayMs = 10000 || options.longPollErrorDelayMs;
+            this.longPollErrorDelayMs = options.longPollErrorDelayMs || 10000;
 
             //define long poll callback outside of longPoll function
             //to cut down on memory usage since this function is
@@ -78,6 +78,6 @@ define([
     });
     
     return {
-        ChatMessagesProxy: ChatMessagesProxy,
-    }
+        ChatMessagesProxy: ChatMessagesProxy
+    };
 });

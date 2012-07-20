@@ -4,7 +4,7 @@ define([
     'chat/message/messages',
     'chat/message/models',
     'chat/minute/proxies',
-    'chat/tag/models',
+    'chat/tag/models'
 ], function(
     _,
     command,
@@ -49,18 +49,18 @@ define([
 
                 var message = new message_models.ChatMessage({
                     header: new messages.MessageHeader(),
-                    msg: new messages.TagCreateMessage(tag.attributes),
+                    msg: new messages.TagCreateMessage(tag.attributes)
                 });
                 
                 //send message
                 message.save(null, {
                     success: _.bind(this.onSuccess, this),
-                    error: _.bind(this.onError, this),
+                    error: _.bind(this.onError, this)
                 });
             }
 
             return true;
-        },
+        }
 
     });
 
@@ -100,7 +100,7 @@ define([
 
                 message.save(null, {
                     success: _.bind(this.onSuccess, this),
-                    error: _.bind(this.onError, this),
+                    error: _.bind(this.onError, this)
                 });
             }
 
@@ -110,6 +110,6 @@ define([
 
     return {
         CreateTagCommand: CreateTagCommand,
-        DeleteTagCommand: DeleteTagCommand,
+        DeleteTagCommand: DeleteTagCommand
     };
 });

@@ -4,7 +4,7 @@ define([
     'Backbone',
     'profile/models',
     'typeahead/views',
-    'lookup/views',
+    'lookup/views'
 ], function($, _, Backbone, models, typeahead, lookup) {
 
 
@@ -49,7 +49,7 @@ define([
 
         clickedYrsExperience: function() {
             var yrs = this.$el.find('.skill-yrs-experience').val();
-            this.model.setYrsExperience(parseInt(yrs));
+            this.model.setYrsExperience(parseInt(yrs, 10));
         },
 
         clickedExpertise: function() {
@@ -57,7 +57,7 @@ define([
         },
 
         clickedDeleteItemButton: function() {
-            if (null != this.collection.get(this.model)){
+            if (null !== this.collection.get(this.model)){
                 this.collection.remove(this.model);
                 this.model = null; // TODO mark for GC?
             }
@@ -77,7 +77,7 @@ define([
 
         render: function() {
             this.$el.children().remove();
-            if (0 == this.skillCollection.length) {
+            if (0 === this.skillCollection.length) {
                 this.addSkillHintView();
                 this.isHintRowVisible = true;
             }
@@ -135,7 +135,7 @@ define([
             var skillName = this.skillInput.val();
             if (skillName) {
                 // only add if entry doesn't exist
-                if (null == this.skillCollection.get(skillName))
+                if (null === this.skillCollection.get(skillName))
                 {
                     var skill = new models.Skill({
                         name: skillName,
@@ -217,7 +217,7 @@ define([
 
         clickedMinSalary: function() {
             var minSalary = this.$el.find('.min-salary-option').val();
-            this.model.setMinSalary(parseInt(minSalary));
+            this.model.setMinSalary(parseInt(minSalary, 10));
         },
 
         clickedDeleteItemMarker: function() {
@@ -240,7 +240,7 @@ define([
 
         render: function() {
             this.$el.children().remove();
-            if (0 == this.positionCollection.length) {
+            if (0 === this.positionCollection.length) {
                 this.addPositionHintView();
                 this.isHintRowVisible = true;
             }
@@ -294,7 +294,7 @@ define([
             var positionTypeId = null;
             if (positionName) {
                 var positions = this.positionTypeCollection.where({'name': positionName});
-                if (1 == positions.length){
+                if (1 === positions.length){
                     positionTypeId = (positions[0]).id;
                 }
             }
@@ -302,7 +302,7 @@ define([
             if (positionTypeId) {
                 // only add if entry doesn't already exist in user's position prefs
                 var posPrefs = this.positionCollection.where({'positionTypeId': positionTypeId});
-                if (0 == posPrefs.length)
+                if (0 === posPrefs.length)
                 {
                     var positionPref = new models.PositionPreference({
                         positionTypeId: positionTypeId
@@ -313,7 +313,7 @@ define([
 
             }
             this.positionInput.focus();
-        },
+        }
 
     });
 
@@ -392,7 +392,7 @@ define([
 
         render: function() {
             this.$el.children().remove();
-            if (0 == this.technologyCollection.length) {
+            if (0 === this.technologyCollection.length) {
                 this.addTechnologyHintView();
                 this.isHintRowVisible = true;
             }
@@ -457,7 +457,7 @@ define([
          */
         addTechnology: function() {
             var value = this.technologyInput.val();
-            if (value.toLowerCase() == this.lookupValue.toLowerCase()) {
+            if (value.toLowerCase() === this.lookupValue.toLowerCase()) {
                 // If this check passes, it implies that the value of this.lookupValue & this.lookupData
                 // are up-to-date and accurate.
                 this._add(this.lookupData);
@@ -498,7 +498,7 @@ define([
             if (technologyName) {
                 //only add if entry doesn't already exist in user's position prefs
                 var techPrefs = this.technologyCollection.where({'technologyId': data.id});
-                if (0 == techPrefs.length) {
+                if (0 === techPrefs.length) {
                     var technologyPref = new models.TechnologyPreference({
                         technologyId: data.id,
                         name: data.name,
@@ -509,7 +509,7 @@ define([
                 this.technologyInput.val("");
             }
             this.technologyInput.focus();
-        },
+        }
 
     });
 
@@ -588,7 +588,7 @@ define([
 
         render: function() {
             this.$el.children().remove();
-            if (0 == this.locationCollection.length) {
+            if (0 === this.locationCollection.length) {
                 this.addLocationHintView();
                 this.isHintRowVisible = true;
             }
@@ -653,7 +653,7 @@ define([
          */
         addLocation: function() {
             var value = this.locationInput.val();
-            if (value.toLowerCase() == this.lookupData.name.toLowerCase()) {
+            if (value.toLowerCase() === this.lookupData.name.toLowerCase()) {
                 // If this check passes, it implies that the value of this.lookupValue & this.lookupData
                 // are up-to-date and accurate.  This is to prevent a time-of-check versus time-of-use
                 // bug.  This could occur if the user had selected an option in from the drop down menu,
@@ -695,7 +695,7 @@ define([
             if (data) {
                 //only add if entry doesn't already exist in user's location prefs
                 var locationPrefs = this.locationCollection.where({'locationId': data.id});
-                if (0 == locationPrefs.length) {
+                if (0 === locationPrefs.length) {
                     var locationPref = new models.LocationPreference({
                         locationId: data.id,
                         city: data.city,
@@ -708,7 +708,7 @@ define([
                 this.locationInput.val("");
             }
             this.locationInput.focus();
-        },
+        }
 
     });
 
@@ -788,5 +788,5 @@ define([
 
         JobNotificationListView: JobNotificationListView,
         JobNotificationFormView: JobNotificationFormView
-    }
+    };
 });

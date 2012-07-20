@@ -4,7 +4,7 @@ define([
     'core/view',
     'text!chat/resource/templates/resource_document.html',
     'text!chat/resource/templates/resource_select.html',
-    'text!chat/resource/templates/resource_tab.html',
+    'text!chat/resource/templates/resource_tab.html'
 ], function(
     $,
     _,
@@ -17,7 +17,7 @@ define([
      * Resource View Events
      */
     var EVENTS = {
-        SELECT: 'resource:Select',
+        SELECT: 'resource:Select'
     };
 
     /**
@@ -36,7 +36,7 @@ define([
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
             return this;
-        },
+        }
     });
 
     /**
@@ -55,7 +55,7 @@ define([
         tagName: 'select',
 
         events: {
-            'change': 'onChangeEvent',
+            'change': 'onChangeEvent'
         },
         
         initialize: function() {
@@ -83,7 +83,7 @@ define([
             if(resource) {
                 this.$el.val(resource.id);
             }
-        },
+        }
     });
 
     /**
@@ -112,7 +112,7 @@ define([
 
             new ResourceSelectView({
                 el: this.$(this.resourceSelectSelector),
-                model: this.model,
+                model: this.model
             }).render();
 
             return this;
@@ -131,10 +131,10 @@ define([
                 if(resource) {
                     this.resourceViews[resource.id] = new ResourceDocumentView({
                         el: this.$(this.documentSelector),
-                        model: resource,
+                        model: resource
                     }).render();
 
-                    this.currentResourceView = this.resourceViews[resource.id]
+                    this.currentResourceView = this.resourceViews[resource.id];
                 }
             }
         }
@@ -143,6 +143,6 @@ define([
 
     return {
         EVENTS: EVENTS,
-        ChatResourcesTabView: ChatResourcesTabView,
+        ChatResourcesTabView: ChatResourcesTabView
     };
 });

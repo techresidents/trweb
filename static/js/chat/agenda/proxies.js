@@ -5,7 +5,7 @@ define([
     'chat/minute/models',
     'chat/minute/proxies',
     'topic/models',
-    'topic/proxies',
+    'topic/proxies'
 ], function(
     _,
     notifications,
@@ -37,7 +37,7 @@ define([
             //create and register topics proxy
             this.topicCollection = new topic_models.TopicCollection();
             this.topicsProxy = new topic_proxies.TopicsProxy({
-                collection: this.topicCollection,
+                collection: this.topicCollection
             });
             this.facade.registerProxy(this.topicsProxy);
             
@@ -47,7 +47,7 @@ define([
             this.minuteCollection.bind('add', this._onMinuteStarted, this);
             this.minuteCollection.bind('change:endTimestamp', this._onMinuteEnded, this);
             this.minutesProxy = new minute_proxies.ChatMinutesProxy({
-                collection: this.minuteCollection,
+                collection: this.minuteCollection
             });
             this.facade.registerProxy(this.minutesProxy);
         },
@@ -236,17 +236,17 @@ define([
             var that = this;
             _.each(minutes, function(minute) {
                 that.facade.trigger(notifications.MINUTE_END, {
-                    minute: minute,
+                    minute: minute
                 });
             });
-        },
+        }
 
     }, {
 
-        NAME: 'ChatAgendaProxy',
+        NAME: 'ChatAgendaProxy'
     });
 
     return {
-        ChatAgendaProxy: ChatAgendaProxy,
+        ChatAgendaProxy: ChatAgendaProxy
     };
 });

@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function(
     $,
     _,
@@ -22,7 +22,7 @@ define([
         defaults: function() {
             return {
                 markerId: null,
-                marker: null,
+                marker: null
             };
         },
         
@@ -46,17 +46,18 @@ define([
         toJSON: function() {
             var result = {
                 markerId: this.attributes.markerId,
-                marker: {},
+                marker: {}
             };
+            var key;
 
-            for(var key in this.defaults()) {
+            for(key in this.defaults()) {
                 if(key !== 'markerId') {
                     result.marker[key] = this.attributes[key];
                 }
             }
 
             return result;
-        },
+        }
 
     });
 
@@ -74,15 +75,15 @@ define([
                 markerId: null,
                 type: JoinedMarker.TYPE,
                 userId: null,
-                name: null,
+                name: null
             };
         },
 
         initialize: function(attributes, options) {
-        },
+        }
 
     }, {
-        TYPE: 'JOINED_MARKER',
+        TYPE: 'JOINED_MARKER'
     });
 
 
@@ -99,15 +100,15 @@ define([
                 markerId: null,
                 type: ConnectedMarker.TYPE,
                 userId: null,
-                isConnected: null,
+                isConnected: null
             };
         },
 
         initialize: function(attributes, options) {
-        },
+        }
 
     }, {
-        TYPE: 'CONNECTED_MARKER',
+        TYPE: 'CONNECTED_MARKER'
     });
 
 
@@ -124,15 +125,15 @@ define([
                 markerId: null,
                 type: PublishingMarker.TYPE,
                 userId: null,
-                isPublishing: null,
+                isPublishing: null
             };
         },
 
         initialize: function(attributes, options) {
-        },
+        }
 
     }, {
-        TYPE: 'PUBLISHING_MARKER',
+        TYPE: 'PUBLISHING_MARKER'
     });
 
 
@@ -149,15 +150,15 @@ define([
                 markerId: null,
                 type: SpeakingMarker.TYPE,
                 userId: null,
-                isSpeaking: null,
+                isSpeaking: null
             };
         },
 
         initialize: function(attributes, options) {
-        },
+        }
 
     }, {
-        TYPE: 'SPEAKING_MARKER',
+        TYPE: 'SPEAKING_MARKER'
     });
 
 
@@ -194,7 +195,7 @@ define([
             return result;
         },
 
-        localStorage: new Backbone.LocalStorage('MarkerCollection'),
+        localStorage: new Backbone.LocalStorage('MarkerCollection')
     });
 
     return {
@@ -203,6 +204,6 @@ define([
         ConnectedMarker: ConnectedMarker,
         JoinedMarker: JoinedMarker,
         PublishingMarker: PublishingMarker,
-        SpeakingMarker: SpeakingMarker,
+        SpeakingMarker: SpeakingMarker
     };
 });

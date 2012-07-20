@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
     
 
@@ -24,7 +24,7 @@ define([
                 selected: null,
                 active: null,
                 topics: null,
-                minutes: null,
+                minutes: null
             };
         },
         
@@ -66,11 +66,11 @@ define([
 
         activate: function(topic) {
             return this.set({active: topic});
-        },
+        }
 
     });
 
     return {
-        AgendaValueObject: AgendaValueObject,
+        AgendaValueObject: AgendaValueObject
     };
 });

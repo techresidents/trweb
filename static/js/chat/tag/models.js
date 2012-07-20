@@ -1,7 +1,7 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
     
     /**
@@ -21,7 +21,7 @@ define([
                 timestamp: null,
                 minuteId: null,
                 name: null,
-                tagReferenceId: null,
+                tagReferenceId: null
             };
         },
         
@@ -79,7 +79,7 @@ define([
             } else {
                 return null;
             }
-        },
+        }
     });
 
 
@@ -88,11 +88,11 @@ define([
      */
     var TagCollection = Backbone.Collection.extend({
 
-        model: Tag,
+        model: Tag
     });
 
     return {
         Tag: Tag,
-        TagCollection: TagCollection,
+        TagCollection: TagCollection
     };
 });

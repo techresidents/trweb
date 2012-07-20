@@ -3,7 +3,7 @@ define([
     'common/notifications',
     'core/mediator',
     'alert/models',
-    'alert/views',
+    'alert/views'
 ], function(
     _,
     notifications,
@@ -15,7 +15,7 @@ define([
         name: 'AlertMediator',
         
         notifications: [
-            [notifications.ALERT, 'onAlert'],
+            [notifications.ALERT, 'onAlert']
         ],
 
         initialize: function(options) {
@@ -25,18 +25,18 @@ define([
             var view = new alert_views.AlertView({
                 model: new alert_models.AlertValueObject({
                     severity: notification.severity,
-                    message: notification.message,
+                    message: notification.message
                 })
             });
 
             this.facade.trigger(notifications.VIEW_CREATED, {
                 type: 'AlertView',
-                view: view,
+                view: view
             });
-        },
+        }
     });
 
     return {
-        AlertMediator: AlertMediator,
-    }
+        AlertMediator: AlertMediator
+    };
 });

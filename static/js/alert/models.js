@@ -1,14 +1,14 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone',
+    'Backbone'
 ], function($, _, Backbone) {
 
     var SEVERITY = {
         DEBUG: 'debug',
         INFO: 'info',
         WARNING: 'warning',
-        ERROR: 'error',
+        ERROR: 'error'
     };
     
     /**
@@ -22,7 +22,7 @@ define([
         defaults: function() {
             return {
                 severtity: SEVERITY.INFO,
-                message: null,
+                message: null
             };
         },
 
@@ -42,12 +42,12 @@ define([
         setMessage: function(message) {
             this.set({ message: message });
             return this;
-        },
+        }
     });
 
 
     return {
         SEVERITY: SEVERITY,
-        AlertValueObject: AlertValueObject,
-    }
+        AlertValueObject: AlertValueObject
+    };
 });

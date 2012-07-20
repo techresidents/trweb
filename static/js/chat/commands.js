@@ -5,7 +5,7 @@ define([
     'chat/proxies',
     'chat/agenda/proxies',
     'chat/minute/models',
-    'chat/minute/proxies',
+    'chat/minute/proxies'
 ], function(
     _,
     notifications,
@@ -122,7 +122,7 @@ define([
                 this.facade.trigger(notifications.CHAT_START);
             }
             return true;
-        },
+        }
     });
 
     /**
@@ -156,6 +156,6 @@ define([
         ChatStartCommand: ChatStartCommand,
         ChatEndCommand: ChatEndCommand,
         ChatEndedCommand: ChatEndedCommand,
-        ChatNextTopicCommand: ChatNextTopicCommand,
+        ChatNextTopicCommand: ChatNextTopicCommand
     };
 });

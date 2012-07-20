@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'core/base',
+    'core/base'
 ], function($, _, Backbone, base) { 
 
     var NotificationBus = function(options) {
@@ -26,10 +26,10 @@ define([
 
         trigger: function(notifications) {
             return this._events.trigger(arguments);
-        },
+        }
     });
 
     return {
-        bus: new NotificationBus(),
+        bus: new NotificationBus()
     };
 });

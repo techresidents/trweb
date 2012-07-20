@@ -5,7 +5,7 @@ define([
     'spin',
     'text!chat/user/templates/user.html',
     'text!chat/user/templates/user_header.html',
-    'text!chat/user/templates/user_footer.html',
+    'text!chat/user/templates/user_footer.html'
 ], function(
     $,
     _,
@@ -31,7 +31,7 @@ define([
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
             return this;
-        },
+        }
 
     });
 
@@ -53,7 +53,7 @@ define([
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
             return this;
-        },
+        }
 
     });
 
@@ -106,7 +106,6 @@ define([
             //re-render it.
             if(!this.user.isConnected()) {
                 this.$el.html(this.template(this.model.toJSON()));
-                this.$el.addClass(this.css);
                 if(this.user.isCurrentUser()) {
                     this.spinner = new spin.Spinner({left: 200, top: 100}).spin(this.el);
                 }
@@ -128,7 +127,7 @@ define([
             
             //add style indicating number of chat participants.
             //this is useful for sizing the view through css
-            if(this.usersLength != this.users.length) {
+            if(this.usersLength !== this.users.length) {
                 this.$el.removeClass('chat-participants' + this.usersLength);
 
                 this.usersLength = this.users.length;
@@ -148,14 +147,14 @@ define([
             return {
                 elementId: 'participant' + this.user.participant(),
                 width: container.width(),
-                height: container.height(),
+                height: container.height()
             };
 
-        },
+        }
     });
 
 
     return {
-        ChatUserView: ChatUserView,
-    }
+        ChatUserView: ChatUserView
+    };
 });

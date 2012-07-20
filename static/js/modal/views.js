@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'core/view',
-    'text!modal/templates/modal.html',
+    'text!modal/templates/modal.html'
 ], function($, _, view, modal_template) {
 
     /**
@@ -12,7 +12,7 @@ define([
         CLOSE: 'modal:Close',
         OK: 'modal:Ok',
         SAVE: 'modal:Save',
-        CANCEL: 'modal:Cancel',
+        CANCEL: 'modal:Cancel'
     };
 
     /**
@@ -32,7 +32,7 @@ define([
             'click .close': 'onClose',
             'click .ok': 'onOk',
             'click .save': 'onSave',
-            'click .cancel': 'onCancel',
+            'click .cancel': 'onCancel'
         },
 
         initialize: function(options) {
@@ -40,8 +40,8 @@ define([
             this.view = options.view;
             this.title = options.title;
             this.buttonMask = options.buttonMask || 0;
-            this.exitOnBackdropClick = options.exitOnBackdropClick != undefined ? options.exitOnBackdropClick : true;
-            this.exitOnEscapeKey = options.exitOnEscapeKey != undefined ? options.exitOnEscapeKey : true;
+            this.exitOnBackdropClick = options.exitOnBackdropClick !== undefined ? options.exitOnBackdropClick : true;
+            this.exitOnEscapeKey = options.exitOnEscapeKey !== undefined ? options.exitOnEscapeKey : true;
         },
 
         render: function() {
@@ -50,7 +50,7 @@ define([
                 showClose: _.isFunction(this.view.onClose),
                 showCancel: _.isFunction(this.view.onCancel),
                 showOk: _.isFunction(this.view.onOk),
-                showSave: _.isFunction(this.view.onSave),
+                showSave: _.isFunction(this.view.onSave)
             };
 
             this.$el.html(this.template(state));
@@ -60,7 +60,7 @@ define([
             this.$el.modal({
                 backdrop: this.exitOnBackdropClick ? true : 'static',
                 keyboard: this.exitOnEscapeKey ? true : false,
-                show: true,
+                show: true
             });
 
             return this;
@@ -96,12 +96,12 @@ define([
                 this.triggerEvent(EVENTS.CANCEL);
                 this.$el.remove();
             }
-        },
+        }
 
     });
     
     return {
         EVENTS: EVENTS,
-        ModalView: ModalView,
+        ModalView: ModalView
     };
 });

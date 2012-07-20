@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'timer/util',
+    'timer/util'
 ], function($, _, Backbone, util) {
     
 
@@ -94,10 +94,10 @@ define([
             }
 
             this.$el.text(util.formatTimer(remaining));
-        },
+        }
     });
 
     return {
-        DurationTimerView: DurationTimerView,
+        DurationTimerView: DurationTimerView
     };
 });

@@ -13,7 +13,7 @@ define([
     'chat/tag/proxies',
     'chat/whiteboard/models',
     'chat/whiteboard/proxies',
-    'resource/models',
+    'resource/models'
 ], function(
     proxy,
     agenda_proxies,
@@ -56,7 +56,7 @@ define([
                 sessionId: options.chatSessionId,
                 apiKey: options.chatAPIKey,
                 sessionToken: options.chatSessionToken,
-                userToken: options.chatUserToken,
+                userToken: options.chatUserToken
             });
             this.chatSessionProxy.getUsersProxy().reset(options.users);
             this.facade.registerProxy(this.chatSessionProxy);
@@ -66,7 +66,7 @@ define([
             this.chatMessagesProxy = new message_proxies.ChatMessagesProxy({
                 collection: new message_models.ChatMessageCollection(null, {
                     chatSessionToken: options.chatSessionToken,
-                    userId: this.chatSessionProxy.getCurrentUser().id,
+                    userId: this.chatSessionProxy.getCurrentUser().id
                 })
             });
 
@@ -164,16 +164,16 @@ define([
             while(this.isActive()) {
                 this.chatAgendaProxy.activateNext();
             }
-        },
+        }
 
     }, {
 
-        NAME: 'ChatProxy',
+        NAME: 'ChatProxy'
 
     });
 
     return {
-        ChatProxy: ChatProxy,
+        ChatProxy: ChatProxy
     };
    
 });

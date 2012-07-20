@@ -4,11 +4,11 @@ require.config({
         jQuery: 'loader/jquery',
         Underscore: 'loader/underscore',
         Backbone: 'loader/backbone',
-        easyXDM: 'loader/easyXDM',
+        easyXDM: 'loader/easyXDM'
     }
 });
 
 require([
-    'apps/profile/profile',
+    'apps/profile/profile'
 ], function() {
 });
