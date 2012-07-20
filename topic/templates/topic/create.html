@@ -5,117 +5,115 @@
 {% block title %}Tech Residents Topic{% endblock %}
 
 {% block extrahead %}
-<link href="{% static "css/topic.css" %}" rel="stylesheet">
-<script>
-    var require = {
-        baseUrl: '/static/js'
-    };
-</script>
-<script data-main="{%static "js/apps/topic/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
+    <link href="{% static "css/topic.css" %}" rel="stylesheet">
 {%endblock %}
 
 {% block content %}
 
-<div class="container">
-    <div class="row">
-        <div class="span3">
-        </div>
-        <div class="span9">
-            <div id="topicapp">
-                <div class="page-header">
-                    <h1>Create Topic</h1>
-                </div>
-                <div class="page-header control-group topic">
-                    <h3>Discussion</h3>
-                    <div class="controls"/>
-                        <input id="root-topic-input" class="span4"/>
+    <div class="container">
+        <div class="row">
+            <div class="span3">
+            </div>
+            <div class="span9">
+                <div id="topicapp">
+                    <div class="page-header">
+                        <h1>Create Topic</h1>
+                    </div>
+                    <div class="page-header control-group topic">
+                        <h3>Discussion</h3>
+                        <div class="controls"/>
+                            <input id="root-topic-input" class="span4"/>
+                        </div>
+                    </div>
+                    <div class="page-header" id="topic-add">
+                        <h3>Topics</h3>
+                        <input id="topic-input" class="span4"/>
+                        <button class="btn btn-input">Add</button>
+                    </div>
+
+                    <div class="well">
+                        <ul id="topic-list" class="unstyled">
+                        </ul>
+                    </div>
+                    <div id="topic-buttons">
+                        <a id="agend-edit-button" class="btn btn-small">
+                            <i class="icon-pencil"></i>
+                            Edit
+                        </a>
+                        <a id="topic-up-button" class="btn btn-small">
+                            <i class="icon-arrow-up"></i>
+                            Up
+                        </a>
+                        <a id="topic-down-button" class="btn btn-small">
+                            <i class="icon-arrow-down"></i>
+                            Down
+                        </a>
+                        <a id="topic-left-button" class="btn btn-small">
+                            <i class="icon-arrow-left"></i>
+                            Left
+                        </a>
+                        <a id="topic-right-button" class="btn btn-small">
+                            <i class="icon-arrow-right"></i>
+                            Right
+                        </a>
+                        <a id="topic-remove-button" class="btn btn-small">
+                            <i class="icon-remove"></i>
+                            Remove
+                        </a>
+                    </div>
+                    <div class="form-actions">
+                        <form id="topic-form" class="form-vertical" method="post" action="{% url 'topic.views.create' %}">
+                            {% csrf_token %}
+                            <input id="topic-form-input" type="hidden" name="topics"/>
+
+                            <div class="controls">
+                                <input type="submit" value="Submit" class="btn btn-primary" />
+                            </div>
+
+                            {% if form.non_field_errors %}
+                                <div class="controls alert alert-error">
+                                    {% for error in form.non_field_errors%}
+                                        <span>{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </form>
                     </div>
                 </div>
-                <div class="page-header" id="topic-add">
-                    <h3>Topics</h3>
-                    <input id="topic-input" class="span4"/>
-                    <button class="btn btn-input">Add</button>
-                </div>
-
-                <div class="well">
-                    <ul id="topic-list" class="unstyled">
-                    </ul>
-                </div>
-                <div id="topic-buttons">
-                    <a id="agend-edit-button" class="btn btn-small">
-                        <i class="icon-pencil"></i>
-                        Edit
-                    </a>
-                    <a id="topic-up-button" class="btn btn-small">
-                        <i class="icon-arrow-up"></i>
-                        Up
-                    </a>
-                    <a id="topic-down-button" class="btn btn-small">
-                        <i class="icon-arrow-down"></i>
-                        Down 
-                    </a>
-                    <a id="topic-left-button" class="btn btn-small">
-                        <i class="icon-arrow-left"></i>
-                        Left
-                    </a>
-                    <a id="topic-right-button" class="btn btn-small">
-                        <i class="icon-arrow-right"></i>
-                        Right
-                    </a>
-                    <a id="topic-remove-button" class="btn btn-small">
-                        <i class="icon-remove"></i>
-                        Remove
-                    </a>
-                </div>
-                <div class="form-actions">
-                    <form id="topic-form" class="form-vertical" method="post" action="{% url 'topic.views.create' %}">
-                        {% csrf_token %}
-                        <input id="topic-form-input" type="hidden" name="topics"/>
-
-                        <div class="controls">
-                            <input type="submit" value="Submit" class="btn btn-primary" />
-                        </div>
-
-                        {% if form.non_field_errors %}
-                            <div class="controls alert alert-error">
-                                {% for error in form.non_field_errors%}
-                                    <span>{{error}}</span>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </form>
-                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- TODO: add proper escapejs filter that works with json -->
+    <!-- TODO: add proper escapejs filter that works with json -->
+    {% autoescape off %}
+    <script>
+        var data =  {
+            topic_json: {{topic_json}}
+        };
+    </script>
+    {% endautoescape %}
 
-{% autoescape off %}
-<script>
-    var data =  {
-        topic_json: {{topic_json}}
-    };
-</script>
-{% endautoescape %}
+    <!-- Templates -->
+    <script type="text/template" id="topic-template">
+        <div>
+            <a class="toggle-expanded btn btn-tiny">
+                <i class="<%= expanded == true ? 'icon-minus' : 'icon-plus' %>"></i>
+            </a>
+            <strong><span class="level<%= level %>"><%- title %> </span></strong>
+            <% if(expanded) { %>
+                <div class="level<%= level+2 %>">
+                <p> <%- description %> </p>
+                </div>
+            <% } else { %>
+            <% } %>
+        </div>
+    </script>
 
-
-<!-- Templates -->
-
-<script type="text/template" id="topic-template">
-    <div>
-        <a class="toggle-expanded btn btn-tiny">
-            <i class="<%= expanded == true ? 'icon-minus' : 'icon-plus' %>"></i>
-        </a>
-        <strong><span class="level<%= level %>"><%= title %> </span></strong>
-        <% if(expanded) { %>
-            <div class="level<%= level+2 %>">
-            <p> <%= description %> </p>
-            </div>
-        <% } else { %>
-        <% } %>
-    </div>
-</script>
+    <script>
+        var require = {
+            baseUrl: '/static/js'
+        };
+    </script>
+    <script data-main="{%static "js/apps/topic/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
 
 {% endblock %}
