@@ -7,21 +7,6 @@
 
 {% block extrahead %}
     <link href="{% static "css/profile_jobs.css" %}" rel="stylesheet">
-
-    {% autoescape off %}
-        <script>
-            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
-        </script>
-    {% endautoescape %}
-
-    <script>
-        var require = {
-            baseUrl: '/static/js'
-        };
-    </script>
-
-    <script data-main="{% static "js/apps/profile/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
-
 {%endblock %}
 
 {% block content %}
@@ -126,7 +111,7 @@
     {% autoescape off %}
         <script>
             var data = {{json_skills}};
-            var app = {'name':'skills'}
+            var app = {'name':'skills'};
         </script>
     {% endautoescape %}
 
@@ -162,5 +147,20 @@
             <a class="close">x</a>
         </td>
     </script>
+
+    {% autoescape off %}
+        <script>
+            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
+        </script>
+    {% endautoescape %}
+
+    <script>
+        var require = {
+            baseUrl: '/static/js'
+        };
+    </script>
+
+    <script data-main="{% static "js/apps/profile/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
+
 
 {% endblock %}

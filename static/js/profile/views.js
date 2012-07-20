@@ -135,7 +135,7 @@ define([
             var skillName = this.skillInput.val();
             if (skillName) {
                 // only add if entry doesn't exist
-                if (null === this.skillCollection.get(skillName))
+                if (!this.skillCollection.get(skillName))
                 {
                     var skill = new models.Skill({
                         name: skillName,
@@ -290,7 +290,6 @@ define([
 
         addPosition: function() {
             var positionName = this.positionInput.val();
-            console.log(positionName);
             var positionTypeId = null;
             if (positionName) {
                 var positions = this.positionTypeCollection.where({'name': positionName});

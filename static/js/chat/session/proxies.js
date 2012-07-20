@@ -202,7 +202,6 @@ define([
             var id = connectionData.id;
             var user = this.usersProxy.get(id);
             if(!user) {
-                console.log(connectionData);
                 this.usersProxy.add(connectionData);
                 user = this.usersProxy.get(id);
             }
