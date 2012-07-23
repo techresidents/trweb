@@ -25,8 +25,10 @@ define([
             };
         },
 
-        initialize: function(attributes) {
-            if(!this.id) {
+        initialize: function() {
+            if(this.id === null ||
+               this.id === undefined)
+            {
                 this.set({ id: this.cid });
             }
         },
