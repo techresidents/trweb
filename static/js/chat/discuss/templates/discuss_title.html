@@ -1,13 +1,13 @@
 <% if(activeTopic) { %>
     <div class="span9">
         <h3 class="discuss-title-text">
-            Discuss:  &nbsp;&nbsp; <em> <%= rootTopic.title %> - <%= activeTopic.title %> </em>
+            Discuss:  &nbsp;&nbsp; <em> <%= activeTopic.title %> </em>
         </h3>
     </div>
 <% } else if(nextTopic) { %>
     <div class="span9">
         <h3 class="discuss-title-text">
-            Discuss:  &nbsp;&nbsp; <em> <%= rootTopic.title %> - <%= nextTopic.title %> </em>
+            Discuss:  &nbsp;&nbsp; <em> <%= nextTopic.title %> </em>
         </h3>
     </div>
 <% } else { %>

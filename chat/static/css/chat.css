@@ -120,12 +120,13 @@
 }
 
 #agenda-list .active {
-  color: #aaaaaa;
+  color: #EA8F00;
+  font-weight: bold;
   text-decoration: none;
 }
 
 #agenda-list .selected.active {
-  color: #aaaaaa;
+  color: #EA8F00;
   text-decoration: none;
   background-color: #0088cc;
 }
