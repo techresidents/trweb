@@ -25,8 +25,8 @@ define([
             };
         },
 
-        initialize: function() {
-            if(this.get('id') === null) {
+        initialize: function(attributes) {
+            if(!this.id) {
                 this.set({ id: this.cid });
             }
         },
