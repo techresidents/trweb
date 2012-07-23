@@ -183,6 +183,8 @@ define([
     var TopicAddView = Backbone.View.extend({
 
         el: $('#topic-add'),
+        topicTitleSelector: $('#topic-input'),
+        topicDescriptionSelector: $('#topic-description-input'),
 
         events: {
             'click button': 'addTopic',
@@ -191,26 +193,30 @@ define([
 
         initialize: function() {
             this.topicCollection = this.options.topicCollection;
-            this.topicInput = this.$('#topic-input');
+            this.topicTitleInput = this.$(this.topicTitleSelector);
+            this.topicDescriptionInput = this.$(this.topicDescriptionSelector);
         },
 
         addTopic: function() {
-            var title = this.topicInput.val();
+            var title = this.topicTitleInput.val();
+            var description = this.topicDescriptionInput.val();
             
             if(title) {
                 var topic = new models.Topic({
                         parentId: 0,
                         title: title,
+                        description: description,
                         rank: this.topicCollection.length,
                         expanded: true
                 });
 
                 this.topicCollection.add(topic);
 
-                this.topicInput.val('');
-                this.topicInput.focus();
+                this.topicTitleInput.val('');
+                this.topicDescriptionInput.val('');
+                this.topicTitleInput.focus();
             } else {
-                this.topicInput.focus();
+                this.topicTitleInput.focus();
             }
 
         },
