@@ -185,6 +185,7 @@ define([
         el: $('#topic-add'),
         topicTitleSelector: $('#topic-input'),
         topicDescriptionSelector: $('#topic-description-input'),
+        topicDurationSelector: $('#topic-duration-input'),
 
         events: {
             'click button': 'addTopic',
@@ -195,17 +196,20 @@ define([
             this.topicCollection = this.options.topicCollection;
             this.topicTitleInput = this.$(this.topicTitleSelector);
             this.topicDescriptionInput = this.$(this.topicDescriptionSelector);
+            this.topicDurationInput = this.$(this.topicDurationSelector);
         },
 
         addTopic: function() {
             var title = this.topicTitleInput.val();
             var description = this.topicDescriptionInput.val();
+            var duration = this.topicDurationSelector.val();
             
             if(title) {
                 var topic = new models.Topic({
                         parentId: 0,
                         title: title,
                         description: description,
+                        duration: duration,
                         rank: this.topicCollection.length,
                         expanded: true
                 });
@@ -214,6 +218,7 @@ define([
 
                 this.topicTitleInput.val('');
                 this.topicDescriptionInput.val('');
+                this.topicDurationInput.val(5);
                 this.topicTitleInput.focus();
             } else {
                 this.topicTitleInput.focus();
