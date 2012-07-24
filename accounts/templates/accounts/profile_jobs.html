@@ -78,6 +78,9 @@
                                     <div id="position-add" class="input-append">
                                         <select id="position-input">
                                             {% for option in position_names %}
+                                                {% if forloop.first %}
+                                                    <option value="" disabled="disabled" selected="selected">Select your option</option>
+                                                {% endif %}
                                                 <option value={{ option }}>{{ option }}</option>
                                             {% endfor %}
                                         </select>
