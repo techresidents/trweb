@@ -203,6 +203,10 @@ define([
             var title = this.topicTitleInput.val();
             var description = this.topicDescriptionInput.val();
             var duration = this.topicDurationSelector.val();
+
+            if (description.length === 0){
+                description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet rhoncus eros. Proin ut dolor neque, quis pretium massa. In facilisis interdum tortor. Proin fermentum dignissim lorem. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.';
+            }
             
             if(title) {
                 var topic = new models.Topic({
