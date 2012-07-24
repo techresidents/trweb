@@ -72,6 +72,7 @@ class RegisterUserForm(forms.ModelForm):
     def __init__(self, request=None, account_request_code=None, *args, **kwargs):
         self.request = request
         self.account_request_code = account_request_code
+        self.user = None
         super(RegisterUserForm, self).__init__(*args, **kwargs)
     
     def clean_username(self):
@@ -116,6 +117,12 @@ class RegisterUserForm(forms.ModelForm):
             user_profile.timezone = self.cleaned_data['timezone']
             user_profile.save()
 
+
+        #Authenticate user so they can be logged in using
+        #the returned user object.
+        user = auth.authenticate(
+                username=self.cleaned_data['username'],
+                password=self.cleaned_data['password'])
         return user
 
     def create_registration_code(self, registration_code=None):
