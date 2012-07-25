@@ -206,6 +206,12 @@
     padding-bottom: 10px;
 }
 
+.discuss-description-text {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 55px;
+}
+
 #discussion-tagger {
     margin-top: 65px;
 }
