@@ -95,11 +95,14 @@ def register(request, account_request_code=None):
         user_form = forms.RegisterUserForm(request, account_request_code, data=request.POST)
 
         if user_form.is_valid():
-            user_form.save()
+            user = user_form.save()
+
+            #login the new user
+            auth.login(request, user)
 
             #Only sending email validation if registration is not being
             #done with an account request code. If registering with
-            #account requet code, we've already validated email.
+            #account request code, we've already validated email.
             if account_request_code is None:
                 text_template = get_template('accounts/registration_email.txt')
                 html_template = get_template('accounts/registration_email.html')
@@ -110,8 +113,7 @@ def register(request, account_request_code=None):
                         html_template = html_template
                         )
             
-            #TODO should user be authenticated and send to home page
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
     else:
         user_form = forms.RegisterUserForm(request, account_request_code, initial={'timezone': settings.TIME_ZONE})
     

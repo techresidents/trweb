@@ -12,7 +12,7 @@
 }
 
 .chat-participant-container.speaking {
-    border-width: 8px;
+    border-width: 5px;
 }
 
 
@@ -120,23 +120,27 @@
 }
 
 #agenda-list .active {
-  color: #aaaaaa;
+  color: #EA8F00;
+  font-weight: bold;
   text-decoration: none;
 }
 
 #agenda-list .selected.active {
-  color: #aaaaaa;
+  color: #EA8F00;
   text-decoration: none;
   background-color: #0088cc;
 }
 
 #agenda-list .level1 {
   margin-left: 5px;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 
 #agenda-list .level2 {
   margin-left: 15px;
+  font-size: 14px;
 }
 
 
@@ -189,10 +193,6 @@
     background-color: #2A73A7;
 }
 
-.chat-user-container.speaking {
-    border-width: 8px;
-}
-
 
 /* make so that it includes well */
 .chat-well {
@@ -207,6 +207,14 @@
     border-color: #000000;
     margin-left: 0px;
     padding-bottom: 10px;
+}
+
+.discuss-description-text {
+    text-align:justify;
+    text-justify:distribute;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 55px;
 }
 
 #discussion-tagger {

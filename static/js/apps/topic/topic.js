@@ -11,14 +11,22 @@ $(document).ready(function() {
     var TopicAppView = Backbone.View.extend({
 
         el: $('#topicapp'),
+        rootTopicTitleSelector: $('#root-topic-input'),
+        rootTopicDescriptionSelector: $('#root-topic-description-input'),
+        rootTopicDurationSelector: $('#root-topic-duration-input'),
+        topicsFormInputSelector: $('#topics-form-input'),
 
         events : {
-            'blur #root-topic-input' : 'rootTopicChanged'
+            'blur #root-topic-input' : 'rootTopicChanged',
+            'blur #root-topic-description-input' : 'rootTopicDescriptionChanged',
+            'blur #root-topic-duration-input' : 'rootTopicDurationChanged'
         },
 
         initialize: function() {
-            this.topicInput = this.$('#root-topic-input');
-            this.topicsFormInput = this.$('#topics-form-input');
+            this.topicInput = this.$(this.rootTopicTitleSelector);
+            this.rootTopicDescriptionInput = this.$(this.rootTopicDescriptionSelector);
+            this.rootTopicDurationInput = this.$(this.rootTopicDurationSelector);
+            this.topicsFormInput = this.$(this.topicsFormInputSelector);
 
             this.topicCollection = new models.TopicCollection();
             this.topicCollection.bind('reset', this.reset, this);
@@ -38,6 +46,7 @@ $(document).ready(function() {
                 var rootTopic = new models.Topic({
                             id: 0,
                             parentId: null,
+                            duration: this.rootTopicDurationInput.val(),
                             level: 0,
                             rank: 0
                 });
@@ -54,6 +63,16 @@ $(document).ready(function() {
         rootTopicChanged: function() {
             var topic = this.topicCollection.at(0);
             topic.set({ title: this.topicInput.val() });
+        },
+
+        rootTopicDescriptionChanged: function() {
+            var topic = this.topicCollection.at(0);
+            topic.set({ description: this.rootTopicDescriptionInput.val() });
+        },
+
+        rootTopicDurationChanged: function() {
+            var topic = this.topicCollection.at(0);
+            topic.set({ duration: this.rootTopicDurationInput.val() });
         }
     });
 
