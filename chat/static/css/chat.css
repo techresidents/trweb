@@ -12,7 +12,7 @@
 }
 
 .chat-participant-container.speaking {
-    border-width: 8px;
+    border-width: 5px;
 }
 
 
@@ -188,10 +188,6 @@
 
 .chat-background {
     background-color: #2A73A7;
-}
-
-.chat-user-container.speaking {
-    border-width: 8px;
 }
 
 
