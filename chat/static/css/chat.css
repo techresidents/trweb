@@ -113,6 +113,10 @@
     border-color: #231F20;
 }
 
+.chat-tabs {
+    min-height: 675px;
+}
+
 #agenda-list {
     height: 200px;
     overflow-y: auto;
