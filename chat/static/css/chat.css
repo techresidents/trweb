@@ -3,6 +3,15 @@
     padding-bottom: 30px;
 }
 
+.chat-footer .container .footer,
+.chat-footer .container .footer span,
+.chat-footer .container .footer a {
+    color: #FFFFFF;
+}
+.chat-footer .container .footer a {
+    text-decoration: underline;
+}
+
 .chat-person-logo {
     background-image: url("../img/person.png");
     background-repeat: no-repeat;
@@ -192,7 +201,6 @@
 .chat-background {
     background-color: #2A73A7;
 }
-
 
 /* make so that it includes well */
 .chat-well {
