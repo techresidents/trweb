@@ -308,6 +308,10 @@
     display:inline;
 }
 
+.whiteboard-btn-group {
+    margin-bottom: 20px;
+}
+
 #whiteboard-wrapper {
     padding: 0px;
     cursor: pointer;
