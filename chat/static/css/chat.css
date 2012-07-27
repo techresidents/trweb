@@ -301,7 +301,8 @@
 }
 
 #whiteboard-wrapper {
-    padding: 0px
+    padding: 0px;
+    cursor: pointer;
 }
 
 #whiteboard-tools-well {
