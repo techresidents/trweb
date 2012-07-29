@@ -9,16 +9,15 @@
             <%- activeTopic.description %>
         </p>
     </div>
-<% } else if(nextTopic) { %>
-    <div class="span9">
-        <h3 class="discuss-title-text">
-            Discuss:  &nbsp; <em> <%= nextTopic.title %> </em>
-        </h3>
-    </div>
 <% } else { %>
     <div class="span9">
         <h3 class="discuss-title-text">
-            Discuss:  &nbsp; <em> <%= rootTopic.title %> </em>
+            Today's Chat: &nbsp; <em> <%= rootTopic.title %> </em>
         </h3>
+    </div>
+    <div class="span7">
+        <p class="discuss-description-text">
+            To start the chat press 'Start' when all participants are ready.
+        </p>
     </div>
 <% } %>
