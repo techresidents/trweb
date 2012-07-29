@@ -240,7 +240,11 @@
 .discuss-time-text {
     font-weight: bold;
     font-size: 20px;
-    line-height: 45px;
+    line-height: 20px;
+}
+
+#discuss-timer {
+    margin-bottom: 15px;
 }
 
 #discuss-timer.expired {
