@@ -206,7 +206,7 @@
     background-color: #2A73A7;
 }
 
-/* make so that it includes well */
+/* TODO make so that it includes well */
 .chat-well {
     background-color: #FFFFFF;
     border-color: #000000;
@@ -224,6 +224,7 @@
     border-color: #000000;
     margin-left: 0px;
     padding-bottom: 10px;
+    padding-top: 6px;
 }
 
 .discuss-description-text {
