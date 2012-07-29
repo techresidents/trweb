@@ -146,14 +146,16 @@
 
 #agenda-list .level1 {
   margin-left: 5px;
-  font-size: 16px;
+  font-size: 18px;
+  line-height: 27px;
   font-weight: bold;
 }
 
 
 #agenda-list .level2 {
   margin-left: 15px;
-  font-size: 14px;
+  font-size: 15px;
+  line-height: 21px;
 }
 
 
