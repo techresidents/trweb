@@ -214,6 +214,11 @@
     margin-bottom: 7px;
 }
 
+
+.discuss-content {
+    padding-left: 55px;
+}
+
 .discuss-controls-well {
     background-color: #FFFFFF;
     border-color: #000000;
@@ -226,7 +231,6 @@
     text-justify:distribute;
     padding-top: 15px;
     padding-bottom: 15px;
-    padding-left: 55px;
 }
 
 #discussion-tagger {
