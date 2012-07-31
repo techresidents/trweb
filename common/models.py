@@ -10,7 +10,6 @@ class TopicManager(TreeManager):
     def create_topic_tree(self, user, topics):
         return self.create_tree(topics)
 
-
 class Concept(models.Model):
     """Concept model."""
     class Meta:

@@ -1,3 +1,5 @@
+import base64
+
 from django.db import connection, models, transaction
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -48,8 +50,6 @@ class ChatSessionManager(models.Manager):
                 pass
 
         return result;
-
-
 
 class ChatType(models.Model):
     class Meta:
@@ -123,7 +123,6 @@ class Chat(models.Model):
         if self.end < timezone.now():
             result = True
         return result
-
 
 class ChatRole(models.Model):
     class Meta:
@@ -199,3 +198,79 @@ class ChatScheduleJob(models.Model):
     start = models.DateTimeField(auto_now_add=True)
     end = models.DateTimeField(null=True)
 
+
+
+
+class ChatPersistJob(models.Model):
+    """ Represents a job queue for work to be completed by the
+        chat persistence service.
+    """
+    class Meta:
+        db_table = "chat_persist_job"
+
+    chat_session = models.ForeignKey(ChatSession, related_name="+")
+    created = models.DateTimeField(auto_now_add=True)
+    start = models.DateTimeField(null=True)
+    end = models.DateTimeField(null=True)
+    owner = models.CharField(null=True, max_length=1024)
+
+class ChatMessageType(models.Model):
+    """ Represents a chat message type.
+    """
+    class Meta:
+        db_table = "chat_message_type"
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1024)
+
+class ChatMessageFormatType(models.Model):
+    """ Represents a chat message format.
+
+        Chat message binary blobs are persisted within
+        the ChatMessage model.  This entity identifies
+        the format of the persisted binary data.
+    """
+    class Meta:
+        db_table = "chat_message_format_type"
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1024)
+
+class ChatMessageManager(models.Manager):
+    """ Custom Chat Message Manager.
+
+        Clients reading chat messages from the db
+        will most likely only need chat message data
+        in one format.  This manager provides methods
+        to make accessing the supported formats easier.
+    """
+    def json(self):
+        return self.get_query_set().filter(type__name='JSON')
+
+    def thrift(self):
+        return self.get_query_set().filter(type__name='THRIFT')
+
+class ChatMessage(models.Model):
+    """ Represents a chat message.
+
+        Chat messages have associated types and formats.
+        The type is used to determine what purpose the
+        message had; the format is used to determine how
+        the binary message is stored.
+    """
+    class Meta:
+        db_table = "chat_message"
+
+    objects = ChatMessageManager()
+
+    chat_session = models.ForeignKey(ChatSession, related_name="chat_messages")
+    type = models.ForeignKey(ChatMessageType)
+    format_type = models.ForeignKey(ChatMessageFormatType)
+    timestamp = models.DateTimeField()
+    _data = models.TextField()
+
+    def set_data(self, data):
+        self._data = base64.encodestring(data)
+
+    def get_data(self):
+        return base64.decodestring(self._data)
+
+    data = property(get_data, set_data)
