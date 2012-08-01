@@ -278,6 +278,6 @@ class ChatMessage(models.Model):
     chat_session = models.ForeignKey(ChatSession, related_name="chat_messages")
     type = models.ForeignKey(ChatMessageType)
     format_type = models.ForeignKey(ChatMessageFormatType)
-    timestamp = models.DecimalField()
+    timestamp = models.FloatField()
     time = models.DateTimeField()
     data = models.TextField()
