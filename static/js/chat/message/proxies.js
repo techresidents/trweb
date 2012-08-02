@@ -39,7 +39,7 @@ define([
                 'WHITEBOARD_CREATE_PATH': notifications.MESSAGE_WHITEBOARD_CREATE_PATH,
                 'WHITEBOARD_DELETE_PATH': notifications.MESSAGE_WHITEBOARD_DELETE_PATH
             };
-
+            this.longPollTimeoutMs = options.longPollTimeoutMs || 20000;
             this.longPollErrorDelayMs = options.longPollErrorDelayMs || 10000;
 
             //define long poll callback outside of longPoll function
@@ -63,7 +63,12 @@ define([
          * Start long polling for chat messages
          */
         longPoll: function() {
-            this.collection.fetch({add: true, silent: false, complete: this.longPollCallback});
+            this.collection.fetch({
+                add: true,
+                silent: false,
+                complete: this.longPollCallback,
+                timeout: this.longPollTimeoutMs
+            });
         },
         
         /**
