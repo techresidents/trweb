@@ -50,7 +50,7 @@
                         <div class="control-group">
                             <div class="controls" id="jobs-notifications-list">
                                 <label class="checkbox">
-                                    <input type="checkbox" name="email_new_job_opps" id="id_email_new_job_opps"> Allow potential employers to contact me based on the preferences provided below
+                                    <input type="checkbox" name="email_new_job_opps" id="id_email_new_job_opps"> Allow employers to contact me through Tech Residents <br>(Tech Residents will never disclose your contact information)
                                 </label>
                             </div>
                         </div>
@@ -78,6 +78,9 @@
                                     <div id="position-add" class="input-append">
                                         <select id="position-input">
                                             {% for option in position_names %}
+                                                {% if forloop.first %}
+                                                    <option value="" disabled="disabled" selected="selected">Select your option</option>
+                                                {% endif %}
                                                 <option value={{ option }}>{{ option }}</option>
                                             {% endfor %}
                                         </select>

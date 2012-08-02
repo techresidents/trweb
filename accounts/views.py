@@ -102,7 +102,7 @@ def register(request, account_request_code=None):
 
             #Only sending email validation if registration is not being
             #done with an account request code. If registering with
-            #account requet code, we've already validated email.
+            #account request code, we've already validated email.
             if account_request_code is None:
                 text_template = get_template('accounts/registration_email.txt')
                 html_template = get_template('accounts/registration_email.html')
