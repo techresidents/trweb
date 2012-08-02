@@ -45,6 +45,7 @@ define([
             this.template = _.template(discuss_parent_template);
             this.users = this.options.users;
             this.tags = this.options.tags;
+            this.model.bind('change:activeMinute', this.onMinuteChange, this);
         },
 
         render: function() {
@@ -68,11 +69,20 @@ define([
                 el: this.$(this.tagSelector),
                 users: this.users,
                 collection: this.tags,
-                maxItems: 8
+                maxItems: 8,
+                filter: _.bind(this.tagFilter, this)
             });
             this.taggerView.render();
 
             return this;
+        },
+
+        onMinuteChange: function() {
+            this.taggerView.applyFilter();
+        },
+
+        tagFilter: function(tag) {
+            return tag.minuteId() === this.model.activeMinute().id;
         }
     });
 
