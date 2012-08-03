@@ -96,6 +96,20 @@ define([
 
         initialize: function(models, options) {
         },
+        
+        /**
+         * Sort messages by timestamp.
+         * It's important to ensure that the latest message is always
+         * last, since this is used to calculate teh asOf timestamp
+         * used in the fetch method. If this is not the case,
+         * a tight loop could be created if the server sends
+         * back messages out of order (should never happen)
+         * where we keep polling for new messages and the same
+         * old messages are returned over and over.
+         */
+        comparator: function(model) {
+            return model.attributes.header.timestamp;
+        },
 
         remove: function(models, options) {
             //no-op

@@ -121,10 +121,17 @@ define([
          */
         activateNext: function() {
             var activeTopic = this.active();
-            var closeLevel = this._startMinutes(activeTopic);
+
+            //invoke with trigger=false in order to determine
+            //the closeLevel, so we can end the currently
+            //open minutes before starting the new one.
+            var closeLevel = this._startMinutes(activeTopic, false);
             if(activeTopic) {
                 this._endMinutes(activeTopic.rank(), closeLevel);
             }
+
+            //really start the minutes
+            this._startMinutes(activeTopic, true);
         },
 
         /**
@@ -173,14 +180,18 @@ define([
          * Start chat Minutes for next active Topic.
          * This will result in the creation of chat Minute's
          * for all topics following the currently active topic,
-         * up to and including the next leaft topic.
+         * up to and including the next leaf topic.
          * @param {Topic} active Currently active Topic model.
+         * @param {boolean} trigger if True, MINUTE_START notificationa
+         *     will be triggered, otherewise no notifications
+         *     will be triggered. Setting trigger to false,
+         *     is convenient for determining the close level.
          * @return {number} Topic level for which preceding
          * Minutes need to be closed. A level of 1 indicates
          * that all Topics with rank <= active().rank() and
          * and level >= 1 can be closed.
          */
-        _startMinutes: function(active) {
+        _startMinutes: function(active, trigger) {
             //close level indicates the topic level for 
             //which preceding topics (lower rank) need
             //to have their Minute's closed.
@@ -193,9 +204,11 @@ define([
             while(true) {
                 topic = this.topicsProxy.next(topic);
                 if(topic) {
-                    this.facade.trigger(notifications.MINUTE_START, {
-                        topicId: topic.id
-                    });
+                    if(trigger) {
+                        this.facade.trigger(notifications.MINUTE_START, {
+                            topicId: topic.id
+                        });
+                    }
 
                     if(this.topicsProxy.isLeaf(topic)) {
                         //found leaf topic to activate, so break.
@@ -222,6 +235,9 @@ define([
          * and giving it a valid endTimestamp.
          */
         _endMinutes: function(rank, level) {
+            var i;
+            var minute;
+
             var minutes = this.minutesProxy.collection.filter(function(minute) {
                var topic = this.topicsProxy.get(minute.topicId()); 
                if(!minute.get('endTimestamp') &&
@@ -232,13 +248,16 @@ define([
                    return false;
                }
             }, this);
-
-            var that = this;
-            _.each(minutes, function(minute) {
-                that.facade.trigger(notifications.MINUTE_END, {
+            
+            //iterate the minutes from back to front
+            //so that child minutes are closed before
+            //parent minuts.
+            for(i = minutes.length - 1; i >= 0; i--) {
+                minute = minutes[i];
+                this.facade.trigger(notifications.MINUTE_END, {
                     minute: minute
                 });
-            });
+            }
         }
 
     }, {
