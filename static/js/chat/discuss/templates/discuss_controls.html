@@ -4,9 +4,9 @@
     </div>
     <div>
         <% if(activeTopic && nextTopic) { %>
-            <button class="btn btn-input btn-success btn-large next" title="Proceed to the next chat topic">Next Topic</button>
+            <button class="btn btn-input btn-success btn-large next" title="Proceed to the next chat topic">Next</button>
         <% } else if(activeTopic && nextTopic==null) { %>
-            <button class="btn btn-input btn-success btn-large end" title="End the chat for all participants">End</button>
+            <button class="btn btn-input btn-success btn-large next" title="End the chat for all participants">End</button>
         <% } else { %>
             <button class="btn btn-input btn-success btn-large start" title="Start the chat">Start</button>
         <% } %>
