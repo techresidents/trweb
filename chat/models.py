@@ -163,8 +163,8 @@ class ChatMinute(models.Model):
         db_table = "chat_minute"
 
     chat_session = models.ForeignKey(ChatSession, related_name="chat_minutes")
-    start = models.DateTimeField(),
-    end = models.DateTimeField(),
+    start = models.DateTimeField()
+    end = models.DateTimeField(null=True)
 
 class ChatTag(models.Model):
     class Meta:
@@ -212,15 +212,15 @@ class ChatPersistJob(models.Model):
     end = models.DateTimeField(null=True)
     owner = models.CharField(null=True, max_length=1024)
 
-class ChatSpeaking(models.Model):
+class ChatSpeakingMarker(models.Model):
     """ Represents a record of which user was speaking during
         a chat minute.
     """
     class Meta:
-        db_table = "chat_speaking"
+        db_table = "chat_speaking_marker"
 
     user = models.ForeignKey(User)
-    chat_minute = models.ForeignKey(ChatMinute, related_name="chat_speaking")
+    chat_minute = models.ForeignKey(ChatMinute, related_name="chat_speaking_markers")
     start = models.DateTimeField()
     end = models.DateTimeField()
 
