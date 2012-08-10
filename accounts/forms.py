@@ -403,7 +403,7 @@ class ProfileChatsForm(forms.Form):
 class ProfileJobsForm(forms.Form):
 
     # numerical constants
-    SALARY_MIN = 50000
+    SALARY_MIN = 0
     SALARY_MAX = 260000
 
     # Setup form fields
@@ -424,7 +424,7 @@ class ProfileJobsForm(forms.Form):
             valid_position_type_ids = [p.id for p in valid_position_types]
 
             # Need to validate positionPrefID, if it has one, the positionTypeID, and minSalary
-            for position in cleaned_positions_data:
+            for position_data in cleaned_positions_data:
 
                 # Validate the PositionPrefID, if it has one
                 # The PositionPrefID is validated via the save() method.
@@ -434,20 +434,20 @@ class ProfileJobsForm(forms.Form):
                 # PositionPrefID will be generated when save() compeletes.
 
                 # Validate the positionTypeID
-                position_type_id = position['positionTypeId']
+                position_type_id = position_data['positionTypeId']
                 if position_type_id:
                     if not position_type_id in valid_position_type_ids:
-                        raise forms.ValidationError("PositionType id value is invalid")
+                        raise forms.ValidationError("Position type is invalid")
                 else:
-                    raise forms.ValidationError("PositionType id field required")
+                    raise forms.ValidationError("Position type field required")
 
                 # Validate the minimum salary data
-                position_min_salary = position['min_salary']
+                position_min_salary = position_data['min_salary']
                 if position_min_salary is not None:
-                    if not type(position_min_salary == int):
-                        min_salary = int(position_min_salary)
-                    else:
+                    if type(position_min_salary == int):
                         min_salary = position_min_salary
+                    else:
+                        min_salary = int(position_min_salary)
                     if min_salary < self.SALARY_MIN or\
                        min_salary > self.SALARY_MAX:
                         raise forms.ValidationError("Position minimum salary value is invalid")
@@ -463,8 +463,8 @@ class ProfileJobsForm(forms.Form):
         valid_technology_ids = [t.id for t in valid_technologies]
 
         # Validate the technologyID
-        for technology in cleaned_technologies_data:
-            technology_id = technology['technologyId']
+        for technology_data in cleaned_technologies_data:
+            technology_id = technology_data['technologyId']
             if technology_id:
                 if not technology_id in valid_technology_ids:
                     raise forms.ValidationError("Technology id value is invalid")
@@ -480,8 +480,8 @@ class ProfileJobsForm(forms.Form):
         valid_location_ids = [l.id for l in valid_locations]
 
         # Validate the locationID
-        for location in cleaned_locations_data:
-            location_id = location['locationId']
+        for location_data in cleaned_locations_data:
+            location_id = location_data['locationId']
             if location_id:
                 if not location_id in valid_location_ids:
                     raise forms.ValidationError("Location id value is invalid")
@@ -489,7 +489,6 @@ class ProfileJobsForm(forms.Form):
                 raise forms.ValidationError("Location id field required")
 
         return cleaned_locations_data
-
 
     def save(self):
         # Making the assumption that form data is clean and valid (meaning that the position

@@ -273,9 +273,11 @@ def profile_jobs(request):
         form = forms.ProfileJobsForm(request)
 
     # Create minimum salary values to populate the UI with
+    # These values purposefully do not use the same values
+    # that the form uses to validate min salary inputs.
     min_salary_options = range(
-        forms.ProfileJobsForm.SALARY_MIN,
-        forms.ProfileJobsForm.SALARY_MAX,
+        50000,
+        260000,
         10000)
 
     # Create data to populate the Positions field
