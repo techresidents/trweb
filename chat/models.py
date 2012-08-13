@@ -126,7 +126,7 @@ class ChatRole(models.Model):
     class Meta:
         db_table = "chat_role"
 
-    role = models.CharField(max_length=100)
+    role = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=1024)
 
 class ChatSession(models.Model):
