@@ -212,6 +212,7 @@ define([
 
                     if(this.topicsProxy.isLeaf(topic)) {
                         //found leaf topic to activate, so break.
+                        closeLevel = Math.min(closeLevel, topic.level());
                         break;
                     } else {
                         //found non-leaf topic, so make sure we close
