@@ -8,7 +8,7 @@ from techresidents_web.common.models import Technology
 
 class PositionType(models.Model):
     """Represents a position type such as developer, manager, or architect"""
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=1024)
 
 class Requisition(models.Model):

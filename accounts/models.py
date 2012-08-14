@@ -25,7 +25,7 @@ post_save.connect(create_user_profile, sender=User)
 
 class CodeType(models.Model):
     """Code Types for things like registration and password reset """
-    type = models.CharField(max_length=100)
+    type = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=1024)
 
 

@@ -237,6 +237,7 @@
         {% endverbatim %}
         <td>
             <select class="min-salary-option">
+                <option value="0">None</option>
                 {% for option in min_salary_options %}
                     <option value={{ option }}>{{ option|intcomma }}
                         {% if forloop.last %}+{% endif %}
