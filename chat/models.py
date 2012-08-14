@@ -137,6 +137,8 @@ class ChatSession(models.Model):
     users = models.ManyToManyField(User, through="ChatUser")
     token = models.CharField(max_length=1024, null=True)
     participants = models.IntegerField(default=0)
+    start = models.DateTimeField(null=True)
+    end = models.DateTimeField(null=True)
 
     objects = ChatSessionManager()
 

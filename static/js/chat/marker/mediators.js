@@ -26,17 +26,19 @@ define([
         notifications: [
             [notifications.USER_CONNECTED_CHANGED, 'onConnectedChanged'],
             [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged'],
-            [notifications.USER_SPEAKING_CHANGED,'onSpeakingChanged']
+            [notifications.USER_SPEAKING_CHANGED,'onSpeakingChanged'],
+            [notifications.CHAT_STARTED, 'onChatStarted'],
+            [notifications.CHAT_ENDED, 'onChatEnded']
         ],
 
         initialize: function(options) {
             this.usersProxy = this.facade.getProxy(user_proxies.ChatUsersProxy.NAME);
 
             //create JOINED_MARKER now
-            var currentUser = this.usersProxy.currentUser();
+            this.currentUser = this.usersProxy.currentUser();
             this.facade.trigger(notifications.MARKER_JOINED_CREATE, {
-                userId: currentUser.id,
-                name: currentUser.name()
+                userId: this.currentUser.id,
+                name: this.currentUser.name()
             });
         },
 
@@ -58,6 +60,18 @@ define([
             this.facade.trigger(notifications.MARKER_SPEAKING_CREATE, {
                 userId: notification.model.id,
                 isSpeaking: notification.model.isSpeaking()
+            });
+        },
+
+        onChatStarted: function(notification) {
+            this.facade.trigger(notifications.MARKER_STARTED_CREATE, {
+                userId: this.currentUser.id
+            });
+        },
+
+        onChatEnded: function(notification) {
+            this.facade.trigger(notifications.MARKER_ENDED_CREATE, {
+                userId: this.currentUser.id
             });
         }
         

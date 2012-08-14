@@ -161,6 +161,52 @@ define([
         TYPE: 'SPEAKING_MARKER'
     });
 
+    /**
+     * Chat Started Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
+    var StartedMarker = Marker.extend({
+
+        defaults: function() {
+            return {
+                markerId: null,
+                type: StartedMarker.TYPE,
+                userId: null
+            };
+        },
+
+        initialize: function(attributes, options) {
+        }
+
+    }, {
+        TYPE: 'STARTED_MARKER'
+    });
+
+    /**
+     * Chat Ended Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
+    var EndedMarker = Marker.extend({
+
+        defaults: function() {
+            return {
+                markerId: null,
+                type: EndedMarker.TYPE,
+                userId: null
+            };
+        },
+
+        initialize: function(attributes, options) {
+        }
+
+    }, {
+        TYPE: 'ENDED_MARKER'
+    });
+
 
     /**
      * Chat Marker collection.
@@ -187,6 +233,12 @@ define([
                 case SpeakingMarker.TYPE: 
                     result = new SpeakingMarker(attributes, options);
                     break;
+                case StartedMarker.TYPE: 
+                    result = new StartedMarker(attributes, options);
+                    break;
+                case EndedMarker.TYPE: 
+                    result = new EndedMarker(attributes, options);
+                    break;
                 default:
                     result = new Marker(attributes, options);
                     break;
@@ -204,6 +256,8 @@ define([
         ConnectedMarker: ConnectedMarker,
         JoinedMarker: JoinedMarker,
         PublishingMarker: PublishingMarker,
-        SpeakingMarker: SpeakingMarker
+        SpeakingMarker: SpeakingMarker,
+        StartedMarker: StartedMarker,
+        EndedMarker: EndedMarker
     };
 });
