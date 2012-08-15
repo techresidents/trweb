@@ -77,12 +77,11 @@ class CreateChatForm(forms.Form):
             #ChatRegistrations and ChatUser entries for each participant.
             
             #create chat
-            #TODO user topic duration to calculate end time when this is properly set.
             chat = Chat.objects.create(
                     type=type,
                     topic=topic,
                     start=start,
-                    end=start+datetime.timedelta(hours=1)) 
+                    end=start+datetime.timedelta(minutes=topic.duration)) 
 
             #Create the tokbox session
             opentok = OpenTokSDK.OpenTokSDK(
@@ -114,12 +113,11 @@ class CreateChatForm(forms.Form):
             #chat.
 
             #create chat
-            #TODO user topic duration to calculate end time when this is properly set.
             chat = Chat.objects.create(
                     type=type,
                     topic=topic,
                     start=start,
-                    end=start+datetime.timedelta(hours=1),
+                    end=start+datetime.timedelta(minutes=topic.duration),
                     registration_start=timezone.now(),
                     #registration_end=start-datetime.timedelta(hours=1),
                     registration_end=start-datetime.timedelta(minutes=2),
@@ -137,12 +135,11 @@ class CreateChatForm(forms.Form):
             #to be site-registered, while private chats do.
 
             #create chat
-            #TODO user topic duration to calculate end time when this is properly set.
             chat = Chat.objects.create(
                     type=type,
                     topic=topic,
                     start=start,
-                    end=start+datetime.timedelta(hours=1)) 
+                    end=start+datetime.timedelta(minutes=topic.duration)) 
 
             #Create the tokbox session
             opentok = OpenTokSDK.OpenTokSDK(
