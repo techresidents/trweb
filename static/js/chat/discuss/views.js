@@ -46,33 +46,34 @@ define([
             this.users = this.options.users;
             this.tags = this.options.tags;
             this.model.bind('change:activeMinute', this.onMinuteChange, this);
+
+            //child views
+            this.titleView = null;
+            this.controlsView = null;
+            this.taggerView = null;
         },
 
         render: function() {
 
             this.$el.html(this.template());
-
-            new DiscussTitleView({
+            
+            this.titleView = new DiscussTitleView({
                 el: this.$(this.titleSelector),
                 model: this.model
             }).render();
 
-
-            new DiscussControlsView({
+            this.controlsView = new DiscussControlsView({
                 el: this.$(this.controlsSelector),
                 model: this.model
             }).render();
-
-            // Keep a reference to the tagger view so that we can invoke
-            // the enabled() method from the mediator.
+            
             this.taggerView = new tag_views.ChatTaggerView({
                 el: this.$(this.tagSelector),
                 users: this.users,
                 collection: this.tags,
                 maxItems: 8,
                 filter: _.bind(this.tagFilter, this)
-            });
-            this.taggerView.render();
+            }).render();
 
             return this;
         },
@@ -129,10 +130,14 @@ define([
             this.model.bind('change:activeTopic', this.render, this);
             this.model.bind('change:nextTopic', this.render, this);
             this.timer = null;
+            this.enabled = true;
         },
 
         render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
+            var state = _.extend(this.model.toJSON(),
+                { enabled: this.enabled });
+            this.$el.html(this.template(state));
+
             var activeTopic = this.model.activeTopic();
             var activeMinute = this.model.activeMinute();
             if(activeTopic && activeMinute) {
@@ -149,12 +154,23 @@ define([
             return this;
         },
 
+        enable: function(enabled) {
+            if(this.enabled !== enabled) {
+                this.enabled = enabled;
+                this.render();
+            }
+        },
+
         next: function() {
-            this.triggerEvent(EVENTS.NEXT);
+            if(this.enabled) {
+                this.triggerEvent(EVENTS.NEXT);
+            }
         },
 
         start: function() {
-            this.triggerEvent(EVENTS.START);
+            if(this.enabled) {
+                this.triggerEvent(EVENTS.START);
+            }
         }
     });
 

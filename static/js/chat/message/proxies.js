@@ -41,6 +41,7 @@ define([
             };
             this.longPollTimeoutMs = options.longPollTimeoutMs || 20000;
             this.longPollErrorDelayMs = options.longPollErrorDelayMs || 10000;
+            this.polling = false;
 
             //define long poll callback outside of longPoll function
             //to cut down on memory usage since this function is
@@ -58,17 +59,38 @@ define([
 
             this.collection.on('add', this.onMessageAdded, this);
         },
-        
+
         /**
          * Start long polling for chat messages
          */
+        startLongPoll: function() {
+            if(!this.polling) {
+                this.polling = true;
+                this.longPoll();
+            }
+        },
+
+        /**
+         * Stop long polling for chat messages
+         */
+        stopLongPoll: function() {
+            if(this.polling) {
+                this.polling = false;
+            }
+        },
+        
+        /**
+         * Long poll for chat messages
+         */
         longPoll: function() {
-            this.collection.fetch({
-                add: true,
-                silent: false,
-                complete: this.longPollCallback,
-                timeout: this.longPollTimeoutMs
-            });
+            if(this.polling) {
+                this.collection.fetch({
+                    add: true,
+                    silent: false,
+                    complete: this.longPollCallback,
+                    timeout: this.longPollTimeoutMs
+                });
+            }
         },
         
         /**

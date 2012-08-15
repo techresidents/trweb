@@ -167,6 +167,10 @@ define([
             this.enabled = false;
             this.tagInput = null;
             this.lastSelectedTag = null;
+
+            //child views
+            this.lookupView = null;
+            this.taggerListView = null;
         },
 
         enable: function(enabled) {
@@ -179,7 +183,7 @@ define([
             this.$el.html(this.template(state));
 
             this.tagInput = this.$(this.inputSelector);
-
+            
             this.lookupView = new lookup.LookupView({
                 el: this.tagInput,
                 scope: 'tag',
@@ -189,7 +193,7 @@ define([
                 onselect: this.onSelect,
                 context: this
             });
-
+            
             this.taggerListView = new ChatTaggerListView({
                 el: this.$(this.listSelector),
                 users: this.users,

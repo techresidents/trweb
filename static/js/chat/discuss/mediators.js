@@ -71,6 +71,14 @@ define([
             this.view.model.setActiveMinute(this.agendaProxy.minutesProxy.active());
             this.view.model.setActiveTopic(notification.topic);
             this.view.model.setNextTopic(this.agendaProxy.nextActive(notification.topic));
+
+            //disable next button for several seconds
+            this.view.controlsView.enable(false);
+
+            var that = this;
+            setTimeout(function() {
+                that.view.controlsView.enable(true);
+            }, 5000);
         },
 
         onChatStarted: function(notification) {

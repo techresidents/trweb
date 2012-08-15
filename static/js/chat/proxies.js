@@ -124,7 +124,7 @@ define([
         connect: function() {
             //connect the chat and start polling for messages.
             this.chatSessionProxy.connect();
-            this.chatMessagesProxy.longPoll();
+            this.chatMessagesProxy.startLongPoll();
         },
 
         /**
@@ -132,6 +132,7 @@ define([
          */
         disconnect: function() {
             this.chatSessionProxy.disconnect();
+            this.chatMessagesProxy.stopLongPoll();
         },
     
         /**
