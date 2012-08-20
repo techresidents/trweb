@@ -1,0 +1,77 @@
+{% extends "banner_base.html" %}
+{% load url from future %}
+
+{% block title %}Welcome to Tech Residents - Login{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="page-header">
+            <h1>
+                Join the conversation
+                <small>It's free</small>
+                <a class="btn btn-success" href="{% url 'accounts.views.register' %}">Sign Up</a>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span10">
+            <div class="well">
+                <form class="form-horizontal" method="post" action="{% url 'accounts.views.otp' %}">
+                    {% csrf_token %}
+                    <fieldset>
+                        <legend>Tech Residents Login</legend>
+
+                        {% if messages %}
+                            {% for message in messages %}
+                                <!-- Consume all messages stored -->
+                                {% if message.tags == 'success' %}
+                                    <div class="alert alert-success">
+                                        <span>{{ message }}</span>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
+                        <div class="control-group{% if form.secret.errors %} error{% endif %}">
+                            {{ form.secret.label_tag }}
+                            <div class="controls">
+                                {{ form.secret }}
+                                {% for error in form.secret.errors %}
+                                    <span class="help-inline">{{error}}</span>
+                                {% endfor %}
+                            </div>
+                            <div class="controls">
+                                <img src="https://chart.googleapis.com/chart?chs=200x200&amp;chld=M|0&amp;cht=qr&amp;chl=otpauth://totp/TechResidents-{{email}}%3fsecret%3d{{secret}}"/>
+                            </div>
+                            <div class="controls">
+                                <label class="checkbox inline">
+                                    {{ form.enable }}
+                                    {{ form.enable.label }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="controls">
+                                <input type="submit" value="Save" class="btn btn-primary inline" />
+                            </div>
+                        </div>
+
+                        <div>
+                            {% if form.non_field_errors %}
+                                <div class="controls alert alert-error">
+                                    {% for error in form.non_field_errors%}
+                                        <span>{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
