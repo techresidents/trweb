@@ -1,5 +1,10 @@
+import base64
 import datetime
+import hashlib
+import hmac
 import logging
+import struct
+import time
 import uuid
 
 from django import forms
@@ -13,7 +18,7 @@ from django.utils import timezone
 
 from techresidents_web.common.forms import JSONField
 from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType, Location
-from techresidents_web.accounts.models import CodeType, Code, Request, Skill
+from techresidents_web.accounts.models import CodeType, Code, OneTimePassword, OneTimePasswordType, Request, Skill
 from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, LocationPref, Prefs
 
 
@@ -226,6 +231,45 @@ class LoginForm(forms.Form):
     def get_user(self):
         return self.user
 
+class LoginOTPForm(forms.Form):
+    code = forms.CharField(label="Code", max_length=32, widget=forms.PasswordInput, required=True)
+
+    def __init__(self, one_time_password=None, *args, **kwargs):
+        self.otp = one_time_password
+        super(LoginOTPForm, self).__init__(*args, **kwargs)
+    
+    def _authenticate(self, secret, code):
+        #Time based one time password (RFC 6238)
+        result = False
+        
+        if secret is not None and code is not None:
+            timestamp = int(time.time() / 30)
+            secret = base64.b32decode(secret)
+
+            for index in [-1, 0, 1]:
+                timestamp_bytes = struct.pack(">q", timestamp + index)
+
+                hmac_digest = hmac.HMAC(secret, timestamp_bytes, hashlib.sha1).digest()
+
+                offset = ord(hmac_digest[-1]) & 0x0F
+                truncated_hmac_digest = hmac_digest[offset:offset+4]
+
+                valid_code = struct.unpack(">L", truncated_hmac_digest)[0]
+                valid_code &= 0x7FFFFFFF
+                valid_code %= 1000000
+
+                if ("%06d" % valid_code) == str(code):
+                    result = True
+                    break
+
+        return result
+
+    def clean(self):
+        code = self.cleaned_data.get('code')
+        if not self._authenticate(self.otp.secret, code):
+            raise forms.ValidationError("Invalid code")
+        return self.cleaned_data
+
 class ForgotPasswordForm(forms.Form):
     username = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, required=True)
     username_confirmation = forms.EmailField(label="Re-enter email", max_length=EMAIL_MAX_LEN, required=True)
@@ -314,6 +358,50 @@ class ResetPasswordForm(forms.Form):
 
         code.used = timezone.now()
         code.save()
+
+class OTPForm(forms.Form):
+    secret = forms.CharField(label="Secret", max_length=256, required=True)
+    enable = forms.BooleanField(label="Enable", widget=forms.CheckboxInput, required=False)
+
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        super(OTPForm, self).__init__(*args, **kwargs)
+    
+    def clean_secret(self):
+        secret = self.cleaned_data["secret"]
+        if len(secret) != 16:
+            raise forms.ValidationError("Invalid secret")
+
+        try:
+            base64.b32decode(secret)
+        except:
+            raise forms.ValidationError("Invalid secret")
+
+        return secret
+
+    def save(self, commit=True):
+        #otp model
+        try:
+            otp = OneTimePassword.objects.get(
+                    type__name="TOTP",
+                    user=self.request.user)
+        except OneTimePassword.DoesNotExist:
+            otp_type = OneTimePasswordType.objects.get(
+                    name="TOTP")
+            otp = OneTimePassword(
+                    type=otp_type,
+                    user=self.request.user)
+        otp.secret = self.cleaned_data['secret']
+
+        #user profile model
+        user_profile = self.request.user.get_profile()
+        user_profile.otp_enabled = self.cleaned_data['enable']
+
+        if commit:
+            otp.save()
+            user_profile.save()
+
+        return (user_profile, otp)
 
 class ProfileAccountForm(forms.Form):
     #year choices

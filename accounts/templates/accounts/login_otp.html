@@ -1,0 +1,56 @@
+{% extends "banner_base.html" %}
+{% load url from future %}
+
+{% block title %}Welcome to Tech Residents - Login{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="page-header">
+            <h1>
+                Join the conversation
+                <small>It's free</small>
+                <a class="btn btn-success" href="{% url 'accounts.views.register' %}">Sign Up</a>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span10">
+            <div class="well">
+                <form class="form-horizontal" method="post" action="{% url 'accounts.views.login_otp' %}">
+                    {% csrf_token %}
+                    <fieldset>
+                        <legend>Tech Residents Login</legend>
+                        <div class="control-group{% if form.code.errors %} error{% endif %}">
+                            {{ form.code.label_tag }}
+                            <div class="controls">
+                                {{ form.code }}
+                                {% for error in form.code.errors %}
+                                    <span class="help-inline">{{error}}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="controls">
+                                <input type="submit" value="Login" class="btn btn-primary inline" />
+                            </div>
+                        </div>
+
+                        <div>
+                            {% if form.non_field_errors %}
+                                <div class="controls alert alert-error">
+                                    {% for error in form.non_field_errors%}
+                                        <span>{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

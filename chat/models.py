@@ -135,7 +135,7 @@ class ChatSession(models.Model):
     
     chat = models.ForeignKey(Chat, related_name="chat_sessions")
     users = models.ManyToManyField(User, through="ChatUser")
-    token = models.CharField(max_length=1024, null=True)
+    token = models.CharField(max_length=1024, null=True, unique=True)
     participants = models.IntegerField(default=0)
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)

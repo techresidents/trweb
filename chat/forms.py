@@ -108,7 +108,7 @@ class CreateChatForm(forms.Form):
             #Unrestricted chats are open and not restricted to specified users.
             #i.e. Chats with non-predetermined, site-registered, chat-registered users.
             #As a convenience, we will create ChatRegistrations for the specified
-            #users. Note that non ChatSession's will be created for this chat, instead
+            #users. Note that ChatSession's will not be created for this chat, instead
             #they will be created on an as-needed basis when users arrive for this
             #chat.
 
