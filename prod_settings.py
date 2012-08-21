@@ -21,6 +21,10 @@ DATABASES = {
     }
 }
 
+#Session settings
+SESSION_COOKIE_AGE = 1209600  #2 weeks
+SESSION_COOKIE_DOMAIN = '.techresidents.com'
+
 #Static files settings
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
 
@@ -48,7 +52,7 @@ REGISTRATION_REQUIRES_CODE = False
 #Login using HTTPS. This is should only be used by the landing page which is http,
 #but POSTS to the login page using https in non-development environments.
 TR_LOGIN_USING_HTTPS = True
-TR_XD_REMOTE = 'http://techresidents.com:6767/static/js/easyXDM/cors/index.html'
+TR_XD_REMOTE = 'http://api.techresidents.com/static/js/easyXDM/cors/index.html'
 
 #Tokbox Settings
 TOKBOX_JS_URL = 'http://static.opentok.com/v0.91/js/TB.min.js'
