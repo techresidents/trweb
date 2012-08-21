@@ -336,7 +336,9 @@ define([
             'click #tools-arrow': 'onArrowToolSelected',
             'click #tools-rect':  'onRectToolSelected',
             'click #tools-circle':'onCircleToolSelected',
-            'click #tools-erase': 'onEraseToolSelected'
+            'click #tools-erase': 'onEraseToolSelected',
+            'click #whiteboard-clear-button': 'onClear',
+            'click #whiteboard-undo-button': 'onUndo'
         },
 
         initialize: function() {
@@ -386,6 +388,24 @@ define([
             if (toolName) {
                 this.triggerEvent(EVENTS.SELECT_TOOL, {toolName:toolName});
             }
+        },
+
+        /**
+         * This function listens on the 'clear' button
+         */
+        onClear: function(){
+            this.triggerEvent(EVENTS.CLEAR_WHITEBOARD, {
+                whiteboardId: this.viewModel.getSelectedWhiteboardId()
+            });
+        },
+
+        /**
+         * This function listens on the 'undo' button.
+         */
+        onUndo: function(){
+            this.triggerEvent(EVENTS.UNDO, {
+                whiteboardId: this.viewModel.getSelectedWhiteboardId()
+            });
         }
     });
 
@@ -576,13 +596,6 @@ define([
             // instantiate whiteboard tools view
             new ChatWhiteboardToolsView({
                 el: this.$(this.toolsSelector),
-                viewModel: this.viewModel
-            }).render();
-
-            // instantiate controls view
-            new ChatWhiteboardControlsView({
-                el: this.$(this.controlsSelector),
-                wbCollection: this.wbCollection,
                 viewModel: this.viewModel
             }).render();
 

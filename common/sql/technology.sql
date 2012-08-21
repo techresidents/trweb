@@ -4,7 +4,7 @@ INSERT INTO technology (name, type_id, description) VALUES ('Blackberry SDK', 1,
 INSERT INTO technology (name, type_id, description) VALUES ('Cocoa', 1, '');
 INSERT INTO technology (name, type_id, description) VALUES ('Django', 1, '');
 INSERT INTO technology (name, type_id, description) VALUES ('DynamicX', 1, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Flex', 1, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Flex SDK', 1, '');
 INSERT INTO technology (name, type_id, description) VALUES ('Grails', 1, '');
 INSERT INTO technology (name, type_id, description) VALUES ('Hadoop', 1, '');
 INSERT INTO technology (name, type_id, description) VALUES ('iOS SDK', 1, '');
@@ -51,7 +51,6 @@ INSERT INTO technology (name, type_id, description) VALUES ('Dart', 2, '');
 INSERT INTO technology (name, type_id, description) VALUES ('Erlang', 2, '');
 INSERT INTO technology (name, type_id, description) VALUES ('F', 2, '');
 INSERT INTO technology (name, type_id, description) VALUES ('F#', 2, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Flex', 2, '');
 INSERT INTO technology (name, type_id, description) VALUES ('Fortran', 2, '');
 INSERT INTO technology (name, type_id, description) VALUES ('Go', 2, '');
 INSERT INTO technology (name, type_id, description) VALUES ('Groovy', 2, '');

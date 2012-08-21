@@ -36,6 +36,8 @@ define([
         MARKER_JOINED_CREATE: 'notification:MarkerJoinedCreate',
         MARKER_PUBLISHING_CREATE: 'notification:MarkerPublishingCreate',
         MARKER_SPEAKING_CREATE: 'notification:MarkerSpeakingCreate',
+        MARKER_STARTED_CREATE: 'notification:MarkerStartedCreate',
+        MARKER_ENDED_CREATE: 'notification:MarkerEndedCreate',
 
         /* MESSAGE ACTIONS */
         MESSAGE_MARKER_CREATE: 'notification:Message:MarkerCreate',

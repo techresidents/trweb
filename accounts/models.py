@@ -13,6 +13,9 @@ class UserProfile(models.Model):
     email_new_chat_topics = models.BooleanField(default=False)
     timezone = models.CharField(max_length=255)
 
+    #one time password
+    otp_enabled = models.BooleanField(default=False)
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
@@ -25,7 +28,7 @@ post_save.connect(create_user_profile, sender=User)
 
 class CodeType(models.Model):
     """Code Types for things like registration and password reset """
-    type = models.CharField(max_length=100)
+    type = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=1024)
 
 
@@ -56,3 +59,20 @@ class Skill(models.Model):
     technology = models.ForeignKey(Technology)
     expertise_type = models.ForeignKey(ExpertiseType)
     yrs_experience = models.IntegerField()
+
+
+class OneTimePasswordType(models.Model):
+    """One time password type."""
+    class Meta:
+        db_table = "accounts_one_time_password_type"
+
+    name = models.CharField(max_length=100, unique=True)
+    description = models.CharField(max_length=1024)
+
+class OneTimePassword(models.Model):
+    """One time password."""
+    class Meta:
+        db_table = "accounts_one_time_password"
+    type = models.ForeignKey(OneTimePasswordType)
+    secret = models.CharField(max_length=1024)
+    user = models.ForeignKey(User)

@@ -1,14 +1,14 @@
 <div class="span1 well discuss-controls-well">
     <div>
-        <span id="discuss-timer" class="discuss-time-text"/>
+        <p id="discuss-timer" class="discuss-time-text"/>
     </div>
     <div>
         <% if(activeTopic && nextTopic) { %>
-            <button class="btn btn-input btn-success btn-large next">Next</button>
+            <button class="btn btn-input btn-success btn-large next <%= enabled ? '' : 'disabled' %>" title="Proceed to the next chat topic">Next</button>
         <% } else if(activeTopic && nextTopic==null) { %>
-            <button class="btn btn-input btn-success btn-large start">End</button>
+            <button class="btn btn-input btn-success btn-large next <%= enabled ? '' : 'disabled' %>" title="End the chat for all participants">End</button>
         <% } else { %>
-            <button class="btn btn-input btn-success btn-large start">Start</button>
+            <button class="btn btn-input btn-success btn-large start <%= enabled ? '' : 'disabled' %>" title="Start the chat">Start</button>
         <% } %>
     </div>
 </div>

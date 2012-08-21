@@ -3,11 +3,13 @@ from django.conf.urls.defaults import patterns, url
 
 urlpatterns = patterns('accounts.views',
     url(r'^login/$', 'login'),
+    url(r'^login/otp/$', 'login_otp'),
     url(r'^logout/$', 'logout'),
     url(r'^request/$', 'account_request'),
     url(r'^register/activate/(?P<registration_code>\w+)$', 'register_activate'),
     url(r'^forgot_password/$', 'forgot_password'),
     url(r'^reset_password/(?P<reset_password_code>\w+)$', 'reset_password'),
+    url(r'^otp/$', 'otp'),
     url(r'^profile/account/$', 'profile_account'),
     url(r'^profile/chats/$', 'profile_chats'),
     url(r'^profile/jobs/$', 'profile_jobs'),

@@ -147,6 +147,7 @@ define([
      * @param {Object} options
      *   collection: {TagCollection} (required)
      *   maxItems: maximum tags to show (optional)
+     *   filter: tag filter method (optional)
      */
     var ChatTaggerView = view.View.extend({
 
@@ -162,9 +163,14 @@ define([
             this.template =  _.template(tagger_template);
             this.users = this.options.users;
             this.maxItems = this.options.maxItems;
+            this.filter = this.options.filter;
             this.enabled = false;
             this.tagInput = null;
             this.lastSelectedTag = null;
+
+            //child views
+            this.lookupView = null;
+            this.taggerListView = null;
         },
 
         enable: function(enabled) {
@@ -177,8 +183,8 @@ define([
             this.$el.html(this.template(state));
 
             this.tagInput = this.$(this.inputSelector);
-
-            new lookup.LookupView({
+            
+            this.lookupView = new lookup.LookupView({
                 el: this.tagInput,
                 scope: 'tag',
                 property: 'name',
@@ -187,12 +193,13 @@ define([
                 onselect: this.onSelect,
                 context: this
             });
-
-            new ChatTaggerListView({
+            
+            this.taggerListView = new ChatTaggerListView({
                 el: this.$(this.listSelector),
                 users: this.users,
                 collection: this.collection,
-                maxItems: this.maxItems
+                maxItems: this.maxItems,
+                filter: this.filter
             }).render();
 
             return this;
@@ -218,6 +225,12 @@ define([
                 this.triggerEvent(EVENTS.ADD_TAG, event);
                 this.tagInput.val(null);
                 this.tagInput.focus();
+            }
+        },
+
+        applyFilter: function() {
+            if(this.taggerListView) {
+                this.taggerListView.applyFilter();
             }
         },
 

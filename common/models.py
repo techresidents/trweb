@@ -10,7 +10,6 @@ class TopicManager(TreeManager):
     def create_topic_tree(self, user, topics):
         return self.create_tree(topics)
 
-
 class Concept(models.Model):
     """Concept model."""
     class Meta:
@@ -26,7 +25,7 @@ class Concept(models.Model):
 class ResourceType(models.Model):
     class Meta:
         db_table = "resource_type"
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=1024)
 
 class Resource(models.Model):
@@ -39,7 +38,7 @@ class TopicType(models.Model):
     class Meta:
         db_table = "topic_type"
     
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=1024)
 
 class Topic(models.Model):
@@ -78,7 +77,7 @@ class TechnologyType(models.Model):
     class Meta:
         db_table = "technology_type"
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=1024)
 
 class Technology(models.Model):
@@ -86,7 +85,7 @@ class Technology(models.Model):
     class Meta:
         db_table = "technology"
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     type = models.ForeignKey(TechnologyType)
     description = models.CharField(max_length=1024, blank=True)
 
@@ -95,7 +94,7 @@ class ExpertiseType(models.Model):
     class Meta:
         db_table = "expertise_type"
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     value = models.IntegerField()
     description = models.CharField(max_length=1024)
 
@@ -117,7 +116,7 @@ class Organization(models.Model):
     class Meta:
         db_table = "organization"
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=1024)
 
 class Quality(models.Model):
@@ -125,6 +124,6 @@ class Quality(models.Model):
     class Meta:
         db_table = "quality"
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=1024)
 

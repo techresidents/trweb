@@ -1,0 +1,2 @@
+INSERT INTO chat_message_format_type (name, description) VALUES ('JSON', 'Chat message data is formatted using JSON');
+INSERT INTO chat_message_format_type (name, description) VALUES ('THRIFT_BINARY_B64', 'Chat message data is formatted using THRIFT which is base-64 encoded');

@@ -50,7 +50,7 @@
                         <div class="control-group">
                             <div class="controls" id="jobs-notifications-list">
                                 <label class="checkbox">
-                                    <input type="checkbox" name="email_new_job_opps" id="id_email_new_job_opps"> Allow potential employers to contact me through Tech Residents based on my preferences below. <br> Note that Tech Residents will never reveal your contact information to other companies.
+                                    <input type="checkbox" name="email_new_job_opps" id="id_email_new_job_opps"> Allow employers to contact me through Tech Residents <br>(Tech Residents will never disclose your contact information)
                                 </label>
                             </div>
                         </div>
@@ -237,6 +237,7 @@
         {% endverbatim %}
         <td>
             <select class="min-salary-option">
+                <option value="0">None</option>
                 {% for option in min_salary_options %}
                     <option value={{ option }}>{{ option|intcomma }}
                         {% if forloop.last %}+{% endif %}

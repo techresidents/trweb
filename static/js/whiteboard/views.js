@@ -43,18 +43,18 @@ define([
             
             // set logical (scrollable) paper size if options provided
             // otherwise use container sizes
-            var paperWidth = this.options.paperWidth || $(this.el).width();
-            var paperHeight = this.options.paperHeight || $(this.el).height();
+            this.paperWidth = this.options.paperWidth || $(this.el).width();
+            this.paperHeight = this.options.paperHeight || $(this.el).height();
             
             // if paper size size is larger than element size, set overflow for scrolling
-            if(paperWidth > $(this.el).width() || paperHeight > $(this.el).height()) {
+            if(this.paperWidth > $(this.el).width() || this.paperHeight > $(this.el).height()) {
                 $(this.el).css('overflow', 'auto');
             }
             
             this.paper = Raphael(
                 $(this.el).get(0),
-                paperWidth,
-                paperHeight);
+                this.paperWidth,
+                this.paperHeight);
 
             // init whiteboard marker color
             this.color = '#0000FF';
@@ -138,7 +138,20 @@ define([
             }
 
             var coordinates = this.adjustedCoordinates(event);
-            this.tool.move(coordinates.x, coordinates.y);
+
+            // Simulate a mouse up event if the user draws outside of the whiteboard bounds.
+            // Created a small boundary buffer which helps to catch when users quickly
+            // move the mouse past the whiteboard boundary.
+            var boundsBuffer = 5;
+            if (coordinates.x <= boundsBuffer ||
+                coordinates.y <= boundsBuffer ||
+                coordinates.x >= this.paperWidth-boundsBuffer ||
+                coordinates.y >= this.paperHeight-boundsBuffer)
+            {
+                this.mouseup(event);
+            } else {
+                this.tool.move(coordinates.x, coordinates.y);
+            }
         },
 
         /**

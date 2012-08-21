@@ -219,11 +219,91 @@ define([
 
     });
 
+    /**
+     * Create Started Marker Command
+     * @constructor
+     *
+     * Creates a chat started marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
+    var CreateStartedMarkerCommand = command.AsyncCommand.extend({
+
+        //argument names for onSuccess and onError paramaters
+        asyncCallbackArgs: ['model', 'response'],
+
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {integer} userId 
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         */
+        execute: function(options) {
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: {
+                        type: marker_models.StartedMarker.TYPE,
+                        userId: options.userId
+                    }
+                })
+            });
+
+            message.save(null, {
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+        }
+
+    });
+
+    /**
+     * Create Ended Marker Command
+     * @constructor
+     *
+     * Creates a chat ended marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
+    var CreateEndedMarkerCommand = command.AsyncCommand.extend({
+
+        //argument names for onSuccess and onError paramaters
+        asyncCallbackArgs: ['model', 'response'],
+
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {integer} userId 
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         */
+        execute: function(options) {
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: {
+                        type: marker_models.EndedMarker.TYPE,
+                        userId: options.userId
+                    }
+                })
+            });
+
+            message.save(null, {
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+        }
+
+    });
+
     return {
         CreateMarkerCommand: CreateMarkerCommand,
         CreateConnectedMarkerCommand: CreateConnectedMarkerCommand,
         CreateJoinedMarkerCommand: CreateJoinedMarkerCommand,
         CreatePublishingMarkerCommand: CreatePublishingMarkerCommand,
-        CreateSpeakingMarkerCommand: CreateSpeakingMarkerCommand
+        CreateSpeakingMarkerCommand: CreateSpeakingMarkerCommand,
+        CreateStartedMarkerCommand: CreateStartedMarkerCommand,
+        CreateEndedMarkerCommand: CreateEndedMarkerCommand
     };
 });

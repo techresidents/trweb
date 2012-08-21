@@ -1,4 +1,6 @@
+import base64
 import json
+import os
 
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -10,25 +12,14 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_exempt
 
 from techresidents_web.accounts import forms
-from techresidents_web.accounts.models import Skill
+from techresidents_web.accounts.models import UserProfile, OneTimePassword, Skill
 from techresidents_web.job.models import Prefs, PositionType, PositionTypePref, TechnologyPref, LocationPref
 from techresidents_web.common.models import Technology, TechnologyType, ExpertiseType
 
 
 
-#Disable csrf for the login view since we support logging in
-#from an http landing page which results in a POST from
-#the http landing page to the https login page and 
-#this will result in a failed referer check (403).
-#Disabling the CSRF check for the login page is fairly
-#safe since a cross site POST to the login page can't
-#do much harm. Supporting a POST from http to https
-#does make this pages vulnerable to man in the middle
-#attacks. Support for this may be removed in the future.
-@csrf_exempt
 @never_cache
 def login(request):
     redirect_to = request.REQUEST.get("next", settings.LOGIN_REDIRECT_URL)
@@ -39,18 +30,34 @@ def login(request):
     if request.method == 'POST':
         form = forms.LoginForm(data=request.POST)
         if form.is_valid():
-            auth.login(request, form.get_user())
+            if request.session.test_cookie_worked():
+                request.session.delete_test_cookie()
 
             if not request.POST.get('remember_me', None):
                 request.session.set_expiry(0)
-
-            if request.session.test_cookie_worked():
-                request.session.delete_test_cookie()
             
-            #set timezone in session so it's available to TimezoneMiddleware
-            request.session['timezone'] = request.user.get_profile().timezone
+            #get user profile directly from database
+            #since user.get_profile() is not available for
+            #anonymous users.
+            user = form.get_user()
+            user_profile = UserProfile.objects.get(user_id=user.id)
 
-            return HttpResponseRedirect(redirect_to)
+            #set timezone in session so it's available to TimezoneMiddleware
+            request.session['timezone'] = user_profile.timezone
+
+            if user_profile.otp_enabled:
+                otp = OneTimePassword.objects.get(
+                        type__name="TOTP",
+                        user_id=user.id)
+                request.session["otp"] = {
+                    "user": user,
+                    "user_profile": user_profile,
+                    "otp": otp
+                }
+                return HttpResponseRedirect(reverse('accounts.views.login_otp'))
+            else:
+                auth.login(request, form.get_user())
+                return HttpResponseRedirect(redirect_to)
     else:
         form = forms.LoginForm()
     
@@ -60,6 +67,30 @@ def login(request):
             }
 
     return render_to_response('accounts/login.html', context,  context_instance=RequestContext(request))
+
+@never_cache
+def login_otp(request):
+    redirect_to = request.REQUEST.get("next", settings.LOGIN_REDIRECT_URL)
+
+    #build absolute url and replace https with http
+    redirect_to = request.build_absolute_uri(redirect_to).replace("https:", "http:")
+
+    if request.method == 'POST':
+        data = request.session["otp"]
+        form = forms.LoginOTPForm(data["otp"], data=request.POST)
+        if form.is_valid():
+            auth.login(request, data["user"])
+            del request.session["otp"]
+            return HttpResponseRedirect(redirect_to)
+    else:
+        form = forms.LoginOTPForm()
+    
+    context = {
+            'form': form,
+            'next': redirect_to,
+            }
+
+    return render_to_response('accounts/login_otp.html', context,  context_instance=RequestContext(request))
 
 def account_request(request):
     if request.method == 'POST':
@@ -186,6 +217,39 @@ def reset_password(request, reset_password_code):
     return render_to_response('accounts/reset_password.html', context,  context_instance=RequestContext(request))
 
 @login_required
+def otp(request):
+    if request.method == 'POST':
+        form = forms.OTPForm(request, data=request.POST)
+        secret = form.data["secret"]
+
+        if form.is_valid():
+            form.save(commit=True)
+            messages.success(request, "Save successful")
+            return HttpResponseRedirect(reverse('accounts.views.otp'))
+    else:
+        try:
+            otp = OneTimePassword.objects.get(
+                    type__name="TOTP",
+                    user=request.user)
+            secret = otp.secret
+        except OneTimePassword.DoesNotExist:
+            secret = base64.b32encode(os.urandom(10))
+        
+        form_data = {
+            "enable": request.user.get_profile().otp_enabled,
+            "secret": secret
+        }
+        form = forms.OTPForm(request, data=form_data)
+    
+    context = {
+        'email': request.user.username,
+        'form': form,
+        'secret': secret,
+    }
+
+    return render_to_response('accounts/otp.html', context,  context_instance=RequestContext(request))
+
+@login_required
 def logout(request):
     auth.logout(request)
     redirect_to = request.REQUEST.get("next", settings.LOGIN_URL)
@@ -273,9 +337,11 @@ def profile_jobs(request):
         form = forms.ProfileJobsForm(request)
 
     # Create minimum salary values to populate the UI with
+    # These values purposefully do not use the same values
+    # that the form uses to validate min salary inputs.
     min_salary_options = range(
-        forms.ProfileJobsForm.SALARY_MIN,
-        forms.ProfileJobsForm.SALARY_MAX,
+        50000,
+        260000,
         10000)
 
     # Create data to populate the Positions field
@@ -424,5 +490,3 @@ def profile_skills_common(request, technology_type_name):
     }
 
     return context
-
-

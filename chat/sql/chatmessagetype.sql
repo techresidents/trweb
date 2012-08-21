@@ -1,0 +1,9 @@
+INSERT INTO chat_message_type (name, description) VALUES ('MARKER_CREATE', 'Marker-create message type');
+INSERT INTO chat_message_type (name, description) VALUES ('MINUTE_CREATE', 'Minute-create message type');
+INSERT INTO chat_message_type (name, description) VALUES ('MINUTE_UPDATE', 'Minute-update message type');
+INSERT INTO chat_message_type (name, description) VALUES ('TAG_CREATE', 'Tag-create message type');
+INSERT INTO chat_message_type (name, description) VALUES ('TAG_DELETE', 'Tag-delete message type');
+INSERT INTO chat_message_type (name, description) VALUES ('WHITEBOARD_CREATE', 'Whiteboard-create message type');
+INSERT INTO chat_message_type (name, description) VALUES ('WHITEBOARD_DELETE', 'Whiteboard-delete message type');
+INSERT INTO chat_message_type (name, description) VALUES ('WHITEBOARD_CREATE_PATH', 'Whiteboard-create-path message type');
+INSERT INTO chat_message_type (name, description) VALUES ('WHITEBOARD_DELETE_PATH', 'Whiteboard-delete-path message type');

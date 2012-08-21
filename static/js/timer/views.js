@@ -30,15 +30,7 @@ define([
         },
         
         render: function() {
-            this.$el.text(util.formatTimer(this.duration));
-
-            if(this.running) {
-                this.$el.addClass(this.runningClass);
-            }
-            if(this.expired) {
-                this.$el.addClass(this.expiredClass);
-            }
-            return this;
+            this.updateTimer();
         },
         
         /**
@@ -62,6 +54,7 @@ define([
             this.startTime = startTime || Date.now();
             this.stopTime = null;
             this.$el.addClass(this.runningClass);
+            this.updateTimer();
 
             var that = this;
             this.intervalId = setInterval(function() {
@@ -79,8 +72,8 @@ define([
 
                 clearInterval(this.intervalId);
                 this.intervalId = null;
-
-                this.$el.removeClass(this.runningClass);
+                
+                this.updateTimer();
             }
         },
 
@@ -88,7 +81,15 @@ define([
          * Update the timer display.
          */
         updateTimer: function() {
-            var remaining = this.duration - (new Date() - this.startTime);
+            var remaining = this.duration;
+
+            if(this.running) {
+                this.$el.addClass(this.runningClass);
+                remaining = this.duration - (new Date() - this.startTime);
+            } else {
+                this.$el.removeClass(this.runningClass);
+            }
+
             if(remaining < 0) {
                 this.$el.addClass(this.expiredClass);
             }

@@ -1,10 +1,15 @@
 <div class="span1">
     <div id="whiteboard-tools-well" class="well">
 
+        <span class="whiteboard-tool-header">Action</span>
+        <div class="btn-group whiteboard-btn-group">
+            <button id="whiteboard-clear-button" class="btn btn-danger" title="Clear"><i class="icon-remove-sign icon-white"></i></button>
+            <button id="whiteboard-undo-button" class="btn" title="Undo"><i class="icon-repeat"></i></button>
+        </div>
+
         <span class="whiteboard-tool-header">Tools</span>
-        <div class="btn-group" data-toggle="buttons-radio">
-            <button id="tools-pen" class="btn" title="Pen Tool"><i class="icon-pencil"></i></button>
-            <button id="tools-arrow" class="btn" title="Arrow Tool"><i class="icon-arrow-right"></i></button>
+        <div class="btn-group whiteboard-btn-group" data-toggle="buttons-radio">
+            <button id="tools-pen" class="btn active" title="Pen Tool"><i class="icon-pencil"></i></button>
             <button id="tools-rect" class="btn" title="Rectangle Tool"><i class="tr-icon-square"></i></button>
             <button id="tools-circle" class="btn" title="Circle Tool"><i class="tr-icon-circle"></i></button>
             <button id="tools-erase" class="btn" title="Erase Tool"><i class="tr-icon-erase"></i></button>
@@ -12,7 +17,6 @@
 
         <span class="whiteboard-tool-header">Color</span>
         <div id="color-picker-wrapper">
-
         </div>
 
     </div>

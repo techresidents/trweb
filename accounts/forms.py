@@ -1,5 +1,10 @@
+import base64
 import datetime
+import hashlib
+import hmac
 import logging
+import struct
+import time
 import uuid
 
 from django import forms
@@ -13,7 +18,7 @@ from django.utils import timezone
 
 from techresidents_web.common.forms import JSONField
 from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType, Location
-from techresidents_web.accounts.models import CodeType, Code, Request, Skill
+from techresidents_web.accounts.models import CodeType, Code, OneTimePassword, OneTimePasswordType, Request, Skill
 from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, LocationPref, Prefs
 
 
@@ -226,6 +231,45 @@ class LoginForm(forms.Form):
     def get_user(self):
         return self.user
 
+class LoginOTPForm(forms.Form):
+    code = forms.CharField(label="Code", max_length=32, widget=forms.PasswordInput, required=True)
+
+    def __init__(self, one_time_password=None, *args, **kwargs):
+        self.otp = one_time_password
+        super(LoginOTPForm, self).__init__(*args, **kwargs)
+    
+    def _authenticate(self, secret, code):
+        #Time based one time password (RFC 6238)
+        result = False
+        
+        if secret is not None and code is not None:
+            timestamp = int(time.time() / 30)
+            secret = base64.b32decode(secret)
+
+            for index in [-1, 0, 1]:
+                timestamp_bytes = struct.pack(">q", timestamp + index)
+
+                hmac_digest = hmac.HMAC(secret, timestamp_bytes, hashlib.sha1).digest()
+
+                offset = ord(hmac_digest[-1]) & 0x0F
+                truncated_hmac_digest = hmac_digest[offset:offset+4]
+
+                valid_code = struct.unpack(">L", truncated_hmac_digest)[0]
+                valid_code &= 0x7FFFFFFF
+                valid_code %= 1000000
+
+                if ("%06d" % valid_code) == str(code):
+                    result = True
+                    break
+
+        return result
+
+    def clean(self):
+        code = self.cleaned_data.get('code')
+        if not self._authenticate(self.otp.secret, code):
+            raise forms.ValidationError("Invalid code")
+        return self.cleaned_data
+
 class ForgotPasswordForm(forms.Form):
     username = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, required=True)
     username_confirmation = forms.EmailField(label="Re-enter email", max_length=EMAIL_MAX_LEN, required=True)
@@ -315,6 +359,50 @@ class ResetPasswordForm(forms.Form):
         code.used = timezone.now()
         code.save()
 
+class OTPForm(forms.Form):
+    secret = forms.CharField(label="Secret", max_length=256, required=True)
+    enable = forms.BooleanField(label="Enable", widget=forms.CheckboxInput, required=False)
+
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        super(OTPForm, self).__init__(*args, **kwargs)
+    
+    def clean_secret(self):
+        secret = self.cleaned_data["secret"]
+        if len(secret) != 16:
+            raise forms.ValidationError("Invalid secret")
+
+        try:
+            base64.b32decode(secret)
+        except:
+            raise forms.ValidationError("Invalid secret")
+
+        return secret
+
+    def save(self, commit=True):
+        #otp model
+        try:
+            otp = OneTimePassword.objects.get(
+                    type__name="TOTP",
+                    user=self.request.user)
+        except OneTimePassword.DoesNotExist:
+            otp_type = OneTimePasswordType.objects.get(
+                    name="TOTP")
+            otp = OneTimePassword(
+                    type=otp_type,
+                    user=self.request.user)
+        otp.secret = self.cleaned_data['secret']
+
+        #user profile model
+        user_profile = self.request.user.get_profile()
+        user_profile.otp_enabled = self.cleaned_data['enable']
+
+        if commit:
+            otp.save()
+            user_profile.save()
+
+        return (user_profile, otp)
+
 class ProfileAccountForm(forms.Form):
     #year choices
     years_experience_range = reversed(range(timezone.now().year - 50, timezone.now().year))
@@ -403,7 +491,7 @@ class ProfileChatsForm(forms.Form):
 class ProfileJobsForm(forms.Form):
 
     # numerical constants
-    SALARY_MIN = 50000
+    SALARY_MIN = 0
     SALARY_MAX = 260000
 
     # Setup form fields
@@ -424,7 +512,7 @@ class ProfileJobsForm(forms.Form):
             valid_position_type_ids = [p.id for p in valid_position_types]
 
             # Need to validate positionPrefID, if it has one, the positionTypeID, and minSalary
-            for position in cleaned_positions_data:
+            for position_data in cleaned_positions_data:
 
                 # Validate the PositionPrefID, if it has one
                 # The PositionPrefID is validated via the save() method.
@@ -434,20 +522,20 @@ class ProfileJobsForm(forms.Form):
                 # PositionPrefID will be generated when save() compeletes.
 
                 # Validate the positionTypeID
-                position_type_id = position['positionTypeId']
+                position_type_id = position_data['positionTypeId']
                 if position_type_id:
                     if not position_type_id in valid_position_type_ids:
-                        raise forms.ValidationError("PositionType id value is invalid")
+                        raise forms.ValidationError("Position type is invalid")
                 else:
-                    raise forms.ValidationError("PositionType id field required")
+                    raise forms.ValidationError("Position type field required")
 
                 # Validate the minimum salary data
-                position_min_salary = position['min_salary']
+                position_min_salary = position_data['min_salary']
                 if position_min_salary is not None:
-                    if not type(position_min_salary == int):
-                        min_salary = int(position_min_salary)
-                    else:
+                    if type(position_min_salary == int):
                         min_salary = position_min_salary
+                    else:
+                        min_salary = int(position_min_salary)
                     if min_salary < self.SALARY_MIN or\
                        min_salary > self.SALARY_MAX:
                         raise forms.ValidationError("Position minimum salary value is invalid")
@@ -463,8 +551,8 @@ class ProfileJobsForm(forms.Form):
         valid_technology_ids = [t.id for t in valid_technologies]
 
         # Validate the technologyID
-        for technology in cleaned_technologies_data:
-            technology_id = technology['technologyId']
+        for technology_data in cleaned_technologies_data:
+            technology_id = technology_data['technologyId']
             if technology_id:
                 if not technology_id in valid_technology_ids:
                     raise forms.ValidationError("Technology id value is invalid")
@@ -480,8 +568,8 @@ class ProfileJobsForm(forms.Form):
         valid_location_ids = [l.id for l in valid_locations]
 
         # Validate the locationID
-        for location in cleaned_locations_data:
-            location_id = location['locationId']
+        for location_data in cleaned_locations_data:
+            location_id = location_data['locationId']
             if location_id:
                 if not location_id in valid_location_ids:
                     raise forms.ValidationError("Location id value is invalid")
@@ -489,7 +577,6 @@ class ProfileJobsForm(forms.Form):
                 raise forms.ValidationError("Location id field required")
 
         return cleaned_locations_data
-
 
     def save(self):
         # Making the assumption that form data is clean and valid (meaning that the position

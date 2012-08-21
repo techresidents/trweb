@@ -49,12 +49,10 @@ class ChatSessionManager(models.Manager):
 
         return result;
 
-
-
 class ChatType(models.Model):
     class Meta:
         db_table = "chat_type"
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=1024)
 
 class Chat(models.Model):
@@ -124,12 +122,11 @@ class Chat(models.Model):
             result = True
         return result
 
-
 class ChatRole(models.Model):
     class Meta:
         db_table = "chat_role"
 
-    role = models.CharField(max_length=100)
+    role = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=1024)
 
 class ChatSession(models.Model):
@@ -138,8 +135,10 @@ class ChatSession(models.Model):
     
     chat = models.ForeignKey(Chat, related_name="chat_sessions")
     users = models.ManyToManyField(User, through="ChatUser")
-    token = models.CharField(max_length=1024, null=True)
+    token = models.CharField(max_length=1024, null=True, unique=True)
     participants = models.IntegerField(default=0)
+    start = models.DateTimeField(null=True)
+    end = models.DateTimeField(null=True)
 
     objects = ChatSessionManager()
 
@@ -149,7 +148,7 @@ class ChatRegistration(models.Model):
     
     chat = models.ForeignKey(Chat, related_name="chat_registrations")
     user = models.ForeignKey(User)
-    chat_session = models.ForeignKey(ChatSession, null=True)
+    chat_session = models.ForeignKey(ChatSession, null=True, related_name="chat_registrations")
     checked_in = models.BooleanField(default=False)
 
 class ChatUser(models.Model):
@@ -166,15 +165,20 @@ class ChatMinute(models.Model):
         db_table = "chat_minute"
 
     chat_session = models.ForeignKey(ChatSession, related_name="chat_minutes")
-    start = models.IntegerField(),
-    end = models.IntegerField(null=True),
+    topic = models.ForeignKey(Topic, related_name="chat_minutes")
+    start = models.DateTimeField()
+    end = models.DateTimeField(null=True)
 
 class ChatTag(models.Model):
     class Meta:
         db_table = "chat_tag"
+        unique_together = ("user", "chat_minute", "name")
+
+    user = models.ForeignKey(User)
     chat_minute = models.ForeignKey(ChatMinute, related_name="chat_tags")
     tag = models.ForeignKey(Tag, null=True)
     name = models.CharField(max_length=1024)
+    deleted = models.BooleanField(default=False)
 
 class ChatArchive(models.Model):
     class Meta:
@@ -195,7 +199,91 @@ class ChatFeedback(models.Model):
 class ChatScheduleJob(models.Model):
     class Meta:
         db_table = "chat_schedule_job"
+
     chat = models.ForeignKey(Chat, related_name="+", unique=True)
     start = models.DateTimeField(auto_now_add=True)
     end = models.DateTimeField(null=True)
 
+class ChatPersistJob(models.Model):
+    """ Represents a job queue for work to be completed by the
+        chat persistence service.
+    """
+    class Meta:
+        db_table = "chat_persist_job"
+
+    chat_session = models.ForeignKey(ChatSession, related_name="+", unique=True)
+    created = models.DateTimeField(auto_now_add=True)
+    start = models.DateTimeField(null=True)
+    end = models.DateTimeField(null=True)
+    owner = models.CharField(null=True, max_length=1024)
+
+class ChatSpeakingMarker(models.Model):
+    """ Represents a record of which user was speaking during
+        a chat minute.
+    """
+    class Meta:
+        db_table = "chat_speaking_marker"
+
+    user = models.ForeignKey(User)
+    #TODO make chat minute nullable?
+    chat_minute = models.ForeignKey(ChatMinute, related_name="chat_speaking_markers")
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+
+class ChatMessageType(models.Model):
+    """ Represents a chat message type.
+    """
+    class Meta:
+        db_table = "chat_message_type"
+    name = models.CharField(max_length=100, unique=True)
+    description = models.CharField(max_length=1024)
+
+class ChatMessageFormatType(models.Model):
+    """ Represents a chat message format.
+
+        Chat message binary blobs are persisted within
+        the ChatMessage model.  This entity identifies
+        the format of the persisted binary data.
+    """
+    class Meta:
+        db_table = "chat_message_format_type"
+    name = models.CharField(max_length=100, unique=True)
+    description = models.CharField(max_length=1024)
+
+class ChatMessageManager(models.Manager):
+    """ Custom Chat Message Manager.
+
+        Clients reading chat messages from the db
+        will most likely only need chat message data
+        in one format.  This manager provides methods
+        to make accessing the supported formats easier.
+    """
+    def json(self):
+        return self.get_query_set().filter(type__name='JSON')
+
+    def thrift(self):
+        return self.get_query_set().filter(type__name='THRIFT')
+
+class ChatMessage(models.Model):
+    """ Represents a chat message.
+
+        Chat messages have associated types and formats.
+        The type is used to determine what purpose the
+        message had; the format is used to determine how
+        the binary message is stored within the data TextField.
+
+        The timestamp is stored as a DecimalField to facilitate
+        ordering and debugging, as this attribute is used in the
+        js layer.
+    """
+    class Meta:
+        db_table = "chat_message"
+
+    objects = ChatMessageManager()
+    message_id = models.CharField(max_length=1024, unique=True)
+    chat_session = models.ForeignKey(ChatSession, related_name="chat_messages")
+    type = models.ForeignKey(ChatMessageType)
+    format_type = models.ForeignKey(ChatMessageFormatType)
+    timestamp = models.FloatField()
+    time = models.DateTimeField()
+    data = models.TextField()
