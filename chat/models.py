@@ -165,12 +165,14 @@ class ChatMinute(models.Model):
         db_table = "chat_minute"
 
     chat_session = models.ForeignKey(ChatSession, related_name="chat_minutes")
+    topic = models.ForeignKey(Topic, related_name="chat_minutes")
     start = models.DateTimeField()
     end = models.DateTimeField(null=True)
 
 class ChatTag(models.Model):
     class Meta:
         db_table = "chat_tag"
+        unique_together = ("user", "chat_minute", "name")
 
     user = models.ForeignKey(User)
     chat_minute = models.ForeignKey(ChatMinute, related_name="chat_tags")
