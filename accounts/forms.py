@@ -508,26 +508,19 @@ class ProfileJobsForm(forms.Form):
         cleaned_positions_data = self.cleaned_data.get('positions_form_data')
         if cleaned_positions_data:
 
-            valid_position_types = PositionType.objects.all()
-            valid_position_type_ids = [p.id for p in valid_position_types]
-
+            position_type_ids = []
+            position_type_pref_ids = []
             # Need to validate positionPrefID, if it has one, the positionTypeID, and minSalary
             for position_data in cleaned_positions_data:
 
-                # Validate the PositionPrefID, if it has one
-                # The PositionPrefID is validated via the save() method.
-                # When save() is called this ID (if provided) will be used to update
-                # the user's PositionPreferences.  If this update fails, an exception
-                # will be thrown.  If the user is adding a new preference, then this
-                # PositionPrefID will be generated when save() compeletes.
-
-                # Validate the positionTypeID
-                position_type_id = position_data['positionTypeId']
-                if position_type_id:
-                    if not position_type_id in valid_position_type_ids:
-                        raise forms.ValidationError("Position type is invalid")
-                else:
-                    raise forms.ValidationError("Position type field required")
+                # Append model ids for later validation
+                # Note that position type preferences  will
+                # only have  an 'id' if it's been previously saved.
+                # Preferences being added for the first time
+                # will not have an 'id'.
+                if "id" in position_data:
+                    position_type_pref_ids.append(position_data['id'])
+                position_type_ids.append(position_data['positionTypeId'])
 
                 # Validate the minimum salary data
                 position_min_salary = position_data['min_salary']
@@ -541,40 +534,56 @@ class ProfileJobsForm(forms.Form):
                         raise forms.ValidationError("Position minimum salary value is invalid")
                 else:
                     raise forms.ValidationError("Position minimum salary field required")
+            
+            #Validate position types
+            count = PositionType.objects\
+                    .filter(id__in=position_type_ids)\
+                    .count()
+            if count != len(position_type_ids):
+                raise forms.ValidationError("Position type id value is invalid")
+
+            # Validate position type preference ids are valid
+            # and belong to the current user.
+            count = PositionTypePref.objects\
+                    .filter(id__in=position_type_pref_ids, user=self.user)\
+                    .count()
+            if count != len(position_type_pref_ids):
+                raise forms.ValidationError("Position type pref id value is invalid")
+
 
         return cleaned_positions_data
 
     def clean_technologies_form_data(self):
         cleaned_technologies_data = self.cleaned_data.get('technologies_form_data')
+        if cleaned_technologies_data:
 
-        valid_technologies = Technology.objects.all()
-        valid_technology_ids = [t.id for t in valid_technologies]
+            technology_ids = []
+            for technology_data in cleaned_technologies_data:
+                technology_ids.append(technology_data['technologyId'])
+            
+            count = Technology.objects\
+                    .filter(id__in=technology_ids)\
+                    .count()
 
-        # Validate the technologyID
-        for technology_data in cleaned_technologies_data:
-            technology_id = technology_data['technologyId']
-            if technology_id:
-                if not technology_id in valid_technology_ids:
-                    raise forms.ValidationError("Technology id value is invalid")
-            else:
-                raise forms.ValidationError("Technology id field required")
+            if count != len(technology_ids):
+                raise forms.ValidationError("Technology id value is invalid")
 
         return cleaned_technologies_data
 
     def clean_locations_form_data(self):
         cleaned_locations_data = self.cleaned_data.get('locations_form_data')
+        if cleaned_locations_data:
+            
+            location_ids = []
+            for location_data in cleaned_locations_data:
+                location_ids.append(location_data['locationId'])
+            
+            count = Location.objects\
+                    .filter(id__in=location_ids)\
+                    .count()
 
-        valid_locations = Location.objects.all()
-        valid_location_ids = [l.id for l in valid_locations]
-
-        # Validate the locationID
-        for location_data in cleaned_locations_data:
-            location_id = location_data['locationId']
-            if location_id:
-                if not location_id in valid_location_ids:
-                    raise forms.ValidationError("Location id value is invalid")
-            else:
-                raise forms.ValidationError("Location id field required")
+            if count != len(location_ids):
+                raise forms.ValidationError("Location id value is invalid")
 
         return cleaned_locations_data
 
@@ -685,30 +694,24 @@ class ProfileSkillsForm(forms.Form):
         # Verify we have some data to validate
         if cleaned_skills_data is None:
             raise forms.ValidationError("Invalid Skill data")
-
-        # Perform two db queries up front to prevent calling into the
-        # the db to validate each skill in the form data
-        valid_technologies = Technology.objects.filter(type__name=self.technology_type_name)
-        valid_technology_names = [t.name for t in valid_technologies]
-        valid_expertise = ExpertiseType.objects.all()
-        valid_expertise_names = [e.name for e in valid_expertise]
-
+        
+        technology_names = []
+        expertise_names = []
         for skill in cleaned_skills_data:
+            
             # Verify we have a name attribute
             skill_name = skill[self.JSON_SKILL_NAME]
             if skill_name:
-                # if we have a name attribute, verify that it's valid
-                if not skill_name in valid_technology_names:
-                    raise forms.ValidationError("Skill name value is invalid")
+                #append name for later validation
+                technology_names.append(skill_name)
             else:
                 raise forms.ValidationError("Skill name field required")
 
             # Verify we have an expertise level attribute
             skill_expertise = skill[self.JSON_EXPERTISE]
             if skill_expertise:
-                # if we have an expertise attribute, verify that it's valid
-                if not skill_expertise in valid_expertise_names:
-                    raise forms.ValidationError("Skill expertise value is invalid")
+                #append name for later validation
+                expertise_names.append(skill_expertise)
             else:
                 raise forms.ValidationError("Skill expertise field required")
 
@@ -724,6 +727,22 @@ class ProfileSkillsForm(forms.Form):
                     raise forms.ValidationError("Skill years experience value is invalid")
             else:
                 raise forms.ValidationError("Skill years experience field required")
+        
+        #Validate technology names
+        count = Technology.objects\
+                .filter(type__name=self.technology_type_name,
+                        name__in=technology_names)\
+                .count()
+        if count != len(technology_names):
+            raise forms.ValidationError("Technology name value is inavlid")
+        
+        #validate expertise name
+        expertise_names = list(set(expertise_names)) #remove duplicates
+        count = ExpertiseType.objects\
+                .filter(name__in=expertise_names)\
+                .count()
+        if count != len(expertise_names):
+            raise forms.ValidationError("Expertise name value is inavlid")
 
         return self.cleaned_data
 
