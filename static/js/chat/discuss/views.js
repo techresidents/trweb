@@ -83,7 +83,12 @@ define([
         },
 
         tagFilter: function(tag) {
-            return tag.minuteId() === this.model.activeMinute().id;
+            var show = false;
+            var activeMinute = this.model.activeMinute();
+            if(activeMinute) {
+                show = (tag.minuteId() === activeMinute.id);
+            } 
+            return show;
         }
     });
 

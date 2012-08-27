@@ -170,9 +170,13 @@ define([
          */
         _onMinuteEnded: function(minute) {
             var topic = this.topicsProxy.get(minute.topicId());
-            var nextTopic = this.next(topic);
-            if(!nextTopic) {
-                this._activate(null);
+            var nextTopic;
+
+            if(this.topicsProxy.isLeaf(topic)) {
+                nextTopic = this.next(topic);
+                if(!nextTopic) {
+                    this._activate(null);
+                }
             }
         },
 
