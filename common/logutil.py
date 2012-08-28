@@ -11,7 +11,10 @@ class RequestFilter(logging.Filter):
     """
 
     def filter(self, record):
-        threadlocal = TLSRequestMiddleware.get_threadlocal_storage()
-        record.user = threadlocal.request.user.id
-        record.session = threadlocal.request.session.session_key
+        try:
+            threadlocal = TLSRequestMiddleware.get_threadlocal_storage()
+            record.user = threadlocal.request.user.id
+            record.session = threadlocal.request.session.session_key
+        except:
+            pass
         return True
