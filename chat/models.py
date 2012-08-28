@@ -216,6 +216,7 @@ class ChatPersistJob(models.Model):
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
     owner = models.CharField(null=True, max_length=1024)
+    successful = models.NullBooleanField(null=True)
 
 class ChatSpeakingMarker(models.Model):
     """ Represents a record of which user was speaking during
