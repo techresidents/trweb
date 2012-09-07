@@ -207,6 +207,54 @@ define([
         TYPE: 'ENDED_MARKER'
     });
 
+    /**
+     * Chat Recording Started Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
+    var RecordingStartedMarker = Marker.extend({
+
+        defaults: function() {
+            return {
+                markerId: null,
+                type: RecordingStartedMarker.TYPE,
+                userId: null,
+                archiveId: null
+            };
+        },
+
+        initialize: function(attributes, options) {
+        }
+
+    }, {
+        TYPE: 'RECORDING_STARTED_MARKER'
+    });
+
+    /**
+     * Chat Ended Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
+    var RecordingEndedMarker = Marker.extend({
+
+        defaults: function() {
+            return {
+                markerId: null,
+                type: RecordingEndedMarker.TYPE,
+                userId: null,
+                archiveId: null
+            };
+        },
+
+        initialize: function(attributes, options) {
+        }
+
+    }, {
+        TYPE: 'RECORDING_ENDED_MARKER'
+    });
+
 
     /**
      * Chat Marker collection.
@@ -239,6 +287,12 @@ define([
                 case EndedMarker.TYPE: 
                     result = new EndedMarker(attributes, options);
                     break;
+                case RecordingStartedMarker.TYPE: 
+                    result = new RecordingStartedMarker(attributes, options);
+                    break;
+                case RecordingEndedMarker.TYPE: 
+                    result = new RecordingEndedMarker(attributes, options);
+                    break;
                 default:
                     result = new Marker(attributes, options);
                     break;
@@ -258,6 +312,8 @@ define([
         PublishingMarker: PublishingMarker,
         SpeakingMarker: SpeakingMarker,
         StartedMarker: StartedMarker,
-        EndedMarker: EndedMarker
+        EndedMarker: EndedMarker,
+        RecordingStartedMarker: RecordingStartedMarker,
+        RecordingEndedMarker: RecordingEndedMarker
     };
 });

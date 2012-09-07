@@ -229,6 +229,8 @@ define([
             this.registerCommand(notifications.MARKER_SPEAKING_CREATE, marker_commands.CreateSpeakingMarkerCommand);
             this.registerCommand(notifications.MARKER_STARTED_CREATE, marker_commands.CreateStartedMarkerCommand);
             this.registerCommand(notifications.MARKER_ENDED_CREATE, marker_commands.CreateEndedMarkerCommand);
+            this.registerCommand(notifications.MARKER_RECORDING_STARTED_CREATE, marker_commands.CreateRecordingStartedMarkerCommand);
+            this.registerCommand(notifications.MARKER_RECORDING_ENDED_CREATE, marker_commands.CreateRecordingEndedMarkerCommand);
             this.registerCommand(notifications.MESSAGE_MARKER_CREATE, message_commands.MarkerCreateMessageCommand);
             this.registerCommand(notifications.MESSAGE_MINUTE_CREATE, message_commands.MinuteCreateMessageCommand);
             this.registerCommand(notifications.MESSAGE_MINUTE_UPDATE, message_commands.MinuteUpdateMessageCommand);

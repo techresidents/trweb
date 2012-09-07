@@ -276,6 +276,11 @@ define([
                             this.perSessionRecording ? 'perSession' : 'perStream',
                             this.sessionId);
                 } else {
+
+                    this.facade.trigger(notifications.SESSION_RECORDING_STARTED, {
+                        archive: this.archive
+                    });
+
                     if(this.perSessionRecording) {
                         this.session.startRecording(this.archive);
                     } else {
@@ -291,6 +296,11 @@ define([
         stopRecording: function() {
             this.record = false;
             if(this.recording) {
+
+                this.facade.trigger(notifications.SESSION_RECORDING_ENDED, {
+                    archive: this.archive
+                });
+
                 if(this.perSessionRecording) {
                     this.session.stopRecording(this.archive);
                 } else {
@@ -469,35 +479,35 @@ define([
             this.archive = null;
         },
 
-        sessionNotRecordingHandler: function() {
+        sessionNotRecordingHandler: function(event) {
             this.recording = false;
         },
 
-        sessionRecordingInProgressHandler: function() {
+        sessionRecordingInProgressHandler: function(event) {
             this.recording = true;
         },
 
-        sessionRecordingStartedHandler: function() {
+        sessionRecordingStartedHandler: function(event) {
             this.recording = true;
         },
 
-        sessionRecordingStoppedHandler: function() {
+        sessionRecordingStoppedHandler: function(event) {
             this.recording = false;
         },
 
-        streamNotRecordingHandler: function() {
+        streamNotRecordingHandler: function(event) {
             this.recording = false;
         },
 
-        streamRecordingInProgressHandler: function() {
+        streamRecordingInProgressHandler: function(event) {
             this.recording = true;
         },
 
-        streamRecordingStartedHandler: function() {
+        streamRecordingStartedHandler: function(event) {
             this.recording = true;
         },
 
-        streamRecordingStoppedHandler: function() {
+        streamRecordingStoppedHandler: function(event) {
             this.recording = false;
         }
 

@@ -297,6 +297,86 @@ define([
 
     });
 
+    /**
+     * Create Recording Started Marker Command
+     * @constructor
+     *
+     * Creates a chat started marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
+    var CreateRecordingStartedMarkerCommand = command.AsyncCommand.extend({
+
+        //argument names for onSuccess and onError paramaters
+        asyncCallbackArgs: ['model', 'response'],
+
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {integer} userId 
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         */
+        execute: function(options) {
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: {
+                        type: marker_models.RecordingStartedMarker.TYPE,
+                        userId: options.userId,
+                        archiveId: options.archiveId
+                    }
+                })
+            });
+
+            message.save(null, {
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+        }
+
+    });
+
+    /**
+     * Create Recording Ended Marker Command
+     * @constructor
+     *
+     * Creates a chat ended marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
+    var CreateRecordingEndedMarkerCommand = command.AsyncCommand.extend({
+
+        //argument names for onSuccess and onError paramaters
+        asyncCallbackArgs: ['model', 'response'],
+
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {integer} userId 
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         */
+        execute: function(options) {
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: {
+                        type: marker_models.RecordingEndedMarker.TYPE,
+                        userId: options.userId,
+                        archiveId: options.archiveId
+                    }
+                })
+            });
+
+            message.save(null, {
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+        }
+
+    });
+
     return {
         CreateMarkerCommand: CreateMarkerCommand,
         CreateConnectedMarkerCommand: CreateConnectedMarkerCommand,
@@ -304,6 +384,8 @@ define([
         CreatePublishingMarkerCommand: CreatePublishingMarkerCommand,
         CreateSpeakingMarkerCommand: CreateSpeakingMarkerCommand,
         CreateStartedMarkerCommand: CreateStartedMarkerCommand,
-        CreateEndedMarkerCommand: CreateEndedMarkerCommand
+        CreateEndedMarkerCommand: CreateEndedMarkerCommand,
+        CreateRecordingStartedMarkerCommand: CreateRecordingStartedMarkerCommand,
+        CreateRecordingEndedMarkerCommand: CreateRecordingEndedMarkerCommand
     };
 });
