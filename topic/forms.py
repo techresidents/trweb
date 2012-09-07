@@ -14,22 +14,44 @@ class TopicForm(forms.Form):
         super(TopicForm, self).clean()
 
         topics = self.cleaned_data.get("topics")
+        print topics
 
+        # Ensure we have a root topic and at least one sub-topic
         if not topics or len(topics) < 2:
             raise forms.ValidationError("Invalid topic")
 
         root = topics[0]
         if not root["title"]:
             raise forms.ValidationError("Topic title field required")
-        
-        topic_map = { root["id"]: root }
 
+        # Construct map of topic IDs to topic data
+        topic_map = { root["id"]: root }
         for topic in topics[1:]:
-            if topic["parentId"] not in topic_map:
-                raise forms.ValidationError("Topic parents must preceed children in adjacency list")
+
+            parent_topic_id = topic["parentId"]
+            parent_topic = topic_map[parent_topic_id]
 
             if not topic["title"]:
                 raise forms.ValidationError("Topic title field required")
+
+            if parent_topic_id not in topic_map:
+                raise forms.ValidationError("Topic parents must preceed children in adjacency list")
+
+            if topic["level"] - parent_topic["level"] != 1:
+                raise forms.ValidationError("The level of topic children must be exactly one level greater than their parent")
+
+            # Need to ensure that any topics that are between parent & child have a level > parent
+            parent_topic_level = parent_topic["level"]
+            parent_topic_rank = parent_topic["rank"]
+            topic_rank = topic["rank"]
+            num_topics_between_parent_and_child = topic_rank - parent_topic_rank
+            if num_topics_between_parent_and_child > 1:
+                for t in topic_map.values():
+                    rank = t["rank"]
+                    if rank > parent_topic_rank and rank < topic_rank:
+                        # Topic is between parent and child
+                        if not t["level"] > parent_topic_level:
+                            raise forms.ValidationError("Invalid parent-child hierarchy")
 
             topic_map[topic["id"]] = topic
 
@@ -79,5 +101,5 @@ class TopicForm(forms.Form):
         
         if commit:
             Topic.objects.create_topic_tree(self.request.user, result)
-        
+
         return result

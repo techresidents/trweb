@@ -216,6 +216,7 @@ class ChatPersistJob(models.Model):
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
     owner = models.CharField(null=True, max_length=1024)
+    successful = models.NullBooleanField(null=True)
 
 class ChatSpeakingMarker(models.Model):
     """ Represents a record of which user was speaking during
@@ -225,7 +226,6 @@ class ChatSpeakingMarker(models.Model):
         db_table = "chat_speaking_marker"
 
     user = models.ForeignKey(User)
-    #TODO make chat minute nullable?
     chat_minute = models.ForeignKey(ChatMinute, related_name="chat_speaking_markers")
     start = models.DateTimeField()
     end = models.DateTimeField()
