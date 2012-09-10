@@ -5,12 +5,14 @@ import os
 import threading
 
 import cloudfiles
-from cloudfiles.errors import NoSuchObject
+from cloudfiles.errors import NoSuchObject, NoSuchContainer
 
 from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import Storage
 from django.contrib.staticfiles.storage import CachedFilesMixin
+
+from techresidents_web.cloudfiles_storage.auth import CloudfilesAuthenticator
 
 class StorageFileMode(object):
     """Class representation for file modes.
@@ -298,10 +300,13 @@ class CloudfilesStorage(Storage):
     The following settings are required for use:
 
     CLOUDFILES_USERNAME: Rackspace username
-    CLOUDFILES_API_KEY:  Rackspace api key
+    CLOUDFILES_API_KEY:  Rackspace api key (required if password not provided)
+    CLOUDFILES_PASSWORD: Rackspace password (required if api_key not provided)
     CLOUDFILES_LOCATION_BASE: optional location within container to store files
     CLOUDFILES_SERVICENET: boolean to use internal Rackspace network
     CLOUDFILES_TIMEOUT: optional timeout in seconds
+    CLOUDFILES_CREATE_CONTAINER: optional boolean indicating that the container
+        should be created if it does not exist.
     """
     
     #Thread local storage for cloudfiles.Connection object.
@@ -310,15 +315,18 @@ class CloudfilesStorage(Storage):
     def __init__(self,
             username=None,
             api_key=None,
+            password=None,
             location_base=None,
             container_name=None,
             servicenet=None,
-            timeout=None):
+            timeout=None,
+            create_container=None):
         """CloudfilesStorage constructor.
 
         Args:
             username: Rackspace username
-            api_key: Rackspace api key
+            api_key: Rackspace api key (required if password not provided)
+            password: Rackspace password (required if api_key not provided)
             container_name: cloud files container name
             location_base: location within the container to
                 store all files, i.e. 'static/'.
@@ -333,10 +341,13 @@ class CloudfilesStorage(Storage):
             timeout: timeout in seconds.
         """
         self.username = username or settings.CLOUDFILES_USERNAME
-        self.api_key = api_key or settings.CLOUDFILES_API_KEY
+        self.api_key = api_key or getattr(settings, "CLOUDFILES_API_KEY", None)
+        self.password = password or getattr(settings, "CLOUDFILES_PASSWORD", None)
         self.location_base = location_base or getattr(settings, "CLOUDFILES_LOCATION_BASE", None)
         self.container_name = container_name or settings.CLOUDFILES_CONTAINER_NAME
+        self.servicenet = servicenet or getattr(settings, "CLOUDFILES_SERVICENET")
         self.timeout = timeout or getattr(settings, "CLOUDFILES_TIMEOUT", 5)
+        self.create_container = create_container or getattr(settings, "CLOUDFILES_CREATE_CONTAINER", False)
         
         #normalize location
         if self.location_base:
@@ -344,6 +355,16 @@ class CloudfilesStorage(Storage):
                 self.location_base = self.location_base[1:]
             if not self.location_base.endswith("/"):
                 self.location_base += "/"
+
+        #cloudfiles api only support api-key base authentication.
+        #Replace it with an authenticator that will do api-key
+        #or password based authentication depending on which
+        #is provided.
+        self.authenticator = CloudfilesAuthenticator(
+                username=self.username,
+                api_key=self.api_key,
+                password=self.password,
+                timeout=self.timeout)
     
     def _name_to_location(self, name):
         """Convert relative filename to container location.
@@ -370,7 +391,9 @@ class CloudfilesStorage(Storage):
             connection = cloudfiles.Connection(
                     username=self.username,
                     api_key=self.api_key,
-                    timeout=self.timeout)
+                    timeout=self.timeout,
+                    servicenet=self.servicenet,
+                    auth=self.authenticator)
             self.threadlocal.connection = connection
         return self.threadlocal.connection
 
@@ -382,8 +405,16 @@ class CloudfilesStorage(Storage):
             threadlocal cloudfiles.Connection object.
         """
         if not getattr(self.threadlocal, "container", None):
-            container = self.connection.create_container(
-                    container_name=self.container_name)
+            try:
+                container = self.connection.get_container(
+                        container_name=self.container_name)
+            except NoSuchContainer:
+                if self.create_container:
+                    container = self.connection.create_container(
+                            container_name=self.container_name)
+                    container.make_public()
+                else:
+                    raise
             self.threadlocal.container = container
         return self.threadlocal.container
 

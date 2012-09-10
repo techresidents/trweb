@@ -242,12 +242,12 @@ RIAK_SESSION_KEY = '%(session_key)s'
 
 #Cloudfiles 
 #DEFAULT_FILE_STORAGE = 'techresidents_web.cloudfiles_storage.storage.CloudfilesStorage'
-#CLOUDFILES_USERNAME = 'techresidents'
-#CLOUDFILES_API_KEY = '6e472c9131df23960b230bfd0b936ade'
+#CLOUDFILES_USERNAME = 'trdev'
+#CLOUDFILES_PASSWORD = 'B88mMJqh'
 #CLOUDFILES_CONTAINER_NAME = "Test Container"
-#CLOUDFILES_STATIC_CONTAINER_NAME = "Test Container"
 #CLOUDFILES_SERVICENET = False
 #CLOUDFILES_TIMEOUT = 5
+#CLOUDFILES_CREATE_CONTAINER = False
 
 #Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
