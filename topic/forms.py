@@ -14,7 +14,6 @@ class TopicForm(forms.Form):
         super(TopicForm, self).clean()
 
         topics = self.cleaned_data.get("topics")
-        print topics
 
         # Ensure we have a root topic and at least one sub-topic
         if not topics or len(topics) < 2:
