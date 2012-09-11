@@ -2,11 +2,13 @@ define([
     'Underscore',
     'common/notifications',
     'core/mediator',
+    'chat/session/proxies',
     'chat/user/proxies'
 ], function(
     _,
     notifications,
     mediator,
+    session_proxies,
     user_proxies) {
 
     /**
@@ -28,10 +30,13 @@ define([
             [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged'],
             [notifications.USER_SPEAKING_CHANGED,'onSpeakingChanged'],
             [notifications.CHAT_STARTED, 'onChatStarted'],
-            [notifications.CHAT_ENDED, 'onChatEnded']
+            [notifications.CHAT_ENDED, 'onChatEnded'],
+            [notifications.SESSION_RECORDING_STARTED, 'onRecordingStarted'],
+            [notifications.SESSION_RECORDING_ENDED, 'onRecordingEnded']
         ],
 
         initialize: function(options) {
+            this.chatSessionProxy = this.facade.getProxy(session_proxies.ChatSessionProxy.NAME);
             this.usersProxy = this.facade.getProxy(user_proxies.ChatUsersProxy.NAME);
 
             //create JOINED_MARKER now
@@ -72,6 +77,20 @@ define([
         onChatEnded: function(notification) {
             this.facade.trigger(notifications.MARKER_ENDED_CREATE, {
                 userId: this.currentUser.id
+            });
+        },
+
+        onRecordingStarted: function(notification) {
+            this.facade.trigger(notifications.MARKER_RECORDING_STARTED_CREATE, {
+                userId: this.currentUser.id,
+                archiveId: notification.archive.archiveId
+            });
+        },
+
+        onRecordingEnded: function(notification) {
+            this.facade.trigger(notifications.MARKER_RECORDING_ENDED_CREATE, {
+                userId: this.currentUser.id,
+                archiveId: notification.archive.archiveId
             });
         }
         

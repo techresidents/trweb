@@ -61,7 +61,6 @@ MEDIA_URL = 'http://localhost:8000/'
 # distributed (filesystem, cloud, etc...)
 #STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
-#STATICFILES_STORAGE = 'common.staticfiles.CacheBustingStaticFilesStorage'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -153,6 +152,7 @@ INSTALLED_APPS = (
     'techresidents_web.job',
     'techresidents_web.topic',
     'techresidents_web.whiteboard',
+    'techresidents_web.cloudfiles_storage',
 )
 
 
@@ -231,10 +231,6 @@ LOGGING = {
 #Session settings
 SESSION_COOKIE_AGE = 1209600  #2 weeks
 
-#TODO set session cookie domain to root domain, i.e. techresidents.com
-#to allow for cross sub-domain requests to services at api.techresidents.com
-#SESSION_COOKIE_DOMAIN = 
-
 #Riak Session Cache
 import riak
 SESSION_ENGINE = 'riak_sessions.backends.cache'
@@ -243,6 +239,15 @@ RIAK_PORT = 8087
 RIAK_TRANSPORT_CLASS = riak.RiakPbcTransport
 RIAK_SESSION_BUCKET = 'tr_sessions'
 RIAK_SESSION_KEY = '%(session_key)s'
+
+#Cloudfiles 
+#DEFAULT_FILE_STORAGE = 'techresidents_web.cloudfiles_storage.storage.CloudfilesStorage'
+#CLOUDFILES_USERNAME = 'trdev'
+#CLOUDFILES_PASSWORD = 'B88mMJqh'
+#CLOUDFILES_CONTAINER_NAME = "Test Container"
+#CLOUDFILES_SERVICENET = False
+#CLOUDFILES_TIMEOUT = 5
+#CLOUDFILES_CREATE_CONTAINER = False
 
 #Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

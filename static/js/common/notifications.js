@@ -30,7 +30,7 @@ define([
         /* MARKER NOTICES */
         MARKER_ADDED: 'notification:MarkerAdded',
 
-        /* MARKER ACTIONSS */
+        /* MARKER ACTIONS */
         MARKER_CREATE: 'notification:MarkerCreate',
         MARKER_CONNECTED_CREATE: 'notification:MarkerConnectedCreate',
         MARKER_JOINED_CREATE: 'notification:MarkerJoinedCreate',
@@ -38,6 +38,8 @@ define([
         MARKER_SPEAKING_CREATE: 'notification:MarkerSpeakingCreate',
         MARKER_STARTED_CREATE: 'notification:MarkerStartedCreate',
         MARKER_ENDED_CREATE: 'notification:MarkerEndedCreate',
+        MARKER_RECORDING_STARTED_CREATE: 'notification:MarkerRecordingStartedCreate',
+        MARKER_RECORDING_ENDED_CREATE: 'notification:MarkerRecordingEndedCreate',
 
         /* MESSAGE ACTIONS */
         MESSAGE_MARKER_CREATE: 'notification:Message:MarkerCreate',
@@ -75,6 +77,8 @@ define([
         SESSION_STREAM_CREATED: 'notification:SessionStreamCreated',
         SESSION_STREAM_DESTROYED: 'notification:SessionStreamDestroyed',
         SESSION_MICROPHONE_LEVEL_CHANGED: 'notification:SessionMicrohponeLevelChanged',
+        SESSION_RECORDING_STARTED: 'notification:SessionRecordingStarted',
+        SESSION_RECORDING_ENDED: 'notification:SessionRecordingEnded',
 
         /* SHOW ACTIONS */
         SHOW_AGENDA: 'notification:ShowAgenda',
