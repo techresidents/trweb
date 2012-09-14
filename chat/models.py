@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-from techresidents_web.common.models import Quality, Tag, Topic
+from techresidents_web.common.models import MimeType, Quality, Tag, Topic
 
 class ChatSessionManager(models.Manager):
     """Chat session manager.
@@ -56,7 +56,6 @@ class ChatSessionManager(models.Manager):
         for chat_user in chat_session.chat_users.select_related("user").all():
             if chat_user.user.id == user.id:
                 return chat_user
-
         result = None
         chat_type = chat_session.chat.type
         if chat_type.name == "PRIVATE":
@@ -79,7 +78,6 @@ class ChatSessionManager(models.Manager):
                     result = chat_session.chat_users.create(user=anonymous_user, participant=participants)
             except:
                 pass
-
         return result;
 
 
@@ -132,7 +130,7 @@ class Chat(models.Model):
     class Meta:
         db_table = "chat"
     
-    type = models.ForeignKey(ChatType)
+    type = models.ForeignKey(ChatType, related_name="+")
     topic = models.ForeignKey(Topic, related_name="chats")
     start = models.DateTimeField()
     end = models.DateTimeField()
@@ -299,7 +297,7 @@ class ChatRegistration(models.Model):
         db_table = "chat_registration"
     
     chat = models.ForeignKey(Chat, related_name="chat_registrations")
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name="+")
     chat_session = models.ForeignKey(ChatSession, null=True, related_name="chat_registrations")
     checked_in = models.BooleanField(default=False)
 
@@ -321,9 +319,10 @@ class ChatUser(models.Model):
     """
     class Meta:
         db_table = "chat_user"
+        unique_together = ("chat_session", "user")
     
     chat_session = models.ForeignKey(ChatSession, related_name="chat_users")
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name="+")
     token = models.CharField(max_length=1024, null=True)
     participant = models.IntegerField()
 
@@ -364,24 +363,66 @@ class ChatTag(models.Model):
         db_table = "chat_tag"
         unique_together = ("user", "chat_minute", "name")
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name="+")
     chat_minute = models.ForeignKey(ChatMinute, related_name="chat_tags")
-    tag = models.ForeignKey(Tag, null=True)
+    tag = models.ForeignKey(Tag, null=True, related_name="+")
     name = models.CharField(max_length=1024)
     deleted = models.BooleanField(default=False)
 
 
+class ChatArchiveType(models.Model):
+    """Chat archive type data model.
+    
+    Fields:
+        name: chat archive type name
+        description: chat archive type description
+    """
+    class Meta:
+        db_table = "chat_archive_type"
+    name = models.CharField(max_length=100, unique=True)
+    description = models.CharField(max_length=1024)
+
 class ChatArchive(models.Model):
     """Chat archive data model.
 
+    Represents a media archive file of a past chat. The media
+    archive may be the merged/anonymized audio stream,
+    or one of the original raw video streams.
+
     Fields:
-        chat_session: ChatSession data model object
+        type: ChatArchiveType object
+        chat_session: ChatSession data model object.
+        mime_type: MimeType data model object.
+        path: relative media archive file path
+        users: User objects for all users on the
+            media archive file. This will be equivalent
+            to the ChatSession.users for the merged
+            media file, and a single user for the
+            raw video stream files.
     """
     class Meta:
         db_table = "chat_archive"
 
+    type = models.ForeignKey(ChatArchiveType, related_name="+")
     chat_session = models.ForeignKey(ChatSession, related_name="chat_archives")
+    mime_type = models.ForeignKey(MimeType, related_name="+")
+    path = models.FileField(upload_to="archives", max_length=1024)
+    users = models.ManyToManyField(User, through="ChatArchiveUser", related_name="+")
 
+
+class ChatArchiveUser(models.Model):
+    """Chat archive user data model.
+
+    Linking table for chat archives and users. Note
+    that this model explicit in order to for the
+    naming of the chat_archive_id column.
+    """
+    class Meta:
+        db_table = "chat_archive_user"
+        unique_together = ("chat_archive", "user")
+
+    chat_archive = models.ForeignKey(ChatArchive, related_name="+")
+    user = models.ForeignKey(User, related_name="+")
 
 class ChatFeedback(models.Model):
     """Chat feedback data model.
@@ -400,6 +441,40 @@ class ChatFeedback(models.Model):
     user = models.ForeignKey(User)
     overall_quality = models.ForeignKey(Quality, related_name="+")
     technical_quality = models.ForeignKey(Quality, related_name="+")
+
+
+class ChatArchiveJob(models.Model):
+    """Chat archive job data model.
+    
+    Represents a job for archivesvc.
+
+    Fields:
+        chat_session: ChatSession data model object
+        created: datetime object containing the time
+            the job was created.
+        not_before: datetime object containing the 
+            earliest time that the job should be
+            started.
+        start: datetime object containing the time
+            the job started.
+        end: datetime object containing the time
+            the job ended.
+        successful: boolean indicating that the job
+            was successfully completed.
+        retries_remaining: number of retries remaining
+            for the job.
+    """
+    class Meta:
+        db_table = "chat_archive_job"
+
+    chat_session = models.ForeignKey(ChatSession, related_name="+")
+    created = models.DateTimeField(auto_now_add=True)
+    not_before = models.DateTimeField(auto_now_add=True)
+    start = models.DateTimeField(null=True)
+    end = models.DateTimeField(null=True)
+    owner = models.CharField(null=True, max_length=1024)
+    successful = models.NullBooleanField(null=True)
+    retries_remaining = models.IntegerField()
 
 
 class ChatScheduleJob(models.Model):
@@ -547,7 +622,7 @@ class ChatMessage(models.Model):
     objects = ChatMessageManager()
     message_id = models.CharField(max_length=1024, unique=True)
     chat_session = models.ForeignKey(ChatSession, related_name="chat_messages")
-    type = models.ForeignKey(ChatMessageType)
+    type = models.ForeignKey(ChatMessageType, related_name="+")
     format_type = models.ForeignKey(ChatMessageFormatType)
     timestamp = models.FloatField()
     time = models.DateTimeField()

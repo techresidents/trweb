@@ -356,8 +356,7 @@ def session(request, encoded_chat_session_id):
     if not chat_user.token:
         opentok = OpenTokSDK.OpenTokSDK(
                 settings.TOKBOX_API_KEY,
-                settings.TOKBOX_API_SECRET, 
-                settings.TOKBOX_IS_STAGING) 
+                settings.TOKBOX_API_SECRET)
         token = opentok.generate_token(
                 chat_session.token,
                 connection_data=json.dumps(chat_data["users"][0]),

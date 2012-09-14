@@ -54,9 +54,9 @@ REGISTRATION_REQUIRES_CODE = False
 TR_LOGIN_USING_HTTPS = True
 TR_XD_REMOTE = 'http://api.techresidents.com/static/js/easyXDM/cors/index.html'
 
-#Tokbox Settings
-TOKBOX_JS_URL = 'http://static.opentok.com/v0.91/js/TB.min.js'
-TOKBOX_IS_STAGING = False
+#Tokbox settings
+TOKBOX_API_KEY = '20288731'
+TOKBOX_API_SECRET = '8f8cd837895e064f56e506e952e09c63af396172'
 
 #Logging settings
 LOGGING = {
