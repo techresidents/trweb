@@ -7,13 +7,19 @@ from django.db import models
 class Notification(models.Model):
     """Notification data model.
 
+    The 'token' and 'context' are considered
+    together for a notification to be unique.
+
     Fields:
         created: datetime object containing the time
             the Notification was created.
         token: notification ID. Used to allow creators of
             Notification objects to specify an ID.
         context: the request context
+        users: User data model objects
         subject: the notification subject
+        html_text: html notification body
+        plain_text: plain text notification body
 
     """
     class Meta:
