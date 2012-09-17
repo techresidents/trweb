@@ -3,6 +3,18 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+class NotificationPriority(models.Model):
+    """Notification Priority data model.
+
+    Fields:
+        name: priority name
+        description: priority type description
+    """
+    class Meta:
+        db_table = "notification_priority"
+    name = models.CharField(max_length=100, unique=True)
+    description = models.CharField(max_length=1024)
+
 
 class Notification(models.Model):
     """Notification data model.
@@ -16,7 +28,7 @@ class Notification(models.Model):
         token: notification ID. Used to allow creators of
             Notification objects to specify an ID.
         context: the request context
-        users: User data model objects
+        recipients: User data model objects
         subject: the notification subject
         html_text: html notification body
         plain_text: plain text notification body
@@ -28,7 +40,7 @@ class Notification(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     token = models.CharField(max_length=1024)
     context = models.CharField(max_length=1024)
-    users = models.ManyToManyField(User, through="NotificationUser", related_name="+")
+    recipients = models.ManyToManyField(User, through="NotificationUser", related_name="notifications+")
     subject = models.CharField(max_length=1024)
     html_text = models.TextField(null=True)
     plain_text = models.TextField(null=True)
@@ -85,16 +97,3 @@ class NotificationJob(models.Model):
     successful = models.NullBooleanField(null=True)
     retries_remaining = models.IntegerField()
 
-
-
-class NotificationPriority(models.Model):
-    """Notification Priority data model.
-
-    Fields:
-        name: priority name
-        description: priority type description
-    """
-    class Meta:
-        db_table = "notification_priority"
-    name = models.CharField(max_length=100, unique=True)
-    description = models.CharField(max_length=1024)
