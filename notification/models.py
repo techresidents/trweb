@@ -3,18 +3,6 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
-class NotificationPriority(models.Model):
-    """Notification Priority data model.
-
-    Fields:
-        name: priority name
-        description: priority type description
-    """
-    class Meta:
-        db_table = "notification_priority"
-    name = models.CharField(max_length=100, unique=True)
-    description = models.CharField(max_length=1024)
-
 
 class Notification(models.Model):
     """Notification data model.
@@ -40,6 +28,7 @@ class Notification(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     token = models.CharField(max_length=1024)
     context = models.CharField(max_length=1024)
+    priority = models.IntegerField()
     recipients = models.ManyToManyField(User, through="NotificationUser", related_name="notifications+")
     subject = models.CharField(max_length=1024)
     html_text = models.TextField(null=True)
@@ -88,7 +77,7 @@ class NotificationJob(models.Model):
         db_table = "notification_job"
     notification = models.ForeignKey(Notification, related_name="notification_jobs")
     recipient = models.ForeignKey(User, related_name="+")
-    priority = models.ForeignKey(NotificationPriority, related_name="+")
+    priority = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
     not_before = models.DateTimeField(auto_now_add=True)
     start = models.DateTimeField(null=True)
