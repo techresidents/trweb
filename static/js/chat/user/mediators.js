@@ -69,6 +69,7 @@ define([
             if(userModel.isConnected() && userModel.isCurrentUser()) {
                 var details = view.getStreamViewDetails();
                 this.sessionProxy.session.publish(details.elementId, {
+                    name: userModel.id,
                     width: details.width,
                     height: details.height,
                     encodedWidth: details.width,

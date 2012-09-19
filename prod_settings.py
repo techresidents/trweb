@@ -43,6 +43,15 @@ DEFAULT_FROM_EMAIL = 'Tech Residents Support <support@techresidents.com>'
 #Riak Session Cache
 RIAK_HOST = 'localhost'
 
+#Cloudfiles 
+DEFAULT_FILE_STORAGE = 'techresidents_web.cloudfiles_storage.storage.CloudfilesStorage'
+CLOUDFILES_USERNAME = 'trprod'
+CLOUDFILES_PASSWORD = 'tUtzm2wb'
+CLOUDFILES_CONTAINER_NAME = "tr_public"
+CLOUDFILES_SERVICENET = True
+CLOUDFILES_TIMEOUT = 5
+CLOUDFILES_CREATE_CONTAINER = False
+
 #Landing settings
 LANDING_PLACEHOLDER = False
 

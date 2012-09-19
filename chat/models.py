@@ -399,6 +399,13 @@ class ChatArchive(models.Model):
             to the ChatSession.users for the merged
             media file, and a single user for the
             raw video stream files.
+        public: boolean indicating if the stream is public.
+            This should be set to true if the stream
+            has been anonymized.
+        length: stream length in milliseconds
+        offset: stream offset in milliseconds.
+            This is only applicable for non-merged
+            streams.
     """
     class Meta:
         db_table = "chat_archive"
@@ -408,7 +415,9 @@ class ChatArchive(models.Model):
     mime_type = models.ForeignKey(MimeType, related_name="+")
     path = models.FileField(upload_to="archives", max_length=1024)
     users = models.ManyToManyField(User, through="ChatArchiveUser", related_name="+")
-
+    public = models.BooleanField(default=False)
+    length = models.IntegerField(null=True)
+    offset = models.IntegerField(null=True)
 
 class ChatArchiveUser(models.Model):
     """Chat archive user data model.

@@ -241,13 +241,13 @@ RIAK_SESSION_BUCKET = 'tr_sessions'
 RIAK_SESSION_KEY = '%(session_key)s'
 
 #Cloudfiles 
-#DEFAULT_FILE_STORAGE = 'techresidents_web.cloudfiles_storage.storage.CloudfilesStorage'
-#CLOUDFILES_USERNAME = 'trdev'
-#CLOUDFILES_PASSWORD = 'B88mMJqh'
-#CLOUDFILES_CONTAINER_NAME = "Test Container"
-#CLOUDFILES_SERVICENET = False
-#CLOUDFILES_TIMEOUT = 5
-#CLOUDFILES_CREATE_CONTAINER = False
+DEFAULT_FILE_STORAGE = 'techresidents_web.cloudfiles_storage.storage.CloudfilesStorage'
+CLOUDFILES_USERNAME = 'trdev'
+CLOUDFILES_PASSWORD = 'B88mMJqh'
+CLOUDFILES_CONTAINER_NAME = "trdev_public"
+CLOUDFILES_SERVICENET = False
+CLOUDFILES_TIMEOUT = 5
+CLOUDFILES_CREATE_CONTAINER = False
 
 #Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
