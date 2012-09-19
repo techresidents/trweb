@@ -414,7 +414,7 @@ class ChatArchive(models.Model):
     chat_session = models.ForeignKey(ChatSession, related_name="chat_archives")
     mime_type = models.ForeignKey(MimeType, related_name="+")
     path = models.FileField(upload_to="archives", max_length=1024)
-    users = models.ManyToManyField(User, through="ChatArchiveUser", related_name="+")
+    users = models.ManyToManyField(User, through="ChatArchiveUser", related_name="archives+")
     public = models.BooleanField(default=False)
     length = models.IntegerField(null=True)
     offset = models.IntegerField(null=True)

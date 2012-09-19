@@ -153,6 +153,7 @@ INSTALLED_APPS = (
     'techresidents_web.topic',
     'techresidents_web.whiteboard',
     'techresidents_web.cloudfiles_storage',
+    'techresidents_web.notification',
 )
 
 
