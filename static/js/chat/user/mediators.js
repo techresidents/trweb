@@ -74,7 +74,13 @@ define([
                     height: details.height,
                     encodedWidth: details.width,
                     encodedHeight: details.height,
-                    reportMicLevels: true
+                    reportMicLevels: true,
+                    style: {
+                        //Don't display stream name, since we use 
+                        //the userId as the stream name in order
+                        //to link video streams to users.
+                        nameDisplayMode: "off"
+                    }
                 });
             }
         },
@@ -90,7 +96,13 @@ define([
                     width: details.width,
                     height: details.height,
                     encodedWidth: details.width,
-                    encodedHeight: details.height
+                    encodedHeight: details.height,
+                    style: {
+                        //Don't display stream name, since we use 
+                        //the userId as the stream name in order
+                        //to link video streams to users.
+                        nameDisplayMode: "off"
+                    }
                 });
             }
         }

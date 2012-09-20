@@ -50,6 +50,8 @@ define([
         },
 
         initialize: function(options) {
+            this.options = options;
+            console.log(this.options);
 
             //chat session proxy
             this.chatSessionProxy = new session_proxies.ChatSessionProxy({
@@ -125,12 +127,20 @@ define([
             //connect the chat and start polling for messages.
             this.chatSessionProxy.connect();
             this.chatMessagesProxy.startLongPoll();
+
+            if(this.options.chatRecorded) {
+                this.startRecording();
+            }
         },
 
         /**
          * Disconnect the chat.
          */
         disconnect: function() {
+            if(this.options.chatRecorded) {
+                this.stopRecording();
+            }
+
             this.chatSessionProxy.disconnect();
             this.chatMessagesProxy.stopLongPoll();
         },

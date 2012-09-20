@@ -326,6 +326,8 @@ def session(request, encoded_chat_session_id):
         return HttpResponseRedirect(reverse("chat.views.session_wait", args=[encoded_chat_session_id]))
     elif chat.expired:
         return HttpResponseForbidden("chat expired")
+    elif chat_session.end is not None:
+        return HttpResponseForbidden("chat session ended")
 
     if chat_type.name != "ANONYMOUS":
         if request.user.is_anonymous():
@@ -384,6 +386,7 @@ def session(request, encoded_chat_session_id):
         'chat_session_id': basic_encode(chat_session.id),
         'chat_session_token': chat_session.token,
         'chat_user_token': chat_user.token,
+        'chat_record_json': json.dumps(chat.record),
         'users_json': json.dumps(chat_data["users"]),
         'topics_json': json.dumps(chat_data["topics"]),
         'resources_json': json.dumps(chat_data["resources"]),

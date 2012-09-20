@@ -138,6 +138,7 @@ class Chat(models.Model):
     registration_end = models.DateTimeField(null=True)
     checkin_start = models.DateTimeField(null=True)
     checkin_end = models.DateTimeField(null=True)
+    record = models.BooleanField(default=False)
     
     @property
     def registration_open(self):
