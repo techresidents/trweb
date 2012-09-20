@@ -43,6 +43,15 @@ DEFAULT_FROM_EMAIL = 'Tech Residents Support <support@techresidents.com>'
 #Riak Session Cache
 RIAK_HOST = 'localhost'
 
+#Cloudfiles 
+DEFAULT_FILE_STORAGE = 'techresidents_web.cloudfiles_storage.storage.CloudfilesStorage'
+CLOUDFILES_USERNAME = 'trprod'
+CLOUDFILES_PASSWORD = 'tUtzm2wb'
+CLOUDFILES_CONTAINER_NAME = "tr_public"
+CLOUDFILES_SERVICENET = True
+CLOUDFILES_TIMEOUT = 5
+CLOUDFILES_CREATE_CONTAINER = False
+
 #Landing settings
 LANDING_PLACEHOLDER = False
 
@@ -54,9 +63,9 @@ REGISTRATION_REQUIRES_CODE = False
 TR_LOGIN_USING_HTTPS = True
 TR_XD_REMOTE = 'http://api.techresidents.com/static/js/easyXDM/cors/index.html'
 
-#Tokbox Settings
-TOKBOX_JS_URL = 'http://static.opentok.com/v0.91/js/TB.min.js'
-TOKBOX_IS_STAGING = False
+#Tokbox settings
+TOKBOX_API_KEY = '20288731'
+TOKBOX_API_SECRET = '8f8cd837895e064f56e506e952e09c63af396172'
 
 #Logging settings
 LOGGING = {

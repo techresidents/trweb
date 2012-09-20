@@ -35,7 +35,6 @@ define([
         execute: function(options) {
             var chatProxy = this.facade.getProxy(chat_proxies.ChatProxy.NAME);
             chatProxy.connect();
-            //chatProxy.startRecording();
             return true;
         }
     });

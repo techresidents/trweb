@@ -127,3 +127,9 @@ class Quality(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=1024)
 
+class MimeType(models.Model):
+    class Meta:
+        db_table ="mime_type"
+        unique_together = ("extension", "type")
+    extension = models.CharField(max_length=16)
+    type = models.CharField(max_length=255)

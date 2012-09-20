@@ -2,7 +2,7 @@ pytz
 django==1.4
 psycopg2==2.4.4
 pygments==1.5
-git+git://github.com/opentok/Opentok-Python-SDK.git
+opentok-python-sdk == 0.91.1
 git+https://github.com/basho/riak-python-client.git@1.4.0#egg=riak
 
-git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/trpycore.git@0.4.0#egg=trpycore
+git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/trpycore.git@0.7.0#egg=trpycore

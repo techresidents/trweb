@@ -39,16 +39,26 @@
                                     </div>
                                 </div>
                             {% endfor %}
+                            
+                            <div class="control-group">
+                                <div class="controls">
+                                    {% if user_form.non_field_errors %}
+                                        <div class="alert-message alert-error">
+                                            {% for error in form.non_field_errors%}
+                                                <span>{{error}}</span>
+                                            {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
 
-                            <div class="controls">
-                                <input type="submit" value="Submit" class="btn btn-primary" />
-
-                                {% if user_form.non_field_errors %}
-                                    <div class="alert-message alert-error">
-                                        {% for error in form.non_field_errors%}
-                                            <span>{{error}}</span>
-                                        {% endfor %}
-                                {% endif %}
+                            <div class="control-group">
+                                <div class="controls">
+                                    <input type="submit" value="Submit" class="btn btn-primary" />
+                                    <label class="checkbox inline">
+                                        {{ form.remember_me }}
+                                        {{ form.remember_me.label }}
+                                    </label>
+                                </div>
                             </div>
                         </fieldset>
                     </form>

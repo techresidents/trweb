@@ -153,6 +153,7 @@ INSTALLED_APPS = (
     'techresidents_web.topic',
     'techresidents_web.whiteboard',
     'techresidents_web.cloudfiles_storage',
+    'techresidents_web.notification',
 )
 
 
@@ -241,13 +242,13 @@ RIAK_SESSION_BUCKET = 'tr_sessions'
 RIAK_SESSION_KEY = '%(session_key)s'
 
 #Cloudfiles 
-#DEFAULT_FILE_STORAGE = 'techresidents_web.cloudfiles_storage.storage.CloudfilesStorage'
-#CLOUDFILES_USERNAME = 'trdev'
-#CLOUDFILES_PASSWORD = 'B88mMJqh'
-#CLOUDFILES_CONTAINER_NAME = "Test Container"
-#CLOUDFILES_SERVICENET = False
-#CLOUDFILES_TIMEOUT = 5
-#CLOUDFILES_CREATE_CONTAINER = False
+DEFAULT_FILE_STORAGE = 'techresidents_web.cloudfiles_storage.storage.CloudfilesStorage'
+CLOUDFILES_USERNAME = 'trdev'
+CLOUDFILES_PASSWORD = 'B88mMJqh'
+CLOUDFILES_CONTAINER_NAME = "trdev_public"
+CLOUDFILES_SERVICENET = False
+CLOUDFILES_TIMEOUT = 5
+CLOUDFILES_CREATE_CONTAINER = False
 
 #Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -278,9 +279,7 @@ TR_XD_REMOTE = 'http://localhost:6767/static/js/easyXDM/cors/index.html'
 #Tokbox settings
 TOKBOX_API_KEY = '15889991'
 TOKBOX_API_SECRET = '19a6fb225790a2cf3e048c58ef2fdcc425e7b599'
-TOKBOX_JS_URL = 'http://staging.tokbox.com/v0.91/js/TB.min.js'
-TOKBOX_IS_STAGING = True
-
+TOKBOX_JS_URL = 'http://static.opentok.com/v0.91/js/TB.min.js'
 
 #Django message settings
 #MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

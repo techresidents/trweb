@@ -326,6 +326,8 @@ def session(request, encoded_chat_session_id):
         return HttpResponseRedirect(reverse("chat.views.session_wait", args=[encoded_chat_session_id]))
     elif chat.expired:
         return HttpResponseForbidden("chat expired")
+    elif chat_session.end is not None:
+        return HttpResponseForbidden("chat session ended")
 
     if chat_type.name != "ANONYMOUS":
         if request.user.is_anonymous():
@@ -356,8 +358,7 @@ def session(request, encoded_chat_session_id):
     if not chat_user.token:
         opentok = OpenTokSDK.OpenTokSDK(
                 settings.TOKBOX_API_KEY,
-                settings.TOKBOX_API_SECRET, 
-                settings.TOKBOX_IS_STAGING) 
+                settings.TOKBOX_API_SECRET)
         token = opentok.generate_token(
                 chat_session.token,
                 connection_data=json.dumps(chat_data["users"][0]),
@@ -385,6 +386,7 @@ def session(request, encoded_chat_session_id):
         'chat_session_id': basic_encode(chat_session.id),
         'chat_session_token': chat_session.token,
         'chat_user_token': chat_user.token,
+        'chat_record_json': json.dumps(chat.record),
         'users_json': json.dumps(chat_data["users"]),
         'topics_json': json.dumps(chat_data["topics"]),
         'resources_json': json.dumps(chat_data["resources"]),

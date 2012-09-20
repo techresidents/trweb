@@ -23,6 +23,7 @@ class CreateChatForm(forms.Form):
     start = forms.DateTimeField(label="Start", required=True)
     topic = forms.CharField(label="Topic", max_length=255, required=True)
     users = EmailListField(label="Usernames", max_length=1024, required=True)
+    record = forms.BooleanField(label="Record", widget=forms.CheckboxInput, required=False)
 
     def __init__(self, request=None, *args, **kwargs):
         self.request = request
@@ -66,6 +67,7 @@ class CreateChatForm(forms.Form):
         start = self.cleaned_data["start"]
         topic = self.cleaned_data["topic"]
         users = self.cleaned_data["users"]
+        record = True if self.cleaned_data["record"] else False
         
         chat = None
         chat_session = None
@@ -81,13 +83,13 @@ class CreateChatForm(forms.Form):
                     type=type,
                     topic=topic,
                     start=start,
-                    end=start+datetime.timedelta(minutes=topic.duration)) 
+                    end=start+datetime.timedelta(minutes=topic.duration),
+                    record=record) 
 
             #Create the tokbox session
             opentok = OpenTokSDK.OpenTokSDK(
                     settings.TOKBOX_API_KEY,
-                    settings.TOKBOX_API_SECRET, 
-                    settings.TOKBOX_IS_STAGING) 
+                    settings.TOKBOX_API_SECRET)
             
             #IP passed to tokbox when session is created will be used to determine
             #tokbox server location for chat session. Note that tokboxchat sessions
@@ -122,7 +124,8 @@ class CreateChatForm(forms.Form):
                     #registration_end=start-datetime.timedelta(hours=1),
                     registration_end=start-datetime.timedelta(minutes=2),
                     checkin_start=start-datetime.timedelta(minutes=15),
-                    checkin_end=start)
+                    checkin_end=start,
+                    record=record)
 
             for user in users:
                 ChatRegistration.objects.create(chat=chat, user=user, checked_in=False)
@@ -139,13 +142,13 @@ class CreateChatForm(forms.Form):
                     type=type,
                     topic=topic,
                     start=start,
-                    end=start+datetime.timedelta(minutes=topic.duration)) 
+                    end=start+datetime.timedelta(minutes=topic.duration),
+                    record=record) 
 
             #Create the tokbox session
             opentok = OpenTokSDK.OpenTokSDK(
                     settings.TOKBOX_API_KEY,
-                    settings.TOKBOX_API_SECRET, 
-                    settings.TOKBOX_IS_STAGING) 
+                    settings.TOKBOX_API_SECRET)
             
             session = opentok.create_session(self.request.META['REMOTE_ADDR'])
             chat_session = ChatSession.objects.create(chat=chat, token=session.session_id) 
