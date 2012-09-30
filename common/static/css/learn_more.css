@@ -62,3 +62,53 @@
 .learn-more-step-details {
     padding-top: 30px;
 }
+
+
+
+
+
+
+
+#learn-more-container p {
+    font-size: 16px;
+    line-height: 25px;
+}
+
+#learn-more-overview-start {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+#learn-more-overview-end {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.container-no-padding {
+    padding: 0px;
+}
+
+.learn-more-stripe {
+    background-color: #2A73A7;
+    color: white;
+}
+
+.learn-more-bubble {
+    padding-left: 30px;
+    height: auto;
+    max-width: 100%;
+}
+
+.learn-more-display {
+    height: auto;
+    max-width: 100%;
+}
+
+.learn-more-feature {
+    padding-top: 90px;
+    padding-bottom: 90px;
+}
+
+
+
+

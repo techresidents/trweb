@@ -19,6 +19,25 @@
         color: #EEEEEE;
 }
 
+.navbar .brand {
+    padding-right: 10px;
+}
+
+.brand-beta {
+    float: left;
+    display: block;
+    padding-top: 8px;
+    font-size: 15px;
+    font-weight: 100;
+    line-height: 1;
+    color: #EA8F00;
+}
+
+.brand-beta:hover {
+    color: #EA8F00;
+    text-decoration: none;
+}
+
 .close-inline {
     color: #000000;
     font-size: 20px;
@@ -44,14 +63,14 @@
 
 .logo-small {
     display: block;
-    height: 30px;
-    width: 31px;
-    background-image: url(../img/logo-small.png);
+    height: 25px;
+    width: 26px;
+    background-image: url(../img/logo-25x25.png);
 }
 
 .logo-brand {
     float: left;
-    padding: 5px 10px 5px 1px;
+    padding: 10px 10px 5px 1px;
 }
 
 .marketing p {
