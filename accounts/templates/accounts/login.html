@@ -23,7 +23,7 @@
                     <fieldset>
                         <legend>Tech Residents Login</legend>
                         <div class="control-group{% if form.username.errors %} error{% endif %}">
-                            {{ form.username.label_tag }}
+                            <label class="control-label"> {{ form.username.label_tag }}</label>
                             <div class="controls">
                                 {{ form.username }}
                                 {% for error in form.username.errors %}
@@ -32,7 +32,7 @@
                             </div>
                         </div>
                         <div class="control-group{% if form.password.errors%} error{% endif %}">
-                            {{ form.password.label_tag }}
+                            <label class="control-label">{{ form.password.label_tag }}</label>
                             <div class="controls">
                                 {{ form.password }}
                                 {% for error in form.password.errors %}

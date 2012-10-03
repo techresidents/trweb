@@ -61,19 +61,19 @@ define([
 
             switch(color) {
                 case whiteboard_models.WhiteboardValueObject.COLORS.BLACK:
-                    colorText = 'Black';
+                    colorText = 'BK';
                     colorClass = 'btn-inverse';
                     break;
                 case whiteboard_models.WhiteboardValueObject.COLORS.BLUE:
-                    colorText = 'Blue';
+                    colorText = 'B';
                     colorClass = 'btn-primary';
                     break;
                 case whiteboard_models.WhiteboardValueObject.COLORS.GREEN:
-                    colorText = 'Green';
+                    colorText = 'G';
                     colorClass = 'btn-success';
                     break;
                 case whiteboard_models.WhiteboardValueObject.COLORS.RED:
-                    colorText = 'Red';
+                    colorText = 'R';
                     colorClass = 'btn-danger';
                     break;
                 default:
