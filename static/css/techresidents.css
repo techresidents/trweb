@@ -6,8 +6,15 @@
     padding-top: 25px;
 }
 
-.banner {
+.banner-logo {
+    display: block;
+    height: 120px;
+    width: 700px;
     background-image: url(../img/banner.png);
+}
+
+.banner-stripe {
+    background-image: url(../img/banner-stripe.png);
     background-repeat: repeat-x;
 }
 
@@ -69,12 +76,6 @@
     margin-bottom: 0;
 }
 
-.logo {
-    display: block;
-    height: 120px;
-    width: 700px;
-    background-image: url(../img/logo.png);
-}
 
 .logo-small {
     display: block;
