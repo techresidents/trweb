@@ -2,10 +2,6 @@
     padding-top: 10px;
 }
 
-.menu-content {
-    padding-top: 40px;
-}
-
 .banner-content {
     padding-top: 25px;
 }
@@ -17,10 +13,6 @@
 
 .banner-control-group label {
         color: #EEEEEE;
-}
-
-.navbar .brand {
-    padding-right: 10px;
 }
 
 .brand-beta {
@@ -38,6 +30,17 @@
     text-decoration: none;
 }
 
+/* TODO see if needed */
+.btn-input {
+    margin-bottom: 9px;
+}
+
+.btn-tiny {
+    font-size: 13px;
+    line-height: 16px;
+    padding: 2px 4px;
+}
+
 .close-inline {
     color: #000000;
     font-size: 20px;
@@ -52,6 +55,17 @@
     cursor: pointer;
     opacity: 0.4;
     text-decoration: none;
+}
+
+.footer {
+    border-top: 1px solid #E5E5E5;
+    margin-top: 45px;
+    padding: 35px 0 36px;
+}
+
+.footer span {
+    color: #555555;
+    margin-bottom: 0;
 }
 
 .logo {
@@ -77,26 +91,16 @@
     font-size: 18px;
 }
 
-/* TODO see if needed */
-.btn-input {
-    margin-bottom: 9px;
+.menu-content {
+    padding-top: 45px;
 }
 
-.btn-tiny {
-    font-size: 13px;
-    line-height: 16px;
-    padding: 2px 4px;
+.navbar .brand {
+    padding-right: 10px;
 }
 
-.footer {
-    border-top: 1px solid #E5E5E5;
-    margin-top: 45px;
-    padding: 35px 0 36px;
-}
-
-.footer span {
-    color: #555555;
-    margin-bottom: 0;
+.navbar-tr-padding {
+    padding-top: 45px;
 }
 
 [class^="tr-icon-"] {
