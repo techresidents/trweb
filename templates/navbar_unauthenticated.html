@@ -1,0 +1,16 @@
+{% extends "navbar_base.html" %}
+{% load url from future %}
+
+{% block navbarcontent %}
+    <ul class="nav pull-right">
+        <li>
+            <a href="http://blog.techresidents.com">Blog</a>
+        </li>
+        <li>
+            <a href="{% url 'accounts.views.login'%}">Login</a>
+        </li>
+    </ul>
+{% endblock %}
+
+
+
