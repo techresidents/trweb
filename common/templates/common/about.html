@@ -1,10 +1,11 @@
 {% extends "navbar_unauthenticated.html" %}
+{% load staticfiles %}
 {% load url from future %}
 
 {% block title %}Welcome to Tech Residents - About us{% endblock %}
 
 {% block extrahead %}
-    <link href="{{STATIC_URL}}css/about.css" rel="stylesheet">
+    <link href="{% static "css/about.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}

@@ -1,10 +1,11 @@
 {% extends "navbar_unauthenticated.html" %}
+{% load staticfiles %}
 {% load url from future %}
 
 {% block title %}Welcome to Tech Residents - Learn more{% endblock %}
 
 {% block extrahead %}
-    <link href="{{STATIC_URL}}css/learn_more.css" rel="stylesheet">
+    <link href="{% static "css/learn_more.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -26,7 +27,7 @@
                 <p>A free platform for software developers to discuss curated technical topics with fellow developers.</p>
             </div>
             <div id="learn-more-bubbles" class="span2">
-                <img src="{{STATIC_URL}}img/chat-bubbles.png" alt="chat-bubble">
+                <img src="{% static "img/chat-bubbles.png" %}" alt="chat-bubble">
             </div>
             <div class="span3">
                 <h2>Who is it for?</h2>
@@ -43,7 +44,7 @@
             </div>
             <div class="span5">
                 <div class="learn-more-display">
-                    <img src="{{STATIC_URL}}img/chat-screenshot.png" alt="chat screenshot">
+                    <img src="{% static "img/chat-screenshot.png" %}" alt="chat screenshot">
                 </div>
             </div>
         </div>
@@ -51,7 +52,7 @@
         <div class="row-fluid learn-more-feature">
             <div class="span5 offset1">
                 <div class="learn-more-display">
-                    <img src="{{STATIC_URL}}img/privacy.png" alt="privacy">
+                    <img src="{% static "img/privacy.png" %}" alt="privacy">
                 </div>
             </div>
             <div class="span4">
@@ -73,7 +74,7 @@
             </div>
             <div class="span5 offset1">
                 <div class="learn-more-display">
-                    <img src="{{STATIC_URL}}img/technicalcontent.jpeg" alt="abstract diagram">
+                    <img src="{% static "img/technicalcontent.jpeg" %}" alt="abstract diagram">
                 </div>
             </div>
         </div>
@@ -81,7 +82,7 @@
         <div class="row-fluid learn-more-feature">
             <div class="span5 offset1">
                 <div class="learn-more-display">
-                    <img src="{{STATIC_URL}}img/hiker.jpeg" alt="man hiking">
+                    <img src="{% static "img/hiker.jpeg" %}" alt="man hiking">
                 </div>
             </div>
             <div class="span4">
@@ -107,7 +108,7 @@
             </div>
             <div class="span5 offset1">
                 <div class="learn-more-display">
-                    <img src="{{STATIC_URL}}img/learn.jpeg" alt="businessmen">
+                    <img src="{% static "img/learn.jpeg" %}" alt="businessmen">
                 </div>
             </div>
         </div>
