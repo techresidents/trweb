@@ -1,4 +1,4 @@
-{% extends "menu_base.html" %}
+{% extends "navbar_authenticated.html" %}
 
 {% load url from future %}
 {% load verbatim %}
@@ -12,7 +12,7 @@
     </div>
 
     <div class="row">
-        <div class="span16">
+        <div class="span12">
             <h3>{{chat_title}} - {{chat_start|date:"P"}}   <small>will begin shortly...</small></h3>
         </div/>
     </div>
