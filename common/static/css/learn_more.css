@@ -67,7 +67,11 @@
 
 
 
-
+#learn-more-bubbles {
+    margin-left: 5px;
+    height: auto;
+    max-width: 100%;
+}
 
 #learn-more-container p {
     font-size: 16px;
@@ -79,8 +83,12 @@
     padding-bottom: 50px;
 }
 
+#learn-more-overview-start h1{
+    font-size: 45px;
+    line-height: 1;
+}
+
 #learn-more-overview-end {
-    padding-top: 50px;
     padding-bottom: 50px;
 }
 
@@ -90,13 +98,7 @@
 
 .learn-more-stripe {
     background-color: #2A73A7;
-    color: white;
-}
-
-.learn-more-bubble {
-    padding-left: 30px;
-    height: auto;
-    max-width: 100%;
+    color: #eeeeee;
 }
 
 .learn-more-display {
