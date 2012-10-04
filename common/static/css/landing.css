@@ -34,9 +34,12 @@
     margin-bottom: 0px;
 }
 
-
-.landing-text {
+.landing-text-white {
     color: white;
+}
+
+.landing-text-offwhite {
+    color: #eeeeee;
 }
 
 .landing-text-orange {
