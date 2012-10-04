@@ -1,107 +1,63 @@
+{% extends "navbar_unauthenticated.html" %}
 {% load staticfiles %}
 {% load url from future %}
 
-<!DOCTYPE html>
-<html lang="en">
-
 {% block extrahead %}
-<!--
-<script src="{% static "js/3ps/swfobject/swfobject.js" %}"></script>
-<script type="text/javascript">
-var videoID = "ylLzyHk54Z0"
-var params = { allowScriptAccess: "always" };
-var atts = { id: "ytPlayer" };
-swfobject.embedSWF("http://www.youtube.com/v/" + videoID + "?version=3&enablejsapi=1&playerapiid=player1&modestbranding=1",
-                   "videoDiv", "480", "295", "9", null, null, params, atts);
-</script>
--->
+    <link href="{% static "css/landing.css" %}" rel="stylesheet">
 {% endblock %}
 
-    <head>
-        <meta charset="utf-8">
-        <title>Welcome to Tech Residents</title>
-        <meta name="description" content="">
-        <meta name="author" content="">
+{% block content %}
 
-        <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
-        <!--[if lt IE 9]>
-            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-            <![endif]-->
+    <div id="landing-blue-stripe">
 
-        <!-- Le styles -->
-        <link href="{% static "css/3ps/bootstrap/css/bootstrap.css" %}" rel="stylesheet">
-        <link href="{% static "css/techresidents.css" %}" rel="stylesheet">
-        <link href="{% static "css/landing.css" %}" rel="stylesheet">
-
-        <!-- Le fav and touch icons -->
-        <link rel="shortcut icon" type="image/x-icon" href="{% static "favicon.ico" %}">
-    </head>
-
-    <body>
-
-        <div id="landing-blue-stripe">
-
-            <div id="landing-blue-stripe-top-right">
-                <div class="container">
-                    <div class="row">
-                        <div class="span1 offset11">
-                            <h2>
-                                <a id="landing-login-button" class="landing-text" href="{% url 'accounts.views.login'%}">Login</a>
-                            </h2>
-                        </div>
+        <div id="landing-blue-stripe-middle">
+            <div id="landing-messaging-container" class="container">
+                <div class="row">
+                    <div class="span9">
+                        <h1 class="landing-text-orange landing-brand-text">Tech Residents</h1>
+                        <h1 class="landing-text landing-messaging-text">
+                            Discuss. Be Heard. Get Hired.
+                        </h1>
                     </div>
                 </div>
             </div>
-            <div id="landing-blue-stripe-middle">
-                <div id="landing-messaging-container" class="container">
-                    <div class="row">
-                        <div class="span9">
-                            <h1 class="landing-text landing-messaging-text">
-                                Discuss. Be Heard. Get Hired.
-                            </h1>
-                        </div>
-                    </div>
-                </div>
-                <div id="landing-details-container" class="container">
-                    <div class="row">
-                        <div class="span7">
+            <div id="landing-details-container" class="container">
+                <div class="row">
+                    <div class="span7">
                             <span class="landing-text landing-messaging-details-text">
                                 A free platform for software developers to talk tech and showcase their talent to hiring companies.
                             </span>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="landing-white-stripe">
-            <div id="landing-signup-container" class="container">
-                <div class="row">
-                    <div class="span7 offset2">
-                        <h1 class="landing-messaging-text">
-                            Join the conversation
-                        </h1>
-                    </div>
-                    <div class="span2">
-                        <a id="landing-signup-button" class="btn btn-large btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
-                    </div>
+    <div id="landing-white-stripe">
+        <div id="landing-signup-container" class="container">
+            <div class="row">
+                <div class="span7 offset2">
+                    <h1 class="landing-signup-text">
+                        Join the conversation
+                    </h1>
                 </div>
-                <div class="row">
-                    <div class="span2 offset7">
-                        <h1 class="landing-signup-details-text">
-                            It's free
-                        </h1>
-                    </div>
-                    <div class="span2">
-                        <a id="landing-learn-more-button" class="btn btn-primary btn-large" href="{% url 'common.views.learn_more'%}">Learn More</a>
-                    </div>
+                <div class="span2">
+                    <a id="landing-signup-button" class="btn btn-large btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span2 offset7">
+                    <h1 class="landing-signup-details-text">
+                        It's free
+                    </h1>
+                </div>
+                <div class="span2">
+                    <a id="landing-learn-more-button" class="btn btn-primary btn-large" href="{% url 'common.views.learn_more'%}">Learn More</a>
                 </div>
             </div>
         </div>
+    </div>
 
-       {% include 'footer.html' %}
+{% endblock %}
 
-    </body>
-
-</html>
 
