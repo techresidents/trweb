@@ -13,111 +13,24 @@
     <div class="container">
 
         <div class="page-header">
-            <h1> Chats </h1>
+            <h1>Welcome</h1>
         </div>
 
         <div class="row">
             <div class="span11">
-                <h2>Registered Chats</h2>
+
+                <h2>Topic Library</h2>
 
                 <div class="well">
-                    <table class="table chat-table">
-                        {% for registration_ctx in chat_registrations %}
-                            {% if forloop.first %}
-                                <thead>
-                                    <tr>
-                                        <th class="chat-table-duration">Duration</th>
-                                        <th class="chat-table-title">Title</th>
-                                        <th class="chat-table-description">Description</th>
-                                        <th class="chat-table-date">Start Time</th>
-                                        <th class="chat-table-button">Check-In</th>
-                                    </tr>
-                                </thead>
-                            {% endif %}
-                            <tbody>
-                                <tr>
-                                    <td>{{registration_ctx.duration}} mins</td>
-                                    <td>
-                                        <a href={%url 'chat.views.details' encoded_chat_id=registration_ctx.encoded_chat_id%}>
-                                            {{registration_ctx.topic.title}}
-                                        </a>
-                                    </td>
-                                    <td>{{ registration_ctx.topic.description }}</td>
-                                    <td> {{ registration_ctx.chat.start|date:"m/d e" }} at <br> {{ registration_ctx.chat.start|date:"h:i a e" }}</td>
-                                    <td>
-                                        {% if registration_ctx.registration.checked_in %}
-                                            Checked-In <br>
-                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration_ctx.encoded_chat_id%}>Join Chat</a>
-                                        {% elif registration_ctx.chat.checkin_open %}
-                                            Check-in Open <br>
-                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=registration_ctx.encoded_chat_id%}>Check-in</a>
-                                        {% elif registration_ctx.chat.checkin_closed %}
-                                            Check-in Closed
-                                        {% else %}
-                                            Opens {{ registration_ctx.chat.checkin_start|date:"m/d e" }} at <br> {{ registration_ctx.chat.checkin_start|date:"h:i a e" }}
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        {% empty %}
-                            <tbody>
-                                <tr>
-                                    <em>You are not registered for any chats at this time</em>
-                                </tr>
-                            </tbody>
-                        {%endfor %}
-                    </table>
+                    {% for topic_ctx in chat_topics %}
+                        <p>
+                            <a href={%url 'topic.views.details' encoded_topic_id=topic_ctx.encoded_topic_id %}>
+                                {{topic_ctx.topic.title}}
+                            </a>
+                        </p>
+
+                    {% endfor %}
                 </div>
-
-
-                <h2>Upcoming Chats</h2>
-
-                <div class="well">
-                    <table class="table chat-table">
-                        {% for chat_ctx in upcoming_chats %}
-                            {% if forloop.first %}
-                                <thead>
-                                    <tr>
-                                        <th class="chat-table-duration">Duration</th>
-                                        <th class="chat-table-title">Title</th>
-                                        <th class="chat-table-description">Description</th>
-                                        <th class="chat-table-date">Start Time</th>
-                                        <th class="chat-table-button">Registration</th>
-                                    </tr>
-                                </thead>
-                            {% endif %}
-                            <tbody>
-                                <tr>
-                                    <td>{{chat_ctx.duration}} mins</td>
-                                    <td>
-                                        <a href={%url 'chat.views.details' encoded_chat_id=chat_ctx.encoded_chat_id %}>
-                                            {{chat_ctx.topic.title}}
-                                        </a>
-                                    </td>
-                                    <td>{{ chat_ctx.topic.description }}</td>
-                                    <td> {{ chat_ctx.chat.start|date:"m/d e" }} at <br> {{ chat_ctx.chat.start|date:"h:i a e" }}</td>
-                                    <td>
-                                        {% if chat_ctx.chat.registration_open %}
-                                            Registration Open <br>
-                                            <a class="btn btn-small btn-primary" href={%url 'chat.views.register' encoded_chat_id=chat_ctx.encoded_chat_id%}>Register</a>
-                                        {% elif chat_ctx.chat.registration_closed %}
-                                            Registration Closed
-                                        {% else %}
-                                            Opens {{ chat_ctx.chat.registration_start|date:"m/d e" }} at <br> {{ chat_ctx.chat.registration_start|date:"h:i a e" }}
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        {% empty %}
-                            <tbody>
-                                <tr>
-                                    <em>There are no upcoming chats at this time</em>
-                                </tr>
-                            </tbody>
-                        {%endfor %}
-                    </table>
-                </div>
-
             </div>
         </div>
 
