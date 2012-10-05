@@ -1,7 +1,15 @@
+import datetime
+
 from django import forms
+from django.conf import settings
+from django.utils import timezone
+
+import OpenTokSDK
 
 from common.forms import JSONField
 from common.models import Topic
+from techresidents_web.chat.models import Chat, ChatSession, ChatType
+
 
 class TopicForm(forms.Form):
     topics = JSONField(max_length=8192, widget=forms.HiddenInput, required=True)
@@ -102,3 +110,54 @@ class TopicForm(forms.Form):
             Topic.objects.create_topic_tree(self.request.user, result)
 
         return result
+
+
+class CreatePrivateChatForm(forms.Form):
+
+    start = forms.DateTimeField(label="Date", required=False)
+
+    def __init__(self, request=None, topic_id=None, *args, **kwargs):
+        self.request = request
+        self.topic_id = topic_id
+        super(CreatePrivateChatForm, self).__init__(*args, **kwargs)
+
+    def clean_start(self):
+        start = self.cleaned_data["start"]
+        # TODO clean start - ensure time isn't in the past
+        # If the specified start time is None, we will set the
+        # start time to right now.
+        if start is None:
+            start = timezone.now()
+        return start
+
+    def save(self):
+        start = self.cleaned_data["start"]
+
+        #Private chats allow access to chats
+        #as long as the chat session id is known. The first
+        #n users to access the chat session will be granted
+        #access. Private chats require participants
+        #to be site-registered.
+
+        type = ChatType.objects.get(name='PRIVATE')
+        topic = Topic.objects.get(id=self.topic_id)
+        record = True
+
+        #create chat
+        chat = Chat.objects.create(
+            type=type,
+            topic=topic,
+            start=start,
+            end=start+datetime.timedelta(minutes=topic.duration),
+            record=record)
+
+        #Create the tokbox session
+        opentok = OpenTokSDK.OpenTokSDK(
+            settings.TOKBOX_API_KEY,
+            settings.TOKBOX_API_SECRET)
+        session = opentok.create_session(self.request.META['REMOTE_ADDR'])
+
+        # Create the chat session
+        chat_session = ChatSession.objects.create(chat=chat, token=session.session_id)
+
+        return chat

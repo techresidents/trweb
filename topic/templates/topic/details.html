@@ -1,0 +1,97 @@
+{% extends "navbar_authenticated.html" %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block title %}Tech Residents - Topic Details{% endblock %}
+
+{% block extrahead %}
+    <link href="{% static "css/chat_details.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <div class="page-header">
+            <h1>
+                Topic Details
+            </h1>
+        </div>
+
+        <div id="chat-details" class="row">
+            <div class="span6">
+                {% for topic in topic_tree %}
+                    {% if forloop.first %}
+                        <h2 class="level{{ topic.level }}">
+                            {{ topic.title }}
+                            <small>({{topic.duration}} mins)</small>
+                        </h2>
+                    {% else %}
+                        <h3 class="level{{ topic.level }}">
+                            {{ topic.title }}
+                            <small>({{topic.duration}} mins)</small>
+                        </h3>
+                    {% endif %}
+                    <p class="description level{{ topic.level }}">
+                        {{ topic.description }}
+                    </p>
+                {% endfor %}
+            </div>
+
+            <div class="span4 offset1 well">
+                <h2>
+                    Sign Me Up <br>
+                    <small>I want to chat about this topic</small>
+                </h2>
+                <p class="topic-sign-up-text">
+                    Recommended participants: 1
+                </p>
+                <label class="radio">
+                    <input type="radio" name="chatTimeRadios" id="now" value="now" checked>
+                    Start now
+                </label>
+                <label class="radio">
+                    <input type="radio" name="chatTimeRadios" id="later" value="later">
+                    Schedule for later
+                </label>
+
+                <form class="form" method="post" action="{% url 'topic.views.details' encoded_topic_id=encoded_topic_id %}">
+                    {% csrf_token %}
+                        {% for field in form.visible_fields %}
+                            <div class="control-group{% if field.errors %} error{% endif %}">
+                                <label class="control-label">{{ field.label_tag }}</label>
+                                <div class="controls">
+                                    {{ field }}
+                                    {% for error in field.errors %}
+                                        <span class="help-inline">{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <!-- TODO show errors -->
+
+                        <div class="control-group">
+                            <div class="controls">
+                                <input type="submit" value="Start Chat" class="btn btn-large btn-primary" />
+                            </div>
+                        </div>
+                </form>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success">
+                                <span>{{message}}</span>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
