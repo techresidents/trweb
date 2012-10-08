@@ -120,7 +120,7 @@ class CreatePrivateChatForm(forms.Form):
                  [0, 'Schedule for later']])
 
     chat_date = forms.DateField(label="Date", input_formats=('%m/%d/%Y',), required=False, widget=forms.DateInput(attrs={'placeholder': 'mm/dd/yyyy'}))
-    chat_time = forms.TimeField(label="Time", input_formats=('%H:%M',), required=False, widget=forms.TextInput(attrs={'placeholder': 'hh:mm'}))
+    chat_time = forms.TimeField(label="Time", input_formats=('%I:%M %p',), required=False, widget=forms.TextInput(attrs={'placeholder': 'hh:mm am/pm'}))
 
     def __init__(self, request=None, topic_id=None, *args, **kwargs):
         self.request = request
