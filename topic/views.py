@@ -51,14 +51,18 @@ def details(request, encoded_topic_id):
     if request.method == 'POST':
         form = forms.CreatePrivateChatForm(request, topic_id, data=request.POST)
         if form.is_valid():
-            chat  = form.save()
-            message = "Success %s" % reverse("chat.views.details", args=[basic_encode(chat.id)])
-            messages.success(request, message)
-            return HttpResponseRedirect(reverse("topic.views.details", args=[encoded_topic_id]))
-        else:
-            print 'form is invalid'
+            chat, chat_session = form.save()
+            if form.start_now():
+                return HttpResponseRedirect(reverse("chat.views.session_wait", args=[basic_encode(chat_session.id)]))
+            else:
+                message1 = "Chat scheduled for %s" % chat.start
+                message2 = "Use the following link to invite others and join the chat:" \
+                          "http://techresidents.com%s" % reverse("chat.views.details", args=[basic_encode(chat.id)])
+                messages.success(request, message1)
+                messages.success(request, message2)
+                return HttpResponseRedirect(reverse("topic.views.details", args=[encoded_topic_id]))
     else:
-        form = forms.CreatePrivateChatForm(request, topic_id)
+        form = forms.CreatePrivateChatForm(request, topic_id, initial={'chat_time_radio_btns':'1'})
 
     context = {
         "encoded_topic_id": encoded_topic_id,

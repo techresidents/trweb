@@ -43,40 +43,6 @@
                     Sign Me Up <br>
                     <small>I want to chat about this topic</small>
                 </h2>
-                <p class="topic-sign-up-text">
-                    Recommended participants: 1
-                </p>
-                <label class="radio">
-                    <input type="radio" name="chatTimeRadios" id="now" value="now" checked>
-                    Start now
-                </label>
-                <label class="radio">
-                    <input type="radio" name="chatTimeRadios" id="later" value="later">
-                    Schedule for later
-                </label>
-
-                <form class="form" method="post" action="{% url 'topic.views.details' encoded_topic_id=encoded_topic_id %}">
-                    {% csrf_token %}
-                        {% for field in form.visible_fields %}
-                            <div class="control-group{% if field.errors %} error{% endif %}">
-                                <label class="control-label">{{ field.label_tag }}</label>
-                                <div class="controls">
-                                    {{ field }}
-                                    {% for error in field.errors %}
-                                        <span class="help-inline">{{error}}</span>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endfor %}
-
-                        <!-- TODO show errors -->
-
-                        <div class="control-group">
-                            <div class="controls">
-                                <input type="submit" value="Start Chat" class="btn btn-large btn-primary" />
-                            </div>
-                        </div>
-                </form>
 
                 {% if messages %}
                     {% for message in messages %}
@@ -86,6 +52,45 @@
                             </div>
                         {% endif %}
                     {% endfor %}
+                {% else %}
+
+                    <p class="topic-sign-up-text">
+                        Recommended participants: 1
+                    </p>
+
+                    <form class="form" method="post" action="{% url 'topic.views.details' encoded_topic_id=encoded_topic_id %}">
+                        {% csrf_token %}
+
+                        {% for field in form.visible_fields %}
+                            {% if field.html_name == 'chat_time_radio_btns' %}
+                                {% for radio in form.chat_time_radio_btns %}
+                                    <label class="radio">
+                                        {{ radio.tag }}
+                                        {{ radio.choice_label }}
+                                    </label>
+                                {% endfor %}
+                            {% else %}
+                                <div class="control-group{% if field.errors %} error{% endif %}">
+                                    <label class="control-label">{{ field.label_tag }}</label>
+                                    <div class="controls">
+                                        {{ field }}
+                                        {% for error in field.errors %}
+                                            <span class="help-inline">{{error}}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- TODO show errors -->
+
+                        <div class="control-group">
+                            <div class="controls">
+                                <input type="submit" value="Start Chat" class="btn btn-large btn-primary" />
+                            </div>
+                        </div>
+                    </form>
+
                 {% endif %}
 
             </div>

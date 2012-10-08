@@ -113,13 +113,18 @@ class TopicForm(forms.Form):
 
 
 class CreatePrivateChatForm(forms.Form):
-
+    chat_time_radio_btns = forms.ChoiceField(widget=forms.RadioSelect(), choices=[[1, 'Start now'], [0, 'Schedule for later']])
     start = forms.DateTimeField(label="Date", required=False)
 
     def __init__(self, request=None, topic_id=None, *args, **kwargs):
         self.request = request
         self.topic_id = topic_id
+        self.chat_starts_now = True
         super(CreatePrivateChatForm, self).__init__(*args, **kwargs)
+
+    def start_now(self):
+        """ If chat starts now, returns True; returns False otherwise."""
+        return self.chat_starts_now
 
     def clean_start(self):
         start = self.cleaned_data["start"]
@@ -132,6 +137,13 @@ class CreatePrivateChatForm(forms.Form):
 
     def save(self):
         start = self.cleaned_data["start"]
+        chat_time_radio = self.cleaned_data["chat_time_radio_btns"]
+
+        # Set chat-start-time state based upon radio selection
+        if chat_time_radio == '1':
+            self.chat_starts_now = True
+        else:
+            self.chat_starts_now = False
 
         #Private chats allow access to chats
         #as long as the chat session id is known. The first
@@ -160,4 +172,4 @@ class CreatePrivateChatForm(forms.Form):
         # Create the chat session
         chat_session = ChatSession.objects.create(chat=chat, token=session.session_id)
 
-        return chat
+        return (chat, chat_session)
