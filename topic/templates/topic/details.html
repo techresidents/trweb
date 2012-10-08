@@ -70,7 +70,7 @@
                                     </label>
                                 {% endfor %}
                             {% else %}
-                                <div class="control-group{% if field.errors %} error{% endif %}">
+                                <div class="chat-scheduler control-group{% if field.errors %} error{% endif %}">
                                     <label class="control-label">{{ field.label_tag }}</label>
                                     <div class="controls">
                                         {{ field }}
@@ -86,7 +86,7 @@
 
                         <div class="control-group">
                             <div class="controls">
-                                <input type="submit" value="Start Chat" class="btn btn-large btn-primary" />
+                                <input id="create-chat-btn" type="submit" value="Start Chat" class="btn btn-large btn-primary" />
                             </div>
                         </div>
                     </form>
@@ -98,5 +98,30 @@
         </div>
 
     </div>
+
+    <script src="{% static "js/3ps/jquery/jquery-min.js" %}"></script>
+    <script>
+        $(document).ready(function(){
+
+            function displayScheduler(chat_starting_now){
+                if (chat_starting_now == 1) {
+                    $('#create-chat-btn').prop('value', 'Start Chat');
+                    $('.chat-scheduler').hide();
+                } else {
+                    $('#create-chat-btn').prop('value', 'Schedule Chat');
+                    $('.chat-scheduler').show();
+                }
+            }
+
+            $('input[name=chat_time_radio_btns]:radio').change(function(){
+                var chat_starting = $(this).val();
+                displayScheduler(chat_starting);
+            });
+
+            start_chat = $('input[name=chat_time_radio_btns]:checked').val();
+            displayScheduler(start_chat);
+
+        });
+    </script>
 
 {% endblock %}
