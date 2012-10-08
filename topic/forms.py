@@ -116,31 +116,43 @@ class CreatePrivateChatForm(forms.Form):
 
     chat_time_radio_btns = forms.ChoiceField(
         widget=forms.RadioSelect(),
-        choices=[[1, 'Start now'], [0, 'Schedule for later']])
+        choices=[[1, 'Start now'],
+                 [0, 'Schedule for later']])
 
-    start = forms.DateTimeField(label="Date", required=False)
+    chat_date = forms.DateField(label="Date", input_formats=('%m/%d/%Y',), required=False, widget=forms.DateInput(attrs={'placeholder': 'mm/dd/yyyy'}))
+    chat_time = forms.TimeField(label="Time", input_formats=('%H:%M',), required=False, widget=forms.TextInput(attrs={'placeholder': 'hh:mm'}))
 
     def __init__(self, request=None, topic_id=None, *args, **kwargs):
         self.request = request
         self.topic_id = topic_id
-        self.chat_starts_now = True
+        self.chat_starts_now = None
         super(CreatePrivateChatForm, self).__init__(*args, **kwargs)
 
     def start_now(self):
         """ If chat starts now, returns True; returns False otherwise."""
         return self.chat_starts_now
 
-    def clean_start(self):
-        start = self.cleaned_data["start"]
+    def clean_chat_date(self):
+        chat_date = self.cleaned_data["chat_date"]
         # TODO clean start - ensure time isn't in the past
         # If the specified start time is None, we will set the
         # start time to right now.
-        if start is None:
-            start = timezone.now()
-        return start
+        if chat_date is None:
+            chat_date = timezone.now().date()
+        return chat_date
+
+    def clean_chat_time(self):
+        chat_time = self.cleaned_data["chat_time"]
+        # TODO clean start - ensure time isn't in the past
+        # If the specified start time is None, we will set the
+        # start time to right now.
+        if chat_time is None:
+            chat_time = timezone.now().timetz()
+        return chat_time
 
     def save(self):
-        start = self.cleaned_data["start"]
+        chat_date = self.cleaned_data["chat_date"]
+        chat_time = self.cleaned_data["chat_time"]
         chat_time_radio = self.cleaned_data["chat_time_radio_btns"]
 
         # Set chat-start-time state based upon radio selection
@@ -148,6 +160,11 @@ class CreatePrivateChatForm(forms.Form):
             self.chat_starts_now = True
         else:
             self.chat_starts_now = False
+
+        if self.chat_starts_now:
+            chat_start = timezone.now()
+        else:
+            chat_start = datetime.datetime.combine(chat_date, chat_time)
 
         #Private chats allow access to chats
         #as long as the chat session id is known. The first
@@ -157,15 +174,14 @@ class CreatePrivateChatForm(forms.Form):
 
         type = ChatType.objects.get(name='PRIVATE')
         topic = Topic.objects.get(id=self.topic_id)
-        record = True
 
         #create chat
         chat = Chat.objects.create(
             type=type,
             topic=topic,
-            start=start,
-            end=start+datetime.timedelta(minutes=topic.duration),
-            record=record)
+            start=chat_start,
+            end=chat_start+datetime.timedelta(minutes=topic.duration),
+            record=True)
 
         #Create the tokbox session
         opentok = OpenTokSDK.OpenTokSDK(

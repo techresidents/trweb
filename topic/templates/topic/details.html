@@ -7,6 +7,7 @@
 {% block extrahead %}
     <link href="{% static "css/chat_details.css" %}" rel="stylesheet">
     <link href="{% static "css/3ps/datepicker/datepicker.css" %}" rel="stylesheet">
+    <link href="{% static "css/3ps/timepicker/timePicker.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -101,6 +102,7 @@
 
     <script src="{% static "js/3ps/jquery/jquery-min.js" %}"></script>
     <script src="{% static "js/3ps/datepicker/bootstrap-datepicker.js" %}"></script>
+    <script src="{% static "js/3ps/timepicker/timePicker.min.js" %}"></script>
     <script>
         $(document).ready(function(){
 
@@ -122,7 +124,13 @@
             start_chat = $('input[name=chat_time_radio_btns]:checked').val();
             displayScheduler(start_chat);
 
-            $('#id_start').datepicker();
+            $('#id_chat_date').datepicker();
+
+            $('#id_chat_time').timePicker({
+                show24Hours: false,
+                separator: ':',
+                step: 15
+            });
 
         });
     </script>
