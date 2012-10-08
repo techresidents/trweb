@@ -113,7 +113,11 @@ class TopicForm(forms.Form):
 
 
 class CreatePrivateChatForm(forms.Form):
-    chat_time_radio_btns = forms.ChoiceField(widget=forms.RadioSelect(), choices=[[1, 'Start now'], [0, 'Schedule for later']])
+
+    chat_time_radio_btns = forms.ChoiceField(
+        widget=forms.RadioSelect(),
+        choices=[[1, 'Start now'], [0, 'Schedule for later']])
+
     start = forms.DateTimeField(label="Date", required=False)
 
     def __init__(self, request=None, topic_id=None, *args, **kwargs):
