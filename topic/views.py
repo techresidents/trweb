@@ -1,9 +1,12 @@
+import datetime
+
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils import timezone
 
 from trpycore.encode.basic import basic_encode, basic_decode
 from techresidents_web.common.decorators import staff_required
@@ -62,7 +65,11 @@ def details(request, encoded_topic_id):
                 messages.success(request, message2)
                 return HttpResponseRedirect(reverse("topic.views.details", args=[encoded_topic_id]))
     else:
-        form = forms.CreatePrivateChatForm(request, topic_id, initial={'chat_time_radio_btns':'1'})
+        today = timezone.now()
+        form = forms.CreatePrivateChatForm(request, topic_id, initial={
+            'chat_time_radio_btns':'1',
+            'chat_date': today.strftime('%m/%d/%Y'),
+            'chat_time':'12:00 PM'})
 
     context = {
         "encoded_topic_id": encoded_topic_id,
