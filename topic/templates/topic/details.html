@@ -6,6 +6,7 @@
 
 {% block extrahead %}
     <link href="{% static "css/chat_details.css" %}" rel="stylesheet">
+    <link href="{% static "css/topic_details.css" %}" rel="stylesheet">
     <link href="{% static "css/3ps/datepicker/datepicker.css" %}" rel="stylesheet">
     <link href="{% static "css/3ps/timepicker/timePicker.css" %}" rel="stylesheet">
 {% endblock %}
@@ -54,11 +55,13 @@
                         {% if message.tags == 'success' %}
                             <div class="alert alert-success">
                                 <p>
-                                    Chat successfully scheduled for: <br>
-                                    {{ chat_start|date:"M d" }} at {{ chat_start|date:"h:i a e" }}
+                                    Chat successfully scheduled.
+                                    Use the following info to invite others and to join the chat:
                                 </p>
                                 <p>
-                                    Use the following link to invite others and to join the chat: <br>
+                                    Tech Residents Chat <br>
+                                    Topic: {{ topic.title }} <br>
+                                    When: {{ chat_start|date:"M d" }} at {{ chat_start|date:"h:i a e" }} <br>
                                     {{ chat_link }}
                                 </p>
 
@@ -74,7 +77,7 @@
                         {% for field in form.visible_fields %}
                             {% if field.html_name == 'chat_time_radio_btns' %}
                                 {% for radio in form.chat_time_radio_btns %}
-                                    <label class="radio">
+                                    <label class="radio inline">
                                         {{ radio.tag }}
                                         {{ radio.choice_label }}
                                     </label>
