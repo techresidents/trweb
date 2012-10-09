@@ -71,10 +71,11 @@ def details(request, encoded_topic_id):
                 messages.success(request, message)
                 return HttpResponseRedirect(reverse("topic.views.details", args=[encoded_topic_id]))
     else:
-        today = timezone.now()
+        today_utc = timezone.now()
+        today_local = today_utc.astimezone(timezone.get_current_timezone())
         form = forms.CreatePrivateChatForm(request, topic_id, initial={
             'chat_time_radio_btns':'1',
-            'chat_date': today.strftime('%m/%d/%Y'),
+            'chat_date': today_local.strftime('%m/%d/%Y'),
             'chat_time':'12:00 PM'})
 
     context = {
