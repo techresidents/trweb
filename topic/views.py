@@ -50,6 +50,10 @@ def details(request, encoded_topic_id):
     topic_id = basic_decode(encoded_topic_id)
     topic = Topic.objects.get(id=topic_id)
     topic_tree = Topic.objects.topic_tree(topic_id)
+    if topic.duration <= 10:
+        recommended_participants = '1'
+    else:
+        recommended_participants = '2'
 
     if request.method == 'POST':
         form = forms.CreatePrivateChatForm(request, topic_id, data=request.POST)
@@ -77,6 +81,7 @@ def details(request, encoded_topic_id):
         "encoded_topic_id": encoded_topic_id,
         "topic": topic,
         "topic_tree": topic_tree,
+        "recommended_participants": recommended_participants,
         "form": form
     }
 

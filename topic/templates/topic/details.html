@@ -57,7 +57,7 @@
                 {% else %}
 
                     <p class="topic-sign-up-text">
-                        Recommended participants: 1
+                        Recommended participants: {{ recommended_participants }}
                     </p>
 
                     <form class="form" method="post" action="{% url 'topic.views.details' encoded_topic_id=encoded_topic_id %}">
@@ -83,7 +83,17 @@
                             {% endif %}
                         {% endfor %}
 
-                        <!-- TODO show errors -->
+                        <div class="control-group">
+                            <div class="controls">
+                                {% if form.non_field_errors %}
+                                    <div class="alert alert-error">
+                                        {% for error in form.non_field_errors%}
+                                            <span>{{error}}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
 
                         <div class="control-group">
                             <div class="controls">
@@ -124,7 +134,10 @@
             start_chat = $('input[name=chat_time_radio_btns]:checked').val();
             displayScheduler(start_chat);
 
-            $('#id_chat_date').datepicker();
+            $('#id_chat_date').datepicker({
+                viewMode: 'days',
+                minViewMode: 'days'
+            });
 
             $('#id_chat_time').timePicker({
                 show24Hours: false,

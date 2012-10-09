@@ -114,57 +114,58 @@ class TopicForm(forms.Form):
 
 class CreatePrivateChatForm(forms.Form):
 
-    chat_time_radio_btns = forms.ChoiceField(
-        widget=forms.RadioSelect(),
+    chat_time_radio_btns = forms.ChoiceField(widget=forms.RadioSelect(),
         choices=[[1, 'Start now'],
                  [0, 'Schedule for later']])
-
     chat_date = forms.DateField(label="Date", input_formats=('%m/%d/%Y',), required=False, widget=forms.DateInput(attrs={'placeholder': 'mm/dd/yyyy'}))
-    chat_time = forms.TimeField(label="Time", input_formats=('%I:%M %p',), required=False, widget=forms.TextInput(attrs={'placeholder': 'hh:mm am/pm'}))
+    chat_time = forms.TimeField(label="Time", input_formats=('%I:%M %p',), required=False, widget=forms.TimeInput(attrs={'placeholder': 'hh:mm am/pm'}))
 
     def __init__(self, request=None, topic_id=None, *args, **kwargs):
+        super(CreatePrivateChatForm, self).__init__(*args, **kwargs)
         self.request = request
         self.topic_id = topic_id
-        self.chat_starts_now = None
-        super(CreatePrivateChatForm, self).__init__(*args, **kwargs)
+        self.chat_starts_now = None   # Boolean indicating if user opted to start the chat right now
+        self.chat_start_datetime = None  # This datetime obj is timezone aware
 
     def start_now(self):
         """ If chat starts now, returns True; returns False otherwise."""
         return self.chat_starts_now
 
-    def clean_chat_date(self):
-        chat_date = self.cleaned_data["chat_date"]
-        # TODO clean start - ensure time isn't in the past
-        # If the specified start time is None, we will set the
-        # start time to right now.
-        if chat_date is None:
-            chat_date = timezone.now().date()
-        return chat_date
+    def clean(self):
+        """ Validate user provided chat date and time.
 
-    def clean_chat_time(self):
-        chat_time = self.cleaned_data["chat_time"]
-        # TODO clean start - ensure time isn't in the past
-        # If the specified start time is None, we will set the
-        # start time to right now.
-        if chat_time is None:
-            chat_time = timezone.now().timetz()
-        return chat_time
-
-    def save(self):
-        chat_date = self.cleaned_data["chat_date"]
-        chat_time = self.cleaned_data["chat_time"]
-        chat_time_radio = self.cleaned_data["chat_time_radio_btns"]
-
+        If the chat is starting now, the chat date and time
+        fields can be any value since they will be ignored.
+        """
         # Set chat-start-time state based upon radio selection
+        chat_time_radio = self.cleaned_data["chat_time_radio_btns"]
         if chat_time_radio == '1':
             self.chat_starts_now = True
         else:
             self.chat_starts_now = False
 
-        if self.chat_starts_now:
-            chat_start = timezone.now()
-        else:
-            chat_start = datetime.datetime.combine(chat_date, chat_time)
+        is_start_time_valid = True
+        if not self.chat_starts_now:
+            chat_date = self.cleaned_data["chat_date"]
+            chat_time = self.cleaned_data["chat_time"]
+            if chat_date and chat_time:
+                chat_start_no_tz = datetime.datetime.combine(chat_date, chat_time)
+                self.chat_start_datetime = timezone.make_aware(chat_start_no_tz, timezone.get_current_timezone())
+                if self.chat_start_datetime < timezone.now():
+                    is_start_time_valid = False
+            else:
+                is_start_time_valid = False
+
+        if not is_start_time_valid:
+            raise forms.ValidationError("Chat must be scheduled in the future")
+
+        return self.cleaned_data
+
+    def save(self):
+        """Save form data.
+
+        Creates a Chat and ChatSession.
+        """
 
         #Private chats allow access to chats
         #as long as the chat session id is known. The first
@@ -174,6 +175,10 @@ class CreatePrivateChatForm(forms.Form):
 
         type = ChatType.objects.get(name='PRIVATE')
         topic = Topic.objects.get(id=self.topic_id)
+        if self.chat_starts_now:
+            chat_start = timezone.now()
+        else:
+            chat_start = self.chat_start_datetime # tz aware
 
         #create chat
         chat = Chat.objects.create(
