@@ -1,4 +1,6 @@
 import datetime
+import pytz
+import uuid
 
 from django import forms
 from django.conf import settings
@@ -178,7 +180,8 @@ class CreatePrivateChatForm(forms.Form):
         if self.chat_starts_now:
             chat_start = timezone.now()
         else:
-            chat_start = self.chat_start_datetime # tz aware
+            chat_start_local_tz = self.chat_start_datetime
+            chat_start = chat_start_local_tz.astimezone(pytz.UTC)
 
         #create chat
         chat = Chat.objects.create(
@@ -189,12 +192,13 @@ class CreatePrivateChatForm(forms.Form):
             record=True)
 
         #Create the tokbox session
-        opentok = OpenTokSDK.OpenTokSDK(
-            settings.TOKBOX_API_KEY,
-            settings.TOKBOX_API_SECRET)
-        session = opentok.create_session(self.request.META['REMOTE_ADDR'])
+#        opentok = OpenTokSDK.OpenTokSDK(
+#            settings.TOKBOX_API_KEY,
+#            settings.TOKBOX_API_SECRET)
+#        session = opentok.create_session(self.request.META['REMOTE_ADDR'])
 
         # Create the chat session
-        chat_session = ChatSession.objects.create(chat=chat, token=session.session_id)
+        #chat_session = ChatSession.objects.create(chat=chat, token=session.session_id)
+        chat_session = ChatSession.objects.create(chat=chat, token=uuid.uuid4().hex)
 
         return (chat, chat_session)

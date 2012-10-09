@@ -5,7 +5,7 @@
 {% block title %}Tech Residents - Topic Details{% endblock %}
 
 {% block extrahead %}
-    <link href="{% static "css/chat_details.css" %}" rel="stylesheet">
+    <link href="{% static "css/chat_details.css" %}" rel="stylesheet" xmlns="http://www.w3.org/1999/html">
     <link href="{% static "css/topic_details.css" %}" rel="stylesheet">
     <link href="{% static "css/3ps/datepicker/datepicker.css" %}" rel="stylesheet">
     <link href="{% static "css/3ps/timepicker/timePicker.css" %}" rel="stylesheet">
@@ -55,16 +55,19 @@
                         {% if message.tags == 'success' %}
                             <div class="alert alert-success">
                                 <p>
-                                    Chat successfully scheduled.
-                                    Use the following info to invite others and to join the chat:
+                                    Chat successfully scheduled
                                 </p>
+                            </div>
+                            <div>
+                                <h5>Be sure to save the information below <br>
+                                    and distribute it to all participants:</h5>
+                            </div>
+                            <div class="well chat-info-well">
                                 <p>
-                                    Tech Residents Chat <br>
-                                    Topic: {{ topic.title }} <br>
-                                    When: {{ chat_start|date:"M d" }} at {{ chat_start|date:"h:i a e" }} <br>
-                                    {{ chat_link }}
+                                    <b>Topic:</b> {{ topic.title }} <br>
+                                    <b>When:</b> {{ chat_start|date:"M d" }} at {{ chat_start|date:"h:i a e" }} <br>
+                                    <a href="{{ chat_link }}">{{ chat_link }}</a>
                                 </p>
-
                             </div>
                         {% endif %}
                     {% endfor %}
