@@ -51,9 +51,9 @@ def details(request, encoded_topic_id):
     topic = Topic.objects.get(id=topic_id)
     topic_tree = Topic.objects.topic_tree(topic_id)
     if topic.duration <= 10:
-        recommended_participants = '1'
+        recommended_participants = '1 participant'
     else:
-        recommended_participants = '2'
+        recommended_participants = '2 participants'
 
     if request.method == 'POST':
         form = forms.CreatePrivateChatForm(request, topic_id, data=request.POST)
@@ -62,12 +62,11 @@ def details(request, encoded_topic_id):
             if form.start_now():
                 return HttpResponseRedirect(reverse("chat.views.session_wait", args=[basic_encode(chat_session.id)]))
             else:
-                message = "Chat scheduled %s at %s. " \
-                          "Use the following link to invite others and join the chat: " \
-                          "http://techresidents.com%s" \
-                          % (chat.start.strftime('%b %d'),
-                             chat.start.strftime('%I:%M %p'),
-                             reverse("chat.views.details", args=[basic_encode(chat.id)]) )
+                relative_chat_link = reverse("chat.views.details", args=[basic_encode(chat.id)])
+                request.session["topic_details_chat_start"] = chat.start
+                request.session["topic_details_chat_link"] = request.build_absolute_uri(relative_chat_link)
+                request.session.modified = True
+                message = 'success'
                 messages.success(request, message)
                 return HttpResponseRedirect(reverse("topic.views.details", args=[encoded_topic_id]))
     else:
@@ -83,7 +82,9 @@ def details(request, encoded_topic_id):
         "topic": topic,
         "topic_tree": topic_tree,
         "recommended_participants": recommended_participants,
-        "form": form
+        "form": form,
+        "chat_start": request.session.pop("topic_details_chat_start", None),
+        "chat_link": request.session.pop("topic_details_chat_link", None)
     }
 
     return render_to_response('topic/details.html', context, context_instance=RequestContext(request))

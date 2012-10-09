@@ -24,9 +24,12 @@
             <div class="span6">
                 {% for topic in topic_tree %}
                     {% if forloop.first %}
+
                         <h2 class="level{{ topic.level }}">
                             {{ topic.title }}
                             <small>({{topic.duration}} mins)</small>
+                            <br>
+                            <small>{{ recommended_participants }} recommended</small>
                         </h2>
                     {% else %}
                         <h3 class="level{{ topic.level }}">
@@ -50,15 +53,20 @@
                     {% for message in messages %}
                         {% if message.tags == 'success' %}
                             <div class="alert alert-success">
-                                <span>{{message}}</span>
+                                <p>
+                                    Chat successfully scheduled for: <br>
+                                    {{ chat_start|date:"M d" }} at {{ chat_start|date:"h:i a e" }}
+                                </p>
+                                <p>
+                                    Use the following link to invite others and to join the chat: <br>
+                                    {{ chat_link }}
+                                </p>
+
                             </div>
                         {% endif %}
                     {% endfor %}
-                {% else %}
 
-                    <p class="topic-sign-up-text">
-                        Recommended participants: {{ recommended_participants }}
-                    </p>
+                {% else %}
 
                     <form class="form" method="post" action="{% url 'topic.views.details' encoded_topic_id=encoded_topic_id %}">
                         {% csrf_token %}
