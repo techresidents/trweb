@@ -1,3 +1,16 @@
+
+.home-orange-text {
+    color: #EA8F00;
+}
+.topic-container {
+    border-bottom: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #EA8F00;
+}
+.topic-description {
+    margin-left: 30px;
+}
+
 .chat-table {
     table-layout: fixed;
 }
@@ -21,3 +34,4 @@
 .chat-table-button {
     width: 20%;
 }
+

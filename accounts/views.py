@@ -453,7 +453,7 @@ def profile_skills_persistence(request):
 
     return render_to_response('accounts/profile_skills_persistence.html', context, context_instance=RequestContext(request))
 
-
+@login_required
 def profile_skills_common(request, technology_type_name):
     """ Pulled out the code that was common between the language_skills
         and framework_skill views.

@@ -14,10 +14,12 @@ from django.utils import timezone
 import OpenTokSDK
 
 from trpycore.encode.basic import basic_encode, basic_decode
+from techresidents_web.accounts.models import Skill
 from techresidents_web.common.decorators import staff_required
-from techresidents_web.common.models import Topic
+from techresidents_web.common.models import TechnologyType, Topic
 from techresidents_web.chat.forms import CreateChatForm, ChatFeedbackForm
 from techresidents_web.chat.models import Chat, ChatRegistration, ChatSession, ChatUser
+from techresidents_web.job.models import Prefs, PositionType, PositionTypePref, TechnologyPref, LocationPref
 
 def _build_chat_data(request, chat_session, chat_user):
     # Create JSON user objects and pass down to the javascript app through template
@@ -127,6 +129,39 @@ def details(request, encoded_chat_id):
 
     return render_to_response('chat/details.html', context, context_instance=RequestContext(request))
 
+@login_required
+def compute_profile_completion(request):
+    """ Helper function to compute what percentage
+     of a user's profile has been completed.
+    """
+    profile_percent_complete = 0
+
+    # 10% for basic user profile info
+    user_profile = request.user.get_profile()
+    if user_profile.developer_since is not None:
+        profile_percent_complete += 10
+
+    # 15% for each skill
+    skill_types = ['Language', 'Framework', 'Persistence']
+    for name in skill_types:
+        technology_type_name = name
+        skill_technology_type = TechnologyType.objects.get(name=technology_type_name)
+        user_skills = Skill.objects.filter(user=request.user, technology__type=skill_technology_type).select_related('technology')
+        if len(user_skills) > 0:
+            profile_percent_complete += 15
+
+    #15% for each job preference
+    position_prefs = PositionTypePref.objects.filter(user=request.user)
+    if len(position_prefs) > 0:
+        profile_percent_complete += 15
+    technology_prefs = TechnologyPref.objects.filter(user=request.user)
+    if len(technology_prefs) > 0:
+        profile_percent_complete += 15
+    location_prefs = LocationPref.objects.filter(user=request.user)
+    if len(location_prefs) > 0:
+        profile_percent_complete += 15
+
+    return profile_percent_complete
 
 @login_required
 def home(request):
@@ -145,7 +180,9 @@ def home(request):
         })
 
     context = {
-        "chat_topics": topic_contexts
+        "chat_topics": topic_contexts,
+        "full_name": request.user.get_full_name(),
+        "profile_completed": compute_profile_completion(request)
     }
 
     return render_to_response('chat/home.html', context, context_instance=RequestContext(request))

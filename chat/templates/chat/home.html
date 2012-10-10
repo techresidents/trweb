@@ -13,23 +13,41 @@
     <div class="container">
 
         <div class="page-header">
-            <h1>Welcome</h1>
+            <h1>Welcome to Tech Residents</h1>
         </div>
 
         <div class="row">
-            <div class="span11">
-
-                <h2>Topic Library</h2>
-
+            <div class="span4">
                 <div class="well">
-                    {% for topic_ctx in chat_topics %}
-                        <p>
-                            <a href={%url 'topic.views.details' encoded_topic_id=topic_ctx.encoded_topic_id %}>
-                                {{topic_ctx.topic.title}}
-                            </a>
-                        </p>
+                    <h4>{{ full_name }}</h4>
+                    <p>Your <a href="{% url 'accounts.views.profile_account' %}">profile</a> is {{ profile_completed }}% complete</p>
+                    <p>Recommended actions:</p>
+                    <ul>
+                        <li>Add skills to your profile</li>
+                        <li>Participate in chat: 1 Minute Bio</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="span8">
+                <div class="well">
 
+                    {% for topic_ctx in chat_topics %}
+                        {% if forloop.first %}
+                            <div class="topic-container">
+                                <h3>Topic Library</h3>
+                            </div>
+                        {% endif %}
+                        <div class="topic-container">
+                            <h4>
+                                <a href={%url 'topic.views.details' encoded_topic_id=topic_ctx.encoded_topic_id %}>
+                                    {{topic_ctx.topic.title}}
+                                </a>
+                                <small>({{ topic_ctx.topic.duration }} mins)</small>
+                            </h4>
+                            <h6 class="topic-description">{{ topic_ctx.topic.description }}</h6>
+                        </div>
                     {% endfor %}
+
                 </div>
             </div>
         </div>
