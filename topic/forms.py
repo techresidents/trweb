@@ -1,6 +1,5 @@
 import datetime
 import pytz
-import uuid
 
 from django import forms
 from django.conf import settings
@@ -115,12 +114,25 @@ class TopicForm(forms.Form):
 
 
 class CreatePrivateChatForm(forms.Form):
+    """ Form to create a private chat."""
 
-    chat_time_radio_btns = forms.ChoiceField(widget=forms.RadioSelect(),
+    chat_time_radio_btns = forms.ChoiceField(
+        widget=forms.RadioSelect(),
         choices=[[1, 'Start now'],
                  [0, 'Schedule for later']])
-    chat_date = forms.DateField(label="Date", input_formats=('%m/%d/%Y',), required=False, widget=forms.DateInput(attrs={'placeholder': 'mm/dd/yyyy'}))
-    chat_time = forms.TimeField(label="Time", input_formats=('%I:%M %p',), required=False, widget=forms.TimeInput(attrs={'placeholder': 'hh:mm am/pm'}))
+
+    chat_date = forms.DateField(
+        label="Date",
+        input_formats=('%m/%d/%Y',),
+        required=False,
+        widget=forms.DateInput(attrs={'placeholder': 'mm/dd/yyyy'}))
+
+    chat_time = forms.TimeField(
+        label="Time",
+        input_formats=('%I:%M %p',),
+        required=False,
+        widget=forms.TimeInput(attrs={'placeholder': 'hh:mm am/pm'}))
+
 
     def __init__(self, request=None, topic_id=None, *args, **kwargs):
         super(CreatePrivateChatForm, self).__init__(*args, **kwargs)
@@ -129,16 +141,19 @@ class CreatePrivateChatForm(forms.Form):
         self.chat_starts_now = None   # Boolean indicating if user opted to start the chat right now
         self.chat_start_datetime = None  # This datetime obj is timezone aware
 
-    def start_now(self):
+
+    def start_chat_now(self):
         """ If chat starts now, returns True; returns False otherwise."""
         return self.chat_starts_now
 
+
     def clean(self):
-        """ Validate user provided chat date and time.
+        """ Validate user provided chat date and time, if provided.
 
         If the chat is starting now, the chat date and time
         fields can be any value since they will be ignored.
         """
+
         # Set chat-start-time state based upon radio selection
         chat_time_radio = self.cleaned_data["chat_time_radio_btns"]
         if chat_time_radio == '1':
@@ -159,7 +174,7 @@ class CreatePrivateChatForm(forms.Form):
                 is_start_time_valid = False
 
         if not is_start_time_valid:
-            raise forms.ValidationError("Chat must be scheduled in the future")
+            raise forms.ValidationError("Chat date/time is invalid")
 
         return self.cleaned_data
 
@@ -180,6 +195,9 @@ class CreatePrivateChatForm(forms.Form):
         if self.chat_starts_now:
             chat_start = timezone.now()
         else:
+            # Convert the user's specified date/time to UTC
+            # so that this form always returns a UTC datetime
+            # with chat.start
             chat_start_local_tz = self.chat_start_datetime
             chat_start = chat_start_local_tz.astimezone(pytz.UTC)
 
@@ -192,13 +210,12 @@ class CreatePrivateChatForm(forms.Form):
             record=True)
 
         #Create the tokbox session
-#        opentok = OpenTokSDK.OpenTokSDK(
-#            settings.TOKBOX_API_KEY,
-#            settings.TOKBOX_API_SECRET)
-#        session = opentok.create_session(self.request.META['REMOTE_ADDR'])
+        opentok = OpenTokSDK.OpenTokSDK(
+            settings.TOKBOX_API_KEY,
+            settings.TOKBOX_API_SECRET)
+        session = opentok.create_session(self.request.META['REMOTE_ADDR'])
 
         # Create the chat session
-        #chat_session = ChatSession.objects.create(chat=chat, token=session.session_id)
-        chat_session = ChatSession.objects.create(chat=chat, token=uuid.uuid4().hex)
+        chat_session = ChatSession.objects.create(chat=chat, token=session.session_id)
 
         return (chat, chat_session)

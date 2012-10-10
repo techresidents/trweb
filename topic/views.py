@@ -44,12 +44,15 @@ def create(request):
 def details(request, encoded_topic_id):
     """Display topic details.
 
-    This topic view also allows users to create
-    a chat with the specified topic.
+    This topic view allows users to create
+    a chat for the specified topic.
     """
     topic_id = basic_decode(encoded_topic_id)
     topic = Topic.objects.get(id=topic_id)
     topic_tree = Topic.objects.topic_tree(topic_id)
+
+    # Chose an arbitrary topic duration to determine
+    # if the topic should be consumed with 1 or 2 participants.
     if topic.duration <= 10:
         recommended_participants = '1 participant'
     else:
@@ -59,17 +62,20 @@ def details(request, encoded_topic_id):
         form = forms.CreatePrivateChatForm(request, topic_id, data=request.POST)
         if form.is_valid():
             chat, chat_session = form.save()
-            if form.start_now():
+            if form.start_chat_now():
                 return HttpResponseRedirect(reverse("chat.views.session_wait", args=[basic_encode(chat_session.id)]))
             else:
+                # Chat was scheduled for a later time
                 relative_chat_link = reverse("chat.views.details", args=[basic_encode(chat.id)])
+                # Use the session cache to pass chat details
                 request.session["topic_details_chat_start"] = chat.start
                 request.session["topic_details_chat_link"] = request.build_absolute_uri(relative_chat_link)
                 request.session.modified = True
-                message = 'success'
+                message = 'success' # dummy message
                 messages.success(request, message)
                 return HttpResponseRedirect(reverse("topic.views.details", args=[encoded_topic_id]))
     else:
+        # Get the current time to set default field values
         today_utc = timezone.now()
         today_local = today_utc.astimezone(timezone.get_current_timezone())
         form = forms.CreatePrivateChatForm(request, topic_id, initial={
