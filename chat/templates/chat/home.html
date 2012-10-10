@@ -33,23 +33,35 @@
 
                     {% for topic_ctx in chat_topics %}
                         {% if forloop.first %}
-                            <div class="topic-container">
-                                <h3>Topic Library</h3>
+                            <div class="home-topic-container-header">
+                                <h3>Chat Topics</h3>
                             </div>
                         {% endif %}
-                        <div class="topic-container">
-                            <h4>
-                                <a href={%url 'topic.views.details' encoded_topic_id=topic_ctx.encoded_topic_id %}>
-                                    {{topic_ctx.topic.title}}
-                                </a>
+                        <div class="home-topic-container">
+                            <h4>{{topic_ctx.topic.title}}
                                 <small>({{ topic_ctx.topic.duration }} mins)</small>
                             </h4>
-                            <h6 class="topic-description">{{ topic_ctx.topic.description }}</h6>
+                            <p class="home-topic-description">{{ topic_ctx.topic.description }}</p>
+                            <a class="home-topic-description" href="{% url 'topic.views.details' encoded_topic_id=topic_ctx.encoded_topic_id %}">Sign Up</a>
                         </div>
                     {% endfor %}
 
                 </div>
             </div>
         </div>
+
+    </div>
+
+    <script src="{% static "js/3ps/jquery/jquery-min.js" %}"></script>
+    <script>
+        $(document).ready(function(){
+
+            $(".home-topic-container").click(function(){
+                window.location=$(this).find("a").attr("href");
+                return false;
+            });
+
+        });
+    </script>
 
 {% endblock %}

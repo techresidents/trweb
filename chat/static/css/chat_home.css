@@ -2,36 +2,31 @@
 .home-orange-text {
     color: #EA8F00;
 }
-.topic-container {
+
+.home-topic-container-header {
     border-bottom: 1px;
     border-bottom-style: solid;
     border-bottom-color: #EA8F00;
 }
-.topic-description {
+
+.home-topic-container {
+    padding-bottom: 5px;
+    border-bottom: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #EA8F00;
+}
+
+.home-topic-container:hover {
+    cursor: pointer;
+    background-color: white;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-style: solid;
+    border-color: #EA8F00;
+    border-radius: 5px;
+}
+
+.home-topic-description {
     margin-left: 30px;
 }
-
-.chat-table {
-    table-layout: fixed;
-}
-
-.chat-table-duration {
-    width: 10%;
-}
-
-.chat-table-title {
-    width: 20%;
-}
-
-.chat-table-description {
-    width: 30%;
-}
-
-.chat-table-date {
-    width: 20%;
-}
-
-.chat-table-button {
-    width: 20%;
-}
-
