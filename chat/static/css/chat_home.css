@@ -4,7 +4,7 @@
 }
 
 .home-green-text {
-    color: #468847; /*51B653*/
+    color: #45ae46; /*51B653*/
 }
 
 .home-all-topics-container {
@@ -18,7 +18,10 @@
 }
 
 .home-topic-container {
-    padding: 19px;
+    padding-top: 19px;
+    padding-bottom: 19px;
+    padding-right: 19px;
+    padding-left: 35px;
 }
 
 .home-topic-description {
@@ -44,4 +47,8 @@
 
 .home-topic-row:hover + .home-topic-row > .home-topic-divider {
     margin: 0px;
+}
+
+.home-topic-text-container {
+    padding-left: 60px;
 }
