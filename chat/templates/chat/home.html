@@ -40,9 +40,9 @@
                             <div class="home-topic-divider"></div>
                             <div class="clearfix home-topic-container">
                                 {% if topic_ctx.topic.duration <= 10 %}
-                                    <img class="pull-left" rel="tooltip" title="Recommended for 1 participant" alt="single participant chat topic" src="{% static 'img/person_50x38.png' %}"/>
+                                    <img class="pull-left" rel="tooltip" title="1 participant recommended" alt="single participant chat topic" src="{% static 'img/person_50x38.png' %}"/>
                                 {% else %}
-                                    <img class="pull-left" rel="tooltip" title="Recommended for 2 participants" alt="Multiple participant chat topic" src="{% static 'img/people_50x38.png' %}"/>
+                                    <img class="pull-left" rel="tooltip" title="2 participants recommended" alt="Multiple participant chat topic" src="{% static 'img/people_50x38.png' %}"/>
                                 {% endif %}
 
                                 <div class="home-topic-text-container">
