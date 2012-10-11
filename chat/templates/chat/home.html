@@ -41,6 +41,9 @@
                             <div class="home-topic-container">
                                 <h4>{{topic_ctx.topic.title}}
                                     <small>({{ topic_ctx.topic.duration }} mins)</small>
+                                    {% if topic_ctx.completed %}
+                                        <small class="home-green-text"><b>COMPLETE</b></small>
+                                    {% endif %}
                                 </h4>
                                 <p class="home-topic-description">{{ topic_ctx.topic.description }}</p>
                                 <a class="home-topic-description" href="{% url 'topic.views.details' encoded_topic_id=topic_ctx.encoded_topic_id %}">Sign Up</a>

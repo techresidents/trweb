@@ -167,16 +167,39 @@ def compute_profile_completion(request):
 def home(request):
     """ List all chat topics"""
 
-    # Only retrieve root topics
+    # Retrieve all topics user chatted about
+    chat_sessions = ChatSession.objects.\
+        filter(users=request.user).\
+        select_related("chat", "chat__topic").\
+        order_by("chat__topic__title").\
+        distinct("chat__topic__title")
+
+    completed_topics = []
+    for chat_session in chat_sessions:
+        completed_topics.append(chat_session.chat.topic)
+
+    # Retrieve all root topics
     chat_topics = Topic.objects.\
         filter(rank=0).\
         order_by("title")
 
-    topic_contexts = []
+    incomplete_topics = []
     for topic in chat_topics:
+        if topic not in completed_topics:
+            incomplete_topics.append(topic)
+
+    topic_contexts = []
+    for topic in completed_topics:
         topic_contexts.append({
             "encoded_topic_id": basic_encode(topic.id),
-            "topic": topic
+            "topic": topic,
+            "completed": True
+        })
+    for topic in incomplete_topics:
+        topic_contexts.append({
+            "encoded_topic_id": basic_encode(topic.id),
+            "topic": topic,
+            "completed": False
         })
 
     context = {
