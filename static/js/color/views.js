@@ -42,6 +42,7 @@ define([
 
         render: function() {
             this.$el.html(this.template());
+            this.$('[rel=tooltip]').tooltip(); //activate tooltips
 
             // read the view model to determine which color to show as currently selected
             this.onColorChange();

@@ -348,7 +348,7 @@ define([
 
         render: function() {
             this.$el.html(this.template());
-            this.$('.whiteboard-tool-button').tooltip(); //activate tooltips
+            this.$('[rel=tooltip]').tooltip(); //activate tooltips
 
             // instantiate and render the color picker view
             new color_views.ColorPickerView({
