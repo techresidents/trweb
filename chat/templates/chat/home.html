@@ -18,7 +18,7 @@
 
         <div class="row">
             <div class="span4">
-                <div class="well">
+                <div class="well bluewell">
                     <h4>{{ full_name }}</h4>
                     <p>Your <a href="{% url 'accounts.views.profile_account' %}">profile</a> is {{ profile_completed }}% complete</p>
                     <p>Recommended actions:</p>
@@ -29,23 +29,25 @@
                 </div>
             </div>
             <div class="span8">
-                <div class="well">
+                <div class="well home-topics-outer-container">
 
-                    {% for topic_ctx in chat_topics %}
-                        {% if forloop.first %}
-                            <div class="home-topic-container-header">
-                                <h3>Chat Topics</h3>
-                            </div>
-                        {% endif %}
-                        <div class="home-topic-container">
-                            <h4>{{topic_ctx.topic.title}}
-                                <small>({{ topic_ctx.topic.duration }} mins)</small>
-                            </h4>
-                            <p class="home-topic-description">{{ topic_ctx.topic.description }}</p>
-                            <a class="home-topic-description" href="{% url 'topic.views.details' encoded_topic_id=topic_ctx.encoded_topic_id %}">Sign Up</a>
+                        <div class="home-topic-container-header">
+                            <h3>Chat Topics</h3>
                         </div>
-                    {% endfor %}
 
+                        {% for topic_ctx in chat_topics %}
+                            <div class="home-topic-row">
+                                <div class="home-topic-divider">
+                                </div>
+                                <div class="home-topic-container">
+                                    <h4>{{topic_ctx.topic.title}}
+                                        <small>({{ topic_ctx.topic.duration }} mins)</small>
+                                    </h4>
+                                    <p class="home-topic-description">{{ topic_ctx.topic.description }}</p>
+                                    <a class="home-topic-description" href="{% url 'topic.views.details' encoded_topic_id=topic_ctx.encoded_topic_id %}">Sign Up</a>
+                                </div>
+                            </div>
+                        {% endfor %}
                 </div>
             </div>
         </div>

@@ -182,7 +182,8 @@ def home(request):
     context = {
         "chat_topics": topic_contexts,
         "full_name": request.user.get_full_name(),
-        "profile_completed": compute_profile_completion(request)
+        "profile_completed": compute_profile_completion(request),
+        "recommended_actions": 'accounts.views.login_otp'
     }
 
     return render_to_response('chat/home.html', context, context_instance=RequestContext(request))
