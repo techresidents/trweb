@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^accounts/', include('accounts.urls')),
     url(r'^chat/', include('chat.urls')),
     url(r'^document/', include('document.urls')),
+    url(r'^home/', include('home.urls')),
     url(r'^topic/', include('topic.urls')),
     url(r'^whiteboard/', include('whiteboard.urls')),
 
