@@ -16,9 +16,19 @@
             </div>
             <div class="span9">
                 <div id="topicapp">
+
                     <div class="page-header">
                         <h1>Create Topic</h1>
                     </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="controls alert alert-error">
+                            {% for error in form.non_field_errors%}
+                                <span>{{error}}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     <div class="page-header control-group topic">
                         <h3>Topic Summary</h3>
                         <div class="controls"/>
@@ -212,14 +222,6 @@
                             <div class="controls">
                                 <input type="submit" value="Submit" class="btn btn-primary" />
                             </div>
-
-                            {% if form.non_field_errors %}
-                                <div class="controls alert alert-error">
-                                    {% for error in form.non_field_errors%}
-                                        <span>{{error}}</span>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
                         </form>
                     </div>
                 </div>

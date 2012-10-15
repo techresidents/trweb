@@ -28,9 +28,23 @@ class TopicForm(forms.Form):
         if not topics or len(topics) < 2:
             raise forms.ValidationError("Invalid topic")
 
+        # Ensure root title exists
         root = topics[0]
         if not root["title"]:
             raise forms.ValidationError("Topic title field required")
+
+        # Ensure root title is unique.
+        # This constraint exists to make versioning topics
+        # easier to maintain over time, as the topic heirarchies
+        # will surely change over time based upon user feedback.
+        # This is especially important in the case where a user
+        # completed v1 of a topic, but not v2.
+        root_topic_titles = {}
+        all_root_topics = Topic.objects.filter(rank=0).all()
+        for root_topic in all_root_topics:
+            root_topic_titles[root_topic.title] = root_topic
+        if root["title"] in root_topic_titles:
+            raise forms.ValidationError("Root topic title must be unique")
 
         # Construct map of topic IDs to topic data
         topic_map = { root["id"]: root }
