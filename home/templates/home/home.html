@@ -5,7 +5,7 @@
 {% block title %}Tech Residents - Chat Home{% endblock %}
 
 {% block extrahead %}
-    <link href="{% static "css/chat_home.css" %}" rel="stylesheet">
+    <link href="{% static "css/home.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -23,8 +23,13 @@
                     <p>Your <a href="{% url 'accounts.views.profile_account' %}">profile</a> is {{ profile_completed }}% complete</p>
                     <p>Recommended actions:</p>
                     <ul>
-                        <li>Add skills to your profile</li>
-                        <li>Participate in chat: 1 Minute Bio</li>
+                        {% for action in recommended_actions %}
+                            {% if action.category == 'profile' %}
+                                <li><p>Update your <a href="{{ action.link }}">profile</a></p></li>
+                            {% elif action.category == 'chat' %}
+                                <li><p>Participate in chat <a href="{{ action.link }}">{{ action.chat_name }}</a></p></li>
+                            {% endif %}
+                        {% endfor %}
                     </ul>
                 </div>
             </div>

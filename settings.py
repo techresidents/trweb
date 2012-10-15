@@ -104,7 +104,7 @@ TEMPLATE_LOADERS = (
 )
 
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
-LOGIN_REDIRECT_URL = '/chat'
+LOGIN_REDIRECT_URL = '/home'
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
 
