@@ -57,6 +57,7 @@ class Topic(models.Model):
         title: topic's title
         description: topic's description
         duration: topic's duration in minutes
+        recommended_participants: number of recommended participants
         public: Used for access control.
                 True if topic is accessible to everyone, false otherwise.
         active: Used for version control.
@@ -75,6 +76,7 @@ class Topic(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=2048, blank=True)
     duration = models.IntegerField()
+    recommended_participants = models.IntegerField()
     public = models.BooleanField(default=True)
     active = models.BooleanField(default=True)
     user = models.ForeignKey(User)

@@ -182,10 +182,11 @@ define([
 
     var TopicAddView = Backbone.View.extend({
 
-        el: $('#topic-add'),
+        el: $('#topicapp'),
         topicTitleSelector: $('#topic-input'),
         topicDescriptionSelector: $('#topic-description-input'),
         topicDurationSelector: $('#topic-duration-input'),
+        topicParticipantsSelector: $('#recommended-participants-input'),
 
         events: {
             'click button': 'addTopic',
@@ -197,12 +198,14 @@ define([
             this.topicTitleInput = this.$(this.topicTitleSelector);
             this.topicDescriptionInput = this.$(this.topicDescriptionSelector);
             this.topicDurationInput = this.$(this.topicDurationSelector);
+            this.topicParticipantsInput = this.$(this.topicParticipantsSelector);
         },
 
         addTopic: function() {
             var title = this.topicTitleInput.val();
             var description = this.topicDescriptionInput.val();
-            var duration = this.topicDurationSelector.val();
+            var duration = this.topicDurationInput.val();
+            var participants = this.topicParticipantsInput.val();
 
             if (description.length === 0){
                 description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet rhoncus eros. Proin ut dolor neque, quis pretium massa. In facilisis interdum tortor. Proin fermentum dignissim lorem. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.';
@@ -214,6 +217,7 @@ define([
                         title: title,
                         description: description,
                         duration: duration,
+                        recommendedParticipants: participants,
                         rank: this.topicCollection.length,
                         expanded: true
                 });

@@ -30,7 +30,11 @@
                             {{ topic.title }}
                             <small>({{topic.duration}} mins)</small>
                             <br>
-                            <small>{{ recommended_participants }} recommended</small>
+                            {% if topic.recommended_participants > 1 %}
+                                <small>{{ topic.recommended_participants }} participants recommended</small>
+                            {% else %}
+                                <small>{{ topic.recommended_participants }} participant recommended</small>
+                            {% endif %}
                         </h2>
                     {% else %}
                         <h3 class="level{{ topic.level }}">

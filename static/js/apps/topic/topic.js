@@ -14,18 +14,21 @@ $(document).ready(function() {
         rootTopicTitleSelector: $('#root-topic-input'),
         rootTopicDescriptionSelector: $('#root-topic-description-input'),
         rootTopicDurationSelector: $('#root-topic-duration-input'),
+        rootTopicParticipantsSelector: $('#recommended-participants-input'),
         topicsFormInputSelector: $('#topics-form-input'),
 
         events : {
             'blur #root-topic-input' : 'rootTopicChanged',
             'blur #root-topic-description-input' : 'rootTopicDescriptionChanged',
-            'blur #root-topic-duration-input' : 'rootTopicDurationChanged'
+            'blur #root-topic-duration-input' : 'rootTopicDurationChanged',
+            'blur #recommended-participants-input' : 'rootTopicRecommendedParticipantsChanged'
         },
 
         initialize: function() {
             this.topicInput = this.$(this.rootTopicTitleSelector);
             this.rootTopicDescriptionInput = this.$(this.rootTopicDescriptionSelector);
             this.rootTopicDurationInput = this.$(this.rootTopicDurationSelector);
+            this.rootTopicParticipantsInput = this.$(this.rootTopicParticipantsSelector);
             this.topicsFormInput = this.$(this.topicsFormInputSelector);
 
             this.topicCollection = new models.TopicCollection();
@@ -47,6 +50,7 @@ $(document).ready(function() {
                             id: 0,
                             parentId: null,
                             duration: this.rootTopicDurationInput.val(),
+                            recommendedParticipants: this.rootTopicParticipantsInput.val(),
                             level: 0,
                             rank: 0
                 });
@@ -73,6 +77,11 @@ $(document).ready(function() {
         rootTopicDurationChanged: function() {
             var topic = this.topicCollection.at(0);
             topic.set({ duration: this.rootTopicDurationInput.val() });
+        },
+
+        rootTopicRecommendedParticipantsChanged: function() {
+            var topic = this.topicCollection.at(0);
+            topic.set({ recommendedParticipants: this.rootTopicParticipantsInput.val() });
         }
     });
 

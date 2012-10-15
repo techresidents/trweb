@@ -84,27 +84,24 @@ class TopicForm(forms.Form):
             raise ValueError("Unable to save invalid topic")
 
         result = []
-
         topics = self.cleaned_data.get("topics")
-        
-        root_topic = topics[0]
-        
-        #TODO fix topic type hard code
 
+        # Create root Topic
+        root_topic = topics[0]
         root = Topic(
                 id=root_topic["id"],
                 title=root_topic["title"],
                 description=root_topic["description"],
                 duration=root_topic["duration"],
+                recommended_participants=root_topic["recommendedParticipants"],
                 rank=root_topic["rank"],
-                type_id = 1, 
+                type_id = 1,      #TODO fix topic type hard code
                 user = self.request.user
                 )
-        
-
         topic_map = { root.id : root }
         result.append(root)
 
+        # Create sub Topics
         for topic in topics[1:]:
             parent = topic_map[topic["parentId"]]
             model = Topic(
@@ -113,10 +110,10 @@ class TopicForm(forms.Form):
                     rank=topic["rank"],
                     description=topic["description"],
                     duration=topic["duration"],
+                    recommended_participants=topic["recommendedParticipants"],
                     type_id = 1,
                     user = self.request.user
                     )
-
             model.parent = parent
             topic_map[model.id] = model
             result.append(model)

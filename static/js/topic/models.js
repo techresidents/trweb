@@ -21,6 +21,7 @@ define([
                 title: null,
                 description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet rhoncus eros. Proin ut dolor neque, quis pretium massa. In facilisis interdum tortor. Proin fermentum dignissim lorem. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
                 duration: 5,
+                recommendedParticipants: 2,
                 expanded: false
             };
         },
@@ -92,6 +93,15 @@ define([
 
         setDurationMs: function(durationMs) {
             this.set({duration: durationMs / 60 / 1000});
+            return this;
+        },
+
+        recommendedParticipants: function() {
+            return this.get('recommendedParticipants');
+        },
+
+        setRecommendedParticipants: function(participants) {
+            this.set({recommendedParticipants: participants});
             return this;
         }
     });

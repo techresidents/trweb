@@ -1,4 +1,3 @@
-import datetime
 
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
@@ -23,9 +22,9 @@ def create(request):
     if request.method == 'POST':
         form = forms.TopicForm(request, data=request.POST)
         if form.is_valid():
-            form.save(commit=True)
-            #TODO redirect to some other page
-            return HttpResponseRedirect(reverse("topic.views.create"))
+            created_models_list = form.save(commit=True)
+            root_topic = created_models_list[0] # Root topic is expected to be 1st in list
+            return HttpResponseRedirect(reverse("topic.views.details", args=[basic_encode(root_topic.id)]))
         else:
             topic_json = form.data.get("topics")
 
@@ -50,13 +49,6 @@ def details(request, encoded_topic_id):
     topic_id = basic_decode(encoded_topic_id)
     topic = Topic.objects.get(id=topic_id)
     topic_tree = Topic.objects.topic_tree(topic_id)
-
-    # Chose an arbitrary topic duration to determine
-    # if the topic should be consumed with 1 or 2 participants.
-    if topic.duration <= 10:
-        recommended_participants = '1 participant'
-    else:
-        recommended_participants = '2 participants'
 
     if request.method == 'POST':
         form = forms.CreatePrivateChatForm(request, topic_id, data=request.POST)
@@ -87,7 +79,6 @@ def details(request, encoded_topic_id):
         "encoded_topic_id": encoded_topic_id,
         "topic": topic,
         "topic_tree": topic_tree,
-        "recommended_participants": recommended_participants,
         "form": form,
         "chat_start": request.session.pop("topic_details_chat_start", None),
         "chat_link": request.session.pop("topic_details_chat_link", None)

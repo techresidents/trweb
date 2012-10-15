@@ -12,9 +12,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="span3">
-            </div>
-            <div class="span9">
+            <div class="span8">
                 <div id="topicapp">
 
                     <div class="page-header">
@@ -30,14 +28,19 @@
                     {% endif %}
 
                     <div class="page-header control-group topic">
-                        <h3>Topic Summary</h3>
-                        <div class="controls"/>
-                            <input id="root-topic-input" class="span4" placeholder="Main Title"/>
-                        </div>
+                        <h3>Edit Topic Summary</h3>
+                        <input id="root-topic-input" class="span4" placeholder="Main Title"/>
+                        <textarea id="root-topic-description-input" class="span5" rows="6" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet rhoncus eros. Proin ut dolor neque, quis pretium massa. In facilisis interdum tortor. Proin fermentum dignissim lorem. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."></textarea>
                         <div class="control-group">
-                            <div class="controls"/>
-                            <textarea id="root-topic-description-input" class="span4" rows="7" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet rhoncus eros. Proin ut dolor neque, quis pretium massa. In facilisis interdum tortor. Proin fermentum dignissim lorem. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."></textarea>
-                        </div>
+                            <label class="control-label" for="recommended-participants-input">Recommended # Participants</label>
+                            <div class="controls">
+                                <select id="recommended-participants-input">
+                                    <option>1</option>
+                                    <option selected="selected">2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                </select>
+                            </div>
                         <div class="control-group">
                             <label class="control-label" for="root-topic-duration-input">Total Duration (mins)</label>
                             <div class="controls">
@@ -112,7 +115,7 @@
                         <button class="btn btn-input">Add</button>
                         <div class="control-group">
                             <div class="controls"/>
-                                <textarea id="topic-description-input" class="span4" rows="7" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet rhoncus eros. Proin ut dolor neque, quis pretium massa. In facilisis interdum tortor. Proin fermentum dignissim lorem. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."></textarea>
+                                <textarea id="topic-description-input" class="span5" rows="6" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet rhoncus eros. Proin ut dolor neque, quis pretium massa. In facilisis interdum tortor. Proin fermentum dignissim lorem. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."></textarea>
                             </div>
                         </div>
                         <div class="control-group">
@@ -184,6 +187,9 @@
                         </div>
                     </div>
 
+                    <div>
+                        <h3>Edit Topic Structure</h3>
+                    </div>
                     <div class="well">
                         <ul id="topic-list" class="unstyled">
                         </ul>
