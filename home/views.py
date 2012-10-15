@@ -1,14 +1,16 @@
+from operator import itemgetter
+
 
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 
 from trpycore.encode.basic import basic_encode, basic_decode
 from techresidents_web.accounts.models import Skill
-from techresidents_web.common.models import TechnologyType, Topic
-from techresidents_web.chat.models import Chat, ChatSession, ChatUser
+from techresidents_web.common.models import Topic
 from techresidents_web.job.models import PositionTypePref, TechnologyPref, LocationPref
 
 
@@ -38,8 +40,8 @@ class ChatUserAction(BaseUserAction):
         self.chat_name = chat_name
 
 
-@login_required
-def compute_recommended_actions(request, profile_completion_percentage, completed_topics_list):
+
+def compute_recommended_actions(request, profile_completion_percentage, completed_topics_dict, incomplete_topics_dict):
     """Helper function to compute recommended
     next actions for the users.
 
@@ -55,24 +57,28 @@ def compute_recommended_actions(request, profile_completion_percentage, complete
         action = BaseUserAction(category='profile', link=absolute_link)
         user_actions.append(action)
 
+    # Check to see if user completed the
+    # Tutorial and Bio chats
+    tutorial_title = 'Tutorial'
     tutorial_completed = False
+    bio_title = '1 Minute Bio'
     bio_completed = False
-    for topic in completed_topics_list:
-        if topic.title == 'Tutorial':   #TODO how best to search for these topics?
-            tutorial_completed = True
-        elif topic.title == '1 minute bio': #TODO
-            bio_completed = True
+    if tutorial_title in completed_topics_dict:
+        tutorial_completed = True
+    if bio_title in completed_topics_dict:
+        bio_completed = True
 
-    # Only recommend one of these chats to complete,
-    # not both.
+    # Only recommend one of these chats to
+    # complete, not both.
     if not tutorial_completed:
-        tutorial_topic = Topic.objects.get(title="Tutorial")
+        tutorial_topic = incomplete_topics_dict[tutorial_title]
         relative_link = reverse("topic.views.details", args=[basic_encode(tutorial_topic.id)])
         absolute_link = request.build_absolute_uri(relative_link)
         action = ChatUserAction(chat_name=tutorial_topic.title, link=absolute_link)
         user_actions.append(action)
+
     elif not bio_completed:
-        bio_topic = Topic.objects.get(title="1 minute bio")
+        bio_topic = incomplete_topics_dict[bio_title]
         relative_link = reverse("topic.views.details", args=[basic_encode(bio_topic.id)])
         absolute_link = request.build_absolute_uri(relative_link)
         action = ChatUserAction(chat_name=bio_topic.title, link=absolute_link)
@@ -80,7 +86,7 @@ def compute_recommended_actions(request, profile_completion_percentage, complete
 
     return user_actions
 
-@login_required
+
 def compute_profile_completion(request):
     """ Helper function to compute what percentage
      of a user's profile has been completed.
@@ -92,14 +98,25 @@ def compute_profile_completion(request):
     if user_profile.developer_since is not None:
         profile_percent_complete += 10
 
-    # 15% for each skill
-    skill_types = ['Language', 'Framework', 'Persistence']
-    for name in skill_types:
-        user_skills_count = Skill.objects.filter(user=request.user, technology__type__name=name).count()
-        if user_skills_count > 0:
-            profile_percent_complete += 15
+    # 15% for each category of Skill (language, framework, peristence)
+    # Query for all user's skills, group by technology type
+    technology_type_counts = Skill.objects.\
+        filter(user=request.user).\
+        values('technology__type__name').\
+        annotate(count=Count('technology__type__name'))
+    # Place results of query into simpler data structure,
+    # a map of {'technology_type' : 'count'}
+    technology_type_count_map = {}
+    for t in technology_type_counts:
+        technology_type_count_map[t['technology__type__name']] = t['count']
+    # Give user points for each type of technology type
+    # they've listed their skills for.
+    if len(technology_type_counts):
+        for type in ['Language', 'Framework', 'Persistence']:
+            if type in technology_type_count_map:
+                profile_percent_complete += 15
 
-    #15% for each job preference
+    #15% for each job preference they've added
     position_prefs_count = PositionTypePref.objects.filter(user=request.user).count()
     if position_prefs_count > 0:
         profile_percent_complete += 15
@@ -112,6 +129,8 @@ def compute_profile_completion(request):
 
     return profile_percent_complete
 
+
+
 @login_required
 def home(request):
     """ List all chat topics"""
@@ -119,11 +138,14 @@ def home(request):
     # Retrieve all topics user chatted about
     completed_topics = Topic.objects.\
         filter(chats__chat_sessions__users=request.user).\
-        order_by("title").\
-        distinct("title")
+        filter(chats__chat_sessions__end__isnull=False).\
+        distinct("title").\
+        all()
 
     topic_contexts = []
+    completed_topics_dict = {}  # for fast lookup
     for topic in completed_topics:
+        completed_topics_dict[topic.title] = topic
         topic_contexts.append({
             "encoded_topic_id": basic_encode(topic.id),
             "topic": topic,
@@ -131,12 +153,17 @@ def home(request):
         })
 
     # Retrieve all root topics
-    chat_topics = Topic.objects.\
+    all_root_topics = Topic.objects.\
         filter(rank=0).\
-        order_by("title")
+        all()[:20]
+        # limit number of objects we pull back to 20.
+        # We currently don't have more than 20 chat topics.
+        # This is just a safety net.
 
-    for topic in chat_topics:
-        if topic not in completed_topics:
+    incomplete_topics_dict = {} # for fast lookup
+    for topic in all_root_topics:
+        if topic.title not in completed_topics_dict:
+            incomplete_topics_dict[topic.title] = topic
             topic_contexts.append({
                 "encoded_topic_id": basic_encode(topic.id),
                 "topic": topic,
@@ -144,10 +171,15 @@ def home(request):
             })
 
     profile_completion_percentage = compute_profile_completion(request)
-    recommended_actions = compute_recommended_actions(request, profile_completion_percentage, completed_topics)
+    recommended_actions = compute_recommended_actions(
+        request,
+        profile_completion_percentage,
+        completed_topics_dict,
+        incomplete_topics_dict
+    )
 
     context = {
-        "chat_topics": topic_contexts,
+        "chat_topics": sorted(topic_contexts, key=lambda k: k['topic'].title),
         "full_name": request.user.get_full_name(),
         "profile_completed": profile_completion_percentage,
         "recommended_actions": recommended_actions
