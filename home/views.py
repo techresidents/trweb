@@ -71,18 +71,20 @@ def compute_recommended_actions(request, profile_completion_percentage, complete
     # Only recommend one of these chats to
     # complete, not both.
     if not tutorial_completed:
-        tutorial_topic = incomplete_topics_dict[tutorial_title]
-        relative_link = reverse("topic.views.details", args=[basic_encode(tutorial_topic.id)])
-        absolute_link = request.build_absolute_uri(relative_link)
-        action = ChatUserAction(chat_name=tutorial_topic.title, link=absolute_link)
-        user_actions.append(action)
+        tutorial_topic = incomplete_topics_dict.get(tutorial_title)
+        if tutorial_topic is not None:
+            relative_link = reverse("topic.views.details", args=[basic_encode(tutorial_topic.id)])
+            absolute_link = request.build_absolute_uri(relative_link)
+            action = ChatUserAction(chat_name=tutorial_topic.title, link=absolute_link)
+            user_actions.append(action)
 
     elif not bio_completed:
-        bio_topic = incomplete_topics_dict[bio_title]
-        relative_link = reverse("topic.views.details", args=[basic_encode(bio_topic.id)])
-        absolute_link = request.build_absolute_uri(relative_link)
-        action = ChatUserAction(chat_name=bio_topic.title, link=absolute_link)
-        user_actions.append(action)
+        bio_topic = incomplete_topics_dict.get(bio_title)
+        if bio_topic is not None:
+            relative_link = reverse("topic.views.details", args=[basic_encode(bio_topic.id)])
+            absolute_link = request.build_absolute_uri(relative_link)
+            action = ChatUserAction(chat_name=bio_topic.title, link=absolute_link)
+            user_actions.append(action)
 
     return user_actions
 
