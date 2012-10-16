@@ -178,8 +178,18 @@ def home(request):
         incomplete_topics_dict
     )
 
+    # Sort chat topics alphabetically by title
+    sorted_topics = sorted(topic_contexts, key=lambda k: (k['topic'].title).lower())
+    # Place the Tutorial topic first
+    for topic_dict in sorted_topics:
+        topic = topic_dict["topic"]
+        if topic.title == 'Tutorial':
+            sorted_topics.remove(topic_dict)
+            sorted_topics.insert(0, topic_dict)
+            break
+
     context = {
-        "chat_topics": sorted(topic_contexts, key=lambda k: (k['topic'].title).lower()),
+        "chat_topics": sorted_topics,
         "full_name": request.user.get_full_name(),
         "profile_completed": profile_completion_percentage,
         "recommended_actions": recommended_actions
