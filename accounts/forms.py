@@ -404,8 +404,10 @@ class OTPForm(forms.Form):
         return (user_profile, otp)
 
 class ProfileAccountForm(forms.Form):
-    #year choices
-    years_experience_range = reversed(range(timezone.now().year - 50, timezone.now().year))
+    # year choices
+    # the range 'end' value is not inclusive so we add 1 to the current year
+    # create a 50 year span
+    years_experience_range = reversed(range(timezone.now().year-50, timezone.now().year+1))
     years_experience_choices = [(year, year) for year in years_experience_range]
     years_experience_choices.insert(0,('', ''))  # insert blank default value
 
