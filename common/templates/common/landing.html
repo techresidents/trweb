@@ -2,7 +2,12 @@
 {% load staticfiles %}
 {% load url from future %}
 
-{% block title %} Platform for software professionals to discuss technology and showcase their talent to hiring companies | Tech Residents{% endblock %}
+{% block title %} Platform for software professionals to discuss technology and find great jobs | Tech Residents{% endblock %}
+
+{% block meta-description %}content="Tech Residents provides a free platform for software
+    professionals to discuss curated technical topics with fellow programmers,
+    developers, and engineers to find great jobs."
+{% endblock %}
 
 {% block extrahead %}
     <link href="{% static "css/landing.css" %}" rel="stylesheet">
