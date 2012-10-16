@@ -1,4 +1,2 @@
 User-agent: *
-Disallow: /chat/
-Disallow: /topic/
-Disallow: /whiteboard/
+Disallow: /version
