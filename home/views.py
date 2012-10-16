@@ -179,7 +179,7 @@ def home(request):
     )
 
     context = {
-        "chat_topics": sorted(topic_contexts, key=lambda k: k['topic'].title),
+        "chat_topics": sorted(topic_contexts, key=lambda k: (k['topic'].title).lower()),
         "full_name": request.user.get_full_name(),
         "profile_completed": profile_completion_percentage,
         "recommended_actions": recommended_actions
