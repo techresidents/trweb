@@ -378,11 +378,7 @@ def profile_jobs(request):
         'country': l.location.country} for l in location_prefs]
 
     # Retrieve list of user's notification preferences and create json data to populate UI
-    try:
-        notification_prefs = Prefs.objects.get(user=request.user)
-        json_notification_prefs = {'emailNewJobOpps': notification_prefs.email_new_job_opps}
-    except Prefs.DoesNotExist:
-        json_notification_prefs = {'emailNewJobOpps': False}
+    json_notification_prefs = {'emailNewJobOpps': request.user.get_profile().email_new_job_opps}
 
     context = {
         'form': form,

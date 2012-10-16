@@ -11,6 +11,7 @@ class UserProfile(models.Model):
     developer_since = models.DateField(null=True)
     email_upcoming_chats = models.BooleanField(default=False)
     email_new_chat_topics = models.BooleanField(default=False)
+    email_new_job_opps = models.BooleanField(default=True)
     timezone = models.CharField(max_length=255)
 
     #one time password
