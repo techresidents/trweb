@@ -1,4 +1,4 @@
 User-agent: *
-Disallow: /chat/
-Disallow: /topic/
-Disallow: /whiteboard/
+Disallow: /version
+
+Sitemap: http://techresidents.com/sitemap.txt

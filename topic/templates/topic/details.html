@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% load url from future %}
 
-{% block title %}Tech Residents - Topic Details{% endblock %}
+{% block title %}Topic Details | Tech Residents{% endblock %}
 
 {% block extrahead %}
     <link href="{% static "css/chat_details.css" %}" rel="stylesheet">
@@ -25,12 +25,15 @@
             <div class="span6">
                 {% for topic in topic_tree %}
                     {% if forloop.first %}
-
                         <h2 class="level{{ topic.level }}">
                             {{ topic.title }}
                             <small>({{topic.duration}} mins)</small>
                             <br>
-                            <small>{{ recommended_participants }} recommended</small>
+                            {% if topic.recommended_participants > 1 %}
+                                <small>{{ topic.recommended_participants }} participants recommended</small>
+                            {% else %}
+                                <small>{{ topic.recommended_participants }} participant recommended</small>
+                            {% endif %}
                         </h2>
                     {% else %}
                         <h3 class="level{{ topic.level }}">

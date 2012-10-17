@@ -48,6 +48,23 @@ class Topic(models.Model):
     child relationship. To support the recursive queries for the Topic,
     this model uses the TopicManager model manager.
 
+    Fields:
+        parent: parent Topic object.
+                Self referential topic hierarchy where the root topic's parent must be null
+        rank: integer that describes topic ordering. Root topics have a rank of 0,
+              the first sub-topic has a rank of 1, etc.
+        type: TopicType object
+        title: topic's title
+        description: topic's description
+        duration: topic's duration in minutes
+        recommended_participants: number of recommended participants
+        public: Used for access control.
+                True if topic is accessible to everyone, false otherwise.
+        active: Used for version control.
+                True if this is the most recent version of this topic;
+                False otherwise.
+        user: User object which represents the user who created the topic
+        resources: Resource objects
     """
     class Meta:
         db_table = "topic"
@@ -59,7 +76,9 @@ class Topic(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=2048, blank=True)
     duration = models.IntegerField()
+    recommended_participants = models.IntegerField()
     public = models.BooleanField(default=True)
+    active = models.BooleanField(default=True)
     user = models.ForeignKey(User)
     resources = models.ManyToManyField(Resource)
 

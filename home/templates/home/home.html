@@ -2,10 +2,10 @@
 {% load staticfiles %}
 {% load url from future %}
 
-{% block title %}Tech Residents - Chat Home{% endblock %}
+{% block title %}Home | Tech Residents{% endblock %}
 
 {% block extrahead %}
-    <link href="{% static "css/chat_home.css" %}" rel="stylesheet">
+    <link href="{% static "css/home.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -21,10 +21,17 @@
                 <div class="well">
                     <h4>{{ full_name }}</h4>
                     <p>Your <a href="{% url 'accounts.views.profile_account' %}">profile</a> is {{ profile_completed }}% complete</p>
-                    <p>Recommended actions:</p>
-                    <ul>
-                        <li>Add skills to your profile</li>
-                        <li>Participate in chat: 1 Minute Bio</li>
+                    {% if recommended_actions|length > 0 %}
+                        <p>Recommended actions:</p>
+                        <ul>
+                            {% for action in recommended_actions %}
+                                {% if action.category == 'profile' %}
+                                    <li><p>Update your <a href="{{ action.link }}">profile</a></p></li>
+                                {% elif action.category == 'chat' %}
+                                    <li><p>Participate in chat <a href="{{ action.link }}">{{ action.chat_name }}</a></p></li>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
                     </ul>
                 </div>
             </div>
@@ -39,7 +46,7 @@
                         <div class="home-topic-row">
                             <div class="home-topic-divider"></div>
                             <div class="clearfix home-topic-container">
-                                {% if topic_ctx.topic.duration <= 10 %}
+                                {% if topic_ctx.topic.recommended_participants == 1 %}
                                     <img class="pull-left" rel="tooltip" title="1 participant recommended" alt="single participant chat topic" src="{% static 'img/person_50x38.png' %}"/>
                                 {% else %}
                                     <img class="pull-left" rel="tooltip" title="2 participants recommended" alt="Multiple participant chat topic" src="{% static 'img/people_50x38.png' %}"/>

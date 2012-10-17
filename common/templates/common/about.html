@@ -2,7 +2,13 @@
 {% load staticfiles %}
 {% load url from future %}
 
-{% block title %}Welcome to Tech Residents - About us{% endblock %}
+{% block title %}About Us | Tech Residents{% endblock %}
+
+{% block meta-description %}content="Tech Residents is a Boston
+    based startup with the goal of improving the hiring process
+    for software professionals so that they can find jobs at
+    great companies and build a better career."
+{% endblock %}
 
 {% block extrahead %}
     <link href="{% static "css/about.css" %}" rel="stylesheet">
@@ -13,19 +19,17 @@
 <div class="container">
     <div class="row">
         <div class="span12 page-header">
-            <h1>About us</h1>
+            <h1>About Us</h1>
         </div>
     </div>
     <div class="row">
-        <div class="span8 about-text">
-            <p>Tech Residents is the ground-breaking talent acquisition platform built by software developers, for software developers.</p>
-            <br>
-            <P>With our network of top employers, Tech Residents connects talented software developers with  new opportunities on their terms.</p>
-            <br>
-            <p>Launched in 2012, Tech Residents is headquartered in Boston, Massachusetts.  Tech Residents is currently available on a private beta basis.</p>
+        <div class="span7">
+            <p>Tech Residents is a ground-breaking talent acquisition platform built by software developers, for software developers.
+               With our network of top employers, Tech Residents connects talented software developers with new job opportunities on their terms.</p>
+            <p>Launched in 2012, Tech Residents is headquartered in Boston, Massachusetts and is currently available on a private beta basis.</p>
         </div>
 
-        <div class="span4">
+        <div class="span4 offset1">
             <div class="well">
                 <ul class="nav nav-list">
                     <li class="nav-header">Follow us</li>

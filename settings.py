@@ -104,7 +104,7 @@ TEMPLATE_LOADERS = (
 )
 
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
-LOGIN_REDIRECT_URL = '/chat'
+LOGIN_REDIRECT_URL = '/home'
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
 
@@ -149,6 +149,7 @@ INSTALLED_APPS = (
     'techresidents_web.chat',
     'techresidents_web.codeboard',
     'techresidents_web.document',
+    'techresidents_web.home',
     'techresidents_web.job',
     'techresidents_web.topic',
     'techresidents_web.whiteboard',

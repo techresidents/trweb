@@ -111,7 +111,7 @@ INSERT INTO technology (name, type_id, description) VALUES ('CouchDB', 5, '');
 INSERT INTO technology (name, type_id, description) VALUES ('MongoDB', 5, '');
 INSERT INTO technology (name, type_id, description) VALUES ('Mnesia', 5, '');
 INSERT INTO technology (name, type_id, description) VALUES ('MySQL', 5, '');
-INSERT INTO technology (name, type_id, description) VALUES ('PosgreSQL', 5, '');
+INSERT INTO technology (name, type_id, description) VALUES ('PostgreSQL', 5, '');
 INSERT INTO technology (name, type_id, description) VALUES ('Oracle', 5, '');
 INSERT INTO technology (name, type_id, description) VALUES ('OrientDB', 5, '');
 INSERT INTO technology (name, type_id, description) VALUES ('Riak', 5, '');

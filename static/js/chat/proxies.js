@@ -51,7 +51,6 @@ define([
 
         initialize: function(options) {
             this.options = options;
-            console.log(this.options);
 
             //chat session proxy
             this.chatSessionProxy = new session_proxies.ChatSessionProxy({

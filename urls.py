@@ -12,17 +12,17 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-    
+
+    url(r'^home/', include('home.urls')),
+    url(r'^accounts/', include('accounts.urls')),
+    url(r'^chat/', include('chat.urls')),
+    url(r'^topic/', include('topic.urls')),
     url(r'^learn_more$', 'common.views.learn_more'),
     url(r'^about$', 'common.views.about'),
     url(r'^contact$', 'common.views.contact'),
     url(r'^version$', 'common.views.version'),
-    url(r'^accounts/', include('accounts.urls')),
-    url(r'^chat/', include('chat.urls')),
     url(r'^document/', include('document.urls')),
-    url(r'^topic/', include('topic.urls')),
     url(r'^whiteboard/', include('whiteboard.urls')),
-
 )
 
 #Error handlers

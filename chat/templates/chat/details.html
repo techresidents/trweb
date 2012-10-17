@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% load url from future %}
 
-{% block title %}Tech Residents - Chat Details{% endblock %}
+{% block title %}Chat Details | Tech Residents{% endblock %}
 
 {% block extrahead %}
     <link href="{% static "css/chat_details.css" %}" rel="stylesheet">
@@ -44,7 +44,7 @@
                 </h2>
                 <h2>
                     <small>
-                        {{ chat.start|date:"m/d e" }} at {{ chat.start|date:"h:i a e" }}
+                        {{ chat.start|date:"m/d" }} at {{ chat.start|date:"h:i a e" }}
                     </small>
                 </h2>
 
