@@ -157,6 +157,7 @@ def home(request):
     # Retrieve all root topics
     all_root_topics = Topic.objects.\
         filter(rank=0).\
+        filter(active=True).\
         all()[:20]
         # limit number of objects we pull back to 20.
         # We currently don't have more than 20 chat topics.
