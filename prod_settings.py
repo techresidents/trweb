@@ -34,10 +34,10 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 #Email settings
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 25
-#EMAIL_HOST_USER = 'user'
-#EMAIL_HOST_PASSWORD = 'password'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'techresidents'
+EMAIL_HOST_PASSWORD = '7H5xkuNc'
 DEFAULT_FROM_EMAIL = 'Tech Residents Support <support@techresidents.com>'
 
 #Riak Session Cache

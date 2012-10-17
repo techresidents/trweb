@@ -378,11 +378,7 @@ def profile_jobs(request):
         'country': l.location.country} for l in location_prefs]
 
     # Retrieve list of user's notification preferences and create json data to populate UI
-    try:
-        notification_prefs = Prefs.objects.get(user=request.user)
-        json_notification_prefs = {'emailNewJobOpps': notification_prefs.email_new_job_opps}
-    except Prefs.DoesNotExist:
-        json_notification_prefs = {'emailNewJobOpps': False}
+    json_notification_prefs = {'emailNewJobOpps': request.user.get_profile().email_new_job_opps}
 
     context = {
         'form': form,
@@ -453,7 +449,7 @@ def profile_skills_persistence(request):
 
     return render_to_response('accounts/profile_skills_persistence.html', context, context_instance=RequestContext(request))
 
-
+@login_required
 def profile_skills_common(request, technology_type_name):
     """ Pulled out the code that was common between the language_skills
         and framework_skill views.

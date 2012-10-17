@@ -1,5 +1,5 @@
 #landing-blue-stripe {
-    height: 528px;
+    height: 440px;
     background-color: #2A73A7;
     background-image: url(../img/landing-background-blue-stripe-only.png);
     background-repeat: no-repeat;
@@ -13,7 +13,7 @@
 }
 
 #landing-blue-stripe-middle {
-    padding-top: 60px;
+    padding-top: 20px;
 }
 
 #landing-signup-container {
@@ -23,28 +23,41 @@
 #landing-messaging-container {
     margin-left: 50px;
     margin-right: 0px;
-    margin-top: 0px;
+    margin-top: 15px;
     margin-bottom: 0px;
 }
 
 #landing-details-container {
     margin-left: 80px;
     margin-right: 0px;
-    margin-top: 30px;
+    margin-top: 10px;
     margin-bottom: 0px;
 }
 
-
-
-.landing-text {
+.landing-text-white {
     color: white;
+}
+
+.landing-text-offwhite {
+    color: #eeeeee;
+}
+
+.landing-text-orange {
+    color: #EA8F00;
+}
+
+.landing-brand-text {
+    font-weight: bold;
+    font-family: Arial;
+    font-size: 65px;
+    line-height: 1;
 }
 
 .landing-messaging-text {
     font-weight: bold;
     font-family: Arial;
-    font-size: 45px;
-    line-height: 48pt;
+    font-size: 41px;
+    line-height: 45pt;
 }
 
 .landing-messaging-details-text {
@@ -52,6 +65,12 @@
     font-family: Helvetica;
     font-size: 30px;
     line-height: 33pt;
+}
+
+.landing-signup-text {
+    font-weight: bold;
+    font-family: Arial;
+    font-size: 45px;
 }
 
 .landing-signup-details-text {
@@ -73,6 +92,6 @@
 
 #landing-learn-more-button {
     margin-top: 10px;
-    padding-left: 21px;
-    padding-right: 21px;
+    padding-left: 19px;
+    padding-right: 19px;
 }

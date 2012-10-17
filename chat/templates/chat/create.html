@@ -1,7 +1,7 @@
-{% extends "menu_base.html" %}
+{% extends "navbar_authenticated.html" %}
 {% load url from future %}
 
-{% block title %}Tech Residents - Create Chat{% endblock %}
+{% block title %}Create Chat | Tech Residents{% endblock %}
 
 {% block content %}
 
@@ -30,7 +30,7 @@
                         <fieldset>
                             {% for field in form %}
                                 <div class="control-group{% if field.errors %} error{% endif %}">
-                                    {{ field.label_tag }}
+                                    <label class="control-label">{{ field.label_tag }}</label>
                                     <div class="controls">
                                         {{ field }}
                                         {% for error in field.errors %}

@@ -1,4 +1,4 @@
-{% extends "menu_base.html" %}
+{% extends "navbar_authenticated.html" %}
 
 {% load url from future %}
 {% load verbatim %}
@@ -12,7 +12,7 @@
     </div>
 
     <div class="row">
-        <div class="span16">
+        <div class="span12">
             <ul>
                 {% for chat_session in chat_sessions %}
                 <li><a href={%url 'chat.views.session' encoded_chat_session_id=chat_session.id%}>{{chat_session.topic.title}} - {{chat_session.start}}</a></li>

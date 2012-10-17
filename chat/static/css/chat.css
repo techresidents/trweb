@@ -1,7 +1,3 @@
-#chat {
-    padding-top: 5px;
-    padding-bottom: 30px;
-}
 
 .chat-footer .container .footer,
 .chat-footer .container .footer span,
@@ -113,6 +109,11 @@
     border-color: #231F20;
 }
 
+.chat-participant-footer h5 {
+    margin-top: 5px;
+    margin-bottom: 2px;
+}
+
 .chat-tabs {
     min-height: 675px;
 }
@@ -192,7 +193,7 @@
 }
 
 #chat {
-    padding-top: 5px;
+    padding-top: 10px;
     padding-bottom: 5px;
 }
 

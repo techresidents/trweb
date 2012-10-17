@@ -1,206 +1,132 @@
-{% extends "banner_base.html" %}
+{% extends "navbar_unauthenticated.html" %}
+{% load staticfiles %}
 {% load url from future %}
 
-{% block title %}Welcome to Tech Residents - Learn more{% endblock %}
+{% block title %}Learn More | Tech Residents{% endblock %}
+
+{% block meta-description %}content="Tech Residents helps software
+     professionals to showcase their talent to great companies via
+     online chats. Whether targeting a corporation or a startup
+     Tech Residents can help separate you from the competition."
+{% endblock %}
 
 {% block extrahead %}
-    <link href="{{STATIC_URL}}css/learn_more.css" rel="stylesheet">
+    <link href="{% static "css/learn_more.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 
-<div class="container">
+    <div id="learn-more-container" class="container-fluid container-no-padding">
 
-    <div class="row">
-        <div class="page-header">
-            <h1>
-                Join the conversation
-                <small>It's free</small>
-                <a class="btn btn-large btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
-            </h1>
+        <div id="learn-more-overview-start" class="row-fluid">
+            <div class="span9 offset3">
+                <h1>
+                    Join the conversation
+                    <small>It's free</small>
+                    <a class="btn btn-large btn-success" href="{% url 'accounts.views.register' %}">Sign Up</a>
+                </h1>
+            </div>
         </div>
+        <div id="learn-more-overview-end" class="row-fluid">
+            <div class="span3 offset2">
+                <h2>What is it?</h2>
+                <p>A free platform for software developers to discuss curated technical topics with fellow developers.</p>
+            </div>
+            <div id="learn-more-bubbles" class="span2">
+                <img src="{% static "img/chat-bubbles.png" %}" alt="chat-bubble">
+            </div>
+            <div class="span3">
+                <h2>Who is it for?</h2>
+                <p>Software professionals of all skill and experience levels who are looking for new career opportunities.</p>
+            </div>
+        </div>
+
+        <div class="row-fluid learn-more-feature learn-more-stripe">
+            <div class="span4 offset1">
+                <h2>Give Your Resumé a Voice</h2>
+                <p>Great companies sift through piles of resumés to find great talent.
+                    Don't rely upon your resumé to do all the talking. Participate
+                    in a chat and showcase your ability by discussing technical
+                    topics with fellow developers.
+                </p>
+                <p>Recruit friends and colleagues to join you in a conversation,
+                    or sign up for a chat with members of the Tech Residents community.</p>
+            </div>
+            <div class="span5">
+                <div class="learn-more-display">
+                    <img src="{% static "img/chat-screenshot.png" %}" alt="chat screenshot">
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid learn-more-feature">
+            <div class="span5 offset1">
+                <div class="learn-more-display">
+                    <img src="{% static "img/privacy.png" %}" alt="privacy">
+                </div>
+            </div>
+            <div class="span4">
+                <h2>Because Privacy Matters</h2>
+                <p>Anonymized audio recordings (no video) of your chat will be made available to hiring companies.
+                    Interested companies will contact you through Tech Residents.
+                    Your identity will remain anonymous unless <em>you</em> decide to follow up.</p>
+            </div>
+        </div>
+
+        <div class="row-fluid learn-more-feature learn-more-stripe">
+            <div class="span4 offset1">
+                <h2>Technical Content</h2>
+                <p>Showcase your talent naturally by discussing real-world technical topics,
+                    just like you do every day.
+                    Topics are designed to be relevant and thought provoking.</p>
+                <p>Topics do <b><em><u>not</u></em></b> include programming puzzles, technical-trivia, or brain teasers.
+                </p>
+            </div>
+            <div class="span5 offset1">
+                <div class="learn-more-display">
+                    <img src="{% static "img/technicalcontent.jpeg" %}" alt="abstract diagram">
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid learn-more-feature">
+            <div class="span5 offset1">
+                <div class="learn-more-display">
+                    <img src="{% static "img/hiker.jpeg" %}" alt="man hiking">
+                </div>
+            </div>
+            <div class="span4">
+                <h2>Your Time Is Important</h2>
+                <p>Tired of scheduling another phone interview with yet another company only to never hear back?</p>
+                <p>
+                    Participate in a chat when it's convenient for you.
+                    The best part? After the chat, <em>every</em>
+                    hiring company in our network will have access to your chat.
+                    Only companies that like what they hear will reach out to you,
+                    saving everyone time.
+                </p>
+            </div>
+        </div>
+
+        <div class="row-fluid learn-more-feature learn-more-stripe">
+            <div class="span4 offset1">
+                <h2>You Might Just Learn Something</h2>
+                <p>By chatting with other members of the Tech Residents community you will be exposed to a myriad of
+                    people with different perspectives and expertise.</p>
+                <p>Participating in technical chats will force you to articulate your thoughts
+                    improving how you communicate complex ideas with others.  </p>
+            </div>
+            <div class="span5 offset1">
+                <div class="learn-more-display">
+                    <img src="{% static "img/learn.jpeg" %}" alt="businessmen">
+                </div>
+            </div>
+        </div>
+
+
+
+
     </div>
 
-
-    <div class="row">
-        <div class="span4">
-            <h2 class="learn-more-title">What is it?</h2>
-        </div>
-        <div class="span4">
-            <h2 class="learn-more-title">Who is it for?</h2>
-        </div>
-        <div class="span4">
-            <h2 class="learn-more-title">Why join?</h2>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="span4">
-            <ul>
-                <li>
-                    <p class="learn-more-text">
-                        A free platform for software developers to discuss curated technical topics with fellow developers
-                    </p>
-                </li>
-                <li>
-                    <p class="learn-more-text">
-                        Allows developers to effectively and efficiently showcase themselves to hiring companies through technical conversations
-                    </p>
-                </li>
-            </ul>
-        </div>
-
-        <div class="span4">
-            <ul>
-                <li>
-                    <p class="learn-more-text">
-                        Software professionals who are looking for new career opportunities
-                    </p>
-                </li>
-                <li>
-                    <p class="learn-more-text">
-                        Software professionals of all skill and experience levels, from new grads to veteran developers
-                    </p>
-                </li>
-            </ul>
-
-        </div>
-
-        <div class="span4">
-            <ul>
-                <li>
-                    <p class="learn-more-text">
-
-                        Efficiently showcase your talent and connect with great companies on your terms
-                    </p>
-                </li>
-                <li>
-                    <p class="learn-more-text">
-                        Expand your network
-                    </p>
-                </li>
-                <li>
-                    <p class="learn-more-text">
-                        Improve your communication skills
-                    </p>
-                </li>
-                <li>
-                    <p class="learn-more-text">
-                        Improve your technical breadth and depth
-                    </p>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-
-
-    <div class="row">
-        <div id="learn-more-how-it-works" class="page-header">
-            <h1>
-                How it works
-            </h1>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="span3">
-            <p class="learn-more-text">
-                <span class="learn-more-number-block">1</span>
-                Create a profile
-            </p>
-        </div>
-        <div class="span3">
-            <p class="learn-more-text">
-                <span class="learn-more-number-block">2</span>
-                Schedule a chat
-            </p>
-        </div>
-        <div class="span3">
-            <p class="learn-more-text">
-                <span class="learn-more-number-block">3</span>
-                Discuss technical topics
-            </p>
-        </div>
-        <div class="span3">
-            <p class="learn-more-text">
-                <span class="learn-more-number-block">4</span>
-                Connect with companies
-            </p>
-        </div>
-    </div>
-
-
-
-
-
-    <div class="row learn-more-step-details">
-        <div class="span1">
-            <span class="learn-more-number-block-large">1</span>
-        </div>
-        <div class="span10">
-            <h2>
-                Create a profile
-            </h2>
-        </div>
-        <div class="span7 offset1">
-            <p class="learn-more-text">
-                Create a short profile that describes your skills and the type of position you're seeking.
-            </p>
-        </div>
-    </div>
-
-    <div class="row learn-more-step-details">
-        <div class="span1">
-            <span class="learn-more-number-block-large">2</span>
-        </div>
-        <div class="span10">
-            <h2>
-                Schedule a chat
-            </h2>
-        </div>
-        <div class="span7 offset1">
-            <p class="learn-more-text">
-                Recruit friends and colleagues to join you in a conversation, or sign up for a chat with members of the Tech Residents community.
-            </p>
-        </div>
-    </div>
-
-    <div class="row learn-more-step-details">
-        <div class="span1">
-            <span class="learn-more-number-block-large">3</span>
-        </div>
-        <div class="span10">
-            <h2>
-                Discuss technical topics
-            </h2>
-        </div>
-        <div class="span7 offset1">
-            <p class="learn-more-text">
-                Showcase your talent naturally by discussing real-world technical topics with fellow developers.
-            </p>
-        </div>
-    </div>
-
-    <div class="row learn-more-step-details">
-        <div class="span1">
-            <span class="learn-more-number-block-large">4</span>
-        </div>
-        <div class="span10">
-            <h2>
-                Connect with companies
-            </h2>
-        </div>
-        <div class="span7 offset1">
-            <p class="learn-more-text">
-                Anonymized audio recordings of your chat will be made available to hiring companies.
-                Interested companies will contact you through Tech Residents. Your identity will remain
-                anonymous unless <em>you</em> follow up.
-            </p>
-        </div>
-    </div>
-
-
-</div>
 
 {% endblock %}

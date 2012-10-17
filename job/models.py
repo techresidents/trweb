@@ -26,7 +26,6 @@ class Requisition(models.Model):
 class Prefs(models.Model):
     """Represents a user's job preferences which pertain to all jobs they are seeking"""
     user = models.ForeignKey(User)
-    email_new_job_opps = models.BooleanField(default=False)
 
 class LocationPref(models.Model):
     """Represents one of a user's potentially many location preferences """

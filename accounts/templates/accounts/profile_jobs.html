@@ -1,11 +1,11 @@
-{% extends "menu_base.html" %}
+{% extends "navbar_authenticated.html" %}
 {% load staticfiles %}
 {% load url from future %}
 {% load verbatim %}
 {% load widget_filters %}
 {% load humanize %}
 
-{% block title %}Tech Residents - Profile{% endblock %}
+{% block title %}Profile | Tech Residents{% endblock %}
 
 {% block extrahead %}
     <link href="{% static "css/profile_jobs.css" %}" rel="stylesheet">
@@ -50,7 +50,7 @@
                         <div class="control-group">
                             <div class="controls" id="jobs-notifications-list">
                                 <label class="checkbox">
-                                    <input type="checkbox" name="email_new_job_opps" id="id_email_new_job_opps"> Allow employers to contact me through Tech Residents <br>(Tech Residents will never disclose your contact information)
+                                    <input type="checkbox" name="email_new_job_opps" id="id_email_new_job_opps"> Allow employers to contact me through Tech Residents while maintaining my privacy
                                 </label>
                             </div>
                         </div>
@@ -73,7 +73,7 @@
 
                         <div class="form-horizontal">
                             <div class="control-group">
-                                <label for="position-input">Add Position</label>
+                                <label class="control-label" for="position-input">Add Position</label>
                                 <div class="controls">
                                     <div id="position-add" class="input-append">
                                         <select id="position-input">
@@ -113,7 +113,7 @@
 
                         <div class="form-horizontal">
                             <div class="control-group">
-                                <label for="location-input">Add Location</label>
+                                <label class="control-label" for="location-input">Add Location</label>
                                 <div class="controls">
                                     <div id="location-add" class="input-append">
                                         <input id="location-input" maxlength="1024" type="text" name="location" autocomplete="off" placeholder="City or State">
@@ -143,7 +143,7 @@
 
                         <div class="form-horizontal">
                             <div class="control-group">
-                                <label for="technology-input">Add Technology</label>
+                                <label class="control-label" for="technology-input">Add Technology</label>
                                 <div class="controls">
                                     <div id="technology-add" class="input-append">
                                         <input id="technology-input" maxlength="1024" type="text" name="technology" autocomplete="off" placeholder="Technology Name ( e.g. Java )">

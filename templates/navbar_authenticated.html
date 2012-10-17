@@ -1,0 +1,18 @@
+{% extends "navbar_base.html" %}
+{% load url from future %}
+
+{% block navbarcontent %}
+    <ul class="nav">
+        <li>
+            <a href="{% url 'accounts.views.profile_account' %}">Profile</a>
+        </li>
+        <li>
+            <a href="{% url 'home.views.home' %}">Home</a>
+        </li>
+    </ul>
+    <ul class="nav pull-right">
+        <li>
+            <a href="{% url 'accounts.views.logout' %}">Logout</a>
+        </li>
+    </ul>
+{% endblock %}

@@ -1,13 +1,17 @@
-{% extends "banner_base.html" %}
+{% extends "navbar_unauthenticated.html" %}
 {% load url from future %}
 
-{% block title %}Welcome to Tech Residents - Login{% endblock %}
+{% block title %}Login | Tech Residents{% endblock %}
+
+{% block meta-description %}content="Log into your Tech Residents
+    account."
+{% endblock %}
 
 {% block content %}
 
 <div class="container">
     <div class="row">
-        <div class="page-header">
+        <div class="span12 page-header">
             <h1>
                 Join the conversation
                 <small>It's free</small>
@@ -23,7 +27,7 @@
                     <fieldset>
                         <legend>Tech Residents Login</legend>
                         <div class="control-group{% if form.username.errors %} error{% endif %}">
-                            {{ form.username.label_tag }}
+                            <label class="control-label"> {{ form.username.label_tag }}</label>
                             <div class="controls">
                                 {{ form.username }}
                                 {% for error in form.username.errors %}
@@ -32,7 +36,7 @@
                             </div>
                         </div>
                         <div class="control-group{% if form.password.errors%} error{% endif %}">
-                            {{ form.password.label_tag }}
+                            <label class="control-label">{{ form.password.label_tag }}</label>
                             <div class="controls">
                                 {{ form.password }}
                                 {% for error in form.password.errors %}

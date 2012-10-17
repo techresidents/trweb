@@ -1,7 +1,7 @@
 <form class="form-horizontal" action="/chat/session/<%= model.chatSessionId %>/feedback" method="post">
     <fieldset>
         <div class="control-group <%= errors.overallQuality ? 'error' : '' %>">
-            <label for="overall_quality">Overall Chat Quality</label>
+            <label class="control-label" for="overall_quality">Overall Chat Quality</label>
             <div class="controls">
                 <select id="overall_quality" name="overall_quality">
                     <option></option>
@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="control-group <%= errors.technicalQuality ? 'error' : '' %>">
-            <label for="technical_quality">Technical Quality</label>
+            <label class="control-label" for="technical_quality">Technical Quality</label>
             <div class="controls">
                 <select id="technical_quality" name="technical_quality">
                     <option></option>

@@ -1,9 +1,9 @@
-{% extends "menu_base.html" %}
+{% extends "navbar_authenticated.html" %}
 
 {% load url from future %}
 {% load verbatim %}
 
-{% block title %}Tech Residents - Waiting Room{% endblock %}
+{% block title %}Waiting Room | Tech Residents{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -12,7 +12,7 @@
     </div>
 
     <div class="row">
-        <div class="span16">
+        <div class="span12">
             <h3>{{chat_title}} - {{chat_start|date:"P"}}   <small>will begin shortly...</small></h3>
         </div/>
     </div>

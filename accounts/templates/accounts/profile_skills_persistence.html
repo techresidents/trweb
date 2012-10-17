@@ -1,9 +1,9 @@
-{% extends "menu_base.html" %}
+{% extends "navbar_authenticated.html" %}
 {% load staticfiles %}
 {% load url from future %}
 {% load verbatim %}
 
-{% block title %}Tech Residents - Profile{% endblock %}
+{% block title %}Profile | Tech Residents{% endblock %}
 
 {% block extrahead %}
     <link href="{% static "css/profile_jobs.css" %}" rel="stylesheet">
@@ -57,7 +57,7 @@
                     <div class="form-horizontal well">
 
                         <div id="skill-add" class="control-group">
-                            <label for="skill-input">Add DB Technology</label>
+                            <label class="control-label" for="skill-input">Add DB Technology</label>
                             <div class="controls">
                                 <input id="skill-input" data-source='{{ json_autocomplete_skills }}' maxlength="1024" type="text" name="language" autocomplete="off" placeholder="Technology Name ( e.g. MySQL )">
                                 <button id="skill-add-button" type="button" class="btn-primary">Add</button>

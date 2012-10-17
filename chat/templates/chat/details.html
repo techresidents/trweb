@@ -1,8 +1,8 @@
-{% extends "menu_base.html" %}
+{% extends "navbar_authenticated.html" %}
 {% load staticfiles %}
 {% load url from future %}
 
-{% block title %}Tech Residents - Chat Details{% endblock %}
+{% block title %}Chat Details | Tech Residents{% endblock %}
 
 {% block extrahead %}
     <link href="{% static "css/chat_details.css" %}" rel="stylesheet">
@@ -44,7 +44,7 @@
                 </h2>
                 <h2>
                     <small>
-                        {{ chat.start|date:"m/d e" }} at {{ chat.start|date:"h:i a e" }}
+                        {{ chat.start|date:"m/d" }} at {{ chat.start|date:"h:i a e" }}
                     </small>
                 </h2>
 
@@ -63,7 +63,7 @@
                     {% endif %}
                 {% else %}
                     {% if is_checked_in %}
-                        <a class="btn btn-large btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=encoded_chat_id%}>Join Chat</a>
+                        <a class="btn btn-large btn-primary" href={%url 'chat.views.wait' encoded_chat_id=encoded_chat_id%}>Join Chat</a>
                     {% elif chat.checkin_open %}
                         <a class="btn btn-large btn-primary" href={%url 'chat.views.checkin' encoded_chat_id=encoded_chat_id%}>Check-in</a>
                     {% elif chat.checkin_closed %}
@@ -73,11 +73,12 @@
                             <em>
                                 Check-In opens <br>
                                 {{ chat.checkin_start|date:"m/d e" }} at {{ chat.checkin_start|date:"h:i a e" }}
-                                </em>
+                            </em>
                         </h4>
                     {% endif %}
                 {% endif %}
             </div>
+
         </div>
 
     </div>

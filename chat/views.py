@@ -1,4 +1,4 @@
-from datetime import timedelta
+
 import json
 
 from django.conf import settings
@@ -9,7 +9,6 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpRespons
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
-from django.utils import timezone
 
 import OpenTokSDK
 
@@ -18,6 +17,7 @@ from techresidents_web.common.decorators import staff_required
 from techresidents_web.common.models import Topic
 from techresidents_web.chat.forms import CreateChatForm, ChatFeedbackForm
 from techresidents_web.chat.models import Chat, ChatRegistration, ChatSession, ChatUser
+
 
 def _build_chat_data(request, chat_session, chat_user):
     # Create JSON user objects and pass down to the javascript app through template
@@ -101,13 +101,17 @@ def create(request):
 @login_required
 def details(request, encoded_chat_id):
     chat_id = basic_decode(encoded_chat_id)
-    chat = Chat.objects.select_related("chat__topic").get(id=chat_id)
+    chat = Chat.objects.select_related("chat__topic", "chat__type").get(id=chat_id)
     topic_tree = Topic.objects.topic_tree(chat.topic.id)
 
     try:
-        registration = ChatRegistration.objects.get(user=request.user, chat=chat)
-        is_registered = True
-        is_checked_in = registration.checked_in
+        if chat.type.name == "PRIVATE":
+            is_registered = True
+            is_checked_in = True
+        else:
+            registration = ChatRegistration.objects.get(user=request.user, chat=chat)
+            is_registered = True
+            is_checked_in = registration.checked_in
     except ChatRegistration.DoesNotExist:
         is_registered = False
         is_checked_in = False
@@ -122,74 +126,6 @@ def details(request, encoded_chat_id):
         }
 
     return render_to_response('chat/details.html', context, context_instance=RequestContext(request))
-
-
-@login_required
-def home(request):
-    """ List all all upcoming chats and all chats the user has registered for."""
-
-    # Get all upcoming chats the user has registered for where
-    # the current time is not later than the chat's end-time.
-    chat_registrations = ChatRegistration.objects.\
-        filter(user=request.user, chat__end__gt=timezone.now()).\
-        select_related("chat", "chat__topic").\
-        order_by("chat.start")
-
-    chat_registration_ids = []
-    chat_registration_contexts = []
-    for registration in chat_registrations:
-
-        # Only display unexpired chats that the user registered for
-        if not registration.chat.expired:
-
-            chat_registration_ids.append(registration.chat.id)
-
-            # Compute chat duration
-            chat_duration = registration.chat.end - registration.chat.start
-            chat_duration_secs = chat_duration.seconds
-            chat_duration_mins = chat_duration_secs/60
-
-            chat_registration_contexts.append({
-                "encoded_chat_id": basic_encode(registration.chat.id),
-                "registration": registration,
-                "chat": registration.chat,
-                "topic": registration.chat.topic,
-                "duration": chat_duration_mins
-            })
-
-    # Get all upcoming chats that the user can register for where
-    # the current time is not later than the chat's end-time.
-    # Do not get chats the user is already registered for.
-    upcoming_chats = Chat.objects.\
-    filter(registration_end__gt=timezone.now()).\
-    exclude(id__in=chat_registration_ids).\
-    select_related("chat__topic").\
-    order_by("start")
-
-    chat_contexts = []
-    for chat in upcoming_chats:
-
-        # Only display unexpired chats that the user has not registered for
-        if not chat.expired:
-
-            # Compute chat duration
-            chat_duration = chat.end - chat.start
-            chat_duration_secs = chat_duration.seconds
-            chat_duration_mins = chat_duration_secs/60
-
-            chat_contexts.append({
-                "encoded_chat_id": basic_encode(chat.id),
-                "chat": chat,
-                "topic": chat.topic,
-                "duration": chat_duration_mins
-            })
-
-    context = {
-        "chat_registrations": chat_registration_contexts,
-        "upcoming_chats": chat_contexts
-    }
-
-    return render_to_response('chat/home.html', context, context_instance=RequestContext(request))
 
 @login_required
 def list(request):
@@ -214,6 +150,8 @@ def list(request):
 
 @login_required
 def register(request, encoded_chat_id):
+    """ Register for a chat.
+    """
     chat_id = basic_decode(encoded_chat_id)
     try:
         chat = Chat.objects.get(id=chat_id)
@@ -224,7 +162,7 @@ def register(request, encoded_chat_id):
                         user=request.user,
                         checked_in=False)
                 registration.save()
-            return HttpResponseRedirect(reverse("chat.views.home"))
+            return HttpResponseRedirect(reverse("home.views.home"))
         else:
             return HttpResponseForbidden("registration closed")
 
@@ -233,6 +171,8 @@ def register(request, encoded_chat_id):
 
 @login_required
 def checkin(request, encoded_chat_id):
+    """Check-in for a chat.
+    """
     chat_id = basic_decode(encoded_chat_id)
     try:
         chat = Chat.objects.get(id=chat_id)
@@ -252,6 +192,9 @@ def checkin(request, encoded_chat_id):
 
 @login_required
 def wait(request, encoded_chat_id):
+    """ Directs user to waiting room to wait for a chat to start, based upon input chat ID.
+    If the chat is open, the user is redirected to the chat app (chat.views.session).
+    """
     chat_id = basic_decode(encoded_chat_id)
     try:
         chat = Chat.objects.select_related("chat__type").get(id=chat_id)
@@ -287,6 +230,9 @@ def wait(request, encoded_chat_id):
 
 @login_required
 def session_wait(request, encoded_chat_session_id):
+    """ Implements the same logic as wait, but takes a chat session ID as input.
+
+    """
     chat_session_id = basic_decode(encoded_chat_session_id)
     try:
         chat_session = ChatSession.objects.\
