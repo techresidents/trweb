@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     url(r'^version$', 'common.views.version'),
     url(r'^document/', include('document.urls')),
     url(r'^whiteboard/', include('whiteboard.urls')),
+    url(r'^talent/.*', include('talent.urls')),
 )
 
 #Error handlers
