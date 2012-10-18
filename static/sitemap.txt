@@ -1,8 +1,7 @@
-http://www.techresidents.com/about
-http://www.techresidents.com/contact
-http://www.techresidents.com/accounts/forgot_password
-http://www.techresidents.com/accounts/login
-http://www.techresidents.com/accounts/register
-http://www.techresidents.com/learn_more
-http://www.techresidents.com/register
-http://www.techresidents.com/version
+http://techresidents.com
+http://techresidents.com/about
+http://techresidents.com/contact
+http://techresidents.com/accounts/forgot_password
+http://techresidents.com/accounts/login
+http://techresidents.com/accounts/register
+http://techresidents.com/learn_more

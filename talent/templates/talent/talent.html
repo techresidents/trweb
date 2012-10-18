@@ -1,0 +1,41 @@
+{% extends "chat/navbar_chat_app.html" %}
+{% load staticfiles %}
+{% load url from future %}
+{% load verbatim %}
+
+{% block title %}Tech Residents - Talent{% endblock %}
+
+{% block extrahead %}
+<!--
+    <link href="{% static "css/chat.css" %}" rel="stylesheet">
+-->
+{% endblock %}
+
+{% block content %}
+
+    <div id="talentapp"></div>
+
+    <!-- All of these data structures are generated on the server w/out user input, so it's safe -->
+    {% autoescape off %}
+        <script>
+            data =  {
+            };
+        </script>
+    {% endautoescape %}
+
+    <script src="{{TOKBOX_JS_URL}}"></script>
+
+    {% autoescape off %}
+        <script>
+            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
+        </script>
+    {% endautoescape %}
+
+    <script>
+        var require = {
+            baseUrl: '/static/js'
+        };
+    </script>
+    <script data-main="{% static "js/apps/talent/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
+
+{% endblock %}

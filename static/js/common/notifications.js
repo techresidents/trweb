@@ -108,6 +108,11 @@ define([
         USER_SPEAKING_CHANGED: 'notification:UserSpeakingChanged',
         USER_REMOVED: 'notification:UserRemoved',
 
+        /* VIEW ACTIONS */
+        VIEW_CREATE: 'notification:ViewCreate',
+        VIEW_DESTROY: 'notification:ViewDestroy',
+        VIEW_NAVIGATE: 'notification:ViewNavigate',
+
         /* VIEW NOTICES */
         VIEW_CREATED: 'notification:ViewCreated',
         VIEW_DESTROYED: 'notification:ViewDestroyed',
