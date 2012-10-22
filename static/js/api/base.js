@@ -14,14 +14,77 @@ define([
     xd,
     xdBackbone,
     fields) {
-    
+
+    var ApiQuery = base.Base.extend({
+        initialize: function(options) {
+            options = options || {};
+            this.instance = options.model || options.collection;
+            this.filters = {};
+            this.withRelations = [];
+            this.orderBys = [];
+            this.slices = [];
+        },
+
+        filter: function(filters) {
+            _.extend(this.filters, filters);
+            return this;
+        },
+
+        withRelated: function() {
+            var i;
+            for(i=0; i <arguments.length; i++) {
+                this.withRelations.push(arguments[i]);
+            }
+            return this;
+        },
+
+        orderBys: function() {
+            var i;
+            for(i=0; i <arguments.length; i++) {
+                this.orderBys.push(arguments[i]);
+            }
+            return this;
+        },
+
+        slice: function(start, end) {
+            this.slices = [start, end];
+            return this;
+        },
+
+        fetch: function(options) {
+            if(!options.hasOwnProperty("data")) {
+                options.data = {};
+            }
+
+            if(this.filters) {
+                _.extend(options.data, this.filters);
+            }
+            if(this.withRelations.length > 0) {
+                options.data['with'] = this.withRelations.join();
+            }
+            if(this.orderBys.length > 0) {
+                options.data.order_by = this.orderBys.join();
+            }
+            if(this.slices.length > 0) {
+                options.data.slice = this.slices.join();
+            }
+            
+            return this.instance.fetch(options);
+        }
+    });
+
 
     var ApiModel = Backbone.Model.extend({
 
-        constructor: function(options) {
-            Backbone.Model.prototype.constructor.apply(this, arguments);
+        constructor: function(attributes, options) {
+            attributes = attributes || {};
+            attributes.meta = {
+                "resource_name": base.getValue(this, "urlRoot").substring(1),
+                "resource_uri": null
+            };
+            return Backbone.Model.prototype.constructor.call(this, attributes, options);
         },
-        
+
         baseUrl: "/api/v1",
 
         url: function() {
@@ -30,16 +93,36 @@ define([
             return url;
         },
 
-        
         getRelation: function(fieldName) {
             var field = this.relatedFields[fieldName];
             return this[field.getterName]();
         },
 
+        validate: function(attributes) {
+            var name, field;
+
+            try {
+                for(name in attributes) {
+                    if(attributes.hasOwnProperty(name)) {
+                        if(this.fields.hasOwnProperty(name)) {
+                            field = this.fields[name];
+                        } else if(this.relatedFields.hasOwnProperty(name)) {
+                            field = this.relatedFields[name];
+                        } else {
+                            return name + ": invalid field";
+                        }
+
+                        attributes[name] = field.validate(attributes[name]);
+                    }
+                }
+            } catch(e) {
+                return e.message;
+            }
+        },
+
         parse: function(response) {
             var result = {};
-            var field;
-            var fieldName;
+            var field, fieldName;
 
             for(fieldName in this.fields) {
                 if(this.fields.hasOwnProperty(fieldName)) {
@@ -71,12 +154,32 @@ define([
         },
 
         toJSON: function() {
+            var result = {};
+            var field, fieldName;
+
+            for(fieldName in this.fields) {
+                if(this.fields.hasOwnProperty(fieldName)) {
+                    field = this.fields[fieldName];
+                    result[fieldName] = field.toJSON(this.get(fieldName));
+                }
+            }
+
+            return result;
         },
 
         /**
          * Cross domain compatible sync
          */
-        sync: xdBackbone.sync
+        sync: xdBackbone.sync,
+
+        filter: function(filters) {
+            return new ApiQuery({model: this}).filter(filters);
+        },
+
+        withRelated: function() {
+            var query = new ApiQuery({model: this});
+            return query.withRelated.apply(query, arguments);
+        }
 
     });
 
@@ -123,15 +226,14 @@ define([
 
     var ApiCollection = Backbone.Collection.extend({
 
-        constructor: function(options) {
-            Backbone.Collection.prototype.constructor.apply(this, arguments);
+        constructor: function(models, options) {
+            return Backbone.Collection.prototype.constructor.apply(this, arguments);
         },
 
         baseUrl: "/api/v1",
 
         url: function() {
-            var url = Backbone.Collection.prototype.url.apply(this, arguments);
-            url = this.baseUrl + url;
+            url = this.baseUrl + base.getValue(this, "urlRoot");
             return url;
         },
 
@@ -150,154 +252,28 @@ define([
         /**
          * Cross domain compatible sync
          */
-        sync: xdBackbone.sync
+        sync: xdBackbone.sync,
 
-    });
-
-    var UserCollection = ApiCollection.extend({
-        urlRoot: "/users",
-
-        model: function(attributes, options) {
-            return new User(attributes, options);
-        }
-
-    });
-
-    var User = ApiModel.extend({
-        urlRoot: "/users",
-
-        collectionConstructor: UserCollection,
-
-        fields: {
-            id: new fields.IntegerField({primaryKey: true}),
-            first_name: new fields.StringField()
-        }
-
-    });
-
-    var TopicCollection = ApiCollection.extend({
-
-        urlRoot: "/topic",
-
-        model: function(attributes, options) {
-            return new Topic(attributes, options);
-        }
-    });
-
-    var Topic = ApiModel.extend({
-        
-        urlRoot: "/topic",
-
-        collectionConstructor: TopicCollection,
-        
-        fields: {
-            id: new fields.IntegerField({primaryKey: true}),
-            title: new fields.StringField(),
-            parent_id: new fields.IntegerField()
+        filter: function(filters) {
+            return new ApiQuery({collection: this}).filter(filters);
         },
-        
-        relatedFields: {
-            parent: new fields.ForeignKey({
-                relation: "self",
-                backref: "children"
-            }),
 
-            tree: new fields.RelatedField({
-                relation: "self",
-                many: true
-            })
-        }
-
-    });
-
-    var ChatCollection = ApiCollection.extend({
-
-        urlRoot: "/chat",
-
-        model: function(attributes, options) {
-            return new Chat(attributes, options);
-        }
-    });
-
-    var Chat = ApiModel.extend({
-
-        urlRoot: "/chat",
-
-        collectionConstructor: ChatCollection,
-        
-        fields: {
-            id: new fields.IntegerField({primaryKey: true})
+        withRelated: function() {
+            var query = new ApiQuery({collection: this});
+            return query.withRelated.apply(query, arguments);
         },
-        
-        relatedFields: {
-            topic: new fields.ForeignKey({
-                relation: Topic
-            })
-        }
-    });
 
-    var ChatSessionCollection = ApiCollection.extend({
-
-        urlRoot: "/chat_sessions",
-
-        model: function(attributes, options) {
-            return new ChatSession(attributes, options);
-        }
-    });
-
-    var ChatSession = ApiModel.extend({
-
-        urlRoot: "/chat_sessions",
-
-        collectionConstructor: ChatSessionCollection,
-        
-        fields: {
-            id: new fields.IntegerField({primaryKey: true})
+        orderBy: function() {
+            var query = new ApiQuery({collection: this});
+            return query.orderBy.apply(query, arguments);
         },
-        
-        relatedFields: {
-            users: new fields.ManyToMany({
-                relation: User,
-                backref: "chat_sessions"
-            }),
 
-            chatTest: new fields.ForeignKey({
-                relation: Chat,
-                backref: "chat_sessions"
-            })
+        slice: function(start, end) {
+            return new ApiQuery({collection: this}).slice(start, end);
         }
 
-    });
 
-    
-    var session = new ChatSession({id: "18e718g"});
-
-    /*
-    session.fetch({
-        data: {"with": "chatTest__topic"},
-        success: function() {console.log(session.get_chatTest());}
     });
-    */
-    
-    var user = new User({id: 11});
-    user.fetch({
-        data: {"with": "chat_sessions__chatTest"},
-        success: function() {console.log(user);}
-    });
-
-    /*
-    var session = new ChatSession({id: "18e718g"});
-    session.users.fetch({
-        success: function() {console.log(session.users);}
-    });
-    */
-    
-    /*
-    var topic = new Topic({id: 1});
-    topic.get_tree().fetch({
-        success: function() {console.log(topic);}
-    });
-    */
 
     return {
         ApiCollection: ApiCollection,

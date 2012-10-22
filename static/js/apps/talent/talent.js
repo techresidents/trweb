@@ -6,7 +6,7 @@ define([
     'core/command',
     'core/facade',
     'core/mediator',
-    'api/base',
+    'api/models',
     'text!apps/talent/talent.html'
 ], function(
     $,
@@ -16,7 +16,7 @@ define([
     command,
     facade,
     mediator,
-    api_base,
+    api,
     talent_app_template) {
 
     /**
@@ -200,6 +200,14 @@ define([
 
     //start the app
     talentAppFacade.start();
+
+    var topic = new api.Topic({
+        'id': 26
+    });
+    topic.fetch({
+        success: function() {console.log(topic);}
+    });
+    console.log(topic);
     
     //DOM ready notification
     $(document).ready(function() {
