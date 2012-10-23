@@ -2,12 +2,15 @@ define([
     'jQuery',
     'Underscore',
     'api/base',
-    'api/fields'
+    'api/fields',
+    'api/struct'
+
 ], function(
     $,
     _,
     api,
-    fields) {
+    fields,
+    struct) {
 
     var UserCollection = api.ApiCollection.extend({
         urlRoot: "/users",
@@ -82,6 +85,13 @@ define([
         }
     });
 
+    var ChatType = struct.ApiStruct.extend({
+        fields: {
+            id: new fields.IntegerField({primaryKey: true}),
+            chatname: new fields.StringField()
+        }
+    });
+
     var Chat = api.ApiModel.extend({
 
         urlRoot: "/chat",
@@ -90,7 +100,8 @@ define([
         
         fields: {
             id: new fields.StringField({primaryKey: true}),
-            start: new fields.DateTimeField({nullable: true})
+            start: new fields.DateTimeField({nullable: true}),
+            type: new fields.StructField({struct: ChatType})
         },
         
         relatedFields: {

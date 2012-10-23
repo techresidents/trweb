@@ -247,6 +247,47 @@ define([
         }
     });
 
+    var StructField = Field.extend({
+        initialize: function(attributes) {
+            Field.prototype.initialize(attributes);
+            this.structConstructor = attributes.struct;
+        },
+
+        validate: function(value) {
+            var result = Field.prototype.validate.call(this, value);
+            result.validate();
+            return result;
+        },
+
+        parse: function(value) {
+            var result;
+            if(_.isNull(value) || _.isUndefined(value)) {
+                result = null;
+            } else if(value instanceof this.structConstructor) {
+                result = value;
+            } else if(_.isObject(value)) {
+                result = new this.structConstructor();
+                result.set(result.parse(value));
+            } else {
+                throw new Error(this.name + ":invalid struct");
+            }
+            return result;
+        },
+
+        toJSON: function(value) {
+            var result;
+            if(_.isNull(value) || _.isUndefined(value)) {
+                result = null;
+            } else if(value instanceof this.structConstructor) {
+                result = value.toJSON();
+            } else {
+                throw new Error(this.name + ":invalid struct");
+            }
+            return result;
+        }
+
+    });
+
     var RelatedField = Field.extend({
 
         initialize: function(attributes) {
@@ -363,6 +404,7 @@ define([
         TimestampField: TimestampField,
         DictField: DictField,
         ListField: ListField,
+        StructField: StructField,
         RelatedField: RelatedField,
         ForeignKey: ForeignKey,
         ReverseForeignKey: ReverseForeignKey,

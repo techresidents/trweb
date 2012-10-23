@@ -201,6 +201,13 @@ define([
     //start the app
     talentAppFacade.start();
 
+    var chat = new api.Chat({
+        'id': 'zik0zk'
+    });
+    chat.fetch({
+        success: function() {console.log(chat);}
+    });
+    /*
     var topic = new api.Topic({
         'id': 26
     });
@@ -208,6 +215,7 @@ define([
         success: function() {console.log(topic);}
     });
     console.log(topic);
+    */
     
     //DOM ready notification
     $(document).ready(function() {
