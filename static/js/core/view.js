@@ -1,8 +1,9 @@
 define([
     'jQuery',
     'Underscore',
-    'Backbone'
-], function($, _, Backbone) {
+    'Backbone',
+    'core/base'
+], function($, _, Backbone, base) {
 
     /**
      * View base class.
@@ -44,6 +45,23 @@ define([
         removeEventListeners: function() {
             var namespace = '.eventListener' + this.cid;
             this.$el.unbind(namespace);
+        },
+
+        destroy: function() {
+            var childViews = base.getValue(this, 'childViews');
+            if(this.childViews) {
+                _.each(childViews, function(view) {
+                    if(_.isFunction(view.destroy)) {
+                        view.destroy();
+                    } else {
+                        view.remove();
+                        view.undelegateEvents();
+                    }
+                });
+            }
+
+            this.remove();
+            this.undelegateEvents();
         }
     });
     
