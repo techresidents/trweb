@@ -35,9 +35,7 @@
 
         'easyXDM': {
             deps: ['jquery'],
-            exportsFn: function($) {
-                return this.easyXDM.noConflict();
-            }
+            exports: 'easyXDM'
         },
 
         'raphael': {
