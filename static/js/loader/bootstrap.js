@@ -1,4 +1,0 @@
-define([
-    'Loader'
-], function(Loader) {
-});
