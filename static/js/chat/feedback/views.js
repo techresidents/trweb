@@ -1,6 +1,6 @@
 define([
-    'jQuery',
-    'Underscore',
+    'jquery',
+    'underscore',
     'core/view',
     'text!chat/feedback/templates/feedback_modal.html'
 ], function($, _, view, modal_template) {

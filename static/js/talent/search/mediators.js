@@ -1,5 +1,5 @@
 define([
-    'Underscore',
+    'underscore',
     'common/notifications',
     'core/mediator',
     'api/models',
@@ -20,6 +20,10 @@ define([
             return SearchMediator.NAME;
         },
 
+        viewType: function() {
+            return SearchMediator.VIEW_TYPE;
+        },
+
         /**
          * Notification handlers
          */
@@ -29,30 +33,28 @@ define([
         ],
 
         initialize: function(options) {
-            this.userCollection = new api.UserCollection();
             this.view = null;
         },
 
         onCreateView: function(notification) {
-            if(notification.type === SearchMediator.VIEW_TYPE) {
+            if(notification.type === this.viewType()) {
                 this.view = new talent_views.SearchView({
-                    collection: this.userCollection
+                    collection: new api.UserCollection()
                 });
-                this.userCollection.fetch();
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
-                    type: SearchMediator.VIEW_TYPE,
+                    type: this.viewType(),
                     view: this.view
                 });
             }
         },
 
         onDestroyView: function(notification) {
-            if(notification.type === SearchMediator.VIEW_TYPE) {
+            if(notification.type === this.viewType()) {
                 notification.view.destroy();
 
                 this.facade.trigger(notifications.VIEW_DESTROYED, {
-                    type: SearchMediator.VIEW_TYPE,
+                    type: this.viewType(),
                     view: notification.view
                 });
                 if(this.view === notification.view) {

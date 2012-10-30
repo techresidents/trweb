@@ -1,6 +1,6 @@
 define([
-    'jQuery',
-    'Underscore',
+    'jquery',
+    'underscore',
     'core/view',
     'chat/agenda/models',
     'chat/tag/views',

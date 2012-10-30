@@ -1,157 +1,47 @@
 define([
-    'jQuery',
-    'Underscore',
-    'api/base',
-    'api/fields',
-    'api/struct'
+    'jquery',
+    'underscore',
+    'api/models/location',
+    'api/models/technology',
+    'api/models/topic',
+    'api/models/user',
+    'api/models/chat',
+    'api/models/chat_session',
+    'api/models/archive',
+    'api/models/skill',
+    'api/models/position_pref'
 
 ], function(
     $,
     _,
-    api,
-    fields,
-    struct) {
-
-    var UserCollection = api.ApiCollection.extend({
-        urlRoot: "/users",
-
-        model: function(attributes, options) {
-            return new User(attributes, options);
-        }
-
-    });
-
-    var User = api.ApiModel.extend({
-        urlRoot: "/users",
-
-        collectionConstructor: UserCollection,
-
-        fields: {
-            id: new fields.IntegerField({primaryKey: true}),
-            first_name: new fields.StringField()
-        }
-
-    });
-
-    var TopicCollection = api.ApiCollection.extend({
-
-        urlRoot: "/topic",
-
-        model: function(attributes, options) {
-            return new Topic(attributes, options);
-        }
-    });
-
-    var Topic = api.ApiModel.extend({
-        
-        urlRoot: "/topic",
-
-        collectionConstructor: TopicCollection,
-        
-        fields: {
-            id: new fields.IntegerField({primaryKey: true}),
-            title: new fields.StringField(),
-            description: new fields.StringField(),
-            parent_id: new fields.IntegerField({nullable: true}),
-            type_id: new fields.IntegerField({defaultValue: 1}),
-            user_id: new fields.IntegerField({nullable: true}),
-            rank: new fields.IntegerField(),
-            "public": new fields.BooleanField({defaultValue: false}),
-            level: new fields.IntegerField({nullable: false}),
-            duration: new fields.IntegerField(),
-            recommended_participants: new fields.IntegerField()
-        },
-        
-        relatedFields: {
-            parent: new fields.ForeignKey({
-                relation: "self",
-                backref: "children"
-            }),
-
-            tree: new fields.RelatedField({
-                relation: "self",
-                many: true
-            })
-        }
-
-    });
-
-    var ChatCollection = api.ApiCollection.extend({
-
-        urlRoot: "/chat",
-
-        model: function(attributes, options) {
-            return new Chat(attributes, options);
-        }
-    });
-
-    var ChatType = struct.ApiStruct.extend({
-        fields: {
-            id: new fields.IntegerField({primaryKey: true}),
-            chatname: new fields.StringField()
-        }
-    });
-
-    var Chat = api.ApiModel.extend({
-
-        urlRoot: "/chat",
-
-        collectionConstructor: ChatCollection,
-        
-        fields: {
-            id: new fields.StringField({primaryKey: true}),
-            start: new fields.DateTimeField({nullable: true}),
-            type: new fields.StructField({struct: ChatType})
-        },
-        
-        relatedFields: {
-            topic: new fields.ForeignKey({
-                relation: Topic
-            })
-        }
-    });
-
-    var ChatSessionCollection = api.ApiCollection.extend({
-
-        urlRoot: "/chat_sessions",
-
-        model: function(attributes, options) {
-            return new ChatSession(attributes, options);
-        }
-    });
-
-    var ChatSession = api.ApiModel.extend({
-
-        urlRoot: "/chat_sessions",
-
-        collectionConstructor: ChatSessionCollection,
-        
-        fields: {
-            id: new fields.IntegerField({primaryKey: true})
-        },
-        
-        relatedFields: {
-            users: new fields.ManyToMany({
-                relation: User,
-                backref: "chat_sessions"
-            }),
-
-            chatTest: new fields.ForeignKey({
-                relation: Chat,
-                backref: "chat_sessions"
-            })
-        }
-
-    });
+    location_models,
+    technology_models,
+    topic_models,
+    user_models,
+    chat_models,
+    chat_session_models,
+    archive_models,
+    skill_models,
+    position_pref_models) {
 
     return {
-        Chat: Chat,
-        ChatCollection: ChatCollection,
-        ChatSession: ChatSession,
-        ChatSessionCollection: ChatSessionCollection,
-        User: User,
-        UserCollection: UserCollection,
-        Topic: Topic,
-        TopicCollection: TopicCollection
+        Location: location_models.Location,
+        LocationCollection: location_models.LocationCollection,
+        Technology: technology_models.Technology,
+        TechnologyCollection: technology_models.TechnologyCollection,
+        Topic: topic_models.Topic,
+        TopicCollection: topic_models.TopicCollection,
+        User: user_models.User,
+        UserCollection: user_models.UserCollection,
+        Chat: chat_models.Chat,
+        ChatCollection: chat_models.ChatCollection,
+        ChatSession: chat_session_models.ChatSession,
+        ChatSessionCollection: chat_session_models.ChatSessionCollection,
+        Archive: archive_models.Archive,
+        ArchiveCollection: archive_models.ArchiveCollection,
+        Skill: skill_models.Skill,
+        SkillCollection: skill_models.SkillCollection,
+        PositionPref: position_pref_models.PositionPref,
+        PositinoPrefCollection: position_pref_models.PositionPrefCollection
     };
 });

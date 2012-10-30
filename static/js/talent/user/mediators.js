@@ -1,5 +1,5 @@
 define([
-    'Underscore',
+    'underscore',
     'common/notifications',
     'core/mediator',
     'api/models',
@@ -20,6 +20,10 @@ define([
             return UserMediator.NAME;
         },
 
+        viewType: function() {
+            return UserMediator.VIEW_TYPE;
+        },
+
         /**
          * Notification handlers
          */
@@ -30,21 +34,20 @@ define([
 
         initialize: function(options) {
             this.view = null;
-            this.user = null;
         },
 
         onCreateView: function(notification) {
-            if(notification.type === UserMediator.VIEW_TYPE) {
-                this.user = new api.User({
+            if(notification.type === this.viewType()) {
+                var user = new api.User({
                     id: notification.options.id
                 });
                 this.view = new user_views.UserView({
-                    model: this.user
+                    model: user,
+                    load: true
                 });
-                this.user.fetch();
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
-                    type: UserMediator.VIEW_TYPE,
+                    type: this.viewType(),
                     view: this.view,
                     options: notification.options
                 });
@@ -52,11 +55,11 @@ define([
         },
 
         onDestroyView: function(notification) {
-            if(notification.type === UserMediator.VIEW_TYPE) {
+            if(notification.type === this.viewType()) {
                 notification.view.destroy();
 
                 this.facade.trigger(notifications.VIEW_DESTROYED, {
-                    type: UserMediator.VIEW_TYPE,
+                    type: this.viewType(),
                     view: notification.view
                 });
                 if(this.view === notification.view) {

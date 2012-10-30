@@ -1,8 +1,9 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone'
-], function($, _, Backbone) {
+    'jquery',
+    'underscore',
+    'backbone',
+    'jquery.bootstrap'
+], function($, _, Backbone, none) {
     
     /*
      * Typeahead view.

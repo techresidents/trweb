@@ -1,5 +1,5 @@
 define([
-    'Underscore',
+    'underscore',
     'common/notifications',
     'core/array',
     'core/base',

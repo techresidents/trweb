@@ -1,12 +1,13 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone',
+    'jquery',
+    'underscore',
+    'backbone',
     'common/notifications',
     'core/command',
     'core/facade',
     'core/mediator',
     'core/view',
+    'talent/playback/mediators',
     'talent/search/mediators',
     'talent/user/mediators',
     'text!apps/talent/talent.html'
@@ -19,6 +20,7 @@ define([
     facade,
     mediator,
     view,
+    playback_mediators,
     search_mediators,
     user_mediators,
     talent_app_template) {
@@ -28,6 +30,7 @@ define([
      */
     var TalentAppRouter = Backbone.Router.extend({
         routes: {
+            'playback/:id': 'playback',
             'user/:id': 'user',                
             '*actions': 'search'
         },
@@ -35,6 +38,15 @@ define([
         initialize: function(options) {
             this.facade = options.facade;
 
+        },
+
+        playback: function(id) {
+            this.facade.trigger(notifications.VIEW_CREATE, {
+                type: playback_mediators.PlaybackMediator.VIEW_TYPE,
+                options: {
+                    id: id
+                }
+            });
         },
 
         search: function() {
@@ -61,9 +73,11 @@ define([
 
         execute: function(options) {
             router = this.facade.router;
-
-            if(options.type === "SearchView") {
-                router.navigate("search", {trigger: true});
+            
+            switch(options.type) {
+                case "SearchView":
+                    router.navigate("search", {trigger: true});
+                    break;
             }
         }
     });
@@ -139,6 +153,7 @@ define([
             this.view.addEventListener(TalentAppView.EVENTS.DESTROY_VIEW, this.onDestroyView, this);
 
             //create and register sub-mediators
+            this.facade.registerMediator(new playback_mediators.PlaybackMediator());
             this.facade.registerMediator(new search_mediators.SearchMediator());
             this.facade.registerMediator(new user_mediators.UserMediator());
         },
@@ -228,6 +243,7 @@ define([
             });
             
             var that = this;
+
             $(document).on('click', 'a:not([data-bypass])', function(e) {
                 var href = $(this).attr('href');
                 var protocol = this.protocol + '//';

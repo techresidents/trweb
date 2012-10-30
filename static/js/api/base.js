@@ -1,7 +1,7 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone',
+    'jquery',
+    'underscore',
+    'backbone',
     'core/base',
     'xd/xd',
     'xd/backbone',
@@ -52,6 +52,7 @@ define([
         },
 
         fetch: function(options) {
+            options = options || {};
             if(!options.hasOwnProperty("data")) {
                 options.data = {};
             }
@@ -82,7 +83,7 @@ define([
                 "resource_name": base.getValue(this, "urlRoot").substring(1),
                 "resource_uri": null
             };
-            return Backbone.Model.prototype.constructor.call(this, attributes, options);
+            Backbone.Model.prototype.constructor.call(this, attributes, options);
         },
 
         baseUrl: "/api/v1",
@@ -93,6 +94,10 @@ define([
             return url;
         },
 
+        isLoaded: function() {
+            return this.isValid();
+        },
+
         getRelation: function(fieldName) {
             var field = this.relatedFields[fieldName];
             return this[field.getterName]();
@@ -100,29 +105,35 @@ define([
 
         validate: function(attributes) {
             var name, field;
+            var errors = {};
 
-            try {
-                for(name in attributes) {
-                    if(attributes.hasOwnProperty(name)) {
+            for(name in attributes) {
+                if(attributes.hasOwnProperty(name)) {
+                    try {
                         if(this.fields.hasOwnProperty(name)) {
                             field = this.fields[name];
                         } else if(this.relatedFields.hasOwnProperty(name)) {
                             field = this.relatedFields[name];
                         } else {
-                            return name + ": invalid field";
+                            errors.general = "unknown field";
                         }
-
                         attributes[name] = field.validate(attributes[name]);
                     }
+
+                    catch(e) {
+                        errors[name] = e.message;
+                    }
                 }
-            } catch(e) {
-                return e.message;
+            }
+
+            if(!_.isEmpty(errors)) {
+                return errors;
             }
         },
 
         parse: function(response) {
             var result = {};
-            var field, fieldName;
+            var field, fieldName, relation;
 
             for(fieldName in this.fields) {
                 if(this.fields.hasOwnProperty(fieldName)) {
@@ -138,7 +149,7 @@ define([
                 if(this.relatedFields.hasOwnProperty(fieldName)) {
                     field = this.relatedFields[fieldName];
                     if(response.hasOwnProperty(fieldName)) {
-                        var relation = this.getRelation(fieldName);
+                        relation = this.getRelation(fieldName);
                         if(field.many && _.isArray(response[fieldName])) {
                             relation.reset(relation.parse(response[fieldName]));
                         }else if(!field.many && _.isObject(response[fieldName])) {
@@ -153,14 +164,29 @@ define([
             return result;
         },
 
-        toJSON: function() {
+        toJSON: function(options) {
             var result = {};
-            var field, fieldName;
+            var field, fieldName, relation;
+            options = options || {};
 
             for(fieldName in this.fields) {
                 if(this.fields.hasOwnProperty(fieldName)) {
                     field = this.fields[fieldName];
                     result[fieldName] = field.toJSON(this.get(fieldName));
+                }
+            }
+            
+            if(options.withRelated) {
+                for(fieldName in this.relatedFields) {
+                    if(this.relatedFields.hasOwnProperty(fieldName)) {
+                        field = this.relatedFields[fieldName];
+                        relation = this.getRelation(fieldName);
+                        if(relation.isLoaded()) {
+                            result[fieldName] = relation.toJSON(options);
+                        } else {
+                            result[fieldName] = field.many ? [] : {};
+                        }
+                    }
                 }
             }
 
@@ -227,7 +253,7 @@ define([
     var ApiCollection = Backbone.Collection.extend({
 
         constructor: function(models, options) {
-            return Backbone.Collection.prototype.constructor.apply(this, arguments);
+            Backbone.Collection.prototype.constructor.apply(this, arguments);
         },
 
         baseUrl: "/api/v1",
@@ -235,6 +261,10 @@ define([
         url: function() {
             url = this.baseUrl + base.getValue(this, "urlRoot");
             return url;
+        },
+
+        isLoaded: function() {
+            return this.length > 0;
         },
 
         parse: function(response) {

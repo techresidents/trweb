@@ -1,7 +1,7 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone',
+    'jquery',
+    'underscore',
+    'backbone',
     'xd/xd',
     'xd/backbone'
 ], function($, _, Backbone, xd, xdBackbone) {

@@ -1,0 +1,5 @@
+<div>
+    <% if(chat.topic && chat.topic.title) { %>
+    <a href="playback/<%=id%>"><%= chat.topic.title %> (<%= chat.topic.duration %> min) (x<%= participants %>)</a>
+    <% } %>
+</div>

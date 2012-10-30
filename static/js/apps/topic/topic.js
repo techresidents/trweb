@@ -1,7 +1,7 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone',
+    'jquery',
+    'underscore',
+    'backbone',
     'topic/models',
     'topic/views'
 ], function($, _, Backbone, models, views) {

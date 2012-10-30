@@ -1,1 +1,40 @@
-<div><%=first_name%></div>
+<div class="row">
+     <div class="span2">
+         <div class="user-logo" style="width:140px; height: 100px;"></div>
+         <span><%= id %></span>
+     </div>
+     <div class="span1" style="margin-top: 40px;">
+        <span>Actively</span>
+        <span>Seeking</span>
+     </div>
+     <div class="span2 well user-well">
+         <% _.each(position_prefs, function(position) { %>
+         <%= position.type %> <%= position.salary_start %>
+         <% }); %>
+     </div>
+     <div class="span1" style="margin-top: 40px;">
+        <span>with</span>
+     </div>
+     <div class="span2 well user-well">
+         <% _.each(technology_prefs, function(technology) { %>
+         <%= technology.name %>
+         <% }); %>
+     </div>
+     <div class="span1" style="margin-top: 40px;">
+        <span>located</span>
+        <span>in</span>
+     </div>
+     <div class="span2 well user-well">
+         <% _.each(location_prefs, function(location) { %>
+            <div>
+            <% if(location.city) { %>
+            <%= location.city %>, <%= location.state %>
+            <% } else { %>
+            <%= location.state %>
+            <% } %>
+            </div>
+         <% }); %>
+     </div>
+ </div>
+ <div id="user-skills" class="row"></div>
+ <div id="user-chats" class="row"></div>

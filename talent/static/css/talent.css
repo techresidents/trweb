@@ -1,0 +1,57 @@
+
+.user-logo {
+    background-image: url("../img/person.png");
+    background-repeat: no-repeat;
+    background-size: 90%;
+    background-position: center;
+}
+
+.user-beginner-skills {
+    margin-bottom: 5px;
+}
+
+.user-beginner-skills > div {
+    display: inline;
+    background-color: #F2DEDE;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    margin-right: 5px;
+    padding: 5px;
+    font-size: 14px;
+    line-height: 28px;
+}
+
+.user-intermediate-skills {
+    margin-bottom: 5px;
+}
+
+.user-intermediate-skills > div {
+    display: inline;
+    background-color: #D9EDF7;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    margin-right: 5px;
+    padding: 5px;
+    font-size: 18px;
+    line-height: 36px;
+}
+
+.user-expert-skills {
+    margin-bottom: 5px;
+}
+
+.user-expert-skills > div {
+    display: inline;
+    background-color: #DFF0D8;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    margin-right: 5px;
+    padding: 5px;
+    font-size: 22px;
+    line-height: 44px;
+}
+
+.user-well {
+    padding: 12px;
+    min-height: 80px;
+}

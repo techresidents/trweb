@@ -6,9 +6,7 @@
 {% block title %}Tech Residents - Talent{% endblock %}
 
 {% block extrahead %}
-<!--
-    <link href="{% static "css/chat.css" %}" rel="stylesheet">
--->
+    <link href="{% static "css/talent.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -36,6 +34,9 @@
             baseUrl: '/static/js'
         };
     </script>
+    <!--
     <script data-main="{% static "js/apps/talent/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
+    -->
+    <script data-main="apps/talent/main.js" src="{% static "js/3ps/require/require.js" %}"></script>
 
 {% endblock %}

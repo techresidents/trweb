@@ -1,13 +1,11 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone',
+    'jquery',
+    'underscore',
     'core/base',
     'api/fields'
 ], function(
     $,
     _,
-    Backbone,
     base,
     fields) {
 

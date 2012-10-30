@@ -1,6 +1,6 @@
 define([
-    'jQuery',
-    'Underscore',
+    'jquery',
+    'underscore',
     'core/view',
     'text!talent/search/templates/search.html',
     'text!talent/search/templates/user.html'
@@ -90,7 +90,10 @@ define([
 
         initialize: function() {
             this.template =  _.template(search_template);
-
+            
+            if(!this.collection.isLoaded()) {
+                this.collection.fetch();
+            }
             //child views
             this.userListView = null;
         },

@@ -1,6 +1,6 @@
 define([
-    'jQuery',
-    'Underscore',
+    'jquery',
+    'underscore',
     'core/base'
 ], function(
     $,
@@ -47,9 +47,8 @@ define([
                 return this.set(attributes, options);
             };
             
-            var capitalizedFieldName = fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
-            this.getterName = "get" + capitalizedFieldName;
-            this.setterName = "set" + capitalizedFieldName;
+            this.getterName = "get_" + fieldName;
+            this.setterName = "set_" + fieldName;
 
             constructor.prototype[this.getterName] = getter;
             constructor.prototype[this.setterName] = setter;
@@ -155,7 +154,10 @@ define([
 
         toJSON: function(value) {
             var result;
-            if(_.isDate(value)) {
+            if(_.isNull(value) || _.isUndefined(value)) {
+                result = null;
+            }
+            else if(_.isDate(value)) {
                 result = value.getTime()/1000.0;
             } else {
                 throw new Error(this.name + ": invalid datetime");
