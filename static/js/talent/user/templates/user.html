@@ -9,7 +9,7 @@
      </div>
      <div class="span2 well user-well">
          <% _.each(position_prefs, function(position) { %>
-         <%= position.type %> <%= position.salary_start %>
+         <%= position.type %> <%= Globalize.format(position.salary_start, 'cn0') %>
          <% }); %>
      </div>
      <div class="span1" style="margin-top: 40px;">

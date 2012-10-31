@@ -1,4 +1,5 @@
 define([
+    'globalize',
     'jquery',
     'underscore',
     'backbone',
@@ -12,6 +13,7 @@ define([
     'talent/user/mediators',
     'text!apps/talent/talent.html'
 ], function(
+    Globalize,
     $,
     _,
     Backbone,
@@ -24,14 +26,14 @@ define([
     search_mediators,
     user_mediators,
     talent_app_template) {
-
+    
     /**
      * Talent application router.
      */
     var TalentAppRouter = Backbone.Router.extend({
         routes: {
-            'playback/:id': 'playback',
-            'user/:id': 'user',                
+            'talent/playback/:id': 'playback',
+            'talent/user/:id': 'user',                
             '*actions': 'search'
         },
         
@@ -238,8 +240,8 @@ define([
 
         initializeRouter: function() {
             Backbone.history.start({
-                pushState: true,
-                root: "/talent/"
+                pushState: true
+                //root: "/talent/"
             });
             
             var that = this;
