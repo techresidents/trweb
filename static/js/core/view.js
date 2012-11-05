@@ -2,14 +2,17 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'core/base'
-], function($, _, Backbone, base) {
+    'core/base',
+    'core/format'
+], function($, _, Backbone, base, format) {
 
     /**
      * View base class.
      * @constructor
      */
     var View = Backbone.View.extend({
+
+        fmt: format,
 
         triggerEvent: function(eventName, args) {
             this.$el.trigger(eventName, args);

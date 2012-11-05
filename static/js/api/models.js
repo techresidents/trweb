@@ -9,7 +9,8 @@ define([
     'api/models/chat_session',
     'api/models/archive',
     'api/models/skill',
-    'api/models/position_pref'
+    'api/models/position_pref',
+    'api/models/chat_minute'
 
 ], function(
     $,
@@ -22,7 +23,8 @@ define([
     chat_session_models,
     archive_models,
     skill_models,
-    position_pref_models) {
+    position_pref_models,
+    chat_minute_models) {
 
     return {
         Location: location_models.Location,
@@ -42,6 +44,8 @@ define([
         Skill: skill_models.Skill,
         SkillCollection: skill_models.SkillCollection,
         PositionPref: position_pref_models.PositionPref,
-        PositinoPrefCollection: position_pref_models.PositionPrefCollection
+        PositinoPrefCollection: position_pref_models.PositionPrefCollection,
+        ChatMinute: chat_minute_models.ChatMinute,
+        ChatMinuteCollection: chat_minute_models.ChatMinuteCollection
     };
 });

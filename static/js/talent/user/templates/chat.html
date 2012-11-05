@@ -1,6 +1,6 @@
 <div>
-    <% if(chat.topic && chat.topic.title) { %>
-    <%= Globalize.format(new Date(start*1000), 'd') %>
-    <a href="/talent/playback/<%=id%>"><%= chat.topic.title %> (<%= chat.topic.duration %> min) (x<%= participants %>)</a>
+    <% if(model.chat.topic && model.chat.topic.title) { %>
+    <%= fmt.date(model.start, 'f')%>
+    <a href="/talent/playback/<%=model.id%>"><%= model.chat.topic.title %> (<%= model.chat.topic.duration %> min) (x<%= model.participants %>)</a>
     <% } %>
 </div>

@@ -1,5 +1,4 @@
 define([
-    'globalize',
     'jquery',
     'underscore',
     'backbone',
@@ -9,11 +8,11 @@ define([
     'core/mediator',
     'core/view',
     'talent/playback/mediators',
+    'talent/player/mediators',
     'talent/search/mediators',
     'talent/user/mediators',
     'text!apps/talent/talent.html'
 ], function(
-    Globalize,
     $,
     _,
     Backbone,
@@ -23,6 +22,7 @@ define([
     mediator,
     view,
     playback_mediators,
+    player_mediators,
     search_mediators,
     user_mediators,
     talent_app_template) {
@@ -107,6 +107,9 @@ define([
                 case 'AlertView':
                     this.$('#alerts').append(view.render().el);
                     break;
+                case 'PlayerView':
+                    this.$('#player').append(view.render().el);
+                    break;
                 default:
                     if(this.activeView) {
                         this._destroyView(this.activeView);
@@ -155,9 +158,16 @@ define([
             this.view.addEventListener(TalentAppView.EVENTS.DESTROY_VIEW, this.onDestroyView, this);
 
             //create and register sub-mediators
+            this.facade.registerMediator(new player_mediators.PlayerMediator());
             this.facade.registerMediator(new playback_mediators.PlaybackMediator());
             this.facade.registerMediator(new search_mediators.SearchMediator());
             this.facade.registerMediator(new user_mediators.UserMediator());
+
+            //create player view
+            this.facade.trigger(notifications.VIEW_CREATE, {
+                type: player_mediators.PlayerMediator.VIEW_TYPE
+            });
+            
         },
 
         onDomReady: function(notification) {
@@ -250,7 +260,7 @@ define([
                 var href = $(this).attr('href');
                 var protocol = this.protocol + '//';
 
-                if(href.slice(protocol.length) !== protocol) {
+                if(href && href.slice(protocol.length) !== protocol) {
                     e.preventDefault();
                     that.router.navigate(href, true);
                 }

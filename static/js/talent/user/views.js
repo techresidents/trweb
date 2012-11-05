@@ -35,7 +35,10 @@ define([
         },
 
         render: function() {
-            var context = this.model.toJSON({withRelated: true});
+            var context = {
+                model: this.model.toJSON({withRelated: true}),
+                fmt: this.fmt
+            };
             this.$el.html(this.template(context));
             return this;
         }
@@ -222,7 +225,10 @@ define([
         },
 
         render: function() {
-            var context = this.model.toJSON({withRelated: true});
+            var context = {
+                model: this.model.toJSON({withRelated: true}),
+                fmt: this.fmt
+            };
             this.$el.html(this.template(context));
 
             this.skillsView = new UserSkillsView({

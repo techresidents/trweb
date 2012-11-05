@@ -1,4 +1,4 @@
-{% extends "chat/navbar_chat_app.html" %}
+{% extends "talent/navbar_talent_app.html" %}
 {% load staticfiles %}
 {% load url from future %}
 {% load verbatim %}
@@ -34,9 +34,7 @@
             baseUrl: '/static/js'
         };
     </script>
-    <!--
-    <script data-main="{% static "js/apps/talent/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
-    -->
+
     <script data-main="apps/talent/main.js" src="{% static "js/3ps/require/require.js" %}"></script>
 
 {% endblock %}

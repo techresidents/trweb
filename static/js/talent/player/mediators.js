@@ -4,26 +4,28 @@ define([
     'core/mediator',
     'api/models',
     'talent/notifications',
-    'talent/playback/views'
+    'talent/player/models',
+    'talent/player/views'
 ], function(
     _,
     notifications,
     mediator,
     api,
     talent_notifications,
-    playback_views) {
+    player_models,
+    player_views) {
 
     /**
      * Playback Mediator
      * @constructor
      */
-    var PlaybackMediator = mediator.Mediator.extend({
+    var PlayerMediator = mediator.Mediator.extend({
         name: function() {
-            return PlaybackMediator.NAME;
+            return PlayerMediator.NAME;
         },
 
         viewType: function() {
-            return PlaybackMediator.VIEW_TYPE;
+            return PlayerMediator.VIEW_TYPE;
         },
 
         /**
@@ -31,7 +33,8 @@ define([
          */
         notifications: [
             [notifications.VIEW_CREATE, 'onCreateView'],
-            [notifications.VIEW_DESTROY, 'onDestroyView']
+            [notifications.VIEW_DESTROY, 'onDestroyView'],
+            [talent_notifications.PLAYER_PLAY, 'onPlay']
         ],
 
         initialize: function(options) {
@@ -40,16 +43,10 @@ define([
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-                var chatSession = new api.ChatSession({
-                    id: notification.options.id
-                });
 
-                this.view = new playback_views.PlaybackView({
-                    model: chatSession,
-                    load: true
+                this.view = new player_views.PlayerView({
+                    model: new player_models.NowPlaying()
                 });
-
-                this.view.addEventListener(playback_views.EVENTS.PLAY, this.onPlay, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
@@ -73,22 +70,27 @@ define([
             }
         },
 
-        onPlay: function(e, eventBody) {
-            var notificationBody = {
-                chatSession: eventBody.chatSession,
-                chatMinute: eventBody.chatMinute
-            };
-            this.facade.trigger(talent_notifications.PLAYER_PLAY, notificationBody);
+        onPlay: function(notification) {
+            var model = this.view.model;
+            if(model.chatSession() !== notification.chatSession ||
+               model.chatMinute() !== notification.chatMinute) {
+                this.view.model.set({
+                    chatSession: notification.chatSession,
+                    chatMinute: notification.chatMinute
+                });
+            }else {
+                this.view.play();
+            }
         }
 
     }, {
 
-        NAME: 'PlaybackMediator',
+        NAME: 'PlayerMediator',
         
-        VIEW_TYPE: 'PlaybackView'
+        VIEW_TYPE: 'PlayerView'
     });
 
     return {
-        PlaybackMediator: PlaybackMediator
+        PlayerMediator: PlayerMediator
     };
 });

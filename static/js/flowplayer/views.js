@@ -10,7 +10,7 @@ define([
     _,
     view,
     none) {
- 
+
     /**
      * Flowplayer view.
      * @constructor

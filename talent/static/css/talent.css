@@ -1,8 +1,24 @@
 
+.fixed-footer {
+    height: 90px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABbCAMAAAB9PuTdAAAABGdBTUEAALGPC/xhBQAAAFFQTFRFAAAA////////////////////////////////////////////////////////////////////////////////////////////////////////CDfnXgAAABp0Uk5TEvPm9+/49Prr7fHw9vL17v3p6uz7/Pno5/7d2ngeAAAAYklEQVQoz5XTtxGEUADE0I+Hw7vD9F8omSBgZ4cXqQGFcDsRYojc8Sk3+Bzhc4LPEiJn+KwgsofIFCJriPxBZAuREZ6ZQ2QHkQ1EJhCZQeQfPguIXOBzhc8BPg98yse8r3kB4Fs0CZLGqZkAAAAASUVORK5CYII=);
+    background-repeat-x;
+}
+
+.main-content {
+    padding-bottom: 90px;
+    overflow: hidden;
+}
+
 .user-logo {
     background-image: url("../img/person.png");
     background-repeat: no-repeat;
-    background-size: 90%;
+    background-size: 100%;
     background-position: center;
 }
 
