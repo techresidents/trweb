@@ -12,29 +12,40 @@
 
 {% block extrahead %}
     <link href="{% static "css/landing.css" %}" rel="stylesheet">
+    <script src="{{STATIC_URL}}/js/3ps/swfobject/swfobject.js"></script>
+    <script type="text/javascript">
+        var videoID = "3vbuF02CkA0"
+        var params = { allowScriptAccess: "always" };
+        var atts = { id: "ytPlayer" };
+        swfobject.embedSWF("http://www.youtube.com/v/" + videoID + "?version=3&enablejsapi=1&playerapiid=player1&modestbranding=0",
+                "videoDiv", "400", "225", "9", null, null, params, atts);
+    </script>
 {% endblock %}
 
 {% block content %}
 
     <div id="landing-blue-stripe">
 
-        <div id="landing-blue-stripe-middle">
+        <div id="landing-blue-stripe-container">
             <div id="landing-messaging-container" class="container">
                 <div class="row">
-                    <div class="span9">
+                    <div class="span7">
                         <h1 class="landing-text-orange landing-brand-text">Tech Residents</h1>
+                    </div>
+                    <div class="span7">
                         <h1 class="landing-text-offwhite landing-messaging-text">
                             Discuss. Be Heard. Get Hired.
                         </h1>
                     </div>
-                </div>
-            </div>
-            <div id="landing-details-container" class="container">
-                <div class="row">
-                    <div class="span7">
-                            <span class="landing-text-white landing-messaging-details-text">
-                                A free platform for software developers to talk tech and showcase their talent to hiring companies.
-                            </span>
+                    <div class="span4 pull-right">
+                        <div id="videoDiv">
+
+                        </div>
+                    </div>
+                    <div id="landing-details-container" class="span7">
+                        <span class="landing-text-white landing-messaging-details-text">
+                            A free platform for software developers to talk tech and showcase their talent to hiring companies.
+                        </span>
                     </div>
                 </div>
             </div>
@@ -44,7 +55,7 @@
     <div id="landing-white-stripe">
         <div id="landing-signup-container" class="container">
             <div class="row">
-                <div class="span7 offset2">
+                <div class="span7 offset3">
                     <h1 class="landing-signup-text">
                         Join the conversation
                     </h1>
@@ -54,7 +65,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="span2 offset7">
+                <div class="span2 offset8">
                     <h1 class="landing-signup-details-text">
                         It's free
                     </h1>

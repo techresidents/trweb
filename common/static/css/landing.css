@@ -1,38 +1,23 @@
 #landing-blue-stripe {
     height: 440px;
     background-color: #2A73A7;
-    background-image: url(../img/landing-background-blue-stripe-only.png);
+    background-image: url(../img/blue.png);
     background-repeat: no-repeat;
 }
 
-
-
-#landing-blue-stripe-top-right {
-    padding-top: 45px;
-    padding-left: 205px;
+#landing-blue-stripe-container {
+    padding-top: 20px;
 }
 
-#landing-blue-stripe-middle {
-    padding-top: 20px;
+#landing-details-container {
+    margin-top: 20px;
+    margin-bottom: 0px;
 }
 
 #landing-signup-container {
     padding-top: 20px;
 }
 
-#landing-messaging-container {
-    margin-left: 50px;
-    margin-right: 0px;
-    margin-top: 15px;
-    margin-bottom: 0px;
-}
-
-#landing-details-container {
-    margin-left: 80px;
-    margin-right: 0px;
-    margin-top: 10px;
-    margin-bottom: 0px;
-}
 
 .landing-text-white {
     color: white;
@@ -56,7 +41,7 @@
 .landing-messaging-text {
     font-weight: bold;
     font-family: Arial;
-    font-size: 41px;
+    font-size: 38px;
     line-height: 45pt;
 }
 
@@ -75,13 +60,6 @@
 
 .landing-signup-details-text {
     color: #999;
-}
-
-
-
-#landing-login-button:hover {
-    color: #EA8F00;
-    text-decoration: none;
 }
 
 #landing-signup-button {
