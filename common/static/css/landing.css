@@ -1,8 +1,7 @@
 #landing-blue-stripe {
-    height: 440px;
+    height: 420px;
     background-color: #2A73A7;
-    background-image: url(../img/blue.png);
-    background-repeat: no-repeat;
+    background-repeat: repeat-x;
 }
 
 #landing-blue-stripe-container {
