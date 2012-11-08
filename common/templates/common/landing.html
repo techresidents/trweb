@@ -12,14 +12,6 @@
 
 {% block extrahead %}
     <link href="{% static "css/landing.css" %}" rel="stylesheet">
-    <script src="{{STATIC_URL}}/js/3ps/swfobject/swfobject.js"></script>
-    <script type="text/javascript">
-        var videoID = "3vbuF02CkA0"
-        var params = { allowScriptAccess: "always", allowFullScreen: "true"};
-        var atts = { id: "ytPlayer", frameborder: "1" };
-        swfobject.embedSWF("http://www.youtube.com/v/" + videoID + "?version=3&enablejsapi=1&playerapiid=player1&modestbranding=0&color=white&theme=light",
-                "videoDiv", "400", "225", "9", null, null, params, atts);
-    </script>
 {% endblock %}
 
 {% block content %}
@@ -38,9 +30,7 @@
                         </h1>
                     </div>
                     <div class="span4 pull-right">
-                        <div id="videoDiv">
-
-                        </div>
+                        <iframe width="400" height="225" src="http://www.youtube.com/embed/3vbuF02CkA0?rel=0&color=white" frameborder="1" allowfullscreen></iframe>
                     </div>
                     <div id="landing-details-container" class="span7">
                         <span class="landing-text-white landing-messaging-details-text">
