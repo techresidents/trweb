@@ -34,14 +34,20 @@ define([
         },
 
         render: function() {
-            var context = {};
-            var chatMinute = this.model.chatMinute();
-
-            if(chatMinute) {
-                context.title = chatMinute.get_topic().get_title();
+            var rootMinute, activeMinute, context = {};
+            if(this.model.state() !== this.model.STATE.EMPTY) {
+                rootMinute = this.model.chatSession().get_chat_minutes().at(0);
+                activeMinute = this.model.chatMinute();
+                if(rootMinute.id !== activeMinute.id) {
+                    context.title = rootMinute.get_topic().get_title()
+                        + ' - ' + activeMinute.get_topic().get_title();
+                } else {
+                    context.title = activeMinute.get_topic().get_title();
+                }
             } else {
-                context.title = "Play something";
+                context.title = 'Play something';
             }
+            
             this.$el.html(this.template(context));
             return this;
         }
@@ -66,6 +72,29 @@ define([
             this.titleView = null;
         },
 
+        load: function(chatSession, chatMinute) {
+            var state, result=true;
+            
+            if(!chatSession.isLoading()) {
+                state = chatSession.isLoadedWith('chat_minutes', 'archives');
+                if(!state.loaded) {
+                    result = false;
+                    state.fetcher({
+                        success: _.bind(this.play, this, chatSession, chatMinute)
+                    });
+                }
+            }
+            
+            if(!chatMinute.isLoading() && !chatMinute.isLoaded()) {
+                result = false;
+                chatMinute.fetch({
+                    success: _.bind(this.play, this, chatSession, chatMinute)
+                });
+            }
+            
+            return result;
+        },
+
         render: function() {
             var context = {};
             this.$el.html(this.template(context));
@@ -75,47 +104,45 @@ define([
                 model: this.model
             }).render();
 
-            /*
-            this.flowplayerView = new flowplayer.FlowplayerView({
-                el: this.$('#player')
-            }).render();
-            
-            //bind flowplayer events
-            this.flowplayerView.api.onBegin(_.bind(this.onBegin, this));
-            this.flowplayerView.api.onResume(_.bind(this.onResume, this));
-            this.flowplayerView.api.onSeek(_.bind(this.onSeek, this));
-            this.flowplayerView.api.onFinish(_.bind(this.onFinish, this));
-            */
-
             return this;
         },
 
+        bindFlowplayerEvents: function(api) {
+            api.onBegin(_.bind(this.onBegin, this));
+            api.onResume(_.bind(this.onResume, this));
+            api.onSeek(_.bind(this.onSeek, this));
+            api.onFinish(_.bind(this.onFinish, this));
+        },
+
         onBegin: function(clip) {
-            console.log("BEGIN");
-            this.flowplayerView.api.seek(10);
+            this.model.set({
+                state: this.model.STATE.PLAYING
+            });
         },
 
         onResume: function(clip) {
+            this.model.set({
+                state: this.model.STATE.PLAYING
+            });
         },
 
         onSeek: function(clip, time) {
         },
 
         onFinish: function(clip) {
+            this.model.set({
+                state: this.model.STATE.STOPPED
+            });
         },
 
         play: function(chatSession, chatMinute) {
             var archive, offset;
-            var archives = chatSession.get_archives();
-            var state = chatSession.isLoadedWith('archives');
-            if(!state.loaded) {
-                state.fetcher({
-                    success: _.bind(this.play, this, chatSession, chatMinute)
-                });
+            var loaded = this.load(chatSession, chatMinute);
+            if(!loaded) {
                 return;
             }
 
-            archive = archives.at(0);
+            archive = chatSession.get_archives().at(0);
             offset = chatMinute.get_start() - chatSession.get_publish() - archive.get_offset();
             if(offset < 0) {
                 offset = 0;
@@ -150,11 +177,13 @@ define([
             });
             
             this.api = flowplayer();
+            this.bindFlowplayerEvents(this.api);
             //this.api.play();
 
             this.model.set({
                 chatSession: chatSession,
-                chatMinute: chatMinute
+                chatMinute: chatMinute,
+                state: this.model.STATE.PLAYING
             });
         },
 

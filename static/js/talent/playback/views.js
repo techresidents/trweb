@@ -27,19 +27,22 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(playback_template);
+            this.model.bind('loaded', this.loaded, this);
             this.model.bind('change', this.render, this);
-            this.model.eachRelated('chat__topic__tree', function(instance) {
-                instance.bind('loaded', function() {console.log('loaded');});
-            });
+            
+            if(!this.model.isLoading()) {
+                this.load();
+            }
+        },
+        
+        loaded: function(instance) {
+            this.load();
+        },
 
-            if(options.load) {
-                this.model.withRelated("chat__topic__tree", "chat_minutes__topic").fetch();
-
-                this.model.eachRelated(['chat__topic__tree', 'chat_minutes__topic'], function(instance) {
-                    if(instance.isLoading()) {
-                        console.log(instance.url());
-                    }
-                });
+        load: function() {
+            var state = this.model.isLoadedWith('chat__topic__tree', 'chat_minutes__topic');
+            if(!state.loaded) {
+                state.fetcher();
             }
         },
 
@@ -52,7 +55,7 @@ define([
         play: function(e) {
             var eventBody = {
                 chatSession: this.model,
-                chatMinute: this.model.get_chat_minutes().at(0)
+                chatMinute: this.model.get_chat_minutes().at(1)
             };
 
             this.triggerEvent(EVENTS.PLAY, eventBody);
