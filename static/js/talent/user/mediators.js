@@ -42,8 +42,7 @@ define([
                     id: notification.options.id
                 });
                 this.view = new user_views.UserView({
-                    model: user,
-                    load: true
+                    model: user
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {

@@ -45,7 +45,7 @@ define([
             if(notification.type === this.viewType()) {
 
                 this.view = new player_views.PlayerView({
-                    model: new player_models.NowPlaying()
+                    model: new player_models.PlayerState()
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
@@ -71,16 +71,7 @@ define([
         },
 
         onPlay: function(notification) {
-            var model = this.view.model;
-            if(model.chatSession() !== notification.chatSession ||
-               model.chatMinute() !== notification.chatMinute) {
-                this.view.model.set({
-                    chatSession: notification.chatSession,
-                    chatMinute: notification.chatMinute
-                });
-            }else {
-                this.view.play();
-            }
+            this.view.play(notification.chatSession, notification.chatMinute);
         }
 
     }, {

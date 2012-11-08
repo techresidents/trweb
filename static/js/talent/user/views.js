@@ -27,10 +27,22 @@ define([
 
         initialize: function(options) {
             this.template = _.template(chat_template);
+            this.model.bind('loaded', this.loaded, this);
             this.model.bind('change', this.render, this);
-
-            if(options.load) {
-                this.model.withRelated("chat__topic").fetch();
+            
+            if(!this.model.isLoading()) {
+                this.load();
+            }
+        },
+        
+        loaded: function(instance) {
+            this.load();
+        },
+        
+        load: function() {
+            var state = this.model.isLoadedWith('chat__topic');
+            if(!state.loaded) {
+                state.fetcher();
             }
         },
 
@@ -59,14 +71,27 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(chats_template);
+            this.collection.bind('loaded', this.loaded, this);
             this.collection.bind('reset', this.render, this);
             this.collection.bind('add', this.added, this);
             this.childViews = [];
-
-            if(options.load) {
-                this.collection.withRelated("chat__topic").fetch();
+            
+            if(!this.collection.isLoading()) {
+                this.load();
             }
+        },
 
+        loaded: function(instance) {
+            if(instance === this.collection) {
+                this.load();
+            }
+        },
+
+        load: function() {
+            var state = this.collection.isLoadedWith('chat__topic');
+            if(!state.loaded) {
+                state.fetcher();
+            }
         },
 
         render: function() {
@@ -111,9 +136,27 @@ define([
         initialize: function(options) {
             this.template = _.template(skill_template);
             this.model.bind('change', this.render, this);
+            this.model.bind('loaded', this.loaded, this);
 
-            if(options.load) {
-                this.model.fetch();
+            if(!this.model.isLoading()) {
+                this.load();
+            }
+        },
+
+        loaded: function(instance) {
+            //Cover case where model was already loading at time of view
+            //creation, but not all necessary data was loaded. Invoking
+            //load again will ensure all necessary data is loaded. If
+            //all data is already loaded, this is a no-op.
+            this.load();
+        },
+
+        load: function() {
+            var state = this.model.isLoadedWith('technology');
+            if(!state.loaded) {
+                state.fetcher({
+                    success: _.bind(this.render, this)
+                });
             }
         },
 
@@ -135,6 +178,8 @@ define([
         events: {
         },
 
+        withRelated: ['technology'],
+
         beginnerSkillsSelector: '#beginner-skills',
 
         intermediateSkillsSelector: '#intermediate-skills',
@@ -143,12 +188,26 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(skills_template);
+            this.collection.bind('loaded', this.loaded, this);
             this.collection.bind('reset', this.render, this);
             this.collection.bind('add', this.added, this);
             this.childViews = [];
+            
+            if(!this.collection.isLoading()) {
+                this.load();
+            }
+        },
 
-            if(options.load) {
-                this.collection.withRelated("technology").fetch();
+        loaded: function(instance) {
+            if(instance === this.collection) {
+                this.load();
+            }
+        },
+
+        load: function() {
+            var state = this.collection.isLoadedWith('technology');
+            if(!state.loaded) {
+                state.fetcher();
             }
 
         },
@@ -209,19 +268,36 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(user_template);
+            this.model.bind('loaded', this.loaded, this);
             this.model.bind('change', this.render, this);
 
-            if(options.load) {
-                this.model.withRelated(
-                    "chat_sessions__chat__topic",
-                    "skills__technology",
-                    "position_prefs",
-                    "technology_prefs",
-                    "location_prefs").fetch();
+            if(!this.model.isLoading()) {
+                this.load();
             }
-
+            
             //child views
             this.skillsView = null;
+        },
+
+        load: function() {
+            var state = this.model.isLoadedWith(
+                "chat_sessions__chat__topic",
+                "skills__technology",
+                "position_prefs",
+                "technology_prefs",
+                "location_prefs");
+            
+            if(!state.loaded) {
+                state.fetcher();
+            } 
+        },
+
+        loaded: function() {
+            //Cover case where model was already loading at time of view
+            //creation, but not all necessary data was loaded. Invoking
+            //load again will ensure all necessary data is loaded. If
+            //all data is already loaded, this is a no-op.
+            this.load();
         },
 
         render: function() {

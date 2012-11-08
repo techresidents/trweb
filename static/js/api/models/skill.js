@@ -14,7 +14,7 @@ define([
     technology_models) {
 
     var SkillCollection = api.ApiCollection.extend({
-        urlRoot: "/technologies",
+        urlRoot: "/skills",
 
         model: function(attributes, options) {
             return new Skill(attributes, options);
@@ -23,7 +23,7 @@ define([
     });
 
     var Skill = api.ApiModel.extend({
-        urlRoot: "/technologies",
+        urlRoot: "/skills",
 
         collectionConstructor: SkillCollection,
 

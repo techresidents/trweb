@@ -44,9 +44,26 @@ define([
         tagName: 'ul',
         
         initialize: function() {
+            this.collection.bind('loaded', this.loaded, this);
             this.collection.bind('reset', this.render, this);
             this.collection.bind('add', this.added, this);
             this.childViews = [];
+
+            if(!this.collection.isLoading()) {
+                this.load();
+            }
+        },
+
+        loaded: function(instance) {
+            if(instance === this.collection) {
+                this.load();
+            }
+        },
+
+        load: function() {
+            if(!this.collection.isLoaded()) {
+                this.collection.fetch();
+            }
         },
 
         render: function() {
@@ -88,18 +105,35 @@ define([
 
         listSelector: 'ul',
 
+        childViews: function() {
+            return [this.userListView];
+        },
+
         initialize: function() {
             this.template =  _.template(search_template);
             
+            if(!this.collection.isLoading()) {
+                this.load();
+            }
+
+            //child views
+            this.userListView = null;
+
+            if(!this.collection.isLoading()) {
+                this.load();
+            }
+        },
+
+        loaded: function(instance) {
+            if(instance === this.collection) {
+                this.load();
+            }
+        },
+
+        load: function() {
             if(!this.collection.isLoaded()) {
                 this.collection.fetch();
             }
-            //child views
-            this.userListView = null;
-        },
-
-        childViews: function() {
-            return [this.userListView];
         },
 
         render: function() {

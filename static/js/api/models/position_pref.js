@@ -12,7 +12,7 @@ define([
     user_models) {
 
     var PositionPrefCollection = api.ApiCollection.extend({
-        urlRoot: "/technologies",
+        urlRoot: "/position_prefs",
 
         model: function(attributes, options) {
             return new PositionPref(attributes, options);
@@ -21,7 +21,7 @@ define([
     });
 
     var PositionPref = api.ApiModel.extend({
-        urlRoot: "/technologies",
+        urlRoot: "/position_prefs",
 
         collectionConstructor: PositionPrefCollection,
 

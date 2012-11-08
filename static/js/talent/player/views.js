@@ -58,15 +58,12 @@ define([
         },
 
         childViews: function() {
-            return [this.flowplayerView, this.titleView];
+            return [this.titleView];
         },
 
         initialize: function(options) {
             this.template =  _.template(player_template);
-            this.flowplayerView = null;
             this.titleView = null;
-
-            this.model.bind('change', this.onChange, this);
         },
 
         render: function() {
@@ -93,24 +90,6 @@ define([
             return this;
         },
 
-        onChange: function() {
-            var archives;
-            var chatSession = this.model.chatSession();
-            var chatMinute = this.model.chatMinute();
-
-            if(chatSession && chatMinute) {
-                archives = chatSession.get_archives();
-                if(archives.length) {
-                    this.play();
-                }else {
-                    archives.bind('reset', this.play, this);
-                    archives.fetch();
-                }
-            } else {
-                this.stop();
-            }
-        },
-
         onBegin: function(clip) {
             console.log("BEGIN");
             this.flowplayerView.api.seek(10);
@@ -125,7 +104,22 @@ define([
         onFinish: function(clip) {
         },
 
-        play: function() {
+        play: function(chatSession, chatMinute) {
+            var archive, offset;
+            var archives = chatSession.get_archives();
+            var state = chatSession.isLoadedWith('archives');
+            if(!state.loaded) {
+                state.fetcher({
+                    success: _.bind(this.play, this, chatSession, chatMinute)
+                });
+                return;
+            }
+
+            archive = archives.at(0);
+            offset = chatMinute.get_start() - chatSession.get_publish() - archive.get_offset();
+            if(offset < 0) {
+                offset = 0;
+            }
 
             this.$('#player').flowplayer({
                 src: '/static/js/3ps/flowplayer/flowplayer-v3.2.11.swf'
@@ -134,7 +128,7 @@ define([
                 plugins: {
                     akamai: {
                         url: '/static/js/3ps/flowplayer/AkamaiFlowPlugin.swf',
-                        subClip: {clipBegin: 0},
+                        subClip: {clipBegin: offset / 1000.0},
                         forceNoSubclip: true
                     },
 
@@ -149,48 +143,19 @@ define([
                     live: false,
                     provider: 'akamai',
                     autoPlay: false,
-                    stopLiveOnPause: false
+                    stopLiveOnPause: false,
+                    url: archive.get_streaming_url()
                 }
 
             });
             
             this.api = flowplayer();
-            console.log("play");
-            var chatSession = this.model.chatSession();
-            var archives = chatSession.get_archives();
-            var minutes = chatSession.get_chat_minutes();
-            var publish = chatSession.get_publish();
-            var start = minutes.at(0).get_start();
+            //this.api.play();
 
-            var archive = archives.at(0);
-            
-            var cuepoints = [];
-            var that = this;
-            minutes.each(function(minute) {
-                cuepoints.push({
-                    time: minute.get_start() - publish - archive.get_offset()
-                });
+            this.model.set({
+                chatSession: chatSession,
+                chatMinute: chatMinute
             });
-            console.log(cuepoints);
-            //cuepoints = [{time: 0}, {time: 0}];
-
-            if(archives.length) {
-                archive = archives.at(0);
-                var clip = {
-                    url: archive.get_streaming_url(),
-                    onCuepoint: [
-                        cuepoints,
-                        function(clip, cuepoint) {
-                            console.log(cuepoint.time);
-                            //cuepoint.model.set({chatMinute: cuepoint.minute});
-                        }
-                    ]
-                };
-                console.log(clip);
-                console.log(this.api);
-                this.api.setClip(clip);
-                this.api.play(clip);
-            }
         },
 
         pause: function() {

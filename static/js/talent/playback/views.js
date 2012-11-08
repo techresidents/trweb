@@ -28,10 +28,18 @@ define([
         initialize: function(options) {
             this.template =  _.template(playback_template);
             this.model.bind('change', this.render, this);
-            this.flowplayerView = null;
+            this.model.eachRelated('chat__topic__tree', function(instance) {
+                instance.bind('loaded', function() {console.log('loaded');});
+            });
 
             if(options.load) {
                 this.model.withRelated("chat__topic__tree", "chat_minutes__topic").fetch();
+
+                this.model.eachRelated(['chat__topic__tree', 'chat_minutes__topic'], function(instance) {
+                    if(instance.isLoading()) {
+                        console.log(instance.url());
+                    }
+                });
             }
         },
 
