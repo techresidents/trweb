@@ -1,6 +1,6 @@
 define([
-    'jQuery',
-    'Underscore',
+    'jquery',
+    'underscore',
     'core/base',
     'core/facade'
 ], function($, _, base, facade) { 

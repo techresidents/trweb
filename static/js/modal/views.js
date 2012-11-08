@@ -1,6 +1,6 @@
 define([
-    'jQuery',
-    'Underscore',
+    'jquery',
+    'underscore',
     'core/view',
     'text!modal/templates/modal.html'
 ], function($, _, view, modal_template) {

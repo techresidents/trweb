@@ -1,6 +1,6 @@
 define([
-    'jQuery',
-    'Underscore'
+    'jquery',
+    'underscore'
 ], function($, _) {
 
     /**
@@ -85,7 +85,7 @@ define([
     var getValue = function(object, property) {
         var result = null;
         
-        if(object && object[property]) {
+        if(object && !_.isUndefined(object[property])) {
             result = _.isFunction(object[property]) ? object[property]() : object[property];
         }
         return result;

@@ -1,6 +1,6 @@
 define([
-    'jQuery',
-    'Underscore',
+    'jquery',
+    'underscore',
     'core/view',
     'text!chat/resource/templates/resource_document.html',
     'text!chat/resource/templates/resource_select.html',

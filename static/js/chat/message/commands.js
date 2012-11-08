@@ -1,5 +1,5 @@
 define([
-    'Underscore',
+    'underscore',
     'core/base',
     'core/command',
     'chat/marker/proxies',

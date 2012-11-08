@@ -1,8 +1,9 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone'
-], function($, _, Backbone) {
+    'jquery',
+    'underscore',
+    'backbone',
+    'backbone.localStorage'
+], function($, _, Backbone, none) {
 
     /**
      * Skill model is used to represent a user's skill in

@@ -268,6 +268,10 @@ class ChatSession(models.Model):
             this a slight denormalization since this information
             can be derived from "users". This is necessary in order to
             allow atomic assignmet of users' to chat sessions.
+        connect: datetime objected containing the time that the first 
+            participant connected their video stream.
+        publish: datetime objected containing the time that the first 
+            participant published their video stream.
         start: datetime object containing the time the chat session started.
         end: datetime object containing the time the chat session ended.
     """
@@ -278,6 +282,8 @@ class ChatSession(models.Model):
     users = models.ManyToManyField(User, through="ChatUser")
     token = models.CharField(max_length=1024, null=True, unique=True)
     participants = models.IntegerField(default=0)
+    connect = models.DateTimeField(null=True)
+    publish = models.DateTimeField(null=True)
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
 
@@ -367,6 +373,7 @@ class ChatTag(models.Model):
     user = models.ForeignKey(User, related_name="+")
     chat_minute = models.ForeignKey(ChatMinute, related_name="chat_tags")
     tag = models.ForeignKey(Tag, null=True, related_name="+")
+    time = models.DateTimeField()
     name = models.CharField(max_length=1024)
     deleted = models.BooleanField(default=False)
 
