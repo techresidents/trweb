@@ -3,6 +3,7 @@ define([
     'underscore',
     'core/view',
     'text!talent/user/templates/user.html',
+    'text!talent/user/templates/jobprefs.html',
     'text!talent/user/templates/skills.html',
     'text!talent/user/templates/skill.html',
     'text!talent/user/templates/chats.html',
@@ -12,10 +13,71 @@ define([
     _,
     view,
     user_template,
+    jobprefs_template,
     skills_template,
     skill_template,
     chats_template,
     chat_template) {
+
+    /**
+     * Talent user job preferences view.
+     * @constructor
+     * @param {Object} options
+     *   model: {User} (required)
+     */
+    var UserJobPrefsView = view.View.extend({
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.template =  _.template(jobprefs_template);
+            this.model.bind('loaded', this.loaded, this);
+            this.childViews = [];
+
+            if(!this.model.isLoading()) {
+                this.load();
+            }
+        },
+
+        loaded: function(instance) {
+            //Cover case where model was already loading at time of view
+            //creation, but not all necessary data was loaded. Invoking
+            //load again will ensure all necessary data is loaded. If
+            //all data is already loaded, this is a no-op.
+            if(instance === this.model) {
+                this.load();
+            }
+        },
+
+        load: function() {
+            var state = this.model.isLoadedWith(
+                "position_prefs",
+                "technology_prefs",
+                "location_prefs");
+
+            if(!state.loaded) {
+                state.fetcher();
+            }
+        },
+
+        render: function() {
+            _.each(this.childViews, function(view) {
+                view.destroy();
+            });
+
+            this.childViews = [];
+            //var context = this.model.toJSON({withRelated: true});
+            var context = {
+                model: this.model.toJSON({withRelated: true}),
+                fmt: this.fmt // date formatting
+            };
+            this.$el.html(this.template(context));
+
+            return this;
+        }
+    });
+
 
     /**
      * Talent user chat view.
@@ -109,8 +171,7 @@ define([
 
         added: function(model) {
             var view = new UserChatSessionView({
-                model: model,
-                load: !model.isLoaded()
+                model: model
             }).render();
 
             this.childViews.push(view);
@@ -227,8 +288,7 @@ define([
 
         added: function(model) {
             var view = new UserSkillView({
-                model: model,
-                load: !model.isLoaded()
+                model: model
             }).render();
 
             this.childViews.push(view);
@@ -255,6 +315,8 @@ define([
      */
     var UserView = view.View.extend({
 
+        jobPrefsSelector: '#user-job-prefs',
+
         skillsSelector: '#user-skills',
 
         chatsSelector: '#user-chats',
@@ -263,7 +325,7 @@ define([
         },
 
         childViews: function() {
-            return [this.skillsView, this.chatsView];
+            return [this.jobPrefsView, this.skillsView, this.chatsView];
         },
 
         initialize: function(options) {
@@ -276,7 +338,9 @@ define([
             }
             
             //child views
+            this.jobPrefsView = null;
             this.skillsView = null;
+            this.chatsView = null;
         },
 
         load: function() {
@@ -303,20 +367,23 @@ define([
         render: function() {
             var context = {
                 model: this.model.toJSON({withRelated: true}),
-                fmt: this.fmt
+                fmt: this.fmt // date formatting
             };
             this.$el.html(this.template(context));
 
+            this.jobPrefsView = new UserJobPrefsView({
+                el: this.$(this.jobPrefsSelector),
+                model: this.model
+            }).render();
+
             this.skillsView = new UserSkillsView({
                 el: this.$(this.skillsSelector),
-                collection: this.model.get_skills(),
-                load: false
+                collection: this.model.get_skills()
             }).render();
 
             this.chatsView = new UserChatSessionsView({
                 el: this.$(this.chatsSelector),
-                collection: this.model.get_chat_sessions(),
-                load: false
+                collection: this.model.get_chat_sessions()
             }).render();
 
             return this;

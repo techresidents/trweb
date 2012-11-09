@@ -23,7 +23,7 @@
 }
 
 .user-beginner-skills {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .user-beginner-skills > div {
@@ -38,7 +38,7 @@
 }
 
 .user-intermediate-skills {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .user-intermediate-skills > div {
@@ -53,7 +53,7 @@
 }
 
 .user-expert-skills {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .user-expert-skills > div {
@@ -67,7 +67,33 @@
     line-height: 44px;
 }
 
-.user-well {
-    padding: 12px;
-    min-height: 80px;
+
+.user-skills-filter {
+    margin-right: 20px;
+}
+
+.user-skills-legend {
+    margin-bottom: 5px;
+}
+
+.user-skills-legend-0-2yrs {
+    display: inline;
+    background-color: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 4px 4px 4px 4px;
+    margin-right: 5px;
+    padding: 5px;
+    font-size: 14px;
+    line-height: 28px;
+}
+
+.user-skills-legend-2-5yrs {
+    display: inline;
+    background-color: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 4px 4px 4px 4px;
+    margin-right: 5px;
+    padding: 5px;
+    font-size: 18px;
+    line-height: 36px;
 }
