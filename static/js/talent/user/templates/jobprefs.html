@@ -1,40 +1,43 @@
-<div class="row">
-    <div class="span12">
-        <div class="page-header">
 
-        </div>
-    </div>
-</div>
+<div class="well">
 
-<div class="row">
-    <div class="span2">
-        <div class="user-logo" style="width:120px; height: 110px;"></div>
-    </div>
-    <div class="span2">
-        <h4>Positions</h4>
-        <% _.each(model.position_prefs, function(position) { %>
-        <span><%= position.type %> <%= fmt.num(position.salary_start, 'cn0') %></span>
-        <% }); %>
-    </div>
-    <div class="offset1 span2">
-        <h4>Locations</h4>
-        <% _.each(model.location_prefs, function(location) { %>
-        <% if(location.city) { %>
-        <p><%= location.city %>, <%= location.state %></p>
-        <% } else { %>
-        <p><%= location.state %></p>
-        <% } %>
-        <% }); %>
-    </div>
+    <div class="user-logo" style="width:120px; height: 110px;"></div>
 
-    <div class="offset1 span2">
-        <h4>Technologies</h4>
-        <div class="span2">
-            <% _.each(model.technology_prefs, function(technology) { %>
-            <%= technology.name %>
+    <div>
+        <h4>Looking for</h4>
+        <ul>
+            <% _.each(model.position_prefs, function(position) { %>
+            <li><%= position.type %> <%= fmt.num(position.salary_start, 'cn0') %></li>
             <% }); %>
-        </div>
+        </ul>
+
     </div>
+
+    <div>
+        <h4>Located in</h4>
+        <ul>
+            <% _.each(model.location_prefs, function(location) { %>
+            <% if(location.city) { %>
+                <li><%= location.city %>, <%= location.state %></li>
+            <% } else { %>
+                <li><%= location.state %></li>
+            <% } %>
+            <% }); %>
+        </ul>
+
+    </div>
+
+    <div>
+        <h4>Working with</h4>
+        <ul>
+            <% _.each(model.technology_prefs, function(technology) { %>
+                <li><%= technology.name %></li>
+            <% }); %>
+        </ul>
+    </div>
+
 </div>
+
+
 
 

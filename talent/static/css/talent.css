@@ -22,51 +22,53 @@
     background-position: center;
 }
 
-.user-beginner-skills {
+.user-skill {
     margin-bottom: 10px;
 }
 
-.user-beginner-skills > div {
+.user-skill > div {
     display: inline;
-    background-color: #F2DEDE;
     border: 1px solid #E3E3E3;
     border-radius: 4px 4px 4px 4px;
     margin-right: 5px;
     padding: 5px;
+}
+
+.user-beginner-skills > div {
+    background-color: #F2DEDE;
+}
+
+.user-intermediate-skills > div {
+    background-color: #D9EDF7;
+}
+
+.user-expert-skills > div {
+    background-color: #DFF0D8;
+}
+
+.user-skills-short-duration {
     font-size: 14px;
     line-height: 28px;
 }
 
-.user-intermediate-skills {
-    margin-bottom: 10px;
-}
-
-.user-intermediate-skills > div {
-    display: inline;
-    background-color: #D9EDF7;
-    border: 1px solid #E3E3E3;
-    border-radius: 4px 4px 4px 4px;
-    margin-right: 5px;
-    padding: 5px;
+.user-skills-medium-duration {
     font-size: 18px;
     line-height: 36px;
 }
 
-.user-expert-skills {
-    margin-bottom: 10px;
-}
-
-.user-expert-skills > div {
-    display: inline;
-    background-color: #DFF0D8;
-    border: 1px solid #E3E3E3;
-    border-radius: 4px 4px 4px 4px;
-    margin-right: 5px;
-    padding: 5px;
+.user-skills-long-duration {
     font-size: 22px;
     line-height: 44px;
 }
 
+
+
+
+.user-section-break {
+    padding-bottom: 9px;
+    margin: 20px 0 10px;
+    border-bottom: 1px solid #EEE;
+}
 
 .user-skills-filter {
     margin-right: 20px;

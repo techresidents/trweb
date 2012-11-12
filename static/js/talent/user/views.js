@@ -1,6 +1,7 @@
 define([
     'jquery',
     'underscore',
+    'jquery.bootstrap',
     'core/view',
     'text!talent/user/templates/user.html',
     'text!talent/user/templates/jobprefs.html',
@@ -11,6 +12,7 @@ define([
 ], function(
     $,
     _,
+    none,
     view,
     user_template,
     jobprefs_template,
@@ -67,7 +69,6 @@ define([
             });
 
             this.childViews = [];
-            //var context = this.model.toJSON({withRelated: true});
             var context = {
                 model: this.model.toJSON({withRelated: true}),
                 fmt: this.fmt // date formatting
@@ -222,7 +223,9 @@ define([
         },
 
         render: function() {
-            var context = this.model.toJSON({withRelated: true});
+            var context = {
+                model: this.model.toJSON({withRelated: true})
+            };
             this.$el.html(this.template(context));
             return this;
         }
@@ -282,7 +285,16 @@ define([
             var context = this.collection.toJSON({withRelated: true});
             this.$el.html(this.template(context));
 
-            this.collection.each(this.added, this);
+            // Sort skills such that skills with the most yrs experience
+            // are first in the list.
+            var sortedSkillsList = this.collection.sortBy(function(model) {
+                return model.get_yrs_experience()*-1;
+            }, this);
+            _.each(sortedSkillsList, this.added, this);
+
+            //activate tooltips
+            this.$('[rel=tooltip]').tooltip();
+
             return this;
         },
 
@@ -296,13 +308,29 @@ define([
             switch(model.get_expertise()) {
                 case 'Beginner':
                     this.$(this.beginnerSkillsSelector).append(view.el);
+                    this.addYrsXpStyle(model, this.beginnerSkillsSelector);
                     break;
                 case 'Intermediate':
                     this.$(this.intermediateSkillsSelector).append(view.el);
+                    this.addYrsXpStyle(model, this.intermediateSkillsSelector);
                     break;
                 case 'Expert':
                     this.$(this.expertSkillsSelector).append(view.el);
+                    this.addYrsXpStyle(model, this.expertSkillsSelector);
                     break;
+            }
+        },
+
+        addYrsXpStyle: function(model, selector) {
+            var yrs_xp = model.get_yrs_experience();
+            if(yrs_xp <= 2){
+                this.$(selector + ' div:last-child').addClass('user-skills-short-duration');
+            }
+            else if (yrs_xp > 2 && yrs_xp < 5){
+                this.$(selector + ' div:last-child').addClass('user-skills-medium-duration');
+            }
+            else {
+                this.$(selector + ' div:last-child').addClass('user-skills-long-duration');
             }
         }
     });
