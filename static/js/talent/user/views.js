@@ -362,13 +362,12 @@ define([
         filter: function(exclusionFiltersList) {
             this.exclusionFilters = exclusionFiltersList;
             _.each(this.childViews, function(v) {
-                    var viewSelector = '#skill' + v.model.id;
                     // TODO why is type available without specifying it in isLoadedWith()?
                     if (_.contains(this.exclusionFilters, v.model.get_technology().get_type())) {
-                        this.$(viewSelector).parent('div').hide();
+                        v.$el.hide();
                     }
                     else {
-                        this.$(viewSelector).parent('div').show();
+                        v.$el.show();
                     }
                 },
                 this
