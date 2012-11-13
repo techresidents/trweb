@@ -31,7 +31,41 @@ define([
      */
     var UserJobPrefsView = view.View.extend({
 
+        expandableItemsSelector: '.expandable-list-items',
+        slideToggleSelector: '.slide-toggle',
+        positionPrefsSelector: '.position-prefs',
+        locationPrefsSelector: '.location-prefs',
+        technologyPrefsSelector: '.technology-prefs',
+
         events: {
+            'click .position-prefs .slide-toggle' : 'togglePositionPrefs',
+            'click .location-prefs .slide-toggle' : 'toggleLocationPrefs',
+            'click .technology-prefs .slide-toggle' : 'toggleTechnologyPrefs'
+        },
+
+        togglePositionPrefs: function() {
+            this.toggle(this.positionPrefsSelector);
+        },
+
+        toggleLocationPrefs: function() {
+          this.toggle(this.locationPrefsSelector);
+        },
+
+        toggleTechnologyPrefs: function() {
+            this.toggle(this.technologyPrefsSelector);
+        },
+
+        toggle: function(classSelector) {
+            var itemsSelector = classSelector + ' ' + this.expandableItemsSelector;
+            var sliderSelector = classSelector + ' ' + this.slideToggleSelector;
+            this.$(itemsSelector).slideToggle(200, function() {
+                if ($(sliderSelector).text() === 'more') {
+                    $(sliderSelector).text('less');
+                }
+                else {
+                    $(sliderSelector).text('more');
+                }
+            });
         },
 
         initialize: function(options) {
@@ -77,7 +111,21 @@ define([
             };
             this.$el.html(this.template(context));
 
+            // Add style to make lists expandable
+            var expandableSections = [this.locationPrefsSelector, this.technologyPrefsSelector];
+            _.each(expandableSections, this.addExpandableStyle, this);
+
             return this;
+        },
+
+        addExpandableStyle: function(classSelector) {
+            this.$(classSelector).children('li').each(function(i) {
+                // Always show the first 3 items; make the rest of the items expandable
+                if (i > 2) {
+                    $(this).addClass('expandable-list-items');
+                    $(this).hide();
+                }
+            });
         }
     });
 
@@ -216,6 +264,7 @@ define([
             return this;
         },
 
+        // TODO add doc
         filterUpdated: function(){
             var exclusionFilters = [];
             // get all disabled filters

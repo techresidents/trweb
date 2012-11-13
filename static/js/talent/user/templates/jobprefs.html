@@ -5,34 +5,44 @@
 
     <div>
         <h4>Looking for</h4>
-        <ul>
+        <ul class="position-prefs">
             <% _.each(model.position_prefs, function(position) { %>
-            <li><%= position.type %> <%= fmt.num(position.salary_start, 'cn0') %></li>
+                <li><%= position.type %> <%= fmt.num(position.salary_start, 'cn0') %></li>
             <% }); %>
-        </ul>
 
+            <% if (model.position_prefs.length > 3) { %>
+                <a class="slide-toggle">more</a>
+            <% } %>
+        </ul>
     </div>
 
     <div>
         <h4>Located in</h4>
-        <ul>
+        <ul class="location-prefs">
             <% _.each(model.location_prefs, function(location) { %>
-            <% if(location.city) { %>
-                <li><%= location.city %>, <%= location.state %></li>
-            <% } else { %>
-                <li><%= location.state %></li>
-            <% } %>
+                <% if(location.city) { %>
+                    <li><%= location.city %>, <%= location.state %></li>
+                <% } else { %>
+                    <li><%= location.state %></li>
+                <% } %>
             <% }); %>
-        </ul>
 
+            <% if (model.location_prefs.length > 3) { %>
+                <a class="slide-toggle">more</a>
+            <% } %>
+        </ul>
     </div>
 
     <div>
         <h4>Working with</h4>
-        <ul>
+        <ul class="technology-prefs">
             <% _.each(model.technology_prefs, function(technology) { %>
                 <li><%= technology.name %></li>
             <% }); %>
+
+            <% if (model.technology_prefs.length > 3) { %>
+                <a class="slide-toggle">more</a>
+            <% } %>
         </ul>
     </div>
 
