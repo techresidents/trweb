@@ -4,7 +4,7 @@ define([
     'core/mediator',
     'api/models',
     'talent/notifications',
-    'talent/player/models',
+    'talent/player/proxies',
     'talent/player/views'
 ], function(
     _,
@@ -12,7 +12,7 @@ define([
     mediator,
     api,
     talent_notifications,
-    player_models,
+    player_proxies,
     player_views) {
 
     /**
@@ -39,13 +39,14 @@ define([
 
         initialize: function(options) {
             this.view = null;
+            this.proxy = this.facade.getProxy(player_proxies.PlayerStateProxy.NAME);
         },
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
 
                 this.view = new player_views.PlayerView({
-                    model: new player_models.PlayerState()
+                    model: this.proxy.model
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {

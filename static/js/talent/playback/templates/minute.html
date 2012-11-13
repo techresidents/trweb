@@ -1,0 +1,12 @@
+<h3>
+    <% if(playing) { %>
+    <a class="play btn btn-small btn-primary"><i class="icon-volume-up icon-white"></i></a>
+    <% } else { %>
+    <a class="play btn btn-small"><i class="icon-play"></i></a>
+    <% } %>
+    <%=minute.topic.title %>
+    <small> (<%= fmt.date(minute.duration,'m:ss') %> mins)</small>
+</h3>
+<div class="description">
+    <p><%= minute.topic.description %></p>
+</div>

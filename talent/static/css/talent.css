@@ -1,3 +1,6 @@
+*:focus { outline: 0 !important;}
+*:focus { outline: none !important; }
+*::-moz-focus-inner { border: none !important;}
 
 .fixed-footer {
     height: 90px;
@@ -6,7 +9,7 @@
     left: 0;
     right: 0;
     z-index: 99;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABbCAMAAAB9PuTdAAAABGdBTUEAALGPC/xhBQAAAFFQTFRFAAAA////////////////////////////////////////////////////////////////////////////////////////////////////////CDfnXgAAABp0Uk5TEvPm9+/49Prr7fHw9vL17v3p6uz7/Pno5/7d2ngeAAAAYklEQVQoz5XTtxGEUADE0I+Hw7vD9F8omSBgZ4cXqQGFcDsRYojc8Sk3+Bzhc4LPEiJn+KwgsofIFCJriPxBZAuREZ6ZQ2QHkQ1EJhCZQeQfPguIXOBzhc8BPg98yse8r3kB4Fs0CZLGqZkAAAAASUVORK5CYII=);
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABaCAYAAACBvMdKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAADJJREFUeNrsyjEBACAIADCwf0bMgAW0Ar/bvazaNwZWDGV3H1EURVEURVEURfHb+AQYAAGvT73//pyjAAAAAElFTkSuQmCC);
     background-repeat-x;
 }
 
@@ -15,11 +18,120 @@
     overflow: hidden;
 }
 
+.player {
+    margin-top: 5px;
+}
+.player-user {
+    float: left;
+    margin-right: 10px;
+}
+
+.player-user .user-logo {
+    margin: 0px auto;
+    width: 80px;
+    height: 60px;
+}
+
+.player-controls {
+    float: left;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.player-expand {
+    margin-top: 29px;
+}
+
+.player-fp {
+    display: block;
+    width: 640px;
+    height: 25px;
+}
+
+.playback-users {
+    margin-bottom: 30px;
+}
+
+.playback-user.participant1 { 
+    border: 3px solid #00AEEF;
+    margin-bottom: 10px;
+}
+
+.playback-user.participant2 { 
+    border: 3px solid #00A651;
+    margin-bottom: 10px;
+}
+
+.playback-user .user-logo {
+    margin: 0px auto;
+    margin-top: 5px;
+    width: 120px;
+    height: 90px;
+}
+
+.playback-user p {
+    margin-bottom: 0px;
+}
+
+.playback-tag {
+    float: left;
+    margin-right: 5px;
+}
+
+.playback-tag.participant1 {
+    color: #00AEEF;
+}
+
+.playback-tag.participant2 {
+    color: #00A651;
+}
+
+.playback-tag {
+    float: left;
+    margin-right: 5px;
+    color: #00AEEF;
+    /*
+    color: #00A651;
+    */
+}
+
+.playback-minute.description {
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.playback-minute.level1 {
+  margin-left: 0px;
+}
+
+
+.playback-minute.level2 {
+  margin-left: 30px;
+}
+
+
+.playback-minute.level3 {
+  margin-left: 60px;
+}
+
+
+.playback-minute.level4 {
+  margin-left: 90px;
+}
+
+.playback-minute.level5 {
+  margin-left: 120px;
+}
+
 .user-logo {
     background-image: url("../img/person.png");
     background-repeat: no-repeat;
     background-size: 100%;
     background-position: center;
+}
+
+.user-logo.speaking {
+    background-image: url("../img/person-speaking.png");
 }
 
 .user-beginner-skills {

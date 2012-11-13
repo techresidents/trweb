@@ -1,6 +1,8 @@
 
 require.config({
 
+    urlArgs: 'bust ' + new Date().getTime(),
+
     paths: {
         globalize: '3ps/globalize/globalize',
         jquery: '3ps/jquery/jquery',

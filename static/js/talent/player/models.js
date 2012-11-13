@@ -16,6 +16,21 @@ define([
                 user: null,
                 isSpeaking: false
             };
+        },
+
+        user: function() {
+            return this.get('user');
+        },
+
+        isSpeaking: function() {
+            return this.get('isSpeaking');
+        },
+        
+        toJSON: function(options) {
+            return {
+                user: this.user().toJSON(options),
+                isSpeaking: this.isSpeaking()
+            };
         }
     });
 
@@ -25,7 +40,7 @@ define([
      * @param {Object} attributes Optional model attributes.
      * @param {Object} options Optional options
      */
-    var PlayerUserCollection = Backbone.Model.extend({
+    var PlayerUserCollection = Backbone.Collection.extend({
         model: PlayerUser
     });
 
@@ -72,6 +87,8 @@ define([
     });
 
     return {
-        PlayerState: PlayerState
+        PlayerState: PlayerState,
+        PlayerUser: PlayerUser,
+        PlayerUserCollection: PlayerUserCollection
     };
 });

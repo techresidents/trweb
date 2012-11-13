@@ -9,6 +9,8 @@ define([
     'core/view',
     'talent/playback/mediators',
     'talent/player/mediators',
+    'talent/player/models',
+    'talent/player/proxies',
     'talent/search/mediators',
     'talent/user/mediators',
     'text!apps/talent/talent.html'
@@ -23,6 +25,8 @@ define([
     view,
     playback_mediators,
     player_mediators,
+    player_models,
+    player_proxies,
     search_mediators,
     user_mediators,
     talent_app_template) {
@@ -108,7 +112,7 @@ define([
                     this.$('#alerts').append(view.render().el);
                     break;
                 case 'PlayerView':
-                    this.$('#player').append(view.render().el);
+                    this.$('#player-content').append(view.render().el);
                     break;
                 default:
                     if(this.activeView) {
@@ -192,7 +196,9 @@ define([
     var InitModels = command.Command.extend({
 
         execute: function() {
-            //this.facade.registerProxy(new talent_proxies.TalentProxy(data));
+            this.facade.registerProxy(new player_proxies.PlayerStateProxy({
+                model: new player_models.PlayerState()
+            }));
         }
     });
 
@@ -251,18 +257,20 @@ define([
         initializeRouter: function() {
             Backbone.history.start({
                 pushState: true
-                //root: "/talent/"
             });
             
             var that = this;
 
             $(document).on('click', 'a:not([data-bypass])', function(e) {
+                var root = '/talent';
                 var href = $(this).attr('href');
                 var protocol = this.protocol + '//';
-
-                if(href && href.slice(protocol.length) !== protocol) {
-                    e.preventDefault();
-                    that.router.navigate(href, true);
+                
+                if(href
+                    && href.slice(0, protocol.length) !== protocol
+                    && href.slice(0, root.length) === root) {
+                        e.preventDefault();
+                        that.router.navigate(href, true);
                 }
             });
         },

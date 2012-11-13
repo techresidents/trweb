@@ -4,14 +4,16 @@ define([
     'core/mediator',
     'api/models',
     'talent/notifications',
-    'talent/playback/views'
+    'talent/playback/views',
+    'talent/player/proxies'
 ], function(
     _,
     notifications,
     mediator,
     api,
     talent_notifications,
-    playback_views) {
+    playback_views,
+    player_proxies) {
 
     /**
      * Playback Mediator
@@ -36,6 +38,8 @@ define([
 
         initialize: function(options) {
             this.view = null;
+            this.playerStateProxy = this.facade.getProxy(
+                player_proxies.PlayerStateProxy.NAME);
         },
 
         onCreateView: function(notification) {
@@ -46,7 +50,7 @@ define([
 
                 this.view = new playback_views.PlaybackView({
                     model: chatSession,
-                    load: true
+                    playerState: this.playerStateProxy.model
                 });
 
                 this.view.addEventListener(playback_views.EVENTS.PLAY, this.onPlay, this);

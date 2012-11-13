@@ -58,6 +58,11 @@ define([
         var index = binarySearch(array, target, compareFunction);
         if(index < 0) {
             index = -(index + 1);
+        } else {
+            while(index < array.length 
+                    && compareFunction(array[index], target) === 0) {
+                index++;
+            }
         }
         array.splice(index, 0, target); 
         return index;
