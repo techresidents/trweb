@@ -36,12 +36,20 @@ define([
      * @param {Object} options Optional options
      */
     var PlayerState = Backbone.Model.extend({
+
+        STATE: {
+            EMPTY: 'EMPTY',
+            PLAYING: 'PLAYING',
+            PAUSED: 'PAUSED',
+            STOPPED: 'STOPPED'
+        },
             
         defaults: function() {
             return {
                 chatSession: null,
                 chatMinute: null,
-                users: new PlayerUserCollection()
+                users: new PlayerUserCollection(),
+                state: this.STATE.EMPTY
             };
         },
         
@@ -55,6 +63,10 @@ define([
 
         users: function() {
             return this.get('users');
+        },
+
+        state: function() {
+            return this.get('state');
         }
 
     });
