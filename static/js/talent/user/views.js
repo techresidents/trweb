@@ -6,6 +6,7 @@ define([
     'text!talent/user/templates/user.html',
     'text!talent/user/templates/jobprefs.html',
     'text!talent/user/templates/skills.html',
+    'text!talent/user/templates/skills_filter.html',
     'text!talent/user/templates/skill.html',
     'text!talent/user/templates/chats.html',
     'text!talent/user/templates/chat.html'
@@ -17,6 +18,7 @@ define([
     user_template,
     jobprefs_template,
     skills_template,
+    skills_filter_template,
     skill_template,
     chats_template,
     chat_template) {
@@ -78,7 +80,6 @@ define([
             return this;
         }
     });
-
 
     /**
      * Talent user chat view.
@@ -185,7 +186,45 @@ define([
      * User View Events
      */
     var EVENTS = {
+        UPDATE_SKILLS_FILTER: 'user:updateSkillsFilter'
     };
+
+    /**
+     * Talent user skills filter view.
+     * @constructor
+     * @param {Object} options
+     *   filtersList: list of Technology types the user can filter by (required)
+     */
+    var UserSkillsFilterView = view.View.extend({
+
+        filterSelector: '.user-skills-filter',
+
+        events: {
+            'change .skills-filter input:checkbox' : 'filterUpdated'
+        },
+
+        initialize: function(options) {
+            this.template = _.template(skills_filter_template);
+            this.filtersList = options.filtersList;
+        },
+
+        render: function() {
+            var context = {
+                filtersList: this.filtersList
+            };
+            this.$el.html(this.template(context));
+            return this;
+        },
+
+        filterUpdated: function(){
+            var exclusionFilters = [];
+            // get all disabled filters
+            this.$(".skills-filter input:checkbox:not(:checked)").each(function() {
+                exclusionFilters.push($(this).val()); // here 'this' refers to the element returned by each()
+            });
+            this.triggerEvent(EVENTS.UPDATE_SKILLS_FILTER, {filters: exclusionFilters});
+        }
+    });
 
     /**
      * Talent user skill view.
@@ -242,8 +281,6 @@ define([
         events: {
         },
 
-        withRelated: ['technology'],
-
         beginnerSkillsSelector: '#beginner-skills',
 
         intermediateSkillsSelector: '#intermediate-skills',
@@ -256,6 +293,7 @@ define([
             this.collection.bind('reset', this.render, this);
             this.collection.bind('add', this.added, this);
             this.childViews = [];
+            this.exclusionFilters = [];
             
             if(!this.collection.isLoading()) {
                 this.load();
@@ -273,7 +311,6 @@ define([
             if(!state.loaded) {
                 state.fetcher();
             }
-
         },
 
         render: function() {
@@ -292,6 +329,9 @@ define([
             }, this);
             _.each(sortedSkillsList, this.added, this);
 
+            // apply filter settings
+            this.filter(this.exclusionFilters);
+
             //activate tooltips
             this.$('[rel=tooltip]').tooltip();
 
@@ -299,39 +339,40 @@ define([
         },
 
         added: function(model) {
+
             var view = new UserSkillView({
                 model: model
             }).render();
-
             this.childViews.push(view);
-            
+
+            // Append view to appropriate section of view based upon expertise level
             switch(model.get_expertise()) {
                 case 'Beginner':
                     this.$(this.beginnerSkillsSelector).append(view.el);
-                    this.addYrsXpStyle(model, this.beginnerSkillsSelector);
                     break;
                 case 'Intermediate':
                     this.$(this.intermediateSkillsSelector).append(view.el);
-                    this.addYrsXpStyle(model, this.intermediateSkillsSelector);
                     break;
                 case 'Expert':
                     this.$(this.expertSkillsSelector).append(view.el);
-                    this.addYrsXpStyle(model, this.expertSkillsSelector);
                     break;
             }
         },
 
-        addYrsXpStyle: function(model, selector) {
-            var yrs_xp = model.get_yrs_experience();
-            if(yrs_xp <= 2){
-                this.$(selector + ' div:last-child').addClass('user-skills-short-duration');
-            }
-            else if (yrs_xp > 2 && yrs_xp < 5){
-                this.$(selector + ' div:last-child').addClass('user-skills-medium-duration');
-            }
-            else {
-                this.$(selector + ' div:last-child').addClass('user-skills-long-duration');
-            }
+        filter: function(exclusionFiltersList) {
+            this.exclusionFilters = exclusionFiltersList;
+            _.each(this.childViews, function(v) {
+                    var viewSelector = '#skill' + v.model.id;
+                    // TODO why is type available without specifying it in isLoadedWith()?
+                    if (_.contains(this.exclusionFilters, v.model.get_technology().get_type())) {
+                        this.$(viewSelector).parent('div').hide();
+                    }
+                    else {
+                        this.$(viewSelector).parent('div').show();
+                    }
+                },
+                this
+            );
         }
     });
 
@@ -345,6 +386,8 @@ define([
 
         jobPrefsSelector: '#user-job-prefs',
 
+        skillsFilterSelector: '#user-skills-filter',
+
         skillsSelector: '#user-skills',
 
         chatsSelector: '#user-chats',
@@ -353,7 +396,11 @@ define([
         },
 
         childViews: function() {
-            return [this.jobPrefsView, this.skillsView, this.chatsView];
+            return [
+                this.jobPrefsView,
+                this.skillsFilterView,
+                this.skillsView,
+                this.chatsView];
         },
 
         initialize: function(options) {
@@ -367,8 +414,12 @@ define([
             
             //child views
             this.jobPrefsView = null;
+            this.skillsFilterView = null;
             this.skillsView = null;
             this.chatsView = null;
+
+            // setup event listeners
+            this.addEventListener(EVENTS.UPDATE_SKILLS_FILTER, this.onSkillsFilterUpdated, this);
         },
 
         load: function() {
@@ -404,6 +455,17 @@ define([
                 model: this.model
             }).render();
 
+            // Create tuples for skills filters (displayName, dbValue)
+            var languages = {displayName: 'Languages', value: 'Language'};
+            var frameworks = {displayName: 'Frameworks', value: 'Framework'};
+            var persistence = {displayName: 'Persistence', value: 'Persistence'};
+            var filtersList = [languages, frameworks, persistence];
+
+            this.skillsFilterView = new UserSkillsFilterView({
+                el: this.$(this.skillsFilterSelector),
+                filtersList: filtersList
+            }).render();
+
             this.skillsView = new UserSkillsView({
                 el: this.$(this.skillsSelector),
                 collection: this.model.get_skills()
@@ -415,6 +477,16 @@ define([
             }).render();
 
             return this;
+        },
+
+        /**
+         * Handle when user updates their skills filter.
+         * @param event The DOM event
+         * @param eventBody Expecting the attribute 'filters' to be specified
+         * which provides a list of the active exclusion filters
+         */
+        onSkillsFilterUpdated: function(event, eventBody) {
+            this.skillsView.filter(eventBody.filters);
         }
     });
 

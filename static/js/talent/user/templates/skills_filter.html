@@ -1,0 +1,12 @@
+<div class="span2 well skills-filter">
+    <h5>Filters</h5>
+    <div class="control-group">
+        <div id="filter-options" class="controls">
+            <% _.each(filtersList, function(filter) { %>
+                <label class="checkbox">
+                    <input type="checkbox" checked="checked" name="<%= filter.displayName %>" value="<%= filter.value %>" id="<%= filter.value %>"><%= filter.displayName %>
+                </label>
+            <% }); %>
+        </div>
+    </div>
+</div>
