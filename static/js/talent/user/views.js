@@ -411,7 +411,6 @@ define([
         filter: function(exclusionFiltersList) {
             this.exclusionFilters = exclusionFiltersList;
             _.each(this.childViews, function(v) {
-                    // TODO why is type available without specifying it in isLoadedWith()?
                     if (_.contains(this.exclusionFilters, v.model.get_technology().get_type())) {
                         v.$el.hide();
                     }
