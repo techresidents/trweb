@@ -8,10 +8,12 @@
         <% } %>
 
         <a class="chat-title" href="/talent/playback/<%=model.id%>"><%= model.chat.topic.title %></a>
-        <span><%= fmt.date(model.start, 'MMM dd, yyyy')%></span>
-        <span> || </span>
-        <span><%= model.participants%> participants</span>
-        <span> || </span>
-        <span><%= model.chat.topic.duration %> mins</span>
+
+        <span class="chat-title-small">(<%= model.chat.topic.duration %> mins, </span>
+        <span class="chat-title-small"><%= model.participants%> participant<%= model.participants > 1 ? 's': ''%>)</span>
+        <span class="chat-title-small"> </span>
+        <span class="chat-title-small"> on <%= fmt.date(model.start, 'MM/dd/yy')%></span>
+
+
     <% } %>
 </div>

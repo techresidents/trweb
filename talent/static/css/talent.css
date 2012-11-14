@@ -256,3 +256,9 @@
     font-weight: bold;
     margin-right: 5px;
 }
+
+.chat-title-small {
+    font-size: 14px;
+    font-weight: normal;
+    color: #999;
+}
