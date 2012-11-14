@@ -29,7 +29,7 @@ define([
         collectionConstructor: UserCollection,
 
         fields: {
-            id: new fields.IntegerField({primaryKey: true}),
+            id: new fields.StringField({primaryKey: true}),
             first_name: new fields.StringField(),
             last_name: new fields.StringField(),
             email: new fields.StringField()

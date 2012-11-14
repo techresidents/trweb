@@ -29,7 +29,14 @@ define([
         
         fields: {
             id: new fields.StringField({primaryKey: true}),
-            start: new fields.DateTimeField({nullable: true})
+            topic_id: new fields.StringField(),
+            type: new fields.StringField(),
+            start: new fields.DateTimeField({nullable: true}),
+            end: new fields.DateTimeField({nullable: true}),
+            registration_start: new fields.DateTimeField({nullable: true}),
+            registration_end: new fields.DateTimeField({nullable: true}),
+            checkin_start: new fields.DateTimeField({nullable: true}),
+            checkin_end: new fields.DateTimeField({nullable: true})
         },
         
         relatedFields: {

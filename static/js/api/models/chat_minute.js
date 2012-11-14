@@ -32,7 +32,7 @@ define([
         fields: {
             id: new fields.StringField({primaryKey: true}),
             chat_session_id: new fields.StringField(),
-            topic_id: new fields.IntegerField(),
+            topic_id: new fields.StringField(),
             start: new fields.DateTimeField(),
             end: new fields.DateTimeField()
         },

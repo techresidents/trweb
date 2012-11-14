@@ -26,12 +26,12 @@ define([
         collectionConstructor: TopicCollection,
         
         fields: {
-            id: new fields.IntegerField({primaryKey: true}),
+            id: new fields.StringField({primaryKey: true}),
             type: new fields.StringField({defaultValue: "DEFAULT"}),
             title: new fields.StringField(),
             description: new fields.StringField(),
-            parent_id: new fields.IntegerField({nullable: true}),
-            user_id: new fields.IntegerField({nullable: true}),
+            parent_id: new fields.StringField({nullable: true}),
+            user_id: new fields.StringField({nullable: true}),
             rank: new fields.IntegerField(),
             "public": new fields.BooleanField({defaultValue: false}),
             level: new fields.IntegerField({nullable: true}),

@@ -31,7 +31,7 @@ define([
             id: new fields.IntegerField({primaryKey: true}),
             yrs_experience: new fields.IntegerField(),
             expertise: new fields.StringField(),
-            user_id: new fields.IntegerField(),
+            user_id: new fields.StringField(),
             technology_id: new fields.IntegerField()
         },
 

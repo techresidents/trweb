@@ -193,6 +193,9 @@ define([
                 result = Math.floor(value);
             } else if(_.isString(value)) {
                 result = parseInt(value, 10);
+                if(_.isNaN(result)) {
+                    throw new Error(this.name + ":invalid integer");
+                }
             } else {
                 throw new Error(this.name + ":invalid integer");
             }

@@ -31,7 +31,7 @@ define([
         
         fields: {
             id: new fields.StringField({primaryKey: true}),
-            chat_id: new fields.IntegerField(),
+            chat_id: new fields.StringField(),
             connect: new fields.DateTimeField({nullable: true}),
             publish: new fields.DateTimeField({nullable: true}),
             start: new fields.DateTimeField({nullable: true}),

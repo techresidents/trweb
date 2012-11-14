@@ -28,7 +28,7 @@ define([
         fields: {
             id: new fields.IntegerField({primaryKey: true}),
             type: new fields.StringField(),
-            user_id: new fields.IntegerField(),
+            user_id: new fields.StringField(),
             salary_start: new fields.IntegerField({nullable: true}),
             salary_end: new fields.IntegerField({nullable: true})
         },
