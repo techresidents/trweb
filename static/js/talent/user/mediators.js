@@ -3,12 +3,14 @@ define([
     'common/notifications',
     'core/mediator',
     'api/models',
+    'talent/notifications',
     'talent/user/views'
 ], function(
     _,
     notifications,
     mediator,
     api,
+    talent_notifications,
     user_views) {
 
     /**
@@ -45,6 +47,8 @@ define([
                     model: user
                 });
 
+                this.view.addEventListener(user_views.EVENTS.PLAY_CHAT, this.onPlay, this);
+
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
                     view: this.view,
@@ -65,6 +69,15 @@ define([
                     this.view = null;
                 }
             }
+        },
+
+        onPlay: function(e, eventBody) {
+            var notificationBody = {
+                chatSession: eventBody.chatSession,
+                chatMinute: eventBody.chatMinute
+            };
+            console.log(notificationBody);
+            this.facade.trigger(talent_notifications.PLAYER_PLAY, notificationBody);
         }
 
     }, {

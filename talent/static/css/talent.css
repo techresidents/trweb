@@ -127,13 +127,12 @@
   margin-left: 120px;
 }
 
+
 .user-logo {
     background-image: url("../img/person.png");
     background-repeat: no-repeat;
     background-size: 100%;
     background-position: center;
-    height: 90px;
-    padding-bottom: 5px;
 }
 
 .user-logo.speaking {
@@ -162,6 +161,15 @@
 
 .user-position-prefs-container a:hover {
     cursor: pointer;
+}
+
+.user-position-prefs-container .user-logo {
+    background-image: url("../img/person.png");
+    background-repeat: no-repeat;
+    background-size: 120px 90px;
+    background-position: left center;
+    height: 90px;
+    padding-bottom: 5px;
 }
 
 .user-section-border {
@@ -233,3 +241,11 @@
     padding-bottom: 20px;
 }
 
+#chat-sessions > div {
+    margin-bottom: 5px;
+}
+
+#chat-sessions .btn {
+    margin-bottom: 5px;
+    margin-right: 5px;
+}

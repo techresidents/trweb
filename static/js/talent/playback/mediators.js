@@ -13,6 +13,7 @@ define([
     api,
     talent_notifications,
     playback_views,
+    user_views,
     player_proxies) {
 
     /**

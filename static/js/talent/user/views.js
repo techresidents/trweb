@@ -24,6 +24,14 @@ define([
     chat_template) {
 
     /**
+     * User View Events
+     */
+    var EVENTS = {
+        UPDATE_SKILLS_FILTER: 'user:updateSkillsFilter',
+        PLAY_CHAT: 'user:playChat'
+    };
+
+    /**
      * Talent user job preferences view.
      * @constructor
      * @param {Object} options
@@ -174,6 +182,10 @@ define([
      */
     var UserChatSessionView = view.View.extend({
 
+        events: {
+            'click .play': 'play'
+        },
+
         initialize: function(options) {
             this.template = _.template(chat_template);
             this.model.bind('loaded', this.loaded, this);
@@ -202,6 +214,18 @@ define([
             };
             this.$el.html(this.template(context));
             return this;
+        },
+
+        /**
+         * Play a chat
+         * @param e The DOM event
+         */
+        play: function(e) {
+            var eventBody = {
+                chatSession: this.model,
+                chatMinute: null // this implies start playing chat from beginning
+            };
+            this.triggerEvent(EVENTS.PLAY_CHAT, eventBody);
         }
     });
 
@@ -262,17 +286,9 @@ define([
             }).render();
 
             this.childViews.push(view);
-
             this.$(this.chatSessionsSelector).append(view.el);
         }
     });
-    
-    /**
-     * User View Events
-     */
-    var EVENTS = {
-        UPDATE_SKILLS_FILTER: 'user:updateSkillsFilter'
-    };
 
     /**
      * Talent user skills filter view.
@@ -302,13 +318,16 @@ define([
         },
 
         // TODO add doc
-        filterUpdated: function(){
+        filterUpdated: function(e){
             var exclusionFilters = [];
             // get all disabled filters
             this.$(".skills-filter input:checkbox:not(:checked)").each(function() {
                 exclusionFilters.push($(this).val()); // here 'this' refers to the element returned by each()
             });
-            this.triggerEvent(EVENTS.UPDATE_SKILLS_FILTER, {filters: exclusionFilters});
+            var eventBody = {
+                filters: exclusionFilters
+            };
+            this.triggerEvent(EVENTS.UPDATE_SKILLS_FILTER, eventBody);
         }
     });
 
@@ -477,6 +496,7 @@ define([
         chatsSelector: '#user-chats',
 
         events: {
+            'user:updateSkillsFilter': 'onSkillsFilterUpdated'
         },
 
         childViews: function() {
@@ -501,9 +521,6 @@ define([
             this.skillsFilterView = null;
             this.skillsView = null;
             this.chatsView = null;
-
-            // setup event listeners
-            this.addEventListener(EVENTS.UPDATE_SKILLS_FILTER, this.onSkillsFilterUpdated, this);
         },
 
         load: function() {
@@ -572,6 +589,7 @@ define([
         onSkillsFilterUpdated: function(event, eventBody) {
             this.skillsView.filter(eventBody.filters);
         }
+
     });
 
     return {
