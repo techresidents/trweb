@@ -52,6 +52,10 @@
     margin-bottom: 30px;
 }
 
+.playback-user p {
+    text-align: center;
+}
+
 .playback-user.participant1 { 
     border: 3px solid #00AEEF;
     margin-bottom: 10px;

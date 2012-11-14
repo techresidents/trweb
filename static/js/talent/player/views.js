@@ -115,20 +115,24 @@ define([
         },
 
         render: function() {
-            var rootMinute, activeMinute, context = {};
+            var rootMinute, activeMinute;
+            var context = {
+                title: '',
+                chatSession: null
+            };
+
             if(this.model.state() !== this.model.STATE.EMPTY) {
                 rootMinute = this.model.chatSession().get_chat_minutes().first();
                 activeMinute = this.model.chatMinute();
                 if(rootMinute.id !== activeMinute.id) {
-                    context.title = rootMinute.get_topic().get_title();
-                    context.subtitle = activeMinute.get_topic().get_title();
+                    context.title = rootMinute.get_topic().get_title()
+                        + ' - ' +  activeMinute.get_topic().get_title();
                 } else {
                     context.title = activeMinute.get_topic().get_title();
-                    context.subtitle = '';
                 }
+                context.chatSession = this.model.chatSession().toJSON();
             } else {
                 context.title = 'Nothing to play.';
-                context.subtitle = '';
             }
             
             this.$el.html(this.template(context));
