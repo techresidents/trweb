@@ -1,12 +1,13 @@
 
 
 
-<div class="position-prefs-well">
+<div class="user-position-prefs-container user-section-border-left">
 
     <div class="user-logo"></div>
+    <p class="user-ID"><small>ID: <%= model.id %></small></p>
 
     <div>
-        <h4>Seeking</h4>
+        <h4>Seeking jobs</h4>
         <ul class="position-prefs">
             <% _.each(model.position_prefs, function(position) { %>
                 <li><%= position.type %> <%= fmt.num(position.salary_start, 'cn0') %></li>

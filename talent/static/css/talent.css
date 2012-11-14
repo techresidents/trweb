@@ -123,24 +123,71 @@
   margin-left: 120px;
 }
 
+
+
+
 .user-logo {
     background-image: url("../img/person.png");
     background-repeat: no-repeat;
-    background-size: 100%;
-    background-position: center;
-    width: 120px;
-    height: 110px;
-}
-
-.user-skill {
-    margin-bottom: 10px;
+    background-size: 120px 90px;
+    background-position: left center;
+    height: 90px;
+    padding-bottom: 5px;
 }
 
 .user-logo.speaking {
     background-image: url("../img/person-speaking.png");
 }
 
-.user-skill > div {
+
+
+.user-ID {
+    padding-left: 45px;
+}
+
+.no-span-margin {
+    margin-left: 0px;
+}
+
+
+.user-position-prefs-container {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 19px;
+    padding-right: 19px;
+    padding-bottom: 19px;
+    padding-top: 0px;
+}
+
+.user-position-prefs-container a:hover {
+    cursor: pointer;
+}
+
+.user-section-border {
+    border: 1px solid #E3E3E3;
+}
+
+.user-section-border-top {
+    border-top: 1px solid #E3E3E3;
+}
+
+.user-section-border-bottom {
+    border-bottom: 1px solid #E3E3E3;
+}
+
+.user-section-border-left {
+    border-left: 1px solid #E3E3E3;
+}
+
+.user-section-border-right {
+    border-right: 1px solid #E3E3E3;
+}
+
+.user-skills-container {
+    margin-bottom: 10px;
+}
+
+.user-skills-container > div {
     display: inline-block;
     border: 1px solid #E3E3E3;
     border-radius: 4px 4px 4px 4px;
@@ -152,55 +199,36 @@
     line-height: 36px;
 }
 
-.user-skill-years {
+.user-skill-years-text {
     font-size: 12px;
     line-height: 36px;
 }
 
-.user-beginner-skills > div {
+.user-skills-beginner > div {
     background-color: #F2DEDE;
 }
 
-.user-intermediate-skills > div {
+.user-skills-intermediate > div {
     background-color: #D9EDF7;
 }
 
-.user-expert-skills > div {
+.user-skills-expert > div {
     background-color: #DFF0D8;
 }
 
-.user-section-break {
-    border-bottom: 1px solid #E3E3E3;
-}
-
-.skills-list {
+.user-skills-list-container {
     padding-left: 20px;
     border-left-style: solid;
     border-left-color: #E3E3E3;
     border-left-width: 1px;
 }
-.skills-filter-well {
+
+.user-skills-filter-container {
     margin-left: 0px;
     margin-right: 0px;
     padding-top: 0px;
     padding-right: 20px;
     padding-left: 20px;
     padding-bottom: 20px;
-}
-
-.position-prefs-well {
-    margin-left: 0px;
-    margin-right: 0px;
-    padding-left: 19px;
-    padding-right: 19px;
-    padding-bottom: 19px;
-    padding-top: 0px;
-    border-left-style: solid;
-    border-left-color: #E3E3E3;
-    border-left-width: 1px;
-}
-
-.no-span-margin {
-    margin-left: 0px;
 }
 
