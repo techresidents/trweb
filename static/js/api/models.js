@@ -10,7 +10,9 @@ define([
     'api/models/archive',
     'api/models/skill',
     'api/models/position_pref',
-    'api/models/chat_minute'
+    'api/models/chat_minute',
+    'api/models/speaking_marker',
+    'api/models/chat_tag'
 
 ], function(
     $,
@@ -24,7 +26,9 @@ define([
     archive_models,
     skill_models,
     position_pref_models,
-    chat_minute_models) {
+    chat_minute_models,
+    speaking_marker_models,
+    chat_tag_models) {
 
     return {
         Location: location_models.Location,
@@ -46,6 +50,10 @@ define([
         PositionPref: position_pref_models.PositionPref,
         PositinoPrefCollection: position_pref_models.PositionPrefCollection,
         ChatMinute: chat_minute_models.ChatMinute,
-        ChatMinuteCollection: chat_minute_models.ChatMinuteCollection
+        ChatMinuteCollection: chat_minute_models.ChatMinuteCollection,
+        SpeakingMarker: speaking_marker_models.SpeakingMarker,
+        SpeakingMarkerCollection: speaking_marker_models.SpeakingMarkerCollection,
+        ChatTag: chat_tag_models.ChatTag,
+        ChatTagCollection: chat_tag_models.ChatTagCollection
     };
 });

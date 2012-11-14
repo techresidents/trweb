@@ -15,6 +15,17 @@ define([
     xdBackbone,
     fields) {
 
+    /**
+     * ApiModel/ApiCollection backbone sync method.
+     * @param {String} method
+     * @param {ApiModel} or {ApiCollection} model
+     * @param {Object} options
+     *
+     * In addition to normal data syncing, this
+     * method will also update the model/collection
+     * load state and dispatch a 'loaded' event
+     * following a successful read.
+     */
     var sync = function(method, model, options) {
         var success = options.success;
         var error = options.error;
@@ -60,6 +71,19 @@ define([
         return xdBackbone.sync(method, model, options);
     };
 
+    /**
+     * ApiModel/ApiCollection each related method.
+     * @param {Array} or {String} relations, i.e. user__skills__technology
+     * @param {function} callback 
+     * @param {context} context (optional callback context) 
+     *   if not supplied context will default to model/collection.     
+     * @param {Number} (internal depth counter)
+     *
+     * Traverses the supplied relation path,
+     * i.e. user__skills__technology, and invokes the specified callback
+     * for each related model/collection.
+     *
+     */
     var eachRelated = function(relations, callback, context, depth) {
         var relation;
         
@@ -95,6 +119,19 @@ define([
         }
     };
 
+    /**
+     * ApiModel/ApiCollection isLoadedWith method.
+     * @param {String} relations, i.e. user__skills__technology
+     * @return {Object} status object containing the following:
+     *   loaded: {boolean} true if all relations are loaded, false otherwise
+     *   fetcher: if loaded is false, a function, which when called, will
+     *   load all mising data.
+     *
+     * Tests if all models/collections in the specified
+     * relation path are loaded. Note that in the case of ApiCollection's,
+     * only the first model is tested as an optimization.
+     *
+     */
     var isLoadedWith = function() {
         var i, j, current, collection, relation, relations, query;
         var fetchers = [];
@@ -190,7 +227,14 @@ define([
         return result;
     };
 
-
+    
+    /**
+     * ApiQuery
+     * @constructor
+     * @param {Object} options
+     *   model: {ApiModel} (required if collection not provided)
+     *   collection: {ApiCollection} (required if model not provided)
+     */
     var ApiQuery = base.Base.extend({
         initialize: function(options) {
             options = options || {};
@@ -201,7 +245,7 @@ define([
             this.slices = [];
         },
 
-        filter: function(filters) {
+        filterBy: function(filters) {
             _.extend(this.filters, filters);
             return this;
         },
@@ -267,7 +311,13 @@ define([
         }
     });
 
-
+    
+    /**
+     * ApiModel
+     * @constructor
+     * @param {Object} attributes
+     * @param {Object} options
+     */
     var ApiModel = Backbone.Model.extend({
 
         constructor: function(attributes, options) {
@@ -400,8 +450,8 @@ define([
 
         sync: sync,
 
-        filter: function(filters) {
-            return new ApiQuery({model: this}).filter(filters);
+        filterBy: function(filters) {
+            return new ApiQuery({model: this}).filterBy(filters);
         },
 
         withRelated: function() {
@@ -452,6 +502,12 @@ define([
         return child;
     };
 
+    /**
+     * ApiCollection
+     * @constructor
+     * @param {Array} models
+     * @param {Object} options
+     */
     var ApiCollection = Backbone.Collection.extend({
 
         constructor: function(models, options) {
@@ -494,8 +550,8 @@ define([
 
         sync: sync,
 
-        filter: function(filters) {
-            return new ApiQuery({collection: this}).filter(filters);
+        filterBy: function(filters) {
+            return new ApiQuery({collection: this}).filterBy(filters);
         },
 
         withRelated: function() {

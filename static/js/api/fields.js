@@ -337,8 +337,19 @@ define([
                 return relation;
             };
             
+            //construct setter for relation instance
+            var setter = function(instance) {
+                if(instance) {
+                    var relationInstanceName = "_" + fieldName;
+                    this[relationInstanceName] = instance;
+                }
+            };
+
+            
             this.getterName = "get_" + fieldName;
+            this.setterName = "set_" + fieldName;
             constructor.prototype[this.getterName] = getter;
+            constructor.prototype[this.setterName] = setter;
         }
 
     });
