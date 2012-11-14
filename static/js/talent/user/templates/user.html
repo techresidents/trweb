@@ -1,40 +1,22 @@
-<div class="row">
-     <div class="span2">
-         <div class="user-logo" style="width:140px; height: 100px;"></div>
-         <span><%= model.id %></span>
-     </div>
-     <div class="span1" style="margin-top: 40px;">
-        <span>Actively</span>
-        <span>Seeking</span>
-     </div>
-     <div class="span2 well user-well">
-         <% _.each(model.position_prefs, function(position) { %>
-         <%= position.type %> <%= fmt.num(position.salary_start, 'cn0') %>
-         <% }); %>
-     </div>
-     <div class="span1" style="margin-top: 40px;">
-        <span>with</span>
-     </div>
-     <div class="span2 well user-well">
-         <% _.each(model.technology_prefs, function(technology) { %>
-         <%= technology.name %>
-         <% }); %>
-     </div>
-     <div class="span1" style="margin-top: 40px;">
-        <span>located</span>
-        <span>in</span>
-     </div>
-     <div class="span2 well user-well">
-         <% _.each(model.location_prefs, function(location) { %>
-            <div>
-            <% if(location.city) { %>
-            <%= location.city %>, <%= location.state %>
-            <% } else { %>
-            <%= location.state %>
-            <% } %>
+<div class="container">
+    <div class="row">
+        <div class="span8">
+            <h3 class="user-section-border-bottom">Skills</h3>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="span9">
+            <div id="user-skills-filter"></div>
+            <div id="user-skills"></div>
+            <div class="row">
+                <div id="user-chats"></div>
             </div>
-         <% }); %>
-     </div>
- </div>
- <div id="user-skills" class="row"></div>
- <div id="user-chats" class="row"></div>
+        </div>
+        <div class="span3 no-span-margin">
+            <div id="user-job-prefs"></div>
+        </div>
+    </div>
+</div>
+
+
+

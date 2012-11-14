@@ -10,7 +10,7 @@
     right: 0;
     z-index: 99;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABaCAYAAACBvMdKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAADJJREFUeNrsyjEBACAIADCwf0bMgAW0Ar/bvazaNwZWDGV3H1EURVEURVEURfHb+AQYAAGvT73//pyjAAAAAElFTkSuQmCC);
-    background-repeat-x;
+    background-repeat: repeat-x;
 }
 
 .main-content {
@@ -127,63 +127,112 @@
   margin-left: 120px;
 }
 
+
+
+
 .user-logo {
     background-image: url("../img/person.png");
     background-repeat: no-repeat;
-    background-size: 100%;
-    background-position: center;
+    background-size: 120px 90px;
+    background-position: left center;
+    height: 90px;
+    padding-bottom: 5px;
 }
 
 .user-logo.speaking {
     background-image: url("../img/person-speaking.png");
 }
 
-.user-beginner-skills {
-    margin-bottom: 5px;
+
+
+.user-ID {
+    padding-left: 45px;
 }
 
-.user-beginner-skills > div {
-    display: inline;
-    background-color: #F2DEDE;
+.no-span-margin {
+    margin-left: 0px;
+}
+
+
+.user-position-prefs-container {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 19px;
+    padding-right: 19px;
+    padding-bottom: 19px;
+    padding-top: 0px;
+}
+
+.user-position-prefs-container a:hover {
+    cursor: pointer;
+}
+
+.user-section-border {
+    border: 1px solid #E3E3E3;
+}
+
+.user-section-border-top {
+    border-top: 1px solid #E3E3E3;
+}
+
+.user-section-border-bottom {
+    border-bottom: 1px solid #E3E3E3;
+}
+
+.user-section-border-left {
+    border-left: 1px solid #E3E3E3;
+}
+
+.user-section-border-right {
+    border-right: 1px solid #E3E3E3;
+}
+
+.user-skills-container {
+    margin-bottom: 10px;
+}
+
+.user-skills-container > div {
+    display: inline-block;
     border: 1px solid #E3E3E3;
     border-radius: 4px 4px 4px 4px;
     margin-right: 5px;
-    padding: 5px;
-    font-size: 14px;
-    line-height: 28px;
-}
-
-.user-intermediate-skills {
-    margin-bottom: 5px;
-}
-
-.user-intermediate-skills > div {
-    display: inline;
-    background-color: #D9EDF7;
-    border: 1px solid #E3E3E3;
-    border-radius: 4px 4px 4px 4px;
-    margin-right: 5px;
-    padding: 5px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
     font-size: 18px;
     line-height: 36px;
 }
 
-.user-expert-skills {
-    margin-bottom: 5px;
+.user-skill-years-text {
+    font-size: 12px;
+    line-height: 36px;
 }
 
-.user-expert-skills > div {
-    display: inline;
+.user-skills-beginner > div {
+    background-color: #F2DEDE;
+}
+
+.user-skills-intermediate > div {
+    background-color: #D9EDF7;
+}
+
+.user-skills-expert > div {
     background-color: #DFF0D8;
-    border: 1px solid #E3E3E3;
-    border-radius: 4px 4px 4px 4px;
-    margin-right: 5px;
-    padding: 5px;
-    font-size: 22px;
-    line-height: 44px;
 }
 
-.user-well {
-    padding: 12px;
-    min-height: 80px;
+.user-skills-list-container {
+    padding-left: 20px;
+    border-left-style: solid;
+    border-left-color: #E3E3E3;
+    border-left-width: 1px;
 }
+
+.user-skills-filter-container {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-top: 0px;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-bottom: 20px;
+}
+
