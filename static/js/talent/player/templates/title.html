@@ -1,5 +1,5 @@
-<% if(subtitle) { %>
-<p><%= title %> - <%= subtitle %></p>
+<% if(chatSession) { %>
+<p><a href="/talent/playback/<%= chatSession.id %>"><%= title %></a></p>
 <% } else { %>
 <p><%= title %></p>
 <% } %>

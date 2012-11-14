@@ -15,7 +15,8 @@
         'backbone.localStorage': '3ps/backbone/localStorage',
         easyXDM: '3ps/easyXDM/easyXDM',
         raphael: '3ps/raphael/raphael',
-        spin: '3ps/spin/spin'
+        spin: '3ps/spin/spin',
+        highcharts: '3ps/highcharts/js/highcharts'
     },
 
     shim: {
@@ -51,6 +52,11 @@
         'spin': {
             deps: [],
             exports: 'Spinner'
+        },
+
+        'highcharts': {
+            deps: ['jquery'],
+            exports: 'Highcharts'
         }
     }
 })
