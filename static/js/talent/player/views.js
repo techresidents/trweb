@@ -132,7 +132,7 @@ define([
                 }
                 context.chatSession = this.model.chatSession().toJSON();
             } else {
-                context.title = 'Nothing to play.';
+                context.title = 'Select a chat for playback';
             }
             
             this.$el.html(this.template(context));
@@ -235,11 +235,13 @@ define([
                     }
                 }
             });
-
+            
+            /*
             this.expandView = new PlayerExpandView({
                 el: this.$('.player-expand'),
                 model: this.model
             }).render();
+            */
 
             return this;
         },
