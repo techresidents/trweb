@@ -127,14 +127,11 @@
   margin-left: 120px;
 }
 
-
-
-
 .user-logo {
     background-image: url("../img/person.png");
     background-repeat: no-repeat;
-    background-size: 120px 90px;
-    background-position: left center;
+    background-size: 100%;
+    background-position: center;
     height: 90px;
     padding-bottom: 5px;
 }
