@@ -1,7 +1,7 @@
 
 require.config({
 
-    //urlArgs: 'bust ' + new Date().getTime(),
+//    urlArgs: 'bust ' + new Date().getTime(),
 
     paths: {
         globalize: '3ps/globalize/globalize',
@@ -13,7 +13,8 @@ require.config({
         'backbone.localStorage': '3ps/backbone/localStorage',
         easyXDM: '3ps/easyXDM/easyXDM',
         raphael: '3ps/raphael/raphael',
-        spin: '3ps/spin/spin'
+        spin: '3ps/spin/spin',
+        highcharts: '3ps/highcharts/js/highcharts.src'
     },
 
     shim: {
@@ -51,6 +52,11 @@ require.config({
         'spin': {
             deps: [],
             exports: 'Spinner'
+        },
+
+        'highcharts': {
+            deps: ['jquery'],
+            exports: 'Highcharts'
         }
     }
 });
