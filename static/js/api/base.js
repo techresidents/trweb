@@ -190,8 +190,10 @@ define([
                 var errorCallback = function() {
                     error += 1;
                     if(error + success >= fetchers.length) {
-                        if(error && _.isFunction(options.error)) {
-                            options.error.apply(this, arguments);
+                        if(error) {
+                            if(_.isFunction(options.error)) {
+                                options.error.apply(this, arguments);
+                            }
                         }
                         else {
                             if(_.isFunction(options.success)) {
@@ -203,8 +205,10 @@ define([
                 var successCallback = function(instance, response) {
                     success += 1;
                     if(error + success >= fetchers.length) {
-                        if(error && _.isFunction(options.error)) {
-                            options.error.apply(this, arguments);
+                        if(error) {
+                            if(_.isFunction(options.error)) {
+                                options.error.apply(this, arguments);
+                            }
                         }
                         else {
                             if(_.isFunction(options.success)) {
