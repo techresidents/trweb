@@ -2,12 +2,21 @@
 <div class="span7 no-span-margin user-skills-list-container">
     <div id="expert-skills" class="user-skills-container user-skills-expert" >
         <h4>Expert</h4>
+        <% if (!expertCount) { %>
+            <span><em>No skills provided</em></span>
+        <% } %>
     </div>
     <div id="intermediate-skills" class="user-skills-container user-skills-intermediate" >
         <h4>Intermediate</h4>
+        <% if (!intermediateCount) { %>
+        <span><em>No skills provided</em></span>
+        <% } %>
     </div>
     <div id="beginner-skills" class="user-skills-container user-skills-beginner" >
         <h4>Beginner</h4>
+        <% if (!beginnerCount) { %>
+        <span><em>No skills provided</em></span>
+        <% } %>
     </div>
 </div>
 

@@ -442,7 +442,17 @@ define([
             });
 
             this.childViews = [];
-            var context = this.collection.toJSON({withRelated: true});
+
+            var expertiseCounts = _.countBy(this.collection.models, function(skill) {
+                return skill.get_expertise();
+            });
+
+            var context = {
+                collection: this.collection.toJSON(),
+                expertCount: expertiseCounts.Expert,
+                intermediateCount: expertiseCounts.Intermediate,
+                beginnerCount: expertiseCounts.Beginner
+            };
             this.$el.html(this.template(context));
 
             // Sort skills such that skills with the most yrs experience
