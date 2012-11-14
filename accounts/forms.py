@@ -19,7 +19,7 @@ from django.utils import timezone
 from techresidents_web.common.forms import JSONField
 from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType, Location
 from techresidents_web.accounts.models import CodeType, Code, OneTimePassword, OneTimePasswordType, Request, Skill
-from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, LocationPref, Prefs
+from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, LocationPref
 
 
 # Some field size constants for this form.
@@ -665,10 +665,10 @@ class ProfileJobsForm(forms.Form):
 
         # Update general job prefs
         notification_prefs = self.cleaned_data.get('notifications_form_data')
-        job_prefs, created = Prefs.objects.get_or_create(user=self.user)
+        profile = self.user.get_profile()
         if notification_prefs['emailNewJobOpps'] is not None:
-            job_prefs.email_new_job_opps = notification_prefs['emailNewJobOpps']
-        job_prefs.save()
+            profile.email_new_job_opps = notification_prefs['emailNewJobOpps']
+        profile.save()
 
         return
 
