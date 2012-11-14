@@ -31,41 +31,16 @@ define([
      */
     var UserJobPrefsView = view.View.extend({
 
-        expandableItemsSelector: '.expandable-list-items',
-        slideToggleSelector: '.slide-toggle',
         positionPrefsSelector: '.position-prefs',
         locationPrefsSelector: '.location-prefs',
         technologyPrefsSelector: '.technology-prefs',
+        expandableItemsSelector: '.expandable-list-items',
+        slideToggleSelector: '.slide-toggle',
 
         events: {
             'click .position-prefs .slide-toggle' : 'togglePositionPrefs',
             'click .location-prefs .slide-toggle' : 'toggleLocationPrefs',
             'click .technology-prefs .slide-toggle' : 'toggleTechnologyPrefs'
-        },
-
-        togglePositionPrefs: function() {
-            this.toggle(this.positionPrefsSelector);
-        },
-
-        toggleLocationPrefs: function() {
-          this.toggle(this.locationPrefsSelector);
-        },
-
-        toggleTechnologyPrefs: function() {
-            this.toggle(this.technologyPrefsSelector);
-        },
-
-        toggle: function(classSelector) {
-            var itemsSelector = classSelector + ' ' + this.expandableItemsSelector;
-            var sliderSelector = classSelector + ' ' + this.slideToggleSelector;
-            this.$(itemsSelector).slideToggle(200, function() {
-                if ($(sliderSelector).text() === 'more') {
-                    $(sliderSelector).text('less');
-                }
-                else {
-                    $(sliderSelector).text('more');
-                }
-            });
         },
 
         initialize: function(options) {
@@ -112,20 +87,82 @@ define([
             this.$el.html(this.template(context));
 
             // Add style to make lists expandable
-            var expandableSections = [this.locationPrefsSelector, this.technologyPrefsSelector];
+            var expandableSections = [
+                this.positionPrefsSelector,
+                this.locationPrefsSelector,
+                this.technologyPrefsSelector];
             _.each(expandableSections, this.addExpandableStyle, this);
 
             return this;
         },
 
-        addExpandableStyle: function(classSelector) {
-            this.$(classSelector).children('li').each(function(i) {
-                // Always show the first 3 items; make the rest of the items expandable
-                if (i > 2) {
+        /**
+         * Function to make sections of this view expandable.
+         * @param selector Specify a CSS selector which will be
+         * used to indicate which sections are made expandable.
+         */
+        addExpandableStyle: function(selector) {
+            // The current view is broken up into discrete logical
+            // sections; each with a set of list elements <li>.
+            this.$(selector).children('li').each(function(i) {
+                // Always show the first 3 list items;
+                // make the rest of the items expandable.
+                var numItemsAlwaysShown = 3;
+                if (i > numItemsAlwaysShown-1) { // subtract 1 for 0-index iterator
                     $(this).addClass('expandable-list-items');
-                    $(this).hide();
+                    $(this).hide(); // default to hiding expandable items
                 }
             });
+        },
+
+        /**
+         * Function to handle expanding/contracting the user's position preference.
+         */
+        togglePositionPrefs: function() {
+            this.toggleExpandedView(this.positionPrefsSelector);
+        },
+
+        /**
+         * Function to handle expanding/contracting the user's location preference.
+         */
+        toggleLocationPrefs: function() {
+            this.toggleExpandedView(this.locationPrefsSelector);
+        },
+
+        /**
+         * Function to handle expanding/contracting the user's technology preference.
+         */
+        toggleTechnologyPrefs: function() {
+            this.toggleExpandedView(this.technologyPrefsSelector);
+        },
+
+        /**
+         * Function to expand/contract preference info.
+         * @param selector Specify a selector which will be used to
+         * target the toggle button
+         */
+        toggleExpandedView: function(selector) {
+            // Toggle the expandable items
+            var slideSpeed = 200; //millis
+            var itemsSelector = selector + ' ' + this.expandableItemsSelector;
+            this.$(itemsSelector).slideToggle(slideSpeed);
+
+            // Update text of toggle button
+            var sliderSelector = selector + ' ' + this.slideToggleSelector;
+            this.toggleExpandButtonText(sliderSelector);
+        },
+
+        /**
+         * Update the toggle button's text
+         * @param selector CSS selector find the text to update
+         */
+        toggleExpandButtonText: function(selector) {
+            if ($(selector).text() === 'more') {
+                $(selector).text('less');
+            }
+            else {
+                $(selector).text('more');
+            }
         }
     });
 
