@@ -4,14 +4,16 @@ define([
     'core/mediator',
     'api/models',
     'talent/notifications',
-    'talent/user/views'
+    'talent/user/views',
+    'talent/player/proxies'
 ], function(
     _,
     notifications,
     mediator,
     api,
     talent_notifications,
-    user_views) {
+    user_views,
+    player_proxies) {
 
     /**
      * User Mediator
@@ -36,6 +38,8 @@ define([
 
         initialize: function(options) {
             this.view = null;
+            this.playerStateProxy = this.facade.getProxy(
+                player_proxies.PlayerStateProxy.NAME);
         },
 
         onCreateView: function(notification) {
@@ -44,7 +48,8 @@ define([
                     id: notification.options.id
                 });
                 this.view = new user_views.UserView({
-                    model: user
+                    model: user,
+                    playerState: this.playerStateProxy.model
                 });
 
                 this.view.addEventListener(user_views.EVENTS.PLAY_CHAT, this.onPlay, this);
@@ -76,7 +81,6 @@ define([
                 chatSession: eventBody.chatSession,
                 chatMinute: eventBody.chatMinute
             };
-            console.log(notificationBody);
             this.facade.trigger(talent_notifications.PLAYER_PLAY, notificationBody);
         }
 

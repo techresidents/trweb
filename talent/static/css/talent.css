@@ -246,6 +246,13 @@
 }
 
 #chat-sessions .btn {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    margin-right: 5px;
+}
+
+.chat-title {
+    font-size: 18px;
+    line-height: 20px;
+    font-weight: bold;
     margin-right: 5px;
 }

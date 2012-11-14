@@ -187,7 +187,9 @@ define([
         },
 
         initialize: function(options) {
+            this.playerState = options.playerState;
             this.template = _.template(chat_template);
+            this.playerState.bind('change', this.render, this);
             this.model.bind('loaded', this.loaded, this);
             this.model.bind('change', this.render, this);
             
@@ -210,10 +212,24 @@ define([
         render: function() {
             var context = {
                 model: this.model.toJSON({withRelated: true}),
-                fmt: this.fmt
+                fmt: this.fmt,
+                playing: this.isPlaying()
             };
             this.$el.html(this.template(context));
             return this;
+        },
+
+        /**
+         * Returns true if the chat view is playing.
+         * @return {Boolean}
+         */
+        isPlaying: function() {
+            var result = false;
+            var chatSession = this.playerState.chatSession();
+            if(chatSession && chatSession.id === this.model.id) {
+                result = this.playerState.state() === this.playerState.STATE.PLAYING;
+            }
+            return result;
         },
 
         /**
@@ -243,6 +259,7 @@ define([
         chatSessionsSelector: '#chat-sessions',
 
         initialize: function(options) {
+            this.playerState = options.playerState;
             this.template =  _.template(chats_template);
             this.collection.bind('loaded', this.loaded, this);
             this.collection.bind('reset', this.render, this);
@@ -282,7 +299,8 @@ define([
 
         added: function(model) {
             var view = new UserChatSessionView({
-                model: model
+                model: model,
+                playerState: this.playerState
             }).render();
 
             this.childViews.push(view);
@@ -508,6 +526,7 @@ define([
         },
 
         initialize: function(options) {
+            this.playerState = options.playerState;
             this.template =  _.template(user_template);
             this.model.bind('loaded', this.loaded, this);
             this.model.bind('change', this.render, this);
@@ -574,7 +593,8 @@ define([
 
             this.chatsView = new UserChatSessionsView({
                 el: this.$(this.chatsSelector),
-                collection: this.model.get_chat_sessions()
+                collection: this.model.get_chat_sessions(),
+                playerState: this.playerState
             }).render();
 
             return this;
