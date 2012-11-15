@@ -100,6 +100,7 @@ SECRET_KEY = '9fm2xbrkfogfjmpmjpaq_ul=)$7-0gez(!dz*h@@3=exc^o26*'
 # to the template context.
 TEMPLATE_CONTEXT_PROCESSORS = (
     'techresidents_web.common.context_processors.google_analytics',
+    'techresidents_web.common.context_processors.cross_domain_server',
 )
 
 # List of callables that know how to import templates from various sources.

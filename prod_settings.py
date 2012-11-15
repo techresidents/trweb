@@ -63,12 +63,12 @@ REGISTRATION_REQUIRES_CODE = False
 TR_LOGIN_USING_HTTPS = True
 TR_XD_REMOTE = 'http://api.techresidents.com/static/js/easyXDM/cors/index.html'
 
+#Google Analytics
+GA_ID = 'UA-36319157-1'
+
 #Tokbox settings
 TOKBOX_API_KEY = '20288731'
 TOKBOX_API_SECRET = '8f8cd837895e064f56e506e952e09c63af396172'
-
-#Google Analytics
-GA_ID = 'UA-36319157-1'
 
 #Logging settings
 LOGGING = {
