@@ -94,7 +94,7 @@ define([
             };
             this.$el.html(this.template(context));
 
-            // Add style to make lists expandable
+            // Add CSS styles to make preference lists expandable
             var expandableSections = [
                 this.positionPrefsSelector,
                 this.locationPrefsSelector,
@@ -106,12 +106,12 @@ define([
 
         /**
          * Function to make sections of this view expandable.
-         * @param selector Specify a CSS selector which will be
-         * used to indicate which sections are made expandable.
+         * @param selector A CSS selector specifying the elements
+         * to make expandable.
          */
         addExpandableStyle: function(selector) {
             // The current view is broken up into discrete logical
-            // sections; each with a set of list elements <li>.
+            // sections; each with a unique set of list elements <li>.
             this.$(selector).children('li').each(function(i) {
                 // Always show the first 3 list items;
                 // make the rest of the items expandable.
@@ -146,8 +146,8 @@ define([
 
         /**
          * Function to expand/contract preference info.
-         * @param selector Specify a selector which will be used to
-         * target the toggle button
+         * @param selector CSS selector used to target
+         * which items are expanded/contracted.
          */
         toggleExpandedView: function(selector) {
             // Toggle the expandable items
@@ -162,7 +162,7 @@ define([
 
         /**
          * Update the toggle button's text
-         * @param selector CSS selector find the text to update
+         * @param selector CSS selector to find the text to update
          */
         toggleExpandButtonText: function(selector) {
             if ($(selector).text() === 'more') {
@@ -179,6 +179,7 @@ define([
      * @constructor
      * @param {Object} options
      *   model: ChatSession model (required)
+     *   playerState: PlayerState model (required)
      */
     var UserChatSessionView = view.View.extend({
 
@@ -220,7 +221,8 @@ define([
         },
 
         /**
-         * Returns true if the chat view is playing.
+         * Returns true if this chat session is playing
+         * in the main player (the PlayerView).
          * @return {Boolean}
          */
         isPlaying: function() {
@@ -233,7 +235,7 @@ define([
         },
 
         /**
-         * Play a chat
+         * Play this chat
          * @param e The DOM event
          */
         play: function(e) {
@@ -250,6 +252,7 @@ define([
      * @constructor
      * @param {Object} options
      *   collection: {ChatSessionCollection} (required)
+     *   playerState: PlayerState model (required)
      */
     var UserChatSessionsView = view.View.extend({
 
@@ -297,6 +300,11 @@ define([
             return this;
         },
 
+        /**
+         * Construct a view from the input model
+         * and append to this View.
+         * @param model ChatSession model
+         */
         added: function(model) {
             var view = new UserChatSessionView({
                 model: model,
@@ -316,10 +324,10 @@ define([
      */
     var UserSkillsFilterView = view.View.extend({
 
-        filterSelector: '.user-skills-filter',
+        filterSelector: '.user-skills-filter-container',
 
         events: {
-            'change .skills-filter input:checkbox' : 'filterUpdated'
+            'change .user-skills-filter-container input:checkbox' : 'filterUpdated'
         },
 
         initialize: function(options) {
@@ -335,11 +343,14 @@ define([
             return this;
         },
 
-        // TODO add doc
+        /**
+         * Handle when user modifies the skills filter
+         * @param e The DOM event
+         */
         filterUpdated: function(e){
             var exclusionFilters = [];
             // get all disabled filters
-            this.$(".skills-filter input:checkbox:not(:checked)").each(function() {
+            this.$(this.filterSelector + " input:checkbox:not(:checked)").each(function() {
                 exclusionFilters.push($(this).val()); // here 'this' refers to the element returned by each()
             });
             var eventBody = {
@@ -443,6 +454,7 @@ define([
 
             this.childViews = [];
 
+            // Count the number of items in each expertise group
             var expertiseCounts = _.countBy(this.collection.models, function(skill) {
                 return skill.get_expertise();
             });
@@ -460,17 +472,24 @@ define([
             var sortedSkillsList = this.collection.sortBy(function(model) {
                 return model.get_yrs_experience()*-1;
             }, this);
+
+            // Add skills to DOM in order
             _.each(sortedSkillsList, this.added, this);
 
-            // apply filter settings
+            // Apply any active filter settings
             this.filter(this.exclusionFilters);
 
-            //activate tooltips
+            // Activate tooltips
             this.$('[rel=tooltip]').tooltip();
 
             return this;
         },
 
+        /**
+         * Create view for the input model
+         * and append to the DOM
+         * @param model Skill model
+         */
         added: function(model) {
 
             var view = new UserSkillView({
@@ -492,6 +511,12 @@ define([
             }
         },
 
+        /**
+         * Show/Hide skill Views based upon filter options
+         * @param exclusionFiltersList A list of filters to apply.
+         * All views that match any of the input filters will be
+         * hidden from view.
+         */
         filter: function(exclusionFiltersList) {
             this.exclusionFilters = exclusionFiltersList;
             _.each(this.childViews, function(v) {
@@ -512,6 +537,7 @@ define([
      * @constructor
      * @param {Object} options
      *   model: {User} (required)
+     *   playerState: PlayerState model (required)
      */
     var UserView = view.View.extend({
 
