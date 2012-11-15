@@ -30,7 +30,8 @@ define([
 
         initialize: function(options) {
             this.proxy = this.facade.getProxy(session_proxies.ChatSessionProxy.NAME);
-
+            
+            /*
             this.view = new modal_views.ModalView({
                 title: 'Chat Feedback',
                 exitOnBackdropClick: false,
@@ -39,6 +40,16 @@ define([
                     model: new feedback_models.Feedback({
                         chatSessionId: this.proxy.sessionId
                     })
+                })
+            });
+            */
+
+            this.view = new modal_views.ModalView({
+                title: 'Chat Ended',
+                exitOnBackdropClick: false,
+                exitOnEscapeKey: false,
+                view: new feedback_views.NoFeedbackModalView({
+                    model: new feedback_models.Feedback()
                 })
             });
         },

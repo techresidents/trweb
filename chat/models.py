@@ -436,7 +436,6 @@ class ChatArchiveUser(models.Model):
     """
     class Meta:
         db_table = "chat_archive_user"
-        unique_together = ("chat_archive", "user")
 
     chat_archive = models.ForeignKey(ChatArchive, related_name="+")
     user = models.ForeignKey(User, related_name="+")

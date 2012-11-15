@@ -1,5 +1,7 @@
 require.config({
 
+    urlArgs: window.location.hostname === 'localhost' ? 'bust' + new Date().getTime() : null, 
+
     paths: {
         jquery: '3ps/jquery/jquery',
         'jquery.bootstrap': '3ps/bootstrap/bootstrap',
