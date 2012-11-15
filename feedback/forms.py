@@ -23,23 +23,21 @@ from techresidents_web.common.forms import JSONField
 MESSAGE_MAX_LEN = 1024
 
 FEEDBACK_TYPE_CHOICES = [
-    ("None", "Feedback Type"),
-    ("RFE", "Request Feature/Enhancement"),
-    ("BUG", "Report Bug"),
-    ("Praise", "Praise"),
-    ("WTF", "WTF"),
+    ("General", "General"),
+    ("RFE", "Feature Request/Enhancement"),
+    ("BUG", "Bug Report"),
     ]
 
 class FeedbackForm(forms.Form):
 
     type = forms.ChoiceField(
-        label="",
+        label="Category",
         choices=FEEDBACK_TYPE_CHOICES,
         widget=forms.widgets.Select(attrs={'class':'span4'}),
         required=True)
 
     message = forms.CharField(
-        label="",
+        label="Message",
         max_length=MESSAGE_MAX_LEN,
         widget=forms.widgets.Textarea(attrs={
             'class':'span6',
@@ -58,13 +56,13 @@ class FeedbackForm(forms.Form):
         user = self.request.user
         type = self.cleaned_data['type']
         message = self.cleaned_data['message']
-        message += '\n\n userEmail: %s' % user.email_address
+        message += '\n\n<<< from user: email=%s, name=%s >>>' % (user.email, user.first_name)
 
         # Will send this info to TR Feedback acct for processing
         send_mail(
             subject=type,
             message=message,
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[settings.DEFAULT_FROM_EMAIL],
+            recipient_list=[settings.DEFAULT_FEEDBACK_EMAIL],
             fail_silently=True
         )
