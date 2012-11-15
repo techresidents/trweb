@@ -12,8 +12,71 @@
 
     <div class="container">
 
-        <div class="page-header">
-            <h1>Leave Us Your Feedback</h1>
+        <div class="row">
+            <div class="span12">
+                <div class="page-header">
+                    <h1>Feedback</h1>
+                </div>
+            </div>
         </div>
+
+        <div class="row">
+            <div class="span12">
+
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success">
+                                <span>Thanks for your feedback!</span>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                {% else %}
+
+                    <form class="form-horizontal" method="post" action="{% url 'feedback.views.feedback' %}">
+                        {% csrf_token %}
+                        <fieldset>
+                            {% for field in form %}
+                                <div class="control-group{% if field.errors %} error{% endif %}">
+                                    <label class="control-label">{{ field.label_tag }}</label>
+                                    <div class="controls">
+                                        {{ field }}
+                                        {% for error in field.errors %}
+                                            <span class="help-inline">{{error}}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            <div class="control-group">
+                                <div class="controls">
+                                    <input type="submit" value="Submit" class="btn btn-primary" />
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <div class="controls">
+                                    {% if form.non_field_errors %}
+                                        <div class="alert alert-error">
+                                            {% for error in form.non_field_errors%}
+                                                <span>{{error}}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                {% endif %}
+
+
+            </div>
+        </div>
+
+
+
+    </div>
+
 
 {% endblock %}

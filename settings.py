@@ -269,6 +269,7 @@ EMAIL_PORT = 25
 #EMAIL_HOST_PASSWORD = 'password'
 DEFAULT_FROM_EMAIL = 'Tech Residents Support <support@techresidents.com>'
 DEFAULT_SUPPORT_EMAIL = 'Tech Residents Support <support@techresidents.com>'
+DEFAULT_FEEDBACK_EMAIL = 'Tech Residents Feedback <feedback@techresidents.com>'
 
 #Landing settings
 LANDING_PLACEHOLDER = False
