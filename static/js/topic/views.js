@@ -226,7 +226,7 @@ define([
 
                 this.topicTitleInput.val('');
                 this.topicDescriptionInput.val('');
-                this.topicDurationInput.val(5);
+                this.topicDurationInput.val(300);
                 this.topicTitleInput.focus();
             } else {
                 this.topicTitleInput.focus();
