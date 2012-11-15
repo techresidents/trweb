@@ -269,7 +269,6 @@ define([
         },
 
         scheduleEvents: function(chatSession, scheduler) {
-            console.log('scheduleEvents()');
             var that = this;
             var archive = this.getArchive(chatSession);
 
