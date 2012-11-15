@@ -16,13 +16,9 @@ define([
     'chat/message/commands',
     'chat/minute/commands',
     'chat/discuss/mediators',
-    'chat/resource/commands',
-    'chat/resource/mediators',
     'chat/tag/commands',
     'chat/tag/mediators',
     'chat/user/mediators',
-    'chat/whiteboard/commands',
-    'chat/whiteboard/mediators',
     'text!apps/chat/chat.html'
 ], function(
     $,
@@ -42,13 +38,9 @@ define([
     message_commands,
     minute_commands,
     discuss_mediators,
-    resource_commands,
-    resource_mediators,
     tag_commands,
     tag_mediators,
     user_mediators,
-    whiteboard_commands,
-    whiteboard_mediators,
     chat_app_template) {
     
     /**
@@ -81,27 +73,12 @@ define([
                 case 'AgendaTabView':
                     this.$('#agenda').html(view.render().el);
                     break;
-                case 'WhiteboardTabView':
-                    this.$('#whiteboard').html(view.render().el);
-                    break;
-                case 'ResourcesTabView':
-                    this.$('#resources').html(view.render().el);
-                    break;
             }
         },
         
         showAgenda: function() {
             this.$('a[href="#agenda"]').tab('show');
-        },
-
-        showWhiteboards: function() {
-            this.$('a[href="#whiteboard"]').tab('show');
-        },
-
-        showResources: function() {
-            this.$('a[href="#resources"]').tab('show');
         }
-
     });
    
 
@@ -119,9 +96,7 @@ define([
         notifications: [
             [notifications.DOM_READY, 'onDomReady'],
             [notifications.VIEW_CREATED, 'onViewCreated'],
-            [notifications.SHOW_AGENDA, 'onShowAgenda'],
-            [notifications.SHOW_RESOURCES, 'onShowResources'],
-            [notifications.SHOW_WHITEBOARDS, 'onShowWhiteboards']
+            [notifications.SHOW_AGENDA, 'onShowAgenda']
         ],
 
         initialize: function(options) {
@@ -135,8 +110,6 @@ define([
             this.facade.registerMediator(new discuss_mediators.DiscussMediator());
             this.facade.registerMediator(new tag_mediators.TaggerMediator());
             this.facade.registerMediator(new agenda_mediators.AgendaTabMediator());
-            this.facade.registerMediator(new whiteboard_mediators.WhiteboardTabMediator());
-            this.facade.registerMediator(new resource_mediators.ResourcesTabMediator());
         },
 
         onDomReady: function(notification) {
@@ -243,13 +216,8 @@ define([
             this.registerCommand(notifications.MINUTE_START, minute_commands.StartMinuteCommand);
             this.registerCommand(notifications.MINUTE_END, minute_commands.EndMinuteCommand);
             this.registerCommand(notifications.SHOW_FEEDBACK, feedback_commands.ShowFeedbackCommand);
-            this.registerCommand(notifications.SHOW_RESOURCE, resource_commands.ShowResourceCommand);
             this.registerCommand(notifications.TAG_CREATE, tag_commands.CreateTagCommand);
             this.registerCommand(notifications.TAG_DELETE, tag_commands.DeleteTagCommand);
-            this.registerCommand(notifications.WHITEBOARD_CREATE, whiteboard_commands.CreateWhiteboardCommand);
-            this.registerCommand(notifications.WHITEBOARD_DELETE, whiteboard_commands.DeleteWhiteboardCommand);
-            this.registerCommand(notifications.WHITEBOARD_PATH_CREATE, whiteboard_commands.CreateWhiteboardPathCommand);
-            this.registerCommand(notifications.WHITEBOARD_PATH_DELETE, whiteboard_commands.DeleteWhiteboardPathCommand);
         },
         
         /**
