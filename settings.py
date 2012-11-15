@@ -1,5 +1,6 @@
 # Django settings for techresidents_web project.
-import os 
+import os
+import django.conf.global_settings as GLOBAL_SETTINGS
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -98,9 +99,8 @@ SECRET_KEY = '9fm2xbrkfogfjmpmjpaq_ul=)$7-0gez(!dz*h@@3=exc^o26*'
 
 # Custom context processors used to make custom data available
 # to the template context.
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'techresidents_web.common.context_processors.google_analytics',
-    'techresidents_web.common.context_processors.cross_domain_server',
+TEMPLATE_CONTEXT_PROCESSORS = GLOBAL_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
+    'techresidents_web.common.context_processors.tr_processors',
 )
 
 # List of callables that know how to import templates from various sources.

@@ -1,19 +1,20 @@
 from django.conf import settings
 
-def google_analytics(request):
-    """Add the Google Analytics ID to the template context.
-    Args:
-        request: HttpRequest object
-    Returns:
-        Must return a dictionary
+def tr_processors(request):
     """
-    return {'GA_ID': settings.GA_ID}
+    Define a function which will make the dictionary
+    data available to all template contexts.
 
-def cross_domain_server(request):
-    """Add the cross-domain server location to the template context.
     Args:
         request: HttpRequest object
     Returns:
-        Must return a dictionary
+        Must return a dictionary.
+
+        GA_ID: Add the Google Analytics ID to the template context.
+        TR_XD_REMOTE: Add the cross-domain server location to the template context.
     """
-    return {'TR_XD_REMOTE': settings.TR_XD_REMOTE}
+    return {
+        'GA_ID': settings.GA_ID,
+        'TR_XD_REMOTE': settings.TR_XD_REMOTE
+            }
+
