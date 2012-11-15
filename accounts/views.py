@@ -389,8 +389,7 @@ def profile_jobs(request):
         'json_position_types': json.dumps(json_position_types),
         'position_names': position_names,
         'min_salary_options': min_salary_options,
-        'support_email': settings.DEFAULT_SUPPORT_EMAIL,
-        'TR_XD_REMOTE': settings.TR_XD_REMOTE
+        'support_email': settings.DEFAULT_SUPPORT_EMAIL
     }
 
     return render_to_response('accounts/profile_jobs.html', context, context_instance=RequestContext(request))
@@ -481,8 +480,7 @@ def profile_skills_common(request, technology_type_name):
         'yrs_experience_options': yrs_experience_options,
         'json_autocomplete_skills': json.dumps(json_autocomplete_skills),
         'json_skills': json.dumps(json_skills),
-        'support_email': settings.DEFAULT_SUPPORT_EMAIL,
-        'TR_XD_REMOTE': settings.TR_XD_REMOTE
+        'support_email': settings.DEFAULT_SUPPORT_EMAIL
     }
 
     return context

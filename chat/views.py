@@ -327,7 +327,6 @@ def session(request, encoded_chat_session_id):
     
     context = {
         'TOKBOX_JS_URL': settings.TOKBOX_JS_URL,
-        'TR_XD_REMOTE': settings.TR_XD_REMOTE,
         'chat_api_key': settings.TOKBOX_API_KEY,
         'chat_session_id': basic_encode(chat_session.id),
         'chat_session_token': chat_session.token,
