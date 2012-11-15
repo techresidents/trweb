@@ -1,8 +1,7 @@
 
 require.config({
 
-
-//    urlArgs: 'bust ' + new Date().getTime(),
+    urlArgs: window.location.hostname === 'localhost' ? 'bust' + new Date().getTime() : null, 
 
     paths: {
         globalize: '3ps/globalize/globalize',
