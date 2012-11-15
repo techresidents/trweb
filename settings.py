@@ -96,6 +96,12 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '9fm2xbrkfogfjmpmjpaq_ul=)$7-0gez(!dz*h@@3=exc^o26*'
 
+# Custom context processors used to make custom data available
+# to the template context.
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'techresidents_web.common.context_processors.google_analytics',
+)
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -277,6 +283,8 @@ TR_LOGIN_USING_HTTPS = False
 TR_XD_REMOTE = 'http://localhost:6767/static/js/easyXDM/cors/index.html'
 #TR_XD_REMOTE = 'http://iville.local:6767/static/js/easyXDM/cors/index.html'
 
+#Google Analytics
+GA_ID = 'UA-36319157-2'
 
 #Tokbox settings
 TOKBOX_API_KEY = '15889991'
