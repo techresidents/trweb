@@ -17,7 +17,7 @@
 
         <div class="page-header">
             <h1>
-                Topic Details
+                Chat Details
             </h1>
         </div>
 
@@ -27,7 +27,11 @@
                     {% if forloop.first %}
                         <h2 class="level{{ topic.level }}">
                             {{ topic.title }}
-                            <small>({{topic.duration}} mins)</small>
+                            {% if topic.duration < 60 %}
+                                <small>({{topic.duration}} sec)</small>
+                            {% else %}
+                                <small>({{topic.duration_minutes}} min)</small>
+                            {% endif %}
                             <br>
                             {% if topic.recommended_participants > 1 %}
                                 <small>{{ topic.recommended_participants }} participants recommended</small>
@@ -38,7 +42,11 @@
                     {% else %}
                         <h3 class="level{{ topic.level }}">
                             {{ topic.title }}
-                            <small>({{topic.duration}} mins)</small>
+                            {% if topic.duration < 60 %}
+                                <small>({{topic.duration}} sec)</small>
+                            {% else %}
+                                <small>({{topic.duration_minutes}} min)</small>
+                            {% endif %}
                         </h3>
                     {% endif %}
                     <p class="description level{{ topic.level }}">

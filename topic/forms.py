@@ -217,7 +217,7 @@ class CreatePrivateChatForm(forms.Form):
             type=type,
             topic=topic,
             start=chat_start,
-            end=chat_start+datetime.timedelta(minutes=topic.duration),
+            end=chat_start+datetime.timedelta(seconds=topic.duration),
             record=True)
 
         #Create the tokbox session

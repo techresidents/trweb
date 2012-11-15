@@ -211,10 +211,12 @@ define([
         },
 
         render: function() {
+            var duration = (this.model.get_end() - this.model.get_start()) / 1000;
             var context = {
                 model: this.model.toJSON({withRelated: true}),
                 fmt: this.fmt,
-                playing: this.isPlaying()
+                playing: this.isPlaying(),
+                duration: duration
             };
             this.$el.html(this.template(context));
             return this;

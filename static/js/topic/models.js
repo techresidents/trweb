@@ -20,7 +20,7 @@ define([
                 rank: null,
                 title: null,
                 description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet rhoncus eros. Proin ut dolor neque, quis pretium massa. In facilisis interdum tortor. Proin fermentum dignissim lorem. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-                duration: 5,
+                duration: 300,
                 recommendedParticipants: 2,
                 expanded: false
             };
@@ -88,11 +88,11 @@ define([
         },
 
         durationMs: function() {
-            return this.duration() * 60 * 1000;
+            return this.duration() * 1000;
         },
 
         setDurationMs: function(durationMs) {
-            this.set({duration: durationMs / 60 / 1000});
+            this.set({duration: durationMs / 1000});
             return this;
         },
 

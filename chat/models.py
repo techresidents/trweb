@@ -12,7 +12,7 @@ class ChatSessionManager(models.Manager):
     helper methods for managing chat sessions.
     """
 
-    def increment_participants(self, chat_session, max_participants=4):
+    def increment_participants(self, chat_session, max_participants=2):
         """Atomically increment chat sessions' number of participants.
 
         Helper method to atomically increment the ChatSession model's number

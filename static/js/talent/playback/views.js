@@ -191,7 +191,7 @@ define([
                 playing: this.isPlaying(),
                 fmt: this.fmt
             };
-            context.minute.duration = new Date(this.model.get_end() - this.model.get_start());
+            context.minute.duration = (this.model.get_end() - this.model.get_start()) / 1000;
 
             this.$el.html(this.template(context));
             this.$el.addClass('playback-minute');

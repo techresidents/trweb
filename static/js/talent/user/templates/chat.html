@@ -9,7 +9,11 @@
 
         <a class="chat-title" href="/talent/playback/<%=model.id%>"><%= model.chat.topic.title %></a>
 
-        <span class="chat-title-small">(<%= model.chat.topic.duration %> mins, </span>
+        <% if(duration < 60) { %>
+            <span class="chat-title-small">(1 min, </span>
+        <% } else { %>
+            <span class="chat-title-small">(<%= fmt.format(duration / 60, 'n0') %> min, </span>
+        <% } %>
         <span class="chat-title-small"><%= model.participants%> participant<%= model.participants > 1 ? 's': ''%>)</span>
         <span class="chat-title-small"> </span>
         <span class="chat-title-small"> on <%= fmt.date(model.start, 'MM/dd/yy')%></span>
