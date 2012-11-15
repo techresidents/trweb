@@ -269,12 +269,16 @@ define([
         },
 
         scheduleEvents: function(chatSession, scheduler) {
+            console.log('scheduleEvents()');
             var that = this;
             var archive = this.getArchive(chatSession);
 
             //schedule chat minute change events
             chatSession.get_chat_minutes().each(function(minute) {
                 var offset = that.computeOffset(chatSession, minute.get_start());
+                if (offset < 0) {
+                    offset = 0;
+                }
                 that.scheduler.add(offset, function() {
                     that.model.set({
                         chatMinute: minute
