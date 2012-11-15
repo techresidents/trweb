@@ -1,24 +1,8 @@
-import base64
-import datetime
-import hashlib
-import hmac
-import logging
-import struct
-import time
-import uuid
 
 from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import EmailMultiAlternatives
-from django.core.urlresolvers import reverse
-from django.contrib import auth
-from django.contrib.auth.models import User
-from django.template import Context
-from django.utils import timezone
 
-from techresidents_web.common.forms import JSONField
 
 MESSAGE_MAX_LEN = 1024
 
@@ -27,6 +11,7 @@ FEEDBACK_TYPE_CHOICES = [
     ("RFE", "Feature Request/Enhancement"),
     ("BUG", "Bug Report"),
     ]
+
 
 class FeedbackForm(forms.Form):
 
