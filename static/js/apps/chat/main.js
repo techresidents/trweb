@@ -15,7 +15,6 @@ require.config({
     },
 
     shim: {
-
         'globalize' : {
             exports: 'Globalize'
         },
