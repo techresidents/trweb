@@ -14,7 +14,7 @@
             <% } else { %>
 
                 <% _.each(model.position_prefs, function(position) { %>
-                    <li><%= position.type %> <%= fmt.num(position.salary_start, 'cn0') %></li>
+                    <li><%= position.type %> <%= position.salary_start ? fmt.num(position.salary_start, 'cn0') : '' %></li>
                 <% }); %>
 
                 <% if (model.position_prefs.length > 3) { %>
