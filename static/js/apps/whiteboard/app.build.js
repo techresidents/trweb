@@ -7,6 +7,7 @@
         ],
 
     paths: {
+        globalize: '3ps/globalize/globalize',
         jquery: '3ps/jquery/jquery',
         'jquery.bootstrap': '3ps/bootstrap/bootstrap',
         underscore: '3ps/underscore/underscore',
@@ -17,6 +18,10 @@
     },
 
     shim: {
+        'globalize' : {
+            exports: 'Globalize'
+        },
+
         'jquery.bootstrap': ['jquery'],
 
         'underscore': {

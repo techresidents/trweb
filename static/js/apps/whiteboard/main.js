@@ -3,6 +3,7 @@ require.config({
     urlArgs: window.location.hostname === 'localhost' ? 'bust' + new Date().getTime() : null, 
 
     paths: {
+        globalize: '3ps/globalize/globalize',
         jquery: '3ps/jquery/jquery',
         'jquery.bootstrap': '3ps/bootstrap/bootstrap',
         underscore: '3ps/underscore/underscore',
@@ -13,6 +14,10 @@ require.config({
     },
 
     shim: {
+        'globalize' : {
+            exports: 'Globalize'
+        },
+
         'jquery.bootstrap': ['jquery'],
 
         'underscore': {
