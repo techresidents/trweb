@@ -607,7 +607,8 @@ class ProfileJobsForm(forms.Form):
         # Update user's positions based on data posted
         for position in updated_position_prefs:
             if 'id' in position:
-                rows_updated = PositionTypePref.objects.filter(user=self.user).update(
+                id = position['id']
+                rows_updated = PositionTypePref.objects.filter(id=id, user=self.user).update(
                     salary_start=position['min_salary']
                 )
                 if 1 != rows_updated:
