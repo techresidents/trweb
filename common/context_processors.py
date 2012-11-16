@@ -1,4 +1,5 @@
 from django.conf import settings
+from techresidents_web import version
 
 def tr_processors(request):
     """
@@ -15,6 +16,7 @@ def tr_processors(request):
     """
     return {
         'GA_ID': settings.GA_ID,
-        'TR_XD_REMOTE': settings.TR_XD_REMOTE
-            }
+        'TR_XD_REMOTE': settings.TR_XD_REMOTE,
+        'VERSION': version.VERSION
+    }
 
