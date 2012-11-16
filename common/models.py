@@ -56,7 +56,7 @@ class Topic(models.Model):
         type: TopicType object
         title: topic's title
         description: topic's description
-        duration: topic's duration in minutes
+        duration: topic's duration in seconds
         recommended_participants: number of recommended participants
         public: Used for access control.
                 True if topic is accessible to everyone, false otherwise.
@@ -83,6 +83,15 @@ class Topic(models.Model):
     resources = models.ManyToManyField(Resource)
 
     objects = TopicManager()
+
+    @property
+    def duration_minutes(self):
+        """Return topic duration in minutes.
+
+        Returns:
+            Topic duration in minutes as integer.
+        """
+        return self.duration / 60
 
 class Tag(models.Model):
     class Meta:

@@ -1,6 +1,6 @@
 define([
-    'jQuery',
-    'Underscore',
+    'jquery',
+    'underscore',
     'chat/whiteboard/models',
     'core/view',
     'text!color/templates/color_picker.html'

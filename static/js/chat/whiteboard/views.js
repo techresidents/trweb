@@ -1,7 +1,7 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone',
+    'jquery',
+    'underscore',
+    'backbone',
     'chat/whiteboard/models',
     'color/views',
     'core/view',

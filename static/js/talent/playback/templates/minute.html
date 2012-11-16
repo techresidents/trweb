@@ -1,0 +1,16 @@
+<h3>
+    <% if(playing) { %>
+    <a class="play btn btn-small btn-primary"><i class="icon-volume-up icon-white"></i></a>
+    <% } else { %>
+    <a class="play btn btn-small"><i class="icon-play"></i></a>
+    <% } %>
+    <%=minute.topic.title %>
+    <% if(minute.duration < 60) { %>
+        <small> (<%= minute.duration %> sec)</small>
+    <% } else { %>
+        <small> (<%= fmt.format(minute.duration / 60, 'n0') %> min)</small>
+    <% } %>
+</h3>
+<div class="description">
+    <p><%= minute.topic.description %></p>
+</div>

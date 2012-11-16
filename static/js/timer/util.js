@@ -1,7 +1,7 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone'
+    'jquery',
+    'underscore',
+    'backbone'
 ], function($, _, Backbone) {
     
     var pad2 = function(value) {

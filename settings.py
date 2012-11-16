@@ -1,5 +1,6 @@
 # Django settings for techresidents_web project.
-import os 
+import os
+import django.conf.global_settings as GLOBAL_SETTINGS
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -96,6 +97,12 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '9fm2xbrkfogfjmpmjpaq_ul=)$7-0gez(!dz*h@@3=exc^o26*'
 
+# Custom context processors used to make custom data available
+# to the template context.
+TEMPLATE_CONTEXT_PROCESSORS = GLOBAL_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
+    'techresidents_web.common.context_processors.tr_processors',
+)
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -149,6 +156,7 @@ INSTALLED_APPS = (
     'techresidents_web.chat',
     'techresidents_web.codeboard',
     'techresidents_web.document',
+    'techresidents_web.feedback',
     'techresidents_web.home',
     'techresidents_web.job',
     'techresidents_web.topic',
@@ -261,6 +269,7 @@ EMAIL_PORT = 25
 #EMAIL_HOST_PASSWORD = 'password'
 DEFAULT_FROM_EMAIL = 'Tech Residents Support <support@techresidents.com>'
 DEFAULT_SUPPORT_EMAIL = 'Tech Residents Support <support@techresidents.com>'
+DEFAULT_FEEDBACK_EMAIL = 'Tech Residents Feedback <feedback@techresidents.com>'
 
 #Landing settings
 LANDING_PLACEHOLDER = False
@@ -277,6 +286,8 @@ TR_LOGIN_USING_HTTPS = False
 TR_XD_REMOTE = 'http://localhost:6767/static/js/easyXDM/cors/index.html'
 #TR_XD_REMOTE = 'http://iville.local:6767/static/js/easyXDM/cors/index.html'
 
+#Google Analytics
+GA_ID = 'UA-36319157-2'
 
 #Tokbox settings
 TOKBOX_API_KEY = '15889991'

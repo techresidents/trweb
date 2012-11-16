@@ -1,12 +1,18 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone',
+    'jquery',
+    'underscore',
+    'backbone',
     'common/notifications',
     'core/command',
     'core/facade',
     'core/mediator',
-    'api/base',
+    'core/view',
+    'talent/playback/mediators',
+    'talent/player/mediators',
+    'talent/player/models',
+    'talent/player/proxies',
+    'talent/search/mediators',
+    'talent/user/mediators',
     'text!apps/talent/talent.html'
 ], function(
     $,
@@ -16,26 +22,52 @@ define([
     command,
     facade,
     mediator,
-    api_base,
+    view,
+    playback_mediators,
+    player_mediators,
+    player_models,
+    player_proxies,
+    search_mediators,
+    user_mediators,
     talent_app_template) {
-
+    
     /**
      * Talent application router.
      */
     var TalentAppRouter = Backbone.Router.extend({
         routes: {
-            "search": "search",
-            "*actions": "search"
+            'talent/playback/:id': 'playback',
+            'talent/user/:id': 'user',                
+            '*actions': 'search'
         },
         
         initialize: function(options) {
             this.facade = options.facade;
+
+        },
+
+        playback: function(id) {
+            this.facade.trigger(notifications.VIEW_CREATE, {
+                type: playback_mediators.PlaybackMediator.VIEW_TYPE,
+                options: {
+                    id: id
+                }
+            });
         },
 
         search: function() {
-            console.log("search");
             this.facade.trigger(notifications.VIEW_CREATE, {
-                type: "SearchView"
+                type: search_mediators.SearchMediator.VIEW_TYPE,
+                options: {}
+            });
+        },
+
+        user: function(id) {
+            this.facade.trigger(notifications.VIEW_CREATE, {
+                type: user_mediators.UserMediator.VIEW_TYPE,
+                options: {
+                    id: id
+                }
             });
         }
     });
@@ -47,9 +79,11 @@ define([
 
         execute: function(options) {
             router = this.facade.router;
-
-            if(options.type === "SearchView") {
-                router.navigate("search", {trigger: true});
+            
+            switch(options.type) {
+                case "SearchView":
+                    router.navigate("search", {trigger: true});
+                    break;
             }
         }
     });
@@ -59,10 +93,12 @@ define([
      * @constructor
      * @param {Object} options 
      */
-    var TalentAppView = Backbone.View.extend({
+    var TalentAppView = view.View.extend({
+        
 
         initialize: function() {
             this.template = _.template(talent_app_template);
+            this.activeView = null;
         },
 
         render: function() {
@@ -70,9 +106,36 @@ define([
             return this;
         },
 
-        addView: function(type, view) {
+        addView: function(type, view, options) {
+            switch(type) {
+                case 'AlertView':
+                    this.$('#alerts').append(view.render().el);
+                    break;
+                case 'PlayerView':
+                    this.$('#player-content').append(view.render().el);
+                    break;
+                default:
+                    if(this.activeView) {
+                        this._destroyView(this.activeView);
+                    }
+                    this.$('#content').append(view.render().el);
+                    this.activeView = {
+                        type: type,
+                        view: view,
+                        options: options
+                    };
+                    break;
+            }
+        },
+
+        _destroyView: function(activeView) {
+            this.triggerEvent(TalentAppView.EVENTS.DESTROY_VIEW, activeView);
         }
 
+    }, {
+        EVENTS: {
+            DESTROY_VIEW: 'talent:destroyView'
+        }
     });
    
 
@@ -93,21 +156,34 @@ define([
         ],
 
         initialize: function(options) {
-            console.log("INIT");
             this.view = new TalentAppView(options);
             this.view.render();
 
+            this.view.addEventListener(TalentAppView.EVENTS.DESTROY_VIEW, this.onDestroyView, this);
+
             //create and register sub-mediators
-            //TODO
+            this.facade.registerMediator(new player_mediators.PlayerMediator());
+            this.facade.registerMediator(new playback_mediators.PlaybackMediator());
+            this.facade.registerMediator(new search_mediators.SearchMediator());
+            this.facade.registerMediator(new user_mediators.UserMediator());
+
+            //create player view
+            this.facade.trigger(notifications.VIEW_CREATE, {
+                type: player_mediators.PlayerMediator.VIEW_TYPE
+            });
+            
         },
 
         onDomReady: function(notification) {
-            console.log("DOM READY");
             $('#talentapp').append(this.view.el);
         },
 
         onViewCreated: function(notification) {
-            this.view.addView(notification.type, notification.view);
+            this.view.addView(notification.type, notification.view, notification.options);
+        },
+
+        onDestroyView: function(e, eventBody) {
+            this.facade.trigger(notifications.VIEW_DESTROY, eventBody);
         }
     });
 
@@ -120,7 +196,9 @@ define([
     var InitModels = command.Command.extend({
 
         execute: function() {
-            //this.facade.registerProxy(new talent_proxies.TalentProxy(data));
+            this.facade.registerProxy(new player_proxies.PlayerStateProxy({
+                model: new player_models.PlayerState()
+            }));
         }
     });
 
@@ -170,14 +248,31 @@ define([
                 facade: this
             });
 
-            Backbone.history.start({
-                pushState: true,
-                root: "/talent/"
-            });
 
             //register commands
             this.registerCommand(notifications.APP_START, AppStartCommand);
             this.registerCommand(notifications.VIEW_NAVIGATE, NavigateCommand);
+        },
+
+        initializeRouter: function() {
+            Backbone.history.start({
+                pushState: true
+            });
+            
+            var that = this;
+
+            $(document).on('click', 'a:not([data-bypass])', function(e) {
+                var root = '/talent';
+                var href = $(this).attr('href');
+                var protocol = this.protocol + '//';
+                
+                if(href
+                    && href.slice(0, protocol.length) !== protocol
+                    && href.slice(0, root.length) === root) {
+                        e.preventDefault();
+                        that.router.navigate(href, true);
+                }
+            });
         },
         
         /**
@@ -185,6 +280,7 @@ define([
          */
         start: function() {
             this.trigger(notifications.APP_START);
+            this.initializeRouter();
         },
         
         /**
@@ -200,7 +296,7 @@ define([
 
     //start the app
     talentAppFacade.start();
-    
+
     //DOM ready notification
     $(document).ready(function() {
         talentAppFacade.trigger(notifications.DOM_READY);

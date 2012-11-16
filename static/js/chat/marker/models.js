@@ -1,11 +1,13 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone'
+    'jquery',
+    'underscore',
+    'backbone',
+    'backbone.localStorage'
 ], function(
     $,
     _,
-    Backbone) {
+    Backbone,
+    none) {
     
     /**
      * Chat Marker base model.

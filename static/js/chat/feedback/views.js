@@ -1,9 +1,36 @@
 define([
-    'jQuery',
-    'Underscore',
+    'jquery',
+    'underscore',
     'core/view',
-    'text!chat/feedback/templates/feedback_modal.html'
-], function($, _, view, modal_template) {
+    'text!chat/feedback/templates/feedback_modal.html',
+    'text!chat/feedback/templates/no_feedback_modal.html'
+], function($, _, view, feedback_template, no_feedback_template) {
+
+    /**
+     * No Feedback Modal View.
+     * @constructor
+     * @param {Object} options
+     *   {Feedback} model Chat Feedback model
+     */
+    var NoFeedbackModalView = view.View.extend({
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.template = _.template(no_feedback_template);
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            return this;
+        },
+
+        onOk: function() {
+            window.location = '/';
+        }
+
+    });
 
     /**
      * Feedback Modal View.
@@ -23,7 +50,7 @@ define([
         },
 
         initialize: function(options) {
-            this.template = _.template(modal_template);
+            this.template = _.template(feedback_template);
             this.errors = {};
         },
 
@@ -69,6 +96,7 @@ define([
     });
     
     return {
-        FeedbackModalView: FeedbackModalView
+        FeedbackModalView: FeedbackModalView,
+        NoFeedbackModalView: NoFeedbackModalView
     };
 });

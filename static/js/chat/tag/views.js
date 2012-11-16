@@ -1,6 +1,6 @@
 define([
-    'jQuery',
-    'Underscore',
+    'jquery',
+    'underscore',
     'core/view',
     'lookup/views',
     'text!chat/tag/templates/tagger.html',

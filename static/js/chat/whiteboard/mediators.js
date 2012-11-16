@@ -1,5 +1,5 @@
 define([
-    'Underscore',
+    'underscore',
     'color/views',
     'common/notifications',
     'core/mediator',

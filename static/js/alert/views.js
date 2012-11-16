@@ -1,6 +1,6 @@
 define([
-    'jQuery',
-    'Underscore',
+    'jquery',
+    'underscore',
     'core/view',
     'alert/models',
     'text!alert/templates/alert.html'

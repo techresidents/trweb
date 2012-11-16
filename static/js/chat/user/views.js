@@ -1,7 +1,7 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone',
+    'jquery',
+    'underscore',
+    'backbone',
     'spin',
     'text!chat/user/templates/user.html',
     'text!chat/user/templates/user_header.html',
@@ -10,7 +10,7 @@ define([
     $,
     _,
     Backbone,
-    spin,
+    Spinner,
     user_template,
     user_header_template,
     user_footer_template) {
@@ -107,7 +107,7 @@ define([
             if(!this.user.isConnected()) {
                 this.$el.html(this.template(this.model.toJSON()));
                 if(this.user.isCurrentUser()) {
-                    this.spinner = new spin.Spinner({left: 200, top: 100}).spin(this.el);
+                    this.spinner = new Spinner({left: 200, top: 100}).spin(this.el);
                 }
 
             } else {

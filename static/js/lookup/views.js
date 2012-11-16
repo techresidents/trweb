@@ -1,9 +1,10 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone',
+    'jquery',
+    'underscore',
+    'backbone',
+    'jquery.bootstrap',
     'lookup/models'
-], function($, _, Backbone, models) {
+], function($, _, Backbone, none, models) {
     
     /*
      * Autocomplete lookup view.

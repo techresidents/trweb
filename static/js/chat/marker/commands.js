@@ -1,5 +1,5 @@
 define([
-    'Underscore',
+    'underscore',
     'core/command',
     'chat/marker/models',
     'chat/message/messages',

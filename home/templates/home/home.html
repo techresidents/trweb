@@ -54,7 +54,11 @@
 
                                 <div class="home-topic-text-container">
                                     <h4>{{topic_ctx.topic.title}}
-                                        <small>({{ topic_ctx.topic.duration }} mins)</small>
+                                    {% if topic_ctx.topic.duration < 60 %}
+                                        <small>({{ topic_ctx.topic.duration }} sec)</small>
+                                    {% else %}
+                                        <small>({{ topic_ctx.topic.duration_minutes }} min)</small>
+                                    {% endif %}
                                         {% if topic_ctx.completed %}
                                             <small class="home-green-text"><b>Complete</b></small>
                                         {% endif %}

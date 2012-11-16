@@ -83,7 +83,7 @@ class CreateChatForm(forms.Form):
                     type=type,
                     topic=topic,
                     start=start,
-                    end=start+datetime.timedelta(minutes=topic.duration),
+                    end=start+datetime.timedelta(seconds=topic.duration),
                     record=record) 
 
             #Create the tokbox session
@@ -119,7 +119,7 @@ class CreateChatForm(forms.Form):
                     type=type,
                     topic=topic,
                     start=start,
-                    end=start+datetime.timedelta(minutes=topic.duration),
+                    end=start+datetime.timedelta(seconds=topic.duration),
                     registration_start=timezone.now(),
                     #registration_end=start-datetime.timedelta(hours=1),
                     registration_end=start-datetime.timedelta(minutes=2),
@@ -142,7 +142,7 @@ class CreateChatForm(forms.Form):
                     type=type,
                     topic=topic,
                     start=start,
-                    end=start+datetime.timedelta(minutes=topic.duration),
+                    end=start+datetime.timedelta(seconds=topic.duration),
                     record=record) 
 
             #Create the tokbox session

@@ -65,7 +65,7 @@
                             </div>
                             <div class="controls">
                                 <span class="help">
-                                    <a href="mailto:{{ support_email }}?Subject=Add%20Language%20Request">Language not listed?</a>
+                                    <a target="_blank" href="{% url 'feedback.views.feedback' %}">Language not listed?</a>
                                 </span>
                             </div>
                         </div>
@@ -78,7 +78,7 @@
 
                                 <div class="control-group">
                                     <div class="controls">
-                                        <button type="submit" class="btn-primary">Save changes</button>
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
                                     </div>
                                 </div>
                             </fieldset>
@@ -160,7 +160,7 @@
         };
     </script>
 
-    <script data-main="{% static "js/apps/profile/main.js" %}" src="{% static "js/3ps/require/require.js" %}"></script>
+    <script data-main="apps/profile/main.js" src="{% static "js/3ps/require/require.js" %}"></script>
 
 
 {% endblock %}

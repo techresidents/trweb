@@ -1,14 +1,18 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone'
-], function($, _, Backbone) {
+    'jquery',
+    'underscore',
+    'backbone',
+    'core/base',
+    'core/format'
+], function($, _, Backbone, base, format) {
 
     /**
      * View base class.
      * @constructor
      */
     var View = Backbone.View.extend({
+
+        fmt: format,
 
         triggerEvent: function(eventName, args) {
             this.$el.trigger(eventName, args);
@@ -44,6 +48,23 @@ define([
         removeEventListeners: function() {
             var namespace = '.eventListener' + this.cid;
             this.$el.unbind(namespace);
+        },
+
+        destroy: function() {
+            var childViews = base.getValue(this, 'childViews');
+            if(this.childViews) {
+                _.each(childViews, function(view) {
+                    if(_.isFunction(view.destroy)) {
+                        view.destroy();
+                    } else {
+                        view.remove();
+                        view.undelegateEvents();
+                    }
+                });
+            }
+
+            this.remove();
+            this.undelegateEvents();
         }
     });
     

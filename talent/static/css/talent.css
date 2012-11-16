@@ -1,0 +1,264 @@
+*:focus { outline: 0 !important;}
+*:focus { outline: none !important; }
+*::-moz-focus-inner { border: none !important;}
+
+.fixed-footer {
+    height: 90px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABaCAYAAACBvMdKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAADJJREFUeNrsyjEBACAIADCwf0bMgAW0Ar/bvazaNwZWDGV3H1EURVEURVEURfHb+AQYAAGvT73//pyjAAAAAElFTkSuQmCC);
+    background-repeat: repeat-x;
+}
+
+.main-content {
+    padding-bottom: 90px;
+    overflow: hidden;
+}
+
+.player {
+    margin-top: 5px;
+}
+.player-user {
+    float: left;
+    margin-right: 10px;
+}
+
+.player-user .user-logo {
+    margin: 0px auto;
+    width: 80px;
+    height: 60px;
+}
+
+.player-controls {
+    float: left;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.player-expand {
+    margin-top: 29px;
+}
+
+.player-fp {
+    display: block;
+    width: 640px;
+    height: 25px;
+}
+
+.playback-users {
+    margin-bottom: 30px;
+}
+
+.playback-user p {
+    text-align: center;
+}
+
+.playback-user.participant1 { 
+    border: 3px solid #00AEEF;
+    margin-bottom: 10px;
+}
+
+.playback-user.participant2 { 
+    border: 3px solid #00A651;
+    margin-bottom: 10px;
+}
+
+.playback-user .user-logo {
+    margin: 0px auto;
+    margin-top: 5px;
+    width: 120px;
+    height: 90px;
+}
+
+.playback-user p {
+    margin-bottom: 0px;
+}
+
+.playback-tag {
+    float: left;
+    margin-right: 5px;
+}
+
+.playback-tag.participant1 {
+    color: #00AEEF;
+}
+
+.playback-tag.participant2 {
+    color: #00A651;
+}
+
+.playback-tag {
+    float: left;
+    margin-right: 5px;
+    color: #00AEEF;
+    /*
+    color: #00A651;
+    */
+}
+
+.playback-minute.description {
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.playback-minute.level1 {
+  margin-left: 0px;
+}
+
+
+.playback-minute.level2 {
+  margin-left: 30px;
+}
+
+
+.playback-minute.level3 {
+  margin-left: 60px;
+}
+
+
+.playback-minute.level4 {
+  margin-left: 90px;
+}
+
+.playback-minute.level5 {
+  margin-left: 120px;
+}
+
+
+.user-logo {
+    background-image: url("../img/person.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: center;
+}
+
+.user-logo.speaking {
+    background-image: url("../img/person-speaking.png");
+}
+
+
+
+.user-ID {
+    padding-left: 38px;
+}
+
+.no-span-margin {
+    margin-left: 0px;
+}
+
+
+.user-position-prefs-container {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 19px;
+    padding-right: 19px;
+    padding-bottom: 19px;
+    padding-top: 0px;
+}
+
+.user-position-prefs-container a:hover {
+    cursor: pointer;
+}
+
+.user-position-prefs-container .user-logo {
+    background-image: url("../img/person.png");
+    background-repeat: no-repeat;
+    background-size: 120px 90px;
+    background-position: left center;
+    height: 90px;
+    padding-bottom: 5px;
+}
+
+.user-section-border {
+    border: 1px solid #E3E3E3;
+}
+
+.user-section-border-top {
+    border-top: 1px solid #E3E3E3;
+}
+
+.user-section-border-bottom {
+    border-bottom: 1px solid #E3E3E3;
+}
+
+.user-section-border-left {
+    border-left: 1px solid #E3E3E3;
+}
+
+.user-section-border-right {
+    border-right: 1px solid #E3E3E3;
+}
+
+.user-skills-container {
+    margin-bottom: 10px;
+}
+
+.user-skills-container > div {
+    display: inline-block;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 18px;
+    line-height: 36px;
+}
+
+.user-skill-years-text {
+    font-size: 12px;
+    line-height: 36px;
+}
+
+.user-skills-beginner > div {
+    background-color: #F2DEDE;
+}
+
+.user-skills-intermediate > div {
+    background-color: #D9EDF7;
+}
+
+.user-skills-expert > div {
+    background-color: #DFF0D8;
+}
+
+.user-skills-list-container {
+    padding-left: 20px;
+    border-left-style: solid;
+    border-left-color: #E3E3E3;
+    border-left-width: 1px;
+}
+
+.user-skills-filter-container {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-top: 0px;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-bottom: 20px;
+}
+
+#chat-sessions > div {
+    margin-bottom: 5px;
+}
+
+#chat-sessions .btn {
+    margin-bottom: 10px;
+    margin-right: 5px;
+}
+
+.chat-title {
+    font-size: 18px;
+    line-height: 20px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.chat-title-small {
+    font-size: 14px;
+    font-weight: normal;
+    color: #999;
+}
