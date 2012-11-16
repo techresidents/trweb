@@ -139,7 +139,7 @@ define([
                 {
                     var skill = new models.Skill({
                         name: skillName,
-                        expertise: "None",
+                        expertise: "Beginner",
                         yrs_experience: 0
                     });
                     this.skillCollection.add(skill);

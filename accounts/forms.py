@@ -736,7 +736,7 @@ class ProfileSkillsForm(forms.Form):
                         name__in=technology_names)\
                 .count()
         if count != len(technology_names):
-            raise forms.ValidationError("Technology name value is inavlid")
+            raise forms.ValidationError("Technology name value is invalid")
         
         #validate expertise name
         expertise_names = list(set(expertise_names)) #remove duplicates
@@ -744,7 +744,7 @@ class ProfileSkillsForm(forms.Form):
                 .filter(name__in=expertise_names)\
                 .count()
         if count != len(expertise_names):
-            raise forms.ValidationError("Expertise name value is inavlid")
+            raise forms.ValidationError("Expertise name value is invalid")
 
         return self.cleaned_data
 
@@ -772,7 +772,7 @@ class ProfileSkillsForm(forms.Form):
                 user_skill = Skill(
                     user=self.request.user,
                     technology=technology,
-                    expertise_type=ExpertiseType.objects.get(name='None'),
+                    expertise_type=ExpertiseType.objects.get(name='Beginner'),
                     yrs_experience=0
                 )
 
