@@ -129,8 +129,8 @@ class CreatePrivateChatForm(forms.Form):
 
     chat_time_radio_btns = forms.ChoiceField(
         widget=forms.RadioSelect(),
-        choices=[[1, 'Start now'],
-                 [0, 'Schedule for later']])
+        choices=[[1, 'Chat alone'],
+                 [0, 'Schedule with a friend']])
 
     chat_date = forms.DateField(
         label="Date",
