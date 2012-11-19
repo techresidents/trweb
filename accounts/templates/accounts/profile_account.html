@@ -46,7 +46,7 @@
                                 <label class="control-label">{{ field.label_tag }}</label>
                                 <div class="controls">
                                     {% if field.label == 'Email' %}
-                                        <input class="disabled" id={{ field.auto_id }} type="text" name={{ field.html_name }} value={{ field.value }} disabled>
+                                        <input class="disabled" readonly="readonly" id={{ field.auto_id }} type="text" name={{ field.html_name }} value={{ field.value }}>
                                     {% else %}
                                         {{ field }}
                                     {% endif %}
