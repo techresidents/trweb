@@ -295,7 +295,9 @@ define([
             });
 
             this.childViews = [];
-            var context = this.collection.toJSON({withRelated: true});
+            var context = {
+                collection: this.collection.toJSON({withRelated: true})
+            };
             this.$el.html(this.template(context));
 
             this.collection.each(this.added, this);
