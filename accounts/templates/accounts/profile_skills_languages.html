@@ -156,11 +156,12 @@
 
     <script>
         var require = {
-            baseUrl: '/static/js'
+            baseUrl: '/static/js',
+            urlArgs: '{{VERSION}}'
         };
     </script>
 
-    <script data-main="apps/profile/main.js" src="{% static "js/3ps/require/require.js" %}"></script>
+    <script data-main="apps/profile/main" src="{% static "js/3ps/require/require-min.js" %}"></script>
 
 
 {% endblock %}

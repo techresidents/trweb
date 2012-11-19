@@ -8,11 +8,11 @@
 
     paths: {
         globalize: '3ps/globalize/globalize',
-        jquery: '3ps/jquery/jquery',
-        'jquery.bootstrap': '3ps/bootstrap/bootstrap',
-        underscore: '3ps/underscore/underscore',
-        backbone: '3ps/backbone/backbone',
-        'backbone.localStorage': '3ps/backbone/localStorage',
+        jquery: '3ps/jquery/jquery-min',
+        'jquery.bootstrap': '3ps/bootstrap/bootstrap-min',
+        underscore: '3ps/underscore/underscore-min',
+        backbone: '3ps/backbone/backbone-min',
+        'backbone.localStorage': '3ps/backbone/localStorage-min',
         easyXDM: '3ps/easyXDM/easyXDM'
     },
 
