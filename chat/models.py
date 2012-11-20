@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import connection, models, transaction
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -288,6 +290,66 @@ class ChatSession(models.Model):
     end = models.DateTimeField(null=True)
 
     objects = ChatSessionManager()
+    
+    @property
+    def open(self):
+        """Helper method for determining if session is currently open.
+        
+        A session is considered open if it is currently taking place.
+
+        Returns:
+            True if session is currently open, False othewise.
+        """
+        result = False
+        if not self.end:
+            now = timezone.now()
+            if self.connect:
+                chat_duration = self.chat.end - self.chat.start
+                connect_duration = now - self.connect
+                if connect_duration < chat_duration + datetime.timedelta(minutes=5):
+                    result = True
+            else:
+                max_start = self.chat.start + datetime.timedelta(days=1)
+                if now > self.chat.start and now < max_start:
+                    result = True
+        return result
+    
+    @property
+    def pending(self):
+        """Helper method for determining if session is currently pending.
+        
+        A session is considered pending if it is yet to start.
+
+        Returns:
+            True if session is currently pending, False othewise.
+        """
+        result = False
+        if self.chat.start > timezone.now():
+            result = True
+        return result
+
+    @property
+    def expired(self):
+        """Helper method for determining if session is currently expired.
+        
+        Returns:
+            True if session is currently pending, False othewise.
+        """
+        result = False
+        if self.end:
+            result = True
+        else:
+            now = timezone.now()
+            if self.connect:
+                chat_duration = self.chat.end - self.chat.start
+                connect_duration = now - self.connect
+                if connect_duration > chat_duration + datetime.timedelta(minutes=5):
+                    result = True
+            else: 
+                max_start = self.chat.start + datetime.timedelta(days=1)
+                if now > max_start:
+                    result = True
+        return result
 
 
 class ChatRegistration(models.Model):

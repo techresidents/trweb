@@ -91,6 +91,8 @@ define([
             if(chatProxy.isActive()) {
                 chatProxy.end();
                 result = true;
+            } else {
+                this.facade.trigger(notifications.SHOW_FEEDBACK);
             }
             return true;
         }
