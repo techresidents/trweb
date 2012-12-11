@@ -16,55 +16,80 @@
 
 {% block content %}
 
-    <div id="landing-blue-stripe">
-
-        <div id="landing-blue-stripe-container">
-            <div id="landing-messaging-container" class="container">
-                <div class="row">
-                    <div class="span7">
-                        <h1 class="landing-text-orange landing-brand-text">Tech Residents</h1>
-                    </div>
-                    <div class="span7">
-                        <h1 class="landing-text-offwhite landing-messaging-text">
-                            Discuss. Be Heard. Get Hired.
-                        </h1>
-                    </div>
-                    <div id="embedded-video-container" class="span4 pull-right">
-                        <iframe width="450" height="253" src="http://www.youtube.com/embed/3vbuF02CkA0?rel=0&color=white" frameborder="1" allowfullscreen></iframe>
-                    </div>
-                    <div id="landing-details-container" class="span7">
-                        <span class="landing-text-white landing-messaging-details-text">
-                            A free platform for software developers to talk tech and showcase their talent to hiring companies.
-                        </span>
-                    </div>
+    <div id="landing-banner" class="landing-blue-stripe">
+        <div class="landing-container container">
+            <div class="row">
+                <div class="span7">
+                    <h1 class="landing-text-offwhite landing-messaging-text">
+                        Discuss. Be Heard. Get Hired.
+                    </h1>
+                </div>
+                <div id="embedded-video-container" class="span4 pull-right">
+                    <iframe width="450" height="253" src="http://www.youtube.com/embed/3vbuF02CkA0?rel=0&color=white" frameborder="1" allowfullscreen></iframe>
+                </div>
+                <div id="landing-details-container" class="span7">
+                    <span class="landing-text-white landing-messaging-details-text">
+                        A free platform for software developers to talk tech and showcase their talent to hiring companies.
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="landing-white-stripe">
-        <div id="landing-signup-container" class="container">
+    <div id="landing-lower-banner">
+        <div class="landing-container container">
             <div class="row">
-                <div class="span7 offset3">
-                    <h1 class="landing-signup-text">
-                        Join the conversation
-                    </h1>
+                <div class="span5">
+                    <h1 class="page-header">Developers <small>It's free</small></h1>
+                    <h3>Find your next opportunity</h3>
+                    <p class="lead muted">
+                        <a class="btn btn-large btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
+                        <a class="btn btn-primary btn-large" href="{% url 'common.views.developer_learn_more'%}">Learn More</a>
+                    </p>
                 </div>
-                <div class="span2">
-                    <a id="landing-signup-button" class="btn btn-large btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="span2 offset8">
-                    <h1 class="landing-signup-details-text">
-                        It's free
-                    </h1>
-                </div>
-                <div class="span2">
-                    <a id="landing-learn-more-button" class="btn btn-primary btn-large" href="{% url 'common.views.learn_more'%}">Learn More</a>
+                <div class="span5 offset1">
+                    <h1 class="page-header">Employers <small>It's easy</small></h1>
+                    <h3>Recruit top developers</h3>
+                    <p class="lead muted">
+                        <a class="btn btn-large btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
+                        <a class="btn btn-primary btn-large" href="{% url 'common.views.employer_learn_more'%}">Learn More</a>
+                    </p>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="landing-gray-stripe">
+        <div class="landing-container container">
+            <div class="row">
+                <div style="text-align: center">
+                <h1>Better for everyone</h1>
+            </div>
+                <div class="span6">
+
+                    <ul class="landing-list">
+                        <h3>Developers</h3>
+                        <li><h4>Don't let your resumé speak for you</h4><p>Chat alone or with a friend about real-world topics and let hiring companies compete for you.</p></li>
+                        <li><h4>Earn what you're worth</h4><p>Our hiring events give companies the opportunity to compete for you, ensuring that you get paid what you're worth.</p></li>
+                        <li><h4>Get paid</h4><p>Receive 20% of our recruitment fee as an added bonus.</p></li>
+                        <li><h4>Privacy matters</h4><p>To maintain your privacy, we only share the anonymized audio from your chats with hiring companies.</p></li>
+                        <li><h4>No commitment</h4><p>Developers have no obligation to accept employer offers.</p></li>
+                        <a class="btn btn-large btn-primary" href="{% url 'common.views.developer_learn_more'%}">Learn More</a>
+                    </ul>
+                </div>
+                <div class="span6">
+                    <ul class="landing-list">
+                        <h3>Employers</h3>
+                        <li><h4>Recruit top developers</h4><p>Our curation process surfaces talented developers and puts them within your grasp.</p></li>
+                        <li><h4>Save time</h4><p>Avoid wasting time with the wrong candidates. Listen to developers discuss real-world topics to gauge their fit within your organization. </p></li>
+                        <li><h4>Save money</h4><p>Save 30-50% on traditional recruitment fees.</p></li>
+                        <li><h4>Reduce cognitive bias</h4><p>We present developers in an unbiased manner to encourage objective evaluations.</p></li>
+                        <li><h4>No commitment</h4><p>Employers have no obligatation to make developers an offer.</p></li>
+                        <a class="btn btn-large btn-primary" href="{% url 'common.views.employer_learn_more'%}">Learn More</a>
+                    </ul>
+
+                </div>
+            </div>
     </div>
 
 {% endblock %}

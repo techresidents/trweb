@@ -1,15 +1,14 @@
 #embedded-video-container {
     margin-right: 45px;
+    margin-top: 20px;
 }
 
-#landing-blue-stripe {
-    height: 420px;
-    background-color: #2A73A7;
-    background-repeat: repeat-x;
+#landing-banner {
+    height: 360px;
 }
 
-#landing-blue-stripe-container {
-    padding-top: 20px;
+#landing-lower-banner {
+    margin-bottom: 60px;
 }
 
 #landing-details-container {
@@ -17,10 +16,20 @@
     margin-bottom: 0px;
 }
 
-#landing-signup-container {
+
+.landing-container {
     padding-top: 20px;
 }
 
+.landing-blue-stripe {
+    background-color: #2A73A7;
+    background-repeat: repeat-x;
+}
+
+.landing-gray-stripe {
+    background-color: #F5F5F5;
+    background-repeat: repeat-x;
+}
 
 .landing-text-white {
     color: white;
@@ -55,24 +64,11 @@
     line-height: 33pt;
 }
 
-.landing-signup-text {
-    font-weight: bold;
-    font-family: Arial;
-    font-size: 45px;
-}
-
-.landing-signup-details-text {
-    color: #999;
-}
-
-#landing-signup-button {
-    font-size: 25px;
-    padding-top: 18px;
-    padding-bottom: 18px;
-}
-
-#landing-learn-more-button {
-    margin-top: 10px;
-    padding-left: 19px;
-    padding-right: 19px;
+.landing-list li {
+    list-style: none outside none;
+    padding-top:5px;
+    padding-bottom:5px;
+    border-top: 2px;
+    border-top-style: solid;
+    border-top-color: #EA8F00;
 }
