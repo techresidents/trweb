@@ -35,7 +35,8 @@ define([
         notifications: [
             [notifications.CHAT_TOPIC_CHANGED, 'onChatTopicChanged'],
             [notifications.CHAT_STARTED, 'onChatStarted'],
-            [notifications.CHAT_ENDED, 'onChatEnded']
+            [notifications.CHAT_ENDED, 'onChatEnded'],
+            [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged']
         ],
 
         initialize: function(options) {
@@ -65,6 +66,8 @@ define([
                 type: 'DiscussView',
                 view: this.view
             });
+            
+            this.view.controlsView.enable(this.usersProxy.currentUser().isPublishing());
         },
 
         onChatTopicChanged: function(notification) {
@@ -77,7 +80,9 @@ define([
 
             var that = this;
             setTimeout(function() {
-                that.view.controlsView.enable(true);
+                if(that.usersProxy.currentUser().isPublishing()) {
+                    that.view.controlsView.enable(true);
+                }
             }, 5000);
         },
 
@@ -87,6 +92,10 @@ define([
 
         onChatEnded: function(notification) {
             this.view.taggerView.enable(false);
+        },
+
+        onPublishingChanged: function(notification) {
+            this.view.controlsView.enable(this.usersProxy.currentUser().isPublishing());
         },
 
         onNextTopic: function(e) {

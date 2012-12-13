@@ -45,7 +45,7 @@ define([
             */
 
             this.view = new modal_views.ModalView({
-                title: 'Chat Ended',
+                title: 'Your chat has ended',
                 exitOnBackdropClick: false,
                 exitOnEscapeKey: false,
                 view: new feedback_views.NoFeedbackModalView({
