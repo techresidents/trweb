@@ -24,8 +24,8 @@ class TopicForm(forms.Form):
 
         topics = self.cleaned_data.get("topics")
 
-        # Ensure we have a root topic and at least one sub-topic
-        if not topics or len(topics) < 2:
+        # Ensure we have a root topic:
+        if not topics or len(topics) < 1:
             raise forms.ValidationError("Invalid topic")
 
         # Ensure root title exists

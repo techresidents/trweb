@@ -34,8 +34,8 @@ class TreeManager(models.Manager):
 
     def create_tree(self, values):
 
-        if not values or len(values) < 2:
-            raise ValueError("tree must have at least two items")
+        if not values or len(values) < 1:
+            raise ValueError("tree must have at least one item")
 
         root = values[0]
 
