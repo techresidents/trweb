@@ -105,14 +105,15 @@ INSERT INTO technology (name, type_id, description) VALUES ('Windows Phone', 3, 
 INSERT INTO technology (name, type_id, description) VALUES ('IDAPro', 4, '');
 
 
-INSERT INTO technology (name, type_id, description) VALUES ('Cassandra', 5, '');
-INSERT INTO technology (name, type_id, description) VALUES ('CouchDB', 5, '');
-INSERT INTO technology (name, type_id, description) VALUES ('MongoDB', 5, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Mnesia', 5, '');
-INSERT INTO technology (name, type_id, description) VALUES ('MySQL', 5, '');
-INSERT INTO technology (name, type_id, description) VALUES ('PostgreSQL', 5, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Oracle', 5, '');
-INSERT INTO technology (name, type_id, description) VALUES ('OrientDB', 5, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Riak', 5, '');
-INSERT INTO technology (name, type_id, description) VALUES ('SimpleDB', 5, '');
-INSERT INTO technology (name, type_id, description) VALUES ('SQLite', 5, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Cassandra', 5, 'An open source distributed database management system focused toward scalability and high availability');
+INSERT INTO technology (name, type_id, description) VALUES ('CouchDB', 5, 'An open source database that focuses on ease of use and embracing the web');
+INSERT INTO technology (name, type_id, description) VALUES ('MongoDB', 5, 'A scalable, high-performance, open source NoSQL database');
+INSERT INTO technology (name, type_id, description) VALUES ('Mnesia', 5, 'A distributed, real-time database management system written in the Erlang programming language');
+INSERT INTO technology (name, type_id, description) VALUES ('MySQL', 5, 'The popular open source relational database management system');
+INSERT INTO technology (name, type_id, description) VALUES ('PostgreSQL', 5, 'A powerful, open source object-relational database system');
+INSERT INTO technology (name, type_id, description) VALUES ('Oracle', 5, 'An object-relational database management system produced and marketed by Oracle Corporation');
+INSERT INTO technology (name, type_id, description) VALUES ('OrientDB', 5, 'An open source NoSQL database management system written in Java');
+INSERT INTO technology (name, type_id, description) VALUES ('Riak', 5, 'The most powerful open-source, distributed database you will ever put into production');
+INSERT INTO technology (name, type_id, description) VALUES ('SimpleDB', 5, 'Amazon SimpleDB is a highly available, scalable, and flexible non-relational data store that offloads the work of database administration');
+INSERT INTO technology (name, type_id, description) VALUES ('SQLite', 5, 'Cross-platform C library that implements a self-contained, embeddable, zero-configuration SQL database engine');
+INSERT INTO technology (name, type_id, description) VALUES ('VoltDB', 5, 'Wicked fast OLTP database');
