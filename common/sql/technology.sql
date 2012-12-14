@@ -90,19 +90,18 @@ INSERT INTO technology (name, type_id, description) VALUES ('Visual Basic', 2, '
 INSERT INTO technology (name, type_id, description) VALUES ('Visual Basic .NET', 2, '');
 
 
-INSERT INTO technology (name, type_id, description) VALUES ('Android OS', 3, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Blackberry OS', 3, '');
-INSERT INTO technology (name, type_id, description) VALUES ('iOS', 3, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Linux', 3, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Mac OSX', 3, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Symbian', 3, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Unix', 3, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Windows OS', 3, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Windows Mobile', 3, '');
-INSERT INTO technology (name, type_id, description) VALUES ('Windows Phone', 3, '');
+INSERT INTO technology (name, type_id, description) VALUES ('Android OS', 3, 'A Linux-based operating system designed primarily for touchscreen mobile devices');
+INSERT INTO technology (name, type_id, description) VALUES ('Blackberry OS', 3, 'A mobile OS developed by RIM for its BlackBerry line of smart phone devices');
+INSERT INTO technology (name, type_id, description) VALUES ('iOS', 3, 'A mobile OS by Apple');
+INSERT INTO technology (name, type_id, description) VALUES ('Linux', 3, 'Unix-like OS built under the model of free and open source software development');
+INSERT INTO technology (name, type_id, description) VALUES ('Mac OSX', 3, 'A graphical interface OS by Apple');
+INSERT INTO technology (name, type_id, description) VALUES ('Symbian', 3, 'A mobile OS designed for smart phones');
+INSERT INTO technology (name, type_id, description) VALUES ('Unix', 3, 'A multitasking, multi-user computer operating system originally developed at Bell Labs');
+INSERT INTO technology (name, type_id, description) VALUES ('Windows OS', 3, 'A graphical interface OS by Microsoft');
+INSERT INTO technology (name, type_id, description) VALUES ('Windows Phone', 3, 'A mobile OS by Microsoft');
 
 
-INSERT INTO technology (name, type_id, description) VALUES ('IDAPro', 4, '');
+INSERT INTO technology (name, type_id, description) VALUES ('IDAPro', 4, 'A disassembler which generates assembly language source code from machine-executable code');
 
 
 INSERT INTO technology (name, type_id, description) VALUES ('Cassandra', 5, 'An open source distributed database management system focused toward scalability and high availability');
