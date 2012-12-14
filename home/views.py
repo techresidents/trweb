@@ -61,7 +61,7 @@ def compute_recommended_actions(request, profile_completion_percentage, complete
     # Tutorial and Bio chats
     tutorial_title = 'Tutorial'
     tutorial_completed = False
-    bio_title = '1 Minute Bio'
+    bio_title = 'Bio'
     bio_completed = False
     if tutorial_title in completed_topics_dict:
         tutorial_completed = True
