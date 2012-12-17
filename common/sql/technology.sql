@@ -17,14 +17,14 @@ INSERT INTO technology (name, type_id, description) VALUES ('Meteor', 1, 'An ope
 INSERT INTO technology (name, type_id, description) VALUES ('.Net', 1, 'A comprehensive and consistent programming model for building Windows applications');
 INSERT INTO technology (name, type_id, description) VALUES ('Node.js', 1, 'A server side software system designed for writing scalable Internet applications in Javascript');
 INSERT INTO technology (name, type_id, description) VALUES ('PhoneGap', 1, 'A free and open source framework that allows you to create mobile apps using standardized web APIs for the platforms you care about');
-INSERT INTO technology (name, type_id, description) VALUES ('PureMVC', 1, 'A lightweight framework for creating applications based upon the classic Model, View and Controller concept');
+INSERT INTO technology (name, type_id, description) VALUES ('PureMVC', 1, 'A lightweight framework for creating applications based upon the MVC concept');
 INSERT INTO technology (name, type_id, description) VALUES ('Pyramid', 1, 'A small, fast, down-to-earth Python web application development framework');
 INSERT INTO technology (name, type_id, description) VALUES ('Qt', 1, 'A cross-platform application and UI framework for developers using C++ or QML');
 INSERT INTO technology (name, type_id, description) VALUES ('Rhomobile', 1, 'An HTML5 application development platform built to meet the needs of the next generation of business mobility');
 INSERT INTO technology (name, type_id, description) VALUES ('Ruby on Rails', 1, 'An open-source web framework that is optimized for programmer happiness and sustainable productivity');
 INSERT INTO technology (name, type_id, description) VALUES ('Sencha', 1, 'Provides HTML5-based app development tools and services for building universal apps that run on any device');
 INSERT INTO technology (name, type_id, description) VALUES ('Sinatra', 1, 'A DSL for quickly creating web applications in Ruby with minimal effort');
-INSERT INTO technology (name, type_id, description) VALUES ('Spine', 1, 'Build awesome Javascript MVC Applications');
+INSERT INTO technology (name, type_id, description) VALUES ('Spine', 1, 'Framework to build Javascript MVC applications');
 INSERT INTO technology (name, type_id, description) VALUES ('Spring', 1, 'An application development framework for enterprise Java');
 INSERT INTO technology (name, type_id, description) VALUES ('Struts', 1, 'A free open-source solution for creating Java web applications');
 INSERT INTO technology (name, type_id, description) VALUES ('Symbian SDK', 1, 'Native API for the Symbian OS');
