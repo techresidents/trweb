@@ -24,7 +24,7 @@ INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, p
 INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 300, NULL, 'Slow Process Speculation', 1, True, True, 1, 11, 'A linux process is reportedly running slowly. Speculate on the potential causes of the slowness, and the steps you would take to prove or disprove each hypothesis. Creativity is encouraged.');
 
 --Unicode for Grandmas
-INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 300, NULL, 'Unicode for Grandmas', 1, True, True, 1, 11, 'Explain unicode to an audiuence of grandmothers.');
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 300, NULL, 'Unicode for Grandmas', 1, True, True, 1, 11, 'Explain unicode to an audience of grandmothers.');
 
 --For or Against: ORM
 INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 300, NULL, 'For or Against: ORM', 1, True, True, 1, 11, 'Describe your stance on Object Relational Mapping (ORM) tools.');
