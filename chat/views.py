@@ -1,4 +1,4 @@
-
+import datetime
 import json
 
 from django.conf import settings
@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 import OpenTokSDK
 
 from trpycore.encode.basic import basic_encode, basic_decode
+from trpycore.timezone import tz
 from techresidents_web.common.decorators import staff_required
 from techresidents_web.common.models import Topic
 from techresidents_web.chat.forms import CreateChatForm, ChatFeedbackForm
@@ -198,21 +199,19 @@ def wait(request, encoded_chat_id):
     chat_id = basic_decode(encoded_chat_id)
     try:
         chat = Chat.objects.select_related("chat__type").get(id=chat_id)
-        if chat.expired:
-            return HttpResponseForbidden("chat expired")
 
         chat_session = None
         if chat.type.name != "UNRESTRICTED":
-            if chat.open:
-                chat_session = ChatSession.objects.get(chat=chat)
+            chat_session = ChatSession.objects.get(chat=chat)
         else:
             registration = ChatRegistration.objects.\
                     select_related("chat_session").\
                     get(chat=chat, user=request.user, checked_in=True)
-            if chat.open:
-                chat_session = registration.chat_session
-        
-        if chat_session:
+            chat_session = registration.chat_session
+
+        if chat_session and chat_session.expired:
+            return HttpResponseForbidden("chat session expired")
+        elif chat_session and chat_session.open:
             return HttpResponseRedirect(reverse("chat.views.session", args=[basic_encode(chat_session.id)]))
         else:
             context = {
@@ -240,10 +239,10 @@ def session_wait(request, encoded_chat_session_id):
                 get(id=chat_session_id)
         chat = chat_session.chat
 
-        if chat.open:
+        if chat_session.open:
             return HttpResponseRedirect(reverse("chat.views.session", args=[basic_encode(chat_session.id)]))
-        elif chat.expired:
-            return HttpResponseForbidden("chat expired")
+        elif chat_session.expired:
+            return HttpResponseForbidden("chat session expired")
         else:
             context = {
                 "chat_title": chat.topic.title,
@@ -267,11 +266,11 @@ def session(request, encoded_chat_session_id):
     chat = chat_session.chat
     chat_type = chat_session.chat.type
     chat_user = None
-
-    if chat.pending:
+    
+    if chat_session.pending:
         return HttpResponseRedirect(reverse("chat.views.session_wait", args=[encoded_chat_session_id]))
-    elif chat.expired:
-        return HttpResponseForbidden("chat expired")
+    elif chat_session.expired:
+        return HttpResponseForbidden("chat session expired")
     elif chat_session.end is not None:
         return HttpResponseForbidden("chat session ended")
 
@@ -302,13 +301,18 @@ def session(request, encoded_chat_session_id):
     chat_data = _build_chat_data(request, chat_session, chat_user)
 
     if not chat_user.token:
+        #Calculate tokbox token expirate timestamp. Note that this will only prevent
+        #chats from being started with this token after expire_time.
+        start = chat_session.connect or tz.utcnow()
+        expire_time = tz.utc_to_timestamp(start + datetime.timedelta(minutes=10))
         opentok = OpenTokSDK.OpenTokSDK(
                 settings.TOKBOX_API_KEY,
                 settings.TOKBOX_API_SECRET)
         token = opentok.generate_token(
                 chat_session.token,
                 connection_data=json.dumps(chat_data["users"][0]),
-                role=OpenTokSDK.RoleConstants.MODERATOR)
+                role=OpenTokSDK.RoleConstants.MODERATOR,
+                expire_time=expire_time)
         chat_user.token = token
         chat_user.save()
 

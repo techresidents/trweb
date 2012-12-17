@@ -295,7 +295,9 @@ define([
             });
 
             this.childViews = [];
-            var context = this.collection.toJSON({withRelated: true});
+            var context = {
+                collection: this.collection.toJSON({withRelated: true})
+            };
             this.$el.html(this.template(context));
 
             this.collection.each(this.added, this);
@@ -417,9 +419,9 @@ define([
         events: {
         },
 
-        beginnerSkillsSelector: '#beginner-skills',
+        noviceSkillsSelector: '#novice-skills',
 
-        intermediateSkillsSelector: '#intermediate-skills',
+        proficientSkillsSelector: '#proficient-skills',
 
         expertSkillsSelector: '#expert-skills',
 
@@ -464,8 +466,8 @@ define([
             var context = {
                 collection: this.collection.toJSON(),
                 expertCount: expertiseCounts.Expert,
-                intermediateCount: expertiseCounts.Intermediate,
-                beginnerCount: expertiseCounts.Beginner
+                proficientCount: expertiseCounts.Proficient,
+                noviceCount: expertiseCounts.Novice
             };
             this.$el.html(this.template(context));
 
@@ -501,11 +503,11 @@ define([
 
             // Append view to appropriate section of view based upon expertise level
             switch(model.get_expertise()) {
-                case 'Beginner':
-                    this.$(this.beginnerSkillsSelector).append(view.el);
+                case 'Novice':
+                    this.$(this.noviceSkillsSelector).append(view.el);
                     break;
-                case 'Intermediate':
-                    this.$(this.intermediateSkillsSelector).append(view.el);
+                case 'Proficient':
+                    this.$(this.proficientSkillsSelector).append(view.el);
                     break;
                 case 'Expert':
                     this.$(this.expertSkillsSelector).append(view.el);

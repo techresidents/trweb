@@ -15,8 +15,10 @@
 
     <div class="container">
         <div class="row">
-            <div class="page-header">
-                <h1>Profile</h1>
+            <div class="span12">
+                <div class="page-header">
+                    <h1>Profile</h1>
+                </div>
             </div>
         </div>
     </div>
@@ -65,7 +67,7 @@
                                                 {% if forloop.first %}
                                                     <option value="" disabled="disabled" selected="selected">Select your option</option>
                                                 {% endif %}
-                                                <option value={{ option }}>{{ option }}</option>
+                                                <option value="{{ option }}">{{ option }}</option>
                                             {% endfor %}
                                         </select>
                                         <button id="position-add-button" class="btn">Add</button>
@@ -231,7 +233,7 @@
             <select class="min-salary-option">
                 <option value="0">None</option>
                 {% for option in min_salary_options %}
-                    <option value={{ option }}>{{ option|intcomma }}
+                    <option value="{{ option }}">{{ option|intcomma }}
                         {% if forloop.last %}+{% endif %}
                     </option>
                 {% endfor %}
@@ -279,9 +281,10 @@
 
     <script>
         var require = {
-            baseUrl: '/static/js'
+            baseUrl: '/static/js',
+            urlArgs: '{{VERSION}}'
         };
     </script>
-    <script data-main="apps/profile/main.js" src="{% static "js/3ps/require/require.js" %}"></script>
+    <script data-main="apps/profile/main" src="{% static "js/3ps/require/require-min.js" %}"></script>
 
 {% endblock %}

@@ -58,9 +58,14 @@ def landing_placeholder(request):
     return render_to_response('common/landing_placeholder.html', context,  context_instance=RequestContext(request))
 
 @never_cache
-def learn_more(request):
+def developer_learn_more(request):
     context = {}
-    return render_to_response('common/learn_more.html', context,  context_instance=RequestContext(request))
+    return render_to_response('common/developer_learn_more.html', context,  context_instance=RequestContext(request))
+
+@never_cache
+def employer_learn_more(request):
+    context = {}
+    return render_to_response('common/employer_learn_more.html', context,  context_instance=RequestContext(request))
 
 @never_cache
 def about(request):

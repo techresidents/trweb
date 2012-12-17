@@ -24,12 +24,12 @@
                     {% if forloop.first %}
                         <h2 class="level{{ topic.level }}">
                             {{ topic.title }}
-                            <small>({{topic.duration}} mins)</small>
+                            <small>({{topic.duration_minutes}} min)</small>
                         </h2>
                     {% else %}
                         <h3 class="level{{ topic.level }}">
                             {{ topic.title }}
-                            <small>({{topic.duration}} mins)</small>
+                            <small>({{topic.duration_minutes}} min)</small>
                         </h3>
                     {% endif %}
                     <p class="description level{{ topic.level }}">

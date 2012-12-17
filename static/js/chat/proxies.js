@@ -1,4 +1,5 @@
 define([
+    'common/notifications',
     'core/proxy',
     'chat/agenda/proxies',
     'chat/marker/models',
@@ -15,6 +16,7 @@ define([
     'chat/whiteboard/proxies',
     'resource/models'
 ], function(
+    notifications,
     proxy,
     agenda_proxies,
     marker_models,
@@ -104,6 +106,38 @@ define([
                 collection: new whiteboard_models.WhiteboardCollection()
             });
             this.facade.registerProxy(this.chatWhiteboardsProxy);
+            
+            //schedule chat termination to protect us in the case where the chat is
+            //not ended in a timely manner.
+            this.scheduleTermination();
+        },
+
+        /**
+         *
+         */
+        scheduleTermination: function() {
+            var that = this;
+            var topic = this.chatAgendaProxy.topicCollection.first();
+            var minute = this.chatAgendaProxy.minuteCollection.first();
+            var start, end, now = new Date();
+            if(minute && minute.startTimestamp) {
+                start = new Date(minute.startTimestamp * 1000);
+            } else {
+                start = new Date();
+            }
+
+            end = new Date(start.getTime() + topic.duration()*1000 + 60*5*1000);
+            
+            setTimeout(function() {
+                that.facade.trigger(notifications.ALERT, {
+                    severity: 'warning',
+                    message: 'Chat will terminate in 1 minute ...'
+                });
+            }, end - now  - 60000);
+
+            setTimeout(function() {
+                that.facade.trigger(notifications.CHAT_END);
+            }, end - now);
         },
         
         /**
@@ -171,8 +205,12 @@ define([
          * End the chat
          */
         end: function() {
-            var nextActive;
-
+            var i=1, nextActive;
+            var that = this;
+            var activateNext = function() {
+                that.chatAgendaProxy.activateNext();
+            };
+            
             if(this.isActive()) {
                 nextActive = this.chatAgendaProxy.nextActive();
                 this.chatAgendaProxy.activateNext();
@@ -184,8 +222,13 @@ define([
                     //the new active topic, since this requires
                     //a network request.
                     nextActive = this.chatAgendaProxy.nextActive(nextActive);
-                    this.chatAgendaProxy.activateNext();
+
+                    //delay nextActive() by a 1 second to allow time for
+                    //server response.
+                    setTimeout(activateNext, i*1000);
+                    i++;
                 }
+
             }
         }
 
