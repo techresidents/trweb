@@ -1,25 +1,30 @@
-
 INSERT INTO technology (name, type_id, description) VALUES ('Android SDK', 1, 'Native API for the Android OS');
+INSERT INTO technology (name, type_id, description) VALUES ('Angular.js', 1, 'An open source Javascript framework used to augment browser-based applications with MVC');
+INSERT INTO technology (name, type_id, description) VALUES ('Backbone.js', 1, 'Gives structure to web applications by providing models, collections, and views over a RESTful JSON interface');
 INSERT INTO technology (name, type_id, description) VALUES ('Blackberry SDK', 1, 'Native API for the Blackberry OS');
 INSERT INTO technology (name, type_id, description) VALUES ('Cocoa', 1, 'Native object-oriented API for the Mac OS X operating system');
 INSERT INTO technology (name, type_id, description) VALUES ('Django', 1, 'A high-level Python Web framework that encourages rapid development and clean, pragmatic design');
 INSERT INTO technology (name, type_id, description) VALUES ('Dynamix', 1, 'An open plug-and-play context framework for Android');
+INSERT INTO technology (name, type_id, description) VALUES ('Ember.js', 1, 'A framework for creating ambitious web applications');
 INSERT INTO technology (name, type_id, description) VALUES ('Flex SDK', 1, 'A powerful, open source application framework that allows you to easily build mobile applications as well as traditional applications for browser and desktop using the same programming model, tool, and codebase');
 INSERT INTO technology (name, type_id, description) VALUES ('Grails', 1, 'An open source, full stack, web application framework for the JVM that uses the Groovy programming language');
 INSERT INTO technology (name, type_id, description) VALUES ('Hadoop', 1, 'Allows for the distributed processing of large data sets across clusters of computers using simple programming models');
 INSERT INTO technology (name, type_id, description) VALUES ('iOS SDK', 1, 'Native API for iOS');
 INSERT INTO technology (name, type_id, description) VALUES ('JQuery', 1, 'A fast, concise, library that simplifies how to traverse HTML documents, handle events, perform animations, and add AJAX');
 INSERT INTO technology (name, type_id, description) VALUES ('JQuery Mobile', 1, 'A unified, HTML5-based user interface system for all popular mobile device platforms, built on the rock-solid jQuery and jQuery UI foundation');
-INSERT INTO technology (name, type_id, description) VALUES ('.Net', 1, 'A comprehensive and consistent programming model for building Windows applications');
+INSERT INTO technology (name, type_id, description) VALUES ('Knockout', 1, 'Simplify dynamic JavaScript UIs by applying the Model-View-View Model (MVVM) pattern');
+INSERT INTO technology (name, type_id, description) VALUES ('Meteor', 1, 'An open source platform for building web apps');
 INSERT INTO technology (name, type_id, description) VALUES ('.Net', 1, 'A comprehensive and consistent programming model for building Windows applications');
 INSERT INTO technology (name, type_id, description) VALUES ('Node.js', 1, 'A server side software system designed for writing scalable Internet applications in Javascript');
 INSERT INTO technology (name, type_id, description) VALUES ('PhoneGap', 1, 'A free and open source framework that allows you to create mobile apps using standardized web APIs for the platforms you care about');
+INSERT INTO technology (name, type_id, description) VALUES ('PureMVC', 1, 'A lightweight framework for creating applications based upon the classic Model, View and Controller concept');
 INSERT INTO technology (name, type_id, description) VALUES ('Pyramid', 1, 'A small, fast, down-to-earth Python web application development framework');
 INSERT INTO technology (name, type_id, description) VALUES ('Qt', 1, 'A cross-platform application and UI framework for developers using C++ or QML');
 INSERT INTO technology (name, type_id, description) VALUES ('Rhomobile', 1, 'An HTML5 application development platform built to meet the needs of the next generation of business mobility');
 INSERT INTO technology (name, type_id, description) VALUES ('Ruby on Rails', 1, 'An open-source web framework that is optimized for programmer happiness and sustainable productivity');
 INSERT INTO technology (name, type_id, description) VALUES ('Sencha', 1, 'Provides HTML5-based app development tools and services for building universal apps that run on any device');
 INSERT INTO technology (name, type_id, description) VALUES ('Sinatra', 1, 'A DSL for quickly creating web applications in Ruby with minimal effort');
+INSERT INTO technology (name, type_id, description) VALUES ('Spine', 1, 'Build awesome Javascript MVC Applications');
 INSERT INTO technology (name, type_id, description) VALUES ('Spring', 1, 'An application development framework for enterprise Java');
 INSERT INTO technology (name, type_id, description) VALUES ('Struts', 1, 'A free open-source solution for creating Java web applications');
 INSERT INTO technology (name, type_id, description) VALUES ('Symbian SDK', 1, 'Native API for the Symbian OS');
@@ -101,6 +106,8 @@ INSERT INTO technology (name, type_id, description) VALUES ('IDAPro', 4, 'A disa
 
 INSERT INTO technology (name, type_id, description) VALUES ('Cassandra', 5, 'An open source distributed database management system focused toward scalability and high availability');
 INSERT INTO technology (name, type_id, description) VALUES ('CouchDB', 5, 'An open source database that focuses on ease of use and embracing the web');
+INSERT INTO technology (name, type_id, description) VALUES ('IBM DB2', 5, 'A relational database management system developed by IBM');
+INSERT INTO technology (name, type_id, description) VALUES ('Microsoft SQL Server', 5, 'A relational database management system developed by Microsoft');
 INSERT INTO technology (name, type_id, description) VALUES ('MongoDB', 5, 'A scalable, high-performance, open source NoSQL database');
 INSERT INTO technology (name, type_id, description) VALUES ('Mnesia', 5, 'A distributed, real-time database management system written in the Erlang programming language');
 INSERT INTO technology (name, type_id, description) VALUES ('MySQL', 5, 'The popular open source relational database management system');
