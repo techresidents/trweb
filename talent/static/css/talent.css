@@ -213,11 +213,11 @@
     line-height: 36px;
 }
 
-.user-skills-beginner > div {
+.user-skills-novice > div {
     background-color: #F2DEDE;
 }
 
-.user-skills-intermediate > div {
+.user-skills-proficient > div {
     background-color: #D9EDF7;
 }
 

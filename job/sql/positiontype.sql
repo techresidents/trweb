@@ -1,3 +1,3 @@
-INSERT INTO job_positiontype (name, description) VALUES ('Developer', 'Researches, designs, and builds software.');
-INSERT INTO job_positiontype (name, description) VALUES ('Manager', 'Manages a software project and team.');
-INSERT INTO job_positiontype (name, description) VALUES ('Architect', 'High level system designer. Provides design guidance and considers the big picture.');
+INSERT INTO job_positiontype (name, description) VALUES ('Junior Developer', 'Less than 2 years of professional experience.');
+INSERT INTO job_positiontype (name, description) VALUES ('Senior Developer', 'More than 2 years of professional experience.');
+INSERT INTO job_positiontype (name, description) VALUES ('Team Lead', 'Development team and project leader.');

@@ -67,7 +67,7 @@
                                                 {% if forloop.first %}
                                                     <option value="" disabled="disabled" selected="selected">Select your option</option>
                                                 {% endif %}
-                                                <option value={{ option }}>{{ option }}</option>
+                                                <option value="{{ option }}">{{ option }}</option>
                                             {% endfor %}
                                         </select>
                                         <button id="position-add-button" class="btn">Add</button>
@@ -233,7 +233,7 @@
             <select class="min-salary-option">
                 <option value="0">None</option>
                 {% for option in min_salary_options %}
-                    <option value={{ option }}>{{ option|intcomma }}
+                    <option value="{{ option }}">{{ option|intcomma }}
                         {% if forloop.last %}+{% endif %}
                     </option>
                 {% endfor %}

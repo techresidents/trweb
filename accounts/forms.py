@@ -773,7 +773,7 @@ class ProfileSkillsForm(forms.Form):
                 user_skill = Skill(
                     user=self.request.user,
                     technology=technology,
-                    expertise_type=ExpertiseType.objects.get(name='Beginner'),
+                    expertise_type=ExpertiseType.objects.get(name='Novice'),
                     yrs_experience=0
                 )
 
