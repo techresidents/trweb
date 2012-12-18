@@ -79,6 +79,7 @@ class RegisterUserForm(forms.ModelForm):
         self.account_request_code = account_request_code
         self.user = None
         super(RegisterUserForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].widget.attrs['autofocus'] = 'autofocus'
     
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -208,7 +209,8 @@ class LoginForm(forms.Form):
         self.request = request
         self.user = None
         super(LoginForm, self).__init__(*args, **kwargs)
-    
+        self.fields['username'].widget.attrs['autofocus'] = 'autofocus'
+
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
@@ -237,6 +239,7 @@ class LoginOTPForm(forms.Form):
     def __init__(self, one_time_password=None, *args, **kwargs):
         self.otp = one_time_password
         super(LoginOTPForm, self).__init__(*args, **kwargs)
+        self.fields['code'].widget.attrs['autofocus'] = 'autofocus'
     
     def _authenticate(self, secret, code):
         #Time based one time password (RFC 6238)
@@ -277,6 +280,7 @@ class ForgotPasswordForm(forms.Form):
     def __init__(self, request=None, *args, **kwargs):
         self.request = request
         super(ForgotPasswordForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs['autofocus'] = 'autofocus'
 
     def clean(self):
         if 'username' in self.cleaned_data and 'username_confirmation' in self.cleaned_data:
@@ -332,6 +336,7 @@ class ResetPasswordForm(forms.Form):
     def __init__(self, reset_password_code, *args, **kwargs):
         self.reset_password_code = reset_password_code
         super(ResetPasswordForm, self).__init__(*args, **kwargs)
+        self.fields['password'].widget.attrs['autofocus'] = 'autofocus'
 
     def clean(self):
         if 'password' in self.cleaned_data and 'password_confirmation' in self.cleaned_data:
@@ -366,6 +371,7 @@ class OTPForm(forms.Form):
     def __init__(self, request, *args, **kwargs):
         self.request = request
         super(OTPForm, self).__init__(*args, **kwargs)
+        self.fields['secret'].widget.attrs['autofocus'] = 'autofocus'
     
     def clean_secret(self):
         secret = self.cleaned_data["secret"]
