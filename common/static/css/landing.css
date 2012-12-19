@@ -73,11 +73,6 @@
     border-top-color: #EA8F00;
 }
 
-
-.landing-social-icon {
-    margin-right: 5px;
-}
-
 .landing-social-links {
     margin-top: 25px;
     list-style: none;
@@ -87,6 +82,11 @@
     display: inline-block;
     vertical-align: top;
     margin-right: 25px;
+}
+
+.landing-social-links > li > a > img {
+    margin-right: 5px;
+    margin-bottom: 4px;
 }
 
 .landing-social-text {
