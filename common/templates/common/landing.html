@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% load url from future %}
 
-{% block title %} Discuss technology. Find jobs. Build your career. | Tech Residents{% endblock %}
+{% block title %} Discuss. Be Heard. Get Hired. | Tech Residents{% endblock %}
 
 {% block meta-description %}content="Tech Residents is a free platform for software
     professionals to discuss curated technical topics with fellow professionals to find
@@ -23,9 +23,21 @@
                     <h1 class="landing-text-offwhite landing-messaging-text">
                         Discuss. Be Heard. Get Hired.
                     </h1>
+
                 </div>
+
                 <div id="embedded-video-container" class="span4 pull-right">
                     <iframe width="450" height="253" src="http://www.youtube.com/embed/3vbuF02CkA0?rel=0&color=white" frameborder="1" allowfullscreen></iframe>
+
+                    <ul class="landing-social-links">
+                        <li>
+                            <a href="https://twitter.com/techresidents" class="twitter-follow-button" data-show-count="false">Follow @techresidents</a>
+                            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                        </li>
+                        <li>
+                            <iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Ftechresidents&amp;send=false&amp;layout=button_count&amp;width=80&amp;show_faces=false&amp;font&amp;colorscheme=light&amp;action=like&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:80px; height:21px;" allowTransparency="true"></iframe>
+                        </li>
+                    </ul>
                 </div>
                 <div id="landing-details-container" class="span7">
                     <span class="landing-text-white landing-messaging-details-text">
@@ -56,30 +68,41 @@
                     </p>
                 </div>
             </div>
+            <div class="row">
+                <div class="span9 offset2">
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="landing-gray-stripe">
         <div class="landing-container container">
             <div class="row">
-                <div style="text-align: center">
-                <h1>Better for Everyone</h1>
-            </div>
-                <div class="span6">
-
+                <div class="span7">
+                    <div class="page-header">
+                        <h1>Better for Developers</h1>
+                    </div>
                     <ul class="landing-list">
-                        <h2>Developer Benefits</h2>
                         <li><h4>Don't let your resumé speak for you</h4><p>Chat alone or with a friend about real-world software topics and let hiring companies compete for you.</p></li>
                         <li><h4>Earn what you're worth</h4><p>Our platform gives companies the opportunity to compete for you, ensuring that you get paid what you're worth.</p></li>
-                        <li><h4>Get paid</h4><p>Receive 20% of our recruitment fee ($2400 - $6000)</p></li>
+                        <li><h4>Get paid</h4><p>Get paid 20% of our recruitment fee, typically $2,400 - $6,000.</p></li>
                         <li><h4>Privacy matters</h4><p>To maintain your privacy, we only share the anonymized audio from your chats with hiring companies.</p></li>
                         <li><h4>No commitment</h4><p>Developers have no obligation to accept employer offers.</p></li>
                         <a class="btn btn-large btn-primary" href="{% url 'common.views.developer_learn_more'%}">Learn More</a>
                     </ul>
                 </div>
-                <div class="span6">
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="landing-container container">
+            <div class="row">
+                <div class="span7">
+                    <div class="page-header">
+                        <h1>Better for Employers</h1>
+                    </div>
                     <ul class="landing-list">
-                        <h2>Employer Benefits</h2>
                         <li><h4>Recruit top developers</h4><p>Our curation process surfaces talented developers and puts them within your grasp.</p></li>
                         <li><h4>Save time</h4><p>Avoid wasting time with the wrong candidates. Listen to developers discuss real-world topics to gauge their fit within your organization. </p></li>
                         <li><h4>Save money</h4><p>Save 30-50% on traditional recruitment fees.</p></li>
@@ -90,6 +113,7 @@
 
                 </div>
             </div>
+        </div>
     </div>
 
 {% endblock %}

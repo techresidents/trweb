@@ -72,3 +72,25 @@
     border-top-style: solid;
     border-top-color: #EA8F00;
 }
+
+.landing-social-links {
+    margin-top: 10px;
+    margin-left: 0px;
+    list-style: none;
+}
+
+.landing-social-links > li {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 15px;
+}
+
+.landing-social-links > li > a > img {
+    margin-right: 5px;
+    margin-bottom: 4px;
+}
+
+.landing-social-text {
+    font-size: 12px;
+    font-weight: bold;
+}
