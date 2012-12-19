@@ -8,7 +8,7 @@
 }
 
 #landing-lower-banner {
-    margin-bottom: 60px;
+    margin-bottom: 10px;
 }
 
 #landing-details-container {
@@ -87,4 +87,9 @@
     display: inline-block;
     vertical-align: top;
     margin-right: 25px;
+}
+
+.landing-social-text {
+    font-size: 12px;
+    font-weight: bold;
 }
