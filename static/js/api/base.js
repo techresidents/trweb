@@ -47,10 +47,23 @@ define([
 
             this.eachRelated(withRelated, function(instance) {
                 instance._loading = false;
+
+                //clear dirty flag
+                if(instance.hasOwnProperty('_isDirty')) {
+                    instance._isDirty = false;
+                }
+
                 instance.trigger('loaded', this);
+
             });
             this._loading = false;
+
+            if(this.hasOwnProperty('_isDirty')) {
+                this._isDirty = false;
+            }
+
             this.trigger('loaded', this);
+
         };
         options.success = _.bind(options.success, this);
 
@@ -104,14 +117,11 @@ define([
             relations = relations.split('__');
         }
 
-        if(relations.length) {
-            if(this instanceof ApiCollection) {
-                this.invoke('eachRelated', relations, callback, context, depth+1);
-            } else {
-                relation = this.getRelation(relations[0]);
-                relation.eachRelated(_.rest(relations, 1), callback, context, depth+1);
-            }
-
+        if(this instanceof ApiCollection) {
+            this.invoke('eachRelated', relations, callback, context, depth+1);
+        } else if(relations.length) {
+            relation = this.getRelation(relations[0]);
+            relation.eachRelated(_.rest(relations, 1), callback, context, depth+1);
         }
 
         if(depth) {
@@ -334,6 +344,11 @@ define([
 
             this._loading = false;
             this._loaded = false;
+            this._isDirty = false;
+
+            this.bind('change', function() {
+                this._isDirty = true;
+            }, this);
         },
 
         baseUrl: "/api/v1",
@@ -342,6 +357,10 @@ define([
             var url = Backbone.Model.prototype.url.apply(this, arguments);
             url = this.baseUrl + url;
             return url;
+        },
+
+        isDirty: function() {
+            return this._isDirty;
         },
         
         isLoading: function() {
@@ -451,7 +470,7 @@ define([
 
             return result;
         },
-
+        
         sync: sync,
 
         filterBy: function(filters) {
@@ -518,6 +537,11 @@ define([
             Backbone.Collection.prototype.constructor.apply(this, arguments);
             this._loading = false;
             this._loaded = false;
+
+            //for save()
+            this.toDestroy = [];
+            this.bind('remove', this.onRemove, this);
+
         },
 
         baseUrl: "/api/v1",
@@ -570,6 +594,70 @@ define([
 
         slice: function(start, end) {
             return new ApiQuery({collection: this}).slice(start, end);
+        },
+
+        save: function(options) {
+            var openRequests = 0;
+            var errors = 0;
+            var that = this;
+            options = options || {};
+
+            var syncSuccess = function() {
+                openRequests--;
+                if(openRequests === 0) {
+                    if(errors > 0 && options.error) {
+                        options.error(that);
+                    } else if(errors === 0 && options.success) {
+                        options.success(that);
+                    }
+                }
+            };
+
+            var syncError = function() {
+                openRequests--;
+                errors++;
+                if(openRequests === 0) {
+                    if(options.error) {
+                        options.error(that);
+                    }
+                }
+            };
+
+            //destroy models with id's which have been removed from
+            //the collection prior to save()
+            _.each(this.toDestroy, function(model) {
+                if(!this.get(model.id)) {
+                    openRequests++;
+                    model.destroy({
+                        success: syncSuccess,
+                        error: syncError
+                    });
+                }
+            }, this);
+            
+            //create or update all models currently in collection
+            this.each(function(model) {
+                if(model.isNew() || model.isDirty()) {
+                    openRequests++;
+                    model.save(null, {
+                        success: syncSuccess,
+                        error: syncError
+                    });
+                }
+            });
+
+            this.toDestroy = [];
+            
+            //if no saving is needed still trigger success callback
+            if(openRequests === 0 && options.success) {
+                options.success(this);
+            }
+        },
+
+        onRemove: function(model) {
+            if(model.id) {
+                this.toDestroy.push(model);
+            }
         }
 
 

@@ -47,7 +47,8 @@ define([
             data: params.data,
             processData: processData
         }, function(response) {
-            params.success(JSON.parse(response.data), response.status);
+            var data = response.data ? JSON.parse(response.data) : response.data;
+            params.success(data, response.status);
             if(params.complete) {
                 params.complete(true, response);
             }
