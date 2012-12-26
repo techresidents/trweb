@@ -57,6 +57,10 @@ define([
                     console.log('chatSession object');
                     console.log(chatSession);
                     highlightSession.set_chat_session(chatSessions.get(chatSessionId));
+
+                    //manually re-render since setting chat session relationship
+                    //will not cause a 'change' event.
+                    this.render();
                 }, this);
             }
         },
