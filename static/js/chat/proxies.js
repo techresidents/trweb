@@ -10,6 +10,7 @@ define([
     'chat/minute/proxies',
     'chat/resource/proxies',
     'chat/session/proxies',
+    'chat/skew/proxies',
     'chat/tag/models',
     'chat/tag/proxies',
     'chat/whiteboard/models',
@@ -27,6 +28,7 @@ define([
     minute_proxies,
     resource_proxies,
     session_proxies,
+    skew_proxies,
     tag_models,
     tag_proxies,
     whiteboard_models,
@@ -63,7 +65,7 @@ define([
             });
             this.chatSessionProxy.getUsersProxy().reset(options.users);
             this.facade.registerProxy(this.chatSessionProxy);
-
+            
             
             //chat messages proxy
             this.chatMessagesProxy = new message_proxies.ChatMessagesProxy({
@@ -73,11 +75,18 @@ define([
                 })
             });
 
+
             //chat markers proxy
             this.chatMarkersProxy = new marker_proxies.ChatMarkersProxy({
                 collection: new marker_models.MarkerCollection()
             });
             this.facade.registerProxy(this.chatMarkersProxy);
+
+
+            //chat skew proxy
+            this.chatSkewProxy = new skew_proxies.ChatSkewProxy();
+            this.facade.registerProxy(this.chatSkewProxy);
+            this.chatSkewProxy.calculateSkew();
 
 
             //chat resources proxy

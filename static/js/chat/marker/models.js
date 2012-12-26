@@ -257,6 +257,32 @@ define([
         TYPE: 'RECORDING_ENDED_MARKER'
     });
 
+    /**
+     * Chat Skew Marker.
+     * @constructor
+     * @param {Object} attributes Optional model attributes.
+     * @param {Object} options Optional options
+     */
+    var SkewMarker = Marker.extend({
+
+        defaults: function() {
+            return {
+                markerId: null,
+                type: SkewMarker.TYPE,
+                userId: null,
+                userTimestamp: null,
+                systemTimestamp: null,
+                skew: null
+            };
+        },
+
+        initialize: function(attributes, options) {
+        }
+
+    }, {
+        TYPE: 'SKEW_MARKER'
+    });
+
 
     /**
      * Chat Marker collection.
@@ -295,6 +321,9 @@ define([
                 case RecordingEndedMarker.TYPE: 
                     result = new RecordingEndedMarker(attributes, options);
                     break;
+                case SkewMarker.TYPE:
+                    result = new SkewMarker(attributes, options);
+                    break;
                 default:
                     result = new Marker(attributes, options);
                     break;
@@ -316,6 +345,7 @@ define([
         StartedMarker: StartedMarker,
         EndedMarker: EndedMarker,
         RecordingStartedMarker: RecordingStartedMarker,
-        RecordingEndedMarker: RecordingEndedMarker
+        RecordingEndedMarker: RecordingEndedMarker,
+        SkewMarker: SkewMarker
     };
 });

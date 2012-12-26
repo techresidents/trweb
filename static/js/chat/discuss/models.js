@@ -22,7 +22,8 @@ define([
             return {
                 rootTopic: null,
                 activeTopic: null,
-                nextTopic: null
+                nextTopic: null,
+                skew: 0
             };
         },
 
@@ -60,6 +61,14 @@ define([
         setActiveMinute: function(activeMinute) {
             this.set({ activeMinute: activeMinute });
             return this;
+        },
+
+        skew: function() {
+            return this.get('skew');
+        },
+
+        setSkew: function(skew) {
+            this.set({ skew: skew });
         },
 
         toJSON: function() {
