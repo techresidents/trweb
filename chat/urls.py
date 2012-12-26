@@ -2,7 +2,7 @@ from django.conf.urls.defaults import patterns, url
 
 urlpatterns = patterns('chat.views',
     url(r'^create/$', 'create'),
-    url(r'^highlight_reel/$', 'highlight_reel'),
+    url(r'^reel/$', 'highlight_reel'),
     url(r'^(?P<encoded_chat_id>\w+)/register/$', 'register'),
     url(r'^(?P<encoded_chat_id>\w+)/checkin/$', 'checkin'),
     url(r'^(?P<encoded_chat_id>\w+)/$', 'details'),

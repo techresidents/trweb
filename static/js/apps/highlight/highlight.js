@@ -53,6 +53,9 @@ define([
                 this.model.get_highlight_sessions().each(function(highlightSession) {
                     var chatSessionId = highlightSession.get_chat_session_id();
                     var chatSessions = this.model.get_chat_sessions();
+                    var chatSession = chatSessions.get(chatSessionId);
+                    console.log('chatSession object');
+                    console.log(chatSession);
                     highlightSession.set_chat_session(chatSessions.get(chatSessionId));
                 }, this);
             }
