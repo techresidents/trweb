@@ -145,6 +145,7 @@ define([
                         rank: this.highlightSessionCollection.length
                     });
                 }
+                highlightSession.set_chat_session(model.chatSession());
                 this.highlightSessionCollection.add(highlightSession);
 
             } else {
@@ -183,11 +184,14 @@ define([
         },
 
         render: function() {
+            console.log('SessionView render');
             var context = {
                 model: this.model.toJSON({withRelated: true}),
                 fmt: this.fmt // date formatting
             };
+            console.log(context);
             this.$el.html(this.template(context));
+            //TODO this.$("[rel=tooltip]").tooltip();
             
             return this;
         },
@@ -229,7 +233,7 @@ define([
         },
 
         render: function() {
-            console.log('render');
+            console.log('SessionsView render');
             _.each(this.childViews, function(view) {
                 view.destroy();
             });
@@ -251,7 +255,7 @@ define([
             }).render();
 
             this.childViews.push(view);
-            this.$('ul').append(view.el);
+            this.$('ol').append(view.el);
         },
 
         removed: function(model) {
@@ -278,8 +282,8 @@ define([
             var rank = model.get_rank();
             if(rank !== 0) {
                 this.collection.each(function(m) {
-                    if(m.id !== model.id &&
-                        m.get_rank() >= rank - 1) {
+                    if(m.cid !== model.cid &&
+                        m.get_rank() === rank - 1) {
                         m.set_rank(m.get_rank() + 1);
                     }
                 });
@@ -292,8 +296,8 @@ define([
             var rank = model.get_rank();
             if(rank < this.collection.length - 1) {
                 this.collection.each(function(m) {
-                    if(m.id !== model.id &&
-                        m.get_rank() <= rank + 1) {
+                    if(m.cid !== model.cid &&
+                        m.get_rank() === rank + 1) {
                         m.set_rank(m.get_rank() - 1);
                     }
                 });

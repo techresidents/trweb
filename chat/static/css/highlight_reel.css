@@ -1,0 +1,23 @@
+.reel-chat-history-container {
+    border-right-style: solid;
+    border-right-color: #E3E3E3;
+    border-right-width: 1px;
+}
+
+.reel-list h4 {
+    margin-bottom: 5px;
+}
+
+.reel-rank-btn {
+    margin-top: 10px;
+}
+
+.reel-topic-divider > li {
+    margin-top: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
+    border-top: 2px;
+    border-top-style: solid;
+    border-top-color: #EA8F00;
+}
+
