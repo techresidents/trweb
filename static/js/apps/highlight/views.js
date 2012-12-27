@@ -3,6 +3,8 @@ define([
     'underscore',
     'jquery.bootstrap',
     'core/view',
+    'alert/models',
+    'alert/views',
     'api/models',
     'apps/highlight/models',
     'text!apps/highlight/templates/chat_session.html',
@@ -14,6 +16,8 @@ define([
     _,
     none,
     view,
+    alert_models,
+    alert_views,
     api,
     highlight_models,
     chat_session_template,
@@ -189,8 +193,7 @@ define([
                 fmt: this.fmt // date formatting
             };
             this.$el.html(this.template(context));
-            //TODO this.$("[rel=tooltip]").tooltip();
-            //
+            this.$("[rel=tooltip]").tooltip();
             
             return this;
         },
@@ -200,10 +203,16 @@ define([
         },
 
         onUp: function(e) {
+            // Need to hide tooltip since this view will be removed
+            // from the DOM before the mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
             this.triggerEvent(EVENTS.HIGHLIGHT_SESSION_UP, this.model);
         },
 
         onDown: function(e) {
+            // Need to hide tooltip since this view will be removed
+            // from the DOM before the mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
             this.triggerEvent(EVENTS.HIGHLIGHT_SESSION_DOWN, this.model);
         }
     });
@@ -216,6 +225,9 @@ define([
      *   collection: {HighlightSessionCollection} (required)
      */
     var HighlightSessionsView = view.View.extend({
+
+        saveStatusSelector: '.save-status',
+        emptyReelHintSelector: '.reel-empty-hint',
 
         events: {
             'click .save': 'onSave',
@@ -245,11 +257,22 @@ define([
                 return model.get_rank();
             }), this.added, this);
 
-            
+            // show hint if reel is empty
+            if(this.childViews.length === 0){
+                this.$(this.emptyReelHintSelector).show();
+            }
+
             return this;
         },
 
         added: function(model) {
+            // remove save status view if user has added
+            // a chat to their highlight reel
+            this.removeSaveStatusView();
+
+            // remove reel-empty-hint, if shown
+            this.$(this.emptyReelHintSelector).hide();
+
             var view = new HighlightSessionView({
                 model: model
             }).render();
@@ -259,6 +282,10 @@ define([
         },
 
         removed: function(model) {
+            // remove save status view if user has removed
+            // a chat from their highlight reel
+            this.removeSaveStatusView();
+
             this.collection.each(function(m) {
                 if(m.get_rank() > model.get_rank()) {
                     m.set_rank(m.get_rank() - 1);
@@ -270,10 +297,35 @@ define([
         rankChanged: function(model) {
         },
 
+        /**
+         * Function to remove the save status view
+         * from the DOM.  Should be called if user
+         * updates their highlight reel in any way.
+         */
+        removeSaveStatusView: function() {
+            this.$(this.saveStatusSelector).children().remove();
+        },
+
         onSave: function(e) {
+            var that = this;
             this.collection.save({
                 success: function(collection) {
-                    console.log('okay');
+
+                    // Remove status view if one is already there.
+                    // This prevents multiple status views from appearing
+                    // if user repeatedly hits the save button.
+                    that.removeSaveStatusView();
+
+                    // create and add status view to DOM
+                    var alertModel = new alert_models.AlertValueObject({
+                        severity: alert_models.SEVERITY.SUCCESS,
+                        style: alert_models.STYLE.NORMAL,
+                        message: 'Save successful'
+                    });
+                    var view = new alert_views.AlertView({
+                        model: alertModel
+                    }).render();
+                    that.$(that.saveStatusSelector).append(view.el);
                 }
             });
         },
@@ -307,7 +359,6 @@ define([
         }
 
     });
-
 
 
     return {

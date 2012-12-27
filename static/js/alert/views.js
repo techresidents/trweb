@@ -20,6 +20,7 @@ define([
      * Alerts view.
      * @constructor
      * @param {Object} options
+     *    model: AlertValueObject (required)
      */
     var AlertView = view.View.extend({
 
