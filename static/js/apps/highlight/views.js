@@ -3,25 +3,27 @@ define([
     'underscore',
     'jquery.bootstrap',
     'core/view',
+    'alert/models',
+    'alert/views',
     'api/models',
     'apps/highlight/models',
     'text!apps/highlight/templates/chat_session.html',
     'text!apps/highlight/templates/chat_sessions.html',
     'text!apps/highlight/templates/highlight_session.html',
-    'text!apps/highlight/templates/highlight_sessions.html',
-    'text!apps/highlight/templates/alert_status.html'
+    'text!apps/highlight/templates/highlight_sessions.html'
 ], function(
     $,
     _,
     none,
     view,
+    alert_models,
+    alert_views,
     api,
     highlight_models,
     chat_session_template,
     chat_sessions_template,
     highlight_session_template,
-    highlight_sessions_template,
-    alert_status_template) {
+    highlight_sessions_template) {
 
     /**
      * View Events
@@ -317,9 +319,13 @@ define([
                     that.removeSaveStatusView();
 
                     // create and add status view to DOM
-                    var view = new AlertStatusView({
-                        type: 'alert-success',
+                    var alertModel = new alert_models.AlertValueObject({
+                        severity: alert_models.SEVERITY.SUCCESS,
+                        style: alert_models.STYLE.NORMAL,
                         message: 'Save successful'
+                    });
+                    var view = new alert_views.AlertView({
+                        model: alertModel
                     }).render();
                     that.$(that.saveStatusSelector).append(view.el);
                 }
@@ -355,50 +361,6 @@ define([
         }
 
     });
-
-
-    /**
-     * Alert Status View.
-     * @constructor
-     * @param {Object} options
-     *   type: Supported strings are:  (required)
-     *          'alert-success',
-     *          'alert-error',
-     *          'alert-info',
-     *          'alert-warning'
-     *   message: message string to display (required)
-     */
-    var AlertStatusView = view.View.extend({
-
-        events: {
-            'click .remove': 'removed'
-        },
-
-        childViews: function() {
-            return [];
-        },
-
-        initialize: function(options) {
-            this.type = options.type;
-            this.message = options.message;
-            this.template =  _.template(alert_status_template);
-        },
-
-        render: function() {
-            var context = {
-                message: this.message
-            };
-            this.$el.html(this.template(context));
-            this.$('.alert').addClass(this.type);
-
-            return this;
-        },
-
-        removed: function() {
-            this.destroy();
-        }
-    });
-
 
 
     return {
