@@ -8,7 +8,8 @@ define([
     'text!apps/highlight/templates/chat_session.html',
     'text!apps/highlight/templates/chat_sessions.html',
     'text!apps/highlight/templates/highlight_session.html',
-    'text!apps/highlight/templates/highlight_sessions.html'
+    'text!apps/highlight/templates/highlight_sessions.html',
+    'text!apps/highlight/templates/alert_status.html'
 ], function(
     $,
     _,
@@ -19,7 +20,8 @@ define([
     chat_session_template,
     chat_sessions_template,
     highlight_session_template,
-    highlight_sessions_template) {
+    highlight_sessions_template,
+    alert_status_template) {
 
     /**
      * View Events
@@ -191,7 +193,7 @@ define([
             };
             console.log(context);
             this.$el.html(this.template(context));
-            //TODO this.$("[rel=tooltip]").tooltip();
+            this.$("[rel=tooltip]").tooltip();
             
             return this;
         },
@@ -201,10 +203,16 @@ define([
         },
 
         onUp: function(e) {
+            // Need to hide tooltip since this view will be removed
+            // from the DOM before the mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
             this.triggerEvent(EVENTS.HIGHLIGHT_SESSION_UP, this.model);
         },
 
         onDown: function(e) {
+            // Need to hide tooltip since this view will be removed
+            // from the DOM before the mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
             this.triggerEvent(EVENTS.HIGHLIGHT_SESSION_DOWN, this.model);
         }
     });
@@ -271,9 +279,15 @@ define([
         },
 
         onSave: function(e) {
+            var that = this;
             this.collection.save({
                 success: function(collection) {
                     console.log('okay');
+                    var view = new AlertStatusView({
+                        type: 'alert-success',
+                        message: 'Save successful'
+                    }).render();
+                    that.$('.save-status').append(view.el);
                 }
             });
         },
@@ -306,6 +320,49 @@ define([
             }
         }
 
+    });
+
+
+    /**
+     * Alert Status View.
+     * @constructor
+     * @param {Object} options
+     *   type: Supported strings are:  (required)
+     *          'alert-success',
+     *          'alert-error',
+     *          'alert-info',
+     *          'alert-warning'
+     *   message: message string to display (required)
+     */
+    var AlertStatusView = view.View.extend({
+
+        events: {
+            'click .remove': 'removed'
+        },
+
+        childViews: function() {
+            return [];
+        },
+
+        initialize: function(options) {
+            this.type = options.type;
+            this.message = options.message;
+            this.template =  _.template(alert_status_template);
+        },
+
+        render: function() {
+            var context = {
+                message: this.message
+            };
+            this.$el.html(this.template(context));
+            this.$('.alert').addClass(this.type);
+
+            return this;
+        },
+
+        removed: function() {
+            this.destroy();
+        }
     });
 
 
