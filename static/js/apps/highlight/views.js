@@ -226,6 +226,8 @@ define([
      */
     var HighlightSessionsView = view.View.extend({
 
+        saveStatusSelector: '.save-status',
+
         events: {
             'click .save': 'onSave',
             'HIGHLIGHT_SESSION_UP_EVENT': 'onUp',
@@ -258,6 +260,10 @@ define([
         },
 
         added: function(model) {
+            // remove save status view if user has added
+            // a chat to their highlight reel
+            this.removeSaveStatusView();
+
             var view = new HighlightSessionView({
                 model: model
             }).render();
@@ -267,6 +273,10 @@ define([
         },
 
         removed: function(model) {
+            // remove save status view if user has removed
+            // a chat to their highlight reel
+            this.removeSaveStatusView();
+
             this.collection.each(function(m) {
                 if(m.get_rank() > model.get_rank()) {
                     m.set_rank(m.get_rank() - 1);
@@ -278,16 +288,31 @@ define([
         rankChanged: function(model) {
         },
 
+        /**
+         * Function to remove the save status view
+         * from the DOM.  Should be called if user
+         * updates their highlight reel in any way.
+         */
+        removeSaveStatusView: function() {
+            this.$(this.saveStatusSelector).children().remove();
+        },
+
         onSave: function(e) {
             var that = this;
             this.collection.save({
                 success: function(collection) {
-                    console.log('okay');
+
+                    // Remove status view if one is already there.
+                    // This prevents multiple status views from appearing
+                    // if user repeatedly hits the save button.
+                    that.removeSaveStatusView();
+
+                    // create and add status view to DOM
                     var view = new AlertStatusView({
                         type: 'alert-success',
                         message: 'Save successful'
                     }).render();
-                    that.$('.save-status').append(view.el);
+                    that.$(that.saveStatusSelector).append(view.el);
                 }
             });
         },
