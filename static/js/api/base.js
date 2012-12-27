@@ -460,11 +460,11 @@ define([
             return result;
         },
 
-        toJSON: function(options, level) {
+        toJSON: function(options) {
             var result = {};
             var field, fieldName, relation;
             options = options || {};
-            options.level = options.level || 0;
+            options.level = options.level || 5;
 
             for(fieldName in this.fields) {
                 if(this.fields.hasOwnProperty(fieldName)) {
@@ -478,9 +478,9 @@ define([
                     if(this.relatedFields.hasOwnProperty(fieldName)) {
                         field = this.relatedFields[fieldName];
                         relation = this.getRelation(fieldName);
-                        if(relation.isLoaded() && options.level < 3) {
+                        if(relation.isLoaded() && options.level > 1) {
                             var newOptions = _.clone(options);
-                            newOptions.level += 1;
+                            newOptions.level -= 1;
                             result[fieldName] = relation.toJSON(newOptions);
                         } else {
                             result[fieldName] = field.many ? [] : {};
