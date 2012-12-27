@@ -227,6 +227,7 @@ define([
     var HighlightSessionsView = view.View.extend({
 
         saveStatusSelector: '.save-status',
+        emptyReelHintSelector: '.reel-empty-hint',
 
         events: {
             'click .save': 'onSave',
@@ -255,6 +256,11 @@ define([
             _.each(this.collection.sortBy(function(model) {
                 return model.get_rank();
             }), this.added, this);
+
+            // show hint if reel is empty
+            if(this.childViews.length === 0){
+                this.$(this.emptyReelHintSelector).show();
+            }
             
             return this;
         },
@@ -263,6 +269,9 @@ define([
             // remove save status view if user has added
             // a chat to their highlight reel
             this.removeSaveStatusView();
+
+            // remove reel-empty-hint, if shown
+            this.$(this.emptyReelHintSelector).hide();
 
             var view = new HighlightSessionView({
                 model: model
@@ -274,7 +283,7 @@ define([
 
         removed: function(model) {
             // remove save status view if user has removed
-            // a chat to their highlight reel
+            // a chat from their highlight reel
             this.removeSaveStatusView();
 
             this.collection.each(function(m) {
