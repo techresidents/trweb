@@ -253,10 +253,10 @@ define([
      * Talent user chat sessions view.
      * @constructor
      * @param {Object} options
-     *   collection: {ChatSessionCollection} (required)
+     *   collection: {HighlightSessionCollection} (required)
      *   playerState: PlayerState model (required)
      */
-    var UserChatSessionsView = view.View.extend({
+    var UserHighlightSessionsView = view.View.extend({
 
         events: {
         },
@@ -283,7 +283,7 @@ define([
         },
 
         load: function() {
-            var state = this.collection.isLoadedWith('chat__topic');
+            var state = this.collection.isLoadedWith('chat_session__chat__topic');
             if(!state.loaded) {
                 state.fetcher();
             }
@@ -311,7 +311,7 @@ define([
          */
         added: function(model) {
             var view = new UserChatSessionView({
-                model: model,
+                model: model.get_chat_session(),
                 playerState: this.playerState
             }).render();
 
@@ -584,7 +584,7 @@ define([
 
         load: function() {
             var state = this.model.isLoadedWith(
-                "chat_sessions__chat__topic",
+                "highlight_sessions__chat_session__chat__topic",
                 "skills__technology",
                 "position_prefs",
                 "technology_prefs",
@@ -630,10 +630,10 @@ define([
                 el: this.$(this.skillsSelector),
                 collection: this.model.get_skills()
             }).render();
-
-            this.chatsView = new UserChatSessionsView({
+            
+            this.chatsView = new UserHighlightSessionsView({
                 el: this.$(this.chatsSelector),
-                collection: this.model.get_chat_sessions(),
+                collection: this.model.get_highlight_sessions(),
                 playerState: this.playerState
             }).render();
 
