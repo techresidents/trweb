@@ -16,8 +16,8 @@ define([
 
         urlRoot: "/archives",
 
-        model: function(attributes, options) {
-            return new Archive(attributes, options);
+        modelConstructor: function() {
+            return Archive;
         }
     });
 

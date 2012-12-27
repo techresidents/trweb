@@ -5,7 +5,9 @@ define([
     'core/base',
     'xd/xd',
     'xd/backbone',
-    'api/fields'
+    'api/fields',
+    'api/session',
+    'api/config'
 ], function(
     $,
     _,
@@ -13,7 +15,9 @@ define([
     base,
     xd,
     xdBackbone,
-    fields) {
+    api_fields,
+    api_session,
+    api_config) {
 
     /**
      * ApiModel/ApiCollection backbone sync method.
@@ -336,12 +340,22 @@ define([
 
         constructor: function(attributes, options) {
             attributes = attributes || {};
+            options = options || {};
+
+            //configure session if neeed
+            if(options.session ||
+              (!options.noSession && api_config.defaultSession)) {
+                this.session = api_session.ApiSession.get(
+                    options.session || api_config.defaultSession);
+            }
+
             attributes.meta = {
                 "resource_name": base.getValue(this, "urlRoot").substring(1),
                 "resource_uri": null
             };
-            Backbone.Model.prototype.constructor.call(this, attributes, options);
 
+            Backbone.Model.prototype.constructor.call(this, attributes, options);
+            
             this._loading = false;
             this._loaded = false;
             this._isDirty = false;
@@ -375,9 +389,9 @@ define([
 
         eachRelated: eachRelated,
 
-        getRelation: function(fieldName) {
+        getRelation: function(fieldName, attributes) {
             var field = this.relatedFields[fieldName];
-            return this[field.getterName]();
+            return this[field.getterName](attributes);
         },
 
         validate: function(attributes) {
@@ -422,11 +436,15 @@ define([
                 }
             }
 
+            //set the id now since we need this.url() to
+            //generate valid urls for getRelation().
+            this.id = result.id;
+
             for(fieldName in this.relatedFields) {
                 if(this.relatedFields.hasOwnProperty(fieldName)) {
                     field = this.relatedFields[fieldName];
                     if(response.hasOwnProperty(fieldName)) {
-                        relation = this.getRelation(fieldName);
+                        relation = this.getRelation(fieldName, result);
                         if(field.many && _.isArray(response[fieldName])) {
                             relation.reset(relation.parse(response[fieldName]));
                         }else if(!field.many && _.isObject(response[fieldName])) {
@@ -442,10 +460,11 @@ define([
             return result;
         },
 
-        toJSON: function(options) {
+        toJSON: function(options, level) {
             var result = {};
             var field, fieldName, relation;
             options = options || {};
+            options.level = options.level || 0;
 
             for(fieldName in this.fields) {
                 if(this.fields.hasOwnProperty(fieldName)) {
@@ -459,8 +478,10 @@ define([
                     if(this.relatedFields.hasOwnProperty(fieldName)) {
                         field = this.relatedFields[fieldName];
                         relation = this.getRelation(fieldName);
-                        if(relation.isLoaded()) {
-                            result[fieldName] = relation.toJSON(options);
+                        if(relation.isLoaded() && options.level < 3) {
+                            var newOptions = _.clone(options);
+                            newOptions.level += 1;
+                            result[fieldName] = relation.toJSON(newOptions);
                         } else {
                             result[fieldName] = field.many ? [] : {};
                         }
@@ -489,13 +510,13 @@ define([
         var fieldMap = child.prototype.fields;
         var fieldName;
 
-        fieldMap.meta = new fields.DictField();
+        fieldMap.meta = new api_fields.DictField();
         
         defaults = {};
         for(fieldName in fieldMap) {
             if(fieldMap.hasOwnProperty(fieldName)) {
                 field = fieldMap[fieldName];
-                if(field instanceof(fields.Field)) {
+                if(field instanceof(api_fields.Field)) {
                     field.contribute(child, fieldName);
                     
                     if(field.primaryKey) {
@@ -517,7 +538,7 @@ define([
         for(fieldName in fieldMap) {
             if(fieldMap.hasOwnProperty(fieldName)) {
                 field = fieldMap[fieldName];
-                if(field instanceof(fields.Field)) {
+                if(field instanceof(api_fields.Field)) {
                     field.contribute(child, fieldName);
                 }
             }
@@ -534,14 +555,22 @@ define([
     var ApiCollection = Backbone.Collection.extend({
 
         constructor: function(models, options) {
-            Backbone.Collection.prototype.constructor.apply(this, arguments);
+            options = options || {};
+
+            Backbone.Collection.prototype.constructor.call(this, models, options);
+
             this._loading = false;
             this._loaded = false;
+        
+            if(options.session ||
+              (!options.noSession && api_config.defaultSession)) {
+                this.session = api_session.ApiSession.get(
+                    options.session || api_config.defaultSession);
+            }
 
             //for save()
             this.toDestroy = [];
             this.bind('remove', this.onRemove, this);
-
         },
 
         baseUrl: "/api/v1",
@@ -549,6 +578,17 @@ define([
         url: function() {
             url = this.baseUrl + base.getValue(this, "urlRoot");
             return url;
+        },
+
+        model: function(attributes, options) {
+            var result;
+            var constructor = this.modelConstructor();
+            if(this.session && attributes.id) {
+                result = this.session.getModel(constructor, attributes.id);
+            } else {
+                result = new constructor(attributes, options);
+            }
+            return result;
         },
 
         isLoading: function() {
@@ -567,10 +607,11 @@ define([
             var result = [];
             var i;
             for(i = 0; i<response.length; i++) {
-                var model = new this.model();
+                var model = this.model({
+                    id: response[i].id
+                });
                 model.set(model.parse(response[i]));
                 result.push(model);
-
             }
             this._loaded = true;
             return result;

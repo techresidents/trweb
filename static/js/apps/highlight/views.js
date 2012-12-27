@@ -184,14 +184,13 @@ define([
         },
 
         render: function() {
-            console.log('SessionView render');
             var context = {
                 model: this.model.toJSON({withRelated: true}),
                 fmt: this.fmt // date formatting
             };
-            console.log(context);
             this.$el.html(this.template(context));
             //TODO this.$("[rel=tooltip]").tooltip();
+            //
             
             return this;
         },
@@ -233,7 +232,6 @@ define([
         },
 
         render: function() {
-            console.log('SessionsView render');
             _.each(this.childViews, function(view) {
                 view.destroy();
             });
@@ -242,9 +240,11 @@ define([
 
             this.childViews = [];
             this.$el.html(this.template());
+
             _.each(this.collection.sortBy(function(model) {
                 return model.get_rank();
             }), this.added, this);
+
             
             return this;
         },
@@ -253,7 +253,7 @@ define([
             var view = new HighlightSessionView({
                 model: model
             }).render();
-
+            
             this.childViews.push(view);
             this.$('ol').append(view.el);
         },

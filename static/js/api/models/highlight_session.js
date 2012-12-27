@@ -16,8 +16,8 @@ define([
     var HighlightSessionCollection = api.ApiCollection.extend({
         urlRoot: "/highlight_sessions",
 
-        model: function(attributes, options) {
-            return new HighlightSession(attributes, options);
+        modelConstructor: function() {
+            return HighlightSession;
         }
 
     });

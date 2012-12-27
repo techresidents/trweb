@@ -14,8 +14,8 @@ define([
 
         urlRoot: "/topics",
 
-        model: function(attributes, options) {
-            return new Topic(attributes, options);
+        modelConstructor: function() {
+            return Topic;
         }
     });
 

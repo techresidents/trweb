@@ -16,8 +16,8 @@ define([
     var SkillCollection = api.ApiCollection.extend({
         urlRoot: "/skills",
 
-        model: function(attributes, options) {
-            return new Skill(attributes, options);
+        modelConstructor: function() {
+            return Skill;
         }
 
     });

@@ -17,8 +17,8 @@ define([
     var UserCollection = api.ApiCollection.extend({
         urlRoot: "/users",
 
-        model: function(attributes, options) {
-            return new User(attributes, options);
+        modelConstructor: function() {
+            return User;
         }
 
     });

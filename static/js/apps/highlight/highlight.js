@@ -8,6 +8,7 @@ define([
     'core/mediator',
     'core/view',
     'api/models',
+    'api/session',
     'apps/highlight/views',
     'text!apps/highlight/templates/highlight.html'
 ], function(
@@ -20,6 +21,7 @@ define([
     mediator,
     view,
     api,
+    api_session,
     highlight_views,
     highlight_app_template) {
     
@@ -46,22 +48,6 @@ define([
             
             if(!state.loaded) {
                 state.fetcher();
-            } else {
-                //Manually add chat_sessions to highlight_sessions models.
-                //This is an optimization, since we've already fetched the chat_sessions,
-                //there's no need to fetch highlight_sessions__chat_sessions__chat__topic.
-                this.model.get_highlight_sessions().each(function(highlightSession) {
-                    var chatSessionId = highlightSession.get_chat_session_id();
-                    var chatSessions = this.model.get_chat_sessions();
-                    var chatSession = chatSessions.get(chatSessionId);
-                    console.log('chatSession object');
-                    console.log(chatSession);
-                    highlightSession.set_chat_session(chatSessions.get(chatSessionId));
-
-                    //manually re-render since setting chat session relationship
-                    //will not cause a 'change' event.
-                    this.render();
-                }, this);
             }
         },
 
@@ -81,7 +67,7 @@ define([
                 collection: this.model.get_chat_sessions(),
                 highlightSessionCollection: this.model.get_highlight_sessions()
             }).render();
-            
+
             this.highlightSessionsView = new highlight_views.HighlightSessionsView({
                 el: this.$('#highlight_sessions'),
                 collection: this.model.get_highlight_sessions()
@@ -107,9 +93,13 @@ define([
         ],
 
         initialize: function(options) {
+            this.session = new api_session.ApiSession.get('global');
+            this.userModel = this.session.getModel(api.User, options.userId);
+            /*
             this.userModel = new api.User({
                 id: options.userId
             });
+            */
 
             this.view = new HighlightAppView({
                 model: this.userModel

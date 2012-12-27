@@ -288,27 +288,6 @@ define([
             var state = this.model.isLoadedWith('chat__topic__tree', 'chat_minutes', 'users', 'chat_tags');
             if(!state.loaded) {
                 state.fetcher();
-            } else {
-                //Manually set ChatMinute topic models.
-                //This is an optimization, since we've already fetched the topic tree,
-                //there's no need to fetch chat_minutes__topic.
-                this.model.get_chat_minutes().each(function(minute) {
-                    var topicId = minute.get_topic_id();
-                    var topicTree = this.model.get_chat().get_topic().get_tree();
-                    minute.set_topic(topicTree.get(topicId));
-                }, this);
-
-
-                //Manually set ChatTag minute models.
-                //This is an optimization, similar to above.
-                this.model.get_chat_tags().each(function(tag) {
-                    var minutes = this.model.get_chat_minutes();
-                    var minute = minutes.get(tag.get_chat_minute_id());
-                    tag.set_chat_minute(minute);
-                }, this);
-
-                //Call render explicitly since we're swapping out models manually.
-                this.render();
             }
         },
 

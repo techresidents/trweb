@@ -14,8 +14,8 @@ define([
     var PositionPrefCollection = api.ApiCollection.extend({
         urlRoot: "/position_prefs",
 
-        model: function(attributes, options) {
-            return new PositionPref(attributes, options);
+        modelConstructor: function() {
+            return PositionPref;
         }
 
     });
