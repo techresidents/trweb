@@ -14,8 +14,8 @@ define([
     };
 
     var STYLE = {
-        BLOCK: 'block', // for longer messages
-        NORMAL: 'normal' // for short messages
+        BLOCK: 'alert-block', // for longer messages
+        NORMAL: '' // for short messages
     };
     
     /**
