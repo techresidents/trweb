@@ -62,6 +62,7 @@ REGISTRATION_REQUIRES_CODE = False
 #but POSTS to the login page using https in non-development environments.
 TR_LOGIN_USING_HTTPS = True
 TR_XD_REMOTE = 'http://api.techresidents.com/static/js/easyXDM/cors/index.html'
+TR_API_ENDPOINT = 'http://api.techresidents.com/api/v1'
 
 #Google Analytics
 GA_ID = 'UA-36319157-1'
