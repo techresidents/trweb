@@ -5,6 +5,7 @@ define([
     'chat/agenda/proxies',
     'chat/discuss/models',
     'chat/discuss/views',
+    'chat/skew/proxies',
     'chat/tag/proxies',
     'chat/tag/views',
     'chat/user/proxies'
@@ -15,6 +16,7 @@ define([
     agenda_proxies,
     discuss_models,
     discuss_views,
+    skew_proxies,
     tag_proxies,
     tag_views,
     user_proxies) {
@@ -36,11 +38,13 @@ define([
             [notifications.CHAT_TOPIC_CHANGED, 'onChatTopicChanged'],
             [notifications.CHAT_STARTED, 'onChatStarted'],
             [notifications.CHAT_ENDED, 'onChatEnded'],
-            [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged']
+            [notifications.USER_PUBLISHING_CHANGED,'onPublishingChanged'],
+            [notifications.SKEW_CALCULATED, 'onSkewCalculated']
         ],
 
         initialize: function(options) {
             this.agendaProxy = this.facade.getProxy(agenda_proxies.ChatAgendaProxy.NAME);
+            this.skewProxy = this.facade.getProxy(skew_proxies.ChatSkewProxy.NAME);
             this.tagsProxy = this.facade.getProxy(tag_proxies.ChatTagsProxy.NAME);
             this.usersProxy = this.facade.getProxy(user_proxies.ChatUsersProxy.NAME);
 
@@ -51,7 +55,8 @@ define([
                     rootTopic: this.agendaProxy.topics().first(),
                     activeTopic: this.agendaProxy.active(),
                     nextTopic: this.agendaProxy.nextActive(),
-                    activeMinute: this.agendaProxy.minutesProxy.active()
+                    activeMinute: this.agendaProxy.minutesProxy.active(),
+                    skew: this.skewProxy.getSkew()
                 })
             });
 
@@ -96,6 +101,10 @@ define([
 
         onPublishingChanged: function(notification) {
             this.view.controlsView.enable(this.usersProxy.currentUser().isPublishing());
+        },
+
+        onSkewCalculated: function(notification) {
+            this.view.model.setSkew(this.skewProxy.getSkew());
         },
 
         onNextTopic: function(e) {

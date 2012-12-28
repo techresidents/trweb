@@ -377,6 +377,46 @@ define([
 
     });
 
+    /**
+     * Create Skew Marker Command
+     * @constructor
+     *
+     * Creates a chat skew marker by creating and sending ChatMessage
+     * with MarkerCreateMessage body.
+     */
+    var CreateSkewMarkerCommand = command.AsyncCommand.extend({
+
+        //argument names for onSuccess and onError paramaters
+        asyncCallbackArgs: ['model', 'response'],
+
+        /**
+         * Execute command
+         * @param {Object} options
+         *   {integer} userId 
+         *   {function} onSuccess optional success callback
+         *   {function} onError optional error callback
+         *   {Object} context optional callback context
+         */
+        execute: function(options) {
+            var message = new message_models.ChatMessage({
+                header: new messages.MessageHeader(),
+                msg: new messages.MarkerCreateMessage({
+                    marker: {
+                        type: marker_models.SkewMarker.TYPE,
+                        userId: options.userId,
+                        userTimestamp: options.userTimestamp
+                    }
+                })
+            });
+
+            message.save(null, {
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+        }
+
+    });
+
     return {
         CreateMarkerCommand: CreateMarkerCommand,
         CreateConnectedMarkerCommand: CreateConnectedMarkerCommand,
@@ -386,6 +426,7 @@ define([
         CreateStartedMarkerCommand: CreateStartedMarkerCommand,
         CreateEndedMarkerCommand: CreateEndedMarkerCommand,
         CreateRecordingStartedMarkerCommand: CreateRecordingStartedMarkerCommand,
-        CreateRecordingEndedMarkerCommand: CreateRecordingEndedMarkerCommand
+        CreateRecordingEndedMarkerCommand: CreateRecordingEndedMarkerCommand,
+        CreateSkewMarkerCommand: CreateSkewMarkerCommand
     };
 });

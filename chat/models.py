@@ -705,3 +705,17 @@ class ChatMessage(models.Model):
     timestamp = models.FloatField()
     time = models.DateTimeField()
     data = models.TextField()
+
+class ChatHighlightSession(models.Model):
+    """Chat highlight reel sessions.
+
+    Chat sessions included by user in highlight reel.
+    Fields:
+    """
+    class Meta:
+        db_table = "chat_highlight_session"
+        unique_together = ("chat_session", "user")
+
+    user = models.ForeignKey(User, related_name="chat_highlight_sessions")
+    chat_session = models.ForeignKey(ChatSession, related_name="+")
+    rank = models.IntegerField()

@@ -12,7 +12,8 @@ define([
     'api/models/position_pref',
     'api/models/chat_minute',
     'api/models/speaking_marker',
-    'api/models/chat_tag'
+    'api/models/chat_tag',
+    'api/models/highlight_session'
 
 ], function(
     $,
@@ -28,7 +29,10 @@ define([
     position_pref_models,
     chat_minute_models,
     speaking_marker_models,
-    chat_tag_models) {
+    chat_tag_models,
+    highlight_session_models
+    ) {
+
 
     return {
         Location: location_models.Location,
@@ -54,6 +58,8 @@ define([
         SpeakingMarker: speaking_marker_models.SpeakingMarker,
         SpeakingMarkerCollection: speaking_marker_models.SpeakingMarkerCollection,
         ChatTag: chat_tag_models.ChatTag,
-        ChatTagCollection: chat_tag_models.ChatTagCollection
+        ChatTagCollection: chat_tag_models.ChatTagCollection,
+        HighlightSession: highlight_session_models.HighlightSession,
+        HighlightSessionCollection: highlight_session_models.HighlightSessionCollection
     };
 });

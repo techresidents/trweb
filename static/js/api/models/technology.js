@@ -12,8 +12,8 @@ define([
     var TechnologyCollection = api.ApiCollection.extend({
         urlRoot: "/technologies",
 
-        model: function(attributes, options) {
-            return new Technology(attributes, options);
+        modelConstructor: function() {
+            return Technology;
         }
 
     });

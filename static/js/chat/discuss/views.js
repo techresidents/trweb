@@ -146,7 +146,8 @@ define([
             var activeTopic = this.model.activeTopic();
             var activeMinute = this.model.activeMinute();
             if(activeTopic && activeMinute) {
-                var startTime = new Date(activeMinute.startTimestamp() * 1000.0);
+                var startTimestamp = activeMinute.startTimestamp() + this.model.skew();
+                var startTime = new Date(startTimestamp * 1000);
 
                 this.timer = new timer.DurationTimerView({
                     el: this.$(this.timerSelector),

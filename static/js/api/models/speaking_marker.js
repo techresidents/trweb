@@ -20,8 +20,8 @@ define([
 
         urlRoot: "/speaking_markers",
 
-        model: function(attributes, options) {
-            return new SpeakingMarker(attributes, options);
+        modelConstructor: function() {
+            return SpeakingMarker;
         }
     });
 

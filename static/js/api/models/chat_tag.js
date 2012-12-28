@@ -20,8 +20,8 @@ define([
 
         urlRoot: "/chat_tags",
 
-        model: function(attributes, options) {
-            return new ChatTag(attributes, options);
+        modelConstructor: function() {
+            return ChatTag;
         }
     });
 

@@ -1,0 +1,35 @@
+.reel-container {
+    margin-top: 20px;
+}
+
+.reel-chat-history-container {
+    border-right-style: solid;
+    border-right-color: #E3E3E3;
+    border-right-width: 1px;
+}
+
+.reel-list h4 {
+    margin-bottom: 5px;
+}
+
+.reel-rank-btn.up {
+    margin-top: 10px;
+}
+
+.reel-rank-btn.down {
+    margin-top: 0px;
+}
+
+.reel-topic-divider > li {
+    margin-top: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
+    border-top: 2px;
+    border-top-style: solid;
+    border-top-color: #EA8F00;
+}
+
+.save-status {
+    margin-top: 10px;
+}
+

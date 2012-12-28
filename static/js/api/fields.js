@@ -315,24 +315,38 @@ define([
             var that = this;
 
             //construct getter which returns relation instance
-            var getter = function() {
+            var getter = function(attributes) {
                 var relation;
                 var constructorInstance;
+                var fk;
                 var relationInstanceName = "_" + fieldName;
+                attributes = attributes || this.attributes;
 
                 //'this' resolves to relationConstructor instance
                 if(this[relationInstanceName]) {
                     relation = this[relationInstanceName];
                 } else {
                     if(that.many) {
-                        relation = new that.relationConstructor.prototype.collectionConstructor();
+                        if(this.session && attributes.id) {
+                            relation = this.session.getCollection(
+                                    that.relationConstructor.prototype.collectionConstructor,
+                                    base.getValue(this, 'url') + "/" + fieldName);
+
+                        } else {
+                            relation = new that.relationConstructor.prototype.collectionConstructor();
+                        }
                     } else {
-                        relation = new that.relationConstructor();
+                        fk = attributes[fieldName + '_id'];
+                        if(this.session && fk) {
+                            relation = this.session.getModel(that.relationConstructor, fk);
+                        } else {
+                            relation = new that.relationConstructor();
+                        }
                     }
                     
                     constructorInstance = this;
                     relation.url = function() {
-                        return constructorInstance.url() + "/" + fieldName;
+                        return base.getValue(constructorInstance, 'url') + "/" + fieldName;
                     };
 
                     this[relationInstanceName] = relation;

@@ -18,8 +18,8 @@ define([
 
         urlRoot: "/chat_sessions",
 
-        model: function(attributes, options) {
-            return new ChatSession(attributes, options);
+        modelConstructor: function() {
+            return ChatSession;
         }
     });
 

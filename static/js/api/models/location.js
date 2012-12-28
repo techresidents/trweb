@@ -12,8 +12,8 @@ define([
     var LocationCollection = api.ApiCollection.extend({
         urlRoot: "/locations",
 
-        model: function(attributes, options) {
-            return new Location(attributes, options);
+        modelConstructor: function() {
+            return Location;
         }
 
     });

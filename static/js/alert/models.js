@@ -9,7 +9,13 @@ define([
         DEBUG: 'debug',
         INFO: 'info',
         WARNING: 'warning',
-        ERROR: 'error'
+        ERROR: 'error',
+        SUCCESS: 'success'
+    };
+
+    var STYLE = {
+        BLOCK: 'alert-block', // for longer messages
+        NORMAL: '' // for short messages
     };
     
     /**
@@ -22,7 +28,8 @@ define([
 
         defaults: function() {
             return {
-                severtity: SEVERITY.INFO,
+                severity: SEVERITY.INFO,
+                style: STYLE.BLOCK,
                 message: null
             };
         },
@@ -49,6 +56,7 @@ define([
 
     return {
         SEVERITY: SEVERITY,
+        STYLE: STYLE,
         AlertValueObject: AlertValueObject
     };
 });

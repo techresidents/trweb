@@ -1,1 +1,8 @@
-Please activate your account by visiting {{activation_url}}.
+Welcome to Tech Residents! This email was sent to verify your email address with techresidents.com. If you did not register an account with Tech Residents no further action is needed, most likely somone mistyped their email address.
+
+To activate your account please click on the link below.
+
+{{activation_url}}
+
+Enjoy!
+The Tech Residents Team

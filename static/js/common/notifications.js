@@ -40,6 +40,7 @@ define([
         MARKER_ENDED_CREATE: 'notification:MarkerEndedCreate',
         MARKER_RECORDING_STARTED_CREATE: 'notification:MarkerRecordingStartedCreate',
         MARKER_RECORDING_ENDED_CREATE: 'notification:MarkerRecordingEndedCreate',
+        MARKER_SKEW_CREATE: 'notification:MarkerSkewCreate',
 
         /* MESSAGE ACTIONS */
         MESSAGE_MARKER_CREATE: 'notification:Message:MarkerCreate',
@@ -86,6 +87,9 @@ define([
         SHOW_RESOURCES: 'notification:ShowResources',
         SHOW_RESOURCE: 'notification:ShowResource',
         SHOW_WHITEBOARDS: 'notification:ShowWhiteboards',
+
+        /* SKEW NOTICES */
+        SKEW_CALCULATED: 'notification:SkewCalculated',
 
         /* TAG ACTIONS */
         TAG_CREATE: 'notification:TagCreate',

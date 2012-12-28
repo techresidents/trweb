@@ -359,3 +359,13 @@ def session_feedback(request, encoded_chat_session_id):
             return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
         else:
             return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
+
+@login_required
+def highlight_reel(request):
+    """User's highlight reel."""
+    
+    context = {
+        "user_id": basic_encode(request.user.id)
+    }
+    
+    return render_to_response('chat/highlight_reel.html', context, context_instance=RequestContext(request))

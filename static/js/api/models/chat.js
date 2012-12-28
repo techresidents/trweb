@@ -16,8 +16,8 @@ define([
 
         urlRoot: "/chats",
 
-        model: function(attributes, options) {
-            return new Chat(attributes, options);
+        modelConstructor: function() {
+            return Chat;
         }
     });
 
