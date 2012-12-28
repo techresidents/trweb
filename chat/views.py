@@ -14,6 +14,7 @@ import OpenTokSDK
 
 from trpycore.encode.basic import basic_encode, basic_decode
 from trpycore.timezone import tz
+from techresidents_web.api.client import ApisvcClient
 from techresidents_web.common.decorators import staff_required
 from techresidents_web.common.models import Topic
 from techresidents_web.chat.forms import CreateChatForm, ChatFeedbackForm
@@ -363,9 +364,14 @@ def session_feedback(request, encoded_chat_session_id):
 @login_required
 def highlight_reel(request):
     """User's highlight reel."""
-    
+    encoded_user_id = basic_encode(request.user.id)
+    client = ApisvcClient(request.session.session_key)
+    user_json = client.user(
+            user_id=encoded_user_id,
+            with_related="chat_sessions__chat__topic,highlight_sessions")
+
     context = {
-        "user_id": basic_encode(request.user.id)
+        "user_json": json.dumps(user_json)
     }
     
     return render_to_response('chat/highlight_reel.html', context, context_instance=RequestContext(request))

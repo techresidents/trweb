@@ -50,6 +50,7 @@ REGISTRATION_REQUIRES_CODE = False
 #but POSTS to the login page using https in non-development environments.
 TR_LOGIN_USING_HTTPS = True
 TR_XD_REMOTE = 'http://staging.techresidents.com:6767/static/js/easyXDM/cors/index.html'
+TR_API_ENDPOINT = 'http://staging.techresidents.com/api/v1'
 
 #Logging settings
 LOGGING = {
