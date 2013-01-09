@@ -34,7 +34,8 @@ define([
         notifications: [
             [notifications.VIEW_CREATE, 'onCreateView'],
             [notifications.VIEW_DESTROY, 'onDestroyView'],
-            [talent_notifications.PLAYER_PLAY, 'onPlay']
+            [talent_notifications.PLAYER_PLAY, 'onPlay'],
+            [talent_notifications.PLAYER_PAUSE, 'onPause']
         ],
 
         initialize: function(options) {
@@ -73,6 +74,10 @@ define([
 
         onPlay: function(notification) {
             this.view.play(notification.chatSession, notification.chatMinute);
+        },
+
+        onPause: function(notification) {
+            this.view.pause();
         }
 
     }, {

@@ -50,9 +50,9 @@ define([
         }
     });
 
-    var FlowplayerClock = base.Base.extend({
+    var PlayerClock = base.Base.extend({
         initialize: function(options) {
-            this.api = options.api;
+            this.player = options.player;
         },
 
         start: function(elapsed) {
@@ -68,7 +68,7 @@ define([
         },
 
         elapsed: function() {
-            return this.api.getTime() * 1000.0;
+            return this.player.offset() * 1000.0;
         }
     });
 
@@ -81,6 +81,7 @@ define([
             this.lastElapsed = 0;
             this.nextEventIndex = null;
             this.timer = null;
+            this.running = false;
         },
         
         clear:  function() {
@@ -97,6 +98,7 @@ define([
         },
 
         start: function(elapsed) {
+            this.running = true;
             this.lastElapsed = elapsed || 0;
             this.nextEventIndex = this.nextEvent(this.lastElapsed);
             this.scheduleNextEvent(this.lastElapsed, this.nextEventIndex);
@@ -104,6 +106,7 @@ define([
         },
 
         pause: function() {
+            this.running = false;
             this.clock.pause();
             if(this.timer) {
                 clearTimeout(this.timer);
@@ -111,11 +114,13 @@ define([
         },
 
         resume: function() {
+            this.running = true;
             this.scheduleNextEvent(this.lastElapsed, this.nextEventIndex);
             this.clock.resume();
         },
 
         stop: function() {
+            this.running = false;
             this.clock.stop();
             if(this.timer) {
                 clearTimeout(this.timer);
@@ -149,6 +154,10 @@ define([
         },
 
         scheduleNextEvent: function(elapsed, eventIndex) {
+            if(!this.running) {
+                return;
+            }
+
             eventIndex = eventIndex || this.nextEvent(elapsed);
             var nextEvent = this.events[eventIndex];
             if(nextEvent) {
@@ -178,6 +187,6 @@ define([
     return {
         Scheduler: Scheduler,
         SchedulerClock: SchedulerClock,
-        FlowplayerClock: FlowplayerClock
+        PlayerClock: PlayerClock
     };
 });

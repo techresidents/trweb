@@ -54,6 +54,7 @@ define([
                 });
 
                 this.view.addEventListener(playback_views.EVENTS.PLAY, this.onPlay, this);
+                this.view.addEventListener(playback_views.EVENTS.PAUSE, this.onPause, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
@@ -83,6 +84,10 @@ define([
                 chatMinute: eventBody.chatMinute
             };
             this.facade.trigger(talent_notifications.PLAYER_PLAY, notificationBody);
+        },
+
+        onPause: function(e, eventBody) {
+            this.facade.trigger(talent_notifications.PLAYER_PAUSE);
         }
 
     }, {

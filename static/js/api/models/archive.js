@@ -38,7 +38,10 @@ define([
             streaming_url: new fields.StringField(),
             length: new fields.IntegerField({nullable: true}),
             offset: new fields.IntegerField({nullable: true}),
-            'public': new fields.BooleanField()
+            'public': new fields.BooleanField(),
+            waveform: new fields.StringField({nullable: true}),
+            waveform_path: new fields.StringField({nullable: true}),
+            waveform_url: new fields.StringField({nullable: true})
         },
         
         relatedFields: {

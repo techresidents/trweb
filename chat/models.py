@@ -472,6 +472,9 @@ class ChatArchive(models.Model):
         public: boolean indicating if the stream is public.
             This should be set to true if the stream
             has been anonymized.
+        waveform: json array of normalized waveform data
+            suitable for rendering.
+        waveform_path: path to transparent waveform image
         length: stream length in milliseconds
         offset: stream offset in milliseconds.
             This is only applicable for non-merged
@@ -486,6 +489,8 @@ class ChatArchive(models.Model):
     path = models.FileField(upload_to="archives", max_length=1024)
     users = models.ManyToManyField(User, through="ChatArchiveUser", related_name="archives+")
     public = models.BooleanField(default=False)
+    waveform = models.TextField()
+    waveform_path = models.FileField(upload_to="archives", max_length=1024, null=True)
     length = models.IntegerField(null=True)
     offset = models.IntegerField(null=True)
 

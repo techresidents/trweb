@@ -1,8 +1,8 @@
 <h3>
     <% if(playing) { %>
-    <a class="play btn btn-small btn-primary"><i class="icon-volume-up icon-white"></i></a>
+    <a><i class="player-btn player-speaker"></i></a>
     <% } else { %>
-    <a class="play btn btn-small"><i class="icon-play"></i></a>
+    <a class="play"><i class="player-btn player-play"></i></a>
     <% } %>
     <%=minute.topic.title %>
     <% if(minute.duration < 60) { %>

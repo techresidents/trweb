@@ -17,7 +17,8 @@
         easyXDM: '3ps/easyXDM/easyXDM',
         raphael: '3ps/raphael/raphael-min',
         spin: '3ps/spin/spin',
-        highcharts: '3ps/highcharts/js/highcharts'
+        highcharts: '3ps/highcharts/js/highcharts',
+        soundmanager2: '3ps/soundmanager/script/soundmanager2-jsmin'
     },
 
     shim: {
@@ -59,6 +60,10 @@
         'highcharts': {
             deps: ['jquery'],
             exports: 'Highcharts'
+        },
+
+        'soundmanager2': {
+            exports: 'soundManager'
         }
     }
 })

@@ -14,7 +14,8 @@ require.config({
         easyXDM: '3ps/easyXDM/easyXDM',
         raphael: '3ps/raphael/raphael',
         spin: '3ps/spin/spin',
-        highcharts: '3ps/highcharts/js/highcharts.src'
+        highcharts: '3ps/highcharts/js/highcharts.src',
+        soundmanager2: '3ps/soundmanager/script/soundmanager2'
     },
 
     shim: {
@@ -57,6 +58,10 @@ require.config({
         'highcharts': {
             deps: ['jquery'],
             exports: 'Highcharts'
+        },
+
+        'soundmanager2': {
+            exports: 'soundManager'
         }
     }
 });

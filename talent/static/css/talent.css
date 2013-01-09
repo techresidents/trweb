@@ -21,31 +21,132 @@
 .player {
     margin-top: 5px;
 }
+
+.player-title {
+    font-size: 14pt;
+    line-height: 13px;
+    display: inline-block;
+    top: 0;
+    margin-top: 10px;
+}
+
+.player-btn {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+}
+
+.player-button {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 38px;
+}
+
+.player-timer {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 42px;
+    font-size: 14pt;
+    color: #666666;
+}
+
+.player-play {
+    background-image: url("../img/player-play.png");
+}
+
+.player-play:hover {
+    background-image: url("../img/player-play-hover.png");
+}
+
+.player-pause {
+    background-image: url("../img/player-pause.png");
+}
+
+.player-pause:hover {
+    background-image: url("../img/player-pause-hover.png");
+}
+
+.player-speaker {
+    background-image: url("../img/player-speaker.png");
+}
+
+.player-scrubber-container {
+    cursor: pointer;
+    position: relative;
+    height: 40px;
+    background-color: #AAAAAA;
+    width: 540px;
+}
+
+.player-scrubber-buffer {
+    position: absolute;
+    top 0;
+    width: 0%;
+    height: 100%;
+    background-color: #777777;
+}
+
+.player-scrubber-progress {
+    position: absolute;
+    top 0;
+    width: 0%;
+    height: 100%;
+    background-color: #EA8F00;
+}
+
+.player-scrubber-tracker {
+    position: absolute;
+    top 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background-color: #888888;
+}
+
+.player-scrubber-waveform {
+    position: absolute;
+    background-image: url("../img/waveform.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+}
+
+.player-users {
+    margin-left: 10px;
+    display: inline-block;
+    vertical-align: top;
+    border-left: 2px solid #dddddd;
+}
+
 .player-user {
-    float: left;
-    margin-right: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 15px;
 }
 
 .player-user .user-logo {
     margin: 0px auto;
-    width: 80px;
-    height: 60px;
+    width: 60px;
+    height: 45px;
 }
 
 .player-controls {
-    float: left;
-    margin-left: 10px;
-    margin-right: 10px;
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .player-expand {
     margin-top: 29px;
 }
 
-.player-fp {
-    display: block;
-    width: 640px;
-    height: 25px;
+.player-component {
 }
 
 .playback-users {
@@ -94,9 +195,12 @@
     float: left;
     margin-right: 5px;
     color: #00AEEF;
-    /*
-    color: #00A651;
-    */
+}
+
+.playback-minute .player-btn {
+    height: 30px;
+    width: 30px;
+    vertical-align: middle;
 }
 
 .playback-minute.description {
@@ -131,7 +235,7 @@
 .user-logo {
     background-image: url("../img/person.png");
     background-repeat: no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
     background-position: center;
 }
 
@@ -244,8 +348,10 @@
     margin-bottom: 5px;
 }
 
-#chat-sessions .btn {
-    margin-bottom: 10px;
+#chat-sessions .player-btn {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
     margin-right: 5px;
 }
 
@@ -254,6 +360,7 @@
     line-height: 20px;
     font-weight: bold;
     margin-right: 5px;
+    vertical-align: middle;
 }
 
 .chat-title-small {

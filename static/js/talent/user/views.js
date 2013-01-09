@@ -190,7 +190,8 @@ define([
         initialize: function(options) {
             this.playerState = options.playerState;
             this.template = _.template(chat_template);
-            this.playerState.bind('change', this.render, this);
+            this.playerState.bind('change:chatSession', this.render, this);
+            this.playerState.bind('change:state', this.render, this);
             this.model.bind('loaded', this.loaded, this);
             this.model.bind('change', this.render, this);
             
