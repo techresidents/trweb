@@ -2,9 +2,9 @@
     <% if(model.chat.topic && model.chat.topic.title) { %>
 
         <% if(playing) { %>
-            <a class="play btn btn-small btn-primary"><i class="icon-volume-up icon-white"></i></a>
+        <a><i class="player-btn player-speaker"></i></a>
         <% } else { %>
-            <a class="play btn btn-small"><i class="icon-play"></i></a>
+        <a class="play"><i class="player-btn player-play"></i></a>
         <% } %>
 
         <a class="chat-title" href="/talent/playback/<%=model.id%>"><%= model.chat.topic.title %></a>

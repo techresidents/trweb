@@ -63,6 +63,10 @@ define([
             return {
                 chatSession: null,
                 chatMinute: null,
+                archive: null,
+                duration: 0,
+                offset: 0,
+                buffered: 0,
                 users: new PlayerUserCollection(),
                 state: this.STATE.EMPTY
             };
@@ -76,12 +80,44 @@ define([
             return this.get('chatMinute');
         },
 
+        archive: function() {
+            return this.get('archive');
+        },
+
+        duration: function() {
+            return this.get('duration');
+        },
+
+        offset: function() {
+            return this.get('offset');
+        },
+
+        buffered: function() {
+            return this.get('buffered');
+        },
+
         users: function() {
             return this.get('users');
         },
 
         state: function() {
             return this.get('state');
+        },
+
+        isEmpty: function() {
+            return this.state() === this.STATE.EMPTY;
+        },
+
+        isPlaying: function() {
+            return this.state() === this.STATE.PLAYING;
+        },
+
+        isPaused: function() {
+            return this.state() === this.STATE.PAUSED;
+        },
+
+        isStopped: function() {
+            return this.state() === this.STATE.STOPPED;
         }
 
     });

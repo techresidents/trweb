@@ -24,7 +24,8 @@ define([
     users_template) {
 
     var EVENTS = {
-        PLAY: 'playback:Play'
+        PLAY: 'playback:Play',
+        PAUSE: 'playback:Pause'
     };
 
     /**
@@ -166,21 +167,23 @@ define([
     var PlaybackMinuteView = view.View.extend({
 
         events: {
-            'click .play': 'play'
+            'click .play': 'play',
+            'click .pause': 'pause'
         },
 
         initialize: function(options) {
             this.template = _.template(minute_template);
             this.playerState = options.playerState;
             this.model.bind('change', this.render, this);
-            this.playerState.bind('change', this.render, this);
+            this.playerState.bind('change:chatMinute', this.render, this);
+            this.playerState.bind('change:state', this.render, this);
         },
 
         isPlaying: function() {
             var result = false;
             var minute = this.playerState.chatMinute();
             if(minute && minute.id === this.model.id) {
-                result = this.playerState.state() === this.playerState.STATE.PLAYING;
+                result = this.playerState.isPlaying();
             }
             return result;
         },
@@ -205,6 +208,10 @@ define([
                 chatMinute: this.model
             };
             this.triggerEvent(EVENTS.PLAY, eventBody);
+        },
+
+        pause: function(e) {
+            this.triggerEvent(EVENTS.PAUSE);
         }
 
     });
