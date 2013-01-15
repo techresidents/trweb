@@ -118,6 +118,11 @@ define([
 
         isStopped: function() {
             return this.state() === this.STATE.STOPPED;
+        },
+
+        hasArchive: function() {
+            var archive = this.archive();
+            return archive !== null && archive !== undefined;
         }
 
     });

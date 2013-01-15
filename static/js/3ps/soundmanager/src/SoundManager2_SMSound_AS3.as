@@ -350,6 +350,7 @@ package {
           this.lastValues.position = nMsecOffset; // https://gist.github.com/1de8a3113cf33d0cff67
         }
 
+
         // this.ns.addEventListener(Event.SOUND_COMPLETE, _onfinish);
         this.applyTransform();
 

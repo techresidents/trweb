@@ -36,9 +36,10 @@ define([
      */
     var TalentAppRouter = Backbone.Router.extend({
         routes: {
-            'talent/playback/:id': 'playback',
-            'talent/user/:id': 'user',                
+            'playback/:id': 'playback',
+            'user/:id': 'user',                
             '*actions': 'search'
+
         },
         
         initialize: function(options) {
@@ -255,8 +256,10 @@ define([
         },
 
         initializeRouter: function() {
+            //var pushState = !!(window.history && window.history.pushState);
             Backbone.history.start({
-                pushState: true
+                pushState: true,
+                root: '/talent/'
             });
             
             var that = this;
@@ -265,12 +268,12 @@ define([
                 var root = '/talent';
                 var href = $(this).attr('href');
                 var protocol = this.protocol + '//';
-                
+
                 if(href
                     && href.slice(0, protocol.length) !== protocol
                     && href.slice(0, root.length) === root) {
                         e.preventDefault();
-                        that.router.navigate(href, true);
+                        that.router.navigate(href.slice(root.length, href.length), true);
                 }
             });
         },
