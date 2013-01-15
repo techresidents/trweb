@@ -1,0 +1,115 @@
+{% extends "navbar_authenticated.html" %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block title %}Compatibility | Tech Residents{% endblock %}
+
+{% block extrahead %}
+    <link href="{% static "css/compat.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+        <div class="row">
+            <div class="span10">
+                <div class="alert browser-alert compat-alert"></div>
+            </div>
+            <div class="span10">
+                <div class="alert flash-alert compat-alert"></div>
+            </div>
+        </div>
+
+        <div class="page-header">
+            <h1>Supported Browsers</h1>
+        </div>
+
+        <div class="row">
+            <div class="span2">
+                <a href='http://www.google.com/intl/en/chrome/browser/'><img src='/static/img/chrome-128.png'><img><p>11.0</p></a>
+            </div>
+            <div class="span2">
+                <a href='http://www.mozilla.org/en-US/firefox/new/'><img src='/static/img/firefox-128.png'><img><p>3.6</p></a>
+            </div>
+            <div class="span2">
+                <a href='http://www.apple.com/safari/'><img src='/static/img/safari-128.png'><img><p>5.0</p></a>
+            </div>
+            <div class="span2">
+                <a href='http://www.opera.com/download/'><img src='/static/img/opera-128.png'><img><p>11.0</p></a>
+            </div>
+            <div class="span2">
+                <a href='http://windows.microsoft.com/en-US/internet-explorer/download-ie'><img src='/static/img/ie-128.png'><img><p>9.0</p></a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static "js/3ps/jquery/jquery-min.js" %}"></script>
+    <script src="{% static "js/3ps/swfobject/swfobject.js" %}"></script>
+    <script>
+        var detectBrowser = function() {
+            var result;
+            var name = navigator.appName, userAgent = navigator.userAgent, tem;
+            var match = userAgent.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+            if(match && (tem = userAgent.match(/version\/([\.\d]+)/i))!= null) match[2]= tem[1];
+            if(match) {
+                result = {name: match[1], version: match[2] };
+                } else {
+                    result = {name: name, version: '?' };
+                }
+            return result;
+        };
+
+        var detectFlash = function() {
+            return swfobject.getFlashPlayerVersion();
+        };
+
+        var isBrowserCompatible = function(minVersions) {
+            var result = false;
+            var browser = detectBrowser();
+            var name = browser.name.toLowerCase();
+            if(minVersions.hasOwnProperty(name)) {
+                if(parseFloat(browser.version) >= minVersions[name]) {
+                    result = true;
+                }
+            }
+            return result;
+        };
+
+        var isFlashCompatible = function(major, minor) {
+            var result = false;
+            var flash = detectFlash();
+            if(flash.major > major ||
+            (flash.major === major && flash.minor >= minor)) {
+                result = true;
+            }
+            return result;
+        }
+
+        var browser = detectBrowser();
+        var browserCompatible = isBrowserCompatible({
+            'chrome': 11,
+            'firefox': 13.6,
+            'msie': 9,
+            'opera': 11,
+            'safari': 5
+        });
+        
+        var flash = detectFlash();
+        var flashCompatible = isFlashCompatible(10, 0);
+
+        $(document).ready(function(){
+            if(browserCompatible) {
+                $('.browser-alert').addClass('alert-success').text(browser.name + ' ' + browser.version + ' is supported.');
+                } else {
+                $('.browser-alert').addClass('alert-error').text(browser.name + ' ' + browser.version + ' is currently not supported.');
+            }
+
+            if(flashCompatible) {
+                $('.flash-alert').addClass('alert-success').text('Flash ' + flash.major + '.' + flash.minor + ' is supported.');
+                } else {
+                $('.flash-alert').addClass('alert-error').text('Flash ' + flash.major + '.' + flash.minor + ' is currently not supported.');
+            }
+        });
+    </script>
+
+{% endblock %}

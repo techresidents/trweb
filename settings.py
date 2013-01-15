@@ -155,6 +155,7 @@ INSTALLED_APPS = (
     'techresidents_web.accounts',
     'techresidents_web.chat',
     'techresidents_web.codeboard',
+    'techresidents_web.compat',
     'techresidents_web.document',
     'techresidents_web.feedback',
     'techresidents_web.home',

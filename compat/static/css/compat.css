@@ -1,0 +1,12 @@
+
+.compat-alert {
+    font-size: 14pt;
+}
+.browser-alert {
+    margin-top: 20px;
+}
+
+a > p {
+    text-align: center;
+}
+
