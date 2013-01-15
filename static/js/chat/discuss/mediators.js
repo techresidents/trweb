@@ -43,6 +43,7 @@ define([
         ],
 
         initialize: function(options) {
+            var activeTopic;
             this.agendaProxy = this.facade.getProxy(agenda_proxies.ChatAgendaProxy.NAME);
             this.skewProxy = this.facade.getProxy(skew_proxies.ChatSkewProxy.NAME);
             this.tagsProxy = this.facade.getProxy(tag_proxies.ChatTagsProxy.NAME);
@@ -55,7 +56,7 @@ define([
                     rootTopic: this.agendaProxy.topics().first(),
                     activeTopic: this.agendaProxy.active(),
                     nextTopic: this.agendaProxy.nextActive(),
-                    activeMinute: this.agendaProxy.minutesProxy.active(),
+                    activeMinute: this.agendaProxy.activeMinute(),
                     skew: this.skewProxy.getSkew()
                 })
             });
@@ -76,9 +77,10 @@ define([
         },
 
         onChatTopicChanged: function(notification) {
-            this.view.model.setActiveMinute(this.agendaProxy.minutesProxy.active());
+            var nextActiveTopic = this.agendaProxy.nextActive(notification.topic);
+            this.view.model.setActiveMinute(this.agendaProxy.minute(notification.topic));
             this.view.model.setActiveTopic(notification.topic);
-            this.view.model.setNextTopic(this.agendaProxy.nextActive(notification.topic));
+            this.view.model.setNextTopic(nextActiveTopic);
 
             //disable next button for several seconds
             this.view.controlsView.enable(false);

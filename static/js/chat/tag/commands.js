@@ -3,14 +3,14 @@ define([
     'core/command',
     'chat/message/messages',
     'chat/message/models',
-    'chat/minute/proxies',
+    'chat/agenda/proxies',
     'chat/tag/models'
 ], function(
     _,
     command,
     messages,
     message_models,
-    minute_proxies,
+    agenda_proxies,
     tag_models) {
     
     /**
@@ -37,8 +37,8 @@ define([
          *   {Object} context optional callback context
          */
         execute: function(options) {
-            var minutesProxy = this.facade.getProxy(minute_proxies.ChatMinutesProxy.NAME);
-            var activeMinute = minutesProxy.collection.active();
+            var agendaProxy = this.facade.getProxy(agenda_proxies.ChatAgendaProxy.NAME);
+            var activeMinute = agendaProxy.activeMinute();
 
             if(activeMinute) {
                 var tag = new tag_models.Tag({
@@ -88,8 +88,8 @@ define([
          *   {Object} context optional callback context
          */
         execute: function(options) {
-            var minutesProxy = this.facade.getProxy(minute_proxies.ChatMinutesProxy.NAME);
-            var activeMinute = minutesProxy.collection.active();
+            var agendaProxy = this.facade.getProxy(agenda_proxies.ChatAgendaProxy.NAME);
+            var activeMinute = agendaProxy.activeMinute();
 
             if(activeMinute) {
 

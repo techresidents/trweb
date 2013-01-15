@@ -71,17 +71,7 @@ define([
      */
     var MinuteCollection = Backbone.Collection.extend({
 
-        model: Minute,
-        
-        /**
-         * Return the currently active Minute. 
-         */
-        active: function() {
-            var minutes = this.where({
-                endTimestamp: null
-            });
-            return _.last(minutes);
-        }
+        model: Minute
     });
 
     return {
