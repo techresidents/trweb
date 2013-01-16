@@ -91,16 +91,9 @@ define([
 
         render: function() {
             var context = {};
-            var waveformUrl;
-            var archive = this.model.archive();
-            if(archive && archive.get_waveform_url()) {
-                waveformUrl = archive.get_waveform_url();
-            } else {
-                waveformUrl = '/static/img/waveform-none.png';
-            }
             this.$el.html(this.template(context));
-            this.$('.player-scrubber-waveform').css('background-image', 'url(' + waveformUrl + ')');
             this.$('.player-scrubber-tracker').hide();
+            this._loadWaveform();
             return this;
         },
 
@@ -149,6 +142,25 @@ define([
                 percent: percent,
                 left: left
             };
+        },
+
+        _loadWaveform: function() {
+            var that = this;
+            var waveformUrl, image;
+            var archive = this.model.archive();
+            if(archive && archive.get_waveform_url()) {
+                waveformUrl = archive.get_waveform_url();
+            } else {
+                waveformUrl = '/static/img/waveform-none.png';
+            }
+            
+            //reduce flicker by loading waveform image before we set it on scrubber
+            image = new Image();
+            image.onload = function() {
+                that.$('.player-scrubber-waveform').css('background-image', 'url(' + waveformUrl + ')');
+                that.$('.player-scrubber-default-waveform').hide();
+            };
+            image.src = waveformUrl;
         }
     });
 
