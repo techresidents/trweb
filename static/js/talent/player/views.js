@@ -746,7 +746,7 @@ define([
             });
             */
             
-            this.playerView = new SoundManagerStreamingView({
+            this.playerView = new SoundManagerView({
                 el: this.$('.player-component'),
                 model: this.model
             });
@@ -872,7 +872,7 @@ define([
             if(!loaded) {
                 return;
             }
-
+            
             this.loadPlayer(chatSession, chatMinute, offset);
 
             if(!this.model.hasArchive()) {
