@@ -21,7 +21,6 @@ define([
     };
 
     var sync = function(method, model, options) {
-
         var type = methodMap[method];
         var processData = type === 'GET' ? true : false;
 
@@ -48,17 +47,20 @@ define([
             processData: processData
         }, function(response) {
             var data = response.data ? JSON.parse(response.data) : response.data;
-            params.success(data, response.status);
+            params.success(model, data, options);
             if(params.complete) {
                 params.complete(true, response);
             }
+            model.trigger('sync', model, data, options);
         }, function(response) {
-            params.error(response.data.data, response.data.status);
+            params.error(model, response.data.data, options);
             if(params.complete) {
                 params.complete(false, response);
             }
-        }
-        );
+            model.trigger('error', model, response.data.data, options);
+        });
+
+        model.trigger('request', model, null, options);
     };
     
     return {

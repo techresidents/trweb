@@ -394,6 +394,13 @@ define([
             return this[field.getterName](attributes);
         },
 
+        bootstrap: function(data) {
+            var options = {silent: true};
+            //set silent to true to silence change events
+            //which will mark models dirty.
+            this.set(this.parse(data, options), options);
+        },
+
         validate: function(attributes) {
             var name, field;
             var errors = {};
@@ -422,7 +429,7 @@ define([
             }
         },
 
-        parse: function(response) {
+        parse: function(response, options) {
             var result = {};
             var field, fieldName, relation;
 
@@ -446,9 +453,9 @@ define([
                     if(response.hasOwnProperty(fieldName)) {
                         relation = this.getRelation(fieldName, result);
                         if(field.many && _.isArray(response[fieldName])) {
-                            relation.reset(relation.parse(response[fieldName]));
+                            relation.reset(relation.parse(response[fieldName], options), options);
                         }else if(!field.many && _.isObject(response[fieldName])) {
-                            relation.set(relation.parse(response[fieldName]));
+                            relation.set(relation.parse(response[fieldName], options), options);
                         } else {
                             relation.url = response[fieldName];
                         }
@@ -603,14 +610,14 @@ define([
 
         eachRelated: eachRelated,
 
-        parse: function(response) {
+        parse: function(response, options) {
             var result = [];
             var i;
             for(i = 0; i<response.length; i++) {
                 var model = this.model({
                     id: response[i].id
                 });
-                model.set(model.parse(response[i]));
+                model.set(model.parse(response[i], options), options);
                 result.push(model);
             }
             this._loaded = true;

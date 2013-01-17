@@ -95,7 +95,7 @@ define([
         initialize: function(options) {
             this.session = new api_session.ApiSession.get('global');
             this.userModel = this.session.getModel(api.User, options.user.id);
-            this.userModel.set(this.userModel.parse(options.user));
+            this.userModel.bootstrap(options.user);
 
             this.view = new HighlightAppView({
                 model: this.userModel
