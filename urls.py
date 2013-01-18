@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 # Uncomment the next two lines to enable the admin:
@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^home/', include('home.urls')),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^chat/', include('chat.urls')),
+    url(r'^compat/', include('compat.urls')),
     url(r'^feedback/', include('feedback.urls')),
     url(r'^topic/', include('topic.urls')),
     url(r'^developer/learn_more/$', 'common.views.developer_learn_more'),

@@ -91,26 +91,21 @@ define([
 
         render: function() {
             var context = {};
-            var waveformUrl;
-            var archive = this.model.archive();
-            if(archive && archive.get_waveform_url()) {
-                waveformUrl = archive.get_waveform_url();
-            } else {
-                waveformUrl = '/static/img/waveform.png';
-            }
             this.$el.html(this.template(context));
-            this.$('.player-scrubber-waveform').css('background-image', 'url(' + waveformUrl + ')');
             this.$('.player-scrubber-tracker').hide();
+            this._loadWaveform();
             return this;
         },
 
         offsetChanged: function() {
             var width = (this.model.offset() / this.model.duration()) * 100;
+            width = Math.min(width, 100);
             this.$('.player-scrubber-progress').animate({width: width + '%'});
         },
 
         bufferedChanged: function() {
             var width = (this.model.buffered() / this.model.duration()) * 100;
+            width = Math.min(width, 100);
             this.$('.player-scrubber-buffer').animate({width: width + '%'});
         },
 
@@ -147,6 +142,25 @@ define([
                 percent: percent,
                 left: left
             };
+        },
+
+        _loadWaveform: function() {
+            var that = this;
+            var waveformUrl, image;
+            var archive = this.model.archive();
+            if(archive && archive.get_waveform_url()) {
+                waveformUrl = archive.get_waveform_url();
+            } else {
+                waveformUrl = '/static/img/waveform-none.png';
+            }
+            
+            //reduce flicker by loading waveform image before we set it on scrubber
+            image = new Image();
+            image.onload = function() {
+                that.$('.player-scrubber-waveform').css('background-image', 'url(' + waveformUrl + ')');
+                that.$('.player-scrubber-default-waveform').hide();
+            };
+            image.src = waveformUrl;
         }
     });
 
@@ -241,7 +255,8 @@ define([
             var rootMinute, activeMinute;
             var context = {
                 title: '',
-                chatSession: null
+                chatSession: null,
+                hasArchive: false
             };
 
             if(!this.model.isEmpty()) {
@@ -254,6 +269,7 @@ define([
                     context.title = activeMinute.get_topic().get_title();
                 }
                 context.chatSession = this.model.chatSession().toJSON();
+                context.hasArchive = this.model.hasArchive();
             } else {
                 context.title = 'Select a chat for playback';
             }
@@ -305,6 +321,10 @@ define([
      * @constructor
      * @param {Object} options
      *   model: {PlayerState} model (required)
+     *
+     * Note that soundmanager position and to/from only works 
+     * reliably for mp3s at the moment. As a result this view
+     * should only be used with mp3s and not mp4s.
      */
     var SoundManagerView = view.View.extend({
 
@@ -313,6 +333,104 @@ define([
 
         initialize: function(options) {
             this.archive = null;
+            this.sound = null;
+            this.startOffset = 0;
+        },
+
+        render: function() {
+            return this;
+        },
+
+        load: function(archives, offset) {
+            var that = this;
+            var archive = archives.find(function(archive) {
+                return archive.get_mime_type() === 'audio/mpeg3';
+            });
+            this.archives = archives;
+            this.startOffset = offset;
+
+            if(this.sound) {
+                this.sound.stop();
+                this.sound.destruct();
+            }
+            this.sound = soundManager.createSound({
+                id: 'sound' + archive.id,
+                url: archive.get_url(),
+                autoLoad: true,
+                autoPlay: false,
+                onfinish: function() {
+                    that.triggerEvent(EVENTS.FINISHED);
+                }
+            });
+        },
+
+        offset: function() {
+            var result = 0;
+            if(this.sound) {
+                result = this.sound.position / 1000.0;
+            }
+            return result;
+        },
+
+        buffered: function() {
+            var result = 0;
+            if(this.sound && this.sound.buffered && this.sound.buffered.length) {
+                result = this.sound.buffered[0].end / 1000.0;
+            }
+            return result;
+        },
+
+        duration: function() {
+            var result = 0;
+            if(this.sound) {
+                result = this.sound.duration / 1000.0;
+            }
+            return result;
+        },
+
+        play: function(archives, offset) {
+            offset = _.isNumber(offset) ? offset : this.startOffset;
+            if(archives) {
+                this.load(archives, offset);
+            }
+            this.sound.play({
+                position: offset * 1000.0
+            });
+        },
+
+        pause: function() {
+            this.sound.pause();
+        },
+
+        resume: function() {
+            this.sound.resume();
+        },
+
+        seek: function(offset) {
+            this.sound.setPosition(offset * 1000.0);
+        },
+
+        stop: function() {
+            this.sound.stop();
+        }
+    });
+
+    /**
+     * SoundManagerStreamingView.
+     * @constructor
+     * @param {Object} options
+     *   model: {PlayerState} model (required)
+     *
+     * Note that the Rackspace CDN only works with mp4s.
+     * As a result this view can only be used with mp4s.
+     */
+    var SoundManagerStreamingView = view.View.extend({
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.archives = null;
             this.startOffset = 0;
             this.sound = null;
         },
@@ -321,9 +439,12 @@ define([
             return this;
         },
 
-        load: function(archive, offset) {
+        load: function(archives, offset) {
             var that = this;
-            this.archive = archive;
+            var archive = archives.find(function(archive) {
+                return archive.get_mime_type() === 'video/mp4';
+            });
+            this.archives = archives;
 
             if(this.sound) {
                 //bug in sm, if play() is not called prior to destruct()
@@ -335,7 +456,7 @@ define([
 
             this.startOffset = offset;
             this.sound = soundManager.createSound({
-                id: 'sound'+_.uniqueId(),
+                id: 'sound' + archive.id,
                 url: archive.get_streaming_url() + '?seek=' + offset,
                 autoLoad: true,
                 autoPlay: false,
@@ -346,7 +467,11 @@ define([
         },
 
         offset: function() {
-            return this.startOffset + (this.sound.position / 1000.0);
+            var result = 0;
+            if(this.sound) {
+                result = this.startOffset + (this.sound.position / 1000.0);
+            }
+            return result;
         },
 
         buffered: function() {
@@ -354,12 +479,16 @@ define([
         },
 
         duration: function() {
-            return this.sound.duration / 1000.0;
+            var result = 0;
+            if(this.sound) {
+                result = this.sound.duration / 1000.0;
+            }
+            return result;
         },
 
-        play: function(archive, offset) {
-            if(archive) {
-                this.load(archive, offset);
+        play: function(archives, offset) {
+            if(archives) {
+                this.load(archives, offset);
             }
 
             this.sound.play();
@@ -376,7 +505,7 @@ define([
         seek: function(offset) {
             if(!this.model.isStopped()) {
                 this.sound.stop();
-                this.load(this.archive, offset);
+                this.load(this.archives, offset);
                 if(this.model.isPlaying()) {
                     this.sound.play();
                 }
@@ -407,8 +536,11 @@ define([
             return this;
         },
 
-        load: function(archive, offset) {
+        load: function(archives, offset) {
             var that = this;
+            var archive = archives.find(function(archive) {
+                return archive.get_mime_type() === 'video/mp4';
+            });
             var url = archive.get_streaming_url();
 
             this.$el.flowplayer({
@@ -457,9 +589,9 @@ define([
             return this.api ? this.api.getClip().duration : 0;
         },
 
-        play: function(archive, offset) {
-            if(archive) {
-                this.load(archive, offset);
+        play: function(archives, offset) {
+            if(archives) {
+                this.load(archives, offset);
             }
             if(this.api) {
                 this.api.play();
@@ -633,7 +765,13 @@ define([
 
         computeOffset: function(chatSession, timestamp) {
             var archive = this.getArchive(chatSession);
-            return timestamp - chatSession.get_publish() - archive.get_offset();
+            var offset = timestamp - chatSession.get_publish() - archive.get_offset();
+            if(offset < 0) {
+                offset = 0;
+            } else if(offset > archive.get_length()) {
+                offset = archive.get_length() - 500;
+            }
+            return offset;
         },
         
         scheduleEvents: function(chatSession, scheduler) {
@@ -643,9 +781,7 @@ define([
             //schedule chat minute change events
             chatSession.get_chat_minutes().each(function(minute) {
                 var offset = that.computeOffset(chatSession, minute.get_start());
-                if (offset < 0) {
-                    offset = 0;
-                }
+                console.log(offset);
                 that.scheduler.add(offset, function() {
                     that.model.set({
                         chatMinute: minute
@@ -676,7 +812,7 @@ define([
         },
         
         loadPlayer: function(chatSession, chatMinute, offset) {
-            var archive;
+            var archive, duration = 0;
             var loaded = this.load(this.loadPlayer, chatSession, chatMinute, offset);
             if(!loaded) {
                 return;
@@ -687,12 +823,16 @@ define([
             }
 
             archive = this.getArchive(chatSession);
-            if(!_.isNumber(offset)) {
-                offset = this.computeOffset(chatSession, chatMinute.get_start());
-                offset /= 1000.0;
-                if(offset < 0) {
-                    offset = 0;
+            if(archive) {
+                if(!_.isNumber(offset)) {
+                    offset = this.computeOffset(chatSession, chatMinute.get_start());
+                    offset /= 1000.0;
+                    if(offset < 0) {
+                        offset = 0;
+                    }
                 }
+
+                duration = archive.get_length() / 1000.0;
             }
 
             //stop scheduler if it exists
@@ -702,8 +842,12 @@ define([
             
             //stop progress timer
             this.stopProgressTimer();
-
-            this.playerView.load(archive, offset);
+            
+            if(archive) {
+                this.playerView.load(chatSession.get_archives(), offset);
+            } else if(this.model.isPlaying()) {
+                this.playerView.stop();
+            }
 
             var users = new player_models.PlayerUserCollection();
             users.reset(chatSession.get_users().map(function(user) {
@@ -718,20 +862,23 @@ define([
                 chatMinute: chatMinute,
                 archive: archive,
                 offset: offset,
-                duration: archive.get_length() / 1000.0,
+                duration: duration,
                 users: users,
                 state: this.model.STATE.STOPPED
             });
         },
 
         play: function(chatSession, chatMinute, offset) {
-            var archive;
             var loaded = this.load(this.play, chatSession, chatMinute, offset);
             if(!loaded) {
                 return;
             }
-
+            
             this.loadPlayer(chatSession, chatMinute, offset);
+
+            if(!this.model.hasArchive()) {
+                return;
+            }
 
             this.model.set({
                 state: this.model.STATE.PLAYING
@@ -774,12 +921,12 @@ define([
         seek: function(offset) {
             var activeMinutes, activeMinute;
             var minutes = this.model.chatSession().get_chat_minutes();
-            
+
             this.playerView.seek(offset);
-            
+
             if(this.model.isPlaying()) {
+                this.stopProgressTimer();
                 this.scheduler.stop();
-                this.scheduler.start(offset * 1000);
             }
 
             activeMinutes = minutes.filter(function(minute) {
@@ -799,6 +946,11 @@ define([
                 chatMinute: activeMinute,
                 offset: offset
             });
+
+            if(this.model.isPlaying()) {
+                this.startProgressTimer();
+                this.scheduler.start(offset * 1000);
+            }
         },
 
         stop: function() {

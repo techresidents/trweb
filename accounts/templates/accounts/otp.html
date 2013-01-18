@@ -35,16 +35,22 @@
                         {% endif %}
 
                         <div class="control-group{% if form.secret.errors %} error{% endif %}">
-                            {{ form.secret.label_tag }}
+                            <label class="control-label"> {{ form.secret.label_tag }}</label>
                             <div class="controls">
                                 {{ form.secret }}
                                 {% for error in form.secret.errors %}
                                     <span class="help-inline">{{error}}</span>
                                 {% endfor %}
                             </div>
+                        </div>
+
+                        <div class="control-group">
                             <div class="controls">
                                 <img src="https://chart.googleapis.com/chart?chs=200x200&amp;chld=M|0&amp;cht=qr&amp;chl=otpauth://totp/TechResidents-{{email}}%3fsecret%3d{{secret}}"/>
                             </div>
+                        </div>
+
+                        <div class="control-group">
                             <div class="controls">
                                 <label class="checkbox inline">
                                     {{ form.enable }}
@@ -52,6 +58,7 @@
                                 </label>
                             </div>
                         </div>
+
                         <div class="control-group">
                             <div class="controls">
                                 <input type="submit" value="Save" class="btn btn-primary inline" />

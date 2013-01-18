@@ -82,6 +82,8 @@ define([
      */
     var ChatSessionsView = view.View.extend({
 
+        emptyChatHistoryHintSelector: '.chat-history-empty-hint',
+
         events: {
         },
 
@@ -107,6 +109,13 @@ define([
             this.childViews = [];
             this.$el.html(this.template());
             this.collection.each(this.added, this);
+
+            // show hint if reel is empty
+            if (this.childViews.length === 0) {
+                this.$(this.emptyChatHistoryHintSelector).show();
+            } else {
+                this.$(this.emptyChatHistoryHintSelector).hide();
+            }
             
             return this;
         },

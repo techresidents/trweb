@@ -9,6 +9,44 @@
 {% endblock %}
 
 {% block content %}
+    <script>
+        var detectBrowser = function() {
+            var result;
+            var name = navigator.appName, userAgent = navigator.userAgent, tem;
+            var match = userAgent.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+            if(match && (tem = userAgent.match(/version\/([\.\d]+)/i))!= null) match[2]= tem[1];
+            if(match) {
+                result = {name: match[1], version: match[2] };
+                } else {
+                    result = {name: name, version: '?' };
+                }
+            return result;
+        };
+
+        var isCompatible = function(minVersions) {
+            var result = false;
+            var browser = detectBrowser();
+            var name = browser.name.toLowerCase();
+            if(minVersions.hasOwnProperty(name)) {
+                if(parseFloat(browser.version) >= minVersions[name]) {
+                    result = true;
+                }
+            }
+            return result;
+        };
+
+        var compatible = isCompatible({
+            'chrome': 11,
+            'firefox': 3.6,
+            'msie': 9,
+            'opera': 11,
+            'safari': 5
+        });
+
+        if(!compatible) {
+            window.location = '/compat/';
+        }
+    </script>
 
     <div class="container">
 

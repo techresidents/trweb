@@ -2,6 +2,7 @@
 {% load url from future %}
 
 {% block navbarcontent %}
+{% if USER.is_developer %}
     <ul class="nav">
         <li>
             <a href="{% url 'home.views.home' %}">Home</a>
@@ -21,4 +22,20 @@
             <a href="{% url 'accounts.views.logout' %}">Logout</a>
         </li>
     </ul>
+{% endif %}
+{% if USER.is_employer %}
+    <ul class="nav">
+        <li>
+            <a href="{% url 'home.views.home' %}">Home</a>
+        </li>
+        <li>
+            <a href="{% url 'feedback.views.feedback' %}">Feedback</a>
+        </li>
+    </ul>
+    <ul class="nav pull-right">
+        <li>
+            <a href="{% url 'accounts.views.logout' %}">Logout</a>
+        </li>
+    </ul>
+{% endif %}
 {% endblock %}

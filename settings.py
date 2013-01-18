@@ -110,7 +110,7 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
-AUTH_PROFILE_MODULE = 'accounts.UserProfile'
+AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = '/home'
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
@@ -137,9 +137,10 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     #Patches must be applied before any other apps are loaded
-    'techresidents_web.patch',
+    #'techresidents_web.patch',
 
-    'django.contrib.auth',
+
+    #'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
@@ -151,10 +152,11 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     
-    'techresidents_web.common',
     'techresidents_web.accounts',
+    'techresidents_web.common',
     'techresidents_web.chat',
     'techresidents_web.codeboard',
+    'techresidents_web.compat',
     'techresidents_web.document',
     'techresidents_web.feedback',
     'techresidents_web.home',

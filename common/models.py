@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 from techresidents_web.common.managers import TreeManager
 
@@ -161,3 +162,14 @@ class MimeType(models.Model):
         unique_together = ("extension", "type")
     extension = models.CharField(max_length=16)
     type = models.CharField(max_length=255)
+
+class Skill(models.Model):
+    """Represents one of potentially many user skills """
+    class Meta:
+        unique_together = ("user", "technology")
+        db_table ="skill"
+
+    user = models.ForeignKey(User)
+    technology = models.ForeignKey(Technology)
+    expertise_type = models.ForeignKey(ExpertiseType)
+    yrs_experience = models.IntegerField()

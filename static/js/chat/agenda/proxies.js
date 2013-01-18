@@ -69,7 +69,21 @@ define([
             return this.topicCollection;
         },
 
-        
+        /**
+         * Get Minute model for given topic.
+         * @param {Topic} topic Topic model.
+         * @return {Minute} Minute model if exists, null otherwise.
+         */
+        minute: function(topic) {
+            var result = null;
+            if(topic) {
+                result = this.minuteCollection.find(function(minute) {
+                    return minute.topicId() === topic.id;
+                });
+            }
+            return result;
+        },
+
         /**
          * Get the next Topic.
          * @param {Topic} topic - Optional Topic model for
@@ -113,6 +127,16 @@ define([
          */
         active: function() {
             return this.activeTopic;
+        },
+
+        /**
+         * Get the active minute.
+         * @return {Minute} Active minute or null if none active.
+         */
+        activeMinute: function() {
+            var activeTopic = this.active();
+            var result = this.minute(activeTopic);
+            return result;
         },
         
         /**
