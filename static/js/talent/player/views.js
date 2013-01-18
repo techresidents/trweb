@@ -781,6 +781,7 @@ define([
             //schedule chat minute change events
             chatSession.get_chat_minutes().each(function(minute) {
                 var offset = that.computeOffset(chatSession, minute.get_start());
+                console.log(offset);
                 that.scheduler.add(offset, function() {
                     that.model.set({
                         chatMinute: minute

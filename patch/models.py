@@ -9,4 +9,4 @@ def patch_username_length(max_length):
         if isinstance(validator, MaxLengthValidator):
             validator.limit_value = max_length
 
-patch_username_length(75)
+#patch_username_length(75)

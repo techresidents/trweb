@@ -8,17 +8,19 @@ import time
 import uuid
 
 from django import forms
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.contrib import auth
-from django.contrib.auth.models import User
+from django.db import IntegrityError
 from django.template import Context
 from django.utils import timezone
+User = get_user_model()
 
 from techresidents_web.common.forms import JSONField
-from techresidents_web.common.models import ExpertiseType, Technology, TechnologyType, Location
-from techresidents_web.accounts.models import CodeType, Code, OneTimePassword, OneTimePasswordType, Request, Skill
+from techresidents_web.common.models import ExpertiseType, Skill, Technology, TechnologyType, Location
+from techresidents_web.accounts.models import CodeType, Code, OneTimePassword, OneTimePasswordType, Request, Tenant
 from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, LocationPref
 
 
@@ -29,6 +31,7 @@ EMAIL_MAX_LEN = 75
 PASSWORD_MIN_LEN = 4
 PASSWORD_MAX_LEN = 30
 JSON_FIELD_MAX_LEN = 2048
+COMPANY_MAX_LEN = 75 
 
 TIME_ZONE_CHOICES = [
     ("US/Hawaii", "(GMT-10:00) Hawaii Time"),
@@ -114,21 +117,15 @@ class RegisterUserForm(forms.ModelForm):
         user = super(RegisterUserForm, self).save(commit=False)
         user.email = self.cleaned_data['username']
         user.set_password(self.cleaned_data['password'])
+        user.timezone = self.cleaned_data['timezone']
         if commit:
             user.save()
             
-            #user object must be saved prior to accessing profile
-            #since the profile is not created in db until this point.
-            user_profile = user.get_profile()
-            user_profile.timezone = self.cleaned_data['timezone']
-            user_profile.save()
-
-
-        #Authenticate user so they can be logged in using
-        #the returned user object.
-        user = auth.authenticate(
-                username=self.cleaned_data['username'],
-                password=self.cleaned_data['password'])
+            #Authenticate user so they can be logged in using
+            #the returned user object.
+            user = auth.authenticate(
+                    username=self.cleaned_data['username'],
+                    password=self.cleaned_data['password'])
         return user
 
     def create_registration_code(self, registration_code=None):
@@ -155,6 +152,7 @@ class RegisterUserForm(forms.ModelForm):
 
         context = context or Context()
         context['activation_url'] = self.get_activation_url(registration_code)
+        context['activation_code'] = registration_code
         to = self.cleaned_data['username']
 
         text_content = text_template.render(context)
@@ -163,9 +161,78 @@ class RegisterUserForm(forms.ModelForm):
         msg.attach_alternative(html_content, 'text/html')
         msg.send()
 
+class RegisterEmployerForm(RegisterUserForm):
+    company = forms.CharField(label="Company", max_length=COMPANY_MAX_LEN, required=True)
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'username')
+
+    def __init__(self, *args, **kwargs):
+        super(RegisterEmployerForm, self).__init__(*args, **kwargs)
+        self.fields['company'].widget.attrs['autofocus'] = 'autofocus'
+        del self.fields['first_name'].widget.attrs['autofocus']
+        self.fields.keyOrder = [
+                'company',
+                'first_name',
+                'last_name',
+                'username',
+                'password',
+                'password_confirmation',
+                'timezone'
+        ]
+    
+    def clean_username(self):
+        email = super(RegisterEmployerForm, self).clean_username()
+
+        prohibited_domains = [
+            'gmail.com',
+            'hotmail.com',
+            'live.com',
+            'outlook.com',
+            'yahoo.com'
+        ]
+
+        domain = email.split('@')[1]
+        if domain in prohibited_domains:
+            raise forms.ValidationError('invalid email address domain')
+        return email
+    
+    def get_tenant(self):
+        result = None
+        company = self.cleaned_data['company']
+        email = self.cleaned_data['username']
+        domain = email.split('@')[1]
+        try:
+            result = Tenant.objects.get(domain=domain)
+        except Tenant.DoesNotExist:
+            try:
+                result = Tenant.objects.create(name=company, domain=domain)
+            except IntegrityError:
+                pass
+        except:
+            pass
+        return result
+
+
+    def save(self, commit=True):
+        user = super(RegisterEmployerForm, self).save(commit=False)
+        user.tenant = self.get_tenant()
+        #Employers must verify email addresss to activate account.
+        user.is_active = False
+
+        if commit:
+            user.save()
+            #Authenticate user so they can be logged in using
+            #the returned user object.
+            user = auth.authenticate(
+                    username=self.cleaned_data['username'],
+                    password=self.cleaned_data['password'])
+        return user
+    
 class RegistrationActivationForm(forms.Form):
 
-    registration_code = forms.CharField(label="Registration Code", max_length=128, required=True)
+    registration_code = forms.CharField(label="Activation Code", max_length=128, required=True)
 
     def __init__(self, allow_reactivation, *args, **kwargs):
         self.allow_reactivation = allow_reactivation
@@ -184,7 +251,7 @@ class RegistrationActivationForm(forms.Form):
                 Code.objects.get(type__type='REGISTRATION', code=registration_code, used=None)
 
         except ObjectDoesNotExist:
-            raise forms.ValidationError("Invalid registration code.")
+            raise forms.ValidationError("Invalid activation code.")
 
         return registration_code
 
@@ -197,8 +264,11 @@ class RegistrationActivationForm(forms.Form):
         code = Code.objects.get(type__type='REGISTRATION', code=registration_code)
 
         if not code.used:
+            code.user.is_active = True
+            code.user.save()
             code.used = timezone.now()
             code.save()
+
 
 class LoginForm(forms.Form):
     username = forms.EmailField(label="Email", max_length=EMAIL_MAX_LEN, required=True)
@@ -399,15 +469,14 @@ class OTPForm(forms.Form):
                     user=self.request.user)
         otp.secret = self.cleaned_data['secret']
 
-        #user profile model
-        user_profile = self.request.user.get_profile()
-        user_profile.otp_enabled = self.cleaned_data['enable']
+        #user model
+        self.request.user.otp_enabled = self.cleaned_data['enable']
 
         if commit:
             otp.save()
-            user_profile.save()
+            self.request.user.save()
 
-        return (user_profile, otp)
+        return otp
 
 class ProfileAccountForm(forms.Form):
     # year choices
@@ -433,10 +502,10 @@ class ProfileAccountForm(forms.Form):
         user = self.request.user
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
+        user.timezone = self.cleaned_data['timezone']
         
         #user profile model
         user_profile = self.request.user.get_profile()
-        user_profile.timezone = self.cleaned_data['timezone']
         year = self.cleaned_data['developer_since'] # returns year as a string when not empty
         if year:
             user_profile.developer_since = datetime.date(int(year),1,1)

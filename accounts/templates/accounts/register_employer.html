@@ -15,16 +15,16 @@
         <div class="span12 page-header">
             <h1>
                 Sign up for Tech Residents
-                <small>Developers</small>
+                <small>Employers</small>
             </h1>
         </div>
 
         <div class="span10">
             <div class="well">
                 {% if account_request_code %}
-                    <form class="form-horizontal" method="post" action="{% url 'accounts.views.register' account_request_code %}">
+                    <form class="form-horizontal" method="post" action="{% url 'accounts.views.register_employer' account_request_code %}">
                 {% else %}
-                    <form class="form-horizontal" method="post" action="{% url 'accounts.views.register' %}">
+                    <form class="form-horizontal" method="post" action="{% url 'accounts.views.register_employer' %}">
                 {% endif %}
                     {% csrf_token %}
                     <fieldset>
@@ -44,6 +44,7 @@
                             <div class="controls">
                                 <div>
                                     <p>By clicking Sign Up you agree to our <a href="#">Terms of Service.</a></p>
+                                    <p class="alert alert-info"><strong>Please note that email address verification is required for employer login.</strong></p>
                                 </div>
                                 <input type="submit" value="Sign Up" class="btn btn-large btn-success" />
                             </div>
@@ -62,6 +63,7 @@
                         </div>
                     </fieldset>
                 </form>
+
             </div>
         </div>
     </div>

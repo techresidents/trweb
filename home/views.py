@@ -9,8 +9,7 @@ from django.template import RequestContext
 
 
 from trpycore.encode.basic import basic_encode, basic_decode
-from techresidents_web.accounts.models import Skill
-from techresidents_web.common.models import Topic
+from techresidents_web.common.models import Skill, Topic
 from techresidents_web.job.models import PositionTypePref, TechnologyPref, LocationPref
 
 
@@ -132,10 +131,16 @@ def compute_profile_completion(request):
     return profile_percent_complete
 
 
-
 @login_required
 def home(request):
-    """ List all chat topics"""
+    if request.user.is_employer:
+        return home_employer(request)
+    else:
+        return home_developer(request)
+
+@login_required
+def home_developer(request):
+    """Developer home"""
 
     # Retrieve all topics user chatted about
     completed_topics = Topic.objects.\
@@ -200,3 +205,12 @@ def home(request):
     }
 
     return render_to_response('home/home.html', context, context_instance=RequestContext(request))
+
+@login_required
+def home_employer(request):
+    """Employer home"""
+
+    context = {
+    }
+
+    return render_to_response('home/home_employer.html', context, context_instance=RequestContext(request))

@@ -1,5 +1,6 @@
 pytz
-django==1.4
+#django==1.4
+git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/django.git@1.5c1#egg=django
 psycopg2==2.4.4
 pygments==1.5
 opentok-python-sdk == 0.91.1

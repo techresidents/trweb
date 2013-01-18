@@ -2,10 +2,12 @@ import datetime
 
 from django.db import connection, models, transaction
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from techresidents_web.common.models import MimeType, Quality, Tag, Topic
+
+User = get_user_model()
 
 class ChatSessionManager(models.Manager):
     """Chat session manager.
@@ -489,7 +491,7 @@ class ChatArchive(models.Model):
     path = models.FileField(upload_to="archives", max_length=1024)
     users = models.ManyToManyField(User, through="ChatArchiveUser", related_name="archives+")
     public = models.BooleanField(default=False)
-    waveform = models.TextField()
+    waveform = models.TextField(null=True)
     waveform_path = models.FileField(upload_to="archives", max_length=1024, null=True)
     length = models.IntegerField(null=True)
     offset = models.IntegerField(null=True)

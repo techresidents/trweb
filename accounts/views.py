@@ -14,9 +14,9 @@ from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
 
 from techresidents_web.accounts import forms
-from techresidents_web.accounts.models import UserProfile, OneTimePassword, Skill
-from techresidents_web.job.models import Prefs, PositionType, PositionTypePref, TechnologyPref, LocationPref
-from techresidents_web.common.models import Technology, TechnologyType, ExpertiseType
+from techresidents_web.accounts.models import OneTimePassword
+from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, LocationPref
+from techresidents_web.common.models import Skill, Technology, TechnologyType, ExpertiseType
 
 
 
@@ -36,22 +36,15 @@ def login(request):
             if not request.POST.get('remember_me', None):
                 request.session.set_expiry(0)
             
-            #get user profile directly from database
-            #since user.get_profile() is not available for
-            #anonymous users.
             user = form.get_user()
-            user_profile = UserProfile.objects.get(user_id=user.id)
+            request.session['timezone'] = user.timezone
 
-            #set timezone in session so it's available to TimezoneMiddleware
-            request.session['timezone'] = user_profile.timezone
-
-            if user_profile.otp_enabled:
+            if user.otp_enabled:
                 otp = OneTimePassword.objects.get(
                         type__name="TOTP",
                         user_id=user.id)
                 request.session["otp"] = {
                     "user": user,
-                    "user_profile": user_profile,
                     "otp": otp
                 }
                 return HttpResponseRedirect(reverse('accounts.views.login_otp'))
@@ -155,18 +148,71 @@ def register(request, account_request_code=None):
 
     return render_to_response('accounts/register.html', context,  context_instance=RequestContext(request))
 
-def register_activate(request, registration_code):
+def register_employer(request, account_request_code=None):
+    """Register user with or without account request code.
+    
+    In order to force user registration to require a valid 
+    account request code set the REGISTRATION_REQUIRES_CODE
+    setting to True. This will adjust the register url,
+    forcing the account_request_code to be present.
+    
+    Args:
+        request: request object
+        account_request_code: optional account request code. If not None,
+            a valid account_request must exist in the database with
+            the provided code in order for registration to be allowed.
+    """
+    if request.method == 'POST':
+        user_form = forms.RegisterEmployerForm(request, account_request_code, data=request.POST)
+
+        if user_form.is_valid():
+            user_form.save()
+
+            #Only sending email validation if registration is not being
+            #done with an account request code. If registering with
+            #account request code, we've already validated email.
+            if account_request_code is None:
+                text_template = get_template('accounts/registration_email.txt')
+                html_template = get_template('accounts/registration_email.html')
+                
+                user_form.send_activation_email(
+                        subject = "Tech Residents - Registration",
+                        text_template = text_template,
+                        html_template = html_template
+                        )
+
+            return HttpResponseRedirect(reverse('accounts.views.register_activate'))
+    else:
+        user_form = forms.RegisterEmployerForm(request, account_request_code, initial={'timezone': settings.TIME_ZONE})
+    
+    context = {
+        'user_form' : user_form,
+        'account_request_code': account_request_code,
+    }
+
+    return render_to_response('accounts/register_employer.html', context,  context_instance=RequestContext(request))
+
+def register_activate(request, registration_code=None):
     success = False
+    if request.method == 'POST':
+        registration_code = request.POST["registration_code"]
+    
+    if registration_code is not None:
+        form = forms.RegistrationActivationForm(allow_reactivation=True, data={'registration_code': registration_code})
 
-    form = forms.RegistrationActivationForm(allow_reactivation=True, data={'registration_code': registration_code})
+        if form.is_valid():
+            form.activate()
+            success = True
+            messages.success(request, "Successful")
+            return HttpResponseRedirect(reverse('accounts.views.register_activate'))
 
-    if form.is_valid():
-        form.activate()
-        success = True
+    else:        
+        form = forms.RegistrationActivationForm(allow_reactivation=True)
 
     context = {
-            'success': success,
-            }
+        'form': form,
+        'success': success,
+    }
 
     return render_to_response('accounts/register_activate.html', context,  context_instance=RequestContext(request))
 
@@ -236,7 +282,8 @@ def otp(request):
             secret = base64.b32encode(os.urandom(10))
         
         form_data = {
-            "enable": request.user.get_profile().otp_enabled,
+            "enable": request.user.otp_enabled,
+
             "secret": secret
         }
         form = forms.OTPForm(request, data=form_data)
@@ -275,7 +322,7 @@ def profile_account(request):
             'first_name':user.first_name,
             'last_name':user.last_name,
             'email_address':user.email,
-            'timezone': user_profile.timezone or settings.TIME_ZONE,
+            'timezone': user.timezone or settings.TIME_ZONE,
         }
         if user_profile.developer_since is not None:
             form_data['developer_since'] = user_profile.developer_since.year

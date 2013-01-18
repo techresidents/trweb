@@ -13,15 +13,50 @@
 
         <div class="span10">
             <div class="well">
-                {% if success %}
-                    <div class="alert alert-success">
-                        <span>Your account has been successfully activated. Please <a href="{% url 'accounts.views.login' %}">Login</a>.</span>
-                    </div>
-                {% else %}
-                    <div class="alert alert-error">
-                        <span>Invalid account activation code.</span>
-                    </div>
-                {% endif %}
+                <form class="form-horizontal" method="post" action="{% url 'accounts.views.register_activate' %}">
+                    {% csrf_token %}
+                    <fieldset>
+                        <legend>Tech Residents Account Activation</legend>
+
+                        {% if messages %}
+                            {% for message in messages %}
+                                <!-- Consume all messages stored -->
+                                {% if message.tags == 'success' %}
+                                <p class="lead alert alert-success">Your account has been successfully activated. Please <a href="{% url 'accounts.views.login' %}">Login</a>.</p>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if not messages %}
+                        <p class="lead alert alert-info">In order to verify your email address, we've sent you an email containing an activation code. Please enter the activation code below.</p>
+                        <div class="control-group{% if form.registration_code.errors %} error{% endif %}">
+                            <label class="control-label"> {{ form.registration_code.label_tag }}</label>
+                            <div class="controls">
+                                <input id="id_registration_code" class="input-xlarge" autofocus="autofocus" type="text" name="registration_code" max_length=128>
+                                {% for error in form.registration_code.errors %}
+                                    <span class="help-inline">{{error}}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <div class="controls">
+                                <input type="submit" value="Activate" class="btn btn-large btn-primary inline" />
+                            </div>
+                        </div>
+
+                        <div>
+                            {% if form.non_field_errors %}
+                                <div class="controls alert alert-error">
+                                    {% for error in form.non_field_errors%}
+                                        <span>{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </fieldset>
+                </form>
             </div>
         </div>
     </div>
