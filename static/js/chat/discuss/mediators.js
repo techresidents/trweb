@@ -90,7 +90,7 @@ define([
                 if(that.usersProxy.currentUser().isPublishing()) {
                     that.view.controlsView.enable(true);
                 }
-            }, 5000);
+            }, 4000);
         },
 
         onChatStarted: function(notification) {
