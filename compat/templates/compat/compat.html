@@ -26,19 +26,19 @@
 
         <div class="row">
             <div class="span2">
-                <a href='http://www.google.com/intl/en/chrome/browser/'><img src='/static/img/chrome-128.png'><img><p>11.0</p></a>
+                <a href='http://www.google.com/intl/en/chrome/browser/'><img src='/static/img/chrome-128.png'><img><p>11.0+</p></a>
             </div>
             <div class="span2">
-                <a href='http://www.mozilla.org/en-US/firefox/new/'><img src='/static/img/firefox-128.png'><img><p>3.6</p></a>
+                <a href='http://www.mozilla.org/en-US/firefox/new/'><img src='/static/img/firefox-128.png'><img><p>3.6+</p></a>
             </div>
             <div class="span2">
-                <a href='http://www.apple.com/safari/'><img src='/static/img/safari-128.png'><img><p>5.0</p></a>
+                <a href='http://www.apple.com/safari/'><img src='/static/img/safari-128.png'><img><p>5.0+</p></a>
             </div>
             <div class="span2">
-                <a href='http://www.opera.com/download/'><img src='/static/img/opera-128.png'><img><p>11.0</p></a>
+                <a href='http://www.opera.com/download/'><img src='/static/img/opera-128.png'><img><p>11.0+</p></a>
             </div>
             <div class="span2">
-                <a href='http://windows.microsoft.com/en-US/internet-explorer/download-ie'><img src='/static/img/ie-128.png'><img><p>9.0</p></a>
+                <a href='http://windows.microsoft.com/en-US/internet-explorer/download-ie'><img src='/static/img/ie-128.png'><img><p>9.0+</p></a>
             </div>
         </div>
     </div>
@@ -99,15 +99,15 @@
 
         $(document).ready(function(){
             if(browserCompatible) {
-                $('.browser-alert').addClass('alert-success').text(browser.name + ' ' + browser.version + ' is supported.');
+                $('.browser-alert').addClass('alert-success').text('This browser is supported (' + browser.name + ' ' + browser.version + ')');
                 } else {
-                $('.browser-alert').addClass('alert-error').text(browser.name + ' ' + browser.version + ' is currently not supported.');
+                $('.browser-alert').addClass('alert-error').text('This browser is currently not supported (' + browser.name + ' ' + browser.version + '). Please update your browser.');
             }
 
             if(flashCompatible) {
-                $('.flash-alert').addClass('alert-success').text('Flash ' + flash.major + '.' + flash.minor + ' is supported.');
+                $('.flash-alert').addClass('alert-success').text('This version of Flash is supported (' + flash.major + '.' + flash.minor + ')');
                 } else {
-                $('.flash-alert').addClass('alert-error').text('Flash ' + flash.major + '.' + flash.minor + ' is currently not supported.');
+                $('.flash-alert').addClass('alert-error').text('This version of Flash is currently not supported (' + flash.major + '.' + flash.minor + '). Please update to the latest version.');
             }
         });
     </script>
