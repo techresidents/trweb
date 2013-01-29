@@ -1,0 +1,39 @@
+{% extends "navbar_authenticated.html" %}
+{% load staticfiles %}
+{% load url from future %}
+{% load verbatim %}
+
+{% block title %}Requisition | Tech Residents{% endblock %}
+
+{% block extrahead %}
+    <link href="{% static "css/requisition.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div id="requisitionapp"></div>
+
+    <!-- All of these data structures are generated on the server w/out user input, so it's safe -->
+    {% autoescape off %}
+        <script>
+            data =  {
+            };
+        </script>
+    {% endautoescape %}
+
+    {% autoescape off %}
+        <script>
+            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
+        </script>
+    {% endautoescape %}
+
+    <script>
+        var require = {
+            baseUrl: '/static/js',
+            urlArgs: '{{VERSION}}'
+        };
+    </script>
+
+    <script data-main="apps/requisition/main" src="{% static "js/3ps/require/require-min.js" %}"></script>
+
+{% endblock %}

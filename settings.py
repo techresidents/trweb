@@ -166,6 +166,7 @@ INSTALLED_APPS = (
     'techresidents_web.talent',
     'techresidents_web.cloudfiles_storage',
     'techresidents_web.notification',
+    'techresidents_web.requisition',
 )
 
 
@@ -286,8 +287,9 @@ TR_LOGIN_USING_HTTPS = False
 
 #Set the location of the cross domain (XD) server for use with easyXDM.
 TR_XD_REMOTE = 'http://localhost:6767/static/js/easyXDM/cors/index.html'
-#TR_XD_REMOTE = 'http://iville.local:6767/static/js/easyXDM/cors/index.html'
+#TR_XD_REMOTE = 'http://einstein.local:6767/static/js/easyXDM/cors/index.html'
 TR_API_ENDPOINT = 'http://localhost:6767/api/v1'
+
 
 #Google Analytics
 GA_ID = 'UA-36319157-2'
