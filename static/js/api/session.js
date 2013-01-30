@@ -34,11 +34,21 @@ define([
             this.cache = caches[this.name];
         },
 
+        hasModel: function(constructor, key) {
+            var result = false;
+            var cacheKey = this._cacheKey(constructor, key);
+
+            if(this.cache.hasOwnProperty(cacheKey)) {
+                result = true;
+            }
+            return result;
+        },
+
         getModel: function(constructor, key) {
             var result;
             var cacheKey = this._cacheKey(constructor, key);
 
-            if(this.cache.hasOwnProperty(cacheKey)) {
+            if(this.hasModel(constructor, key)) {
                 result = this.cache[cacheKey];
             } else {
                 var id;
@@ -53,10 +63,19 @@ define([
             return result;
         },
 
+        hasCollection: function(constructor, key) {
+            var result = false;
+            var cacheKey = this._cacheKey(constructor, key);
+            if(this.cache.hasOwnProperty(cacheKey)) {
+                result = true;
+            }
+            return result;
+        },
+
         getCollection: function(constructor, key) {
             var result;
             var cacheKey = this._cacheKey(constructor, key);
-            if(this.cache.hasOwnProperty(cacheKey)) {
+            if(this.hasCollection(constructor, key)) {
                 result = this.cache[cacheKey];
             } else {
                 result = new constructor(null, {

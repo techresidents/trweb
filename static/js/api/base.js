@@ -339,6 +339,7 @@ define([
     var ApiModel = Backbone.Model.extend({
 
         constructor: function(attributes, options) {
+
             attributes = attributes || {};
             options = options || {};
 
@@ -348,6 +349,13 @@ define([
                 this.session = api_session.ApiSession.get(
                     options.session || api_config.defaultSession);
             }
+            
+            //TODO 
+            //Consider short circuiting creation of model if it already exists
+            //in the session. This would only work if the model id was passed
+            //to the constructor. The downside of this approach is that clone()
+            //would no longer work, and would need to be overriden to pass
+            //the 'noSession' option to the constructor.
 
             attributes.meta = {
                 "resource_name": base.getValue(this, "urlRoot").substring(1),

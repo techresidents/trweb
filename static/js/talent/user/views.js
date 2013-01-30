@@ -78,8 +78,10 @@ define([
                 "location_prefs");
 
             if(!state.loaded) {
-                state.fetcher();
-            }
+                state.fetcher({
+                    success: _.bind(this.render, this)
+                });
+            } 
         },
 
         render: function() {

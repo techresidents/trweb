@@ -15,7 +15,7 @@ from django.views.decorators.cache import never_cache
 
 from techresidents_web.accounts import forms
 from techresidents_web.accounts.models import OneTimePassword
-from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, LocationPref
+from techresidents_web.job.models import JobPositionType, JobPositionTypePref, JobTechnologyPref, JobLocationPref
 from techresidents_web.common.models import Skill, Technology, TechnologyType, ExpertiseType
 
 
@@ -392,7 +392,7 @@ def profile_jobs(request):
         10000)
 
     # Create data to populate the Positions field
-    position_types = PositionType.objects.all()
+    position_types = JobPositionType.objects.all()
     position_names = [p.name for p in position_types]
     json_position_types = [ {
         'id': p.id,
@@ -400,14 +400,14 @@ def profile_jobs(request):
         'description': p.description} for p in position_types]
 
     # Retrieve list of user's position preferences and create json data to populate UI
-    position_prefs = PositionTypePref.objects.filter(user=request.user).select_related('position_type')
+    position_prefs = JobPositionTypePref.objects.filter(user=request.user).select_related('position_type')
     json_position_prefs = [ {
         'id': pos.id,
         'positionTypeId': pos.position_type.id,
         'min_salary': pos.salary_start} for pos in position_prefs]
 
     # Retrieve list of user's future job technology preferences and create json data to populate UI
-    technology_prefs = TechnologyPref.objects.filter(user=request.user).select_related('technology').order_by('technology__name')
+    technology_prefs = JobTechnologyPref.objects.filter(user=request.user).select_related('technology').order_by('technology__name')
     json_technology_prefs = [{
         'id': t.id,
         'technologyId': t.technology.id,
@@ -415,7 +415,7 @@ def profile_jobs(request):
         'description': t.technology.description} for t in technology_prefs]
 
     # Retrieve list of user's future job location preferences and create json data to populate UI
-    location_prefs = LocationPref.objects.filter(user=request.user).select_related('location').order_by('location__city')
+    location_prefs = JobLocationPref.objects.filter(user=request.user).select_related('location').order_by('location__city')
     json_location_prefs = [{
         'id': l.id,
         'locationId': l.location.id,

@@ -3,6 +3,7 @@ define([
     'common/notifications',
     'core/mediator',
     'api/models',
+    'api/session',
     'talent/notifications',
     'talent/user/views',
     'talent/player/proxies'
@@ -11,6 +12,7 @@ define([
     notifications,
     mediator,
     api,
+    api_session,
     talent_notifications,
     user_views,
     player_proxies) {
@@ -40,13 +42,14 @@ define([
             this.view = null;
             this.playerStateProxy = this.facade.getProxy(
                 player_proxies.PlayerStateProxy.NAME);
+            this.session = new api_session.ApiSession.get();
         },
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-                var user = new api.User({
-                    id: notification.options.id
-                });
+
+                var user = this.session.getModel(api.User, notification.options.id);
+
                 this.view = new user_views.UserView({
                     model: user,
                     playerState: this.playerStateProxy.model
