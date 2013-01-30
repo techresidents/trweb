@@ -3,6 +3,7 @@ from django.template import RequestContext
 
 from techresidents_web.common.decorators import staff_required
 
+#TODO create new decorator for employer_login
 @staff_required
 def requisition(request):
     """Requisition application view"""
