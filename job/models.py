@@ -89,36 +89,6 @@ class JobTechnologyPref(models.Model):
     user = models.ForeignKey(User, related_name="job_technology_prefs")
     technology = models.ForeignKey(Technology, related_name="+")
 
-class JobInterviewOfferType(models.Model):
-    """Job interview type model"""
-    class Meta:
-        db_table = "job_interview_offer_type"
-
-    name = models.CharField(max_length=100, unique=True)
-    description = models.CharField(max_length=1024)
-
-class JobInterviewOfferStatus(models.Model):
-    """Job interview offer status model"""
-    class Meta:
-        db_table = "job_interview_offer_status"
-
-    name = models.CharField(max_length=100, unique=True)
-    description = models.CharField(max_length=1024)
-    
-class JobInterviewOffer(models.Model):
-    """Job interview offer model"""
-    class Meta:
-        db_table = "job_interview_offer"
-    
-    tenant = models.ForeignKey(Tenant, related_name="job_interview_offers")
-    candidate = models.ForeignKey(User, related_name="job_interview_offers")
-    employee = models.ForeignKey(User, related_name="+")
-    requisition = models.ForeignKey(JobRequisition, related_name="job_interview_offers")
-    type = models.ForeignKey(JobInterviewOfferType, related_name="+")
-    status = models.ForeignKey(JobInterviewOfferStatus, related_name="+")
-    created = models.DateTimeField(auto_now_add=True)
-    expires = models.DateTimeField()
-
 class JobApplicationType(models.Model):
     """Job application type model"""
     class Meta:
@@ -148,6 +118,16 @@ class JobApplication(models.Model):
     type = models.ForeignKey(JobApplicationType, related_name="+")
     status = models.ForeignKey(JobApplicationStatus, related_name="+")
 
+class JobApplicationLog(models.Model):
+    """Job application log model"""
+    class Meta:
+        db_table = "job_application_log"
+
+    tenant = models.ForeignKey(Tenant, related_name="+")
+    user = models.ForeignKey(User, related_name="+")
+    application = models.ForeignKey(JobApplication, related_name="job_application_logs")
+    note = models.TextField(max_length=4096)
+
 class JobApplicationScore(models.Model):
     """Job application score model"""
     class Meta:
@@ -172,6 +152,36 @@ class JobApplicationVote(models.Model):
     application = models.ForeignKey(JobApplication, related_name="job_application_votes")
     yes = models.NullBooleanField()
 
+class JobInterviewOfferType(models.Model):
+    """Job interview type model"""
+    class Meta:
+        db_table = "job_interview_offer_type"
+
+    name = models.CharField(max_length=100, unique=True)
+    description = models.CharField(max_length=1024)
+
+class JobInterviewOfferStatus(models.Model):
+    """Job interview offer status model"""
+    class Meta:
+        db_table = "job_interview_offer_status"
+
+    name = models.CharField(max_length=100, unique=True)
+    description = models.CharField(max_length=1024)
+    
+class JobInterviewOffer(models.Model):
+    """Job interview offer model"""
+    class Meta:
+        db_table = "job_interview_offer"
+    
+    tenant = models.ForeignKey(Tenant, related_name="job_interview_offers")
+    employee = models.ForeignKey(User, related_name="+")
+    candidate = models.ForeignKey(User, related_name="job_interview_offers")
+    application = models.ForeignKey(JobApplication, related_name="job_interview_offers")
+    type = models.ForeignKey(JobInterviewOfferType, related_name="+")
+    status = models.ForeignKey(JobInterviewOfferStatus, related_name="+")
+    created = models.DateTimeField(auto_now_add=True)
+    expires = models.DateTimeField()
+
 class JobOfferStatus(models.Model):
     """Job offer status model"""
     class Meta:
@@ -188,7 +198,7 @@ class JobOffer(models.Model):
     tenant = models.ForeignKey(Tenant, related_name="job_offers")
     employee = models.ForeignKey(User, related_name="+")
     candidate = models.ForeignKey(User, related_name="job_offers")
-    requisition = models.ForeignKey(JobRequisition, related_name="job_offers")
+    application = models.ForeignKey(JobApplication, related_name="job_offers")
     salary = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
     status = models.ForeignKey(JobOfferStatus, related_name="+")

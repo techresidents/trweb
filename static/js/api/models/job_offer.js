@@ -5,7 +5,7 @@ define([
     'api/fields',
     'api/models/tenant',
     'api/models/user',
-    'api/models/requisition'
+    'api/models/application'
 ], function(
     $,
     _,
@@ -13,7 +13,7 @@ define([
     fields,
     tenant_models,
     user_models,
-    requisition_models) {
+    application_models) {
 
     var JobOfferCollection = api.ApiCollection.extend({
         urlRoot: "/job_offers",
@@ -34,7 +34,7 @@ define([
             tenant_id: new fields.StringField(),
             candidate_id: new fields.StringField(),
             employee_id: new fields.StringField(),
-            requisition_id: new fields.StringField(),
+            application_id: new fields.StringField(),
             status: new fields.StringField(),
             salary: new fields.IntegerField()
         },
@@ -53,8 +53,8 @@ define([
                 relation: user_models.User
             }),
 
-            requisition: new fields.ForeignKey({
-                relation: requisition_models.Requisition,
+            application: new fields.ForeignKey({
+                relation: application_models.Application,
                 backref: "job_offers"
             })
         }
