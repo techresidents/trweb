@@ -69,12 +69,17 @@ class SessionStore(SessionBase):
         """
         
         #Continue to create new session keys while we get collisions
+        errors = 0 
         while True:
             self._session_key = self._get_new_session_key()
             try:
                 self.save(must_create=True)
             except CreateError:
-                continue
+                errors += 1
+                if errors <= 5:
+                    continue
+                else:
+                    raise
             
             #Found unused session key
             self.modified = True

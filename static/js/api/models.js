@@ -4,6 +4,7 @@ define([
     'api/models/location',
     'api/models/technology',
     'api/models/topic',
+    'api/models/tenant',
     'api/models/user',
     'api/models/chat',
     'api/models/chat_session',
@@ -13,14 +14,23 @@ define([
     'api/models/chat_minute',
     'api/models/speaking_marker',
     'api/models/chat_tag',
-    'api/models/highlight_session'
-
+    'api/models/highlight_session',
+    'api/models/requisition',
+    'api/models/requisition_technology',
+    'api/models/interview_offer',
+    'api/models/application',
+    'api/models/application_score',
+    'api/models/application_vote',
+    'api/models/job_offer',
+    'api/models/job_note',
+    'api/models/job_event'
 ], function(
     $,
     _,
     location_models,
     technology_models,
     topic_models,
+    tenant_models,
     user_models,
     chat_models,
     chat_session_models,
@@ -30,7 +40,16 @@ define([
     chat_minute_models,
     speaking_marker_models,
     chat_tag_models,
-    highlight_session_models
+    highlight_session_models,
+    requisition_models,
+    requisition_technology_models,
+    interview_offer_models,
+    application_models,
+    application_score_models,
+    application_vote_models,
+    job_offer_models,
+    job_note_models,
+    job_event_models
     ) {
 
 
@@ -60,6 +79,24 @@ define([
         ChatTag: chat_tag_models.ChatTag,
         ChatTagCollection: chat_tag_models.ChatTagCollection,
         HighlightSession: highlight_session_models.HighlightSession,
-        HighlightSessionCollection: highlight_session_models.HighlightSessionCollection
+        HighlightSessionCollection: highlight_session_models.HighlightSessionCollection,
+        Requisition: requisition_models.Requisition,
+        RequisitionCollection: requisition_models.RequisitionCollection,
+        RequisitionTechnology: requisition_technology_models.RequisitionTechnology,
+        RequisitionTechnologyCollection: requisition_technology_models.RequisitionTechnologyCollection,
+        InterviewOffer: interview_offer_models.InterviewOffer,
+        InterviewOfferCollection: interview_offer_models.InterviewOfferCollection,
+        Application: application_models.Application,
+        ApplicationCollection: application_models.ApplicationCollection,
+        ApplicationScore: application_score_models.ApplicationScore,
+        ApplicationScoreCollection: application_score_models.ApplicationScoreCollection,
+        ApplicationVote: application_vote_models.ApplicationVote,
+        ApplicationVoteCollection: application_vote_models.ApplicationVoteCollection,
+        JobOffer: job_offer_models.JobOffer,
+        JobOfferCollection: job_offer_models.JobOfferCollection,
+        JobNote: job_note_models.JobNote,
+        JobNoteCollection: job_note_models.JobNoteCollection,
+        JobEvent: job_event_models.JobEvent,
+        JobEventCollection: job_event_models.JobEventCollection
     };
 });
