@@ -62,6 +62,7 @@ define([
      * @constructor
      * @param {Object} options
      *   model: {Requisition} (required)
+     *   userModel: {User} (required)
      *   positionTypesCollection: {JobPositionTypesCollection} (required) //TODO
      */
     var CreateRequisitionView = view.View.extend({
@@ -83,6 +84,8 @@ define([
         },
 
         initialize: function(options) {
+            this.model = options.model;
+            this.userModel = options.userModel;
             this.template = _.template(create_requisition_template);
 
             // for location autocomplete
@@ -133,14 +136,13 @@ define([
 
         onSave: function() {
             this.model.set({
-                user_id: 2,
-                tenant_id: 2,
+                user_id: this.userModel.id,
+                tenant_id: 2, //TODO can't ref tenant_id for some reason
                 status: this.$(this.statusSelector).val(),
                 title: this.$(this.titleSelector).val(),
                 position_type: this.$(this.positionTypeSelector).val(),
                 salary_start: this.$(this.salaryStartSelector).val(),
                 salary_end: this.$(this.salaryEndSelector).val(),
-                location: this.getLocation(),
                 location_id: this.getLocation().id,
                 description: this.$(this.descriptionSelector).val(),
                 employer_requisition_identifier: this.$(this.employerReqIdSelector).val(),
@@ -151,8 +153,6 @@ define([
             var that = this;
             this.model.save(null, {
                 success: function(model) {
-                    console.log('callback model');
-                    console.log(model);
                     var eventBody = {
                         id: model.id
                     };
@@ -225,6 +225,8 @@ define([
     var ReadRequisitionView = view.View.extend({
 
         initialize: function(options) {
+            console.log(this.model);
+            this.model = options.model;
             this.template = _.template(read_requisition_template);
             this.model.bind('change', this.render, this);
             this.model.bind('loaded', this.loaded, this);
@@ -243,7 +245,7 @@ define([
         },
 
         load: function() {
-            var state = this.model.isLoadedWith('technology'); //TODO
+            var state = this.model.isLoadedWith("location");
             if(!state.loaded) {
                 state.fetcher({
                     success: _.bind(this.render, this)
@@ -253,6 +255,7 @@ define([
 
         render: function() {
             var context = {
+                fmt: this.fmt,
                 model: this.model.toJSON({withRelated: true})
             };
             this.$el.html(this.template(context));
@@ -265,8 +268,9 @@ define([
      * @constructor
      * @param {Object} options
      *   model: {Requisition} (required).
-     *   If model has no ID, then a view to create
-     *   a new requisition will be displayed.
+     *      If model has no ID, then a view to create
+     *      a new requisition will be displayed.
+     *   userModel: {User} (required)
      */
     var RequisitionView = view.View.extend({
 
@@ -279,7 +283,9 @@ define([
             return [this.requisitionView];
         },
 
-        initialize: function() {
+        initialize: function(options) {
+            this.model = options.model;
+            this.userModel = options.userModel;
             this.template =  _.template(requisition_template);
 
             //child views
@@ -317,7 +323,8 @@ define([
                 console.log('RequisitionView: show create new req');
                 this.requisitionView = new CreateRequisitionView({
                     el: this.$(this.requisition_view_selector),
-                    model: this.model
+                    model: this.model,
+                    userModel: this.userModel
                 }).render();
             } else {
                 console.log('RequisitionView: show read req view');

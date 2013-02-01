@@ -2,6 +2,7 @@ define([
     'underscore',
     'common/notifications',
     'core/mediator',
+    'current/proxies',
     'api/models',
     'requisition/notifications',
     'requisition/req/views',
@@ -10,6 +11,7 @@ define([
     _,
     notifications,
     mediator,
+    current_proxies,
     api,
     requisition_notifications,
     requisition_views,
@@ -38,6 +40,7 @@ define([
 
         initialize: function(options) {
             this.view = null;
+            this.currentProxy = this.facade.getProxy(current_proxies.CurrentProxy.NAME);
         },
 
         onCreateView: function(notification) {
@@ -47,7 +50,8 @@ define([
                     id: notification.options.id
                 });
                 this.view = new requisition_views.RequisitionView({
-                    model: requisition
+                    model: requisition,
+                    userModel: this.currentProxy.currentUser()
                 });
 
                 // Add event listeners
@@ -77,8 +81,6 @@ define([
         },
 
         onSave: function(e, eventBody) {
-            console.log('onSave');
-            console.log(eventBody);
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
                 type: this.viewType(),
                 options: {

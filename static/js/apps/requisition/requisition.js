@@ -7,6 +7,7 @@ define([
     'core/facade',
     'core/mediator',
     'core/view',
+    'current/proxies',
     'requisition/req/mediators',
     'requisition/list/mediators',
     'text!apps/requisition/requisition.html'
@@ -19,6 +20,7 @@ define([
     facade,
     mediator,
     view,
+    current_proxies,
     requisition_mediators,
     requisition_list_mediators,
     requisition_app_template) {
@@ -187,7 +189,10 @@ define([
     var InitModels = command.Command.extend({
 
         execute: function() {
-            // Register proxies here.
+            // Register proxies here
+            this.facade.registerProxy(new current_proxies.CurrentProxy({
+                user: TR.CURRENT_USER
+            }));
         }
     });
 

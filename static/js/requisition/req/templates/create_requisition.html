@@ -2,6 +2,12 @@
     <h3>Create New Requisition</h3>
     <form class="form-horizontal">
         <div class="control-group">
+            <label class="control-label" for="inputEmployerReqID">Employer Requisition#</label>
+            <div class="controls">
+                <input type="text" id="inputEmployerReqID" placeholder="Requisition ID (optional)" maxlength="100">
+            </div>
+        </div>
+        <div class="control-group">
             <label class="control-label" for="inputStatus">Status</label>
             <div class="controls">
                 <select id="inputStatus">
@@ -44,12 +50,6 @@
             <label class="control-label" for="inputDescription">Description</label>
             <div class="controls">
                 <textarea id="inputDescription" class="input-xxlarge" rows="7" placeholder="Requisition Details" maxlength="1024" required></textarea>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="inputEmployerReqID">Employer Requisition#</label>
-            <div class="controls">
-                <input type="text" id="inputEmployerReqID" placeholder="Requisition ID (optional)" maxlength="100">
             </div>
         </div>
         <div class="control-group">
