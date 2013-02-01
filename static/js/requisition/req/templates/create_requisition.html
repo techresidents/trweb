@@ -1,3 +1,78 @@
-<div class="span8">
-    <p>Create requisition form here</p>
+<div class="span12">
+    <h3>Create New Requisition</h3>
+    <form class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="inputStatus">Status</label>
+            <div class="controls">
+                <select id="inputStatus">
+                    <option value="OPEN">Open</option>
+                    <option value="CLOSED">Closed</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputTitle">Title</label>
+            <div class="controls">
+                <input type="text" id="inputTitle" placeholder="Requisition Title" maxlength="100" required>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputLocation">Location</label>
+            <div class="controls">
+                <input id="inputLocation" maxlength="1024" type="text" name="location" autocomplete="off" placeholder="Boston, MA" required>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputPositionType">Position Type</label>
+            <div class="controls">
+                <select id="inputPositionType">
+                    <option value="Junior Developer">Junior Developer</option>
+                    <option value="Senior Developer">Senior Developer</option>
+                    <option value="Team Lead">Team Lead</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputSalary">Salary Range (US)</label>
+            <div class="controls">
+                <input class="input-medium" type="number" id="inputSalaryStart" placeholder="50,000" maxlength="10" required>
+                to
+                <input class="input-medium" type="number" id="inputSalaryEnd" placeholder="75,000" maxlength="10" required>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputDescription">Description</label>
+            <div class="controls">
+                <textarea id="inputDescription" class="input-xxlarge" rows="7" placeholder="Requisition Details" maxlength="1024" required></textarea>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmployerReqID">Employer Requisition#</label>
+            <div class="controls">
+                <input type="text" id="inputEmployerReqID" placeholder="Requisition ID (optional)" maxlength="100">
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <label class="checkbox">
+                    <input id="inputTelecommute" type="checkbox"> Telecommute
+                </label>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <label class="checkbox">
+                    <input id="inputRelocation" type="checkbox"> Relocation
+                </label>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <a class="btn cancel">Cancel</a>
+                <a class="btn btn-primary save">Save</a>
+            </div>
+        </div>
+    </form>
+
+
 </div>

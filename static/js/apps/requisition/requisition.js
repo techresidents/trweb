@@ -73,8 +73,15 @@ define([
 
         execute: function(options) {
             router = this.facade.router;
-
             switch(options.type) {
+                case requisition_mediators.RequisitionMediator.VIEW_TYPE:
+                    var reqId = options.options.id;
+                    if (!reqId) {
+                        router.navigate("create", {trigger: true});
+                    } else {
+                        router.navigate("req/" + reqId, {trigger: true});
+                    }
+                    break;
                 case requisition_list_mediators.RequisitionListMediator.VIEW_TYPE:
                     router.navigate("list", {trigger: true});
                     break;
@@ -119,6 +126,7 @@ define([
             }
         },
 
+        // TODO why not trigger notification here?
         _destroyView: function(activeView) {
             this.triggerEvent(RequisitionAppView.EVENTS.DESTROY_VIEW, activeView);
         }

@@ -4,14 +4,16 @@ define([
     'core/mediator',
     'api/models',
     'requisition/notifications',
-    'requisition/req/views'
+    'requisition/req/views',
+    'requisition/list/mediators'
 ], function(
     _,
     notifications,
     mediator,
     api,
     requisition_notifications,
-    requisition_views) {
+    requisition_views,
+    requisition_list_mediators) {
 
     /**
      * Requisition Mediator
@@ -48,6 +50,10 @@ define([
                     model: requisition
                 });
 
+                // Add event listeners
+                this.view.addEventListener(requisition_views.EVENTS.SAVE, this.onSave, this);
+                this.view.addEventListener(requisition_views.EVENTS.CANCEL, this.onCancel, this);
+
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
                     view: this.view,
@@ -68,6 +74,24 @@ define([
                     this.view = null;
                 }
             }
+        },
+
+        onSave: function(e, eventBody) {
+            console.log('onSave');
+            console.log(eventBody);
+            this.facade.trigger(notifications.VIEW_NAVIGATE, {
+                type: this.viewType(),
+                options: {
+                    id: eventBody.id
+                }
+            });
+        },
+
+        onCancel: function(e, eventBody) {
+            this.facade.trigger(notifications.VIEW_NAVIGATE, {
+                type: requisition_list_mediators.RequisitionListMediator.VIEW_TYPE,
+                options: {}
+            });
         }
 
     }, {

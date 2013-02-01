@@ -2,6 +2,8 @@ define([
     'jquery',
     'underscore',
     'core/view',
+    'profile/models',
+    'lookup/views',
     'text!requisition/req/templates/req.html',
     'text!requisition/req/templates/create_requisition.html',
     'text!requisition/req/templates/read_requisition.html',
@@ -10,6 +12,8 @@ define([
     $,
     _,
     view,
+    profile_models,
+    lookup_views,
     requisition_template,
     create_requisition_template,
     read_requisition_template,
@@ -19,6 +23,8 @@ define([
      * Requisition View Events
      */
     var EVENTS = {
+        SAVE: 'requisition:Save',
+        CANCEL: 'requisition:Cancel'
     };
 
     /**
@@ -55,20 +61,158 @@ define([
      * Create Requisition View.
      * @constructor
      * @param {Object} options
-     *   model: Requisition model (required)
+     *   model: {Requisition} (required)
+     *   positionTypesCollection: {JobPositionTypesCollection} (required) //TODO
      */
     var CreateRequisitionView = view.View.extend({
 
+        statusSelector: '#inputStatus',
+        titleSelector: '#inputTitle',
+        locationSelector: '#inputLocation',
+        positionTypeSelector: '#inputPositionType',
+        salaryStartSelector: '#inputSalaryStart',
+        salaryEndSelector: '#inputSalaryEnd',
+        descriptionSelector: '#inputDescription',
+        employerReqIdSelector: '#inputEmployerReqID',
+        telecommuteSelector: '#inputTelecommute',
+        relocationSelector: '#inputRelocation',
+
+        events: {
+            'click .save': 'onSave',
+            'click .cancel': 'onCancel'
+        },
+
         initialize: function(options) {
             this.template = _.template(create_requisition_template);
+
+            // for location autocomplete
+            this.lookupValue = null; // location text from field
+            this.lookupData = null; // location data object
+            this.lookupView = null;
+
+            // TODO need to ensure positionTypesCollection is available too
+            if(!this.model.isLoading()) {
+                this.load();
+            }
+        },
+
+        loaded: function(instance) {
+            //Cover case where model was already loading at time of view
+            //creation, but not all necessary data was loaded. Invoking
+            //load again will ensure all necessary data is loaded. If
+            //all data is already loaded, this is a no-op.
+            this.load();
+        },
+
+        load: function() {
+            var state = this.model.isLoaded();
+            if(!state.loaded) {
+                state.fetch();
+            }
         },
 
         render: function() {
             var context = {
+                positionTypes: [], // TODO need to pass in positionTypes collection, loaded, isLoaded, etc
                 model: this.model.toJSON({withRelated: true})
             };
             this.$el.html(this.template(context));
+
+            // setup location autocomplete
+            this.lookupView = new lookup_views.LookupView({
+                el: this.$(this.locationSelector),
+                scope: 'location',
+                property: 'name',
+                forceSelection: true,
+                onenter: this.updateLocationData,
+                onselect: this.updateLocationData,
+                context: this
+            });
             return this;
+        },
+
+        onSave: function() {
+            this.model.set({
+                user_id: 2,
+                tenant_id: 2,
+                status: this.$(this.statusSelector).val(),
+                title: this.$(this.titleSelector).val(),
+                position_type: this.$(this.positionTypeSelector).val(),
+                salary_start: this.$(this.salaryStartSelector).val(),
+                salary_end: this.$(this.salaryEndSelector).val(),
+                location: this.getLocation(),
+                location_id: this.getLocation().id,
+                description: this.$(this.descriptionSelector).val(),
+                employer_requisition_identifier: this.$(this.employerReqIdSelector).val(),
+                telecommute: this.$(this.telecommuteSelector).is(":checked"),
+                relocation: this.$(this.relocationSelector).is(":checked")
+            });
+            console.log(this.model);
+            var that = this;
+            this.model.save(null, {
+                success: function(model) {
+                    console.log('callback model');
+                    console.log(model);
+                    var eventBody = {
+                        id: model.id
+                    };
+                    that.triggerEvent(EVENTS.SAVE, eventBody);
+
+                    // create and add status view to DOM
+//                    var alertModel = new alert_models.AlertValueObject({
+//                        severity: alert_models.SEVERITY.SUCCESS,
+//                        style: alert_models.STYLE.NORMAL,
+//                        message: 'Save successful'
+//                    });
+//                    var view = new alert_views.AlertView({
+//                        model: alertModel
+//                    }).render();
+//                    that.$(that.saveStatusSelector).append(view.el);
+                }
+            });
+        },
+
+        onCancel: function() {
+            var eventBody = {};
+            this.triggerEvent(EVENTS.CANCEL, eventBody);
+        },
+
+        /**
+         * Callback to be invoked when when user selects a location
+         * from the typeahead view
+         * @param value  the string in the LookupView input
+         * @param data  the LookupResult.matches object which is scope/category specific
+         */
+        updateLocationData: function(value, data) {
+            this.lookupValue = value;
+            this.lookupData = data;
+            this.location = new profile_models.LocationPreference({
+                locationId: data.id,
+                city: data.city,
+                state: data.state,
+                zip: data.zip,
+                country: data.country
+            });
+        },
+
+        /**
+         * Method to retrieve location data object
+         * @return Returns LocationPreference object or null
+         * if no object is available
+         */
+        getLocation: function() {
+            var ret = null;
+            var value = this.$(this.locationSelector).val();
+            if (value.toLowerCase() === this.lookupData.name.toLowerCase()) {
+                // If this check passes, it implies that the value of this.lookupValue & this.lookupData
+                // are up-to-date and accurate.  This is to prevent a time-of-check versus time-of-use
+                // bug.  This could occur if the user had selected an option in from the drop down menu,
+                // then edited the location data within the field and finally pressed the 'add' button.
+                ret = this.lookupData;
+
+                // TODO I wonder if this check fails, if I can use the text data in the field and get a new result.
+            }
+            return ret;
         }
     });
 
@@ -141,6 +285,7 @@ define([
             //child views
             this.requisitionView = null;
 
+            // TODO need to bind to anything?
             if(!this.model.isLoading()) {
                 this.load();
             }
@@ -167,12 +312,15 @@ define([
 
             // Need to determine if user is creating a
             // new req or viewing an existing req
-            if (this.model.id === undefined) {
+            // TODO can model ID be zero?
+            if (!this.model.id) {
+                console.log('RequisitionView: show create new req');
                 this.requisitionView = new CreateRequisitionView({
                     el: this.$(this.requisition_view_selector),
                     model: this.model
                 }).render();
             } else {
+                console.log('RequisitionView: show read req view');
                 this.requisitionView = new ReadRequisitionView({
                     el: this.$(this.requisition_view_selector),
                     model: this.model
