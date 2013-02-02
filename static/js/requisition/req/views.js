@@ -137,7 +137,7 @@ define([
         onSave: function() {
             this.model.set({
                 user_id: this.userModel.id,
-                tenant_id: 2, //TODO can't ref tenant_id for some reason
+                tenant_id: this.userModel.get_tenant_id(),
                 status: this.$(this.statusSelector).val(),
                 title: this.$(this.titleSelector).val(),
                 position_type: this.$(this.positionTypeSelector).val(),
@@ -225,9 +225,10 @@ define([
     var ReadRequisitionView = view.View.extend({
 
         initialize: function(options) {
-            console.log(this.model);
             this.model = options.model;
             this.template = _.template(read_requisition_template);
+
+            // bindings
             this.model.bind('change', this.render, this);
             this.model.bind('loaded', this.loaded, this);
 
@@ -245,8 +246,11 @@ define([
         },
 
         load: function() {
-            var state = this.model.isLoadedWith("location");
-            if(!state.loaded) {
+            var state = this.model.isLoadedWith(
+                "location",
+                "requisition_technologies"
+            );
+            if (!state.loaded) {
                 state.fetcher({
                     success: _.bind(this.render, this)
                 });
@@ -288,10 +292,13 @@ define([
             this.userModel = options.userModel;
             this.template =  _.template(requisition_template);
 
-            //child views
+            // bindings
+            // TODO verify bindings
+            this.model.bind('loaded', this.loaded, this);
+
+            // child views
             this.requisitionView = null;
 
-            // TODO need to bind to anything?
             if(!this.model.isLoading()) {
                 this.load();
             }
@@ -304,9 +311,20 @@ define([
         },
 
         load: function() {
-            if(!this.model.isLoaded()) {
-                this.model.fetch();
+            // Only require loading the model if a
+            // non-empty model was passed to this view
+            if (this.model.id) {
+                var state = this.model.isLoadedWith(
+                    "location",
+                    "requisition_technologies"
+                );
+                if (!state.loaded) {
+                    state.fetcher({
+                        success: _.bind(this.render, this)
+                    });
+                }
             }
+
         },
 
         render: function() {
