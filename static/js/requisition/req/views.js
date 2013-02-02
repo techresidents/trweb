@@ -23,8 +23,8 @@ define([
      * Requisition View Events
      */
     var EVENTS = {
-        SAVE: 'requisition:Save',
-        CANCEL: 'requisition:Cancel'
+        SAVED: 'requisition:Saved',
+        CANCELED: 'requisition:Canceled'
     };
 
     /**
@@ -63,7 +63,6 @@ define([
      * @param {Object} options
      *   model: {Requisition} (required)
      *   userModel: {User} (required)
-     *   positionTypesCollection: {JobPositionTypesCollection} (required) //TODO
      */
     var CreateRequisitionView = view.View.extend({
 
@@ -92,31 +91,11 @@ define([
             this.lookupValue = null; // location text from field
             this.lookupData = null; // location data object
             this.lookupView = null;
-
-            // TODO need to ensure positionTypesCollection is available too
-            if(!this.model.isLoading()) {
-                this.load();
-            }
-        },
-
-        loaded: function(instance) {
-            //Cover case where model was already loading at time of view
-            //creation, but not all necessary data was loaded. Invoking
-            //load again will ensure all necessary data is loaded. If
-            //all data is already loaded, this is a no-op.
-            this.load();
-        },
-
-        load: function() {
-            var state = this.model.isLoaded();
-            if(!state.loaded) {
-                state.fetch();
-            }
         },
 
         render: function() {
             var context = {
-                positionTypes: [], // TODO need to pass in positionTypes collection, loaded, isLoaded, etc
+                positionTypes: [], // TODO need to pass in positionTypes object or array
                 model: this.model.toJSON({withRelated: true})
             };
             this.$el.html(this.template(context));
@@ -156,7 +135,7 @@ define([
                     var eventBody = {
                         id: model.id
                     };
-                    that.triggerEvent(EVENTS.SAVE, eventBody);
+                    that.triggerEvent(EVENTS.SAVED, eventBody);
 
                     // create and add status view to DOM
 //                    var alertModel = new alert_models.AlertValueObject({
@@ -174,7 +153,7 @@ define([
 
         onCancel: function() {
             var eventBody = {};
-            this.triggerEvent(EVENTS.CANCEL, eventBody);
+            this.triggerEvent(EVENTS.CANCELED, eventBody);
         },
 
         /**

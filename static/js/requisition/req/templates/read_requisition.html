@@ -3,10 +3,10 @@
     <p><b>Employer Requisition#:</b> <%= model.employer_requisition_identifier ? model.employer_requisition_identifier : 'N/A' %></p>
     <p><b>Status:</b> <%= model.status %></p>
     <p><b>Title:</b> <%= model.title %></p>
-    <p><b>Location:</b> <%= model.location.city %>, <%=model.location.state %></p>
     <p><b>Position Type:</b> <%= model.position_type %></p>
     <p><b>Salary Range (US):</b> <%= fmt.num(model.salary_start, 'cn0') %> - <%= fmt.num(model.salary_end, 'cn0') %></p>
-    <p><b>Description:</b> <%= model.description %></p>
+    <p><b>Location:</b> <%= model.location.city %>, <%=model.location.state %></p>
     <p><b>Telecommute:</b> <%= model.telecommute ? 'Yes': 'No' %></p>
     <p><b>Relocation:</b> <%= model.relocation ? 'Yes' : 'No' %> </p>
+    <p><b>Description:</b> <%= model.description %></p>
 </div>

@@ -55,8 +55,8 @@ define([
                 });
 
                 // Add event listeners
-                this.view.addEventListener(requisition_views.EVENTS.SAVE, this.onSave, this);
-                this.view.addEventListener(requisition_views.EVENTS.CANCEL, this.onCancel, this);
+                this.view.addEventListener(requisition_views.EVENTS.SAVED, this.onSaved, this);
+                this.view.addEventListener(requisition_views.EVENTS.CANCELED, this.onCanceled, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
@@ -80,7 +80,7 @@ define([
             }
         },
 
-        onSave: function(e, eventBody) {
+        onSaved: function(e, eventBody) {
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
                 type: this.viewType(),
                 options: {
@@ -89,7 +89,7 @@ define([
             });
         },
 
-        onCancel: function(e, eventBody) {
+        onCanceled: function(e, eventBody) {
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
                 type: requisition_list_mediators.RequisitionListMediator.VIEW_TYPE,
                 options: {}
