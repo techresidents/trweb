@@ -79,7 +79,9 @@ define([
 
         events: {
             'click .save': 'onSave',
-            'click .cancel': 'onCancel'
+            'click .cancel': 'onCancel',
+            'blur input': 'validateInput',
+            'blur textarea': 'validateTextarea'
         },
 
         initialize: function(options) {
@@ -111,6 +113,52 @@ define([
                 context: this
             });
             return this;
+        },
+
+        validateInput: function(evt) {
+            // TODO the problem is that set() invokes validate() for all fields.
+            console.log('validate invoked');
+            var target = $(evt.currentTarget);
+            var targetType = target.attr('type');
+            var targetData = {};
+            var errorStatus = null;
+
+            if (targetType === 'text') {
+                console.log('Field was text. Validating...');
+                targetData[target.attr('name')] = target.val();
+                console.log(targetData);
+                this.model.set(targetData, {validate: true}); //listen on invalid event to handle errors
+
+            } else if (targetType === 'number') {
+                console.log('Field was a number. Validating...');
+                // Replace any commas with empty string
+                var rawValue = target.val();
+                var cleanedValue = rawValue.replace(/\,/g, '');
+                targetData[target.attr('name')] = cleanedValue;
+                console.log(targetData);
+                errorStatus = this.model.set(targetData, {validate: true});
+                if (errorStatus) {
+                    // if error status is true, then there was an error
+                    console.log('error!');
+                    console.log(errorStatus);
+                }
+            }
+        },
+
+        validateTextarea: function(evt) {
+            console.log('Field was a textarea. Validating...');
+            var target = $(evt.currentTarget);
+            var targetData = {};
+            var errorStatus = null;
+
+            targetData[target.attr('name')] = target.val();
+            console.log(targetData);
+            errorStatus = this.model.set(targetData, {validate: true});
+            if (errorStatus) {
+                // if error status is true, then there was an error
+                console.log('error!');
+                console.log(errorStatus);
+            }
         },
 
         onSave: function() {
