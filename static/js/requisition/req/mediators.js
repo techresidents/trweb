@@ -3,6 +3,8 @@ define([
     'common/notifications',
     'core/mediator',
     'current/proxies',
+    'alert/mediators',
+    'alert/models',
     'api/models',
     'requisition/notifications',
     'requisition/req/views',
@@ -12,6 +14,8 @@ define([
     notifications,
     mediator,
     current_proxies,
+    alert_mediators,
+    alert_models,
     api,
     requisition_notifications,
     requisition_views,
@@ -86,6 +90,14 @@ define([
                 options: {
                     id: eventBody.id
                 }
+            });
+
+            // create alert status for successful creation
+            this.facade.trigger(notifications.VIEW_CREATE, {
+                type: alert_mediators.AlertMediator.VIEW_TYPE,
+                severity: alert_models.SEVERITY.SUCCESS,
+                style: alert_models.STYLE.NORMAL,
+                message: 'Requisition created successfully'
             });
         },
 

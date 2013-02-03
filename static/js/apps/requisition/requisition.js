@@ -7,6 +7,7 @@ define([
     'core/facade',
     'core/mediator',
     'core/view',
+    'alert/mediators',
     'current/proxies',
     'requisition/req/mediators',
     'requisition/list/mediators',
@@ -20,6 +21,7 @@ define([
     facade,
     mediator,
     view,
+    alert_mediators,
     current_proxies,
     requisition_mediators,
     requisition_list_mediators,
@@ -98,10 +100,13 @@ define([
      */
     var RequisitionAppView = view.View.extend({
 
+        statusSelector: '#alerts',
+        contentSelector: '#content',
 
         initialize: function() {
             this.template = _.template(requisition_app_template);
             this.activeView = null;
+            this.activeStatusView = null;
         },
 
         render: function() {
@@ -111,14 +116,22 @@ define([
 
         addView: function(type, view, options) {
             switch(type) {
-                case 'AlertView':
-                    this.$('#alerts').append(view.render().el);
+                case alert_mediators.AlertMediator.VIEW_TYPE:
+                    if(this.activeStatusView) {
+                        this._destroyView(this.activeStatusView);
+                    }
+                    this.$(this.statusSelector).append(view.render().el);
+                    this.activeStatusView = {
+                        type: type,
+                        view: view,
+                        options: options
+                    };
                     break;
                 default:
                     if(this.activeView) {
                         this._destroyView(this.activeView);
                     }
-                    this.$('#content').append(view.render().el);
+                    this.$(this.contentSelector).append(view.render().el);
                     this.activeView = {
                         type: type,
                         view: view,
@@ -128,7 +141,6 @@ define([
             }
         },
 
-        // TODO why not trigger notification here?
         _destroyView: function(activeView) {
             this.triggerEvent(RequisitionAppView.EVENTS.DESTROY_VIEW, activeView);
         }
@@ -163,6 +175,7 @@ define([
             this.view.addEventListener(RequisitionAppView.EVENTS.DESTROY_VIEW, this.onDestroyView, this);
 
             //create and register sub-mediators
+            this.facade.registerMediator(new alert_mediators.AlertMediator());
             this.facade.registerMediator(new requisition_list_mediators.RequisitionListMediator());
             this.facade.registerMediator(new requisition_mediators.RequisitionMediator());
         },

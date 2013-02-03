@@ -114,7 +114,8 @@ define([
         },
 
         onSave: function() {
-            this.model.set({
+            var that = this;
+            this.model.save({
                 user_id: this.userModel.id,
                 tenant_id: this.userModel.get_tenant_id(),
                 status: this.$(this.statusSelector).val(),
@@ -127,26 +128,12 @@ define([
                 employer_requisition_identifier: this.$(this.employerReqIdSelector).val(),
                 telecommute: this.$(this.telecommuteSelector).is(":checked"),
                 relocation: this.$(this.relocationSelector).is(":checked")
-            });
-            console.log(this.model);
-            var that = this;
-            this.model.save(null, {
+            }, {
                 success: function(model) {
                     var eventBody = {
                         id: model.id
                     };
                     that.triggerEvent(EVENTS.SAVED, eventBody);
-
-                    // create and add status view to DOM
-//                    var alertModel = new alert_models.AlertValueObject({
-//                        severity: alert_models.SEVERITY.SUCCESS,
-//                        style: alert_models.STYLE.NORMAL,
-//                        message: 'Save successful'
-//                    });
-//                    var view = new alert_views.AlertView({
-//                        model: alertModel
-//                    }).render();
-//                    that.$(that.saveStatusSelector).append(view.el);
                 }
             });
         },

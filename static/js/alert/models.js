@@ -50,6 +50,15 @@ define([
         setMessage: function(message) {
             this.set({ message: message });
             return this;
+        },
+
+        style: function() {
+            return this.get('style');
+        },
+
+        setStyle: function(style) {
+            this.set({ style: style });
+            return this;
         }
     });
 
