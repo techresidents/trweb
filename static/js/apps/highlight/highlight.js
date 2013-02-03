@@ -51,7 +51,6 @@ define([
 
         load: function() {
             var state = this.model.isLoadedWith("chat_sessions__chat__topic", "highlight_sessions");
-            
             if(!state.loaded) {
                 state.fetcher();
             }
@@ -77,7 +76,9 @@ define([
             this.highlightSessionsView = new highlight_views.HighlightSessionsView({
                 el: this.$('#highlight_sessions'),
                 collection: this.model.get_highlight_sessions()
-            }).render();
+            });
+            this.highlightSessionsView.addEventListener(highlight_views.EVENTS.DESTROY_STATUS_VIEW, this.removeStatusView, this);
+            this.highlightSessionsView.render();
 
             return this;
         },
@@ -95,6 +96,12 @@ define([
                         options: options
                     };
                     break;
+            }
+        },
+
+        removeStatusView: function(e, eventBody) {
+            if (this.activeStatusView) {
+                this._destroyView(this.activeStatusView);
             }
         },
 

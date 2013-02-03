@@ -29,7 +29,8 @@ define([
     var EVENTS = {
         HIGHLIGHT_SESSION_UP: 'HIGHLIGHT_SESSION_UP_EVENT',
         HIGHLIGHT_SESSION_DOWN: 'HIGHLIGHT_SESSION_DOWN_EVENT',
-        SAVED: 'HIGHLIGHT_SESSION_SAVED'
+        SAVED: 'HIGHLIGHT_SESSION_SAVED',
+        DESTROY_STATUS_VIEW: 'HIGHLIGHT_SESSION_DESTROY_STATUS_VIEW'
     };
 
     /**
@@ -275,7 +276,7 @@ define([
         added: function(model) {
             // remove save status view if user has added
             // a chat to their highlight reel
-            this.removeSaveStatusView();
+            this.triggerEvent(EVENTS.DESTROY_STATUS_VIEW, {});
 
             // remove reel-empty-hint, if shown
             this.$(this.emptyReelHintSelector).hide();
@@ -291,7 +292,7 @@ define([
         removed: function(model) {
             // remove save status view if user has removed
             // a chat from their highlight reel
-            this.removeSaveStatusView();
+            this.triggerEvent(EVENTS.DESTROY_STATUS_VIEW, {});
 
             this.collection.each(function(m) {
                 if(m.get_rank() > model.get_rank()) {
