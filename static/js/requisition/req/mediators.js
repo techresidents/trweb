@@ -98,7 +98,7 @@ define([
                 type: alert_mediators.AlertMediator.VIEW_TYPE,
                 severity: alert_models.SEVERITY.SUCCESS,
                 style: alert_models.STYLE.NORMAL,
-                message: 'Requisition created successfully'
+                message: 'Requisition updated successfully'
             });
         },
 

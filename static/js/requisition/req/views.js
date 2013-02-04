@@ -51,16 +51,6 @@ define([
         // TODO
     });
 
-    /**
-     * Edit Requisition View.
-     * @constructor
-     * @param {Object} options
-     *  model: {Requisition} (required)
-     */
-    var EditRequisitionView = view.View.extend({
-        //TODO
-    });
-
 
     /**
      * Requisition Form View.
@@ -94,13 +84,12 @@ define([
             this.statusFormOptions = options.statusFormOptions;
             this.positionTypeFormOptions = options.positionTypeFormOptions;
             this.template = _.template(requisition_form_template);
+            this.location = null;
 
             // generate form options
             this._generateRequisitionFormOptions();
 
-            // for location autocomplete
-            this.lookupValue = null; // location text from field
-            this.lookupData = null; // location data object
+            // child views
             this.lookupView = null;
         },
 
@@ -136,7 +125,7 @@ define([
             ];
         },
 
-        setupValidator: function() {
+        _setupValidator: function() {
             this.$(this.formSelector).validate({
                 rules: {
                     title: {
@@ -168,28 +157,29 @@ define([
             });
         },
 
-        render: function() {
-            var context = {
-                model: this.model.toJSON({withRelated: true}),
-                statusFormOptions: this.statusFormOptions,
-                positionTypeFormOptions: this.positionTypeFormOptions
-            };
-            this.$el.html(this.template(context));
+        _populateForm: function() {
 
-            // setup form validator
-            this.setupValidator();
+            // TODO can probably move these into the HTML later.
 
-            // setup location autocomplete
-            this.lookupView = new lookup_views.LookupView({
-                el: this.$(this.locationSelector),
-                scope: 'location',
-                property: 'name',
-                forceSelection: true,
-                onenter: this.updateLocationData,
-                onselect: this.updateLocationData,
-                context: this
-            });
-            return this;
+            var jsonModel = this.model.toJSON({withRelated: true});
+            this._updateLocationData(null, jsonModel.location);
+
+            this.$(this.statusSelector).val(jsonModel.status);
+            this.$(this.titleSelector).val(jsonModel.title);
+            this.$(this.positionTypeSelector).val(jsonModel.position_type);
+            this.$(this.salaryStartSelector).val(jsonModel.salary_start);
+            this.$(this.salaryEndSelector).val(jsonModel.salary_end);
+            this.$(this.descriptionSelector).val(jsonModel.description);
+            this.$(this.employerReqIdSelector).val(jsonModel.employer_requisition_identifier);
+            this.$(this.telecommuteSelector).prop('checked', jsonModel.telecommute);
+            this.$(this.relocationSelector).prop('checked', jsonModel.relocation);
+
+            if (jsonModel.location.city) {
+                this.$(this.locationSelector).val(jsonModel.location.city + ", " + jsonModel.location.state);
+            } else if (jsonModel.location.state) {
+                this.$(this.locationSelector).val(jsonModel.location.state);
+            }
+
         },
 
         /**
@@ -198,9 +188,7 @@ define([
          * @param value  the string in the LookupView input
          * @param data  the LookupResult.matches object which is scope/category specific
          */
-        updateLocationData: function(value, data) {
-            this.lookupValue = value;
-            this.lookupData = data;
+        _updateLocationData: function(value, data) {
             this.location = new profile_models.LocationPreference({
                 locationId: data.id,
                 city: data.city,
@@ -210,22 +198,41 @@ define([
             });
         },
 
+        render: function() {
+            var context = {
+                model: this.model.toJSON({withRelated: true}),
+                statusFormOptions: this.statusFormOptions,
+                positionTypeFormOptions: this.positionTypeFormOptions
+            };
+            this.$el.html(this.template(context));
+
+            // setup form validator
+            this._setupValidator();
+
+            // setup location autocomplete
+            this.lookupView = new lookup_views.LookupView({
+                el: this.$(this.locationSelector),
+                scope: 'location',
+                property: 'name',
+                forceSelection: true,
+                onenter: this._updateLocationData,
+                onselect: this._updateLocationData,
+                context: this
+            });
+
+            // fill in any provided form info
+            this._populateForm();
+
+            return this;
+        },
+
         /**
-         * Method to retrieve location data object
-         * @return Returns LocationPreference object or null
+         * Method to retrieve location data ID
+         * @return Returns LocationPreference object ID or null
          * if no object is available
          */
-        getLocation: function() {
-            var ret = null;
-            var value = this.$(this.locationSelector).val();
-            if (value.toLowerCase() === this.lookupData.name.toLowerCase()) {
-                // If this check passes, it implies that the value of this.lookupValue & this.lookupData
-                // are up-to-date and accurate.  This is to prevent a time-of-check versus time-of-use
-                // bug.  This could occur if the user had selected an option in from the drop down menu,
-                // then edited the location data within the field and finally pressed the 'add' button.
-                ret = this.lookupData;
-            }
-            return ret;
+        getLocationId: function() {
+            return this.location.locationId();
         },
 
         onSave: function() {
@@ -238,7 +245,7 @@ define([
                 position_type: this.$(this.positionTypeSelector).val(),
                 salary_start: this.$(this.salaryStartSelector).val(),
                 salary_end: this.$(this.salaryEndSelector).val(),
-                location_id: this.getLocation().id,
+                location_id: this.getLocationId(),
                 description: this.$(this.descriptionSelector).val(),
                 employer_requisition_identifier: this.$(this.employerReqIdSelector).val(),
                 telecommute: this.$(this.telecommuteSelector).is(":checked"),
@@ -254,6 +261,9 @@ define([
         },
 
         onCancel: function() {
+            // TODO
+            // restore original collection data
+            // use silent:true flag
             var eventBody = {};
             this.triggerEvent(EVENTS.CANCELED, eventBody);
         }
@@ -278,6 +288,43 @@ define([
             this.model = options.model;
             this.userModel = options.userModel;
             this.template = _.template(create_requisition_template);
+
+            // child views
+            this.reqFormView = null;
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+
+            this.reqFormView = new RequisitionFormView({
+                el: this.$(this.formContainerSelector),
+                model: this.model,
+                userModel: this.userModel
+            }).render();
+
+            return this;
+        }
+    });
+
+    /**
+     * Edit Requisition View.
+     * @constructor
+     * @param {Object} options
+     *   model: {Requisition} (required)
+     *   userModel: {User} (required)
+     */
+    var EditRequisitionView = view.View.extend({
+
+        formContainerSelector: '#req-form-container',
+
+        childViews: function() {
+            return [this.reqFormView];
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.userModel = options.userModel;
+            this.template = _.template(edit_requisition_template);
 
             // child views
             this.reqFormView = null;
