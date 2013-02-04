@@ -11,8 +11,9 @@
             <label class="control-label" for="inputStatus">Status</label>
             <div class="controls">
                 <select id="inputStatus">
-                    <option value="OPEN">Open</option>
-                    <option value="CLOSED">Closed</option>
+                    <%_.each(statusFormOptions, function(item) { %>
+                        <option value="<%= item.value %>"><%= item.option %></option>
+                    <% }); %>
                 </select>
             </div>
         </div>
@@ -26,9 +27,9 @@
             <label class="control-label" for="inputPositionType">Position Type</label>
             <div class="controls">
                 <select id="inputPositionType" name="position_type">
-                    <option value="Junior Developer">Junior Developer</option>
-                    <option value="Senior Developer">Senior Developer</option>
-                    <option value="Team Lead">Team Lead</option>
+                    <%_.each(positionTypeFormOptions, function(item) { %>
+                        <option value="<%= item.value %>"><%= item.option %></option>
+                    <% }); %>
                 </select>
             </div>
         </div>
