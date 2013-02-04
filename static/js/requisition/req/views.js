@@ -68,8 +68,6 @@ define([
      * @param {Object} options
      *   model: {Requisition} (required)
      *   userModel: {User} (required)
-     *   statusFormOptions: Array of form option objects (required)
-     *   positionTypeFormOptions: Array of form option objects (required)
      */
     var RequisitionFormView = view.View.extend({
 
@@ -97,10 +95,45 @@ define([
             this.positionTypeFormOptions = options.positionTypeFormOptions;
             this.template = _.template(requisition_form_template);
 
+            // generate form options
+            this._generateRequisitionFormOptions();
+
             // for location autocomplete
             this.lookupValue = null; // location text from field
             this.lookupData = null; // location data object
             this.lookupView = null;
+        },
+
+        _generateRequisitionFormOptions: function() {
+            // Requistion Status
+            var statusOpen = {
+                option: "Open", // shown in UI
+                value: "OPEN"   // returned value
+            };
+            var statusClosed = {
+                option: "Closed", // shown in UI
+                value: "CLOSED"   // returned value
+            };
+            this.statusFormOptions = [statusOpen, statusClosed];
+
+            // Postion Types
+            var positionTypeJuniorDeveloper = {
+                option: "Junior Developer",
+                value: "Junior Developer"
+            };
+            var positionTypeSeniorDeveloper = {
+                option: "Senior Developer",
+                value: "Senior Developer"
+            };
+            var positionTypeTeamLead = {
+                option: "Team Lead",
+                value: "Team Lead"
+            };
+            this.positionTypeFormOptions = [
+                positionTypeJuniorDeveloper,
+                positionTypeSeniorDeveloper,
+                positionTypeTeamLead
+            ];
         },
 
         setupValidator: function() {
@@ -232,8 +265,6 @@ define([
      * @param {Object} options
      *   model: {Requisition} (required)
      *   userModel: {User} (required)
-     *   statusFormOptions: Array of form option objects (required)
-     *   positionTypeFormOptions: Array of form option objects (required)
      */
     var CreateRequisitionView = view.View.extend({
 
@@ -246,8 +277,6 @@ define([
         initialize: function(options) {
             this.model = options.model;
             this.userModel = options.userModel;
-            this.statusFormOptions = options.statusFormOptions;
-            this.positionTypeFormOptions = options.positionTypeFormOptions;
             this.template = _.template(create_requisition_template);
 
             // child views
@@ -260,9 +289,7 @@ define([
             this.reqFormView = new RequisitionFormView({
                 el: this.$(this.formContainerSelector),
                 model: this.model,
-                userModel: this.userModel,
-                statusFormOptions: this.statusFormOptions,
-                positionTypeFormOptions: this.positionTypeFormOptions
+                userModel: this.userModel
             }).render();
 
             return this;
@@ -349,9 +376,6 @@ define([
             this.userModel = options.userModel;
             this.template =  _.template(requisition_template);
 
-            // generate form options
-            this._generateRequisitionFormOptions();
-
             // bindings
             // TODO verify bindings
             this.model.bind('loaded', this.loaded, this);
@@ -362,38 +386,6 @@ define([
             if(!this.model.isLoading()) {
                 this.load();
             }
-        },
-
-        _generateRequisitionFormOptions: function() {
-            // Requistion Status
-            var statusOpen = {
-                option: "Open", // shown in UI
-                value: "OPEN"   // returned value
-            };
-            var statusClosed = {
-                option: "Closed", // shown in UI
-                value: "CLOSED"   // returned value
-            };
-            this.statusFormOptions = [statusOpen, statusClosed];
-
-            // Postion Types
-            var positionTypeJuniorDeveloper = {
-                option: "Junior Developer",
-                value: "Junior Developer"
-            };
-            var positionTypeSeniorDeveloper = {
-                option: "Senior Developer",
-                value: "Senior Developer"
-            };
-            var positionTypeTeamLead = {
-                option: "Team Lead",
-                value: "Team Lead"
-            };
-            this.positionTypeFormOptions = [
-                positionTypeJuniorDeveloper,
-                positionTypeSeniorDeveloper,
-                positionTypeTeamLead
-            ];
         },
 
         loaded: function(instance) {
@@ -434,18 +426,14 @@ define([
                 this.requisitionView = new CreateRequisitionView({
                     el: this.$(this.requisition_view_selector),
                     model: this.model,
-                    userModel: this.userModel,
-                    statusFormOptions: this.statusFormOptions,
-                    positionTypeFormOptions: this.positionTypeFormOptions
+                    userModel: this.userModel
                 }).render();
             }
             else if (this.action == 'edit') {
                 this.requisitionView = new EditRequisitionView({
                     el: this.$(this.requisition_view_selector),
                     model: this.model,
-                    userModel: this.userModel,
-                    statusFormOptions: this.statusFormOptions,
-                    positionTypeFormOptions: this.positionTypeFormOptions
+                    userModel: this.userModel
                 }).render();
             }
             else if (this.action === 'read') {
