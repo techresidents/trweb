@@ -54,6 +54,7 @@ define([
                     id: notification.options.id
                 });
                 this.view = new requisition_views.RequisitionView({
+                    action: notification.options.action,
                     model: requisition,
                     userModel: this.currentProxy.currentUser()
                 });

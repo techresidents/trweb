@@ -8,7 +8,8 @@ define([
     'text!requisition/req/templates/req.html',
     'text!requisition/req/templates/create_requisition.html',
     'text!requisition/req/templates/read_requisition.html',
-    'text!requisition/req/templates/edit_requisition.html'
+    'text!requisition/req/templates/edit_requisition.html',
+    'text!requisition/req/templates/requisition_form.html'
 ], function(
     $,
     _,
@@ -19,7 +20,8 @@ define([
     requisition_template,
     create_requisition_template,
     read_requisition_template,
-    edit_requisition_template) {
+    edit_requisition_template,
+    requisition_form_template) {
 
     /**
      * Requisition View Events
@@ -59,8 +61,9 @@ define([
         //TODO
     });
 
+
     /**
-     * Create Requisition View.
+     * Requisition Form View.
      * @constructor
      * @param {Object} options
      *   model: {Requisition} (required)
@@ -68,8 +71,9 @@ define([
      *   statusFormOptions: Array of form option objects (required)
      *   positionTypeFormOptions: Array of form option objects (required)
      */
-    var CreateRequisitionView = view.View.extend({
+    var RequisitionFormView = view.View.extend({
 
+        formSelector: '#requisition-form',
         statusSelector: '#inputStatus',
         titleSelector: '#inputTitle',
         locationSelector: '#inputLocation',
@@ -91,7 +95,7 @@ define([
             this.userModel = options.userModel;
             this.statusFormOptions = options.statusFormOptions;
             this.positionTypeFormOptions = options.positionTypeFormOptions;
-            this.template = _.template(create_requisition_template);
+            this.template = _.template(requisition_form_template);
 
             // for location autocomplete
             this.lookupValue = null; // location text from field
@@ -100,7 +104,7 @@ define([
         },
 
         setupValidator: function() {
-            this.$('#requisition-form').validate({
+            this.$(this.formSelector).validate({
                 rules: {
                     title: {
                         required: true,
@@ -155,36 +159,6 @@ define([
             return this;
         },
 
-        onSave: function() {
-            var that = this;
-            this.model.save({
-                user_id: this.userModel.id,
-                tenant_id: this.userModel.get_tenant_id(),
-                status: this.$(this.statusSelector).val(),
-                title: this.$(this.titleSelector).val(),
-                position_type: this.$(this.positionTypeSelector).val(),
-                salary_start: this.$(this.salaryStartSelector).val(),
-                salary_end: this.$(this.salaryEndSelector).val(),
-                location_id: this.getLocation().id,
-                description: this.$(this.descriptionSelector).val(),
-                employer_requisition_identifier: this.$(this.employerReqIdSelector).val(),
-                telecommute: this.$(this.telecommuteSelector).is(":checked"),
-                relocation: this.$(this.relocationSelector).is(":checked")
-            }, {
-                success: function(model) {
-                    var eventBody = {
-                        id: model.id
-                    };
-                    that.triggerEvent(EVENTS.SAVED, eventBody);
-                }
-            });
-        },
-
-        onCancel: function() {
-            var eventBody = {};
-            this.triggerEvent(EVENTS.CANCELED, eventBody);
-        },
-
         /**
          * Callback to be invoked when when user selects a location
          * from the typeahead view
@@ -219,6 +193,79 @@ define([
                 ret = this.lookupData;
             }
             return ret;
+        },
+
+        onSave: function() {
+            var that = this;
+            this.model.save({
+                user_id: this.userModel.id,
+                tenant_id: this.userModel.get_tenant_id(),
+                status: this.$(this.statusSelector).val(),
+                title: this.$(this.titleSelector).val(),
+                position_type: this.$(this.positionTypeSelector).val(),
+                salary_start: this.$(this.salaryStartSelector).val(),
+                salary_end: this.$(this.salaryEndSelector).val(),
+                location_id: this.getLocation().id,
+                description: this.$(this.descriptionSelector).val(),
+                employer_requisition_identifier: this.$(this.employerReqIdSelector).val(),
+                telecommute: this.$(this.telecommuteSelector).is(":checked"),
+                relocation: this.$(this.relocationSelector).is(":checked")
+            }, {
+                success: function(model) {
+                    var eventBody = {
+                        id: model.id
+                    };
+                    that.triggerEvent(EVENTS.SAVED, eventBody);
+                }
+            });
+        },
+
+        onCancel: function() {
+            var eventBody = {};
+            this.triggerEvent(EVENTS.CANCELED, eventBody);
+        }
+    });
+
+    /**
+     * Create Requisition View.
+     * @constructor
+     * @param {Object} options
+     *   model: {Requisition} (required)
+     *   userModel: {User} (required)
+     *   statusFormOptions: Array of form option objects (required)
+     *   positionTypeFormOptions: Array of form option objects (required)
+     */
+    var CreateRequisitionView = view.View.extend({
+
+        formContainerSelector: '#req-form-container',
+
+        childViews: function() {
+            return [this.reqFormView];
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.userModel = options.userModel;
+            this.statusFormOptions = options.statusFormOptions;
+            this.positionTypeFormOptions = options.positionTypeFormOptions;
+            this.template = _.template(create_requisition_template);
+
+            // child views
+            this.reqFormView = null;
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+
+            this.reqFormView = new RequisitionFormView({
+                el: this.$(this.formContainerSelector),
+                model: this.model,
+                userModel: this.userModel,
+                statusFormOptions: this.statusFormOptions,
+                positionTypeFormOptions: this.positionTypeFormOptions
+            }).render();
+
+            return this;
         }
     });
 
@@ -277,9 +324,12 @@ define([
      * Requisition main view.
      * @constructor
      * @param {Object} options
-     *   model: {Requisition} (required).
-     *      If model has no ID, then a view to create
-     *      a new requisition will be displayed.
+     *   action: String specifying which action the user
+     *      would like to perform. Valid values:
+     *          'read',
+     *          'edit',
+     *          'create'
+     *   model: {Requisition} (required)
      *   userModel: {User} (required)
      */
     var RequisitionView = view.View.extend({
@@ -294,6 +344,7 @@ define([
         },
 
         initialize: function(options) {
+            this.action = options.action; // read, create, or edit req
             this.model = options.model;
             this.userModel = options.userModel;
             this.template =  _.template(requisition_template);
@@ -375,11 +426,11 @@ define([
 
             this.$el.html(this.template());
 
-            // Need to determine if user is creating a
-            // new req or viewing an existing req
-            // TODO can model ID be zero?
-            if (!this.model.id) {
-                console.log('RequisitionView: show create new req');
+            // TODO does it make more sense for the mediator to hvae this logic? What purpose does this parent view serve?
+
+            // Need to determine if user is reading,
+            // editing, or creating a requisition
+            if (this.action === 'create') {
                 this.requisitionView = new CreateRequisitionView({
                     el: this.$(this.requisition_view_selector),
                     model: this.model,
@@ -387,8 +438,17 @@ define([
                     statusFormOptions: this.statusFormOptions,
                     positionTypeFormOptions: this.positionTypeFormOptions
                 }).render();
-            } else {
-                console.log('RequisitionView: show read req view');
+            }
+            else if (this.action == 'edit') {
+                this.requisitionView = new EditRequisitionView({
+                    el: this.$(this.requisition_view_selector),
+                    model: this.model,
+                    userModel: this.userModel,
+                    statusFormOptions: this.statusFormOptions,
+                    positionTypeFormOptions: this.positionTypeFormOptions
+                }).render();
+            }
+            else if (this.action === 'read') {
                 this.requisitionView = new ReadRequisitionView({
                     el: this.$(this.requisition_view_selector),
                     model: this.model
