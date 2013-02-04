@@ -1,6 +1,7 @@
 define([
     'jquery',
     'underscore',
+    'jquery.validate',
     'core/view',
     'profile/models',
     'lookup/views',
@@ -11,6 +12,7 @@ define([
 ], function(
     $,
     _,
+    jquery_validate,
     view,
     profile_models,
     lookup_views,
@@ -79,9 +81,7 @@ define([
 
         events: {
             'click .save': 'onSave',
-            'click .cancel': 'onCancel',
-            'blur input': 'validateInput',
-            'blur textarea': 'validateTextarea'
+            'click .cancel': 'onCancel'
         },
 
         initialize: function(options) {
@@ -95,12 +95,47 @@ define([
             this.lookupView = null;
         },
 
+        setupValidator: function() {
+            this.$('#requisition-form').validate({
+                rules: {
+                    title: {
+                        required: true,
+                        minlength: 1,
+                        maxlength: 100
+                    },
+                    salary_start: {
+                        required: true,
+                        number: true,
+                        maxlength: 10
+                    },
+                    salary_end: {
+                        required: true,
+                        number: true,
+                        maxlength: 10
+                    },
+                    location: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 100
+                    },
+                    description: {
+                        required: true,
+                        minlength: 1,
+                        maxlength: 1024
+                    }
+                }
+            });
+        },
+
         render: function() {
             var context = {
                 positionTypes: [], // TODO need to pass in positionTypes object or array
                 model: this.model.toJSON({withRelated: true})
             };
             this.$el.html(this.template(context));
+
+            // setup form validator
+            this.setupValidator();
 
             // setup location autocomplete
             this.lookupView = new lookup_views.LookupView({
@@ -113,52 +148,6 @@ define([
                 context: this
             });
             return this;
-        },
-
-        validateInput: function(evt) {
-            // TODO the problem is that set() invokes validate() for all fields.
-            console.log('validate invoked');
-            var target = $(evt.currentTarget);
-            var targetType = target.attr('type');
-            var targetData = {};
-            var errorStatus = null;
-
-            if (targetType === 'text') {
-                console.log('Field was text. Validating...');
-                targetData[target.attr('name')] = target.val();
-                console.log(targetData);
-                this.model.set(targetData, {validate: true}); //listen on invalid event to handle errors
-
-            } else if (targetType === 'number') {
-                console.log('Field was a number. Validating...');
-                // Replace any commas with empty string
-                var rawValue = target.val();
-                var cleanedValue = rawValue.replace(/\,/g, '');
-                targetData[target.attr('name')] = cleanedValue;
-                console.log(targetData);
-                errorStatus = this.model.set(targetData, {validate: true});
-                if (errorStatus) {
-                    // if error status is true, then there was an error
-                    console.log('error!');
-                    console.log(errorStatus);
-                }
-            }
-        },
-
-        validateTextarea: function(evt) {
-            console.log('Field was a textarea. Validating...');
-            var target = $(evt.currentTarget);
-            var targetData = {};
-            var errorStatus = null;
-
-            targetData[target.attr('name')] = target.val();
-            console.log(targetData);
-            errorStatus = this.model.set(targetData, {validate: true});
-            if (errorStatus) {
-                // if error status is true, then there was an error
-                console.log('error!');
-                console.log(errorStatus);
-            }
         },
 
         onSave: function() {
@@ -223,8 +212,6 @@ define([
                 // bug.  This could occur if the user had selected an option in from the drop down menu,
                 // then edited the location data within the field and finally pressed the 'add' button.
                 ret = this.lookupData;
-
-                // TODO I wonder if this check fails, if I can use the text data in the field and get a new result.
             }
             return ret;
         }

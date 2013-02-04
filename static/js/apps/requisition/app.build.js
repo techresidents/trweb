@@ -11,6 +11,7 @@
         jquery: '3ps/jquery/jquery-min',
         'jquery.bootstrap': '3ps/bootstrap/bootstrap-min',
         'jquery.flowplayer': '3ps/flowplayer/flowplayer-3.2.10.min',
+        'jquery.validate': '3ps/jqueryvalidate/jquery.validate.min',
         underscore: '3ps/underscore/underscore-min',
         backbone: '3ps/backbone/backbone-min',
         'backbone.localStorage': '3ps/backbone/localStorage-min',
@@ -29,6 +30,8 @@
         'jquery.bootstrap': ['jquery'],
 
         'jquery.flowplayer': ['jquery'],
+
+        'jquery.validate': ['jquery'],
 
         'underscore': {
             deps: ['jquery'],
