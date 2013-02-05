@@ -3,25 +3,33 @@ define([
     'underscore',
     'jquery.validate',
     'core/view',
+    'api/models',
     'profile/models',
     'lookup/views',
     'text!requisition/req/templates/req.html',
     'text!requisition/req/templates/create_requisition.html',
     'text!requisition/req/templates/read_requisition.html',
     'text!requisition/req/templates/edit_requisition.html',
-    'text!requisition/req/templates/requisition_form.html'
+    'text!requisition/req/templates/requisition_form.html',
+    'text!requisition/req/templates/wishlist.html',
+    'text!requisition/req/templates/wishlist_item.html',
+    'text!requisition/req/templates/wishlist_add_item.html'
 ], function(
     $,
     _,
     jquery_validate,
     view,
-    profile_models,
+    api_models,
+    profile_models,   // TODO reference api models instead of profile_models
     lookup_views,
     requisition_template,
     create_requisition_template,
     read_requisition_template,
     edit_requisition_template,
-    requisition_form_template) {
+    requisition_form_template,
+    wishlist_template,
+    wishlist_item_template,
+    wishlist_add_item_template) {
 
     /**
      * Requisition View Events
@@ -37,18 +45,338 @@ define([
      * @param {Object} options
      *      collection: {} (optional)
      */
-    var RequisitionSkillsView = view.View.extend({
+    var RequisitionWishlistView = view.View.extend({
         // TODO
     });
 
     /**
-     * Edit Requisition Skills View.
+     * Edit Requisition Wishlist Item View.
      * @constructor
      * @param {Object} options
-     *      collection: {} (optional)
+     *      model: {RequisitionTechnology} (required)
      */
-    var EditRequisitionSkillsView = view.View.extend({
-        // TODO
+    var EditWishlistItemView = view.View.extend({
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template = _.template(wishlist_item_template);
+            this.model.bind('change', this.render, this);
+            this.model.bind('loaded', this.loaded, this);
+
+            if(!this.model.isLoading()) {
+                this.load();
+            }
+        },
+
+        loaded: function(instance) {
+            //Cover case where model was already loading at time of view
+            //creation, but not all necessary data was loaded. Invoking
+            //load again will ensure all necessary data is loaded. If
+            //all data is already loaded, this is a no-op.
+            this.load();
+        },
+
+        load: function() {
+            // TODO uncomment and test jeff's fix
+//            var state = this.model.isLoadedWith('technology');
+//            if(!state.loaded) {
+//                state.fetcher({
+//                    success: _.bind(this.render, this)
+//                });
+//            }
+        },
+
+        render: function() {
+            console.log('rendering wishlist item');
+            var context = {
+                model: this.model.toJSON({withRelated: true})
+            };
+            this.$el.html(this.template(context));
+            return this;
+        }
+    });
+
+    /**
+     * Edit List View.
+     * @constructor
+     * @param {Object} options
+     *      collection: {RequisitionTechnologyCollection} (required)
+     */
+    var EditListView = view.View.extend({
+
+        initialize: function(options) {
+            this.collection = options.collection;
+            this.collection.bind("reset", this.render, this);
+            this.collection.bind("add", this.addListItem, this);
+            this.collection.bind("remove", this.render, this);
+            this.collection.bind('loaded', this.loaded, this);
+
+            // child views
+            this.childViews = [];
+
+            if (!this.collection.isLoading()) {
+                this.load();
+            }
+        },
+
+        loaded: function(instance) {
+            if (instance === this.collection) {
+                this.load();
+            }
+        },
+
+        load: function() {
+            if (!this.collection.isLoaded()) {
+                this.collection.fetch();
+            }
+        },
+
+        render: function() {
+            console.log('EditListView render');
+            // Remove child views
+            _.each(this.childViews, function(view) {
+                view.destroy();
+            });
+            this.childViews = [];
+
+            // Sort wishlist items such that those with the most yrs experience
+            // are first in the list.
+            var sortedWishlist = this.collection.sortBy(function(model) {
+                return model.get_yrs_experience() * -1;
+            }, this);
+
+            // Add skills to DOM in order
+            _.each(sortedWishlist, this.addListItem, this);
+
+            // Activate tooltips
+            this.$('[rel=tooltip]').tooltip();
+        },
+
+        /**
+         * Create view for the added model to the collection
+         * and append to the DOM
+         * @param {Object} options
+         *      model: {RequisitionTechnology} (required)
+         */
+        addListItem: function(model) {
+            console.log('addListItem invoked');
+            var view = new EditWishlistItemView({
+                model: model
+            }).render();
+            this.childViews.push(view);
+
+            this.$el.append(view.render().el);
+        }
+    });
+
+    /**
+     * Add Wishlist Item View.
+     * @constructor
+     * @param {Object} options
+     *      model: {Requisition} (required)
+     */
+    var AddWishlistItemView = view.View.extend({
+
+        inputSelector: '#wishlist-input',
+
+        events: {
+            "click button": "onAddButton"
+        },
+
+        childViews: function() {
+            return [this.lookupView];
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.collection = this.model.get_requisition_technologies();
+            this.lookupValue = null; // value in input field
+            this.lookupData = null; // data object of input field
+            this.template = _.template(wishlist_add_item_template);
+
+            // data bindings
+            this.model.bind('loaded', this.loaded, this);
+
+            // child views
+            this.lookupView = null;
+
+            if(!this.model.isLoading()) {
+                this.load();
+            }
+        },
+
+        loaded: function(instance) {
+            //Cover case where model was already loading at time of view
+            //creation, but not all necessary data was loaded. Invoking
+            //load again will ensure all necessary data is loaded. If
+            //all data is already loaded, this is a no-op.
+            this.load();
+        },
+
+        load: function() {
+            var state = this.model.isLoadedWith('requisition_technologies');
+            if(!state.loaded) {
+                state.fetcher({
+                    success: _.bind(this.render, this)
+                });
+            }
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+
+            // setup technology autocomplete
+            this.lookupView = new lookup_views.LookupView({
+                el: this.$(this.inputSelector),
+                scope: 'technology',
+                forceSelection: true,
+                onenter: this.updateOnEnter,
+                onselect: this.updateOnSelect,
+                context: this
+            });
+
+            return this;
+        },
+
+        /**
+         * Listen to the 'Add' button.
+         */
+        onAddButton: function() {
+            var value = this.$(this.inputSelector).val();
+            if (value.toLowerCase() === this.lookupValue.toLowerCase()) {
+                // If this check passes, it implies that the value of this.lookupValue & this.lookupData
+                // are up-to-date and accurate.
+                this._add(this.lookupData);
+            }
+        },
+
+        /**
+         * Callback to be invoked when enter is pressed on the LookupView
+         * @param value  the string in the LookupView input
+         * @param data  the LookupResult.matches object which is scope/category specific
+         */
+        updateOnEnter: function(value, data) {
+            this._add(data);
+        },
+
+        /**
+         * Callback to be invoked when a LookupView result is selected
+         * either explicitly through the menu or implicitly
+         * when focus is lost.
+         * @param value the string in the LookupView input
+         * @param data LookupResult.matches object which is scope/category specific
+         */
+        updateOnSelect: function(value, data) {
+            this.lookupValue = value;
+            this.lookupData = data;
+        },
+
+        /**
+         * Method to add a wishlist item
+         * @param data Lookup data object
+         * @private
+         */
+        _add: function(data) {
+            var technologyName = data.name;
+            if (technologyName) {
+                //only add if entry doesn't already exist in user's wishlist
+                var technologies = this.collection.where({'technology_id': data.id});
+                if (0 === technologies.length) {
+                    var technology = new api_models.Technology({
+                        id: data.id,
+                        name: data.name,
+                        description: data.description
+                    });
+                    var requisitionTechnology = new api_models.RequisitionTechnology({
+                        requisition_id: this.model.id,
+                        technology_id: technology.id,
+                        yrs_experience: 1
+                    });
+                    requisitionTechnology.set_technology(technology);
+                    requisitionTechnology._technology._loaded = true; // TODO temporary
+                    this.collection.add(requisitionTechnology);
+                }
+                this.$(this.inputSelector).val("");
+            }
+            this.$(this.inputSelector).focus();
+        }
+
+    });
+
+    /**
+     * Edit Requisition Wishlist View. The main parent view
+     * to display an editable wishlist.
+     * @constructor
+     * @param {Object} options
+     *      model: {Requisition} (required)
+     */
+    var EditRequisitionWishlistView = view.View.extend({
+
+        addItemSelector: '#add-wishlist-item',
+        listSelector: '#list',
+
+        events: {
+        },
+
+        childViews: function() {
+            return [
+                this.addItemView,
+                this.listView
+            ];
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.model.bind('loaded', this.loaded, this);
+
+            this.template = _.template(wishlist_template);
+
+            // child views
+            this.addItemView = null;
+            this.listView = null;
+
+            if(!this.model.isLoading()) {
+                this.load();
+            }
+        },
+
+        loaded: function(instance) {
+            //Cover case where model was already loading at time of view
+            //creation, but not all necessary data was loaded. Invoking
+            //load again will ensure all necessary data is loaded. If
+            //all data is already loaded, this is a no-op.
+            this.load();
+        },
+
+        load: function() {
+            var state = this.model.isLoadedWith('requisition_technologies__technology');
+            if(!state.loaded) {
+                state.fetcher({
+                    success: _.bind(this.render, this)
+                });
+            }
+        },
+
+        render: function() {
+            console.log('EditReqWishlistParentView');
+            this.$el.html(this.template());
+
+            // view to add items to wishlist
+            this.addItemView = new AddWishlistItemView({
+                el: this.$(this.addItemSelector),
+                model: this.model
+            });
+            this.addItemView.render();
+
+            // view to manage list of items
+            this.listView = new EditListView({
+                el: this.$(this.listSelector),
+                collection: this.model.get_requisition_technologies()
+            });
+            this.listView.render();
+
+            return this;
+        }
     });
 
 
@@ -62,35 +390,43 @@ define([
     var RequisitionFormView = view.View.extend({
 
         formSelector: '#requisition-form',
+
+        employerReqIdSelector: '#inputEmployerReqID',
         statusSelector: '#inputStatus',
         titleSelector: '#inputTitle',
-        locationSelector: '#inputLocation',
         positionTypeSelector: '#inputPositionType',
         salaryStartSelector: '#inputSalaryStart',
         salaryEndSelector: '#inputSalaryEnd',
-        descriptionSelector: '#inputDescription',
-        employerReqIdSelector: '#inputEmployerReqID',
+        locationSelector: '#inputLocation',
         telecommuteSelector: '#inputTelecommute',
         relocationSelector: '#inputRelocation',
+        wishlistSelector: '#wishlist-container',
+        descriptionSelector: '#inputDescription',
 
         events: {
             'click .save': 'onSave',
             'click .cancel': 'onCancel'
         },
 
+        childViews: function() {
+            return [
+                this.lookupView,
+                this.wishlistView
+            ];
+        },
+
         initialize: function(options) {
             this.model = options.model;
             this.userModel = options.userModel;
-            this.statusFormOptions = options.statusFormOptions;
-            this.positionTypeFormOptions = options.positionTypeFormOptions;
-            this.template = _.template(requisition_form_template);
             this.location = null;
 
             // generate form options
             this._generateRequisitionFormOptions();
+            this.template = _.template(requisition_form_template);
 
             // child views
             this.lookupView = null;
+            this.wishlistView = null;
         },
 
         _generateRequisitionFormOptions: function() {
@@ -199,6 +535,7 @@ define([
         },
 
         render: function() {
+            console.log('ReqForm rendering');
             var context = {
                 model: this.model.toJSON({withRelated: true}),
                 statusFormOptions: this.statusFormOptions,
@@ -208,6 +545,12 @@ define([
 
             // setup form validator
             this._setupValidator();
+
+            // setup wishlist
+            this.wishlistView = new EditRequisitionWishlistView({
+                el: this.$(this.wishlistSelector),
+                model: this.model
+            }).render();
 
             // setup location autocomplete
             this.lookupView = new lookup_views.LookupView({
@@ -252,18 +595,34 @@ define([
                 relocation: this.$(this.relocationSelector).is(":checked")
             }, {
                 success: function(model) {
-                    var eventBody = {
-                        id: model.id
-                    };
-                    that.triggerEvent(EVENTS.SAVED, eventBody);
+                    var id = model.id;
+                    var requisitionTechnologiesCollection = that.model.get_requisition_technologies();
+                    requisitionTechnologiesCollection.save({
+                        success: function(collection) {
+                            var eventBody = {
+                                id: id
+                            };
+                            that.triggerEvent(EVENTS.SAVED, eventBody);
+                        },
+                        error: function(collection) {
+                            // TODO
+                            console.log('error saving requisition_technologies collection');
+                            console.log(collection);
+                        }
+                    });
+                },
+                error: function(model) {
+                    // TODO
+                    console.log('error saving requisition model');
+                    console.log(model);
                 }
             });
         },
 
         onCancel: function() {
             // TODO
-            // restore original collection data
-            // use silent:true flag
+            // update collections silently until save. If saved, use the new collection.
+            // Else: restore original collection data. use silent:true flag
             var eventBody = {};
             this.triggerEvent(EVENTS.CANCELED, eventBody);
         }
@@ -328,9 +687,31 @@ define([
 
             // child views
             this.reqFormView = null;
+
+            if(!this.model.isLoading()) {
+                this.load();
+            }
+        },
+
+        loaded: function(instance) {
+            //Cover case where model was already loading at time of view
+            //creation, but not all necessary data was loaded. Invoking
+            //load again will ensure all necessary data is loaded. If
+            //all data is already loaded, this is a no-op.
+            this.load();
+        },
+
+        load: function() {
+            var state = this.model.isLoadedWith('requisition_technology__technology');
+            if(!state.loaded) {
+                state.fetcher({
+                    success: _.bind(this.render, this)
+                });
+            }
         },
 
         render: function() {
+            console.log('EditReqView rendering');
             this.$el.html(this.template());
 
             this.reqFormView = new RequisitionFormView({
@@ -455,10 +836,10 @@ define([
                     });
                 }
             }
-
         },
 
         render: function() {
+            console.log('ParentView rendering');
             _.each(this.childViews, function(view) {
                 view.destroy();
             });
