@@ -340,14 +340,16 @@ define([
                         if(this.session && fk) {
                             relation = this.session.getModel(that.relationConstructor, fk);
                         } else {
-                            relation = new that.relationConstructor();
+                            relation = new that.relationConstructor({id: fk});
                         }
                     }
                     
-                    constructorInstance = this;
-                    relation.url = function() {
-                        return base.getValue(constructorInstance, 'url') + "/" + fieldName;
-                    };
+                    if(!fk) {
+                        constructorInstance = this;
+                        relation.url = function() {
+                            return base.getValue(constructorInstance, 'url') + "/" + fieldName;
+                        };
+                    }
 
                     this[relationInstanceName] = relation;
                 }
