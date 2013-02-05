@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^document/', include('document.urls')),
     url(r'^whiteboard/', include('whiteboard.urls')),
     url(r'^talent/.*', include('talent.urls')),
+    url(r'^requisition/.*', include('requisition.urls')),
 )
 
 #Error handlers

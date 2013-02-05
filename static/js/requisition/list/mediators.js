@@ -2,28 +2,34 @@ define([
     'underscore',
     'common/notifications',
     'core/mediator',
-    'alert/models',
-    'alert/views'
+    'api/models',
+    'requisition/notifications',
+    'requisition/list/views'
 ], function(
     _,
     notifications,
     mediator,
-    alert_models,
-    alert_views) {
+    api,
+    requisition_notifications,
+    requisition_list_views) {
 
-    var AlertMediator = mediator.Mediator.extend({
-
+    /**
+     * Requisition Mediator
+     * @constructor
+     */
+    var RequisitionListMediator = mediator.Mediator.extend({
         name: function() {
-            return AlertMediator.NAME;
+            return RequisitionListMediator.NAME;
         },
 
         viewType: function() {
-            return AlertMediator.VIEW_TYPE;
+            return RequisitionListMediator.VIEW_TYPE;
         },
 
-
+        /**
+         * Notification handlers
+         */
         notifications: [
-            [notifications.ALERT, 'onAlert'], // deprecated
             [notifications.VIEW_CREATE, 'onCreateView'],
             [notifications.VIEW_DESTROY, 'onDestroyView']
         ],
@@ -32,29 +38,17 @@ define([
             this.view = null;
         },
 
-        _createView: function(notification) {
-            this.view = new alert_views.AlertView({
-                model: new alert_models.AlertValueObject({
-                    severity: notification.severity,
-                    message: notification.message,
-                    style: notification.style
-                })
-            });
-
-            this.facade.trigger(notifications.VIEW_CREATED, {
-                type: this.viewType(),
-                view: this.view,
-                options: notification.options
-            });
-        },
-
-        onAlert: function(notification) {
-            this._createView(notification);
-        },
-
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-                this._createView(notification);
+                this.view = new requisition_list_views.RequisitionListSummaryView({
+                    collection: new api.RequisitionCollection()
+                });
+
+                this.facade.trigger(notifications.VIEW_CREATED, {
+                    type: this.viewType(),
+                    view: this.view,
+                    options: notification.options
+                });
             }
         },
 
@@ -66,7 +60,6 @@ define([
                     type: this.viewType(),
                     view: notification.view
                 });
-
                 if(this.view === notification.view) {
                     this.view = null;
                 }
@@ -74,11 +67,13 @@ define([
         }
 
     }, {
-        NAME: 'AlertMediator',
-        VIEW_TYPE: 'AlertView'
+
+        NAME: 'RequisitionListMediator',
+
+        VIEW_TYPE: 'RequisitionListView'
     });
 
     return {
-        AlertMediator: AlertMediator
+        RequisitionListMediator: RequisitionListMediator
     };
 });

@@ -7,6 +7,8 @@ define([
     'core/facade',
     'core/mediator',
     'core/view',
+    'alert/mediators',
+    'alert/models',
     'api/models',
     'api/session',
     'apps/highlight/views',
@@ -20,6 +22,8 @@ define([
     facade,
     mediator,
     view,
+    alert_mediators,
+    alert_models,
     api,
     api_session,
     highlight_views,
@@ -32,6 +36,8 @@ define([
      *   model: User model (required)
      */
     var HighlightAppView = view.View.extend({
+
+        saveStatusSelector: '.save-status',
         
         initialize: function(options) {
             this.template = _.template(highlight_app_template);
@@ -45,7 +51,6 @@ define([
 
         load: function() {
             var state = this.model.isLoadedWith("chat_sessions__chat__topic", "highlight_sessions");
-            
             if(!state.loaded) {
                 state.fetcher();
             }
@@ -71,9 +76,42 @@ define([
             this.highlightSessionsView = new highlight_views.HighlightSessionsView({
                 el: this.$('#highlight_sessions'),
                 collection: this.model.get_highlight_sessions()
-            }).render();
+            });
+            this.highlightSessionsView.addEventListener(highlight_views.EVENTS.DESTROY_STATUS_VIEW, this.removeStatusView, this);
+            this.highlightSessionsView.render();
 
             return this;
+        },
+
+        addView: function(type, view, options) {
+            switch(type) {
+                case alert_mediators.AlertMediator.VIEW_TYPE:
+                    if(this.activeStatusView) {
+                        this._destroyView(this.activeStatusView);
+                    }
+                    this.$(this.saveStatusSelector).append(view.render().el);
+                    this.activeStatusView = {
+                        type: type,
+                        view: view,
+                        options: options
+                    };
+                    break;
+            }
+        },
+
+        removeStatusView: function(e, eventBody) {
+            if (this.activeStatusView) {
+                this._destroyView(this.activeStatusView);
+            }
+        },
+
+        _destroyView: function(activeView) {
+            this.triggerEvent(HighlightAppView.EVENTS.DESTROY_VIEW, activeView);
+        }
+
+    },  {
+        EVENTS: {
+            DESTROY_VIEW: 'highlight:destroyView'
         }
     });
    
@@ -89,7 +127,8 @@ define([
          * Notification handlers
          */
         notifications: [
-            [notifications.DOM_READY, 'onDomReady']
+            [notifications.DOM_READY, 'onDomReady'],
+            [notifications.VIEW_CREATED, 'onViewCreated']
         ],
 
         initialize: function(options) {
@@ -102,12 +141,33 @@ define([
             });
             this.view.render();
 
+            // Add event listeners
+            this.view.addEventListener(highlight_views.EVENTS.SAVED, this.onSaved, this);
+            this.view.addEventListener(HighlightAppView.EVENTS.DESTROY_VIEW, this.onDestroyView, this);
+
             //create and register sub-mediators
-            //Register sub-mediators here if needed
+            this.facade.registerMediator(new alert_mediators.AlertMediator());
         },
 
         onDomReady: function(notification) {
             $('#highlightapp').append(this.view.el);
+        },
+
+        onViewCreated: function(notification) {
+            this.view.addView(notification.type, notification.view, notification.options);
+        },
+
+        onSaved: function(e, eventBody) {
+            this.facade.trigger(notifications.VIEW_CREATE, {
+                type: alert_mediators.AlertMediator.VIEW_TYPE,
+                severity: alert_models.SEVERITY.SUCCESS,
+                style: alert_models.STYLE.NORMAL,
+                message: 'Save successful'
+            });
+        },
+
+        onDestroyView: function(e, eventBody) {
+            this.facade.trigger(notifications.VIEW_DESTROY, eventBody);
         }
     });
 

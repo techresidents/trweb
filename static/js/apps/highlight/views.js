@@ -3,8 +3,7 @@ define([
     'underscore',
     'jquery.bootstrap',
     'core/view',
-    'alert/models',
-    'alert/views',
+    'common/notifications',
     'api/models',
     'apps/highlight/models',
     'text!apps/highlight/templates/chat_session.html',
@@ -16,8 +15,7 @@ define([
     _,
     none,
     view,
-    alert_models,
-    alert_views,
+    notifications,
     api,
     highlight_models,
     chat_session_template,
@@ -30,7 +28,9 @@ define([
      */
     var EVENTS = {
         HIGHLIGHT_SESSION_UP: 'HIGHLIGHT_SESSION_UP_EVENT',
-        HIGHLIGHT_SESSION_DOWN: 'HIGHLIGHT_SESSION_DOWN_EVENT'
+        HIGHLIGHT_SESSION_DOWN: 'HIGHLIGHT_SESSION_DOWN_EVENT',
+        SAVED: 'HIGHLIGHT_SESSION_SAVED',
+        DESTROY_STATUS_VIEW: 'HIGHLIGHT_SESSION_DESTROY_STATUS_VIEW'
     };
 
     /**
@@ -235,7 +235,6 @@ define([
      */
     var HighlightSessionsView = view.View.extend({
 
-        saveStatusSelector: '.save-status',
         emptyReelHintSelector: '.reel-empty-hint',
 
         events: {
@@ -277,7 +276,7 @@ define([
         added: function(model) {
             // remove save status view if user has added
             // a chat to their highlight reel
-            this.removeSaveStatusView();
+            this.triggerEvent(EVENTS.DESTROY_STATUS_VIEW, {});
 
             // remove reel-empty-hint, if shown
             this.$(this.emptyReelHintSelector).hide();
@@ -293,7 +292,7 @@ define([
         removed: function(model) {
             // remove save status view if user has removed
             // a chat from their highlight reel
-            this.removeSaveStatusView();
+            this.triggerEvent(EVENTS.DESTROY_STATUS_VIEW, {});
 
             this.collection.each(function(m) {
                 if(m.get_rank() > model.get_rank()) {
@@ -306,35 +305,12 @@ define([
         rankChanged: function(model) {
         },
 
-        /**
-         * Function to remove the save status view
-         * from the DOM.  Should be called if user
-         * updates their highlight reel in any way.
-         */
-        removeSaveStatusView: function() {
-            this.$(this.saveStatusSelector).children().remove();
-        },
-
         onSave: function(e) {
             var that = this;
             this.collection.save({
                 success: function(collection) {
-
-                    // Remove status view if one is already there.
-                    // This prevents multiple status views from appearing
-                    // if user repeatedly hits the save button.
-                    that.removeSaveStatusView();
-
-                    // create and add status view to DOM
-                    var alertModel = new alert_models.AlertValueObject({
-                        severity: alert_models.SEVERITY.SUCCESS,
-                        style: alert_models.STYLE.NORMAL,
-                        message: 'Save successful'
-                    });
-                    var view = new alert_views.AlertView({
-                        model: alertModel
-                    }).render();
-                    that.$(that.saveStatusSelector).append(view.el);
+                    var eventBody = {};
+                    that.triggerEvent(EVENTS.SAVED, eventBody);
                 }
             });
         },

@@ -1,0 +1,82 @@
+<div class="span12">
+    <h3>Create New Requisition</h3>
+    <form id="requisition-form" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="inputEmployerReqID">Employer Requisition#</label>
+            <div class="controls">
+                <input id="inputEmployerReqID" name="employer_requisition_identifier" type="text" placeholder="Requisition ID (optional)" maxlength="100">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputStatus">Status</label>
+            <div class="controls">
+                <select id="inputStatus">
+                    <%_.each(statusFormOptions, function(item) { %>
+                        <option value="<%= item.value %>"><%= item.option %></option>
+                    <% }); %>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputTitle">Title</label>
+            <div class="controls">
+                <input id="inputTitle" name="title" type="text" placeholder="Requisition Title" maxlength="100" required>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputPositionType">Position Type</label>
+            <div class="controls">
+                <select id="inputPositionType" name="position_type">
+                    <%_.each(positionTypeFormOptions, function(item) { %>
+                        <option value="<%= item.value %>"><%= item.option %></option>
+                    <% }); %>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputSalaryStart">Salary Range (US)</label>
+            <div class="controls">
+                <input type="number" id="inputSalaryStart" name="salary_start" placeholder="75,000" maxlength="10" required>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <input type="number" id="inputSalaryEnd" name="salary_end" placeholder="90,000" maxlength="10" required>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputLocation">Location</label>
+            <div class="controls">
+                <input id="inputLocation" maxlength="100" type="text" name="location" autocomplete="off" placeholder="Boston, MA" required>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <label class="checkbox">
+                    <input type="checkbox" id="inputTelecommute" name="telecommute"> Telecommute
+                </label>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <label class="checkbox">
+                    <input type="checkbox" id="inputRelocation"name="relocation" > Relocation
+                </label>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputDescription">Description</label>
+            <div class="controls">
+                <textarea id="inputDescription" class="input-xxlarge" name="description" rows="7" placeholder="Requisition Details" maxlength="1024" required></textarea>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <a class="btn cancel">Cancel</a>
+                <a class="btn btn-primary save">Save</a>
+            </div>
+        </div>
+    </form>
+
+
+</div>
