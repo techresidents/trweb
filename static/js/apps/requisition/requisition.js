@@ -33,8 +33,8 @@ define([
     var RequisitionAppRouter = Backbone.Router.extend({
         routes: {
             'create': 'create',
-            'req/:id/edit': 'edit',
             'req/:id': 'read',
+            'req/:id/edit': 'edit',
             '*list': 'list'
 
         },
@@ -45,6 +45,7 @@ define([
         },
 
         create: function() {
+            console.log('router: create');
             this.facade.trigger(notifications.VIEW_CREATE, {
                 type: requisition_mediators.RequisitionMediator.VIEW_TYPE,
                 options: {
@@ -54,6 +55,7 @@ define([
         },
 
         edit: function(id) {
+            console.log('router: edit');
             this.facade.trigger(notifications.VIEW_CREATE, {
                 type: requisition_mediators.RequisitionMediator.VIEW_TYPE,
                 options: {
@@ -64,6 +66,7 @@ define([
         },
 
         read: function(id) {
+            console.log('router: read');
             this.facade.trigger(notifications.VIEW_CREATE, {
                 type: requisition_mediators.RequisitionMediator.VIEW_TYPE,
                 options: {
@@ -90,6 +93,7 @@ define([
     var NavigateCommand = command.Command.extend({
 
         execute: function(options) {
+            console.log('NavigateCommand executed');
             router = this.facade.router;
             switch(options.type) {
                 case requisition_mediators.RequisitionMediator.VIEW_TYPE:
