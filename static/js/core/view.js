@@ -50,15 +50,33 @@ define([
             this.$el.unbind(namespace);
         },
 
+        destroyChildViews: function() {
+            var childViews = base.getValue(this, 'childViews');
+            if(this.childViews) {
+                _.each(childViews, function(view) {
+                    if(view) {
+                        if(_.isFunction(view.destroy)) {
+                            view.destroy();
+                        } else {
+                            view.remove();
+                            view.undelegateEvents();
+                        }
+                    }
+                });
+            }
+        },
+
         destroy: function() {
             var childViews = base.getValue(this, 'childViews');
             if(this.childViews) {
                 _.each(childViews, function(view) {
-                    if(_.isFunction(view.destroy)) {
-                        view.destroy();
-                    } else {
-                        view.remove();
-                        view.undelegateEvents();
+                    if(view) {
+                        if(_.isFunction(view.destroy)) {
+                            view.destroy();
+                        } else {
+                            view.remove();
+                            view.undelegateEvents();
+                        }
                     }
                 });
             }
