@@ -33,7 +33,8 @@ define([
     var RequisitionAppRouter = Backbone.Router.extend({
         routes: {
             'create': 'create',
-            'req/:id': 'requisition',
+            'req/:id/edit': 'edit',
+            'req/:id': 'read',
             '*list': 'list'
 
         },
@@ -46,14 +47,27 @@ define([
         create: function() {
             this.facade.trigger(notifications.VIEW_CREATE, {
                 type: requisition_mediators.RequisitionMediator.VIEW_TYPE,
-                options: {}
+                options: {
+                    action: 'create'
+                }
             });
         },
 
-        requisition: function(id) {
+        edit: function(id) {
             this.facade.trigger(notifications.VIEW_CREATE, {
                 type: requisition_mediators.RequisitionMediator.VIEW_TYPE,
                 options: {
+                    action: 'edit',
+                    id: id
+                }
+            });
+        },
+
+        read: function(id) {
+            this.facade.trigger(notifications.VIEW_CREATE, {
+                type: requisition_mediators.RequisitionMediator.VIEW_TYPE,
+                options: {
+                    action: 'read',
                     id: id
                 }
             });

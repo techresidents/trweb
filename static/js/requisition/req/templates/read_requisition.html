@@ -1,5 +1,7 @@
 <div class="span12">
-    <h3>Requisition Details</h3>
+    <h3>Requisition Details
+        <a class="btn btn-success" href="/requisition/req/<%= model.id %>/edit">Edit</a>
+    </h3>
     <p><b>Employer Requisition#:</b> <%= model.employer_requisition_identifier ? model.employer_requisition_identifier : 'N/A' %></p>
     <p><b>Status:</b> <%= model.status %></p>
     <p><b>Title:</b> <%= model.title %></p>
