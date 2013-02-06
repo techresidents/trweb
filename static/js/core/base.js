@@ -78,15 +78,20 @@ define([
      *
      * @param {Object} object
      * @param {string} property name
+     * @param {Object} optional argument to pass to function if property is function
      *
      * @return object[property] if object[property] is not a function,
      *         object[property]() otherwise.
      */
-    var getValue = function(object, property) {
+    var getValue = function(object, property, arg) {
         var result = null;
         
         if(object && !_.isUndefined(object[property])) {
-            result = _.isFunction(object[property]) ? object[property]() : object[property];
+            if(_.isFunction(object[property])) {
+                result = object[property](arg);
+            } else {
+                result = object[property];
+            }
         }
         return result;
     };
