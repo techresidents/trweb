@@ -245,6 +245,7 @@ define([
                 onselect: this.updateOnSelect,
                 context: this
             });
+            this.childViews.push(this.lookupView);
 
             return this;
         },
@@ -593,6 +594,7 @@ define([
                 onselect: this._updateLocationData,
                 context: this
             });
+            this.childViews.push(this.lookupView);
 
             // fill in any provided form info
             this._populateForm();
@@ -610,6 +612,9 @@ define([
         },
 
         onSave: function() {
+            //console.log('onSave');
+            //console.log(window.pageYOffset);
+            //console.log(window.scrollY);
             var that = this;
             this.model.save({
                 user_id: this.userModel.id,
@@ -625,7 +630,8 @@ define([
                 telecommute: this.$(this.telecommuteSelector).is(":checked"),
                 relocation: this.$(this.relocationSelector).is(":checked")
             }, {
-                silent: true,
+                wait: true,
+                silent: true, // this prevents current views from re-rendering
                 success: function(model) {
                     var id = model.id;
                     var requisitionTechnologiesCollection = that.model._requisition_technologies;
@@ -637,7 +643,7 @@ define([
                     });
 
                     requisitionTechnologiesCollection.save({
-                        silent: true,
+                        silent: true, // this prevents current views from re-rendering
                         success: function(collection) {
                             var eventBody = {
                                 id: id
@@ -826,6 +832,13 @@ define([
                 model: this.model.toJSON({withRelated: true})
             };
             this.$el.html(this.template(context));
+
+            //var y = this.$el.scrollTop();
+            //console.log(y);
+            //console.log('read view offset');
+            //console.log(window.pageYOffset);
+            //console.log(window.scrollY);
+
             return this;
         }
     });
