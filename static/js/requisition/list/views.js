@@ -31,7 +31,6 @@ define([
             this.template = _.template(list_item_template);
         },
 
-
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
             return this;
@@ -49,24 +48,24 @@ define([
         tagName: 'ul',
 
         initialize: function() {
-            this.collection.bind('loaded', this.loaded, this);
-            this.collection.bind('reset', this.render, this);
-            this.collection.bind('add', this.added, this);
+            this.listenTo(this.collection, 'loaded', this.loaded);
+            this.listenTo(this.collection, 'reset', this.render);
+            this.listenTo(this.collection, 'add', this.added);
             this.childViews = [];
 
-            if(!this.collection.isLoading()) {
+            if (!this.collection.isLoading()) {
                 this.load();
             }
         },
 
         loaded: function(instance) {
-            if(instance === this.collection) {
+            if (instance === this.collection) {
                 this.load();
             }
         },
 
         load: function() {
-            if(!this.collection.isLoaded()) {
+            if (!this.collection.isLoaded()) {
                 this.collection.fetch();
             }
         },
@@ -75,7 +74,6 @@ define([
             _.each(this.childViews, function(view) {
                 view.destroy();
             });
-
             this.childViews = [];
             this.collection.each(this.added, this);
             return this;
@@ -114,7 +112,7 @@ define([
             //child views
             this.requisitionListView = null;
 
-            if(!this.collection.isLoading()) {
+            if (!this.collection.isLoading()) {
                 this.load();
             }
         },
