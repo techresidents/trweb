@@ -149,7 +149,8 @@ define([
                     if(this.activeView) {
                         this._destroyView(this.activeView);
                     }
-                    this.$(this.contentSelector).append(view.render().el);
+                    this.$(this.contentSelector).html(view.render().el);
+                    $('html,body').scrollTop(0);
                     this.activeView = {
                         type: type,
                         view: view,
