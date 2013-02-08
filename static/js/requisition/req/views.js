@@ -93,7 +93,6 @@ define([
 
         render: function() {
             console.log('WishlistItemView render');
-            console.log(this.model.toJSON({withRelated: true}));
             var context = {
                 model: this.model.toJSON({withRelated: true})
             };
@@ -110,6 +109,9 @@ define([
      *      collection: Copy of {RequisitionTechnologyCollection} (required)
      */
     var EditListView = view.View.extend({
+
+        // TODO Does it make sense to not check if the colleciton is loaded
+        // since this is just a local copy of the data?
 
         initialize: function(options) {
             this.model = options.model;
@@ -142,6 +144,8 @@ define([
 
             // Activate tooltips
             this.$('[rel=tooltip]').tooltip();
+
+            return this;
         },
 
         /**
@@ -152,12 +156,11 @@ define([
          */
         addListItem: function(model) {
             console.log('editList: addListItem invoked');
-            console.log(model);
             var view = new EditWishlistItemView({
                 model: model
-            });
+            }).render();
             this.childViews.push(view);
-            this.$el.append(view.render().el);
+            this.$el.append(view.el);
         }
     });
 
@@ -274,7 +277,6 @@ define([
                     console.log('AddListView just about to call add');
                     this.workingCollection.collection.add(requisitionTechnology);
                     console.log('AddListView just added model to collection');
-                    console.log(this.workingCollection.collection);
                 }
                 this.$(this.inputSelector).val("");
             }
@@ -295,7 +297,7 @@ define([
     var EditRequisitionWishlistView = view.View.extend({
 
         addItemSelector: '#add-wishlist-item',
-        listSelector: '#list',
+        listSelector: '#wishylist',
 
         events: {
         },
@@ -334,7 +336,9 @@ define([
             if (this.model.id) {
                 var state = this.model.isLoadedWith('requisition_technologies__technology');
                 if(!state.loaded) {
-                    state.fetcher();
+                    state.fetcher({
+                        success: _.bind(this.render, this)
+                    });
                 }
             }
         },
@@ -452,7 +456,9 @@ define([
                     "requisition_technologies__technology"
                 );
                 if (!state.loaded) {
-                    state.fetcher();
+                    state.fetcher({
+                        success: _.bind(this.render, this)
+                    });
                 }
             }
         },
@@ -584,6 +590,16 @@ define([
                 positionTypeFormOptions: this.positionTypeFormOptions
             };
             this.$el.html(this.template(context));
+
+            // disable 'enter' button push to prevent accidental
+            // submission of the form. Only disable on input elements
+            // so that the enter button still works in the textarea
+            // and select elements.
+            this.$('#inputLocation').keypress(function(event) {
+                console.log('enter button detected');
+                console.log(event.which);
+                return event.which != 13;
+            });
 
             // setup form validator
             this._setupValidator();
@@ -811,7 +827,9 @@ define([
                     "requisition_technologies__technology"
                 );
                 if (!state.loaded) {
-                    state.fetcher();
+                    state.fetcher({
+                        success: _.bind(this.render, this)
+                    });
                 }
             }
         },
