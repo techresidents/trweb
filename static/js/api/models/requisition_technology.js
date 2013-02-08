@@ -30,7 +30,8 @@ define([
         fields: {
             id: new fields.IntegerField({primaryKey: true}),
             requisition_id: new fields.StringField(),
-            technology_id: new fields.IntegerField()
+            technology_id: new fields.IntegerField(),
+            yrs_experience: new fields.IntegerField()
         },
 
         relatedFields: {

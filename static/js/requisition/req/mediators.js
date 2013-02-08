@@ -48,7 +48,7 @@ define([
         },
 
         onCreateView: function(notification) {
-            if(notification.type === this.viewType()) {
+            if (notification.type === this.viewType()) {
 
                 var requisition = new api.Requisition({
                     id: notification.options.id
@@ -73,10 +73,12 @@ define([
 
         onDestroyView: function(notification) {
             if(notification.type === this.viewType()) {
+                console.log('destroying view');
+                console.log(notification.view);
                 notification.view.destroy();
 
                 this.facade.trigger(notifications.VIEW_DESTROYED, {
-                    type: this.viewType(),
+                    type: notification.type,
                     view: notification.view
                 });
                 if(this.view === notification.view) {
@@ -86,6 +88,7 @@ define([
         },
 
         onSaved: function(e, eventBody) {
+            console.log('mediator: onSaved invoked');
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
                 type: this.viewType(),
                 options: {
