@@ -591,16 +591,6 @@ define([
             };
             this.$el.html(this.template(context));
 
-            // disable 'enter' button push to prevent accidental
-            // submission of the form. Only disable on input elements
-            // so that the enter button still works in the textarea
-            // and select elements.
-            this.$('#inputLocation').keypress(function(event) {
-                console.log('enter button detected');
-                console.log(event.which);
-                return event.which != 13;
-            });
-
             // setup form validator
             this._setupValidator();
 
@@ -624,6 +614,15 @@ define([
                 context: this
             });
             this.childViews.push(this.lookupView);
+
+            // disable 'enter' button push to prevent accidental
+            // submission of the form. Only disable on input elements
+            // so that the enter button still works in the textarea
+            // and select elements.
+            this.$('input').not(':submit').keypress(function(event) {
+                console.log(event.which);
+                return event.which !== 13;
+            });
 
             // fill in any provided form info
             this._populateForm();
