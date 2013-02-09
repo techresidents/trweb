@@ -36,7 +36,8 @@ define([
      */
     var EVENTS = {
         SAVED: 'requisition:Saved',
-        CANCELED: 'requisition:Canceled'
+        CANCELED: 'requisition:Canceled',
+        WISHLIST_ITEM_REMOVED: 'requisition:WishlistItemRemoved'
     };
 
     /**
@@ -56,6 +57,10 @@ define([
      *      model: {RequisitionTechnology} (required)
      */
     var EditWishlistItemView = view.View.extend({
+
+        events: {
+            'click .destroy': 'onDestroy'
+        },
 
         initialize: function(options) {
             this.model = options.model;
@@ -82,8 +87,19 @@ define([
         load: function() {
             var state = this.model.isLoadedWith('technology'); // TODO Is it weird to require this to be loaded with something, when we can't actually go and get it since a req ID may not exist?
             if (!state.loaded) {
-                state.fetcher();
+                state.fetcher({
+                    success: _.bind(this.render, this)
+                });
             }
+        },
+
+        onDestroy: function() {
+            console.log('onDestroy');
+            var eventBody = {
+                model: this.model
+            };
+            this.triggerEvent(EVENTS.WISHLIST_ITEM_REMOVED, eventBody);
+            this.$el.remove();
         },
 
         changed: function() {
@@ -112,6 +128,10 @@ define([
 
         // TODO Does it make sense to not check if the colleciton is loaded
         // since this is just a local copy of the data?
+
+        events: {
+            'requisition:WishlistItemRemoved': 'removeListItem'
+        },
 
         initialize: function(options) {
             this.model = options.model;
@@ -161,6 +181,16 @@ define([
             }).render();
             this.childViews.push(view);
             this.$el.append(view.el);
+        },
+
+        removeListItem: function(e, eventBody) {
+            console.log('removeListItem');
+            if (eventBody.model) {
+                this.collection.remove(eventBody.model);
+                console.log(this.collection);
+                // this will trigger a render which will
+                // destroy the view
+            }
         }
     });
 
@@ -620,7 +650,6 @@ define([
             // so that the enter button still works in the textarea
             // and select elements.
             this.$('input').not(':submit').keypress(function(event) {
-                console.log(event.which);
                 return event.which !== 13;
             });
 
