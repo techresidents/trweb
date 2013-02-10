@@ -104,11 +104,17 @@ define([
         },
 
         onUpArrow: function() {
+            // Need to hide tooltip since this view will be removed
+            // from the DOM before the mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
             var yrs = this.model.get_yrs_experience();
             this.model.set_yrs_experience(yrs + 1);
         },
 
         onDownArrow: function() {
+            // Need to hide tooltip since this view will be removed
+            // from the DOM before the mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
             var yrs = this.model.get_yrs_experience();
             // minimum of 1 yr experience
             if (yrs > 1) {

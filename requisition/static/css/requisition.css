@@ -24,6 +24,7 @@ label.error {
 }
 
 .wishlist-item-years-text {
+    font-size: 12px;
 }
 
 .wishlist-item-years-container {
@@ -52,8 +53,8 @@ label.error {
 
 .arrow-container {
     font-size: 12px;
-    line-height: 14px;
-    margin-top: 6px;
+    line-height: 12px;
+    margin-top: 8px;
 }
 
 
