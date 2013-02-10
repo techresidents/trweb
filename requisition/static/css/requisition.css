@@ -19,6 +19,29 @@ label.error {
 }
 
 .wishlist-item-years-text {
-    font-size: 12px;
-    line-height: 36px;
 }
+
+.wishlist-item-years-container {
+    display: inline-block;
+    border-right: 1px solid #E3E3E3;
+    margin-right: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.arrow {
+    font-size: 12px;
+    line-height: 12px;
+}
+
+.arrow:hover {
+    cursor: pointer;
+}
+
+.arrow-container {
+    font-size: 12px;
+    line-height: 14px;
+    margin-top: 4px;
+}
+
+

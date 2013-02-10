@@ -99,7 +99,7 @@ define([
                 model: this.model
             };
             this.triggerEvent(EVENTS.WISHLIST_ITEM_REMOVED, eventBody);
-            this.$el.remove();
+            //this.$el.remove();
         },
 
         changed: function() {
