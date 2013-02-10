@@ -59,13 +59,15 @@ define([
     var EditWishlistItemView = view.View.extend({
 
         events: {
-            'click .destroy': 'onDestroy'
+            'click .destroy': 'onDestroy',
+            'click .arrow.up': 'onUpArrow',
+            'click .arrow.down': 'onDownArrow'
         },
 
         initialize: function(options) {
             this.model = options.model;
             this.template = _.template(wishlist_item_template);
-            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model, 'change', this.changed);
             this.listenTo(this.model, 'loaded', this.loaded);
 
             if (!this.model.isLoading()) {
@@ -99,7 +101,19 @@ define([
                 model: this.model
             };
             this.triggerEvent(EVENTS.WISHLIST_ITEM_REMOVED, eventBody);
-            //this.$el.remove();
+        },
+
+        onUpArrow: function() {
+            var yrs = this.model.get_yrs_experience();
+            this.model.set_yrs_experience(yrs + 1);
+        },
+
+        onDownArrow: function() {
+            var yrs = this.model.get_yrs_experience();
+            // minimum of 1 yr experience
+            if (yrs > 1) {
+                this.model.set_yrs_experience(yrs - 1);
+            }
         },
 
         changed: function() {
