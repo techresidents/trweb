@@ -18,6 +18,11 @@ label.error {
     background-color: #ffffff;
 }
 
+.wishlist-container > div > .close {
+    line-height: 36px;
+    margin-left: 5px;
+}
+
 .wishlist-item-years-text {
 }
 
@@ -32,16 +37,23 @@ label.error {
 .arrow {
     font-size: 12px;
     line-height: 12px;
+    text-shadow: 0 1px 0 #ffffff;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
 }
 
 .arrow:hover {
+    color: #000000;
+    text-decoration: none;
     cursor: pointer;
+    opacity: 0.6;
+    filter: alpha(opacity=60);
 }
 
 .arrow-container {
     font-size: 12px;
     line-height: 14px;
-    margin-top: 4px;
+    margin-top: 6px;
 }
 
 
