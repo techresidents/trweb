@@ -106,10 +106,21 @@ define([
         },
 
         onCanceled: function(e, eventBody) {
-            this.facade.trigger(notifications.VIEW_NAVIGATE, {
-                type: requisition_list_mediators.RequisitionListMediator.VIEW_TYPE,
-                options: {}
-            });
+            // Bring user back to req details view, if the req exists;
+            // otherwise bring the user to the req list view.
+            if (eventBody.id) {
+                this.facade.trigger(notifications.VIEW_NAVIGATE, {
+                    type: this.viewType(),
+                    options: {
+                        id: eventBody.id
+                    }
+                });
+            } else {
+                this.facade.trigger(notifications.VIEW_NAVIGATE, {
+                    type: requisition_list_mediators.RequisitionListMediator.VIEW_TYPE,
+                    options: {}
+                });
+            }
         }
 
     }, {

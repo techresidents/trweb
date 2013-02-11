@@ -810,10 +810,9 @@ define([
         },
 
         onCancel: function() {
-            // TODO
-            // update collections silently until save. If saved, use the new collection.
-            // Else: restore original collection data. use silent:true flag
-            var eventBody = {};
+            var eventBody = {
+                id: this.model.id
+            };
             this.triggerEvent(EVENTS.CANCELED, eventBody);
         }
     });
