@@ -182,6 +182,10 @@ define([
                 model: this.model.toJSON({withRelated: true})
             };
             this.$el.html(this.template(context));
+
+            // Activate tooltips
+            this.$('[rel=tooltip]').tooltip();
+            
             return this;
         }
     });
@@ -230,9 +234,6 @@ define([
 
             // Add skills to DOM in order
             _.each(sortedWishlist, this.addListItem, this);
-
-            // Activate tooltips
-            this.$('[rel=tooltip]').tooltip();
 
             return this;
         },

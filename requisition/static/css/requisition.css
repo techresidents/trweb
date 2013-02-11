@@ -20,6 +20,10 @@ label.error {
     margin-left: 190px;
 }
 
+#wishlist-input {
+    margin-bottom: 10px;
+}
+
 .wishlist-container > div {
     display: inline-block;
     border: 1px solid #E3E3E3;
@@ -28,9 +32,9 @@ label.error {
     margin-bottom: 10px;
     padding-left: 5px;
     padding-right: 5px;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 36px;
-    background-color: #ffffff;
+    background-color: #dadada;
 }
 
 .wishlist-container > div > .close {
@@ -44,7 +48,7 @@ label.error {
 
 .wishlist-item-years-container {
     display: inline-block;
-    border-right: 1px solid #E3E3E3;
+    border-right: 1px solid #eeeeee;
     margin-right: 2px;
     padding-left: 5px;
     padding-right: 5px;
