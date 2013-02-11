@@ -21,7 +21,7 @@ define([
     jquery_validate,
     view,
     api_models,
-    profile_models,   // TODO reference api models
+    profile_models, // TODO reference api models
     lookup_views,
     requisition_template,
     create_requisition_template,
@@ -134,7 +134,7 @@ define([
         },
 
         load: function() {
-            var state = this.model.isLoadedWith('technology'); // TODO Is it weird to require this to be loaded with something, when we can't actually go and get it since a req ID may not exist?
+            var state = this.model.isLoadedWith('technology');
             if (!state.loaded) {
                 state.fetcher({
                     success: _.bind(this.render, this)
@@ -180,10 +180,7 @@ define([
                 model: this.model.toJSON({withRelated: true})
             };
             this.$el.html(this.template(context));
-
-            // Activate tooltips
-            this.$('[rel=tooltip]').tooltip();
-
+            this.$('[rel=tooltip]').tooltip(); // Activate tooltips
             return this;
         }
     });
@@ -197,7 +194,7 @@ define([
      */
     var EditListView = view.View.extend({
 
-        // TODO Does it make sense to not check if the colleciton is loaded
+        // TODO Does it make sense to not check if the collection is loaded
         // since this is just a local copy of the data?
 
         events: {
@@ -224,13 +221,11 @@ define([
             });
             this.childViews = [];
 
-            // Sort wishlist items such that those with the most yrs experience
-            // are first in the list.
+            // Sort wishlist such that items with the most
+            // yrs experience are first in the list.
             var sortedWishlist = this.collection.sortBy(function(model) {
                 return model.get_yrs_experience() * -1;
             }, this);
-
-            // Add skills to DOM in order
             _.each(sortedWishlist, this.addListItem, this);
 
             return this;
@@ -294,12 +289,14 @@ define([
 
         render: function() {
             console.log('AddWishlistItem render');
+            // destroy child views
             _.each(this.childViews, function(view) {
                 if(_.isFunction(view.destroy)) {
                     view.destroy();
                 }
             });
             this.childViews = [];
+
             this.$el.html(this.template());
 
             // setup technology autocomplete
@@ -371,7 +368,12 @@ define([
                         yrs_experience: 1
                     });
                     requisitionTechnology.set_technology(technology);
-                    requisitionTechnology._technology._loaded = true; // TODO temporary - this ensures that the ListItemView passes this check
+                    // Manually set the flag that indicates the Technology
+                    // data is loaded.  This ensures that any dependent sub-views
+                    // pass their isLoaded() checks, and prevents any invalid
+                    // requests to api service (for the case when the user is creating
+                    // a new requisition and the model doesn't have an ID yet.
+                    requisitionTechnology._technology._loaded = true;
                     console.log('AddListView just about to call add');
                     this.workingCollection.collection.add(requisitionTechnology);
                     console.log('AddListView just added model to collection');
@@ -448,10 +450,12 @@ define([
 
         render: function() {
             console.log('EditReqWishlistParentView');
+            // Destroy child views
             _.each(this.childViews, function(view) {
                 view.destroy();
             });
             this.childViews = [];
+
             this.$el.html(this.template());
 
             // Make a copy of the RequisitionTechnology collection, so that
@@ -714,9 +718,8 @@ define([
 
             // disable 'enter' button push to prevent accidental
             // submission of the form. Only disable on input elements
-            // so that the enter button still works in the textarea
-            // and select elements.
-            this.$('input').not(':submit').keypress(function(event) {
+            // so that the enter button still works in textarea elements.
+            this.$('input,select').not(':submit').keypress(function(event) {
                 return event.which !== 13; //13 reps enter key
             });
 
