@@ -54,6 +54,17 @@
         </div>
     </div>
     <div class="read-form-group">
+        <label class="read-form-label">Wishlist</label>
+        <div class="read-form-values wishlist-container">
+            <%_.each(model.requisition_technologies, function(reqTechnologyModel) { %>
+                <div>
+                    <span class="wishlist-item-years-text wishlist-item-years-container" rel="tooltip" title="<%= reqTechnologyModel.yrs_experience%> yrs experience"><%= reqTechnologyModel.yrs_experience %></span>
+                    <span rel="tooltip" title="<%= reqTechnologyModel.yrs_experience%> yrs experience"><%= reqTechnologyModel.technology.name %></span>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+    <div class="read-form-group">
         <label class="read-form-label">Description</label>
         <div class="read-form-values">
             <span><%= model.description %></span>

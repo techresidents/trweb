@@ -889,11 +889,15 @@ define([
 
         render: function() {
             console.log('ReadView render');
+            console.log(this.model.toJSON({withRelated: true}));
             var context = {
                 fmt: this.fmt,
                 model: this.model.toJSON({withRelated: true})
             };
             this.$el.html(this.template(context));
+
+            // Activate tooltips
+            this.$('[rel=tooltip]').tooltip();
 
             return this;
         }
