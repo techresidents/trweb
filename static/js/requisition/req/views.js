@@ -21,7 +21,7 @@ define([
     jquery_validate,
     view,
     api_models,
-    profile_models,   // TODO reference api models instead of profile_models
+    profile_models,   // TODO reference api models
     lookup_views,
     requisition_template,
     create_requisition_template,
@@ -49,9 +49,6 @@ define([
      *      model: {RequisitionTechnology} (required)
      */
     var WishlistItemView = view.View.extend({
-
-        events: {
-        },
 
         initialize: function(options) {
             this.model = options.model;
@@ -95,6 +92,7 @@ define([
                 model: this.model.toJSON({withRelated: true})
             };
             this.$el.html(this.template(context));
+            this.$('[rel=tooltip]').tooltip(); // Activate tooltips
             return this;
         }
     });
