@@ -114,6 +114,21 @@ html {
     white-space: nowrap;
 }
 
+.read-horizontal-form .read-form-group {
+    margin-bottom: 10px;
+}
+
+.read-horizontal-form .read-form-label {
+    float: left;
+    width: 170px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.read-horizontal-form .read-form-values {
+    margin-left: 190px;
+}
+
 [class^="tr-icon-"] {
     display: inline-block;
     width: 14px;
