@@ -12,6 +12,7 @@ define([
     'text!requisition/req/templates/edit_requisition.html',
     'text!requisition/req/templates/requisition_form.html',
     'text!requisition/req/templates/wishlist.html',
+    'text!requisition/req/templates/edit_wishlist_item.html',
     'text!requisition/req/templates/wishlist_item.html',
     'text!requisition/req/templates/wishlist_add_item.html'
 ], function(
@@ -28,6 +29,7 @@ define([
     edit_requisition_template,
     requisition_form_template,
     wishlist_template,
+    edit_wishlist_item_template,
     wishlist_item_template,
     wishlist_add_item_template) {
 
@@ -41,13 +43,60 @@ define([
     };
 
     /**
-     * Requisition Skills View.
+     * Requisition Wishlist Item View.
      * @constructor
      * @param {Object} options
-     *      collection: {} (optional)
+     *      model: {RequisitionTechnology} (required)
      */
-    var RequisitionWishlistView = view.View.extend({
-        // TODO
+    var WishlistItemView = view.View.extend({
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template = _.template(wishlist_item_template);
+            this.listenTo(this.model, 'change', this.changed);
+            this.listenTo(this.model, 'loaded', this.loaded);
+
+            if (!this.model.isLoading()) {
+                this.load();
+            }
+        },
+
+        loaded: function(instance) {
+            //Cover case where model was already loading at time of view
+            //creation, but not all necessary data was loaded. Invoking
+            //load again will ensure all necessary data is loaded. If
+            //all data is already loaded, this is a no-op.
+            console.log('WishlistItemView loaded');
+            if (instance === this.model) {
+                this.load();
+            }
+        },
+
+        load: function() {
+            var state = this.model.isLoadedWith('technology');
+            if (!state.loaded) {
+                state.fetcher({
+                    success: _.bind(this.render, this)
+                });
+            }
+        },
+
+        changed: function() {
+            console.log('WishlistItemView detected model change event');
+            this.render();
+        },
+
+        render: function() {
+            console.log('WishlistItemView render');
+            var context = {
+                model: this.model.toJSON({withRelated: true})
+            };
+            this.$el.html(this.template(context));
+            return this;
+        }
     });
 
     /**
@@ -66,7 +115,7 @@ define([
 
         initialize: function(options) {
             this.model = options.model;
-            this.template = _.template(wishlist_item_template);
+            this.template = _.template(edit_wishlist_item_template);
             this.listenTo(this.model, 'change', this.changed);
             this.listenTo(this.model, 'loaded', this.loaded);
 
@@ -128,7 +177,7 @@ define([
         },
 
         render: function() {
-            console.log('WishlistItemView render');
+            console.log('EditWishlistItemView render');
             var context = {
                 model: this.model.toJSON({withRelated: true})
             };
@@ -844,6 +893,8 @@ define([
      */
     var ReadRequisitionView = view.View.extend({
 
+        wishlistContainerSelector: '.wishlist-container',
+
         initialize: function(options) {
             this.model = options.model;
             this.template = _.template(read_requisition_template);
@@ -851,6 +902,9 @@ define([
             // bindings
             this.listenTo(this.model, 'change', this.changed);
             this.listenTo(this.model, 'loaded', this.loaded);
+
+            // child views
+            this.childViews = [];
 
             if(!this.model.isLoading()) {
                 this.load();
@@ -889,17 +943,39 @@ define([
 
         render: function() {
             console.log('ReadView render');
-            console.log(this.model.toJSON({withRelated: true}));
+
+            // Remove child views
+            _.each(this.childViews, function(view) {
+                view.destroy();
+            });
+            this.childViews = [];
+
             var context = {
                 fmt: this.fmt,
                 model: this.model.toJSON({withRelated: true})
             };
             this.$el.html(this.template(context));
 
+            // Sort wishlist items such that those with
+            // the most yrs experience are first in the list.
+            var wishlistCollection = this.model.get_requisition_technologies();
+            var sortedWishlist = wishlistCollection.sortBy(function(model) {
+                return model.get_yrs_experience() * -1;
+            }, this);
+            _.each(sortedWishlist, this.addWishlistItem, this);
+
             // Activate tooltips
             this.$('[rel=tooltip]').tooltip();
 
             return this;
+        },
+
+        addWishlistItem: function(model) {
+            var view = new WishlistItemView({
+                model: model
+            }).render();
+            this.childViews.push(view);
+            this.$(this.wishlistContainerSelector).append(view.el);
         }
     });
 
