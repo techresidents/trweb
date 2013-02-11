@@ -185,7 +185,7 @@ define([
 
             // Activate tooltips
             this.$('[rel=tooltip]').tooltip();
-            
+
             return this;
         }
     });
@@ -741,15 +741,19 @@ define([
             console.log('reqForm: onSave');
             var that = this;
 
-            // Need to remove all wishlist items so that we only
-            // persist the current wishlist items. If we don't do
-            // this here then we wouldn't be able to determine which
-            // wishlist items have been removed.
+            // Need to destroy wishlist items that the user removed
+            // from their wishlist. This only happens if the requisition
+            // model already exists and is being edited (and has an ID)
             if (this.model.id) {
-                this.model.get_requisition_technologies().each(function(reqTechModel) {
+                var originalCollection = this.model.get_requisition_technologies();
+                originalCollection.each(function(reqTechModel) {
                     if (reqTechModel.id) {
-                        console.log('Destroy ReqTechModel with id: %s', reqTechModel.id);
-                        reqTechModel.destroy();
+                        // Destroy if the updated collection doesn't contain
+                        // this model from the original collection.
+                        if (!this.workingCollection.collection.contains(reqTechModel)) {
+                            console.log('Destroy ReqTechModel with id: %s', reqTechModel.id);
+                            reqTechModel.destroy();
+                        }
                     }
                 }, this);
             }
