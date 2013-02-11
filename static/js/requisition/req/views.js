@@ -7,12 +7,12 @@ define([
     'profile/models',
     'lookup/views',
     'text!requisition/req/templates/req.html',
-    'text!requisition/req/templates/create_requisition.html',
-    'text!requisition/req/templates/read_requisition.html',
-    'text!requisition/req/templates/edit_requisition.html',
+    'text!requisition/req/templates/requisition_create.html',
+    'text!requisition/req/templates/requisition_read.html',
+    'text!requisition/req/templates/requisition_edit.html',
     'text!requisition/req/templates/requisition_form.html',
     'text!requisition/req/templates/wishlist.html',
-    'text!requisition/req/templates/edit_wishlist_item.html',
+    'text!requisition/req/templates/wishlist_item_edit.html',
     'text!requisition/req/templates/wishlist_item.html',
     'text!requisition/req/templates/wishlist_add_item.html'
 ], function(
@@ -719,7 +719,7 @@ define([
             // so that the enter button still works in the textarea
             // and select elements.
             this.$('input').not(':submit').keypress(function(event) {
-                return event.which !== 13;
+                return event.which !== 13; //13 reps enter key
             });
 
             // fill in any provided form info
@@ -757,7 +757,8 @@ define([
                     }
                 }, this);
             }
-
+            // Copy working collection into model. TODO
+            // We don't use set_requisition_technologies because...
             this.model._requisition_technologies = this.workingCollection.collection.clone();
             this.model.save({
                 user_id: this.userModel.id,
