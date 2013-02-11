@@ -5,6 +5,21 @@ label.error {
     vertical-align: top;
 }
 
+.read-form-label {
+    float: left;
+    width: 170px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.read-form-group {
+    margin-bottom: 10px;
+}
+
+.read-form-values {
+    margin-left: 190px;
+}
+
 .wishlist-container > div {
     display: inline-block;
     border: 1px solid #E3E3E3;

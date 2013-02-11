@@ -1,12 +1,62 @@
 <h3>Requisition Details
-    <a class="btn btn-success" href="/requisition/req/<%= model.id %>/edit">Edit</a>
+    <a class="btn btn-mini btn-success" href="/requisition/req/<%= model.id %>/edit">Edit</a>
 </h3>
-<p><b>Employer Requisition#:</b> <%= model.employer_requisition_identifier ? model.employer_requisition_identifier : 'N/A' %></p>
-<p><b>Status:</b> <%= model.status %></p>
-<p><b>Title:</b> <%= model.title %></p>
-<p><b>Position Type:</b> <%= model.position_type %></p>
-<p><b>Salary Range (US):</b> <%= fmt.num(model.salary_start, 'cn0') %> - <%= fmt.num(model.salary_end, 'cn0') %></p>
-<p><b>Location:</b> <%= model.location.city %>, <%=model.location.state %></p>
-<p><b>Telecommute:</b> <%= model.telecommute ? 'Yes': 'No' %></p>
-<p><b>Relocation:</b> <%= model.relocation ? 'Yes' : 'No' %> </p>
-<p><b>Description:</b> <%= model.description %></p>
+
+<div class="read-form span9">
+
+    <div class="read-form-group">
+        <label class="read-form-label">Employer Requisition#</label>
+        <div class="read-form-values">
+            <span><%= model.employer_requisition_identifier ? model.employer_requisition_identifier : 'N/A' %></span>
+        </div>
+    </div>
+
+    <div class="read-form-group">
+        <label class="read-form-label">Status</label>
+        <div class="read-form-values">
+            <span><%= model.status %></span>
+        </div>
+    </div>
+    <div class="read-form-group">
+        <label class="read-form-label">Title</label>
+        <div class="read-form-values">
+            <span><%= model.title %></span>
+        </div>
+    </div>
+    <div class="read-form-group">
+        <label class="read-form-label">Position Type</label>
+        <div class="read-form-values">
+            <span><%= model.position_type %></span>
+        </div>
+    </div>
+    <div class="read-form-group">
+        <label class="read-form-label">Salary Range (US)</label>
+        <div class="read-form-values">
+            <span><%= fmt.num(model.salary_start, 'cn0') %> - <%= fmt.num(model.salary_end, 'cn0') %></span>
+        </div>
+    </div>
+    <div class="read-form-group">
+        <label class="read-form-label">Location</label>
+        <div class="read-form-values">
+            <span><%= model.location.city %>, <%=model.location.state %></span>
+        </div>
+    </div>
+    <div class="read-form-group">
+        <label class="read-form-label">Telecommute</label>
+        <div class="read-form-values">
+            <span><%= model.telecommute ? 'Yes': 'No' %></span>
+        </div>
+    </div>
+    <div class="read-form-group">
+        <label class="read-form-label">Relocation</label>
+        <div class="read-form-values">
+            <span><%= model.relocation ? 'Yes': 'No' %></span>
+        </div>
+    </div>
+    <div class="read-form-group">
+        <label class="read-form-label">Description</label>
+        <div class="read-form-values">
+            <span><%= model.description %></span>
+        </div>
+    </div>
+</div>
