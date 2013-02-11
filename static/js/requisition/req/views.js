@@ -675,7 +675,6 @@ define([
 
         render: function() {
             console.log('ReqForm rendering');
-            console.log(this);
             _.each(this.childViews, function(view) {
                 if(_.isFunction(view.destroy)) {
                     view.destroy();
@@ -740,9 +739,21 @@ define([
         onSave: function() {
             console.log('reqForm: onSave');
             var that = this;
+
+            // Need to remove all wishlist items so that we only
+            // persist the current wishlist items. If we don't do
+            // this here then we wouldn't be able to determine which
+            // wishlist items have been removed.
+            if (this.model.id) {
+                this.model.get_requisition_technologies().each(function(reqTechModel) {
+                    if (reqTechModel.id) {
+                        console.log('Destroy ReqTechModel with id: %s', reqTechModel.id);
+                        reqTechModel.destroy();
+                    }
+                }, this);
+            }
+
             this.model._requisition_technologies = this.workingCollection.collection.clone();
-            console.log(this.workingCollection.collection.length);
-            console.log(this.workingCollection.collection);
             this.model.save({
                 user_id: this.userModel.id,
                 tenant_id: this.userModel.get_tenant_id(),
