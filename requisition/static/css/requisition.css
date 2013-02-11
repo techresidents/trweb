@@ -28,6 +28,11 @@ label.error {
     vertical-align: top;
 }
 
+#alerts .alert {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .wishlist-container > div {
     display: inline-block;
     border: 1px solid #E3E3E3;

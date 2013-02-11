@@ -738,83 +738,96 @@ define([
             return this.location.locationId();
         },
 
+        _saveModel: function() {
+            var that = this;
+            var reqAttributes = {
+                user_id: this.userModel.id,
+                tenant_id: this.userModel.get_tenant_id(),
+                status: this.$(this.statusSelector).val(),
+                title: this.$(this.titleSelector).val(),
+                position_type: this.$(this.positionTypeSelector).val(),
+                salary_start: this.$(this.salaryStartSelector).val(),
+                salary_end: this.$(this.salaryEndSelector).val(),
+                location_id: this.getLocationId(),
+                description: this.$(this.descriptionSelector).val(),
+                employer_requisition_identifier: this.$(this.employerReqIdSelector).val(),
+                telecommute: this.$(this.telecommuteSelector).is(":checked"),
+                relocation: this.$(this.relocationSelector).is(":checked")
+            };
+
+            // Need to destroy wishlist items that the user removed.
+            // This only happens if the requisition model already
+            // exists and is being edited (which implies it has an ID).
+            if (this.model.id) {
+                var originalCollection = this.model.get_requisition_technologies();
+                originalCollection.each(function(reqTechModel) {
+                    if (reqTechModel.id) {
+                        // Destroy if the updated collection doesn't contain
+                        // this model from the original collection.
+                        if (!this.workingCollection.collection.contains(reqTechModel)) {
+                            console.log('Destroy ReqTechModel with id: %s', reqTechModel.id);
+                            reqTechModel.destroy();
+                        }
+                    }
+                }, this);
+            }
+            // Copy working collection into model.
+            // We don't use set_requisition_technologies because... TODO
+            this.model._requisition_technologies = this.workingCollection.collection.clone();
+
+            // Save the model
+            this.model.save(reqAttributes, {
+                wait: true,
+                success: function(model) {
+                    that._saveReqTechnologyCollection(model, that);
+                },
+                error: function(model) {
+                    // TODO
+                    console.log('error saving requisition model');
+                    console.log(model);
+                }
+            });
+        },
+
+        /**
+         * Callback function to save the RequisitionTechnologyCollection
+         * @param {Object} options
+         *   model: {Requisition} (required)
+         *   context: View context (required)
+         */
+        _saveReqTechnologyCollection: function(model, context) {
+            var requisitionModelID = model.id;
+            // Need to handle the case of new requisitions which won't
+            // have a req ID set on models within their RequisitionTechnologies
+            // collection.
+            var requisitionTechnologiesCollection = model._requisition_technologies;
+            requisitionTechnologiesCollection.each(function(requisitionTechnologyModel) {
+                requisitionTechnologyModel.set_requisition_id(requisitionModelID);
+            });
+
+            requisitionTechnologiesCollection.save({
+                success: function(collection) {
+                    var eventBody = {
+                        id: requisitionModelID
+                    };
+                    console.log('req form: collection successfully saved. Triggering save event.');
+                    context.triggerEvent(EVENTS.SAVED, eventBody);
+                },
+                error: function(collection) {
+                    // TODO
+                    console.log('error saving requisition_technologies collection');
+                }
+            });
+        },
+
         onSave: function() {
-            console.log('reqForm: onSave');
             // Validate the form before saving. If the form isn't
             // valid, the jquery validator plugin will scroll to
             // the invalid field and display an error message.
+            console.log('reqForm: onSave');
             var isFormValid = this.$(this.formSelector).valid();
             if (isFormValid) {
-                console.log('Form is valid');
-                var that = this;
-
-                // Need to destroy wishlist items that the user removed
-                // from their wishlist. This only happens if the requisition
-                // model already exists and is being edited (and has an ID)
-                if (this.model.id) {
-                    var originalCollection = this.model.get_requisition_technologies();
-                    originalCollection.each(function(reqTechModel) {
-                        if (reqTechModel.id) {
-                            // Destroy if the updated collection doesn't contain
-                            // this model from the original collection.
-                            if (!this.workingCollection.collection.contains(reqTechModel)) {
-                                console.log('Destroy ReqTechModel with id: %s', reqTechModel.id);
-                                reqTechModel.destroy();
-                            }
-                        }
-                    }, this);
-                }
-                // Copy working collection into model. TODO
-                // We don't use set_requisition_technologies because...
-                this.model._requisition_technologies = this.workingCollection.collection.clone();
-                this.model.save({
-                    user_id: this.userModel.id,
-                    tenant_id: this.userModel.get_tenant_id(),
-                    status: this.$(this.statusSelector).val(),
-                    title: this.$(this.titleSelector).val(),
-                    position_type: this.$(this.positionTypeSelector).val(),
-                    salary_start: this.$(this.salaryStartSelector).val(),
-                    salary_end: this.$(this.salaryEndSelector).val(),
-                    location_id: this.getLocationId(),
-                    description: this.$(this.descriptionSelector).val(),
-                    employer_requisition_identifier: this.$(this.employerReqIdSelector).val(),
-                    telecommute: this.$(this.telecommuteSelector).is(":checked"),
-                    relocation: this.$(this.relocationSelector).is(":checked")
-                }, {
-                    wait: true,
-                    success: function(model) {
-                        var requisitionModelID = model.id;
-                        var requisitionTechnologiesCollection = model._requisition_technologies;
-                        console.log('req form: Returned working collection');
-                        console.log(requisitionTechnologiesCollection);
-
-                        // Need to handle new requisitions which won't have a req ID set on models
-                        // within their RequisitionTechnologies collection.
-                        requisitionTechnologiesCollection.each(function(requisitionTechnologyModel) {
-                            requisitionTechnologyModel.set_requisition_id(requisitionModelID);
-                        });
-
-                        requisitionTechnologiesCollection.save({
-                            success: function(collection) {
-                                var eventBody = {
-                                    id: requisitionModelID
-                                };
-                                console.log('req form: collection successfully saved. Triggering save event.');
-                                that.triggerEvent(EVENTS.SAVED, eventBody);
-                            },
-                            error: function(collection) {
-                                // TODO
-                                console.log('error saving requisition_technologies collection');
-                                console.log(collection);
-                            }
-                        });
-                    },
-                    error: function(model) {
-                        // TODO
-                        console.log('error saving requisition model');
-                        console.log(model);
-                    }
-                });
+                this._saveModel();
             }
 
         },
