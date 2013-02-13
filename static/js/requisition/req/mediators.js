@@ -61,6 +61,7 @@ define([
 
                 // Add event listeners
                 this.view.addEventListener(requisition_views.EVENTS.SAVED, this.onSaved, this);
+                this.view.addEventListener(requisition_views.EVENTS.SAVE_FAILED, this.onSaveFailed, this);
                 this.view.addEventListener(requisition_views.EVENTS.CANCELED, this.onCanceled, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
@@ -102,6 +103,24 @@ define([
                 severity: alert_models.SEVERITY.SUCCESS,
                 style: alert_models.STYLE.NORMAL,
                 message: 'Requisition updated successfully'
+            });
+        },
+
+        onSaveFailed: function(e, eventBody) {
+            console.log('mediator: onSaveFailed invoked');
+
+            // Set error message
+            var errorMessage = 'There was an error saving your data. Please review your form and try again.';
+            if (eventBody.errorMessage) {
+                errorMessage = eventBody.errorMessage;
+            }
+
+            // create alert status for error
+            this.facade.trigger(notifications.VIEW_CREATE, {
+                type: alert_mediators.AlertMediator.VIEW_TYPE,
+                severity: alert_models.SEVERITY.ERROR,
+                style: alert_models.STYLE.NORMAL,
+                message: errorMessage
             });
         },
 

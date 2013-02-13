@@ -38,6 +38,7 @@ define([
      */
     var EVENTS = {
         SAVED: 'requisition:Saved',
+        SAVE_FAILED: 'requisition:SaveFailed',
         CANCELED: 'requisition:Canceled',
         WISHLIST_ITEM_REMOVED: 'requisition:WishlistItemRemoved'
     };
@@ -522,6 +523,7 @@ define([
             this.userModel = options.userModel;
             this.workingCollection = {collection: null};
             this.location = null;
+            this.validator = null;
 
             // bindings
             this.listenTo(this.model, 'change', this.changed);
@@ -598,7 +600,7 @@ define([
         },
 
         _setupValidator: function() {
-            this.$(this.formSelector).validate({
+            this.validator = this.$(this.formSelector).validate({
                 rules: {
                     title: {
                         required: true,
@@ -738,55 +740,70 @@ define([
             return this.location.locationId();
         },
 
+        /**
+         * Saves the Requisition model object, and the
+         * RequisitionTechnologies collection.
+         */
         _saveModel: function() {
-            var that = this;
-            var reqAttributes = {
-                user_id: this.userModel.id,
-                tenant_id: this.userModel.get_tenant_id(),
-                status: this.$(this.statusSelector).val(),
-                title: this.$(this.titleSelector).val(),
-                position_type: this.$(this.positionTypeSelector).val(),
-                salary_start: this.$(this.salaryStartSelector).val(),
-                salary_end: this.$(this.salaryEndSelector).val(),
-                location_id: this.getLocationId(),
-                description: this.$(this.descriptionSelector).val(),
-                employer_requisition_identifier: this.$(this.employerReqIdSelector).val(),
-                telecommute: this.$(this.telecommuteSelector).is(":checked"),
-                relocation: this.$(this.relocationSelector).is(":checked")
-            };
 
-            // Need to destroy wishlist items that the user removed.
-            // This only happens if the requisition model already
-            // exists and is being edited (which implies it has an ID).
-            if (this.model.id) {
-                var originalCollection = this.model.get_requisition_technologies();
-                originalCollection.each(function(reqTechModel) {
-                    if (reqTechModel.id) {
-                        // Destroy if the updated collection doesn't contain
-                        // this model from the original collection.
-                        if (!this.workingCollection.collection.contains(reqTechModel)) {
-                            console.log('Destroy ReqTechModel with id: %s', reqTechModel.id);
-                            reqTechModel.destroy();
+            // Validate the form before saving. If the form isn't
+            // valid, the jquery validator plugin will scroll to
+            // the invalid field and display an error message.
+            var isFormValid = this.$(this.formSelector).valid();
+            if (isFormValid) {
+                var that = this;
+                var reqAttributes = null;
+
+                // Need to destroy wishlist items that the user removed.
+                // This only happens if the requisition model already
+                // exists and is being edited (which implies it has an ID).
+                if (this.model.id) {
+                    var originalCollection = this.model.get_requisition_technologies();
+                    originalCollection.each(function(reqTechModel) {
+                        if (reqTechModel.id) {
+                            // Destroy if the updated collection doesn't contain
+                            // this model from the original collection.
+                            if (!this.workingCollection.collection.contains(reqTechModel)) {
+                                console.log('Destroy ReqTechModel with id: %s', reqTechModel.id);
+                                reqTechModel.destroy();
+                            }
                         }
-                    }
-                }, this);
-            }
-            // Copy working collection into model.
-            // We don't use set_requisition_technologies because... TODO
-            this.model._requisition_technologies = this.workingCollection.collection.clone();
-
-            // Save the model
-            this.model.save(reqAttributes, {
-                wait: true,
-                success: function(model) {
-                    that._saveReqTechnologyCollection(model, that);
-                },
-                error: function(model) {
-                    // TODO
-                    console.log('error saving requisition model');
-                    console.log(model);
+                    }, this);
                 }
-            });
+                // Copy working collection into model.
+                // We don't use set_requisition_technologies because... TODO
+                this.model._requisition_technologies = this.workingCollection.collection.clone();
+
+                // Read input field values
+                reqAttributes = {
+                    user_id: this.userModel.id,
+                    tenant_id: this.userModel.get_tenant_id(),
+                    status: this.$(this.statusSelector).val(),
+                    title: this.$(this.titleSelector).val(),
+                    position_type: this.$(this.positionTypeSelector).val(),
+                    salary_start: this.$(this.salaryStartSelector).val(),
+                    salary_end: this.$(this.salaryEndSelector).val(),
+                    location_id: this.getLocationId(),
+                    description: this.$(this.descriptionSelector).val(),
+                    employer_requisition_identifier: this.$(this.employerReqIdSelector).val(),
+                    telecommute: this.$(this.telecommuteSelector).is(":checked"),
+                    relocation: this.$(this.relocationSelector).is(":checked")
+                };
+
+                // Save the model
+                this.model.save(reqAttributes, {
+                    wait: true,
+                    success: function(model) {
+                        that._saveReqTechnologyCollection(model, that);
+                    },
+                    error: function(model) {
+                        var eventBody = {};
+                        that.triggerEvent(EVENTS.SAVE_FAILED, eventBody);
+                        $('html,body').scrollTop(0); // scroll to top of page
+                    }
+                });
+
+            }
         },
 
         /**
@@ -814,22 +831,18 @@ define([
                     context.triggerEvent(EVENTS.SAVED, eventBody);
                 },
                 error: function(collection) {
-                    // TODO
-                    console.log('error saving requisition_technologies collection');
+                    var eventBody = {
+                        errorMessage: 'There was an error saving your wishlist. Please review your form and try again.'
+                    };
+                    context.triggerEvent(EVENTS.SAVE_FAILED, eventBody);
+                    $('html,body').scrollTop(0); // scroll to top of page
                 }
             });
         },
 
         onSave: function() {
-            // Validate the form before saving. If the form isn't
-            // valid, the jquery validator plugin will scroll to
-            // the invalid field and display an error message.
             console.log('reqForm: onSave');
-            var isFormValid = this.$(this.formSelector).valid();
-            if (isFormValid) {
-                this._saveModel();
-            }
-
+            this._saveModel();
         },
 
         onCancel: function() {
