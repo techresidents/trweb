@@ -118,6 +118,17 @@ html {
     margin-bottom: 10px;
 }
 
+.read-form-horizontal .read-form-group:before,
+.read-horizontal-form .read-form-group:after {
+    display: table;
+    line-height: 0;
+    content: "";
+}
+
+.read-horizontal-form .read-form-group:after {
+    clear: both;
+}
+
 .read-horizontal-form .read-form-label {
     float: left;
     width: 170px;
