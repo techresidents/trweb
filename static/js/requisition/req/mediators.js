@@ -1,4 +1,5 @@
 define([
+    'jquery',
     'underscore',
     'common/notifications',
     'core/mediator',
@@ -10,6 +11,7 @@ define([
     'requisition/req/views',
     'requisition/list/mediators'
 ], function(
+    $,
     _,
     notifications,
     mediator,
@@ -122,6 +124,9 @@ define([
                 style: alert_models.STYLE.NORMAL,
                 message: errorMessage
             });
+
+            // scroll to top of page
+            $('html,body').scrollTop(0);
         },
 
         onCanceled: function(e, eventBody) {

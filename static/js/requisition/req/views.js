@@ -567,6 +567,13 @@ define([
             }
         },
 
+        /**
+         * Method to generate form options.
+         * Returns:
+         *  Sets this.statusFormOptions
+         *  and this.positionTypeFormOptions.
+         * @private
+         */
         _generateRequisitionFormOptions: function() {
             // Requistion Status
             var statusOpen = {
@@ -599,6 +606,10 @@ define([
             ];
         },
 
+        /**
+         * Method to setup the jquery validation.
+         * @private
+         */
         _setupValidator: function() {
             this.validator = this.$(this.formSelector).validate({
                 rules: {
@@ -631,13 +642,28 @@ define([
             });
         },
 
+        /**
+         * Method to disable the enter button to prevent
+         * accidental submission of the form.
+         * @private
+         */
+        _disableEnterButton: function() {
+            // Only disable on input and select elements
+            // so that the enter button still works in textarea elements.
+            this.$('input,select').not(':submit').keypress(function(event) {
+                return event.which !== 13; //13 reps enter key
+            });
+        },
+
+        /**
+         * Method to set the form input fields
+         * with values of the model.
+         * @private
+         */
         _populateForm: function() {
-
-            // TODO can probably move these into the HTML later.
-
+            // set input field values
+            var locationValue = null;
             var jsonModel = this.model.toJSON({withRelated: true});
-            this._updateLocationData(null, jsonModel.location);
-
             this.$(this.statusSelector).val(jsonModel.status);
             this.$(this.titleSelector).val(jsonModel.title);
             this.$(this.positionTypeSelector).val(jsonModel.position_type);
@@ -647,13 +673,15 @@ define([
             this.$(this.employerReqIdSelector).val(jsonModel.employer_requisition_identifier);
             this.$(this.telecommuteSelector).prop('checked', jsonModel.telecommute);
             this.$(this.relocationSelector).prop('checked', jsonModel.relocation);
-
             if (jsonModel.location.city) {
-                this.$(this.locationSelector).val(jsonModel.location.city + ", " + jsonModel.location.state);
+                locationValue = jsonModel.location.city + ", " + jsonModel.location.state;
             } else if (jsonModel.location.state) {
-                this.$(this.locationSelector).val(jsonModel.location.state);
+                locationValue = jsonModel.location.state;
             }
+            this.$(this.locationSelector).val(locationValue);
 
+            // set internal location
+            this._updateLocationData(locationValue, jsonModel.location);
         },
 
         /**
@@ -675,7 +703,6 @@ define([
         changed: function() {
             console.log('EditReqFormView() detected model change event');
             this.render();
-            // TODO consider which data needs to be reset if the model has changed.
         },
 
         render: function() {
@@ -694,10 +721,7 @@ define([
             };
             this.$el.html(this.template(context));
 
-            // setup form validator
-            this._setupValidator();
-
-            // setup wishlist
+            // setup wishlist view
             this.wishlistView = new EditRequisitionWishlistView({
                 el: this.$(this.wishlistSelector),
                 model: this.model,
@@ -706,7 +730,7 @@ define([
             this.childViews.push(this.wishlistView);
             this.wishlistView.render();
 
-            // setup location autocomplete
+            // setup location autocomplete view
             this.lookupView = new lookup_views.LookupView({
                 el: this.$(this.locationSelector),
                 scope: 'location',
@@ -718,12 +742,11 @@ define([
             });
             this.childViews.push(this.lookupView);
 
-            // disable 'enter' button push to prevent accidental
-            // submission of the form. Only disable on input and select elements
-            // so that the enter button still works in textarea elements.
-            this.$('input,select').not(':submit').keypress(function(event) {
-                return event.which !== 13; //13 reps enter key
-            });
+            // setup form validator
+            this._setupValidator();
+
+            // Disable enter press to prevent accidental submit
+            this._disableEnterButton();
 
             // fill in any provided form info
             this._populateForm();
@@ -771,8 +794,9 @@ define([
                     }, this);
                 }
                 // Copy working collection into model.
-                // We don't use set_requisition_technologies because... TODO
-                this.model._requisition_technologies = this.workingCollection.collection.clone();
+                // This will allow access to this data in the 'success' callback function,
+                // which is where this data is saved to the server.
+                this.model.set_requisition_technologies(this.workingCollection.collection.clone());
 
                 // Read input field values
                 reqAttributes = {
@@ -799,7 +823,6 @@ define([
                     error: function(model) {
                         var eventBody = {};
                         that.triggerEvent(EVENTS.SAVE_FAILED, eventBody);
-                        $('html,body').scrollTop(0); // scroll to top of page
                     }
                 });
 
@@ -835,7 +858,6 @@ define([
                         errorMessage: 'There was an error saving your wishlist. Please review your form and try again.'
                     };
                     context.triggerEvent(EVENTS.SAVE_FAILED, eventBody);
-                    $('html,body').scrollTop(0); // scroll to top of page
                 }
             });
         },
