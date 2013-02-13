@@ -215,11 +215,7 @@ define([
 
         render: function() {
             console.log('EditListView render');
-
-            // Remove child views
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
+            this.destroyChildViews();
             this.childViews = [];
 
             // Sort wishlist such that items with the most
@@ -290,12 +286,7 @@ define([
 
         render: function() {
             console.log('AddWishlistItem render');
-            // destroy child views
-            _.each(this.childViews, function(view) {
-                if(_.isFunction(view.destroy)) {
-                    view.destroy();
-                }
-            });
+            this.destroyChildViews();
             this.childViews = [];
 
             this.$el.html(this.template());
@@ -451,10 +442,7 @@ define([
 
         render: function() {
             console.log('EditReqWishlistParentView');
-            // Destroy child views
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
+            this.destroyChildViews();
             this.childViews = [];
 
             this.$el.html(this.template());
@@ -707,11 +695,7 @@ define([
 
         render: function() {
             console.log('ReqForm rendering');
-            _.each(this.childViews, function(view) {
-                if(_.isFunction(view.destroy)) {
-                    view.destroy();
-                }
-            });
+            this.destroyChildViews();
             this.childViews = [];
 
             var context = {
@@ -898,9 +882,7 @@ define([
 
         render: function() {
             this.$el.html(this.template());
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
+            this.destroyChildViews();
             this.childViews = [];
 
             this.reqFormView = new RequisitionFormView({
@@ -940,9 +922,7 @@ define([
 
         render: function() {
             console.log('EditReqView rendering');
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
+            this.destroyChildViews();
             this.childViews = [];
             this.$el.html(this.template());
 
@@ -1016,11 +996,7 @@ define([
 
         render: function() {
             console.log('ReadView render');
-
-            // Remove child views
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
+            this.destroyChildViews();
             this.childViews = [];
 
             var context = {
@@ -1084,10 +1060,7 @@ define([
 
         render: function() {
             console.log('ParentView rendering');
-            console.log(this);
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
+            this.destroyChildViews();
             this.childViews = [];
             this.$el.html(this.template());
 
