@@ -319,7 +319,7 @@ define([
          */
         onAddButton: function() {
             var value = this.$(this.inputSelector).val();
-            if (value.toLowerCase() === this.lookupValue.toLowerCase()) {
+            if (value.length && value.toLowerCase() === this.lookupValue.toLowerCase()) {
                 // If this check passes, it implies that the value of this.lookupValue & this.lookupData
                 // are up-to-date and accurate.
                 this._add(this.lookupData);
