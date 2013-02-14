@@ -314,7 +314,9 @@ define([
                 start: start,
                 end: end
             });
-            this.state.setSlice(slice);
+            this.state.set({
+                slice: slice
+            });
             return this;
         },
 
