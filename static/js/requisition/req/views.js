@@ -67,7 +67,6 @@ define([
             //creation, but not all necessary data was loaded. Invoking
             //load again will ensure all necessary data is loaded. If
             //all data is already loaded, this is a no-op.
-            console.log('WishlistItemView loaded');
             if (instance === this.model) {
                 this.load();
             }
@@ -83,12 +82,10 @@ define([
         },
 
         changed: function() {
-            console.log('WishlistItemView detected model change event');
             this.render();
         },
 
         render: function() {
-            console.log('WishlistItemView render');
             var context = {
                 model: this.model.toJSON({withRelated: true})
             };
@@ -128,7 +125,6 @@ define([
             //creation, but not all necessary data was loaded. Invoking
             //load again will ensure all necessary data is loaded. If
             //all data is already loaded, this is a no-op.
-            console.log('EditWishlistItemView loaded');
             if (instance === this.model) {
                 this.load();
             }
@@ -144,7 +140,6 @@ define([
         },
 
         onDestroy: function() {
-            console.log('onDestroy');
             var eventBody = {
                 model: this.model
             };
@@ -171,12 +166,10 @@ define([
         },
 
         changed: function() {
-            console.log('EditWishlistItemView detected model change event');
             this.render();
         },
 
         render: function() {
-            console.log('EditWishlistItemView render');
             var context = {
                 model: this.model.toJSON({withRelated: true})
             };
@@ -214,7 +207,6 @@ define([
         },
 
         render: function() {
-            console.log('EditListView render');
             this.destroyChildViews();
             this.childViews = [];
 
@@ -235,7 +227,6 @@ define([
          *      model: {RequisitionTechnology} (required)
          */
         addListItem: function(model) {
-            console.log('editList: addListItem invoked');
             var view = new EditWishlistItemView({
                 model: model
             }).render();
@@ -244,10 +235,8 @@ define([
         },
 
         removeListItem: function(e, eventBody) {
-            console.log('removeListItem');
             if (eventBody.model) {
                 this.collection.remove(eventBody.model);
-                console.log(this.collection);
                 // this will trigger a render which will
                 // destroy the view
             }
@@ -285,7 +274,6 @@ define([
         },
 
         render: function() {
-            console.log('AddWishlistItem render');
             this.destroyChildViews();
             this.childViews = [];
 
@@ -366,9 +354,7 @@ define([
                     // requests to api service (for the case when the user is creating
                     // a new requisition and the model doesn't have an ID yet.
                     requisitionTechnology._technology._loaded = true;
-                    console.log('AddListView just about to call add');
                     this.workingCollection.collection.add(requisitionTechnology);
-                    console.log('AddListView just added model to collection');
                 }
                 this.$(this.inputSelector).val("");
             }
@@ -436,12 +422,10 @@ define([
         },
 
         changed: function() {
-            console.log('EditReqWishlistParentView detected model change event');
             this.render();
         },
 
         render: function() {
-            console.log('EditReqWishlistParentView');
             this.destroyChildViews();
             this.childViews = [];
 
@@ -689,12 +673,10 @@ define([
         },
 
         changed: function() {
-            console.log('EditReqFormView() detected model change event');
             this.render();
         },
 
         render: function() {
-            console.log('ReqForm rendering');
             this.destroyChildViews();
             this.childViews = [];
 
@@ -771,7 +753,6 @@ define([
                             // Destroy if the updated collection doesn't contain
                             // this model from the original collection.
                             if (!this.workingCollection.collection.contains(reqTechModel)) {
-                                console.log('Destroy ReqTechModel with id: %s', reqTechModel.id);
                                 reqTechModel.destroy();
                             }
                         }
@@ -834,7 +815,6 @@ define([
                     var eventBody = {
                         id: requisitionModelID
                     };
-                    console.log('req form: collection successfully saved. Triggering save event.');
                     context.triggerEvent(EVENTS.SAVED, eventBody);
                 },
                 error: function(collection) {
@@ -847,7 +827,6 @@ define([
         },
 
         onSave: function() {
-            console.log('reqForm: onSave');
             this._saveModel();
         },
 
@@ -909,8 +888,6 @@ define([
         formContainerSelector: '#req-form-container',
 
         initialize: function(options) {
-            console.log('EditReqView created');
-            console.log(options.model);
             this.model = options.model;
             this.userModel = options.userModel;
             this.template = _.template(edit_requisition_template);
@@ -921,7 +898,6 @@ define([
         },
 
         render: function() {
-            console.log('EditReqView rendering');
             this.destroyChildViews();
             this.childViews = [];
             this.$el.html(this.template());
@@ -990,12 +966,10 @@ define([
         },
 
         changed: function() {
-            console.log('ReadReqView() detected model change event');
             this.render();
         },
 
         render: function() {
-            console.log('ReadView render');
             this.destroyChildViews();
             this.childViews = [];
 
@@ -1059,7 +1033,6 @@ define([
         },
 
         render: function() {
-            console.log('ParentView rendering');
             this.destroyChildViews();
             this.childViews = [];
             this.$el.html(this.template());
@@ -1069,7 +1042,6 @@ define([
             // Need to determine if user is reading,
             // editing, or creating a requisition
             if (this.action === 'create') {
-                console.log('ParentView: rendering create');
                 this.requisitionView = new CreateRequisitionView({
                     el: this.$(this.requisition_view_selector),
                     model: this.model,
@@ -1079,7 +1051,6 @@ define([
                 this.requisitionView.render();
             }
             else if (this.action == 'edit') {
-                console.log('ParentView: rendering edit');
                 this.requisitionView = new EditRequisitionView({
                     el: this.$(this.requisition_view_selector),
                     model: this.model,
@@ -1089,7 +1060,6 @@ define([
                 this.requisitionView.render();
             }
             else if (this.action === 'read') {
-                console.log('ParentView: rendering read');
                 this.requisitionView = new ReadRequisitionView({
                     el: this.$(this.requisition_view_selector),
                     model: this.model
