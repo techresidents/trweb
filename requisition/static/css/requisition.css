@@ -20,14 +20,6 @@
     margin-top: 8px;
 }
 
-/* for jquery validator */
-label.error {
-    float: none;
-    color: #e20b12;
-    padding-left: .5em;
-    vertical-align: top;
-}
-
 #alerts .alert {
     margin-top: 10px;
     margin-bottom: 10px;
