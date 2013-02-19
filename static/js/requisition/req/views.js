@@ -629,8 +629,8 @@ define([
                     status: this.$(this.statusSelector).val(),
                     title: this.$(this.titleSelector).val(),
                     position_type: this.$(this.positionTypeSelector).val(),
-                    salary_start: this.$(this.salaryStartSelector).val(),
-                    salary_end: this.$(this.salaryEndSelector).val(),
+                    salary_start: this.$(this.salaryStartSelector).val().replace(/\,/g, ''), // commas are valid in the form, but should be removed before sending to server
+                    salary_end: this.$(this.salaryEndSelector).val().replace(/\,/g, ''), // remove commas
                     location_id: this.getLocationId(),
                     description: this.$(this.descriptionSelector).val(),
                     employer_requisition_identifier: this.$(this.employerReqIdSelector).val(),
