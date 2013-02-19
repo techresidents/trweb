@@ -2,12 +2,14 @@ define([
     'jquery',
     'underscore',
     'core/view',
+    'api/loader',
     'text!talent/search/templates/search.html',
     'text!talent/search/templates/user.html'
 ], function(
     $,
     _,
     view,
+    api_loader,
     search_template,
     user_template) {
     
@@ -44,26 +46,16 @@ define([
         tagName: 'ul',
         
         initialize: function() {
-            this.collection.bind('loaded', this.loaded, this);
             this.collection.bind('reset', this.render, this);
             this.collection.bind('add', this.added, this);
             this.childViews = [];
-
-            if(!this.collection.isLoading()) {
-                this.load();
-            }
-        },
-
-        loaded: function(instance) {
-            if(instance === this.collection) {
-                this.load();
-            }
-        },
-
-        load: function() {
-            if(!this.collection.isLoaded()) {
-                this.collection.fetch();
-            }
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.collection }
+            ]);
+            
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
         },
 
         render: function() {
@@ -118,10 +110,11 @@ define([
 
             //child views
             this.userListView = null;
-
+            
             if(!this.collection.isLoading()) {
                 this.load();
             }
+
         },
 
         loaded: function(instance) {

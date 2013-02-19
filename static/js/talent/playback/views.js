@@ -3,6 +3,7 @@ define([
     'jquery.bootstrap',
     'underscore',
     'core/view',
+    'api/loader',
     'text!talent/playback/templates/minute.html',
     'text!talent/playback/templates/minutes.html',
     'text!talent/playback/templates/playback.html',
@@ -15,6 +16,7 @@ define([
     none,
     _,
     view,
+    api_loader,
     minute_template,
     minutes_template,
     playback_template,
@@ -44,7 +46,9 @@ define([
         },
 
         render: function() {
-            var context = this.model.toJSON({withRelated: true});
+            var context = this.model.toJSON({
+                withRelated: ['chat_minute__topic']
+            });
             this.$el.html(this.template(context));
             this.$el.addClass('playback-tag');
             this.$el.addClass('participant' + this.participant);
@@ -112,7 +116,7 @@ define([
         },
 
         render: function() {
-            var context = this.model.toJSON({withRelated: true});
+            var context = this.model.toJSON();
             this.$el.html(this.template(context));
             this.$el.addClass('playback-user');
             this.$el.addClass('participant' + this.participant);
@@ -190,7 +194,9 @@ define([
 
         render: function() {
             var context = {
-                minute: this.model.toJSON({withRelated: true}),
+                minute: this.model.toJSON({
+                    withRelated: ['topic']
+                }),
                 playing: this.isPlaying(),
                 fmt: this.fmt
             };
@@ -278,28 +284,28 @@ define([
             this.playerState = options.playerState;
             this.model.bind('loaded', this.loaded, this);
             this.model.bind('change', this.render, this);
+            this.modelWithRelated = [
+                'chat__topic__tree',
+                'chat_minutes',
+                'users',
+                'chat_tags'
+            ];
+
             this.minutesView = null;
             this.usersView = null;
             this.tagsView = null;
-            
-            if(!this.model.isLoading()) {
-                this.load();
-            }
+
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated }
+            ]);
+
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
         },
         
-        loaded: function(instance) {
-            this.load();
-        },
-
-        load: function() {
-            var state = this.model.isLoadedWith('chat__topic__tree', 'chat_minutes', 'users', 'chat_tags');
-            if(!state.loaded) {
-                state.fetcher();
-            }
-        },
-
         render: function() {
-            var context = this.model.toJSON({withRelated: true});
+            var context = this.model.toJSON();
             this.$el.html(this.template(context));
 
             this.minutesView = new PlaybackMinutesView({

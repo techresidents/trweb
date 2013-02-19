@@ -18,6 +18,16 @@ define([
     var caches = {};
 
     /**
+     * Extremely simple gc
+     */
+    var gc = function() {
+        _.each(sessions, function(session, name) {
+            session.gc();
+        });
+    };
+    setInterval(gc, 60000);
+
+    /**
      * ApiSession
      * @constructor
      * @param {Object} attributes
@@ -26,78 +36,199 @@ define([
     var ApiSession = base.Base.extend({
 
         initialize: function(options) {
-            options = options || {};
-            this.name = options.name || 'global';
+            options = _.extend({
+                name: 'global',
+                expire: 300000
+            }, options);
+            this.name = options.name;
+            this.expire = options.expire;
+
             if(!caches.hasOwnProperty(this.name)) {
                 caches[this.name] = {};
             } 
             this.cache = caches[this.name];
         },
 
-        hasModel: function(constructor, key) {
-            var result = false;
-            var cacheKey = this._cacheKey(constructor, key);
-
-            if(this.cache.hasOwnProperty(cacheKey)) {
-                result = true;
-            }
-            return result;
-        },
-
-        getModel: function(constructor, key) {
-            var result;
-            var cacheKey = this._cacheKey(constructor, key);
-
-            if(this.hasModel(constructor, key)) {
-                result = this.cache[cacheKey];
-            } else {
-                var id;
-                if(!this._isUrl(key)) {
-                    id = key;
+        gc: function() {
+            var now = new Date().getTime();
+            _.each(this.cache, function(entry, key) {
+                if(now > entry.timestamp + this.expire) {
+                    delete this.cache[key];
                 }
-                result = new constructor({id: id}, {
-                    session: this.name
-                });
-                this.cache[cacheKey] = result;
+            }, this);
+        },
+
+        getModel: function(key, query) {
+            var entry, state;
+            var model;
+            var uriObject = {}, result = null;
+            key = this._expandKey(key, query);
+
+            if(query) {
+                uriObject = query.toUriObject();
+            }
+            
+            entry = this.cache[key];
+            if(entry) {
+                model = entry.model.clone();
+                if(uriObject['with']) {
+                    state = model.isLoadedWith.apply(
+                                model,
+                                uriObject['with'].split(','));
+                    if(state.loaded) {
+                        result = model;
+                    }
+                } else {
+                    result = model;
+                }
+            }
+
+            return result;
+        },
+
+        putModel: function(model, key) {
+            key = key || model.key();
+            
+            this.cache[key] = {
+                model: model.clone(),
+                timestamp: new Date().getTime()
+            };
+        },
+
+        removeModel: function(model, key) {
+            key = key || model.key();
+            delete this.cache[key];
+        },
+
+        getCollection: function(key, query) {
+            var entry, state;
+            var collection, model;
+            var uriObject = {}, result = null;
+            key = this._expandKey(key, query);
+
+            if(query) {
+                uriObject = query.toUriObject();
+            }
+
+            entry = this.cache[key];
+            if(entry) {
+                models = _.map(entry.modelKeys, function(key) {
+                    return this.getModel(key);
+                }, this);
+
+                if(_.indexOf(models, null) === -1) {
+                    collection = entry.collection.clone();
+                    collection.reset(models);
+                    
+                    if(uriObject['with']) {
+                        state = collection.isLoadedWith.apply(
+                                    collection,
+                                    uriObject['with'].split(','));
+                        if(state.loaded) {
+                            result = collection;
+                        }
+
+                    } else {
+                        result = collection;
+                    }
+                }
+            }
+
+            return result;
+        },
+
+        putCollection: function(collection, key, query) {
+            key = key || collection.key();
+            key = this._expandKey(key, query);
+
+            this.cache[key] = {
+                modelKeys: collection.map(function(model) {
+                    return model.key();
+                }),
+                collection: collection.clone().reset(),
+                timestamp: new Date().getTime()
+            };
+        },
+
+        removeCollection: function(collection, key, query) {
+            key = key || collection.key();
+            key = this._expandKey(key, query);
+            delete this.cache[key];
+        },
+
+        getFetch: function(key, query) {
+            key = key || instance.key();
+            key = 'fetch:' + this._expandKey(key, query);
+            var result = null;
+            var entry = this.cache[key];
+
+            if(entry) {
+                result = entry.fetch;
+            }
+
+            return result;
+        },
+
+        putFetch: function(instance, key, query) {
+            key = key || instance.key();
+            key = this._expandFetchKey(key, query);
+
+            this.cache[key] = {
+                timestamp: new Date().getTime(),
+                fetch:  {
+                    success: [],
+                    error: []
+                }
+            };
+
+            var syncHandler = function(instance, response, options) {
+                var entry;
+                var syncKey = this._expandFetchKey(instance.key(), options.query);
+                if(syncKey === key) {
+                    entry = this.cache[key];
+                    if(entry) {
+                        _.each(entry.fetch.success, function(callback) {
+                            callback(instance, response, options);
+                        }, this);
+                    delete this.cache[key];
+                    instance.off('sync', syncHandler);
+                    }
+                }
+            };
+
+            var errorHandler = function(instance, response, options) {
+                var entry;
+                var syncKey = this._expandFetchKey(instance.key(), options.query);
+                if(syncKey === key) {
+                    entry = this.cache[key];
+                    if(entry) {
+                        _.each(entry.fetch.error, function(callback) {
+                            callback(instance, response, options);
+                        }, this);
+                    }
+                    delete this.cache[key];
+                    instance.off('error', errorHandler);
+                }
+            };
+
+            instance.on('sync', syncHandler, this);
+            instance.on('error', errorHandler, this);
+        },
+
+        _expandKey: function(key, query) {
+            var result = key;
+            var uri;
+            if(query) {
+                uri = query.toUri();
+                if(uri) {
+                    result = key + '?' + uri;
+                }
             }
             return result;
         },
 
-        hasCollection: function(constructor, key) {
-            var result = false;
-            var cacheKey = this._cacheKey(constructor, key);
-            if(this.cache.hasOwnProperty(cacheKey)) {
-                result = true;
-            }
-            return result;
-        },
-
-        getCollection: function(constructor, key) {
-            var result;
-            var cacheKey = this._cacheKey(constructor, key);
-            if(this.hasCollection(constructor, key)) {
-                result = this.cache[cacheKey];
-            } else {
-                result = new constructor(null, {
-                    session: this.name
-                });
-                this.cache[cacheKey] = result;
-            }
-            return result;
-        },
-
-        _isUrl: function(value) {
-            return _.isString(value) && value.length && value[0] === '/';
-        },
-
-        _cacheKey: function(constructor, key) {
-            var result;
-            if(this._isUrl(key)) {
-                result = key;
-            } else {
-                result = constructor.prototype.url() + '/' + key;
-            }
-            return result;
+        _expandFetchKey: function(key, query) {
+            return 'fetch:' + this._expandKey(key, query);
         }
 
     }, {

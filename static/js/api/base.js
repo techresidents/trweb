@@ -32,7 +32,7 @@ define([
     var ApiModel = Backbone.Model.extend({
 
         constructor: function(attributes, options) {
-
+            var model;
             attributes = attributes || {};
             options = options || {};
 
@@ -43,27 +43,38 @@ define([
                     options.session || api_config.defaultSession);
             }
             
-            //TODO 
-            //Consider short circuiting creation of model if it already exists
-            //in the session. This would only work if the model id was passed
-            //to the constructor. The downside of this approach is that clone()
-            //would no longer work, and would need to be overriden to pass
-            //the 'noSession' option to the constructor.
-
-            attributes.meta = {
-                "resource_name": base.getValue(this, "urlRoot").substring(1),
-                "resource_uri": null
-            };
-
-            Backbone.Model.prototype.constructor.call(this, attributes, options);
+            //if using session and being constructed with id
+            //check the cache to see if we already have the model.
+            //Note that the session will returned a cloned model
+            //so no need to worry side effects.
+            if(this.session && attributes.id) {
+                model = this.session.getModel(
+                    this.constructor.key(attributes.id));
+            }
             
-            this._loading = false;
-            this._loaded = false;
-            this._isDirty = false;
+            //if the model is not in cache proceed with construction
+            if(!model) {
+                attributes.meta = {
+                    "resource_name": base.getValue(this, "urlRoot").substring(1),
+                    "resource_uri": null
+                };
 
-            this.bind('change', function() {
-                this._isDirty = true;
-            }, this);
+                Backbone.Model.prototype.constructor.call(this, attributes, options);
+                
+                this._loading = false;
+                this._loaded = false;
+                this._isDirty = false;
+
+                this.bind('change', function() {
+                    this._isDirty = true;
+                }, this);
+            } else {
+                //short circuited constrctor so return model.
+                //if a value is returned from ctor it will be
+                //used as the new object instead of 'this'.
+                return model;
+            }
+               
         },
 
         baseUrl: "/api/v1",
@@ -72,6 +83,17 @@ define([
             var url = Backbone.Model.prototype.url.apply(this, arguments);
             url = this.baseUrl + url;
             return url;
+        },
+
+        key: function() {
+            var result;
+            var meta = this.get_meta();
+            if(meta.resource_uri) {
+                result = meta.resource_uri;
+            } else {
+                result = base.getValue(this, 'url'); 
+            }
+            return result;
         },
 
         isDirty: function() {
@@ -86,7 +108,15 @@ define([
             return this._loaded;
         },
 
+        isLoadable: function() {
+            return !this.isNew();
+        },
+
         isLoadedWith: api_utils.isLoadedWith,
+            
+        bfsRelated: api_utils.bfsRelated,
+
+        dfsRelated: api_utils.dfsRelated,
 
         eachRelated: api_utils.eachRelated,
 
@@ -124,15 +154,45 @@ define([
                     }
                 }
             }
-
+            
             if(!_.isEmpty(errors)) {
                 return errors;
             }
         },
 
+        clone: function(options) {
+            options = _.extend({
+                attributes: this.attributes
+            }, options);
+            
+            var result = options.to || new this.constructor();
+            result.set(options.attributes);
+            result.url = this.url;
+            result._loaded = this._loaded;
+            result._isDirty = this._isDirty;
+
+            if(options.withRelated) {
+                _.each(options.withRelated, function(relations) {
+                    relations = relations.split('__');
+                    var fieldName = _.first(relations);
+                    var relation = this.getRelation(fieldName);
+                    var nextRelations = _.rest(relations).join('__');
+                    var newOptions = _.extend({}, options, {
+                        to: result.getRelation(fieldName),
+                        withRelated: nextRelations ? [nextRelations] : null
+                    });
+                    delete newOptions.attributes;
+                    relation.clone(newOptions);
+                }, this);
+            }
+
+            return result;
+        },
+
         parse: function(response, options) {
             var result = {};
-            var field, fieldName, relation;
+            var field, fieldName, relation, cache;
+            var relationOptions = _.extend({}, options, {parse: false});
 
             for(fieldName in this.fields) {
                 if(this.fields.hasOwnProperty(fieldName)) {
@@ -140,6 +200,11 @@ define([
                     
                     if(response.hasOwnProperty(fieldName)) {
                         result[fieldName] = field.parse(response[fieldName]);
+                        
+                        //update url if possible
+                        if(fieldName === 'meta' && response.meta.resource_uri) {
+                            this.url = response.meta.resource_uri;
+                        }
                     }
                 }
             }
@@ -148,23 +213,37 @@ define([
             //generate valid urls for getRelation().
             this.id = result.id;
 
+
             for(fieldName in this.relatedFields) {
                 if(this.relatedFields.hasOwnProperty(fieldName)) {
                     field = this.relatedFields[fieldName];
                     if(response.hasOwnProperty(fieldName)) {
                         relation = this.getRelation(fieldName, result);
-                        if(field.many && _.isArray(response[fieldName])) {
-                            relation.reset(relation.parse(response[fieldName], options), options);
-                        }else if(!field.many && _.isObject(response[fieldName])) {
-                            relation.set(relation.parse(response[fieldName], options), options);
+                        if(response[fieldName].meta.loaded) {
+                            if(field.many) {
+                                relation.reset(
+                                        relation.parse(response[fieldName], relationOptions),
+                                        relationOptions);
+                            } else {
+                                relation.set(
+                                        relation.parse(response[fieldName], relationOptions),
+                                        relationOptions);
+                            }
+
                         } else {
-                            relation.url = response[fieldName];
+                            relation.url = response[fieldName].meta.resource_uri;
                         }
                     }
                 }
             }
             
+            this._isDirty = false;
             this._loaded = true;
+            
+            if(this.session && !options.noSession) {
+                this.session.putModel(this.clone({attributes: result}));
+            }
+
             return result;
         },
 
@@ -172,7 +251,6 @@ define([
             var result = {};
             var field, fieldName, relation;
             options = options || {};
-            options.level = options.level || 5;
 
             for(fieldName in this.fields) {
                 if(this.fields.hasOwnProperty(fieldName)) {
@@ -182,19 +260,17 @@ define([
             }
             
             if(options.withRelated) {
-                for(fieldName in this.relatedFields) {
-                    if(this.relatedFields.hasOwnProperty(fieldName)) {
-                        field = this.relatedFields[fieldName];
-                        relation = this.getRelation(fieldName);
-                        if(relation.isLoaded() && options.level > 1) {
-                            var newOptions = _.clone(options);
-                            newOptions.level -= 1;
-                            result[fieldName] = relation.toJSON(newOptions);
-                        } else {
-                            result[fieldName] = field.many ? [] : {};
-                        }
-                    }
-                }
+                _.each(options.withRelated, function(relations) {
+                    relations = relations.split('__');
+                    var fieldName = _.first(relations);
+                    var field = this.relatedFields[fieldName];
+                    var relation = this.getRelation(fieldName);
+                    var nextRelations = _.rest(relations).join('__');
+                    var newOptions = _.extend({}, options, {
+                        withRelated: nextRelations ? [nextRelations] : null
+                    });
+                    result[fieldName] = relation.toJSON(newOptions);
+                }, this);
             }
 
             return result;
@@ -213,8 +289,87 @@ define([
         withRelated: function() {
             var query = new api_query.ApiQuery({model: this});
             return query.withRelated.apply(query, arguments);
+        },
+
+        fetchFromSession: function(options) {
+            var result = false;
+            var fetch, model;
+            options = options || {};
+
+            var triggerFetchEvents = function(model) {
+                var withRelated;
+                if(options.query) {
+                    withRelated = options.query.state.withRelations().pluck('value');
+                }
+
+                if(withRelated) {
+                    model.eachRelated(withRelated, function(current) {
+                        current.instance.trigger('loaded', current.instance);
+                    });
+                }
+                
+                model.trigger('loaded', model);
+                if(_.isFunction(options.success)) {
+                    options.success(model, null, options);
+                }
+            };
+
+            if(this.session && !options.noSession) {
+
+                model = this.session.getModel(this.key(), options.query);
+
+                if(model) {
+                    result.clone({
+                        to: this,
+                        withRelated: withRelated
+                    });
+
+                    triggerFetchEvents(this);
+                    result = true;
+                } else {
+                    fetch = this.session.getFetch(this.key(), options.query);
+                    if(fetch) {
+                        var that = this;
+                        fetch.success.push(function(instance, response) {
+                            instance.clone({ to: that });
+                            triggerFetchEvents(that);
+                        });
+                        result = true;
+                    } else {
+                        this.session.putFetch(this, this.key(), options.query);
+                    }
+                }
+            }
+
+            return result;
+        },
+
+        fetch: function(options) {
+            var handled = this.fetchFromSession(options);
+            if(!handled) {
+                Backbone.Model.prototype.fetch.call(this, options);
+            }
+        },
+
+        save: function(key, value, options) {
+            if(this.session && this.isNew() && this.collection) {
+                this.session.removeCollection(this.collection);
+            }
+            return Backbone.Model.prototype.save.call(this, key, value, options);
+        },
+
+        destroy: function(options) {
+            if(this.session && !this.isNew() && this.collection) {
+                this.session.removeCollection(this.collection);
+            }
+            return Backbone.Model.prototype.destroy.call(this, options);
         }
 
+    }, {
+
+        key: function(id) {
+            return this.prototype.url() + '/' + id;
+        }
     });
 
     ApiModel.extend = function(protoProps, classProps) {
@@ -270,7 +425,8 @@ define([
             options = options || {};
 
             Backbone.Collection.prototype.constructor.call(this, models, options);
-
+            
+            this.meta = {};
             this._loading = false;
             this._loaded = false;
         
@@ -292,14 +448,29 @@ define([
             return url;
         },
 
+        key: function() {
+            var result;
+            if(this.meta.resource_uri) {
+                result = this.meta.resource_uri;
+            } else {
+                result = base.getValue(this, 'url');
+            }
+            return result;
+        },
+
         model: function(attributes, options) {
             var result;
             var constructor = this.modelConstructor();
+
             if(this.session && attributes.id) {
-                result = this.session.getModel(constructor, attributes.id);
-            } else {
+                result = this.session.getModel(
+                        constructor.key(attributes.id));
+            }
+
+            if(!result) {
                 result = new constructor(attributes, options);
             }
+
             return result;
         },
 
@@ -311,21 +482,63 @@ define([
             return this._loaded;
         },
 
+        isLoadable: function() {
+            return true;
+        },
+
         isLoadedWith: api_utils.isLoadedWith,
 
         eachRelated: api_utils.eachRelated,
 
-        parse: function(response, options) {
-            var result = [];
-            var i;
-            for(i = 0; i<response.length; i++) {
-                var model = this.model({
-                    id: response[i].id
+        bfsRelated: api_utils.bfsRelated,
+
+        dfsRelated: api_utils.dfsRelated,
+
+        clone: function(options) {
+            options = _.extend({
+                    models: this.models
+            }, options);
+
+            var result = options.to ||  new this.constructor();
+            result.reset(_.map(options.models, function(model) {
+                return model.clone({
+                    withRelated: options.withRelated
                 });
-                model.set(model.parse(response[i], options), options);
+            }));
+            
+            result.meta = _.clone(this.meta);
+            result.url = this.url;
+            result._loaded = this._loaded;
+
+            return result;
+        },
+
+        parse: function(response, options) {
+            var result = [], cache;
+            var i;
+            options = options || {};
+
+            for(i = 0; i<response.results.length; i++) {
+                var model = this.model({
+                    id: response.results[i].id
+                });
+                model.set(model.parse(response.results[i], options), options);
                 result.push(model);
             }
+
+            this.meta = response.meta;
+            if(this.meta && this.meta.resource_uri) {
+                this.url = this.meta.resource_uri;
+            }
             this._loaded = true;
+
+            if(this.session && !options.noSession) {
+                this.session.putCollection(
+                        this.clone({models: result}),
+                        this.key(),
+                        options.query);
+            }
+
             return result;
         },
 
@@ -353,19 +566,70 @@ define([
             return new api_query.ApiQuery({collection: this}).slice(start, end);
         },
 
+        fetchFromSession: function(options) {
+            var result = false;
+            var fetch, collection;
+            options = options || {};
+            
+            if(this.session && !options.noSession) {
+                collection = this.session.getCollection(this.key(), options.query);
+                if(collection) {
+                    collection.clone({ to: this });
+                    this.trigger('loaded', this);
+                    if(_.isFunction(options.success)) {
+                        options.success(this, null, options);
+                    }
+                    result = true;
+                } else {
+                    fetch = this.session.getFetch(this.key(), options.query);
+                    if(fetch) {
+                        var that = this;
+                        fetch.success.push(function(instance, response, options) {
+                            instance.clone({ to: that });
+                            that.trigger('loaded', that);
+                        });
+                        result = true;
+                    } else {
+                        this.session.putFetch(this, this.key(), options.query);
+                    }
+
+                }
+            }
+
+            return result;
+        },
+
+        fetch: function(options) {
+            var handled = this.fetchFromSession(options);
+
+            if(!handled) {
+                Backbone.Collection.prototype.fetch.call(this, options);
+            }
+        },
+
         save: function(options) {
             var openRequests = 0;
             var errors = 0;
             var that = this;
+            var test = this;
             options = options || {};
 
             var syncSuccess = function() {
                 openRequests--;
                 if(openRequests === 0) {
+
+                    if(that.session && !options.noSession) {
+                        that.session.putCollection(
+                                that,
+                                that.key(),
+                                options.query);
+                    }
+
                     if(errors > 0 && options.error) {
                         options.error(that);
                     } else if(errors === 0 && options.success) {
                         options.success(that);
+
                     }
                 }
             };
@@ -374,14 +638,21 @@ define([
                 openRequests--;
                 errors++;
                 if(openRequests === 0) {
+                    if(that.session && !options.noSession) {
+                        that.session.removeCollection(
+                                that,
+                                that.key(),
+                                options.query);
+                    }
+
                     if(options.error) {
                         options.error(that);
                     }
                 }
             };
 
+
             //destroy models with id's which have been removed from
-            //the collection prior to save()
             _.each(this.toDestroy, function(model) {
                 if(!this.get(model.id)) {
                     openRequests++;
@@ -402,9 +673,9 @@ define([
                     });
                 }
             });
-
             this.toDestroy = [];
             
+
             //if no saving is needed still trigger success callback
             if(openRequests === 0 && options.success) {
                 options.success(this);
@@ -418,6 +689,11 @@ define([
         }
 
 
+    }, {
+
+        key: function(query) {
+            return this.prototype.url();
+        }
     });
 
     return {

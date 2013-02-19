@@ -41,7 +41,7 @@ define([
     var TalentAppRouter = Backbone.Router.extend({
         routes: {
             'playback/:id': 'playback',
-            'tracker': 'tracker',
+            'tracker(/:query)': 'tracker',
             'user/:id': 'user',                
             '*actions': 'search'
 
@@ -61,10 +61,12 @@ define([
             });
         },
 
-        tracker: function() {
+        tracker: function(query) {
             this.facade.trigger(notifications.VIEW_CREATE, {
                 type: tracker_mediators.TrackerMediator.VIEW_TYPE,
-                options: {}
+                options: {
+                    query: query
+                }
             });
         },
 
@@ -89,13 +91,24 @@ define([
      * Navigate Command
      */
     var NavigateCommand = command.Command.extend({
-
         execute: function(options) {
+            var uri;
+            options = _.extend({
+                trigger: true
+            }, options);
             router = this.facade.router;
             
             switch(options.type) {
-                case "SearchView":
-                    router.navigate("search", {trigger: true});
+                case 'SearchView':
+                    uri = 'search';
+                    router.navigate(uri, {trigger: options.trigger});
+                    break;
+                case 'TrackerView':
+                    uri = 'tracker';
+                    if(options.query) {
+                        uri += '/' + options.query;
+                    }
+                    router.navigate(uri, {trigger: options.trigger});
                     break;
             }
         }
@@ -131,7 +144,8 @@ define([
                     if(this.activeView) {
                         this._destroyView(this.activeView);
                     }
-                    this.$('#content').append(view.render().el);
+                    this.$('#content').html(view.render().el);
+                    $('html,body').scrollTop(0);
                     this.activeView = {
                         type: type,
                         view: view,

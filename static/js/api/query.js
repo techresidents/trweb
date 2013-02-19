@@ -8,7 +8,7 @@ define([
     _,
     Backbone,
     base) {
-
+    
     /**
      * ApiQueryFilter
      * @constructor
@@ -17,11 +17,10 @@ define([
      */
     var ApiQueryFilter = Backbone.Model.extend({
 
-        idAttribute: 'name',
-
         defaults: function() {
             return {
                 name: null,
+                op: 'eq',
                 value: null
             };
         },
@@ -35,6 +34,15 @@ define([
             return this;
         },
 
+        op: function() {
+            return this.get('op');
+        },
+
+        setOp: function(value) {
+            this.set({op: value});
+            return this;
+        },
+
         value: function() {
             return this.get('value');
         },
@@ -42,6 +50,64 @@ define([
         setValue: function(value) {
             this.set({value: value});
             return this;
+        },
+
+        toUriObject: function() {
+            var result = {};
+            if(this.op() === 'eq') {
+                result[this.name()] = this.value();
+            } else {
+                result[this.name() + '__' + this.op()] = this.value();
+            }
+            return result;
+        }
+
+    }, {
+        OPERATIONS: {
+            'eq': 'eq',
+            'gt': 'gt',
+            'gte': 'gte',
+            'lt': 'lt',
+            'lte': 'lte',
+            'contains': 'contains',
+            'exact': 'exact',
+            'in': 'in',
+            'startswith': 'startswith',
+            'istartswith': 'istartswith',
+            'endswith': 'endswith',
+            'iendswith': 'iendswith',
+            'range': 'range',
+            'isnull': 'isnull'
+        },
+
+        parse: function(name, value) {
+            var result, parts, op;
+
+            //i.e. 'requisition__status__in=OPEN,CLOSED'
+            if(!value) {
+                parts = value.split(value, '=');
+                name = _.first(parts);
+                value = _.rest(parts).join('=');
+            }
+
+            //i.e. name='requisition__status__in' and value='OPEN,CLOSED'
+            parts = name.split('__');
+            op = _.last(parts).toLowerCase();
+            if(ApiQueryFilter.OPERATIONS.hasOwnProperty(op)) {
+                parts.pop();
+                name = parts.join('__');
+            } else {
+                //default op to 'eq'
+                op = 'eq';
+            }
+            
+            result = new ApiQueryFilter({
+                name: name,
+                op: op,
+                value: value
+            });
+
+            return result;
         }
     });
 
@@ -51,10 +117,10 @@ define([
     var ApiQueryFilterCollection = Backbone.Collection.extend({
         model: ApiQueryFilter,
 
-        asObject: function() {
+        toUriObject: function() {
             var result = {};
             this.each(function(filter) {
-                result[filter.name()] = filter.value();
+                _.extend(result, filter.toUriObject());
             });
             return result;
         }
@@ -92,8 +158,10 @@ define([
     var ApiQueryWithRelationCollection = Backbone.Collection.extend({
         model: ApiQueryWithRelation,
 
-        asCSV: function() {
-            return this.pluck('value').join();
+        toUriObject: function() {
+            return {
+                'with': this.pluck('value').join()
+            };
         }
     });
 
@@ -154,10 +222,12 @@ define([
     var ApiQueryOrderByCollection = Backbone.Collection.extend({
         model: ApiQueryOrderBy,
 
-        asCSV: function() {
-            return this.map(function(model) {
-                return model.value() + '__' + model.direction();
-            });
+        toUriObject: function() {
+            return {
+                order_by: this.map(function(model) {
+                    return model.value() + '__' + model.direction();
+                }).join()
+            };
         }
     });
 
@@ -194,10 +264,12 @@ define([
             return this;
         },
 
-        asCSV: function() {
-            var result = '';
-            result += this.start() + ',' + this.end();
-            return result;
+        toUriObject: function() {
+            var slice = '';
+            slice += this.start() + ',' + this.end();
+            return {
+                slice: slice
+            };
         }
     });
 
@@ -214,8 +286,8 @@ define([
                 filters: new ApiQueryFilterCollection(),
                 withRelations: new ApiQueryWithRelationCollection(),
                 orderBys: new ApiQueryOrderByCollection(),
-                order: null,
-                slice: null
+                slice: null,
+                noSession: false
             };
         },
 
@@ -231,12 +303,12 @@ define([
             return this.get('orderBys');
         },
 
-        order: function() {
-            return this.get('order');
-        },
-
         slice: function() {
             return this.get('slice');
+        },
+
+        noSession: function() {
+            return this.get('noSession');
         }
     });
 
@@ -255,15 +327,23 @@ define([
             this.state = new ApiQueryState();
         },
 
-        filterBy: function(filters) {
-            var filterCollection = this.state.getFilters();
-            _.each(filters, function(value, name) {
-                filterCollection.add(new ApiQueryFilter({
-                    name: name,
-                    value: value
-                }));
+        noSession: function(value) {
+            if(_.isUndefined(value)) {
+                value = true;
+            }
+
+            this.state.set({
+                noSession: value
             });
-            _.extend(this.filters, filters);
+        },
+
+        filterBy: function(filters) {
+            var filter;
+            var filterCollection = this.state.filters();
+            _.each(filters, function(value, name) {
+                filter = ApiQueryFilter.parse(name, value);
+                filterCollection.add(filter);
+            });
             return this;
         },
 
@@ -272,6 +352,7 @@ define([
             var withRelations = this.state.withRelations();
             _.each(arguments, function(arg) {
                 if(_.isArray(arg)) {
+                    console.log('array');
                     _.each(arg, function(value) {
                         if(value) {
                             withRelations.add(new ApiQueryWithRelation({
@@ -321,34 +402,92 @@ define([
         },
 
         fetch: function(options) {
-            var filters = this.state.filters();
-            var withRelations = this.state.withRelations();
-            var orderBys = this.state.orderBys();
-            var order = this.state.order();
-            var slice = this.state.slice();
+            options = _.extend({
+                query: this,
+                noSession: this.state.noSession()
+            }, options);
 
-            options = options || {};
             if(!options.hasOwnProperty("data")) {
                 options.data = {};
             }
+
+            _.extend(options.data, this.toUriObject());
             
+            return this.instance.fetch(options);
+        },
+
+        toUriObject: function() {
+            var result = {};
+            var filters = this.state.filters();
+            var withRelations = this.state.withRelations();
+            var orderBys = this.state.orderBys();
+            var slice = this.state.slice();
+
             if(filters.length) {
-                _.extend(options.data, filters.asObject());
+                _.extend(result, filters.toUriObject());
             }
             if(withRelations.length > 0) {
-                options.data['with'] = withRelations.asCSV();
+                _.extend(result, withRelations.toUriObject());
             }
             if(orderBys.length > 0) {
-                options.data.order_by = orderBys.asCSV();
-            }
-            if(order) {
-                options.data.order = order.value();
+                _.extend(result, orderBys.toUriObject());
             }
             if(slice) {
-                options.data.slice = slice.asCSV();
+                _.extend(result, slice.toUriObject());
+            }
+            return result;
+        },
+
+        toUri: function(options) {
+            var terms = [];
+            var uriObject = this.toUriObject();
+            options = _.extend({
+                includeWithRelations: false
+            }, options);
+            
+            if(!options.includeWithRelations) {
+                delete uriObject['with'];
+            }
+            _.each(uriObject, function(value, key) {
+                terms.push(key + '=' + value);
+            });
+
+            return terms.join('+');
+        }
+    }, {
+
+        parse: function(instance, query) {
+            var result = instance.query();
+            var parts, uriObject = {};
+
+            if(_.isString(query)) {
+                //i.e. query = 'status__in=OPEN,CLOSED+slice=10,20+order_by=created_ASC'
+                var terms = query.split('+');
+                _.each(terms, function(terms) {
+                    parts = terms.split('=');
+                    uriObject[_.first(parts)] = decodeURIComponent(_.rest(parts).join('='));
+                });
+            } else if(_.isObject(query)) {
+                uriObject = query;
             }
 
-            return this.instance.fetch(options);
+            if(uriObject.hasOwnProperty('order_by')) {
+                result.orderBy(uriObject.order_by.split(','));
+                delete uriObject.order_by;
+            }
+            if(uriObject.hasOwnProperty('slice')) {
+                var slice_args = uriObject.slice.split(',');
+                result.slice(_.first(slice_args), _.last(slice_args));
+                delete uriObject.slice;
+            }
+            if(uriObject.hasOwnProperty('with')) {
+                result.withRelated(uriObject['with'].split(','));
+                delete uriObject['with'];
+            }
+            
+            result.filterBy(uriObject);
+
+            return result;
         }
     });
 

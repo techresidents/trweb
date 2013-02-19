@@ -48,7 +48,12 @@ define([
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
 
-                var user = this.session.getModel(api.User, notification.options.id);
+                var user = this.session.getModel(api.User.key(notification.options.id));
+                if(!user) {
+                    user = new api.User({
+                        id: notification.options.id
+                    });
+                }
 
                 this.view = new user_views.UserView({
                     model: user,

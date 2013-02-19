@@ -3,6 +3,7 @@ define([
     'underscore',
     'jquery.bootstrap',
     'core/view',
+    'api/loader',
     'text!talent/user/templates/user.html',
     'text!talent/user/templates/jobprefs.html',
     'text!talent/user/templates/skills.html',
@@ -15,6 +16,7 @@ define([
     _,
     none,
     view,
+    api_loader,
     user_template,
     jobprefs_template,
     skills_template,
@@ -53,35 +55,15 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(jobprefs_template);
-            this.model.bind('loaded', this.loaded, this);
+            this.modelWithRelated = ['position_prefs', 'technology_prefs', 'location_prefs'];
             this.childViews = [];
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated }
+            ]);
 
-            if(!this.model.isLoading()) {
-                this.load();
-            }
-        },
-
-        loaded: function(instance) {
-            //Cover case where model was already loading at time of view
-            //creation, but not all necessary data was loaded. Invoking
-            //load again will ensure all necessary data is loaded. If
-            //all data is already loaded, this is a no-op.
-            if(instance === this.model) {
-                this.load();
-            }
-        },
-
-        load: function() {
-            var state = this.model.isLoadedWith(
-                "position_prefs",
-                "technology_prefs",
-                "location_prefs");
-
-            if(!state.loaded) {
-                state.fetcher({
-                    success: _.bind(this.render, this)
-                });
-            } 
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
         },
 
         render: function() {
@@ -91,7 +73,7 @@ define([
 
             this.childViews = [];
             var context = {
-                model: this.model.toJSON({withRelated: true}),
+                model: this.model.toJSON({ withRelated: this.modelWithRelated }),
                 fmt: this.fmt // date formatting
             };
             this.$el.html(this.template(context));
@@ -194,29 +176,22 @@ define([
             this.template = _.template(chat_template);
             this.playerState.bind('change:chatSession', this.render, this);
             this.playerState.bind('change:state', this.render, this);
-            this.model.bind('loaded', this.loaded, this);
             this.model.bind('change', this.render, this);
-            
-            if(!this.model.isLoading()) {
-                this.load();
-            }
-        },
-        
-        loaded: function(instance) {
-            this.load();
-        },
-        
-        load: function() {
-            var state = this.model.isLoadedWith('chat__topic');
-            if(!state.loaded) {
-                state.fetcher();
-            }
-        },
+            this.modelWithRelated = ['chat__topic'];
 
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated }
+            ]);
+
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
+        },
+        
         render: function() {
             var duration = (this.model.get_end() - this.model.get_start()) / 1000;
             var context = {
-                model: this.model.toJSON({withRelated: true}),
+                model: this.model.toJSON({ withRelated: this.modelWithRelated }),
                 fmt: this.fmt,
                 playing: this.isPlaying(),
                 duration: duration
@@ -269,27 +244,18 @@ define([
         initialize: function(options) {
             this.playerState = options.playerState;
             this.template =  _.template(chats_template);
-            this.collection.bind('loaded', this.loaded, this);
             this.collection.bind('reset', this.render, this);
             this.collection.bind('add', this.added, this);
+            this.collectionWithRelated = ['chat_session__chat__topic'];
             this.childViews = [];
-            
-            if(!this.collection.isLoading()) {
-                this.load();
-            }
-        },
 
-        loaded: function(instance) {
-            if(instance === this.collection) {
-                this.load();
-            }
-        },
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.collection, withRelated: this.collectionWithRelated }
+            ]);
 
-        load: function() {
-            var state = this.collection.isLoadedWith('chat_session__chat__topic');
-            if(!state.loaded) {
-                state.fetcher();
-            }
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
         },
 
         render: function() {
@@ -299,7 +265,9 @@ define([
 
             this.childViews = [];
             var context = {
-                collection: this.collection.toJSON({withRelated: true})
+                collection: this.collection.toJSON({
+                    withRelated: this.collectionWithRelated
+                })
             };
             this.$el.html(this.template(context));
 
@@ -378,33 +346,22 @@ define([
         initialize: function(options) {
             this.template = _.template(skill_template);
             this.model.bind('change', this.render, this);
-            this.model.bind('loaded', this.loaded, this);
+            this.modelWithRelated = ['technology'];
+            
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated }
+            ]);
 
-            if(!this.model.isLoading()) {
-                this.load();
-            }
-        },
-
-        loaded: function(instance) {
-            //Cover case where model was already loading at time of view
-            //creation, but not all necessary data was loaded. Invoking
-            //load again will ensure all necessary data is loaded. If
-            //all data is already loaded, this is a no-op.
-            this.load();
-        },
-
-        load: function() {
-            var state = this.model.isLoadedWith('technology');
-            if(!state.loaded) {
-                state.fetcher({
-                    success: _.bind(this.render, this)
-                });
-            }
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
         },
 
         render: function() {
             var context = {
-                model: this.model.toJSON({withRelated: true})
+                model: this.model.toJSON({
+                    withRelated: ['technology']
+                })
             };
             this.$el.html(this.template(context));
             return this;
@@ -430,28 +387,21 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(skills_template);
-            this.collection.bind('loaded', this.loaded, this);
             this.collection.bind('reset', this.render, this);
             this.collection.bind('add', this.added, this);
+            this.collectionWithRelated = ['technology'];
+
             this.childViews = [];
             this.exclusionFilters = [];
+
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.collection, withRelated: this.collectionWithRelated }
+            ]);
+
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
             
-            if(!this.collection.isLoading()) {
-                this.load();
-            }
-        },
-
-        loaded: function(instance) {
-            if(instance === this.collection) {
-                this.load();
-            }
-        },
-
-        load: function() {
-            var state = this.collection.isLoadedWith('technology');
-            if(!state.loaded) {
-                state.fetcher();
-            }
         },
 
         render: function() {
@@ -571,44 +521,34 @@ define([
         initialize: function(options) {
             this.playerState = options.playerState;
             this.template =  _.template(user_template);
-            this.model.bind('loaded', this.loaded, this);
             this.model.bind('change', this.render, this);
+            this.modelWithRelated = [
+                'highlight_sessions__chat_session__chat__topic',
+                'skills__technology',
+                'position_prefs',
+                'technology_prefs',
+                'location_prefs'
+            ];
 
-            if(!this.model.isLoading()) {
-                this.load();
-            }
-            
             //child views
             this.jobPrefsView = null;
             this.skillsFilterView = null;
             this.skillsView = null;
             this.chatsView = null;
-        },
 
-        load: function() {
-            var state = this.model.isLoadedWith(
-                "highlight_sessions__chat_session__chat__topic",
-                "skills__technology",
-                "position_prefs",
-                "technology_prefs",
-                "location_prefs");
-            
-            if(!state.loaded) {
-                state.fetcher();
-            } 
-        },
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated }
+            ]);
 
-        loaded: function() {
-            //Cover case where model was already loading at time of view
-            //creation, but not all necessary data was loaded. Invoking
-            //load again will ensure all necessary data is loaded. If
-            //all data is already loaded, this is a no-op.
-            this.load();
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
+
         },
 
         render: function() {
             var context = {
-                model: this.model.toJSON({withRelated: true}),
+                model: this.model.toJSON(),
                 fmt: this.fmt // date formatting
             };
             this.$el.html(this.template(context));

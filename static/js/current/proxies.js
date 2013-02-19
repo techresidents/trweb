@@ -29,7 +29,7 @@ define([
                 if(options.user instanceof api.User) {
                     this.user = options.user;
                 } else {
-                    this.user = this.session.getModel(api.User, options.user.id);
+                    this.user = new api.User({id: options.user.id});
                     this.user.bootstrap(options.user);
                 }
             }

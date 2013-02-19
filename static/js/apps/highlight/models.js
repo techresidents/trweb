@@ -43,11 +43,19 @@ define([
             return this;
         },
 
-        toJSON: function(withRelated) {
-            return _.extend({}, {
-                chatSession: this.chatSession() ? this.chatSession().toJSON(withRelated) : null,
+        toJSON: function() {
+            var result = {
+                chatSession: null,
                 selected: this.selected()
-            });
+            };
+
+            if(this.chatSession()) {
+                result.chatSession = this.chatSession().toJSON({
+                    withRelated: ['chat__topic']
+                });
+            }
+
+            return result;
         }
     });
 

@@ -4,6 +4,7 @@ define([
     'underscore',
     'soundmanager/core',
     'core/view',
+    'api/loader',
     'talent/player/scheduler',
     'talent/player/models',
     'timer/util',
@@ -20,6 +21,7 @@ define([
     _,
     soundManager,
     view,
+    api_loader,
     scheduler,
     player_models,
     timer_util,
@@ -694,7 +696,7 @@ define([
                 state = chatSession.isLoadedWith('users', 'chat_minutes__topic', 'speaking_markers', 'archives');
                 if(!state.loaded) {
                     result = false;
-                    state.fetcher({
+                    state.fetcher.fetch({
                         success: _.bind(callback, this, chatSession, chatMinute, offset)
                     });
                 }
@@ -781,7 +783,6 @@ define([
             //schedule chat minute change events
             chatSession.get_chat_minutes().each(function(minute) {
                 var offset = that.computeOffset(chatSession, minute.get_start());
-                console.log(offset);
                 that.scheduler.add(offset, function() {
                     that.model.set({
                         chatMinute: minute

@@ -3,6 +3,7 @@ define([
     'underscore',
     'jquery.validate',
     'core/view',
+    'api/loader',
     'api/models',
     'profile/models',
     'lookup/views',
@@ -20,6 +21,7 @@ define([
     _,
     jquery_validate,
     view,
+    api_loader,
     api_models,
     profile_models, // TODO reference api models
     lookup_views,
@@ -55,42 +57,24 @@ define([
             this.model = options.model;
             this.template = _.template(wishlist_item_template);
             this.listenTo(this.model, 'change', this.changed);
-            this.listenTo(this.model, 'loaded', this.loaded);
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: ['technology'] }
+            ]);
 
-            if (!this.model.isLoading()) {
-                this.load();
-            }
-        },
-
-        loaded: function(instance) {
-            //Cover case where model was already loading at time of view
-            //creation, but not all necessary data was loaded. Invoking
-            //load again will ensure all necessary data is loaded. If
-            //all data is already loaded, this is a no-op.
-            console.log('WishlistItemView loaded');
-            if (instance === this.model) {
-                this.load();
-            }
-        },
-
-        load: function() {
-            var state = this.model.isLoadedWith('technology');
-            if (!state.loaded) {
-                state.fetcher({
-                    success: _.bind(this.render, this)
-                });
-            }
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
         },
 
         changed: function() {
-            console.log('WishlistItemView detected model change event');
             this.render();
         },
 
         render: function() {
-            console.log('WishlistItemView render');
             var context = {
-                model: this.model.toJSON({withRelated: true})
+                model: this.model.toJSON({
+                    withRelated: ['technology']
+                })
             };
             this.$el.html(this.template(context));
             this.$('[rel=tooltip]').tooltip(); // Activate tooltips
@@ -116,35 +100,16 @@ define([
             this.model = options.model;
             this.template = _.template(edit_wishlist_item_template);
             this.listenTo(this.model, 'change', this.changed);
-            this.listenTo(this.model, 'loaded', this.loaded);
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: ['technology'] }
+            ]);
 
-            if (!this.model.isLoading()) {
-                this.load();
-            }
-        },
-
-        loaded: function(instance) {
-            //Cover case where model was already loading at time of view
-            //creation, but not all necessary data was loaded. Invoking
-            //load again will ensure all necessary data is loaded. If
-            //all data is already loaded, this is a no-op.
-            console.log('EditWishlistItemView loaded');
-            if (instance === this.model) {
-                this.load();
-            }
-        },
-
-        load: function() {
-            var state = this.model.isLoadedWith('technology');
-            if (!state.loaded) {
-                state.fetcher({
-                    success: _.bind(this.render, this)
-                });
-            }
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
         },
 
         onDestroy: function() {
-            console.log('onDestroy');
             var eventBody = {
                 model: this.model
             };
@@ -171,14 +136,14 @@ define([
         },
 
         changed: function() {
-            console.log('EditWishlistItemView detected model change event');
             this.render();
         },
 
         render: function() {
-            console.log('EditWishlistItemView render');
             var context = {
-                model: this.model.toJSON({withRelated: true})
+                model: this.model.toJSON({
+                    withRelated: ['technology']
+                })
             };
             this.$el.html(this.template(context));
             this.$('[rel=tooltip]').tooltip(); // Activate tooltips
@@ -191,12 +156,9 @@ define([
      * @constructor
      * @param {Object} options
      *      model: {Requisition} (required)
-     *      collection: Copy of {RequisitionTechnologyCollection} (required)
+     *      collection: {RequisitionTechnologyCollection} which will be modified (required)
      */
     var EditListView = view.View.extend({
-
-        // TODO Does it make sense to not check if the collection is loaded
-        // since this is just a local copy of the data?
 
         events: {
             'requisition:WishlistItemRemoved': 'removeListItem'
@@ -214,7 +176,6 @@ define([
         },
 
         render: function() {
-            console.log('EditListView render');
             this.destroyChildViews();
             this.childViews = [];
 
@@ -235,7 +196,6 @@ define([
          *      model: {RequisitionTechnology} (required)
          */
         addListItem: function(model) {
-            console.log('editList: addListItem invoked');
             var view = new EditWishlistItemView({
                 model: model
             }).render();
@@ -244,10 +204,8 @@ define([
         },
 
         removeListItem: function(e, eventBody) {
-            console.log('removeListItem');
             if (eventBody.model) {
                 this.collection.remove(eventBody.model);
-                console.log(this.collection);
                 // this will trigger a render which will
                 // destroy the view
             }
@@ -259,9 +217,7 @@ define([
      * @constructor
      * @param {Object} options
      *      model: {Requisition} (required)
-     *      workingCollection: Copy of {RequisitionTechnologies} (required)
-     *           We work on a copy so that we don't modify the underlying
-     *           model before it is saved.
+     *      collection: {RequisitionTechnology} collection which will be modified (required)
      */
     var AddWishlistItemView = view.View.extend({
 
@@ -273,7 +229,8 @@ define([
 
         initialize: function(options) {
             this.model = options.model;
-            this.workingCollection = options.workingCollection;
+            this.collection = options.collection;
+            this.originalCollection = this.collection.clone();
 
             this.lookupValue = null; // value in input field
             this.lookupData = null; // data object of input field
@@ -285,7 +242,6 @@ define([
         },
 
         render: function() {
-            console.log('AddWishlistItem render');
             this.destroyChildViews();
             this.childViews = [];
 
@@ -347,8 +303,9 @@ define([
             var technologyName = data.name;
             if (technologyName) {
                 //only add if entry doesn't already exist in user's wishlist
-                var technologies = this.workingCollection.collection.where({'technology_id': data.id});
-                if (0 === technologies.length) {
+                var technologies = this.collection.where({'technology_id': data.id});
+                var originalTechnologies = this.originalCollection.where({'technology_id': data.id});
+                if (!technologies.length && !originalTechnologies.length) {
                     var technology = new api_models.Technology({
                         id: data.id,
                         name: data.name,
@@ -360,15 +317,9 @@ define([
                         yrs_experience: 1
                     });
                     requisitionTechnology.set_technology(technology);
-                    // Manually set the flag that indicates the Technology
-                    // data is loaded.  This ensures that any dependent sub-views
-                    // pass their isLoaded() checks, and prevents any invalid
-                    // requests to api service (for the case when the user is creating
-                    // a new requisition and the model doesn't have an ID yet.
-                    requisitionTechnology._technology._loaded = true;
-                    console.log('AddListView just about to call add');
-                    this.workingCollection.collection.add(requisitionTechnology);
-                    console.log('AddListView just added model to collection');
+                    this.collection.add(requisitionTechnology);
+                } else if(!technologies.length && originalTechnologies.length) {
+                        this.collection.add(originalTechnologies[0]);
                 }
                 this.$(this.inputSelector).val("");
             }
@@ -383,8 +334,7 @@ define([
      * @constructor
      * @param {Object} options
      *      model: {Requisition} (required)
-     *      workingCollection: This will be used to store a reference to the
-     *          working RequisitionTechnology collection.
+     *      collection: RequisitionTechnology collection which will be modified.
      */
     var EditRequisitionWishlistView = view.View.extend({
 
@@ -396,9 +346,8 @@ define([
 
         initialize: function(options) {
             this.model = options.model;
-            this.workingCollection = options.workingCollection;
+            this.collection = options.collection;
             this.listenTo(this.model, 'change', this.changed);
-            this.listenTo(this.model, 'loaded', this.loaded);
             this.template = _.template(wishlist_template);
 
             // child views
@@ -406,61 +355,33 @@ define([
             this.addItemView = null;
             this.listView = null;
 
-            if (!this.model.isLoading()) {
-                this.load();
-            }
-        },
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: ['requisition_technologies__technology'] }
+            ]);
 
-        loaded: function(instance) {
-            //Cover case where model was already loading at time of view
-            //creation, but not all necessary data was loaded. Invoking
-            //load again will ensure all necessary data is loaded. If
-            //all data is already loaded, this is a no-op.
-            if (instance === this.model) {
-                this.load();
+            if(this.model.id) {
+                this.loader.load({
+                    success: _.bind(this.render, this)
+                });
             }
-        },
 
-        load: function() {
-            // If the model doesn't have an ID, it implies that the
-            // user is creating a new requisition, so there's no data
-            // that needs to be loaded.
-            if (this.model.id) {
-                var state = this.model.isLoadedWith('requisition_technologies__technology');
-                if(!state.loaded) {
-                    state.fetcher({
-                        success: _.bind(this.render, this)
-                    });
-                }
-            }
         },
 
         changed: function() {
-            console.log('EditReqWishlistParentView detected model change event');
             this.render();
         },
 
         render: function() {
-            console.log('EditReqWishlistParentView');
             this.destroyChildViews();
             this.childViews = [];
 
             this.$el.html(this.template());
 
-            // Make a copy of the RequisitionTechnology collection, so that
-            // any changes made to the collection won't get applied until
-            // the user saves them.
-            // The reason the collection is referenced directly is
-            // because the requisition model may not exist yet, and
-            // calling get_requisition_technologies() would result
-            // in an error in the api service on the server.
-            this.workingCollection.collection = this.model._requisition_technologies.clone();
-
             // view to add items to wishlist
             this.addItemView = new AddWishlistItemView({
                 el: this.$(this.addItemSelector),
                 model: this.model,
-                workingCollection: this.workingCollection
+                collection: this.collection
             });
             this.childViews.push(this.addItemView);
             this.addItemView.render();
@@ -469,7 +390,7 @@ define([
             this.listView = new EditListView({
                 el: this.$(this.listSelector),
                 model: this.model,
-                collection: this.workingCollection.collection
+                collection: this.collection
             });
             this.childViews.push(this.listView);
             this.listView.render();
@@ -509,89 +430,47 @@ define([
         initialize: function(options) {
             this.model = options.model;
             this.userModel = options.userModel;
-            this.workingCollection = {collection: null};
+            this.workingCollection = this.model.get_requisition_technologies().clone();
             this.location = null;
             this.validator = null;
 
             // bindings
             this.listenTo(this.model, 'change', this.changed);
-            this.listenTo(this.model, 'loaded', this.loaded);
 
-            // generate form options
-            this._generateRequisitionFormOptions();
             this.template = _.template(requisition_form_template);
 
             // child views
             this.childViews = [];
             this.lookupView = null;
             this.wishlistView = null;
-
-            if(!this.model.isLoading()) {
-                this.load();
-            }
-        },
-
-        loaded: function(instance) {
-            //Cover case where model was already loading at time of view
-            //creation, but not all necessary data was loaded. Invoking
-            //load again will ensure all necessary data is loaded. If
-            //all data is already loaded, this is a no-op.
-            if (instance === this.model) {
-                this.load();
-            }
-        },
-
-        load: function() {
-            if (this.model.id) {
-                var state = this.model.isLoadedWith(
-                    "location",
-                    "requisition_technologies__technology"
-                );
-                if (!state.loaded) {
-                    state.fetcher({
-                        success: _.bind(this.render, this)
-                    });
-                }
-            }
-        },
-
-        /**
-         * Method to generate form options.
-         * Returns:
-         *  Sets this.statusFormOptions
-         *  and this.positionTypeFormOptions.
-         * @private
-         */
-        _generateRequisitionFormOptions: function() {
-            // Requistion Status
-            var statusOpen = {
-                option: "Open", // shown in UI
-                value: "OPEN"   // returned value
-            };
-            var statusClosed = {
-                option: "Closed", // shown in UI
-                value: "CLOSED"   // returned value
-            };
-            this.statusFormOptions = [statusOpen, statusClosed];
-
-            // Postion Types
-            var positionTypeJuniorDeveloper = {
-                option: "Junior Developer",
-                value: "Junior Developer"
-            };
-            var positionTypeSeniorDeveloper = {
-                option: "Senior Developer",
-                value: "Senior Developer"
-            };
-            var positionTypeTeamLead = {
-                option: "Team Lead",
-                value: "Team Lead"
-            };
-            this.positionTypeFormOptions = [
-                positionTypeJuniorDeveloper,
-                positionTypeSeniorDeveloper,
-                positionTypeTeamLead
+            
+            //Requisition status options
+            this.statusFormOptions = [
+                { option: 'Open', value: 'OPEN' },
+                { option: 'Closed', value: 'CLOSED' }
             ];
+
+            this.positionTypeFormOptions = [
+                { option: 'Junior Developer', value: 'Junior Developer' },
+                { option: 'Senior Developer', value: 'Senior Developer' },
+                { option: 'Team Lead', value: 'Team Lead' }
+            ];
+            
+            this.loader = new api_loader.ApiLoader([
+                {
+                    instance: this.model,
+                    withRelated: ['location', 'requisition_technologies__technology']
+                }
+            ]);
+
+            if(this.model.id) {
+                this.loader.load({
+                    success: _.bind(function() {
+                        this.workingCollection = this.model.get_requisition_technologies().clone();
+                        this.render();
+                    }, this)
+                });
+            }
         },
 
         /**
@@ -601,31 +480,11 @@ define([
         _setupValidator: function() {
             this.validator = this.$(this.formSelector).validate({
                 rules: {
-                    title: {
-                        required: true,
-                        minlength: 1,
-                        maxlength: 100
-                    },
-                    salary_start: {
-                        required: true,
-                        number: true,
-                        maxlength: 10
-                    },
-                    salary_end: {
-                        required: true,
-                        number: true,
-                        maxlength: 10
-                    },
-                    location: {
-                        required: true,
-                        minlength: 2,
-                        maxlength: 100
-                    },
-                    description: {
-                        required: true,
-                        minlength: 1,
-                        maxlength: 1024
-                    }
+                    title: { required: true, minlength: 1, maxlength: 100 },
+                    salary_start: { required: true, number: true, maxlength: 10 },
+                    salary_end: { required: true, number: true, maxlength: 10 },
+                    location: { required: true, minlength: 2, maxlength: 100 },
+                    description: { required: true, minlength: 1, maxlength: 1024 }
                 }
             });
         },
@@ -651,7 +510,9 @@ define([
         _populateForm: function() {
             // set input field values
             var locationValue = null;
-            var jsonModel = this.model.toJSON({withRelated: true});
+            var jsonModel = this.model.toJSON({
+                withRelated: ['location', 'requisition_technologies__technology']
+            });
             this.$(this.statusSelector).val(jsonModel.status);
             this.$(this.titleSelector).val(jsonModel.title);
             this.$(this.positionTypeSelector).val(jsonModel.position_type);
@@ -689,17 +550,17 @@ define([
         },
 
         changed: function() {
-            console.log('EditReqFormView() detected model change event');
             this.render();
         },
 
         render: function() {
-            console.log('ReqForm rendering');
             this.destroyChildViews();
             this.childViews = [];
 
             var context = {
-                model: this.model.toJSON({withRelated: true}),
+                model: this.model.toJSON({
+                    withRelated: ['location', 'requisition_technologies__technology']
+                }),
                 statusFormOptions: this.statusFormOptions,
                 positionTypeFormOptions: this.positionTypeFormOptions
             };
@@ -709,7 +570,7 @@ define([
             this.wishlistView = new EditRequisitionWishlistView({
                 el: this.$(this.wishlistSelector),
                 model: this.model,
-                workingCollection: this.workingCollection
+                collection: this.workingCollection
             });
             this.childViews.push(this.wishlistView);
             this.wishlistView.render();
@@ -761,27 +622,6 @@ define([
                 var that = this;
                 var reqAttributes = null;
 
-                // Need to destroy wishlist items that the user removed.
-                // This only happens if the requisition model already
-                // exists and is being edited (which implies it has an ID).
-                if (this.model.id) {
-                    var originalCollection = this.model.get_requisition_technologies();
-                    originalCollection.each(function(reqTechModel) {
-                        if (reqTechModel.id) {
-                            // Destroy if the updated collection doesn't contain
-                            // this model from the original collection.
-                            if (!this.workingCollection.collection.contains(reqTechModel)) {
-                                console.log('Destroy ReqTechModel with id: %s', reqTechModel.id);
-                                reqTechModel.destroy();
-                            }
-                        }
-                    }, this);
-                }
-                // Copy working collection into model.
-                // This will allow access to this data in the 'success' callback function,
-                // which is where this data is saved to the server.
-                this.model.set_requisition_technologies(this.workingCollection.collection.clone());
-
                 // Read input field values
                 reqAttributes = {
                     user_id: this.userModel.id,
@@ -802,7 +642,7 @@ define([
                 this.model.save(reqAttributes, {
                     wait: true,
                     success: function(model) {
-                        that._saveReqTechnologyCollection(model, that);
+                        that._saveReqTechnologyCollection();
                     },
                     error: function(model) {
                         var eventBody = {};
@@ -815,39 +655,32 @@ define([
 
         /**
          * Callback function to save the RequisitionTechnologyCollection
-         * @param {Object} options
-         *   model: {Requisition} (required)
-         *   context: View context (required)
          */
-        _saveReqTechnologyCollection: function(model, context) {
-            var requisitionModelID = model.id;
-            // Need to handle the case of new requisitions which won't
-            // have a req ID set on models within their RequisitionTechnologies
-            // collection.
-            var requisitionTechnologiesCollection = model._requisition_technologies;
-            requisitionTechnologiesCollection.each(function(requisitionTechnologyModel) {
-                requisitionTechnologyModel.set_requisition_id(requisitionModelID);
-            });
+        _saveReqTechnologyCollection: function() {
+            var that = this;
+            
+            //handle the create case where requisition_id is not yet set.
+            this.workingCollection.each(function(model) {
+                model.set_requisition_id(this.model.id);
+            }, this);
 
-            requisitionTechnologiesCollection.save({
+            this.workingCollection.save({
                 success: function(collection) {
                     var eventBody = {
-                        id: requisitionModelID
+                        id: that.model.id
                     };
-                    console.log('req form: collection successfully saved. Triggering save event.');
-                    context.triggerEvent(EVENTS.SAVED, eventBody);
+                    that.triggerEvent(EVENTS.SAVED, eventBody);
                 },
                 error: function(collection) {
                     var eventBody = {
                         errorMessage: 'There was an error saving your wishlist. Please review your form and try again.'
                     };
-                    context.triggerEvent(EVENTS.SAVE_FAILED, eventBody);
+                    that.triggerEvent(EVENTS.SAVE_FAILED, eventBody);
                 }
             });
         },
 
         onSave: function() {
-            console.log('reqForm: onSave');
             this._saveModel();
         },
 
@@ -909,8 +742,6 @@ define([
         formContainerSelector: '#req-form-container',
 
         initialize: function(options) {
-            console.log('EditReqView created');
-            console.log(options.model);
             this.model = options.model;
             this.userModel = options.userModel;
             this.template = _.template(edit_requisition_template);
@@ -921,7 +752,6 @@ define([
         },
 
         render: function() {
-            console.log('EditReqView rendering');
             this.destroyChildViews();
             this.childViews = [];
             this.$el.html(this.template());
@@ -954,54 +784,35 @@ define([
 
             // bindings
             this.listenTo(this.model, 'change', this.changed);
-            this.listenTo(this.model, 'loaded', this.loaded);
 
             // child views
             this.childViews = [];
 
-            if(!this.model.isLoading()) {
-                this.load();
-            }
-        },
-
-        loaded: function(instance) {
-            //Cover case where model was already loading at time of view
-            //creation, but not all necessary data was loaded. Invoking
-            //load again will ensure all necessary data is loaded. If
-            //all data is already loaded, this is a no-op.
-            if (instance === this.model) {
-                this.load();
-            }
-        },
-
-        load: function() {
-            // All models should have an ID for this view
-            if (this.model.id) {
-                var state = this.model.isLoadedWith(
-                    "location",
-                    "requisition_technologies__technology"
-                );
-                if (!state.loaded) {
-                    state.fetcher({
-                        success: _.bind(this.render, this)
-                    });
+            this.loader = new api_loader.ApiLoader([
+                {
+                    instance: this.model,
+                    withRelated: ['location', 'requisition_technologies__technology']
                 }
-            }
+            ]);
+
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
         },
 
         changed: function() {
-            console.log('ReadReqView() detected model change event');
             this.render();
         },
 
         render: function() {
-            console.log('ReadView render');
             this.destroyChildViews();
             this.childViews = [];
 
             var context = {
                 fmt: this.fmt,
-                model: this.model.toJSON({withRelated: true})
+                model: this.model.toJSON({
+                    withRelated: ['location', 'requisition_technologies__technology']
+                })
             };
             this.$el.html(this.template(context));
 
@@ -1059,7 +870,6 @@ define([
         },
 
         render: function() {
-            console.log('ParentView rendering');
             this.destroyChildViews();
             this.childViews = [];
             this.$el.html(this.template());
@@ -1069,7 +879,6 @@ define([
             // Need to determine if user is reading,
             // editing, or creating a requisition
             if (this.action === 'create') {
-                console.log('ParentView: rendering create');
                 this.requisitionView = new CreateRequisitionView({
                     el: this.$(this.requisition_view_selector),
                     model: this.model,
@@ -1078,8 +887,7 @@ define([
                 this.childViews.push(this.requisitionView);
                 this.requisitionView.render();
             }
-            else if (this.action == 'edit') {
-                console.log('ParentView: rendering edit');
+            else if (this.action === 'edit') {
                 this.requisitionView = new EditRequisitionView({
                     el: this.$(this.requisition_view_selector),
                     model: this.model,
@@ -1089,7 +897,6 @@ define([
                 this.requisitionView.render();
             }
             else if (this.action === 'read') {
-                console.log('ParentView: rendering read');
                 this.requisitionView = new ReadRequisitionView({
                     el: this.$(this.requisition_view_selector),
                     model: this.model
