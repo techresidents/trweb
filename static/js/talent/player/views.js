@@ -671,11 +671,11 @@ define([
                 this.progressTimerId = setInterval(function() {
                     var offset = that.playerView.offset();
                     var buffered = that.playerView.buffered();
+
                     if(_.isNumber(offset) && offset > 0) {
                         that.model.set({
                             offset: offset,
-                            buffered: buffered,
-                            duration: that.playerView.duration()
+                            buffered: buffered
                         });
                     }
                 }, interval);
@@ -970,7 +970,7 @@ define([
             if(this.model.isPaused()) {
                 this.resume();
             } else if(this.model.isStopped()) {
-                if(this.model.offset() === this.model.duration()) {
+                if(this.model.offset() >= this.model.duration()) {
                     offset = 0;
                 } else {
                     offset = this.model.offset();

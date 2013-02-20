@@ -60,7 +60,8 @@ define([
                 };
 
                 Backbone.Model.prototype.constructor.call(this, attributes, options);
-                
+            
+                this._parentRelation = null;
                 this._loading = false;
                 this._loaded = false;
                 this._isDirty = false;
@@ -80,9 +81,29 @@ define([
         baseUrl: "/api/v1",
 
         url: function() {
-            var url = Backbone.Model.prototype.url.apply(this, arguments);
-            url = this.baseUrl + url;
-            return url;
+            var result, fk, parent, field;
+            var meta = this.get_meta();
+            var baseUrl = base.getValue(this, 'baseUrl');
+            var urlRoot = base.getValue(this, 'urlRoot');
+            
+            if(meta.resource_uri) {
+                result = meta.resource_uri;
+            }
+            else if(!this.isNew()) {
+                result = baseUrl + urlRoot + '/' + encodeURIComponent(this.id);
+            } else if(this._parentRelation) {
+                parent = this._parentRelation.instance;
+                field = this._parentRelation.field;
+                fk = this[field.name + '_id'];
+                if(fk) {
+                    result = baseUrl + urlRoot + '/' + encodeURIComponent(fk);
+                } else {
+                    result = base.getValue(parent, 'url') + '/' + encodeURIComponent(field.name);
+                }
+            } else {
+                result = baseUrl + urlRoot;
+            }
+            return result;
         },
 
         key: function() {
@@ -109,7 +130,13 @@ define([
         },
 
         isLoadable: function() {
-            return !this.isNew();
+            var result = false;
+            if(!this.isNew()) {
+                result = true;
+            } else if(this.getParentRelation()) {
+                result = this.getParentRelation().isLoadable();
+            }
+            return result;
         },
 
         isLoadedWith: api_utils.isLoadedWith,
@@ -123,6 +150,14 @@ define([
         getRelation: function(fieldName, attributes) {
             var field = this.relatedFields[fieldName];
             return this[field.getterName](attributes);
+        },
+
+        getParentRelation: function() {
+            var result = null;
+            if(_.isObject(this._parentRelation)) {
+                result = this._parentRelation.instnace;
+            }
+            return result;
         },
 
         bootstrap: function(data) {
@@ -170,6 +205,9 @@ define([
             result.url = this.url;
             result._loaded = this._loaded;
             result._isDirty = this._isDirty;
+            if(!result._parentRelation) {
+                result._parentRelation = _.clone(this._parentRelation);
+            }
 
             if(options.withRelated) {
                 _.each(options.withRelated, function(relations) {
@@ -200,11 +238,6 @@ define([
                     
                     if(response.hasOwnProperty(fieldName)) {
                         result[fieldName] = field.parse(response[fieldName]);
-                        
-                        //update url if possible
-                        if(fieldName === 'meta' && response.meta.resource_uri) {
-                            this.url = response.meta.resource_uri;
-                        }
                     }
                 }
             }
@@ -231,7 +264,11 @@ define([
                             }
 
                         } else {
-                            relation.url = response[fieldName].meta.resource_uri;
+                            if(field.many) {
+                                relation.meta = response[fieldName].meta;
+                            } else {
+                                relation.set_meta(response[fieldName].meta);
+                            }
                         }
                     }
                 }
@@ -368,7 +405,10 @@ define([
     }, {
 
         key: function(id) {
-            return this.prototype.url() + '/' + id;
+            var baseUrl = base.getValue(this.prototype, 'baseUrl');
+            var urlRoot = base.getValue(this.prototype, 'urlRoot');
+            var result = baseUrl + urlRoot + '/' + encodeURIComponent(id);
+            return result;
         }
     });
 
@@ -427,6 +467,7 @@ define([
             Backbone.Collection.prototype.constructor.call(this, models, options);
             
             this.meta = {};
+            this._parentRelation = null;
             this._loading = false;
             this._loaded = false;
         
@@ -444,8 +485,21 @@ define([
         baseUrl: "/api/v1",
 
         url: function() {
-            url = this.baseUrl + base.getValue(this, "urlRoot");
-            return url;
+            var result, parent, field;
+            var baseUrl = base.getValue(this, 'baseUrl');
+            var urlRoot = base.getValue(this, 'urlRoot');
+         
+            if(this.meta.resource_uri) {
+                result = this.meta.resource_uri;
+            }
+            else if(this._parentRelation) {
+                parent = this._parentRelation.instance;
+                field = this._parentRelation.field;
+                result = base.getValue(parent, 'url') + '/' + encodeURIComponent(field.name);
+            } else {
+                result = baseUrl + urlRoot;
+            }
+            return result;
         },
 
         key: function() {
@@ -494,6 +548,14 @@ define([
 
         dfsRelated: api_utils.dfsRelated,
 
+        getParentRelation: function() {
+            var result = null;
+            if(_.isObject(this._parentRelation)) {
+                result = this._parentRelation.instnace;
+            }
+            return relation;
+        },
+
         clone: function(options) {
             options = _.extend({
                     models: this.models
@@ -509,6 +571,10 @@ define([
             result.meta = _.clone(this.meta);
             result.url = this.url;
             result._loaded = this._loaded;
+            if(!result.parentRelation) {
+                result._parentRelation = _.clone(this._parentRelation);
+            }
+
 
             return result;
         },
@@ -527,9 +593,6 @@ define([
             }
 
             this.meta = response.meta;
-            if(this.meta && this.meta.resource_uri) {
-                this.url = this.meta.resource_uri;
-            }
             this._loaded = true;
 
             if(this.session && !options.noSession) {
@@ -617,7 +680,6 @@ define([
             var syncSuccess = function() {
                 openRequests--;
                 if(openRequests === 0) {
-
                     if(that.session && !options.noSession) {
                         that.session.putCollection(
                                 that,

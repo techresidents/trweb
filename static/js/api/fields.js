@@ -322,7 +322,7 @@ define([
                 var relationInstanceName = "_" + fieldName;
                 attributes = attributes || this.attributes;
 
-                //'this' resolves to relationConstructor instance
+                //'this' resolves to parent relation instance
                 if(this[relationInstanceName]) {
                     relation = this[relationInstanceName];
                 } else {
@@ -345,14 +345,11 @@ define([
                         }
                     }
                     
-                    if(!fk) {
-                        constructorInstance = this;
-                        relation.url = function() {
-                            return base.getValue(constructorInstance, 'url') + "/" + fieldName;
-                        };
-                    }
-
                     this[relationInstanceName] = relation;
+                    relation._parentRelation = {
+                        instance: this,
+                        field: that
+                    };
                 }
                 return relation;
             };
