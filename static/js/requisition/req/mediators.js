@@ -76,8 +76,6 @@ define([
 
         onDestroyView: function(notification) {
             if(notification.type === this.viewType()) {
-                console.log('destroying view');
-                console.log(notification.view);
                 notification.view.destroy();
 
                 this.facade.trigger(notifications.VIEW_DESTROYED, {
@@ -91,7 +89,6 @@ define([
         },
 
         onSaved: function(e, eventBody) {
-            console.log('mediator: onSaved invoked');
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
                 type: this.viewType(),
                 options: {
@@ -109,8 +106,6 @@ define([
         },
 
         onSaveFailed: function(e, eventBody) {
-            console.log('mediator: onSaveFailed invoked');
-
             // Set error message
             var errorMessage = 'There was an error saving your data. Please review your form and try again.';
             if (eventBody.errorMessage) {

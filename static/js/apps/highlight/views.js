@@ -52,12 +52,11 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(chat_session_template);
-            this.model.bind('loaded', this.loaded, this);
         },
 
         render: function() {
             var context = {
-                model: this.model.toJSON({withRelated: true}),
+                model: this.model.toJSON(),
                 fmt: this.fmt // date formatting
             };
             this.$el.html(this.template(context));
@@ -198,7 +197,9 @@ define([
 
         render: function() {
             var context = {
-                model: this.model.toJSON({withRelated: true}),
+                model: this.model.toJSON({
+                    withRelated: ['chat_session__chat__topic']
+                }),
                 fmt: this.fmt // date formatting
             };
             this.$el.html(this.template(context));

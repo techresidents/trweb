@@ -328,18 +328,19 @@ define([
                 } else {
                     if(that.many) {
                         if(this.session && attributes.id) {
-                            relation = this.session.getCollection(
-                                    that.relationConstructor.prototype.collectionConstructor,
-                                    base.getValue(this, 'url') + "/" + fieldName);
+                            relation = this.session.getCollection(this.key() + '/' + fieldName);
+                        }
 
-                        } else {
+                        if(!relation) {
                             relation = new that.relationConstructor.prototype.collectionConstructor();
                         }
                     } else {
                         fk = attributes[fieldName + '_id'];
                         if(this.session && fk) {
-                            relation = this.session.getModel(that.relationConstructor, fk);
-                        } else {
+                            relation = this.session.getModel(that.relationConstructor.key(fk));
+                        }
+
+                        if(!relation) {
                             relation = new that.relationConstructor({id: fk});
                         }
                     }

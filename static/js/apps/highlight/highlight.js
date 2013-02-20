@@ -7,6 +7,7 @@ define([
     'core/facade',
     'core/mediator',
     'core/view',
+    'api/loader',
     'alert/mediators',
     'alert/models',
     'api/models',
@@ -22,6 +23,7 @@ define([
     facade,
     mediator,
     view,
+    api_loader,
     alert_mediators,
     alert_models,
     api,
@@ -42,26 +44,15 @@ define([
         initialize: function(options) {
             this.template = _.template(highlight_app_template);
             this.model = options.model;
-            this.model.bind('loaded', this.loaded, this);
+            this.modelLoadedWith = ['chat_sessions__chat__topic', 'highlight_sessions'];
 
-            if(!this.model.isLoading()) {
-                this.load();
-            }
-        },
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated }
+            ]);
 
-        load: function() {
-            var state = this.model.isLoadedWith("chat_sessions__chat__topic", "highlight_sessions");
-            if(!state.loaded) {
-                state.fetcher();
-            }
-        },
-
-        loaded: function() {
-            //Cover case where model was already loading at time of view
-            //creation, but not all necessary data was loaded. Invoking
-            //load again will ensure all necessary data is loaded. If
-            //all data is already loaded, this is a no-op.
-            this.load();
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
         },
 
         render: function() {
@@ -132,8 +123,9 @@ define([
         ],
 
         initialize: function(options) {
-            this.session = new api_session.ApiSession.get('global');
-            this.userModel = this.session.getModel(api.User, options.user.id);
+            this.userModel = new api.User({
+                id: options.user.id
+            });
             this.userModel.bootstrap(options.user);
 
             this.view = new HighlightAppView({

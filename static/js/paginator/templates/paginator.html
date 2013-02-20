@@ -1,0 +1,11 @@
+<% if(stats.totalPages > 1) { %>
+<div class="pagination">
+    <ul>
+        <% _.each(pages, function(page) { %>
+        <li class="<%= page.disabled ? 'disabled' : '' %> <%= page.page === stats.currentPage ? 'active' : '' %>">
+            <a class="paginator-page" data-page="<%= page.page %>" href="javascript:void(0)"><%= page.label %></a>
+        </li>
+        <% }); %>
+    </ul>
+</div>
+<% } %>
