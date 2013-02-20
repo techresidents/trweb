@@ -201,6 +201,11 @@ define([
             }, options);
             
             var result = options.to || new this.constructor();
+
+            if(result === this) {
+                return result;
+            }
+
             result.set(options.attributes);
             result.url = this.url;
             result._loaded = this._loaded;
@@ -331,6 +336,7 @@ define([
         fetchFromSession: function(options) {
             var result = false;
             var fetch, model;
+            var loadedEvents = 'loaded loaded:read';
             options = options || {};
 
             var triggerFetchEvents = function(model) {
@@ -341,11 +347,11 @@ define([
 
                 if(withRelated) {
                     model.eachRelated(withRelated, function(current) {
-                        current.instance.trigger('loaded', current.instance);
+                        current.instance.trigger(loadedEvents, current.instance);
                     });
                 }
                 
-                model.trigger('loaded', model);
+                model.trigger(loadedEvents, model);
                 if(_.isFunction(options.success)) {
                     options.success(model, null, options);
                 }
@@ -562,6 +568,10 @@ define([
             }, options);
 
             var result = options.to ||  new this.constructor();
+            if(result === this) {
+                return result;
+            }
+
             result.reset(_.map(options.models, function(model) {
                 return model.clone({
                     withRelated: options.withRelated
@@ -632,13 +642,14 @@ define([
         fetchFromSession: function(options) {
             var result = false;
             var fetch, collection;
+            var loadedEvents = 'loaded loaded:read';
             options = options || {};
             
             if(this.session && !options.noSession) {
                 collection = this.session.getCollection(this.key(), options.query);
                 if(collection) {
                     collection.clone({ to: this });
-                    this.trigger('loaded', this);
+                    this.trigger(loadedEvents, this);
                     if(_.isFunction(options.success)) {
                         options.success(this, null, options);
                     }
@@ -649,7 +660,7 @@ define([
                         var that = this;
                         fetch.success.push(function(instance, response, options) {
                             instance.clone({ to: that });
-                            that.trigger('loaded', that);
+                            that.trigger(loadedEvents, that);
                         });
                         result = true;
                     } else {
