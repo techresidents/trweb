@@ -382,7 +382,7 @@ define([
 
             // view to manage list of items
             this.listView = new EditListView({
-                el: this.$(this.listSelector),
+                el: this.$(this.listSelector), // TODO
                 model: this.model,
                 collection: this.collection
             }).render();
