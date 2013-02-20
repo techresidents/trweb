@@ -3,24 +3,22 @@
 </h3>
 
 <div class="read-horizontal-form span9">
-
+    <div class="read-form-group">
+        <label class="read-form-label">Title</label>
+        <div class="read-form-values">
+            <span><%= model.title %></span>
+        </div>
+    </div>
     <div class="read-form-group">
         <label class="read-form-label">Employer Requisition#</label>
         <div class="read-form-values">
             <span><%= model.employer_requisition_identifier ? model.employer_requisition_identifier : 'N/A' %></span>
         </div>
     </div>
-
     <div class="read-form-group">
         <label class="read-form-label">Status</label>
         <div class="read-form-values">
             <span><%= model.status %></span>
-        </div>
-    </div>
-    <div class="read-form-group">
-        <label class="read-form-label">Title</label>
-        <div class="read-form-values">
-            <span><%= model.title %></span>
         </div>
     </div>
     <div class="read-form-group">
