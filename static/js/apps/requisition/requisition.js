@@ -143,9 +143,6 @@ define([
                     break;
                 default:
                     if(this.activeView) {
-                        // Need to hide any tooltips since this view could be removed
-                        // from the DOM before a mouseleave() event fires
-                        this.$("[rel=tooltip]").tooltip('hide');
                         this._destroyView(this.activeView);
                     }
                     this.$(this.contentSelector).html(view.render().el);

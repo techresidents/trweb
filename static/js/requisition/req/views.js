@@ -64,6 +64,13 @@ define([
             });
         },
 
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
         changed: function() {
             this.render();
         },
@@ -105,6 +112,13 @@ define([
             this.loader.load({
                 success: _.bind(this.render, this)
             });
+        },
+
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
         },
 
         onDestroy: function() {
@@ -799,6 +813,13 @@ define([
             this.loader.load({
                 success: _.bind(this.render, this)
             });
+        },
+
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
         },
 
         render: function() {
