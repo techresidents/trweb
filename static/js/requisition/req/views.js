@@ -11,7 +11,7 @@ define([
     'text!requisition/req/templates/requisition_read.html',
     'text!requisition/req/templates/requisition_edit.html',
     'text!requisition/req/templates/requisition_form.html',
-    'text!requisition/req/templates/wishlist.html',
+    'text!requisition/req/templates/wishlist_edit.html',
     'text!requisition/req/templates/wishlist_item_edit.html',
     'text!requisition/req/templates/wishlist_item.html',
     'text!requisition/req/templates/wishlist_add_item.html'
@@ -28,7 +28,7 @@ define([
     read_requisition_template,
     edit_requisition_template,
     requisition_form_template,
-    wishlist_template,
+    edit_wishlist_template,
     edit_wishlist_item_template,
     wishlist_item_template,
     wishlist_add_item_template) {
@@ -235,14 +235,15 @@ define([
             this.template = _.template(wishlist_add_item_template);
 
             // child views
-            this.childViews = [];
             this.lookupView = null;
+        },
+
+        childViews: function() {
+            return [this.lookupView];
         },
 
         render: function() {
             this.destroyChildViews();
-            this.childViews = [];
-
             this.$el.html(this.template());
 
             // setup technology autocomplete
@@ -254,7 +255,6 @@ define([
                 onselect: this.updateOnSelect,
                 context: this
             });
-            this.childViews.push(this.lookupView);
 
             return this;
         },
@@ -339,17 +339,13 @@ define([
         addItemSelector: '.add-wishlist-item-container',
         listSelector: '.wishlist-container',
 
-        events: {
-        },
-
         initialize: function(options) {
             this.model = options.model;
             this.collection = options.collection;
             this.listenTo(this.model, 'change', this.changed);
-            this.template = _.template(wishlist_template);
+            this.template = _.template(edit_wishlist_template);
 
             // child views
-            this.childViews = [];
             this.addItemView = null;
             this.listView = null;
 
@@ -357,12 +353,16 @@ define([
                 { instance: this.model, withRelated: ['requisition_technologies__technology'] }
             ]);
 
-            if(this.model.id) {
+            if (this.model.id) {
                 this.loader.load({
                     success: _.bind(this.render, this)
                 });
             }
 
+        },
+
+        childViews: function() {
+            return [this.addItemView, this.listView];
         },
 
         changed: function() {
@@ -371,27 +371,21 @@ define([
 
         render: function() {
             this.destroyChildViews();
-            this.childViews = [];
-
             this.$el.html(this.template());
 
             // view to add items to wishlist
             this.addItemView = new AddWishlistItemView({
-                el: this.$(this.addItemSelector),
                 model: this.model,
                 collection: this.collection
-            });
-            this.childViews.push(this.addItemView);
-            this.addItemView.render();
+            }).render();
+            this.$(this.addItemSelector).append(this.addItemView.el);
 
             // view to manage list of items
             this.listView = new EditListView({
                 el: this.$(this.listSelector),
                 model: this.model,
                 collection: this.collection
-            });
-            this.childViews.push(this.listView);
-            this.listView.render();
+            }).render();
 
             return this;
         }
@@ -407,7 +401,6 @@ define([
     var RequisitionFormView = view.View.extend({
 
         formSelector: '#requisition-form',
-
         employerReqIdSelector: '#inputEmployerReqID',
         statusSelector: '#inputStatus',
         titleSelector: '#inputTitle',
@@ -438,7 +431,6 @@ define([
             this.template = _.template(requisition_form_template);
 
             // child views
-            this.childViews = [];
             this.lookupView = null;
             this.wishlistView = null;
             
@@ -462,7 +454,7 @@ define([
                 }
             ]);
 
-            if(this.model.id) { // TODO
+            if (this.model.id) {
                 this.loader.load({
                     success: _.bind(function() {
                         this.workingCollection = this.model.get_requisition_technologies().clone();
@@ -470,6 +462,10 @@ define([
                     }, this)
                 });
             }
+        },
+
+        childViews: function() {
+            return [this.lookupView, this.wishlistView];
         },
 
         /**
@@ -564,7 +560,6 @@ define([
 
         render: function() {
             this.destroyChildViews();
-            this.childViews = [];
 
             var context = {
                 model: this.model.toJSON({
@@ -577,12 +572,10 @@ define([
 
             // setup wishlist view
             this.wishlistView = new EditRequisitionWishlistView({
-                el: this.$(this.wishlistSelector),
                 model: this.model,
                 collection: this.workingCollection
-            });
-            this.childViews.push(this.wishlistView);
-            this.wishlistView.render();
+            }).render();
+            this.$(this.wishlistSelector).append(this.wishlistView.el);
 
             // setup location autocomplete view
             this.lookupView = new lookup_views.LookupView({
@@ -594,7 +587,6 @@ define([
                 onselect: this._updateLocationData,
                 context: this
             });
-            this.childViews.push(this.lookupView);
 
             // setup form validator
             this._setupValidator();
