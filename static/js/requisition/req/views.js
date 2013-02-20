@@ -336,8 +336,8 @@ define([
      */
     var EditRequisitionWishlistView = view.View.extend({
 
-        addItemSelector: '#add-wishlist-item',
-        listSelector: '#wishylist',
+        addItemSelector: '.add-wishlist-item-container',
+        listSelector: '.wishlist-container',
 
         events: {
         },
@@ -718,22 +718,22 @@ define([
             this.template = _.template(create_requisition_template);
 
             // child views
-            this.childViews = [];
             this.reqFormView = null;
         },
 
+        childViews: function() {
+            return [this.reqFormView];
+        },
+
         render: function() {
-            this.$el.html(this.template());
             this.destroyChildViews();
-            this.childViews = [];
+            this.$el.html(this.template());
 
             this.reqFormView = new RequisitionFormView({
-                el: this.$(this.formContainerSelector),
                 model: this.model,
                 userModel: this.userModel
-            });
-            this.childViews.push(this.reqFormView);
-            this.reqFormView.render();
+            }).render();
+            this.$(this.formContainerSelector).append(this.reqFormView.el);
 
             return this;
         }
@@ -756,22 +756,22 @@ define([
             this.template = _.template(edit_requisition_template);
 
             // child views
-            this.childViews = [];
             this.reqFormView = null;
+        },
+
+        childViews: function() {
+            return [this.reqFormView];
         },
 
         render: function() {
             this.destroyChildViews();
-            this.childViews = [];
             this.$el.html(this.template());
 
             this.reqFormView = new RequisitionFormView({
-                el: this.$(this.formContainerSelector),
                 model: this.model,
                 userModel: this.userModel
-            });
-            this.childViews.push(this.reqFormView);
-            this.reqFormView.render();
+            }).render();
+            this.$(this.formContainerSelector).append(this.reqFormView.el);
 
             return this;
         }
@@ -792,7 +792,7 @@ define([
             this.template = _.template(read_requisition_template);
 
             // bindings
-            this.listenTo(this.model, 'change', this.changed);
+            this.listenTo(this.model, 'change', this.render);
 
             // child views
             this.childViews = [];
@@ -807,10 +807,6 @@ define([
             this.loader.load({
                 success: _.bind(this.render, this)
             });
-        },
-
-        changed: function() {
-            this.render();
         },
 
         render: function() {
@@ -874,13 +870,15 @@ define([
             this.template =  _.template(requisition_template);
 
             // child views
-            this.childViews = [];
             this.requisitionView = null;
+        },
+
+        childViews: function() {
+            return [this.requisitionView];
         },
 
         render: function() {
             this.destroyChildViews();
-            this.childViews = [];
             this.$el.html(this.template());
 
             // TODO does it make more sense for the mediator to hvae this logic? What purpose does this parent view serve?
@@ -889,29 +887,24 @@ define([
             // editing, or creating a requisition
             if (this.action === 'create') {
                 this.requisitionView = new CreateRequisitionView({
-                    el: this.$(this.requisition_view_selector),
                     model: this.model,
                     userModel: this.userModel
-                });
-                this.childViews.push(this.requisitionView);
-                this.requisitionView.render();
+                }).render();
             }
             else if (this.action === 'edit') {
                 this.requisitionView = new EditRequisitionView({
-                    el: this.$(this.requisition_view_selector),
                     model: this.model,
                     userModel: this.userModel
-                });
-                this.childViews.push(this.requisitionView);
-                this.requisitionView.render();
+                }).render();
             }
             else if (this.action === 'read') {
                 this.requisitionView = new ReadRequisitionView({
-                    el: this.$(this.requisition_view_selector),
                     model: this.model
-                });
-                this.childViews.push(this.requisitionView);
-                this.requisitionView.render();
+                }).render();
+            }
+
+            if (this.requisitionView) {
+                this.$(this.requisition_view_selector).append(this.requisitionView.el);
             }
 
             return this;
