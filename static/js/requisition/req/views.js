@@ -5,7 +5,6 @@ define([
     'core/view',
     'api/loader',
     'api/models',
-    'profile/models',
     'lookup/views',
     'text!requisition/req/templates/req.html',
     'text!requisition/req/templates/requisition_create.html',
@@ -23,7 +22,6 @@ define([
     view,
     api_loader,
     api_models,
-    profile_models, // TODO reference api models
     lookup_views,
     requisition_template,
     create_requisition_template,
@@ -444,12 +442,13 @@ define([
             this.lookupView = null;
             this.wishlistView = null;
             
-            //Requisition status options
+            // Requisition status options
             this.statusFormOptions = [
                 { option: 'Open', value: 'OPEN' },
                 { option: 'Closed', value: 'CLOSED' }
             ];
 
+            // Requisition position type options
             this.positionTypeFormOptions = [
                 { option: 'Junior Developer', value: 'Junior Developer' },
                 { option: 'Senior Developer', value: 'Senior Developer' },
@@ -463,7 +462,7 @@ define([
                 }
             ]);
 
-            if(this.model.id) {
+            if(this.model.id) { // TODO
                 this.loader.load({
                     success: _.bind(function() {
                         this.workingCollection = this.model.get_requisition_technologies().clone();
@@ -550,8 +549,8 @@ define([
          * @param data  the LookupResult.matches object which is scope/category specific
          */
         _updateLocationData: function(value, data) {
-            this.location = new profile_models.LocationPreference({
-                locationId: data.id,
+            this.location = new api_models.Location({
+                id: data.id,
                 city: data.city,
                 state: data.state,
                 zip: data.zip,
@@ -615,7 +614,7 @@ define([
          * if no object is available
          */
         getLocationId: function() {
-            return this.location.locationId();
+            return this.location.id;
         },
 
         /**
