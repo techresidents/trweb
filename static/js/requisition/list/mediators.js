@@ -43,7 +43,7 @@ define([
                 var collection = new api.RequisitionCollection();
                 this.view = new requisition_list_views.RequisitionsSummaryView({
                     collection: collection,
-                    query: collection.query()
+                    query: collection.query().slice(0, 5)
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {

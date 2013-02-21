@@ -3,6 +3,7 @@ define([
     'underscore',
     'core/view',
     'grid/views',
+    'paginator/views',
     'api/loader',
     'text!requisition/list/templates/list.html',
     'text!requisition/list/templates/list_item.html'
@@ -11,6 +12,7 @@ define([
     _,
     view,
     grid_views,
+    paginator_views,
     api_loader,
     list_template,
     list_item_template) {
@@ -85,7 +87,7 @@ define([
      */
     var RequisitionsSummaryView = view.View.extend({
 
-        gridSelector: '.content',
+        contentSelector: '.content',
 
         initialize: function(options) {
             console.log('ParentView init');
@@ -97,6 +99,7 @@ define([
 
             //child views
             this.requisitionGridView = null;
+            this.paginatorView = null;
 
             this.loader = new api_loader.ApiLoader([
                 {
@@ -138,7 +141,6 @@ define([
                             options: function (model) {
                                 var value = null;
                                 var location = model.get_location();
-                                console.log(location);
                                 if (location.get_city()) {
                                     value = location.get_city() + ', ' + location.get_state();
                                 } else {
@@ -160,19 +162,29 @@ define([
         },
 
         childViews: function() {
-            return [this.requisitionGridView];
+            return [this.requisitionGridView, this.paginatorView];
         },
 
         render: function() {
             console.log('ParentView render');
             this.destroyChildViews();
             this.$el.html(this.template());
+
+            // setup grid view
             this.requisitionGridView = new grid_views.GridView({
                 config: this.gridConfig,
                 collection: this.collection,
                 query: this.query
             }).render();
-            this.$(this.gridSelector).append(this.requisitionGridView.el);
+            this.$(this.contentSelector).append(this.requisitionGridView.el);
+
+            // setup paginator
+            this.paginatorView = new paginator_views.PaginatorView({
+                maxPages: 10,
+                collection: this.collection,
+                query: this.query
+            }).render();
+            this.$(this.contentSelector).append(this.paginatorView.el);
 
             return this;
         }
