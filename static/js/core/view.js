@@ -50,6 +50,16 @@ define([
             this.$el.unbind(namespace);
         },
 
+        listenTo: function(obj, name, callback) {
+            var wrapper = function() {
+                if(this._listeners && !_.isEmpty(this._listeners)) {
+                    callback.apply(this, arguments);
+                }
+            };
+
+            Backbone.View.prototype.listenTo.call(this, obj, name, wrapper);
+        },
+
         destroyChildViews: function() {
             var childViews = base.getValue(this, 'childViews');
             if(this.childViews) {
