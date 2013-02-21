@@ -22,41 +22,21 @@ define([
     };
 
     /**
-     * Requisitions main view.
+     * Requisition grid view.
      * @constructor
      * @param {Object} options
-     *   collection: {RequisitionCollection} (required)
+     *   collection: {ApiCollection} collection (required)
+     *   query: {ApiQuery} query (optional)
      */
-    var RequisitionsSummaryView = view.View.extend({
-
-        contentSelector: '.content',
+    var RequisitionGridView = grid_views.GridView.extend({
 
         initialize: function(options) {
-            console.log('ParentView init');
-            this.collection = options.collection;
-            this.query = options.query;
-            this.template =  _.template(list_template);
-            this.gridConfig = null;
-            this.initGridConfig();
-
-            //child views
-            this.requisitionGridView = null;
-            this.paginatorView = null;
-
-            this.loader = new api_loader.ApiLoader([
-                {
-                    instance: this.collection,
-                    withRelated: ['location']
-                }
-            ]);
-
-            this.loader.load({
-                success: _.bind(this.render, this)
-            });
+            this.initConfig(options);
+            grid_views.GridView.prototype.initialize.apply(this, arguments);
         },
 
-        initGridConfig: function() {
-            this.gridConfig = {
+        initConfig: function(options) {
+            options.config = {
                 columns: [
                     {
                         column: 'Req#',
@@ -119,6 +99,39 @@ define([
                     }
                 ]
             };
+        }
+    });
+
+    /**
+     * Requisitions main view.
+     * @constructor
+     * @param {Object} options
+     *   collection: {RequisitionCollection} (required)
+     */
+    var RequisitionsSummaryView = view.View.extend({
+
+        contentSelector: '.content',
+
+        initialize: function(options) {
+            console.log('ParentView init');
+            this.collection = options.collection;
+            this.query = options.query;
+            this.template =  _.template(list_template);
+
+            //child views
+            this.requisitionGridView = null;
+            this.paginatorView = null;
+
+            this.loader = new api_loader.ApiLoader([
+                {
+                    instance: this.collection,
+                    withRelated: ['location']
+                }
+            ]);
+
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
         },
 
         childViews: function() {
@@ -131,8 +144,7 @@ define([
             this.$el.html(this.template());
 
             // setup grid view
-            this.requisitionGridView = new grid_views.GridView({
-                config: this.gridConfig,
+            this.requisitionGridView = new RequisitionGridView({
                 collection: this.collection,
                 query: this.query
             }).render();
