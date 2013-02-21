@@ -104,7 +104,7 @@ define([
         initialize: function(options) {
             this.model = options.model;
             this.template = _.template(edit_wishlist_item_template);
-            this.listenTo(this.model, 'change', this.changed);
+            this.listenTo(this.model, 'change', this.render);
             this.loader = new api_loader.ApiLoader([
                 { instance: this.model, withRelated: ['technology'] }
             ]);
@@ -129,26 +129,16 @@ define([
         },
 
         onUpArrow: function() {
-            // Need to hide tooltip since this view will be removed
-            // from the DOM before the mouseleave() event fires
-            this.$("[rel=tooltip]").tooltip('hide');
             var yrs = this.model.get_yrs_experience();
             this.model.set_yrs_experience(yrs + 1);
         },
 
         onDownArrow: function() {
-            // Need to hide tooltip since this view will be removed
-            // from the DOM before the mouseleave() event fires
-            this.$("[rel=tooltip]").tooltip('hide');
             var yrs = this.model.get_yrs_experience();
             // minimum of 1 yr experience
             if (yrs > 1) {
                 this.model.set_yrs_experience(yrs - 1);
             }
-        },
-
-        changed: function() {
-            this.render();
         },
 
         render: function() {
@@ -356,7 +346,7 @@ define([
         initialize: function(options) {
             this.model = options.model;
             this.collection = options.collection;
-            this.listenTo(this.model, 'change', this.changed);
+            this.listenTo(this.model, 'change', this.render);
             this.template = _.template(edit_wishlist_template);
 
             // child views
@@ -367,6 +357,7 @@ define([
                 { instance: this.model, withRelated: ['requisition_technologies__technology'] }
             ]);
 
+            // only need to load if model already has an ID
             if (this.model.id) {
                 this.loader.load({
                     success: _.bind(this.render, this)
@@ -377,10 +368,6 @@ define([
 
         childViews: function() {
             return [this.addItemView, this.listView];
-        },
-
-        changed: function() {
-            this.render();
         },
 
         render: function() {
@@ -440,7 +427,7 @@ define([
             this.validator = null;
 
             // bindings
-            this.listenTo(this.model, 'change', this.changed);
+            this.listenTo(this.model, 'change', this.render);
 
             this.template = _.template(requisition_form_template);
 
@@ -468,6 +455,7 @@ define([
                 }
             ]);
 
+            // only need to load if model already has an ID (e.g. for edit)
             if (this.model.id) {
                 this.loader.load({
                     success: _.bind(function() {
@@ -566,10 +554,6 @@ define([
                 zip: data.zip,
                 country: data.country
             });
-        },
-
-        changed: function() {
-            this.render();
         },
 
         render: function() {
@@ -893,8 +877,6 @@ define([
         render: function() {
             this.destroyChildViews();
             this.$el.html(this.template());
-
-            // TODO does it make more sense for the mediator to hvae this logic? What purpose does this parent view serve?
 
             // Need to determine if user is reading,
             // editing, or creating a requisition
