@@ -2,6 +2,7 @@ define([
     'underscore',
     'common/notifications',
     'core/mediator',
+    'current/proxies',
     'api/models',
     'requisition/notifications',
     'requisition/list/views'
@@ -9,6 +10,7 @@ define([
     _,
     notifications,
     mediator,
+    current_proxies,
     api,
     requisition_notifications,
     requisition_list_views) {
@@ -36,11 +38,13 @@ define([
 
         initialize: function(options) {
             this.view = null;
+            this.currentProxy = this.facade.getProxy(current_proxies.CurrentProxy.NAME);
         },
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-                var collection = new api.RequisitionCollection();
+                var user = this.currentProxy.currentUser();
+                var collection = user.get_tenant().get_requisitions();
                 this.view = new requisition_list_views.RequisitionsSummaryView({
                     collection: collection,
                     query: collection.query().slice(0, 5)

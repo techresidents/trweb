@@ -30,6 +30,11 @@ define([
      */
     var RequisitionGridView = grid_views.GridView.extend({
 
+        events: _.extend({
+
+            }, grid_views.GridView.prototype.events
+        ),
+
         initialize: function(options) {
             this.initConfig(options);
             grid_views.GridView.prototype.initialize.apply(this, arguments);
