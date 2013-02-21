@@ -40,7 +40,11 @@ define([
          * @return {User}
          */
         currentUser: function() {
-            return this.user;
+            var result = null;
+            if (this.user) {
+                result = this.user.clone();
+            }
+            return result;
         }
 
     }, {
