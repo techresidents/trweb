@@ -2,12 +2,14 @@ define([
     'jquery',
     'underscore',
     'core/view',
+    'api/loader',
     'text!requisition/list/templates/list.html',
     'text!requisition/list/templates/list_item.html'
 ], function(
     $,
     _,
     view,
+    api_loader,
     list_template,
     list_item_template) {
 
@@ -47,33 +49,17 @@ define([
 
         tagName: 'ul',
 
-        initialize: function() {
-            this.listenTo(this.collection, 'loaded', this.loaded);
-            this.listenTo(this.collection, 'reset', this.render);
-            this.listenTo(this.collection, 'add', this.added);
+        initialize: function(options) {
+            this.collection = options.collection;
+            this.listenTo(this.collection, "reset", this.render);
+            this.listenTo(this.collection, "add", this.render);
+            this.listenTo(this.collection, "remove", this.render);
             this.childViews = [];
-
-            if (!this.collection.isLoading()) {
-                this.load();
-            }
-        },
-
-        loaded: function(instance) {
-            if (instance === this.collection) {
-                this.load();
-            }
-        },
-
-        load: function() {
-            if (!this.collection.isLoaded()) {
-                this.collection.fetch();
-            }
         },
 
         render: function() {
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
+            console.log('listView render');
+            this.destroyChildViews();
             this.childViews = [];
             this.collection.each(this.added, this);
             return this;
@@ -97,45 +83,35 @@ define([
      */
     var RequisitionListSummaryView = view.View.extend({
 
-        events: {
-        },
-
         listSelector: 'ul',
 
-        childViews: function() {
-            return [this.requisitionListView];
-        },
-
-        initialize: function() {
+        initialize: function(options) {
+            console.log('ParentView init');
+            this.collection = options.collection;
             this.template =  _.template(list_template);
 
             //child views
             this.requisitionListView = null;
 
-            if (!this.collection.isLoading()) {
-                this.load();
-            }
+            this.loader = new api_loader.ApiLoader([
+                {
+                    instance: this.collection
+                }
+            ]);
+
+            this.loader.load({
+                success: _.bind(this.render, this)
+            });
         },
 
-        loaded: function(instance) {
-            if(instance === this.collection) {
-                this.load();
-            }
-        },
-
-        load: function() {
-            if(!this.collection.isLoaded()) {
-                this.collection.fetch();
-            }
+        childViews: function() {
+            return [this.requisitionListView];
         },
 
         render: function() {
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
-
+            console.log('ParentView render');
+            this.destroyChildViews();
             this.$el.html(this.template());
-
             this.requisitionListView = new RequisitionListView({
                 el: this.$(this.listSelector),
                 collection: this.collection
