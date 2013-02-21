@@ -156,6 +156,24 @@ define([
                         column: 'Status',
                         headerCellView: { options: { sort: 'status' } },
                         cellView: { options: { valueAttribute: 'status' } }
+                    },
+                    {
+                        column: 'Actions',
+                        cellView: {
+                            ctor: grid_views.GridActionCellView,
+                            options: function(model) {
+                                return {
+                                    actions: [
+                                        {key: 'close', label: 'Close'},
+                                        {key: 'edit', label: 'Edit'},
+                                        {key: 'view', label: 'View', handler: function() {console.log('blah');}},
+                                        {key: 'divider'},
+                                        {key: 'delete', label: 'Delete'}
+                                    ]
+                                };
+
+                            }
+                        }
                     }
                 ]
             };
