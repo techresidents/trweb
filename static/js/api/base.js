@@ -395,15 +395,21 @@ define([
         },
 
         save: function(key, value, options) {
-            if(this.session && this.isNew() && this.collection) {
-                this.session.removeCollection(this.collection);
+            if(this.session && this.isNew) {
+                if(this.collection) {
+                    this.session.removeCollection(this.collection);
+                }
+                this.session.removeCollection(new this.collectionConstructor());
             }
             return Backbone.Model.prototype.save.call(this, key, value, options);
         },
 
         destroy: function(options) {
-            if(this.session && !this.isNew() && this.collection) {
-                this.session.removeCollection(this.collection);
+            if(this.session && !this.isNew()) {
+                if(this.collection) {
+                    this.session.removeCollection(this.collection);
+                }
+                this.session.removeCollection(new this.collectionConstructor());
             }
             return Backbone.Model.prototype.destroy.call(this, options);
         }
@@ -764,8 +770,11 @@ define([
 
     }, {
 
-        key: function(query) {
-            return this.prototype.url();
+        key: function() {
+            var baseUrl = base.getValue(this.prototype, 'baseUrl');
+            var urlRoot = base.getValue(this.prototype, 'urlRoot');
+            var result = baseUrl + urlRoot;
+            return result;
         }
     });
 
