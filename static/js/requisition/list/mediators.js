@@ -40,8 +40,10 @@ define([
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-                this.view = new requisition_list_views.RequisitionListSummaryView({
-                    collection: new api.RequisitionCollection()
+                var collection = new api.RequisitionCollection();
+                this.view = new requisition_list_views.RequisitionsSummaryView({
+                    collection: collection,
+                    query: collection.query()
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {

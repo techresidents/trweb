@@ -2,6 +2,7 @@ define([
     'jquery',
     'underscore',
     'core/view',
+    'grid/views',
     'api/loader',
     'text!requisition/list/templates/list.html',
     'text!requisition/list/templates/list_item.html'
@@ -9,6 +10,7 @@ define([
     $,
     _,
     view,
+    grid_views,
     api_loader,
     list_template,
     list_item_template) {
@@ -76,26 +78,30 @@ define([
     });
 
     /**
-     * Requisition list main view.
+     * Requisitions main view.
      * @constructor
      * @param {Object} options
      *   collection: {RequisitionCollection} (required)
      */
-    var RequisitionListSummaryView = view.View.extend({
+    var RequisitionsSummaryView = view.View.extend({
 
-        listSelector: 'ul',
+        gridSelector: '.content',
 
         initialize: function(options) {
             console.log('ParentView init');
             this.collection = options.collection;
+            this.query = options.query;
             this.template =  _.template(list_template);
+            this.gridConfig = null;
+            this.initGridConfig();
 
             //child views
-            this.requisitionListView = null;
+            this.requisitionGridView = null;
 
             this.loader = new api_loader.ApiLoader([
                 {
-                    instance: this.collection
+                    instance: this.collection,
+                    withRelated: ['location']
                 }
             ]);
 
@@ -104,18 +110,69 @@ define([
             });
         },
 
+        initGridConfig: function() {
+            this.gridConfig = {
+                columns: [
+                    {
+                        column: 'Req#',
+                        headerCellView: { options: { sort: 'employer_requisition_identifier' } },
+                        cellView: { options: { valueAttribute: 'employer_requisition_identifier' } }
+                    },
+                    {
+                        column: 'Title',
+                        headerCellView: { options: { sort: 'title' } },
+                        cellView: {
+                            ctor: grid_views.GridLinkCellView,
+                            options: function (model) {
+                                return {
+                                    href: '/requisition/req/' + model.get_id(),
+                                    value: model.get_title()
+                                };
+                            }
+                        }
+                    },
+                    {
+                        column: 'Location',
+                        headerCellView: { options: { sort: 'location__state' } },
+                        cellView: {
+                            options: function (model) {
+                                var value = null;
+                                var location = model.get_location();
+                                console.log(location);
+                                if (location.get_city()) {
+                                    value = location.get_city() + ', ' + location.get_state();
+                                } else {
+                                    value = location.get_state();
+                                }
+                                return {
+                                    value: value
+                                };
+                            }
+                        }
+                    },
+                    {
+                        column: 'Status',
+                        headerCellView: { options: { sort: 'status' } },
+                        cellView: { options: { valueAttribute: 'status' } }
+                    }
+                ]
+            };
+        },
+
         childViews: function() {
-            return [this.requisitionListView];
+            return [this.requisitionGridView];
         },
 
         render: function() {
             console.log('ParentView render');
             this.destroyChildViews();
             this.$el.html(this.template());
-            this.requisitionListView = new RequisitionListView({
-                el: this.$(this.listSelector),
-                collection: this.collection
+            this.requisitionGridView = new grid_views.GridView({
+                config: this.gridConfig,
+                collection: this.collection,
+                query: this.query
             }).render();
+            this.$(this.gridSelector).append(this.requisitionGridView.el);
 
             return this;
         }
@@ -123,6 +180,6 @@ define([
 
     return {
         EVENTS: EVENTS,
-        RequisitionListSummaryView: RequisitionListSummaryView
+        RequisitionsSummaryView: RequisitionsSummaryView
     };
 });
