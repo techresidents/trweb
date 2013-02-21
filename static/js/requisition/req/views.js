@@ -383,7 +383,7 @@ define([
 
             // view to manage list of items
             this.listView = new EditListView({
-                el: this.$(this.listSelector), // TODO
+                el: this.$(this.listSelector),
                 model: this.model,
                 collection: this.collection
             }).render();
