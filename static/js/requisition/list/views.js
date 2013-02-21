@@ -5,8 +5,7 @@ define([
     'grid/views',
     'paginator/views',
     'api/loader',
-    'text!requisition/list/templates/list.html',
-    'text!requisition/list/templates/list_item.html'
+    'text!requisition/list/templates/list.html'
 ], function(
     $,
     _,
@@ -14,70 +13,13 @@ define([
     grid_views,
     paginator_views,
     api_loader,
-    list_template,
-    list_item_template) {
+    list_template) {
 
     /**
      * Requisition List View Events
      */
     var EVENTS = {
     };
-
-    /**
-     * Requisition list item view.
-     * @constructor
-     * @param {Object} options
-     *   model: Requisition model (required)
-     */
-    var RequisitionListItemView = view.View.extend({
-
-        tagName: 'li',
-
-        initialize: function() {
-            this.template = _.template(list_item_template);
-        },
-
-        render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
-            return this;
-        }
-    });
-
-    /**
-     * Requisition list view.
-     * @constructor
-     * @param {Object} options
-     *   collection: RequisitionCollection (required)
-     */
-    var RequisitionListView = view.View.extend({
-
-        tagName: 'ul',
-
-        initialize: function(options) {
-            this.collection = options.collection;
-            this.listenTo(this.collection, "reset", this.render);
-            this.listenTo(this.collection, "add", this.render);
-            this.listenTo(this.collection, "remove", this.render);
-            this.childViews = [];
-        },
-
-        render: function() {
-            console.log('listView render');
-            this.destroyChildViews();
-            this.childViews = [];
-            this.collection.each(this.added, this);
-            return this;
-        },
-
-        added: function(model) {
-            var view = new RequisitionListItemView({
-                model: model
-            }).render();
-
-            this.childViews.push(view);
-            this.$el.append(view.el);
-        }
-    });
 
     /**
      * Requisitions main view.
