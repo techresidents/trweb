@@ -26,6 +26,22 @@
     margin-bottom: 10px;
 }
 
+.req-summary-grid .grid-cell-location {
+    width: 200px;
+}
+
+.req-summary-grid .grid-cell-internal-id {
+    width: 100px;
+}
+
+.req-summary-grid .grid-cell-status {
+    width: 100px;
+}
+
+.req-summary-grid .grid-cell-title {
+    width: 250px;
+}
+
 .wishlist-container > div {
     display: inline-block;
     border: 1px solid #E3E3E3;

@@ -25,15 +25,19 @@ define([
      * Requisition grid view.
      * @constructor
      * @param {Object} options
-     *   collection: {ApiCollection} collection (required)
+     *   collection: {RequisitionCollection} collection (required)
      *   query: {ApiQuery} query (optional)
      */
     var RequisitionGridView = grid_views.GridView.extend({
 
         events: _.extend({
-
+            // Place events here
             }, grid_views.GridView.prototype.events
         ),
+
+        attributes: {
+            'class': 'grid req-summary-grid'
+        },
 
         initialize: function(options) {
             this.initConfig(options);
@@ -44,7 +48,7 @@ define([
             options.config = {
                 columns: [
                     {
-                        column: 'Req#',
+                        column: 'Internal ID',
                         headerCellView: { options: { sort: 'employer_requisition_identifier' } },
                         cellView: { options: { valueAttribute: 'employer_requisition_identifier' } }
                     },
@@ -112,6 +116,7 @@ define([
      * @constructor
      * @param {Object} options
      *   collection: {RequisitionCollection} (required)
+     *   query: {ApiQuery} query (optional)
      */
     var RequisitionsSummaryView = view.View.extend({
 

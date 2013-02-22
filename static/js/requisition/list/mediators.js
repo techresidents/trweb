@@ -47,7 +47,7 @@ define([
                 var collection = user.get_tenant().get_requisitions();
                 this.view = new requisition_list_views.RequisitionsSummaryView({
                     collection: collection,
-                    query: collection.query().slice(0, 5)
+                    query: collection.query().slice(0, 10)
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
