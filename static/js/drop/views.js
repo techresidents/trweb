@@ -30,6 +30,7 @@ define([
         defaultTemplate: drop_template,
 
         events: {
+            'click .drop-content': 'onDropContentClick'
         },
 
         childViews: function() {
@@ -129,6 +130,14 @@ define([
             var target = $(e.target);
             if(!target.hasClass('drop-button')) {
                 this.close();
+            }
+        },
+
+        onDropContentClick: function(e) {
+            //if autoclose is true prevent drop view from closing
+            //on click inside .drop-content
+            if(this.autoclose) {
+                e.stopPropagation();
             }
         },
 

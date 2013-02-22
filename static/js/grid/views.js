@@ -178,7 +178,9 @@ define([
                     value: this.sort,
                     direction: direction
                 });
-                this.triggerEvent(EVENTS.GRID_SORT, orderBy);
+                this.triggerEvent(EVENTS.GRID_SORT, {
+                    orderByModel: orderBy
+                });
             }
         }
     });
@@ -449,8 +451,13 @@ define([
         },
 
         onDropMenuSelected: function(e, item) {
+            var eventBody = {
+                action: item,
+                model: this.model,
+                query: this.query
+            };
             e.stopPropagation();
-            this.triggerEvent(EVENTS.GRID_ACTION, item);
+            this.triggerEvent(EVENTS.GRID_ACTION, eventBody);
         }
     });
 
@@ -541,10 +548,6 @@ define([
      */
     var GridView = view.View.extend({
 
-        attributes: {
-            'class': 'grid'
-        },
-
         defaultTemplate: grid_template,
 
         events: {
@@ -581,12 +584,17 @@ define([
             });
         },
 
+        classes: function() {
+            return ['grid'];
+        },
+
         render: function() {
             this.destroyChildViews();
             this.rowViews = [];
             
             var context = base.getValue(this, 'context', this);
             this.$el.html(this.template(context));
+            this.$el.attr('class', this.classes().join(' '));
             
             this.headerRowView = this.createHeaderRow(
                     this.config,
@@ -641,11 +649,12 @@ define([
             this.$('tbody').append(view.el);
         },
         
-        onGridAction: function(e, action) {
+        onGridAction: function(e, eventBody) {
         },
 
-        onGridSort: function(e, orderByModel) {
+        onGridSort: function(e, eventBody) {
             var pageSize = 20;
+            var orderByModel = eventBody.orderByModel;
             var slice = this.query.state.slice();
             if(slice) {
                 pageSize = slice.end() - slice.start();

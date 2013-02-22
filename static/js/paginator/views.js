@@ -75,7 +75,6 @@ define([
                 }
                 
                 totalCount = this.collection.meta.total_count;
-                
                 if(totalCount) {
                     totalPages = Math.ceil(totalCount / pageSize);
                 }             
