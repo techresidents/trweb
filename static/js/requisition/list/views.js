@@ -45,8 +45,24 @@ define([
         },
 
         initConfig: function(options) {
+            var that = this;
             options.config = {
                 columns: [
+                    {
+                        column: 'Created',
+                        headerCellView: { options: { sort: 'created' } },
+                        cellView: {
+                            options: function (model) {
+                                var value = that.fmt.date(
+                                    model.get_created(),
+                                    'MM/dd/yy'
+                                );
+                                return {
+                                    value: value
+                                };
+                            }
+                        }
+                    },
                     {
                         column: 'Internal ID',
                         headerCellView: { options: { sort: 'employer_requisition_identifier' } },

@@ -26,8 +26,12 @@
     margin-bottom: 10px;
 }
 
+.req-summary-grid .grid-cell-created {
+    width: 75px;
+}
+
 .req-summary-grid .grid-cell-location {
-    width: 200px;
+    width: 180px;
 }
 
 .req-summary-grid .grid-cell-internal-id {
@@ -35,11 +39,11 @@
 }
 
 .req-summary-grid .grid-cell-status {
-    width: 100px;
+    width: 80px;
 }
 
 .req-summary-grid .grid-cell-title {
-    width: 250px;
+    width: 180px;
 }
 
 .wishlist-container > div {
