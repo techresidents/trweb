@@ -206,14 +206,6 @@ define([
                 return result;
             }
 
-            result.set(options.attributes);
-            result.url = this.url;
-            result._loaded = this._loaded;
-            result._isDirty = this._isDirty;
-            if(!result._parentRelation) {
-                result._parentRelation = _.clone(this._parentRelation);
-            }
-
             if(options.withRelated) {
                 _.each(options.withRelated, function(relations) {
                     relations = relations.split('__');
@@ -228,6 +220,15 @@ define([
                     relation.clone(newOptions);
                 }, this);
             }
+
+            result.url = this.url;
+            result._loaded = this._loaded;
+            result._isDirty = this._isDirty;
+            if(!result._parentRelation) {
+                result._parentRelation = _.clone(this._parentRelation);
+            }
+            result.set(options.attributes);
+
 
             return result;
         },
@@ -578,19 +579,19 @@ define([
                 return result;
             }
 
-            result.reset(_.map(options.models, function(model) {
+            var models = _.map(options.models, function(model) {
                 return model.clone({
                     withRelated: options.withRelated
                 });
-            }));
-            
+            });
+
             result.meta = _.clone(this.meta);
             result.url = this.url;
             result._loaded = this._loaded;
             if(!result.parentRelation) {
                 result._parentRelation = _.clone(this._parentRelation);
             }
-
+            result.reset(models);
 
             return result;
         },
