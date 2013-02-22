@@ -4,6 +4,7 @@
     text-shadow: 0 1px 0 #ffffff;
     opacity: 0.4;
     filter: alpha(opacity=40);
+    color: #000000;
 }
 
 .arrow:hover {
@@ -18,14 +19,6 @@
     font-size: 12px;
     line-height: 12px;
     margin-top: 8px;
-}
-
-/* for jquery validator */
-label.error {
-    float: none;
-    color: #e20b12;
-    padding-left: .5em;
-    vertical-align: top;
 }
 
 #alerts .alert {
@@ -43,7 +36,10 @@ label.error {
     padding-right: 5px;
     font-size: 16px;
     line-height: 36px;
-    background-color: #dadada;
+    background-color: rgba(234, 143, 0, 0.15);
+    border-color: rgba(234, 143, 0, 0.5);
+    color: #ea8f00;
+
 }
 
 .wishlist-container > div > .close {
@@ -53,14 +49,16 @@ label.error {
 
 .wishlist-item-years-container {
     display: inline-block;
-    border-right: 1px solid #eeeeee;
+    border-right: 1px;
+    border-right-style: solid;
+    border-right-color: rgba(234, 143, 0, 0.5);
     margin-right: 2px;
     padding-left: 5px;
     padding-right: 5px;
 }
 
 .wishlist-item-years-text {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 #wishlist-input {

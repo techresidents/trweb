@@ -1,8 +1,14 @@
 <form id="requisition-form" class="form-horizontal" action="javascript:void(0);">
     <div class="control-group">
-        <label class="control-label" for="inputEmployerReqID">Employer Requisition#</label>
+        <label class="control-label" for="inputTitle">Title</label>
         <div class="controls">
-            <input id="inputEmployerReqID" name="employer_requisition_identifier" type="text" placeholder="Requisition ID (optional)" maxlength="100">
+            <input id="inputTitle" name="title" type="text" placeholder="Requisition Title" maxlength="100" required>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="inputEmployerReqID">Requisition#</label>
+        <div class="controls">
+            <input id="inputEmployerReqID" name="employer_requisition_identifier" type="text" placeholder="Internal Req ID (optional)" maxlength="100">
         </div>
     </div>
     <div class="control-group">
@@ -13,12 +19,6 @@
                 <option value="<%= item.value %>"><%= item.option %></option>
                 <% }); %>
             </select>
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label" for="inputTitle">Title</label>
-        <div class="controls">
-            <input id="inputTitle" name="title" type="text" placeholder="Requisition Title" maxlength="100" required>
         </div>
     </div>
     <div class="control-group">

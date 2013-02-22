@@ -5,14 +5,13 @@ define([
     'core/view',
     'api/loader',
     'api/models',
-    'profile/models',
     'lookup/views',
     'text!requisition/req/templates/req.html',
     'text!requisition/req/templates/requisition_create.html',
     'text!requisition/req/templates/requisition_read.html',
     'text!requisition/req/templates/requisition_edit.html',
     'text!requisition/req/templates/requisition_form.html',
-    'text!requisition/req/templates/wishlist.html',
+    'text!requisition/req/templates/wishlist_edit.html',
     'text!requisition/req/templates/wishlist_item_edit.html',
     'text!requisition/req/templates/wishlist_item.html',
     'text!requisition/req/templates/wishlist_add_item.html'
@@ -23,14 +22,13 @@ define([
     view,
     api_loader,
     api_models,
-    profile_models, // TODO reference api models
     lookup_views,
     requisition_template,
     create_requisition_template,
     read_requisition_template,
     edit_requisition_template,
     requisition_form_template,
-    wishlist_template,
+    edit_wishlist_template,
     edit_wishlist_item_template,
     wishlist_item_template,
     wishlist_add_item_template) {
@@ -66,6 +64,13 @@ define([
             });
         },
 
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
         changed: function() {
             this.render();
         },
@@ -99,7 +104,7 @@ define([
         initialize: function(options) {
             this.model = options.model;
             this.template = _.template(edit_wishlist_item_template);
-            this.listenTo(this.model, 'change', this.changed);
+            this.listenTo(this.model, 'change', this.render);
             this.loader = new api_loader.ApiLoader([
                 { instance: this.model, withRelated: ['technology'] }
             ]);
@@ -107,6 +112,13 @@ define([
             this.loader.load({
                 success: _.bind(this.render, this)
             });
+        },
+
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
         },
 
         onDestroy: function() {
@@ -117,26 +129,16 @@ define([
         },
 
         onUpArrow: function() {
-            // Need to hide tooltip since this view will be removed
-            // from the DOM before the mouseleave() event fires
-            this.$("[rel=tooltip]").tooltip('hide');
             var yrs = this.model.get_yrs_experience();
             this.model.set_yrs_experience(yrs + 1);
         },
 
         onDownArrow: function() {
-            // Need to hide tooltip since this view will be removed
-            // from the DOM before the mouseleave() event fires
-            this.$("[rel=tooltip]").tooltip('hide');
             var yrs = this.model.get_yrs_experience();
             // minimum of 1 yr experience
             if (yrs > 1) {
                 this.model.set_yrs_experience(yrs - 1);
             }
-        },
-
-        changed: function() {
-            this.render();
         },
 
         render: function() {
@@ -237,14 +239,15 @@ define([
             this.template = _.template(wishlist_add_item_template);
 
             // child views
-            this.childViews = [];
             this.lookupView = null;
+        },
+
+        childViews: function() {
+            return [this.lookupView];
         },
 
         render: function() {
             this.destroyChildViews();
-            this.childViews = [];
-
             this.$el.html(this.template());
 
             // setup technology autocomplete
@@ -256,7 +259,6 @@ define([
                 onselect: this.updateOnSelect,
                 context: this
             });
-            this.childViews.push(this.lookupView);
 
             return this;
         },
@@ -338,20 +340,16 @@ define([
      */
     var EditRequisitionWishlistView = view.View.extend({
 
-        addItemSelector: '#add-wishlist-item',
-        listSelector: '#wishylist',
-
-        events: {
-        },
+        addItemSelector: '.add-wishlist-item-container',
+        listSelector: '.wishlist-container',
 
         initialize: function(options) {
             this.model = options.model;
             this.collection = options.collection;
-            this.listenTo(this.model, 'change', this.changed);
-            this.template = _.template(wishlist_template);
+            this.listenTo(this.model, 'change', this.render);
+            this.template = _.template(edit_wishlist_template);
 
             // child views
-            this.childViews = [];
             this.addItemView = null;
             this.listView = null;
 
@@ -359,7 +357,8 @@ define([
                 { instance: this.model, withRelated: ['requisition_technologies__technology'] }
             ]);
 
-            if(this.model.id) {
+            // only need to load if model already has an ID
+            if (this.model.id) {
                 this.loader.load({
                     success: _.bind(this.render, this)
                 });
@@ -367,33 +366,27 @@ define([
 
         },
 
-        changed: function() {
-            this.render();
+        childViews: function() {
+            return [this.addItemView, this.listView];
         },
 
         render: function() {
             this.destroyChildViews();
-            this.childViews = [];
-
             this.$el.html(this.template());
 
             // view to add items to wishlist
             this.addItemView = new AddWishlistItemView({
-                el: this.$(this.addItemSelector),
                 model: this.model,
                 collection: this.collection
-            });
-            this.childViews.push(this.addItemView);
-            this.addItemView.render();
+            }).render();
+            this.$(this.addItemSelector).append(this.addItemView.el);
 
             // view to manage list of items
             this.listView = new EditListView({
                 el: this.$(this.listSelector),
                 model: this.model,
                 collection: this.collection
-            });
-            this.childViews.push(this.listView);
-            this.listView.render();
+            }).render();
 
             return this;
         }
@@ -409,7 +402,6 @@ define([
     var RequisitionFormView = view.View.extend({
 
         formSelector: '#requisition-form',
-
         employerReqIdSelector: '#inputEmployerReqID',
         statusSelector: '#inputStatus',
         titleSelector: '#inputTitle',
@@ -435,21 +427,21 @@ define([
             this.validator = null;
 
             // bindings
-            this.listenTo(this.model, 'change', this.changed);
+            this.listenTo(this.model, 'change', this.render);
 
             this.template = _.template(requisition_form_template);
 
             // child views
-            this.childViews = [];
             this.lookupView = null;
             this.wishlistView = null;
             
-            //Requisition status options
+            // Requisition status options
             this.statusFormOptions = [
                 { option: 'Open', value: 'OPEN' },
                 { option: 'Closed', value: 'CLOSED' }
             ];
 
+            // Requisition position type options
             this.positionTypeFormOptions = [
                 { option: 'Junior Developer', value: 'Junior Developer' },
                 { option: 'Senior Developer', value: 'Senior Developer' },
@@ -463,7 +455,8 @@ define([
                 }
             ]);
 
-            if(this.model.id) {
+            // only need to load if model already has an ID (e.g. for edit)
+            if (this.model.id) {
                 this.loader.load({
                     success: _.bind(function() {
                         this.workingCollection = this.model.get_requisition_technologies().clone();
@@ -473,12 +466,26 @@ define([
             }
         },
 
+        childViews: function() {
+            return [this.lookupView, this.wishlistView];
+        },
+
         /**
          * Method to setup the jquery validation.
          * @private
          */
         _setupValidator: function() {
             this.validator = this.$(this.formSelector).validate({
+                // specify error class to be consistent with bootstrap
+                errorClass: 'error help-inline',
+                errorElement: 'span',
+                highlight: function (element, errorClass, validClass) {
+                    $(element).parents("div.control-group").addClass("error").removeClass(validClass);
+
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).parents(".error").removeClass(errorClass).addClass(validClass);
+                },
                 rules: {
                     title: { required: true, minlength: 1, maxlength: 100 },
                     salary_start: { required: true, number: true, maxlength: 10 },
@@ -540,8 +547,8 @@ define([
          * @param data  the LookupResult.matches object which is scope/category specific
          */
         _updateLocationData: function(value, data) {
-            this.location = new profile_models.LocationPreference({
-                locationId: data.id,
+            this.location = new api_models.Location({
+                id: data.id,
                 city: data.city,
                 state: data.state,
                 zip: data.zip,
@@ -549,13 +556,8 @@ define([
             });
         },
 
-        changed: function() {
-            this.render();
-        },
-
         render: function() {
             this.destroyChildViews();
-            this.childViews = [];
 
             var context = {
                 model: this.model.toJSON({
@@ -568,12 +570,10 @@ define([
 
             // setup wishlist view
             this.wishlistView = new EditRequisitionWishlistView({
-                el: this.$(this.wishlistSelector),
                 model: this.model,
                 collection: this.workingCollection
-            });
-            this.childViews.push(this.wishlistView);
-            this.wishlistView.render();
+            }).render();
+            this.$(this.wishlistSelector).append(this.wishlistView.el);
 
             // setup location autocomplete view
             this.lookupView = new lookup_views.LookupView({
@@ -585,7 +585,6 @@ define([
                 onselect: this._updateLocationData,
                 context: this
             });
-            this.childViews.push(this.lookupView);
 
             // setup form validator
             this._setupValidator();
@@ -605,7 +604,7 @@ define([
          * if no object is available
          */
         getLocationId: function() {
-            return this.location.locationId();
+            return this.location.id;
         },
 
         /**
@@ -709,22 +708,22 @@ define([
             this.template = _.template(create_requisition_template);
 
             // child views
-            this.childViews = [];
             this.reqFormView = null;
         },
 
+        childViews: function() {
+            return [this.reqFormView];
+        },
+
         render: function() {
-            this.$el.html(this.template());
             this.destroyChildViews();
-            this.childViews = [];
+            this.$el.html(this.template());
 
             this.reqFormView = new RequisitionFormView({
-                el: this.$(this.formContainerSelector),
                 model: this.model,
                 userModel: this.userModel
-            });
-            this.childViews.push(this.reqFormView);
-            this.reqFormView.render();
+            }).render();
+            this.$(this.formContainerSelector).append(this.reqFormView.el);
 
             return this;
         }
@@ -747,22 +746,22 @@ define([
             this.template = _.template(edit_requisition_template);
 
             // child views
-            this.childViews = [];
             this.reqFormView = null;
+        },
+
+        childViews: function() {
+            return [this.reqFormView];
         },
 
         render: function() {
             this.destroyChildViews();
-            this.childViews = [];
             this.$el.html(this.template());
 
             this.reqFormView = new RequisitionFormView({
-                el: this.$(this.formContainerSelector),
                 model: this.model,
                 userModel: this.userModel
-            });
-            this.childViews.push(this.reqFormView);
-            this.reqFormView.render();
+            }).render();
+            this.$(this.formContainerSelector).append(this.reqFormView.el);
 
             return this;
         }
@@ -783,7 +782,7 @@ define([
             this.template = _.template(read_requisition_template);
 
             // bindings
-            this.listenTo(this.model, 'change', this.changed);
+            this.listenTo(this.model, 'change', this.render);
 
             // child views
             this.childViews = [];
@@ -800,8 +799,11 @@ define([
             });
         },
 
-        changed: function() {
-            this.render();
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
         },
 
         render: function() {
@@ -865,44 +867,39 @@ define([
             this.template =  _.template(requisition_template);
 
             // child views
-            this.childViews = [];
             this.requisitionView = null;
+        },
+
+        childViews: function() {
+            return [this.requisitionView];
         },
 
         render: function() {
             this.destroyChildViews();
-            this.childViews = [];
             this.$el.html(this.template());
-
-            // TODO does it make more sense for the mediator to hvae this logic? What purpose does this parent view serve?
 
             // Need to determine if user is reading,
             // editing, or creating a requisition
             if (this.action === 'create') {
                 this.requisitionView = new CreateRequisitionView({
-                    el: this.$(this.requisition_view_selector),
                     model: this.model,
                     userModel: this.userModel
-                });
-                this.childViews.push(this.requisitionView);
-                this.requisitionView.render();
+                }).render();
             }
             else if (this.action === 'edit') {
                 this.requisitionView = new EditRequisitionView({
-                    el: this.$(this.requisition_view_selector),
                     model: this.model,
                     userModel: this.userModel
-                });
-                this.childViews.push(this.requisitionView);
-                this.requisitionView.render();
+                }).render();
             }
             else if (this.action === 'read') {
                 this.requisitionView = new ReadRequisitionView({
-                    el: this.$(this.requisition_view_selector),
                     model: this.model
-                });
-                this.childViews.push(this.requisitionView);
-                this.requisitionView.render();
+                }).render();
+            }
+
+            if (this.requisitionView) {
+                this.$(this.requisition_view_selector).append(this.requisitionView.el);
             }
 
             return this;
