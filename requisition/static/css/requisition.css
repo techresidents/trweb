@@ -26,6 +26,26 @@
     margin-bottom: 10px;
 }
 
+.req-summary-grid .grid-cell-created {
+    width: 75px;
+}
+
+.req-summary-grid .grid-cell-location {
+    width: 180px;
+}
+
+.req-summary-grid .grid-cell-internal-id {
+    width: 100px;
+}
+
+.req-summary-grid .grid-cell-status {
+    width: 80px;
+}
+
+.req-summary-grid .grid-cell-title {
+    width: 180px;
+}
+
 .wishlist-container > div {
     display: inline-block;
     border: 1px solid #E3E3E3;
