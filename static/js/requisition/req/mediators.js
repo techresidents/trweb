@@ -1,5 +1,4 @@
 define([
-    'jquery',
     'underscore',
     'common/notifications',
     'core/mediator',
@@ -11,7 +10,6 @@ define([
     'requisition/req/views',
     'requisition/list/mediators'
 ], function(
-    $,
     _,
     notifications,
     mediator,
@@ -20,14 +18,28 @@ define([
     alert_models,
     api,
     requisition_notifications,
-    requisition_views,
-    requisition_list_mediators) {
+    requisition_views) {
 
     /**
      * Requisition Mediator
      * @constructor
      */
     var RequisitionMediator = mediator.Mediator.extend({
+
+        /**
+         * Method to retrieve the RequisitionListMediators view type.
+         * This view type is used when we need to navigate to views controlled
+         * by the RequisitionListMediator.
+         * @private
+         */
+        _getRequisitionListMediatorViewType: function() {
+            // The RequisitionListMediator name is hard coded here to prevent a
+            // circular dependency which would arise if we were to import
+            // the mediator.
+            var requisitionListMediator = this.facade.getMediator('RequisitionListMediator');
+            return requisitionListMediator.viewType();
+        },
+
         name: function() {
             return RequisitionMediator.NAME;
         },
@@ -88,11 +100,18 @@ define([
             }
         },
 
+        /**
+         * Function to handle SAVED events
+         * @param e Event
+         * @param eventBody Event body. Expecting:
+         *      id: model ID (required)
+         */
         onSaved: function(e, eventBody) {
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
                 type: this.viewType(),
                 options: {
-                    id: eventBody.id
+                    id: eventBody.id,
+                    action: "read"
                 }
             });
 
@@ -105,9 +124,15 @@ define([
             });
         },
 
+        /**
+         * Function to handle SAVE_FAILED events
+         * @param e Event
+         * @param eventBody Event body. Expecting empty body.
+         */
         onSaveFailed: function(e, eventBody) {
             // Set error message
-            var errorMessage = 'There was an error saving your data. Please review your form and try again.';
+            var errorMessage = 'There was an error saving your data. ' +
+                'Please review your form and try again.';
             if (eventBody.errorMessage) {
                 errorMessage = eventBody.errorMessage;
             }
@@ -119,11 +144,15 @@ define([
                 style: alert_models.STYLE.NORMAL,
                 message: errorMessage
             });
-
-            // scroll to top of page
-            $('html,body').scrollTop(0);
         },
 
+        /**
+         * Function to handle CANCELED events
+         * @param e Event
+         * @param eventBody Event body. Expecting:
+         *      id: model ID (optional)
+         *      If provided will route user back to req details view
+         */
         onCanceled: function(e, eventBody) {
             // Bring user back to req details view, if the req exists;
             // otherwise bring the user to the req list view.
@@ -131,12 +160,13 @@ define([
                 this.facade.trigger(notifications.VIEW_NAVIGATE, {
                     type: this.viewType(),
                     options: {
-                        id: eventBody.id
+                        id: eventBody.id,
+                        action: "read"
                     }
                 });
             } else {
                 this.facade.trigger(notifications.VIEW_NAVIGATE, {
-                    type: requisition_list_mediators.RequisitionListMediator.VIEW_TYPE,
+                    type: this._getRequisitionListMediatorViewType(),
                     options: {}
                 });
             }
