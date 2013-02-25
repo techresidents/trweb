@@ -5,7 +5,8 @@ define([
     'grid/views',
     'paginator/views',
     'api/loader',
-    'text!requisition/list/templates/list.html'
+    'text!requisition/list/templates/list.html',
+    'text!requisition/list/templates/confirm_delete_modal.html'
 ], function(
     $,
     _,
@@ -13,7 +14,8 @@ define([
     grid_views,
     paginator_views,
     api_loader,
-    list_template) {
+    list_template,
+    confirm_delete_modal_template) {
 
     /**
      * Requisition List View Events
@@ -22,8 +24,39 @@ define([
         VIEW_REQ: 'requisitionList:ViewReq',
         EDIT_REQ: 'requisitionList:EditReq',
         OPEN_REQ: 'requisitionList:OpenReq',
-        CLOSE_REQ: 'requisitionList:CloseReq'
+        CLOSE_REQ: 'requisitionList:CloseReq',
+        DELETE_REQ: 'requisitionList:DeleteReq',
+        DELETE_REQ_CONFIRMED: 'requisitionList:DeleteReqConfirmed'
     };
+
+    /**
+     * Confirm Requisition Delete Modal View.
+     * @constructor
+     * @param {Object} options
+     *   model: {Requisition} (required)
+     */
+    var ConfirmDeleteModalView = view.View.extend({
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template = _.template(confirm_delete_modal_template);
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            return this;
+        },
+
+        onOk: function() {
+            var eventBody = {model: this.model};
+            this.triggerEvent(EVENTS.DELETE_REQ_CONFIRMED, eventBody);
+            return true;
+        },
+
+        onCancel: function() {
+            return true;
+        }
+    });
 
     /**
      * Requisition grid view.
@@ -99,7 +132,7 @@ define([
                     },
                     {
                         column: 'Location',
-                        headerCellView: { options: { sort: 'location__state' } },
+                        headerCellView: {},
                         cellView: {
                             options: function (model) {
                                 var value = null;
@@ -121,7 +154,7 @@ define([
                         cellView: { options: { valueAttribute: 'status' } }
                     },
                     {
-                        column: 'Actions',
+                        column: '',
                         cellView: {
                             ctor: grid_views.GridActionCellView,
                             options: function(model) {
@@ -156,6 +189,10 @@ define([
                 var eventBody = {model: model};
                 this.triggerEvent(EVENTS.CLOSE_REQ, eventBody);
             };
+            var deleteHandler = function() {
+                var eventBody = {model: model};
+                this.triggerEvent(EVENTS.DELETE_REQ, eventBody);
+            };
 
             // Set handler based upon model's current status
             var statusHandler = null;
@@ -179,7 +216,7 @@ define([
                     {key: 'divider'},
                     statusHandler,
                     {key: 'divider'},
-                    {key: 'delete', label: 'Delete'}
+                    {key: 'delete', label: 'Delete', handler: deleteHandler}
                 ]
             };
         }
@@ -199,23 +236,14 @@ define([
         initialize: function(options) {
             console.log('ParentView init');
             this.collection = options.collection;
-            this.query = options.query;
+            this.query = options.query.withRelated('location');
             this.template =  _.template(list_template);
 
             //child views
             this.requisitionGridView = null;
             this.paginatorView = null;
 
-            this.loader = new api_loader.ApiLoader([
-                {
-                    instance: this.collection,
-                    withRelated: ['location']
-                }
-            ]);
-
-            this.loader.load({
-                success: _.bind(this.render, this)
-            });
+            this.query.fetch();
         },
 
         childViews: function() {
@@ -248,6 +276,7 @@ define([
 
     return {
         EVENTS: EVENTS,
-        RequisitionsSummaryView: RequisitionsSummaryView
+        RequisitionsSummaryView: RequisitionsSummaryView,
+        ConfirmDeleteModalView: ConfirmDeleteModalView
     };
 });

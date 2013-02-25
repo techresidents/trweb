@@ -6,6 +6,7 @@ define([
     'alert/models',
     'current/proxies',
     'api/models',
+    'modal/views',
     'requisition/notifications',
     'requisition/list/views',
 ], function(
@@ -16,6 +17,7 @@ define([
     alert_models,
     current_proxies,
     api_models,
+    modal_views,
     requisition_notifications,
     requisition_list_views
 ) {
@@ -75,6 +77,7 @@ define([
                 this.view.addEventListener(requisition_list_views.EVENTS.EDIT_REQ, this.onEditReq, this);
                 this.view.addEventListener(requisition_list_views.EVENTS.OPEN_REQ, this.onOpenReq, this);
                 this.view.addEventListener(requisition_list_views.EVENTS.CLOSE_REQ, this.onCloseReq, this);
+                this.view.addEventListener(requisition_list_views.EVENTS.DELETE_REQ, this.onDeleteReq, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
@@ -92,7 +95,7 @@ define([
                     type: this.viewType(),
                     view: notification.view
                 });
-                if(this.view === notification.view) {
+                if (this.view === notification.view) {
                     this.view = null;
                 }
             }
@@ -171,6 +174,48 @@ define([
                         }
                     });
                 }
+            }
+        },
+
+        /**
+         * Listens for 'delete' button and
+         * asks the user to confirm delete.
+         * @param e Event
+         * @param eventBody Event body. Expecting:
+         *      model: {Requisition} (required)
+         */
+        onDeleteReq: function(e, eventBody) {
+            var model = eventBody.model;
+            if (model) {
+                // TODO create this modal once in init. The problem was
+                // that this ModalView calls remove() which removes events.
+                // Call detach instead?
+                var modalView = new modal_views.ModalView({
+                    title: 'Confirm Delete',
+                    exitOnBackdropClick: true,
+                    exitOnEscapeKey: true,
+                    view: new requisition_list_views.ConfirmDeleteModalView({
+                        model: model
+                    })
+                });
+                modalView.addEventListener(requisition_list_views.EVENTS.DELETE_REQ_CONFIRMED, this.onDeleteReqConfirmed, this);
+                modalView.render();
+            }
+        },
+
+        /**
+         * Method to delete the specified Requisition
+         * @param e Event
+         * @param eventBody Event body. Expecting:
+         *      model: {Requisition} (required)
+         */
+        onDeleteReqConfirmed: function(e, eventBody) {
+            var model = eventBody.model;
+            if (model) {
+                console.log('destroying req');
+                // TODO setup apisvc for mark-as-delete behavior
+                //model.destroy();
+                // TODO show alert on error
             }
         },
 

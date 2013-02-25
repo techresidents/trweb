@@ -560,6 +560,7 @@ define([
         },
 
         initialize: function(options) {
+            console.log('init grid');
             options = _.extend({
                 template: this.defaultTemplate,
                 context: {}
@@ -572,16 +573,17 @@ define([
             this.query = options.query || this.collection.query();
 
             //bind events
-            this.listenTo(this.collection, 'reset', this.render);
+            this.listenTo(this.collection, 'reset', this.onReset);
             this.listenTo(this.collection ,'add', this.added);
             this.listenTo(this.collection, 'remove', this.render);
             
             this.headerRowView = null;
             this.rowViews = [];
-            
-            this.query.fetch({
-                success: _.bind(this.render, this)
-            });
+        },
+
+        onReset: function() {
+            console.log('reset');
+            this.render();
         },
 
         classes: function() {
@@ -589,6 +591,7 @@ define([
         },
 
         render: function() {
+            console.log('gridView render');
             this.destroyChildViews();
             this.rowViews = [];
             
