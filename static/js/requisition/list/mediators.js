@@ -105,32 +105,36 @@ define([
          * Method to bring the user to the req details view
          * @param e Event
          * @param eventBody Event body. Expecting:
-         *      id: model ID (required)
+         *      model: {Requisition} (required)
          */
         onViewReq: function(e, eventBody) {
-            this.facade.trigger(notifications.VIEW_NAVIGATE, {
-                type: this._getRequisitionMediatorViewType(),
-                options: {
-                    id: eventBody.id,
-                    action: 'read'
-                }
-            });
+            if (eventBody.model) {
+                this.facade.trigger(notifications.VIEW_NAVIGATE, {
+                    type: this._getRequisitionMediatorViewType(),
+                    options: {
+                        id: eventBody.model.id,
+                        action: 'read'
+                    }
+                });
+            }
         },
 
         /**
          * Method to bring the user to the edit req view
          * @param e Event
          * @param eventBody Event body
-         *      id: model ID (required)
+         *      model: {Requisition} (required)
          */
         onEditReq: function(e, eventBody) {
-            this.facade.trigger(notifications.VIEW_NAVIGATE, {
-                type: this._getRequisitionMediatorViewType(),
-                options: {
-                    id: eventBody.id,
-                    action: 'edit'
-                }
-            });
+            if (eventBody.model) {
+                this.facade.trigger(notifications.VIEW_NAVIGATE, {
+                    type: this._getRequisitionMediatorViewType(),
+                    options: {
+                        id: eventBody.model.id,
+                        action: 'edit'
+                    }
+                });
+            }
         },
 
         /**

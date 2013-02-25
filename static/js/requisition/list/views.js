@@ -172,53 +172,67 @@ define([
          * @private
          */
         _getGridActions: function(model) {
-
-            var viewHandler = function() {
-                var eventBody = {id: model.id};
-                this.triggerEvent(EVENTS.VIEW_REQ, eventBody);
-            };
-            var editHandler = function() {
-                var eventBody = {id: model.id};
-                this.triggerEvent(EVENTS.EDIT_REQ, eventBody);
-            };
-            var openHandler = function() {
-                var eventBody = {model: model};
-                this.triggerEvent(EVENTS.OPEN_REQ, eventBody);
-            };
-            var closeHandler = function() {
-                var eventBody = {model: model};
-                this.triggerEvent(EVENTS.CLOSE_REQ, eventBody);
-            };
-            var deleteHandler = function() {
-                var eventBody = {model: model};
-                this.triggerEvent(EVENTS.DELETE_REQ, eventBody);
-            };
-
-            // Set handler based upon model's current status
-            var statusHandler = null;
+            // Set openOrCloseAction based upon model's current status
+            var openOrCloseAction = null;
             if (model.get_status() === "OPEN") {
-                statusHandler = {
+                openOrCloseAction = {
                     key: 'close',
-                    label: 'Close',
-                    handler: closeHandler
+                    label: 'Close'
                 };
             } else {
-                statusHandler = {
+                openOrCloseAction = {
                     key: 'open',
-                    label: 'Open',
-                    handler: openHandler
+                    label: 'Open'
                 };
             }
+
             return {
                 actions: [
-                    {key: 'view', label: 'View', handler: viewHandler},
-                    {key: 'edit', label: 'Edit', handler: editHandler},
+                    {key: 'view', label: 'View'},
+                    {key: 'edit', label: 'Edit'},
                     {key: 'divider'},
-                    statusHandler,
+                    openOrCloseAction,
                     {key: 'divider'},
-                    {key: 'delete', label: 'Delete', handler: deleteHandler}
+                    {key: 'delete', label: 'Delete'}
                 ]
             };
+        },
+
+        /**
+         * @Override
+         * Grid Action event handler
+         * @param e
+         * @param eventBody
+         *      model: {Requisition} (required)
+         *      action: {
+         *          key: 'value'      (required)
+         *          label: 'value'    (optional)
+         *          handler: function (optional)
+         *      }
+         */
+        onGridAction: function(e, eventBody) {
+            if (eventBody.model && eventBody.action.key) {
+                console.log('action');
+                var listEventBody = {model: eventBody.model};
+                switch (eventBody.action.key) {
+                    case 'view':
+                        console.log('view');
+                        this.triggerEvent(EVENTS.VIEW_REQ, listEventBody);
+                        break;
+                    case 'edit':
+                        this.triggerEvent(EVENTS.EDIT_REQ, listEventBody);
+                        break;
+                    case 'delete':
+                        this.triggerEvent(EVENTS.DELETE_REQ, listEventBody);
+                        break;
+                    case 'open':
+                        this.triggerEvent(EVENTS.OPEN_REQ, listEventBody);
+                        break;
+                    case 'close':
+                        this.triggerEvent(EVENTS.CLOSE_REQ, listEventBody);
+                        break;
+                }
+            }
         }
     });
 
