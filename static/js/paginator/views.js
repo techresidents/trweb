@@ -49,10 +49,6 @@ define([
 
             //bind events
             this.listenTo(this.collection, 'reset', this.render);
-
-            this.query.fetch({
-                success: _.bind(this.render, this)
-            });
         },
 
         classes: function() {

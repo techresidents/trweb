@@ -2,6 +2,7 @@ define([
     'jquery',
     'underscore',
     'jquery.bootstrap',
+    'core/array',
     'core/view',
     'api/loader',
     'text!talent/user/templates/user.html',
@@ -15,6 +16,7 @@ define([
     $,
     _,
     none,
+    array,
     view,
     api_loader,
     user_template,
@@ -56,22 +58,20 @@ define([
         initialize: function(options) {
             this.template =  _.template(jobprefs_template);
             this.modelWithRelated = ['position_prefs', 'technology_prefs', 'location_prefs'];
-            this.childViews = [];
+
+            //bind events
             this.loader = new api_loader.ApiLoader([
                 { instance: this.model, withRelated: this.modelWithRelated }
-            ]);
-
+            ], {
+                successOnAlreadyLoaded: true
+            });
+            
             this.loader.load({
                 success: _.bind(this.render, this)
             });
         },
 
         render: function() {
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
-
-            this.childViews = [];
             var context = {
                 model: this.model.toJSON({ withRelated: this.modelWithRelated }),
                 fmt: this.fmt // date formatting
@@ -174,18 +174,17 @@ define([
         initialize: function(options) {
             this.playerState = options.playerState;
             this.template = _.template(chat_template);
-            this.playerState.bind('change:chatSession', this.render, this);
-            this.playerState.bind('change:state', this.render, this);
-            this.model.bind('change', this.render, this);
             this.modelWithRelated = ['chat__topic'];
+            
+            //bind events
+            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.playerState, 'change:state', this.render);
 
             this.loader = new api_loader.ApiLoader([
                 { instance: this.model, withRelated: this.modelWithRelated }
             ]);
 
-            this.loader.load({
-                success: _.bind(this.render, this)
-            });
+            this.loader.load();
         },
         
         render: function() {
@@ -244,26 +243,30 @@ define([
         initialize: function(options) {
             this.playerState = options.playerState;
             this.template =  _.template(chats_template);
-            this.collection.bind('reset', this.render, this);
-            this.collection.bind('add', this.added, this);
             this.collectionWithRelated = ['chat_session__chat__topic'];
-            this.childViews = [];
+            
+            //bind events
+            this.listenTo(this.collection, 'reset', this.onReset);
+            this.listenTo(this.collection, 'add', this.onAdd);
 
             this.loader = new api_loader.ApiLoader([
                 { instance: this.collection, withRelated: this.collectionWithRelated }
             ]);
 
-            this.loader.load({
-                success: _.bind(this.render, this)
-            });
+            this.loader.load();
+
+            //child views
+            this.childViews = [];
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.destroyChildViews();
+            this.childViews = [];
+            this.collection.each(this.createChildView, this);
         },
 
         render: function() {
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
-
-            this.childViews = [];
             var context = {
                 collection: this.collection.toJSON({
                     withRelated: this.collectionWithRelated
@@ -271,23 +274,31 @@ define([
             };
             this.$el.html(this.template(context));
 
-            this.collection.each(this.added, this);
+            _.each(this.childViews, function(view) {
+                this.append(view, this.chatSessionsSelector);
+            }, this);
+            
             return this;
         },
 
-        /**
-         * Construct a view from the input model
-         * and append to this View.
-         * @param model ChatSession model
-         */
-        added: function(model) {
+        createChildView: function(model) {
             var view = new UserChatSessionView({
                 model: model.get_chat_session(),
                 playerState: this.playerState
-            }).render();
-
+            });
             this.childViews.push(view);
-            this.$(this.chatSessionsSelector).append(view.el);
+
+            return view;
+        },
+
+        onReset: function() {
+            this.initChildViews();
+            this.render();
+        },
+
+        onAdd: function(model) {
+            var view = this.createChildView(model);
+            this.append(view, this.chatSessionsSelector);
         }
     });
 
@@ -345,16 +356,16 @@ define([
 
         initialize: function(options) {
             this.template = _.template(skill_template);
-            this.model.bind('change', this.render, this);
             this.modelWithRelated = ['technology'];
             
+            //bind events
+            this.listenTo(this.model, 'change', this.render);
+
             this.loader = new api_loader.ApiLoader([
                 { instance: this.model, withRelated: this.modelWithRelated }
             ]);
 
-            this.loader.load({
-                success: _.bind(this.render, this)
-            });
+            this.loader.load();
         },
 
         render: function() {
@@ -385,32 +396,44 @@ define([
 
         expertSkillsSelector: '#expert-skills',
 
+        childViews: function() {
+            var result = this.noviceViews.concat(this.proficientViews).concat(this.expertViews);
+            return result;
+        },
+
         initialize: function(options) {
             this.template =  _.template(skills_template);
-            this.collection.bind('reset', this.render, this);
-            this.collection.bind('add', this.added, this);
             this.collectionWithRelated = ['technology'];
 
-            this.childViews = [];
             this.exclusionFilters = [];
+            
+            //bind events
+            this.listenTo(this.collection, 'reset', this.onReset);
+            this.listenTo(this.collection, 'add', this.onAdd);
 
             this.loader = new api_loader.ApiLoader([
                 { instance: this.collection, withRelated: this.collectionWithRelated }
             ]);
 
-            this.loader.load({
-                success: _.bind(this.render, this)
-            });
-            
+            this.loader.load();
+
+            //child views
+            this.noviceViews = [];
+            this.proficientViews = [];
+            this.expertViews = [];
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.destroyChildViews();
+            this.noviceViews = [];
+            this.proficientViews = [];
+            this.expertViews = [];
+
+            this.collection.each(this.createSkillView, this);
         },
 
         render: function() {
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
-
-            this.childViews = [];
-
             // Count the number of items in each expertise group
             var expertiseCounts = _.countBy(this.collection.models, function(skill) {
                 return skill.get_expertise();
@@ -424,15 +447,18 @@ define([
             };
             this.$el.html(this.template(context));
 
-            // Sort skills such that skills with the most yrs experience
-            // are first in the list.
-            var sortedSkillsList = this.collection.sortBy(function(model) {
-                return model.get_yrs_experience()*-1;
+            _.each(this.noviceViews, function(view) {
+                this.append(view, this.noviceSkillsSelector);
             }, this);
 
-            // Add skills to DOM in order
-            _.each(sortedSkillsList, this.added, this);
+            _.each(this.proficientViews, function(view) {
+                this.append(view, this.proficientSkillsSelector);
+            }, this);
 
+            _.each(this.expertViews, function(view) {
+                this.append(view, this.expertSkillsSelector);
+            }, this);
+            
             // Apply any active filter settings
             this.filter(this.exclusionFilters);
 
@@ -442,30 +468,30 @@ define([
             return this;
         },
 
-        /**
-         * Create view for the input model
-         * and append to the DOM
-         * @param model Skill model
-         */
-        added: function(model) {
-
+        createSkillView: function(model) {
             var view = new UserSkillView({
                 model: model
-            }).render();
-            this.childViews.push(view);
+            });
 
-            // Append view to appropriate section of view based upon expertise level
+            var compare = function(view1, view2) {
+                return array.defaultCompare(
+                        -view1.model.get_yrs_experience(),
+                        -view2.model.get_yrs_experience());
+            };
+
             switch(model.get_expertise()) {
                 case 'Novice':
-                    this.$(this.noviceSkillsSelector).append(view.el);
+                    array.binaryInsert(this.noviceViews, view, compare);
                     break;
                 case 'Proficient':
-                    this.$(this.proficientSkillsSelector).append(view.el);
+                    array.binaryInsert(this.proficientViews, view, compare);
                     break;
                 case 'Expert':
-                    this.$(this.expertSkillsSelector).append(view.el);
+                    array.binaryInsert(this.expertViews, view, compare);
                     break;
             }
+
+            return view;
         },
 
         /**
@@ -476,7 +502,7 @@ define([
          */
         filter: function(exclusionFiltersList) {
             this.exclusionFilters = exclusionFiltersList;
-            _.each(this.childViews, function(v) {
+            _.each(this.childViews(), function(v) {
                     if (_.contains(this.exclusionFilters, v.model.get_technology().get_type())) {
                         v.$el.hide();
                     }
@@ -486,6 +512,16 @@ define([
                 },
                 this
             );
+        },
+
+        onReset: function() {
+            this.initChildViews();
+            this.render();
+        },
+
+        onAdd: function(model) {
+            var view = this.createSkillView(model);
+            this.render();
         }
     });
 
@@ -515,13 +551,13 @@ define([
                 this.jobPrefsView,
                 this.skillsFilterView,
                 this.skillsView,
-                this.chatsView];
+                this.chatsView
+            ];
         },
 
         initialize: function(options) {
             this.playerState = options.playerState;
             this.template =  _.template(user_template);
-            this.model.bind('change', this.render, this);
             this.modelWithRelated = [
                 'highlight_sessions__chat_session__chat__topic',
                 'skills__technology',
@@ -530,20 +566,45 @@ define([
                 'location_prefs'
             ];
 
+            //bind events
+            this.listenTo(this.model, 'change', this.render);
+
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated }
+            ]);
+            this.loader.load();
+
             //child views
             this.jobPrefsView = null;
             this.skillsFilterView = null;
             this.skillsView = null;
             this.chatsView = null;
+            this.initChildViews();
+        },
 
-            this.loader = new api_loader.ApiLoader([
-                { instance: this.model, withRelated: this.modelWithRelated }
-            ]);
+        initChildViews: function() {
+            // Create tuples for skills filters (displayName, dbValue)
+            var languages = {displayName: 'Languages', value: 'Language'};
+            var frameworks = {displayName: 'Frameworks', value: 'Framework'};
+            var persistence = {displayName: 'Persistence', value: 'Persistence'};
+            var filtersList = [languages, frameworks, persistence];
 
-            this.loader.load({
-                success: _.bind(this.render, this)
+            this.jobPrefsView = new UserJobPrefsView({
+                model: this.model
             });
 
+            this.skillsFilterView = new UserSkillsFilterView({
+                filtersList: filtersList
+            });
+
+            this.skillsView = new UserSkillsView({
+                collection: this.model.get_skills()
+            });
+            
+            this.chatsView = new UserHighlightSessionsView({
+                collection: this.model.get_highlight_sessions(),
+                playerState: this.playerState
+            });
         },
 
         render: function() {
@@ -553,33 +614,10 @@ define([
             };
             this.$el.html(this.template(context));
 
-            this.jobPrefsView = new UserJobPrefsView({
-                el: this.$(this.jobPrefsSelector),
-                model: this.model
-            }).render();
-
-            // Create tuples for skills filters (displayName, dbValue)
-            var languages = {displayName: 'Languages', value: 'Language'};
-            var frameworks = {displayName: 'Frameworks', value: 'Framework'};
-            var persistence = {displayName: 'Persistence', value: 'Persistence'};
-            var filtersList = [languages, frameworks, persistence];
-
-            this.skillsFilterView = new UserSkillsFilterView({
-                el: this.$(this.skillsFilterSelector),
-                filtersList: filtersList
-            }).render();
-
-            this.skillsView = new UserSkillsView({
-                el: this.$(this.skillsSelector),
-                collection: this.model.get_skills()
-            }).render();
-            
-            this.chatsView = new UserHighlightSessionsView({
-                el: this.$(this.chatsSelector),
-                collection: this.model.get_highlight_sessions(),
-                playerState: this.playerState
-            }).render();
-
+            this.assign(this.jobPrefsView, this.jobPrefsSelector);
+            this.assign(this.skillsFilterView, this.skillsFilterSelector);
+            this.assign(this.skillsView, this.skillsSelector);
+            this.assign(this.chatsView, this.chatsSelector);
             return this;
         },
 

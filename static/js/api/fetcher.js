@@ -29,27 +29,27 @@ define([
                 if(error + success >= queries.length) {
                     if(error) {
                         if(_.isFunction(options.error)) {
-                            options.error.apply(this, arguments);
+                            options.error();
                         }
                     }
                     else {
                         if(_.isFunction(options.success)) {
-                            options.success.apply(this, arguments);
+                            options.success();
                         }
                     }
                 }
             };
-            var successCallback = function(instance, response) {
+            var successCallback = function() {
                 success += 1;
                 if(error + success >= queries.length) {
                     if(error) {
                         if(_.isFunction(options.error)) {
-                            options.error.apply(this, arguments);
+                            options.error();
                         }
                     }
                     else {
                         if(_.isFunction(options.success)) {
-                            options.success.apply(this, arguments);
+                            options.success();
                         }
                     }
                 }

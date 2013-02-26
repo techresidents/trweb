@@ -50,7 +50,7 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(timer_template);
-            this.model.bind('change:offset', this.render, this);
+            this.listenTo(this.model, 'change:offset', this.render);
         },
 
         render: function() {
@@ -85,10 +85,11 @@ define([
             this.template =  _.template(scrubber_template);
             this.timerId = null;
             this.progress = 0;
-
-            this.model.bind('change:chatSession', this.render, this);
-            this.model.bind('change:offset', this.offsetChanged, this);
-            this.model.bind('change:buffered', this.bufferedChanged, this);
+            
+            //bind events
+            this.listenTo(this.model, 'change:chatSession', this.render);
+            this.listenTo(this.model, 'change:offset', this.offsetChanged);
+            this.listenTo(this.model, 'change:buffered', this.bufferedChanged);
         },
 
         render: function() {
@@ -176,7 +177,7 @@ define([
 
         initialize: function(options) {
             this.template = _.template(user_template);
-            this.model.bind('change', this.render, this);
+            this.listenTo(this.model, 'change', this.render);
         },
 
         render: function() {
@@ -194,45 +195,51 @@ define([
      *   model: {PlayerState} model (required)
      */
     var PlayerUsersView = view.View.extend({
+
         initialize: function(options) {
             this.template =  _.template(users_template);
-            this.model.bind('change', this.render, this);
             this.collection = this.model.users();
+
+            //bind events
+            this.listenTo(this.collection, 'reset', this.onReset);
+            this.listenTo(this.collection, 'add', this.onAdd);
+
+            //child views
             this.childViews = [];
+            this.initChildViews();
         },
 
-        bindUsersEvents: function(collection) {
-            collection.bind('reset', this.render, this);
-            collection.bind('add', this.added, this);
+        initChildViews: function() {
+            this.destroyChildViews();
+            this.childViews = [];
+            this.collection.each(this.createChildView, this);
         },
 
-        render: function() {
-            var collection = this.model.users();
-            if(collection !== this.collection) {
-                this.collection = collection;
-
-                _.each(this.childViews, function(view) {
-                    view.destroy();
-                });
-
-                this.childViews = [];
-                this.bindUsersEvents(collection);
-                var context = this.model.toJSON({withRelated: true});
-                this.$el.html(this.template(context));
-                this.collection.each(this.added, this);
-            }
-                
-            return this;
-        },
-
-        added: function(model) {
+        createChildView: function(model) {
             var view = new PlayerUserView({
                 model: model
             }).render();
-
             this.childViews.push(view);
+            return view;
+        },
 
-            this.$el.append(view.el);
+        render: function() {
+            var context = this.model.toJSON({withRelated: true});
+            this.$el.html(this.template(context));
+            _.each(this.childViews, function(view) {
+                this.append(view);
+            }, this);
+            return this;
+        },
+
+        onReset: function() {
+            this.initChildViews();
+            this.render();
+        },
+
+        onAdd: function(model) {
+            var view = this.createChildView(model);
+            this.append(view);
         }
     });
 
@@ -249,8 +256,7 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(title_template);
-
-            this.model.bind('change:chatMinute', this.render, this);
+            this.listenTo(this.model, 'change:chatMinute', this.render);
         },
 
         render: function() {
@@ -296,7 +302,7 @@ define([
 
         initialize: function(options) {
             this.template = _.template(button_template);
-            this.model.bind('change:state', this.render, this);
+            this.listenTo(this.model, 'change:state', this.render);
         },
 
         render: function() {
@@ -651,6 +657,32 @@ define([
             ];
         },
 
+        initChildViews: function() {
+            this.usersView = new PlayerUsersView({
+                model: this.model
+            });
+            this.buttonView = new PlayerButtonView({
+                model: this.model
+            });
+            this.timerView = new PlayerTimerView({
+                model: this.model
+            });
+            this.titleView = new PlayerTitleView({
+                model: this.model
+            });
+            this.scrubberView = new PlayerScrubberView({
+                model: this.model
+            });
+            /*
+            this.playerView = new FlowplayerView({
+                model: this.model
+            });
+            */
+            this.playerView = new SoundManagerView({
+                model: this.model
+            });
+        },
+
         initialize: function(options) {
             this.template =  _.template(player_template);
             this.playerView = null;
@@ -661,6 +693,9 @@ define([
             this.usersView = null;
             this.scheduler = null;
             this.progressTimerId = null;
+
+            //child views
+            this.initChildViews();
         },
 
         startProgressTimer: function(interval) {
@@ -716,43 +751,12 @@ define([
             var context = this.model.toJSON({withRelated: true});
             this.$el.html(this.template(context));
 
-            this.usersView = new PlayerUsersView({
-                el: this.$('.player-users'),
-                model: this.model
-            }).render();
-
-            this.buttonView = new PlayerButtonView({
-                el: this.$('.player-button'),
-                model: this.model
-            }).render();
-
-            this.timerView = new PlayerTimerView({
-                el: this.$('.player-timer'),
-                model: this.model
-            }).render();
-            
-            this.titleView = new PlayerTitleView({
-                el: this.$('.player-title'),
-                model: this.model
-            }).render();
-
-            this.scrubberView = new PlayerScrubberView({
-                el: this.$('.player-scrubber'),
-                model: this.model
-            }).render();
-            
-            /*
-            this.playerView = new FlowplayerView({
-                el: this.$('.player-component'),
-                model: this.model
-            });
-            */
-            
-            this.playerView = new SoundManagerView({
-                el: this.$('.player-component'),
-                model: this.model
-            });
-
+            this.assign(this.usersView, '.player-users');
+            this.assign(this.buttonView, '.player-button');
+            this.assign(this.timerView, '.player-timer');
+            this.assign(this.titleView, '.player-title');
+            this.assign(this.scrubberView, '.player-scrubber');
+            this.assign(this.playerView, '.player-component');
             return this;
         },
 
@@ -850,7 +854,7 @@ define([
                 this.playerView.stop();
             }
 
-            var users = new player_models.PlayerUserCollection();
+            var users = this.model.users();
             users.reset(chatSession.get_users().map(function(user) {
                 return new player_models.PlayerUser({
                     user: user,

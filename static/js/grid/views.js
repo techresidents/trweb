@@ -58,7 +58,8 @@ define([
             this.query = options.query;
             this.model = options.model;
             this.viewConfig = options.view;
-            this.childView = null;
+
+            this.childView = this.createChildView(this.viewConfig);
         },
 
         classes: function() {
@@ -73,9 +74,7 @@ define([
             var context = _.extend({}, base.getValue(this, 'context', this));
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
-            this.destroyChildViews();
-            this.childView = this.createChildView(this.viewConfig).render();
-            this.$el.append(this.childView.el);
+            this.append(this.childView);
             return this;
         },
 
@@ -211,16 +210,18 @@ define([
             this.context = options.context;
             this.config = options.config;
             this.query = options.query;
+
+            //child views
             this.childViews = [];
+            _.each(this.config, this.createCellView, this);
         },
 
         render: function() {
-            this.destroyChildViews();
-            this.childViews = [];
-
             var context = _.extend({}, base.getValue(this, 'context', this));
             this.$el.html(this.template(context));
-            _.each(this.config, this.createCellView, this);
+            _.each(this.childViews, function(view) {
+                this.append(view);
+            }, this);
             return this;
         },
 
@@ -236,10 +237,8 @@ define([
                 query: this.query
             }, base.getValue(config.headerCellView, 'options', this));
 
-            var view = new ctor(options).render();
-
+            var view = new ctor(options);
             this.childViews.push(view);
-            this.$el.append(view.el);
         }
     });
 
@@ -331,8 +330,8 @@ define([
                             view: this.config.hoverView
                         }
                     }
-                }).render();
-                this.$el.append(this.hoverView.el);
+                });
+                this.append(this.hoverView);
             }
 
             if(this.hoverView) {
@@ -419,7 +418,7 @@ define([
             GridCellView.prototype.initialize.call(this, options);
 
             this.actions = options.actions;
-            this.childView = null;
+            this.childView = this.createChildView();
         },
         
         classes: function() {
@@ -430,16 +429,14 @@ define([
 
         render: function() {
             GridCellView.prototype.render.call(this);
-            this.destroyChildViews();
-            this.childView = this.createChildView();
-            this.$el.append(this.childView.el);
+            this.append(this.childView);
             return this;
         },
 
         createChildView: function() {
             return new drop_views.DropMenuView({
                 items: this.actions
-            }).render();
+            });
         },
 
         onToggle: function(e) {
@@ -488,10 +485,12 @@ define([
             this.model = options.model;
             this.query = options.query;
 
+            //child views
+            this.childViews = [];
+            _.each(this.config, this.createCellView, this);
+
             //bind events
             this.listenTo(this.model, 'change', this.render);
-
-            this.childViews = [];
         },
 
         classes: function() {
@@ -499,13 +498,12 @@ define([
         },
 
         render: function() {
-            this.destroyChildViews();
-            this.childViews = [];
-
             var context = base.getValue(this, 'context', this);
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
-            _.each(this.config, this.createCellView, this);
+            _.each(this.childViews, function(view) {
+                this.append(view);
+            }, this);
             return this;
         },
 
@@ -524,14 +522,9 @@ define([
                 query: this.query
             }, base.getValue(config.cellView, 'options', this.model));
             
-            var view = new ctor(options).render();
+            var view = new ctor(options);
 
             this.childViews.push(view);
-            this.appendCellView(view);
-        },
-
-        appendCellView: function(view) {
-            this.$el.append(view.el);
         },
 
         onRowClick: function(e) {
@@ -570,18 +563,25 @@ define([
             this.config = options.config;
             this.collection = options.collection;
             this.query = options.query || this.collection.query();
+            
+            //child views
+            this.headerRowView = null;
+            this.rowViews = [];
+            this.initChildViews();
 
             //bind events
             this.listenTo(this.collection, 'reset', this.onReset);
-            this.listenTo(this.collection ,'add', this.added);
-            this.listenTo(this.collection, 'remove', this.render);
-            
-            this.headerRowView = null;
-            this.rowViews = [];
+            this.listenTo(this.collection ,'add', this.onAdd);
+            this.listenTo(this.collection, 'remove', this.onRemove);
         },
 
-        onReset: function() {
-            this.render();
+        initChildViews: function() {
+            this.destroyChildViews();
+
+            this.headerRowView = this.createHeaderRow();
+
+            this.rowViews = [];
+            this.collection.each(this.createRow, this);
         },
 
         classes: function() {
@@ -589,64 +589,71 @@ define([
         },
 
         render: function() {
-            this.destroyChildViews();
-            this.rowViews = [];
-            
             var context = base.getValue(this, 'context', this);
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             
-            this.headerRowView = this.createHeaderRow(
-                    this.config,
-                    this.query).render();
-            this.$('thead').append(this.headerRowView.el);
-            this.collection.each(this.added, this);
+            this.html(this.headerRowView, 'thead');
+            _.each(this.rowViews, function(view) {
+                this.append(view, 'tbody');
+            }, this);
+
             return this;
         },
 
-        createHeaderRow: function(config, query) {
-            config = _.extend({
+        createHeaderRow: function() {
+            var config = _.extend({
                 headerRowView: {
                     ctor: GridHeaderRowView
                 }
-            }, config);
+            }, this.config);
 
             var ctor = config.headerRowView.ctor || GridHeaderRowView;
 
             var options = _.extend({
                 config: config.columns,
-                query: query
+                query: this.query
             }, base.getValue(config.headerRowView, 'options', this));
 
-            var view = new ctor(options).render();
+            var view = new ctor(options);
 
             return view;
         },
 
-        createRow: function(config, model, query) {
-            config = _.extend({
+        createRow: function(model) {
+            var config = _.extend({
                 rowView: {
                     ctor: GridRowView
                 }
-            }, config);
+            }, this.config);
 
             var ctor = config.rowView.ctor || GridRowView;
         
             var options = _.extend({
                 config: config.columns,
                 model: model,
-                query: query
+                query: this.query
             }, base.getValue(config.rowView, 'options', model));
 
-            var view = new ctor(options).render();
+            var view = new ctor(options);
+            this.rowViews.push(view);
 
             return view;
         },
 
-        added: function(model) {
-            var view = this.createRow(this.config, model, this.query).render();
-            this.rowViews.push(view);
-            this.$('tbody').append(view.el);
+        onReset: function() {
+            this.initChildViews();
+            this.render();
+        },
+
+        onAdd: function(model) {
+            var view = this.createRow(model);
+            this.append(view, 'tbody');
+        },
+
+        onRemove: function(model) {
+            this.initChildViews();
+            this.render();
         },
         
         onGridAction: function(e, eventBody) {

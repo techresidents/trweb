@@ -37,20 +37,6 @@ define([
             return [this.childView];
         },
 
-        delegateEventName: function(eventName) {
-            //use delegate events so they're removed on destroy()
-            return eventName + '.delegateGlobalEvents' + this.cid;
-        },
-
-        undelegateGlobalEvents: function() {
-            $('html').off(this.delegateEventName(''));
-        },
-
-        destroy: function() {
-            this.undelegateGlobalEvents();
-            view.View.prototype.destroy.apply(this, arguments);
-        },
-
         initialize: function(options) {
             options = _.extend({
                 autoclose: true,
@@ -65,13 +51,34 @@ define([
             this.childView = null;
             this.isOpen = false;
             
+            //child views
+            this.childView = this.createChildView(this.viewConfig);
+            
+        },
+
+        delegateEventName: function(eventName) {
+            //use delegate events so they're removed on destroy()
+            return eventName + '.delegateGlobalEvents' + this.cid;
+        },
+
+        undelegateGlobalEvents: function() {
+            $('html').off(this.delegateEventName(''));
+        },
+
+        delegateEvents: function() {
+            view.View.prototype.delegateEvents.apply(this, arguments);
             if(this.autoclose) {
                 //close the action menu if click happens outside of a .drop-button
-                $('html').on(this.delegateEventName('click'), _.bind(this.onClose, this));
+                $('html').on(this.delegateEventName('click'), _.bind(this.onClick, this));
 
                 //handle drop opened event so we can close if another drop has been opened
                 $('html').on(this.delegateEventName(EVENTS.DROP_OPENED), _.bind(this.onDropOpened, this));
             }
+        },
+
+        undelegateEvents: function() {
+            this.undelegateGlobalEvents();
+            view.View.prototype.undelegateEvents.apply(this, arguments);
         },
 
         classes: function() {
@@ -83,9 +90,7 @@ define([
 
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
-            this.destroyChildViews();
-            this.childView = this.createChildView(this.viewConfig).render();
-            this.$('.drop-content').html(this.childView.el);
+            this.append(this.childView, '.drop-content');
             return this;
         },
 
@@ -122,13 +127,20 @@ define([
             }
         },
 
-        onClose: function(e) {
+        onClick: function(e) {
             if(!this.isOpen) {
                 return;
             }
 
             var target = $(e.target);
-            if(!target.hasClass('drop-button')) {
+            var inDom = target.closest(document.documentElement).length ? true : false;
+
+            //check to see if the target is in the dom.
+            //child view click events which result in a re-render of the drop view
+            //will no longer be in the dom so we can't check to see if its
+            //part of the .drop-content, so ignore all events from views 
+            //not in the dom.
+            if(inDom && !target.closest('.drop-button, .drop-content').length) {
                 this.close();
             }
         },

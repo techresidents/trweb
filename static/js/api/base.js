@@ -394,9 +394,9 @@ define([
                 Backbone.Model.prototype.fetch.call(this, options);
             }
         },
-
+        
         save: function(key, value, options) {
-            if(this.session && this.isNew) {
+            if(this.session && this.isNew()) {
                 if(this.collection) {
                     this.session.removeCollection(this.collection);
                 }
@@ -651,15 +651,19 @@ define([
             var fetch, collection;
             var loadedEvents = 'loaded loaded:read';
             options = options || {};
+
+            var triggerFetchEvents = function(collection) {
+                collection.trigger(loadedEvents, collection);
+                if(_.isFunction(options.success)) {
+                    options.success(collection, null, options);
+                }
+            };
             
             if(this.session && !options.noSession) {
                 collection = this.session.getCollection(this.key(), options.query);
                 if(collection) {
                     collection.clone({ to: this });
-                    this.trigger(loadedEvents, this);
-                    if(_.isFunction(options.success)) {
-                        options.success(this, null, options);
-                    }
+                    triggerFetchEvents(collection);
                     result = true;
                 } else {
                     fetch = this.session.getFetch(this.key(), options.query);
@@ -667,7 +671,7 @@ define([
                         var that = this;
                         fetch.success.push(function(instance, response, options) {
                             instance.clone({ to: that });
-                            that.trigger(loadedEvents, that);
+                            triggerFetchEvents(that);
                         });
                         result = true;
                     } else {

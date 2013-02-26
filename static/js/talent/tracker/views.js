@@ -3,6 +3,7 @@ define([
     'underscore',
     'core/view',
     'api/models',
+    'filter/views',
     'grid/views',
     'paginator/views',
     'text!talent/tracker/templates/tracker.html'
@@ -11,6 +12,7 @@ define([
     _,
     view,
     api,
+    filter_views,
     grid_views,
     paginator_views,
     tracker_template) {
@@ -48,7 +50,7 @@ define([
         },
 
         childViews: function() {
-            return [this.gridView];
+            return [this.filtersView, this.gridView, this.paginatorView];
         },
 
         initialize: function(options) {
@@ -57,6 +59,7 @@ define([
             //this.collection = new api.LocationCollection();
             this.collection = options.collection;
             this.query = options.query;
+            this.query.fetch();
 
             /*
             this.config = [
@@ -144,27 +147,54 @@ define([
                     }
                 ]
             };
+
+            this.filtersConfig = {
+                filters: [
+                    { name: 'City', field: 'city',  filterView: {
+                            ctor: filter_views.ChoicesFilterView,
+                            options: { name: 'City', field: 'city', choices: ['Boston', 'San Francisco'] }
+                        }
+                    },
+                    { name: 'State', field: 'state', filterView: { options: { name: 'State', field: 'city' } } }
+                ]
+            };
+
+            //child views
+            this.filtersView = null;
+            this.gridView = null;
+            this.paginatorView = null;
+            this.initChildViews();
         },
+
+        initChildViews: function() {
+            this.filtersView = new filter_views.FiltersView({
+                config: this.filtersConfig,
+                collection: this.collection,
+                query: this.query
+            });
+
+            this.gridView = new grid_views.GridView({
+                config: this.config,
+                collection: this.collection,
+                query: this.query
+            });
+
+            this.paginatorView = new paginator_views.PaginatorView({
+                maxPages: 10,
+                collection: this.collection,
+                query: this.query
+            });
+        },
+
         
         render: function() {
             //this.query = this.collection.withRelated('requisition');
             //this.query = this.collection.filterBy({'city__in': 'Boston,San Francisco'}).slice(0, 10);
             //this.query = this.query.withRelated('technology');
             this.$el.html(this.template());
-            this.gridView = new grid_views.GridView({
-                config: this.config,
-                collection: this.collection,
-                query: this.query
-            }).render();
-            this.$('.content').append(this.gridView.el);
-
-            this.paginatorView = new paginator_views.PaginatorView({
-                maxPages: 10,
-                collection: this.collection,
-                query: this.query
-            }).render();
-            this.$('.content').append(this.paginatorView.el);
-
+            this.append(this.filtersView, '.content');
+            this.append(this.gridView, '.content');
+            this.append(this.paginatorView, '.content');
             return this;
         }
     });
