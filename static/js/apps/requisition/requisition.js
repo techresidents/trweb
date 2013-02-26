@@ -86,6 +86,9 @@ define([
      * This command should be used if it's needed to redirect
      * to another URL due to some event (e.g. something other
      * than a click on a URL by a user).
+     * Expected event options are:
+     *      action: 'create', 'read', or 'edit' (required)
+     *      id: model ID (required for actions: 'read','edit')
      */
     var NavigateCommand = command.Command.extend({
 
@@ -94,10 +97,13 @@ define([
             switch(options.type) {
                 case requisition_mediators.RequisitionMediator.VIEW_TYPE:
                     var reqId = options.options.id;
-                    if (!reqId) {
+                    var action = options.options.action;
+                    if (action === "create") {
                         router.navigate("create", {trigger: true});
-                    } else {
+                    } else if (reqId && action === 'read') {
                         router.navigate("req/" + reqId, {trigger: true});
+                    } else if (reqId && action === 'edit') {
+                        router.navigate("req/" + reqId + "/edit", {trigger: true});
                     }
                     break;
                 case requisition_list_mediators.RequisitionListMediator.VIEW_TYPE:
@@ -135,6 +141,7 @@ define([
                         this._destroyView(this.activeStatusView);
                     }
                     this.$(this.statusSelector).append(view.render().el);
+                    $('html,body').scrollTop(0);
                     this.activeStatusView = {
                         type: type,
                         view: view,
