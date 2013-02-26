@@ -37,20 +37,6 @@ define([
             return [this.childView];
         },
 
-        delegateEventName: function(eventName) {
-            //use delegate events so they're removed on destroy()
-            return eventName + '.delegateGlobalEvents' + this.cid;
-        },
-
-        undelegateGlobalEvents: function() {
-            $('html').off(this.delegateEventName(''));
-        },
-
-        destroy: function() {
-            this.undelegateGlobalEvents();
-            view.View.prototype.destroy.apply(this, arguments);
-        },
-
         initialize: function(options) {
             options = _.extend({
                 autoclose: true,
@@ -65,6 +51,22 @@ define([
             this.childView = null;
             this.isOpen = false;
             
+            //child views
+            this.childView = this.createChildView(this.viewConfig);
+            
+        },
+
+        delegateEventName: function(eventName) {
+            //use delegate events so they're removed on destroy()
+            return eventName + '.delegateGlobalEvents' + this.cid;
+        },
+
+        undelegateGlobalEvents: function() {
+            $('html').off(this.delegateEventName(''));
+        },
+
+        delegateEvents: function() {
+            view.View.prototype.delegateEvents.apply(this, arguments);
             if(this.autoclose) {
                 //close the action menu if click happens outside of a .drop-button
                 $('html').on(this.delegateEventName('click'), _.bind(this.onClose, this));
@@ -72,6 +74,11 @@ define([
                 //handle drop opened event so we can close if another drop has been opened
                 $('html').on(this.delegateEventName(EVENTS.DROP_OPENED), _.bind(this.onDropOpened, this));
             }
+        },
+
+        undelegateEvents: function() {
+            this.undelegateGlobalEvents();
+            view.View.prototype.undelegateEvents.apply(this, arguments);
         },
 
         classes: function() {
@@ -83,9 +90,7 @@ define([
 
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
-            this.destroyChildViews();
-            this.childView = this.createChildView(this.viewConfig).render();
-            this.$('.drop-content').html(this.childView.el);
+            this.html(this.childView, '.drop-content');
             return this;
         },
 
@@ -128,7 +133,7 @@ define([
             }
 
             var target = $(e.target);
-            if(!target.hasClass('drop-button')) {
+            if(!target.closest('.drop-button').length) {
                 this.close();
             }
         },

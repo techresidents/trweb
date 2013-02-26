@@ -17,13 +17,21 @@ define([
     var ApiLoader = base.Base.extend({
         
         initialize: function(targets, options) {
+            options = _.extend({
+                successOnAlreadyLoaded: false
+            }, options);
+
             this.targets = targets || [];
+            this.successOnAlreadyLoaded = options.successOnAlreadyLoaded;
         },
 
         load: function(options) {
-            options = options || {};
+            options = _.extend({
+                successOnAlreadyLoaded: this.successOnAlreadyLoaded
+            }, options);
+
             var targets = this.targets;
-            var queries = [], loading = [];
+            var fetcher, queries = [], loading = [];
             var count = 0, loaded = 0;
 
             var loadedCallback = function(target, instance) {
@@ -32,7 +40,7 @@ define([
                     loaded += 1;
 
                     if(loaded >= count) {
-                        this.load(targets, options);
+                        this.load(options);
                     }
                 }
             };
@@ -60,12 +68,16 @@ define([
                         queries = queries.concat(state.fetcher.queries);
                     }
                 }, this);
-
-                var fetcher = new api_fetcher.ApiFetcher(queries);
-                fetcher.fetch({
-                    success: options.success,
-                    error: options.error
-                });
+                
+                if(queries.length) {
+                    fetcher = new api_fetcher.ApiFetcher(queries);
+                    fetcher.fetch({
+                        success: options.success,
+                        error: options.error
+                    });
+                } else if(options.successOnAlreadyLoaded && options.success) {
+                    options.success();
+                }
             }
         }
     });

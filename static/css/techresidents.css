@@ -270,6 +270,14 @@ html {
     left: 0;
     top: 100%;
     z-index: 1000;
+
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    margin: 2px 0 0;
+    min-width: 160px;
+    padding: 5px 5px;
 }
 
 .drop-open .drop-content {
@@ -309,4 +317,30 @@ html {
     height: 1px;
     margin: 9px 1px;
     overflow: hidden;
+}
+
+.choices ul {
+    list-style: none;
+}
+
+.choices input {
+    margin: 0px;
+}
+
+.filter {
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+.filter-wrap-name {
+    color: #777777;
+}
+
+.filter-wrap {
+    display: inline-block;
+    line-height: 15px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

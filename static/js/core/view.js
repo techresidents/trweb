@@ -60,6 +60,25 @@ define([
             Backbone.View.prototype.listenTo.call(this, obj, name, wrapper);
         },
 
+        append: function(view, selector) {
+            var target = selector ? this.$(selector) : this.$el;
+            target.append(view.render().el);
+            view.delegateEvents();
+            return this;
+        },
+
+        assign: function(view, selector) {
+            view.setElement(this.$(selector)).render();
+            return this;
+        },
+
+        html: function(view, selector) {
+            var target = selector ? this.$(selector) : this.$el;
+            target.html(view.render().el);
+            view.delegateEvents();
+            return this;
+        },
+
         destroyChildViews: function() {
             var childViews = base.getValue(this, 'childViews');
             if(this.childViews) {
