@@ -33,8 +33,9 @@ define([
     var RequisitionAppRouter = Backbone.Router.extend({
         routes: {
             'create': 'create',
-            'req/:id': 'read',
-            'req/:id/edit': 'edit',
+            'view/:id': 'read',
+            'edit/:id': 'edit',
+            'list(/:query)': 'list',
             '*list': 'list'
 
         },
@@ -73,10 +74,12 @@ define([
             });
         },
 
-        list: function() {
+        list: function(query) {
             this.facade.trigger(notifications.VIEW_CREATE, {
                 type: requisition_list_mediators.RequisitionListMediator.VIEW_TYPE,
-                options: {}
+                options: {
+                    query: query
+                }
             });
         }
     });
@@ -87,27 +90,61 @@ define([
      * to another URL due to some event (e.g. something other
      * than a click on a URL by a user).
      * Expected event options are:
+     *      type: Name of the view type which dictates the mediator that will
+     *            handle creating the needed view (required)
      *      action: 'create', 'read', or 'edit' (required)
      *      id: model ID (required for actions: 'read','edit')
+     *      query: query string for requisition list view (optional)
+     *      trigger: Backbone trigger value. Defaults to true (optional)
+     *      replace: Backbone replace value. Defaults to false (optional)
      */
     var NavigateCommand = command.Command.extend({
 
         execute: function(options) {
+            // Default trigger and replace values
+            options = _.extend({
+                trigger: true
+            }, options);
+            options = _.extend({
+                replace: false
+            }, options);
             router = this.facade.router;
             switch(options.type) {
                 case requisition_mediators.RequisitionMediator.VIEW_TYPE:
+                    var uri;
                     var reqId = options.options.id;
                     var action = options.options.action;
                     if (action === "create") {
-                        router.navigate("create", {trigger: true});
-                    } else if (reqId && action === 'read') {
-                        router.navigate("req/" + reqId, {trigger: true});
-                    } else if (reqId && action === 'edit') {
-                        router.navigate("req/" + reqId + "/edit", {trigger: true});
+                        uri = 'create';
+                        router.navigate(uri, {
+                            trigger: options.trigger,
+                            replace: options.replace
+                        });
+                    }
+                    else if (reqId && action === 'read') {
+                        uri = 'view/' + reqId;
+                        router.navigate(uri, {
+                            trigger: options.trigger,
+                            replace: options.replace
+                        });
+                    }
+                    else if (reqId && action === 'edit') {
+                        uri = 'edit/' + reqId;
+                        router.navigate(uri, {
+                            trigger: options.trigger,
+                            replace: options.replace
+                        });
                     }
                     break;
                 case requisition_list_mediators.RequisitionListMediator.VIEW_TYPE:
-                    router.navigate("list", {trigger: true});
+                    uri = 'list';
+                    if (options.query) {
+                        uri += '/' + options.query;
+                    }
+                    router.navigate(uri, {
+                        trigger: options.trigger,
+                        replace: options.replace
+                    });
                     break;
             }
         }

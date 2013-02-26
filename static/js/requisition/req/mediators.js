@@ -61,6 +61,12 @@ define([
             this.currentProxy = this.facade.getProxy(current_proxies.CurrentProxy.NAME);
         },
 
+        /**
+         *
+         * @param notification Notification options
+         *      type: Mediator's view type (required)
+         *      options.id: Requisition model ID (optional)
+         */
         onCreateView: function(notification) {
             if (notification.type === this.viewType()) {
 

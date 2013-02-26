@@ -124,7 +124,7 @@ define([
                             ctor: grid_views.GridLinkCellView,
                             options: function (model) {
                                 return {
-                                    href: '/requisition/req/' + model.get_id(),
+                                    href: '/requisition/view/' + model.get_id(),
                                     value: model.get_title()
                                 };
                             }

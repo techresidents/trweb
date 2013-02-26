@@ -6,9 +6,10 @@ define([
     'alert/models',
     'current/proxies',
     'api/models',
+    'api/query',
     'modal/views',
     'requisition/notifications',
-    'requisition/list/views',
+    'requisition/list/views'
 ], function(
     _,
     notifications,
@@ -17,6 +18,7 @@ define([
     alert_models,
     current_proxies,
     api_models,
+    api_query,
     modal_views,
     requisition_notifications,
     requisition_list_views
@@ -63,13 +65,29 @@ define([
             this.currentProxy = this.facade.getProxy(current_proxies.CurrentProxy.NAME);
         },
 
+        /**
+         *
+         * @param notification Notification options
+         *      type: Mediator's view type (required)
+         *      options.query: {ApiQuery} (optional)
+         */
         onCreateView: function(notification) {
             if (notification.type === this.viewType()) {
                 var user = this.currentProxy.currentUser();
-                var collection = user.get_tenant().get_requisitions();
+                this.collection = user.get_tenant().get_requisitions();
+                this.collection.on('reset', this.onReset, this);
+                this.query = this.collection.query().slice(0, 10);
+                console.log(notification.options.query);
+                if (notification.options.query) {
+                    this.query = api_query.ApiQuery.parse(
+                        this.collection,
+                        notification.options.query
+                    );
+                }
+
                 this.view = new requisition_list_views.RequisitionsSummaryView({
-                    collection: collection,
-                    query: collection.query().slice(0, 10)
+                    collection: this.collection,
+                    query: this.query
                 });
 
                 // Add event listeners
@@ -82,14 +100,22 @@ define([
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
                     view: this.view,
-                    options: notification.options
+                    options: _.extend(notification.options, {
+                        collection: this.collection,
+                        query: this.query
+                    })
                 });
             }
         },
 
+        /**
+         * TODO add expected params
+         * @param notification
+         */
         onDestroyView: function(notification) {
             if (notification.type === this.viewType()) {
                 notification.view.destroy();
+                notification.options.collection.off('reset', this.onReset, this);
 
                 this.facade.trigger(notifications.VIEW_DESTROYED, {
                     type: this.viewType(),
@@ -99,6 +125,19 @@ define([
                     this.view = null;
                 }
             }
+        },
+
+        /**
+         * Method to listen for reset events on the collection
+         * and update the URL to include any query parameters.
+         */
+        onReset: function() {
+            this.facade.trigger(notifications.VIEW_NAVIGATE, {
+                type: this.viewType(),
+                query: this.query.toUri(),
+                trigger: false,
+                replace: false
+            });
         },
 
         /**
