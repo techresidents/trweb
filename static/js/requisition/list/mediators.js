@@ -66,7 +66,7 @@ define([
         },
 
         /**
-         *
+         * onCreateView
          * @param notification Notification options
          *      type: Mediator's view type (required)
          *      options.query: {ApiQuery} (optional)
@@ -77,7 +77,6 @@ define([
                 this.collection = user.get_tenant().get_requisitions();
                 this.collection.on('reset', this.onReset, this);
                 this.query = this.collection.query().slice(0, 10);
-                console.log(notification.options.query);
                 if (notification.options.query) {
                     this.query = api_query.ApiQuery.parse(
                         this.collection,
@@ -109,8 +108,12 @@ define([
         },
 
         /**
-         * TODO add expected params
-         * @param notification
+         * onDestroyView
+         * @param notification Notification options
+         *      type: View type which indicates if this mediator is responsible
+         *          for destroying this view (required)
+         *      view: {View} (required)
+         *      options.collection: {RequisitionCollection} (required)
          */
         onDestroyView: function(notification) {
             if (notification.type === this.viewType()) {

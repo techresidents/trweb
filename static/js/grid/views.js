@@ -560,7 +560,6 @@ define([
         },
 
         initialize: function(options) {
-            console.log('init grid');
             options = _.extend({
                 template: this.defaultTemplate,
                 context: {}
@@ -582,7 +581,6 @@ define([
         },
 
         onReset: function() {
-            console.log('reset');
             this.render();
         },
 
@@ -591,7 +589,6 @@ define([
         },
 
         render: function() {
-            console.log('gridView render');
             this.destroyChildViews();
             this.rowViews = [];
             

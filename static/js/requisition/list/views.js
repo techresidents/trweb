@@ -212,11 +212,9 @@ define([
          */
         onGridAction: function(e, eventBody) {
             if (eventBody.model && eventBody.action.key) {
-                console.log('action');
                 var listEventBody = {model: eventBody.model};
                 switch (eventBody.action.key) {
                     case 'view':
-                        console.log('view');
                         this.triggerEvent(EVENTS.VIEW_REQ, listEventBody);
                         break;
                     case 'edit':
@@ -248,7 +246,6 @@ define([
         contentSelector: '.content',
 
         initialize: function(options) {
-            console.log('ParentView init');
             this.collection = options.collection;
             this.query = options.query.withRelated('location');
             this.template =  _.template(list_template);
@@ -265,7 +262,6 @@ define([
         },
 
         render: function() {
-            console.log('ParentView render');
             this.destroyChildViews();
             this.$el.html(this.template());
 

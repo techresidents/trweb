@@ -174,7 +174,7 @@ define([
         addView: function(type, view, options) {
             switch(type) {
                 case alert_mediators.AlertMediator.VIEW_TYPE:
-                    if(this.activeStatusView) {
+                    if (this.activeStatusView) {
                         this._destroyView(this.activeStatusView);
                     }
                     this.$(this.statusSelector).append(view.render().el);
@@ -186,7 +186,7 @@ define([
                     };
                     break;
                 default:
-                    if(this.activeView) {
+                    if (this.activeView) {
                         this._destroyView(this.activeView);
                     }
                     this.$(this.contentSelector).html(view.render().el);
