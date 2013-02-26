@@ -69,7 +69,7 @@ define([
             view.View.prototype.delegateEvents.apply(this, arguments);
             if(this.autoclose) {
                 //close the action menu if click happens outside of a .drop-button
-                $('html').on(this.delegateEventName('click'), _.bind(this.onClose, this));
+                $('html').on(this.delegateEventName('click'), _.bind(this.onClick, this));
 
                 //handle drop opened event so we can close if another drop has been opened
                 $('html').on(this.delegateEventName(EVENTS.DROP_OPENED), _.bind(this.onDropOpened, this));
@@ -90,7 +90,7 @@ define([
 
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
-            this.html(this.childView, '.drop-content');
+            this.append(this.childView, '.drop-content');
             return this;
         },
 
@@ -127,13 +127,20 @@ define([
             }
         },
 
-        onClose: function(e) {
+        onClick: function(e) {
             if(!this.isOpen) {
                 return;
             }
 
             var target = $(e.target);
-            if(!target.closest('.drop-button').length) {
+            var inDom = target.closest(document.documentElement).length ? true : false;
+
+            //check to see if the target is in the dom.
+            //child view click events which result in a re-render of the drop view
+            //will no longer be in the dom so we can't check to see if its
+            //part of the .drop-content, so ignore all events from views 
+            //not in the dom.
+            if(inDom && !target.closest('.drop-button, .drop-content').length) {
                 this.close();
             }
         },
