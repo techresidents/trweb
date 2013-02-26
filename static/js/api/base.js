@@ -394,9 +394,9 @@ define([
                 Backbone.Model.prototype.fetch.call(this, options);
             }
         },
-
+        
         save: function(key, value, options) {
-            if(this.session && this.isNew) {
+            if(this.session && this.isNew()) {
                 if(this.collection) {
                     this.session.removeCollection(this.collection);
                 }
