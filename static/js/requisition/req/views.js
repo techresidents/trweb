@@ -638,6 +638,7 @@ define([
                 };
 
                 // Save the model
+                // TODO call validate explicitly to display any errors
                 this.model.save(reqAttributes, {
                     wait: true,
                     success: function(model) {

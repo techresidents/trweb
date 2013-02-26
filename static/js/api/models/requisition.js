@@ -36,7 +36,7 @@ define([
             tenant_id: new fields.StringField(),
             user_id: new fields.StringField(),
             location_id: new fields.IntegerField(),
-            created: new fields.DateTimeField(),
+            created: new fields.DateTimeField({nullable: true}),
             status: new fields.StringField(),
             position_type: new fields.StringField(),
             title: new fields.StringField(),

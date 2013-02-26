@@ -117,7 +117,7 @@ define([
                 type: this.viewType(),
                 options: {
                     id: eventBody.id,
-                    action: "read"
+                    action: 'read'
                 }
             });
 
@@ -167,7 +167,7 @@ define([
                     type: this.viewType(),
                     options: {
                         id: eventBody.id,
-                        action: "read"
+                        action: 'read'
                     }
                 });
             } else {
