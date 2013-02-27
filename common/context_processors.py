@@ -20,6 +20,6 @@ def tr_processors(request):
         'GA_ID': settings.GA_ID,
         'TR_XD_REMOTE': settings.TR_XD_REMOTE,
         'VERSION': version.VERSION,
-        'USER': request.user
+        'USER': getattr(request, 'user', None)
     }
 
