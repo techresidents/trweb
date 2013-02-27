@@ -59,6 +59,7 @@ define([
             this.model = options.model;
             this.viewConfig = options.view;
 
+            //child views
             this.childView = this.createChildView(this.viewConfig);
         },
 
@@ -213,6 +214,11 @@ define([
 
             //child views
             this.childViews = [];
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.destroyChildViews();
             _.each(this.config, this.createCellView, this);
         },
 
@@ -278,8 +284,10 @@ define([
             this.query = options.query;
             this.valueAttribute = options.valueAttribute;
             this.value = options.value;
-            this.hoverView = null;
             this.hoverTimer = null;
+
+            //child views
+            this.hoverView = null;
         },
 
         classes: function() {
@@ -418,6 +426,8 @@ define([
             GridCellView.prototype.initialize.call(this, options);
 
             this.actions = options.actions;
+
+            //child views
             this.childView = this.createChildView();
         },
         
@@ -485,12 +495,17 @@ define([
             this.model = options.model;
             this.query = options.query;
 
-            //child views
-            this.childViews = [];
-            _.each(this.config, this.createCellView, this);
-
             //bind events
             this.listenTo(this.model, 'change', this.render);
+
+            //child views
+            this.childViews = [];
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.destroyChildViews();
+            _.each(this.config, this.createCellView, this);
         },
 
         classes: function() {
@@ -525,6 +540,7 @@ define([
             var view = new ctor(options);
 
             this.childViews.push(view);
+            return view;
         },
 
         onRowClick: function(e) {
@@ -563,16 +579,16 @@ define([
             this.config = options.config;
             this.collection = options.collection;
             this.query = options.query || this.collection.query();
-            
-            //child views
-            this.headerRowView = null;
-            this.rowViews = [];
-            this.initChildViews();
 
             //bind events
             this.listenTo(this.collection, 'reset', this.onReset);
             this.listenTo(this.collection ,'add', this.onAdd);
             this.listenTo(this.collection, 'remove', this.onRemove);
+
+            //child views
+            this.headerRowView = null;
+            this.rowViews = [];
+            this.initChildViews();
         },
 
         initChildViews: function() {
