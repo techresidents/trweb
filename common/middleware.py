@@ -1,7 +1,13 @@
 import pytz
 import threading
 
+from django.conf import settings
+from django.contrib import auth
+from django.contrib.auth import get_user_model
+from django.http import HttpResponseRedirect
 from django.utils import timezone
+
+User = get_user_model()
 
 class TimezoneMiddleware(object):
     def process_request(self, request):
@@ -39,3 +45,32 @@ class TLSRequestMiddleware(object):
             pass
         finally:
             return response
+
+class DemoMiddleware(object):
+    """Demo middleware
+
+    This middleware allows us to easily demo our app as the demo user
+    with a url like techresidents.com?demo=<guid>. This middleware will
+    intercept all url's with a demo url parameter and login() the user
+    with the demo account associated with the guid.
+    """
+    
+    def __init__(self):
+        self.demo_users = settings.DEMO_USERS
+
+    def process_request(self, request):
+        try:
+            if request.method == "GET" and "demo" in request.GET:
+                key = request.GET["demo"]
+                if key in self.demo_users:
+                    username = self.demo_users[key]
+                    user = User.objects.get(username=username)
+                    
+                    #if valid username/password and user is active
+                    if user and user.is_active:
+                        user.backend = 'django.contrib.auth.backends.ModelBackend'
+                        auth.login(request, user)
+                        return HttpResponseRedirect(request.path)
+        except:
+            pass
+        return None
