@@ -1,0 +1,86 @@
+.arrow {
+    font-size: 12px;
+    line-height: 12px;
+    text-shadow: 0 1px 0 #ffffff;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+    color: #000000;
+}
+
+.arrow:hover {
+    color: #000000;
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.6;
+    filter: alpha(opacity=60);
+}
+
+.arrow-container {
+    font-size: 12px;
+    line-height: 12px;
+    margin-top: 8px;
+}
+
+#alerts .alert {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.req-summary-grid .grid-cell-created {
+    width: 75px;
+}
+
+.req-summary-grid .grid-cell-location {
+    width: 180px;
+}
+
+.req-summary-grid .grid-cell-internal-id {
+    width: 100px;
+}
+
+.req-summary-grid .grid-cell-status {
+    width: 80px;
+}
+
+.req-summary-grid .grid-cell-title {
+    width: 180px;
+}
+
+.wishlist-container > div {
+    display: inline-block;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 16px;
+    line-height: 36px;
+    background-color: rgba(234, 143, 0, 0.15);
+    border-color: rgba(234, 143, 0, 0.5);
+    color: #ea8f00;
+
+}
+
+.wishlist-container > div > .close {
+    line-height: 36px;
+    margin-left: 6px;
+}
+
+.wishlist-item-years-container {
+    display: inline-block;
+    border-right: 1px;
+    border-right-style: solid;
+    border-right-color: rgba(234, 143, 0, 0.5);
+    margin-right: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.wishlist-item-years-text {
+    font-size: 14px;
+}
+
+#wishlist-input {
+    margin-bottom: 10px;
+}

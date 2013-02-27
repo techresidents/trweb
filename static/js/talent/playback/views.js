@@ -3,6 +3,7 @@ define([
     'jquery.bootstrap',
     'underscore',
     'core/view',
+    'api/loader',
     'text!talent/playback/templates/minute.html',
     'text!talent/playback/templates/minutes.html',
     'text!talent/playback/templates/playback.html',
@@ -15,6 +16,7 @@ define([
     none,
     _,
     view,
+    api_loader,
     minute_template,
     minutes_template,
     playback_template,
@@ -40,11 +42,15 @@ define([
         initialize: function(options) {
             this.template = _.template(tag_template);
             this.participant = options.participant;
-            this.model.bind('change', this.render, this);
+
+            //bind events
+            this.listenTo(this.model, 'change', this.render);
         },
 
         render: function() {
-            var context = this.model.toJSON({withRelated: true});
+            var context = this.model.toJSON({
+                withRelated: ['chat_minute__topic']
+            });
             this.$el.html(this.template(context));
             this.$el.addClass('playback-tag');
             this.$el.addClass('participant' + this.participant);
@@ -64,35 +70,52 @@ define([
         initialize: function(options) {
             this.template =  _.template(tags_template);
             this.users = options.users;
-            this.collection.bind('reset', this.render, this);
-            this.collection.bind('add', this.added, this);
+
+            // bind events
+            this.listenTo(this.collection, 'reset', this.onReset);
+            this.listenTo(this.collection, 'add', this.onAdd);
+
+            //child views
             this.childViews = [];
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.destroyChildViews();
+            this.childViews = [];
+            this.collection.each(this.createChildView, this);
+        },
+
+        createChildView: function(model) {
+            var user = this.users.get(model.get_user_id());
+            var view = new PlaybackTagView({
+                model: model,
+                participant: this.users.indexOf(user) + 1
+            }).render();
+            this.childViews.push(view);
+            return view;
         },
 
         render: function() {
             var context = {
                 collection: this.collection.toJSON()
             };
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
-
-            this.childViews = [];
             this.$el.html(this.template(context));
-            this.collection.each(this.added, this);
-                
+
+            _.each(this.childViews, function(view) {
+                this.append(view);
+            }, this);
             return this;
         },
 
-        added: function(model) {
-            var user = this.users.get(model.get_user_id());
-            var view = new PlaybackTagView({
-                model: model,
-                participant: this.users.indexOf(user) + 1
-            }).render();
+        onReset: function() {
+            this.initChildViews();
+            this.render();
+        },
 
-            this.childViews.push(view);
-            this.$el.append(view.el);
+        onAdd: function(model) {
+            var view = this.createChildView(model);
+            this.append(view);
         }
     });
 
@@ -108,11 +131,13 @@ define([
         initialize: function(options) {
             this.template = _.template(user_template);
             this.participant = options.participant;
-            this.model.bind('change', this.render, this);
+
+            //bind events
+            this.listenTo(this.model, 'change', this.render);
         },
 
         render: function() {
-            var context = this.model.toJSON({withRelated: true});
+            var context = this.model.toJSON();
             this.$el.html(this.template(context));
             this.$el.addClass('playback-user');
             this.$el.addClass('participant' + this.participant);
@@ -129,32 +154,49 @@ define([
     var PlaybackUsersView = view.View.extend({
         initialize: function(options) {
             this.template =  _.template(users_template);
-            this.collection.bind('reset', this.render, this);
-            this.collection.bind('add', this.added, this);
+
+            //bind events
+            this.listenTo(this.collection, 'reset', this.onReset);
+            this.listenTo(this.collection, 'add', this.onAdd);
+
+            //child views
             this.childViews = [];
+            this.initChildViews();
         },
 
-        render: function() {
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
-
+        initChildViews: function() {
+            this.destroyChildViews();
             this.childViews = [];
-            this.$el.html(this.template());
-            this.collection.each(this.added, this);
-                
-            return this;
+            this.collection.each(this.createChildView, this);
         },
 
-        added: function(model) {
+        createChildView: function(model) {
             var view = new PlaybackUserView({
                 model: model,
                 participant: this.collection.indexOf(model) + 1
             }).render();
-
             this.childViews.push(view);
-            this.$el.append(view.el);
+            return view;
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            _.each(this.childViews, function(view) {
+                this.append(view);
+            }, this);
+            return this;
+        },
+
+        onReset: function() {
+            this.initChildViews();
+            this.render();
+        },
+
+        onAdd: function(model) {
+            var view = this.createChildView(model);
+            this.append(view);
         }
+
     });
 
     /**
@@ -174,9 +216,11 @@ define([
         initialize: function(options) {
             this.template = _.template(minute_template);
             this.playerState = options.playerState;
-            this.model.bind('change', this.render, this);
-            this.playerState.bind('change:chatMinute', this.render, this);
-            this.playerState.bind('change:state', this.render, this);
+
+            //bind events
+            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.playerState, 'change:chatMinute', this.render);
+            this.listenTo(this.playerState, 'change:state', this.render);
         },
 
         isPlaying: function() {
@@ -190,7 +234,9 @@ define([
 
         render: function() {
             var context = {
-                minute: this.model.toJSON({withRelated: true}),
+                minute: this.model.toJSON({
+                    withRelated: ['topic']
+                }),
                 playing: this.isPlaying(),
                 fmt: this.fmt
             };
@@ -227,31 +273,47 @@ define([
         initialize: function(options) {
             this.template =  _.template(minutes_template);
             this.playerState = options.playerState;
-            this.collection.bind('reset', this.render, this);
-            this.collection.bind('add', this.added, this);
+
+            //bind events
+            this.listenTo(this.collection, 'reset', this.onReset);
+            this.listenTo(this.collection, 'add', this.onAdd);
+
+            //child views
             this.childViews = [];
+            this.initChildViews();
         },
 
-        render: function() {
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
-
+        initChildViews: function() {
+            this.destroyChildViews();
             this.childViews = [];
-            this.$el.html(this.template());
-            this.collection.each(this.added, this);
-                
-            return this;
+            this.collection.each(this.createChildView, this);
         },
 
-        added: function(model) {
+        createChildView: function(model) {
             var view = new PlaybackMinuteView({
                 model: model,
                 playerState: this.playerState
             }).render();
-
             this.childViews.push(view);
-            this.$el.append(view.el);
+            return view;
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            _.each(this.childViews, function(view) {
+                this.append(view);
+            }, this);
+            return this;
+        },
+
+        onReset: function() {
+            this.initChildViews();
+            this.render();
+        },
+
+        onAdd: function(model) {
+            var view = this.createChildView(model);
+            this.append(view);
         }
     });
 
@@ -276,49 +338,52 @@ define([
         initialize: function(options) {
             this.template =  _.template(playback_template);
             this.playerState = options.playerState;
-            this.model.bind('loaded', this.loaded, this);
-            this.model.bind('change', this.render, this);
+            this.modelWithRelated = [
+                'chat__topic__tree',
+                'chat_minutes',
+                'users',
+                'chat_tags'
+            ];
+            
+            //bind events
+            this.listenTo(this.model, 'change', this.render);
+            
+            //load data
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated }
+            ]);
+            this.loader.load();
+            
+            //child views
             this.minutesView = null;
             this.usersView = null;
             this.tagsView = null;
-            
-            if(!this.model.isLoading()) {
-                this.load();
-            }
-        },
-        
-        loaded: function(instance) {
-            this.load();
+            this.initChildViews();
+
         },
 
-        load: function() {
-            var state = this.model.isLoadedWith('chat__topic__tree', 'chat_minutes', 'users', 'chat_tags');
-            if(!state.loaded) {
-                state.fetcher();
-            }
-        },
-
-        render: function() {
-            var context = this.model.toJSON({withRelated: true});
-            this.$el.html(this.template(context));
-
+        initChildViews: function() {
             this.minutesView = new PlaybackMinutesView({
-                el: this.$('.playback-minutes'),
                 collection: this.model.get_chat_minutes(),
                 playerState: this.playerState
-            }).render();
+            });
 
             this.usersView = new PlaybackUsersView({
-                el: this.$('.playback-users'),
                 collection: this.model.get_users()
-            }).render();
+            });
 
             this.tagsView = new PlaybackTagsView({
-                el: this.$('.playback-tags'),
                 collection: this.model.get_chat_tags(),
                 users: this.model.get_users()
-            }).render();
-
+            });
+        },
+        
+        render: function() {
+            var context = this.model.toJSON();
+            this.$el.html(this.template(context));
+            this.assign(this.minutesView, '.playback-minutes');
+            this.assign(this.usersView, '.playback-users');
+            this.assign(this.tagsView, '.playback-tags');
             return this;
         },
 

@@ -322,34 +322,34 @@ define([
                 var relationInstanceName = "_" + fieldName;
                 attributes = attributes || this.attributes;
 
-                //'this' resolves to relationConstructor instance
+                //'this' resolves to parent relation instance
                 if(this[relationInstanceName]) {
                     relation = this[relationInstanceName];
                 } else {
                     if(that.many) {
                         if(this.session && attributes.id) {
-                            relation = this.session.getCollection(
-                                    that.relationConstructor.prototype.collectionConstructor,
-                                    base.getValue(this, 'url') + "/" + fieldName);
+                            relation = this.session.getCollection(this.key() + '/' + fieldName);
+                        }
 
-                        } else {
+                        if(!relation) {
                             relation = new that.relationConstructor.prototype.collectionConstructor();
                         }
                     } else {
                         fk = attributes[fieldName + '_id'];
                         if(this.session && fk) {
-                            relation = this.session.getModel(that.relationConstructor, fk);
-                        } else {
-                            relation = new that.relationConstructor();
+                            relation = this.session.getModel(that.relationConstructor.key(fk));
+                        }
+
+                        if(!relation) {
+                            relation = new that.relationConstructor({id: fk});
                         }
                     }
                     
-                    constructorInstance = this;
-                    relation.url = function() {
-                        return base.getValue(constructorInstance, 'url') + "/" + fieldName;
-                    };
-
                     this[relationInstanceName] = relation;
+                    relation._parentRelation = {
+                        instance: this,
+                        field: that
+                    };
                 }
                 return relation;
             };

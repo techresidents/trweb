@@ -1,3 +1,7 @@
+html {
+    overflow-y: scroll;
+}
+
 .content {
     padding-top: 10px;
 }
@@ -110,6 +114,32 @@
     white-space: nowrap;
 }
 
+.read-horizontal-form .read-form-group {
+    margin-bottom: 10px;
+}
+
+.read-form-horizontal .read-form-group:before,
+.read-horizontal-form .read-form-group:after {
+    display: table;
+    line-height: 0;
+    content: "";
+}
+
+.read-horizontal-form .read-form-group:after {
+    clear: both;
+}
+
+.read-horizontal-form .read-form-label {
+    float: left;
+    width: 170px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.read-horizontal-form .read-form-values {
+    margin-left: 190px;
+}
+
 [class^="tr-icon-"] {
     display: inline-block;
     width: 14px;
@@ -134,4 +164,183 @@
 
 .tr-icon-erase {
     background-position: -48px 0;
+}
+
+
+.grid-table  {
+    background-color: transparent
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+}
+
+.grid-table thead th {
+    vertical-align: bottom;
+}
+
+.grid-table th {
+    font-weight: bold;
+}
+
+.grid-table th, .grid-table td {
+    border-top: 1px solid #DDDDDD;
+    line-height: 26px;
+    padding: 3px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.grid-table thead tr:first-child th, thead tr:first-child td {
+    border-top: 0 none;
+}
+
+.grid-header-cell-sort {
+    cursor: pointer;
+}
+
+.grid-header-cell-sort-asc .grid-sort-arrow {
+    display: inline-block;
+    border-bottom: 5px solid #000000;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    margin-bottom: 3px;
+}
+
+.grid-header-cell-sort-desc .grid-sort-arrow {
+    display: inline-block;
+    border-top: 5px solid #000000;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    margin-bottom: 3px;
+}
+
+.grid-header-cell-sort-asc, .grid-header-cell-sort-desc, 
+.grid-header-cell-sort.grid-header-cell-sort-asc:hover,
+.grid-header-cell-sort.grid-header-cell-sort-desc:hover {
+    background-color: #DDDDDD;
+}
+
+.grid-header-cell-sort:hover {
+    background-color: #EEEEEE;
+}
+
+.grid-action-cell {
+    width: 40px;
+}
+.grid-action-cell-inner{
+    position: relative;
+    display: none;
+}
+
+.grid-action-cell-inner .btn-mini {
+    padding: 2px 4px;
+}
+
+.grid-row:hover {
+    background-color: #EEEEEE;
+}
+
+.grid-row:hover .grid-action-cell-inner {
+    display: block;
+}
+
+.grid-action-cell-inner:hover {
+    display: block;
+
+}
+
+.grid-hover-cell {
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    margin: 2px 0 0;
+    min-width: 160px;
+    padding: 5px 5px;
+}
+
+.drop-inner {
+    position: relative;
+}
+
+.drop-inner .drop-content {
+    position: absolute;
+    display: none;
+    float: left;
+    left: 0;
+    top: 100%;
+    z-index: 1000;
+
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    margin: 2px 0 0;
+    min-width: 160px;
+    padding: 5px 5px;
+}
+
+.drop-open .drop-content {
+    display: block;
+}
+
+.drop-menu ul {
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    list-style: none outside none;
+    margin: 2px 0 0;
+    min-width: 160px;
+    padding: 5px 0;
+}
+
+.drop-menu li > a {
+    clear: both;
+    color: #333333;
+    display: block;
+    font-weight: normal;
+    line-height: 20px;
+    padding: 3px 20px;
+    white-space: nowrap;
+}
+
+.drop-menu li > a:hover, .drop-menu li a:focus {
+    background-color: #0081C2;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.drop-menu-divider {
+    background-color: #E5E5E5;
+    border-bottom: 1px solid #FFFFFF;
+    height: 1px;
+    margin: 9px 1px;
+    overflow: hidden;
+}
+
+.choices ul {
+    list-style: none;
+}
+
+.choices input {
+    margin: 0px;
+}
+
+.filter {
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+.filter-wrap-name {
+    color: #777777;
+}
+
+.filter-wrap {
+    display: inline-block;
+    line-height: 15px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

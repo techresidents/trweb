@@ -7,11 +7,13 @@ define([
     'core/facade',
     'core/mediator',
     'core/view',
+    'current/proxies',
     'talent/playback/mediators',
     'talent/player/mediators',
     'talent/player/models',
     'talent/player/proxies',
     'talent/search/mediators',
+    'talent/tracker/mediators',
     'talent/user/mediators',
     'text!apps/talent/talent.html'
 ], function(
@@ -23,11 +25,13 @@ define([
     facade,
     mediator,
     view,
+    current_proxies,
     playback_mediators,
     player_mediators,
     player_models,
     player_proxies,
     search_mediators,
+    tracker_mediators,
     user_mediators,
     talent_app_template) {
     
@@ -37,6 +41,7 @@ define([
     var TalentAppRouter = Backbone.Router.extend({
         routes: {
             'playback/:id': 'playback',
+            'tracker(/:query)': 'tracker',
             'user/:id': 'user',                
             '*actions': 'search'
 
@@ -52,6 +57,15 @@ define([
                 type: playback_mediators.PlaybackMediator.VIEW_TYPE,
                 options: {
                     id: id
+                }
+            });
+        },
+
+        tracker: function(query) {
+            this.facade.trigger(notifications.VIEW_CREATE, {
+                type: tracker_mediators.TrackerMediator.VIEW_TYPE,
+                options: {
+                    query: query
                 }
             });
         },
@@ -77,13 +91,24 @@ define([
      * Navigate Command
      */
     var NavigateCommand = command.Command.extend({
-
         execute: function(options) {
+            var uri;
+            options = _.extend({
+                trigger: true
+            }, options);
             router = this.facade.router;
             
             switch(options.type) {
-                case "SearchView":
-                    router.navigate("search", {trigger: true});
+                case 'SearchView':
+                    uri = 'search';
+                    router.navigate(uri, {trigger: options.trigger});
+                    break;
+                case 'TrackerView':
+                    uri = 'tracker';
+                    if(options.query) {
+                        uri += '/' + options.query;
+                    }
+                    router.navigate(uri, {trigger: options.trigger});
                     break;
             }
         }
@@ -119,7 +144,8 @@ define([
                     if(this.activeView) {
                         this._destroyView(this.activeView);
                     }
-                    this.$('#content').append(view.render().el);
+                    this.$('#content').html(view.render().el);
+                    $('html,body').scrollTop(0);
                     this.activeView = {
                         type: type,
                         view: view,
@@ -166,6 +192,7 @@ define([
             this.facade.registerMediator(new player_mediators.PlayerMediator());
             this.facade.registerMediator(new playback_mediators.PlaybackMediator());
             this.facade.registerMediator(new search_mediators.SearchMediator());
+            this.facade.registerMediator(new tracker_mediators.TrackerMediator());
             this.facade.registerMediator(new user_mediators.UserMediator());
 
             //create player view
@@ -191,12 +218,14 @@ define([
     /**
      * Init Models Command
      * @constructor
-     * Registers the TalentProxy, which in turn, registers
-     * sub-proxies.
+     * Registers Proxies.
      */
     var InitModels = command.Command.extend({
 
         execute: function() {
+            this.facade.registerProxy(new current_proxies.CurrentProxy({
+                user: TR.CURRENT_USER
+            }));
             this.facade.registerProxy(new player_proxies.PlayerStateProxy({
                 model: new player_models.PlayerState()
             }));
@@ -212,7 +241,7 @@ define([
     var InitViews = command.Command.extend({
 
         execute: function() {
-            this.facade.registerMediator(new TalentAppMediator(data));
+            this.facade.registerMediator(new TalentAppMediator());
         }
     });
 
@@ -254,7 +283,12 @@ define([
             this.registerCommand(notifications.APP_START, AppStartCommand);
             this.registerCommand(notifications.VIEW_NAVIGATE, NavigateCommand);
         },
-
+        
+        /**
+         * Initialize router and history. 
+         * This should not be called until dom is ready, since i.e. hash-based
+         * history relies on an iframe.
+         */
         initializeRouter: function() {
             //var pushState = !!(window.history && window.history.pushState);
             Backbone.history.start({
@@ -282,8 +316,7 @@ define([
          * Start the application and connect talent.
          */
         start: function() {
-            this.trigger(notifications.APP_START);
-            this.initializeRouter();
+            this.trigger(notifications.APP_START, TR.data);
         },
         
         /**
@@ -302,6 +335,7 @@ define([
 
     //DOM ready notification
     $(document).ready(function() {
+        talentAppFacade.initializeRouter();
         talentAppFacade.trigger(notifications.DOM_READY);
     });
 });

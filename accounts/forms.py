@@ -21,7 +21,7 @@ User = get_user_model()
 from techresidents_web.common.forms import JSONField
 from techresidents_web.common.models import ExpertiseType, Skill, Technology, TechnologyType, Location
 from techresidents_web.accounts.models import CodeType, Code, OneTimePassword, OneTimePasswordType, Request, Tenant
-from techresidents_web.job.models import PositionType, PositionTypePref, TechnologyPref, LocationPref
+from techresidents_web.job.models import JobPositionType, JobPositionTypePref, JobTechnologyPref, JobLocationPref
 
 
 # Some field size constants for this form.
@@ -613,7 +613,7 @@ class ProfileJobsForm(forms.Form):
                     raise forms.ValidationError("Position minimum salary field required")
             
             #Validate position types
-            count = PositionType.objects\
+            count = JobPositionType.objects\
                     .filter(id__in=position_type_ids)\
                     .count()
             if count != len(position_type_ids):
@@ -621,7 +621,7 @@ class ProfileJobsForm(forms.Form):
 
             # Validate position type preference ids are valid
             # and belong to the current user.
-            count = PositionTypePref.objects\
+            count = JobPositionTypePref.objects\
                     .filter(id__in=position_type_pref_ids, user=self.user)\
                     .count()
             if count != len(position_type_pref_ids):
@@ -674,7 +674,7 @@ class ProfileJobsForm(forms.Form):
         updated_pref_ids = {p['id'] for p in updated_position_prefs if 'id' in p}
 
         # Before updating the user's position preferences, save the old prefs to check for prefs that may have been deleted
-        previous_position_prefs = PositionTypePref.objects.filter(user=self.user)
+        previous_position_prefs = JobPositionTypePref.objects.filter(user=self.user)
         for previous_pref in previous_position_prefs:
             if not previous_pref.id in updated_pref_ids:
                  previous_pref.delete()
@@ -683,13 +683,13 @@ class ProfileJobsForm(forms.Form):
         for position in updated_position_prefs:
             if 'id' in position:
                 id = position['id']
-                rows_updated = PositionTypePref.objects.filter(id=id, user=self.user).update(
+                rows_updated = JobPositionTypePref.objects.filter(id=id, user=self.user).update(
                     salary_start=position['min_salary']
                 )
                 if 1 != rows_updated:
                     logging.error('Failed to update PositionTypePreference')
             else:
-                PositionTypePref(
+                JobPositionTypePref(
                     user=self.user,
                     position_type_id=position['positionTypeId'],
                     salary_start=position['min_salary']
@@ -702,7 +702,7 @@ class ProfileJobsForm(forms.Form):
         updated_technology_pref_ids = {t['technologyId'] for t in updated_technology_prefs}
 
         # Before updating the user's technology preferences, save the old prefs to check for prefs that may have been deleted
-        previous_technology_prefs = TechnologyPref.objects.filter(user=self.user).select_related('technology')
+        previous_technology_prefs = JobTechnologyPref.objects.filter(user=self.user).select_related('technology')
         for previous_pref in previous_technology_prefs:
             if not previous_pref.technology.id in updated_technology_pref_ids:
                 previous_pref.delete()
@@ -711,7 +711,7 @@ class ProfileJobsForm(forms.Form):
         for technology in updated_technology_prefs:
             # Check if this is a new preference and save it if it is.
             if 'id' not in technology:
-                TechnologyPref(
+                JobTechnologyPref(
                     user=self.user,
                     technology_id=technology['technologyId']
                 ).save()
@@ -724,7 +724,7 @@ class ProfileJobsForm(forms.Form):
         updated_location_pref_ids = {l['locationId'] for l in updated_location_prefs}
 
         # Before updating the user's location preferences, save the old prefs to check for prefs that may have been deleted
-        previous_location_prefs = LocationPref.objects.filter(user=self.user).select_related('location')
+        previous_location_prefs = JobLocationPref.objects.filter(user=self.user).select_related('location')
         for previous_pref in previous_location_prefs:
             if not previous_pref.location.id in updated_location_pref_ids:
                 previous_pref.delete()
@@ -733,7 +733,7 @@ class ProfileJobsForm(forms.Form):
         for location in updated_location_prefs:
             # Check if this is a new preference and save it if it is.
             if 'id' not in location:
-                LocationPref(
+                JobLocationPref(
                     user=self.user,
                     location_id=location['locationId']
                 ).save()

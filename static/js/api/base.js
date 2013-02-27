@@ -5,9 +5,11 @@ define([
     'core/base',
     'xd/xd',
     'xd/backbone',
+    'api/config',
     'api/fields',
+    'api/query',
     'api/session',
-    'api/config'
+    'api/utils'
 ], function(
     $,
     _,
@@ -15,320 +17,11 @@ define([
     base,
     xd,
     xdBackbone,
+    api_config,
     api_fields,
+    api_query,
     api_session,
-    api_config) {
-
-    /**
-     * ApiModel/ApiCollection backbone sync method.
-     * @param {String} method
-     * @param {ApiModel} or {ApiCollection} model
-     * @param {Object} options
-     *
-     * In addition to normal data syncing, this
-     * method will also update the model/collection
-     * load state and dispatch a 'loaded' event
-     * following a successful read.
-     */
-    var sync = function(method, model, options) {
-        var success = options.success;
-        var error = options.error;
-        var withRelated = null;
-
-        if(method === 'read' && options.data && options.data['with']) {
-            withRelated = options.data['with'].split(',');
-        }
-
-        this._loading = true;
-        this.eachRelated(withRelated, function(instance) {
-            instance._loading = true;
-        });
-
-        options.success = function() {
-            if(_.isFunction(success)) {
-                success.apply(this, arguments);
-            }
-
-            this.eachRelated(withRelated, function(instance) {
-                instance._loading = false;
-
-                //clear dirty flag
-                if(instance.hasOwnProperty('_isDirty')) {
-                    instance._isDirty = false;
-                }
-
-                instance.trigger('loaded', this);
-
-            });
-            this._loading = false;
-
-            if(this.hasOwnProperty('_isDirty')) {
-                this._isDirty = false;
-            }
-
-            this.trigger('loaded', this);
-
-        };
-        options.success = _.bind(options.success, this);
-
-        options.error = function() {
-            if(_.isFunction(error)) {
-                error.apply(this, arguments);
-            }
-
-            this.eachRelated(withRelated, function(instance) {
-                instance._loaded = true;
-                instance._loading = false;
-            });
-            this._loading = false;
-
-        };
-        options.error = _.bind(options.error, this);
-
-        return xdBackbone.sync(method, model, options);
-    };
-
-    /**
-     * ApiModel/ApiCollection each related method.
-     * @param {Array} or {String} relations, i.e. user__skills__technology
-     * @param {function} callback 
-     * @param {context} context (optional callback context) 
-     *   if not supplied context will default to model/collection.     
-     * @param {Number} (internal depth counter)
-     *
-     * Traverses the supplied relation path,
-     * i.e. user__skills__technology, and invokes the specified callback
-     * for each related model/collection.
-     *
-     */
-    var eachRelated = function(relations, callback, context, depth) {
-        var relation;
-        
-        context = context || this;
-        depth = depth || 0;
-
-        if(!relations) {
-            return;
-        }
-
-        if(depth === 0) {
-            if(_.isArray(relations)) {
-                _.each(relations, function(relation) {
-                    this.eachRelated(relation, callback, context, depth);
-                }, this);
-                return;
-            }
-            relations = relations.split('__');
-        }
-
-        if(this instanceof ApiCollection) {
-            this.invoke('eachRelated', relations, callback, context, depth+1);
-        } else if(relations.length) {
-            relation = this.getRelation(relations[0]);
-            relation.eachRelated(_.rest(relations, 1), callback, context, depth+1);
-        }
-
-        if(depth) {
-            callback.call(context, this);
-        }
-    };
-
-    /**
-     * ApiModel/ApiCollection isLoadedWith method.
-     * @param {String} relations, i.e. user__skills__technology
-     * @return {Object} status object containing the following:
-     *   loaded: {boolean} true if all relations are loaded, false otherwise
-     *   fetcher: if loaded is false, a function, which when called, will
-     *   load all mising data.
-     *
-     * Tests if all models/collections in the specified
-     * relation path are loaded. Note that in the case of ApiCollection's,
-     * only the first model is tested as an optimization.
-     *
-     */
-    var isLoadedWith = function() {
-        var i, j, current, collection, relation, relations, query;
-        var fetchers = [];
-        var result = {
-            loaded: true,
-            fetcher: null
-        };
-
-        if(!this.isLoaded()) {
-            query = this.withRelated.apply(this, arguments);
-            return {
-                loaded: false,
-                fetcher: _.bind(query.fetch, query)
-            };
-        }
-
-        for(i=0; i < arguments.length; i++) {
-            current = this;
-            relations = arguments[i].split('__');
-            for(j=0; j < relations.length; j++) {
-                relation = relations[j];
-                if(current instanceof ApiCollection) {
-                    collection = current;
-                    if(current.length) {
-                        current = current.at(0).getRelation(relation);
-                    } else {
-                        break;
-                    }
-                } else {
-                    collection = null;
-                    current = current.getRelation(relation);
-                }
-
-                if(!current.isLoaded()) {
-                    if(collection) {
-                        query = collection.withRelated(_.rest(relations, j).join('__'));
-                        fetchers.push(_.bind(query.fetch, query));
-                    } else {
-                        query = current.withRelated(_.rest(relations, j+1).join('__'));
-                        fetchers.push(_.bind(query.fetch, query));
-                    }
-                    break;
-                }
-            }
-
-        }
-        
-        if(fetchers.length) {
-            result.loaded = false;
-            result.fetcher = function(options) {
-                var i, fetcher;
-                var error = 0;
-                var success = 0;
-                options = options || {};
-
-                var errorCallback = function() {
-                    error += 1;
-                    if(error + success >= fetchers.length) {
-                        if(error) {
-                            if(_.isFunction(options.error)) {
-                                options.error.apply(this, arguments);
-                            }
-                        }
-                        else {
-                            if(_.isFunction(options.success)) {
-                                options.success.apply(this, arguments);
-                            }
-                        }
-                    }
-                };
-                var successCallback = function(instance, response) {
-                    success += 1;
-                    if(error + success >= fetchers.length) {
-                        if(error) {
-                            if(_.isFunction(options.error)) {
-                                options.error.apply(this, arguments);
-                            }
-                        }
-                        else {
-                            if(_.isFunction(options.success)) {
-                                options.success.apply(this, arguments);
-                            }
-                        }
-                    }
-                };
-
-                for(i=0; i < fetchers.length; i++) {
-                    fetcher = fetchers[i];
-                    fetcher({
-                        success: successCallback,
-                        error: errorCallback
-                    });
-                }
-            };
-        }
-
-        return result;
-    };
-
-    
-    /**
-     * ApiQuery
-     * @constructor
-     * @param {Object} options
-     *   model: {ApiModel} (required if collection not provided)
-     *   collection: {ApiCollection} (required if model not provided)
-     */
-    var ApiQuery = base.Base.extend({
-        initialize: function(options) {
-            options = options || {};
-            this.instance = options.model || options.collection;
-            this.filters = {};
-            this.withRelations = [];
-            this.orderBys = [];
-            this.slices = [];
-        },
-
-        filterBy: function(filters) {
-            _.extend(this.filters, filters);
-            return this;
-        },
-
-        withRelated: function() {
-            var i, arg;
-            for(i=0; i < arguments.length; i++) {
-                arg = arguments[i];
-                if(_.isArray(arg)) {
-                    if(arg.length) {
-                        this.withRelations = this.withRelations.concat(arg);
-                    }
-                } else {
-                    if(arg) {
-                        this.withRelations.push(arg);
-                    }
-                }
-            }
-            return this;
-        },
-
-        orderBys: function() {
-            var i, arg;
-            for(i=0; i < arguments.length; i++) {
-                if(_.isArray(arg)) {
-                    if(arg.length) {
-                        this.orderBys = this.orderBys.concat(arg);
-                    }
-                } else {
-                    if(arg) {
-                        this.orderBys.push(arguments[i]);
-                    }
-                }
-            }
-            return this;
-        },
-
-        slice: function(start, end) {
-            this.slices = [start, end];
-            return this;
-        },
-
-        fetch: function(options) {
-            options = options || {};
-            if(!options.hasOwnProperty("data")) {
-                options.data = {};
-            }
-
-            if(this.filters) {
-                _.extend(options.data, this.filters);
-            }
-            if(this.withRelations.length > 0) {
-                options.data['with'] = this.withRelations.join();
-            }
-            if(this.orderBys.length > 0) {
-                options.data.order_by = this.orderBys.join();
-            }
-            if(this.slices.length > 0) {
-                options.data.slice = this.slices.join();
-            }
-            
-            return this.instance.fetch(options);
-        }
-    });
-
+    api_utils) {
     
     /**
      * ApiModel
@@ -339,6 +32,7 @@ define([
     var ApiModel = Backbone.Model.extend({
 
         constructor: function(attributes, options) {
+            var model;
             attributes = attributes || {};
             options = options || {};
 
@@ -348,29 +42,79 @@ define([
                 this.session = api_session.ApiSession.get(
                     options.session || api_config.defaultSession);
             }
-
-            attributes.meta = {
-                "resource_name": base.getValue(this, "urlRoot").substring(1),
-                "resource_uri": null
-            };
-
-            Backbone.Model.prototype.constructor.call(this, attributes, options);
             
-            this._loading = false;
-            this._loaded = false;
-            this._isDirty = false;
+            //if using session and being constructed with id
+            //check the cache to see if we already have the model.
+            //Note that the session will returned a cloned model
+            //so no need to worry side effects.
+            if(this.session && attributes.id) {
+                model = this.session.getModel(
+                    this.constructor.key(attributes.id));
+            }
+            
+            //if the model is not in cache proceed with construction
+            if(!model) {
+                attributes.meta = {
+                    "resource_name": base.getValue(this, "urlRoot").substring(1),
+                    "resource_uri": null
+                };
 
-            this.bind('change', function() {
-                this._isDirty = true;
-            }, this);
+                Backbone.Model.prototype.constructor.call(this, attributes, options);
+            
+                this._parentRelation = null;
+                this._loading = false;
+                this._loaded = false;
+                this._isDirty = false;
+
+                this.bind('change', function() {
+                    this._isDirty = true;
+                }, this);
+            } else {
+                //short circuited constrctor so return model.
+                //if a value is returned from ctor it will be
+                //used as the new object instead of 'this'.
+                return model;
+            }
+               
         },
 
         baseUrl: "/api/v1",
 
         url: function() {
-            var url = Backbone.Model.prototype.url.apply(this, arguments);
-            url = this.baseUrl + url;
-            return url;
+            var result, fk, parent, field;
+            var meta = this.get_meta();
+            var baseUrl = base.getValue(this, 'baseUrl');
+            var urlRoot = base.getValue(this, 'urlRoot');
+            
+            if(meta.resource_uri) {
+                result = meta.resource_uri;
+            }
+            else if(!this.isNew()) {
+                result = baseUrl + urlRoot + '/' + encodeURIComponent(this.id);
+            } else if(this._parentRelation) {
+                parent = this._parentRelation.instance;
+                field = this._parentRelation.field;
+                fk = this[field.name + '_id'];
+                if(fk) {
+                    result = baseUrl + urlRoot + '/' + encodeURIComponent(fk);
+                } else {
+                    result = base.getValue(parent, 'url') + '/' + encodeURIComponent(field.name);
+                }
+            } else {
+                result = baseUrl + urlRoot;
+            }
+            return result;
+        },
+
+        key: function() {
+            var result;
+            var meta = this.get_meta();
+            if(meta.resource_uri) {
+                result = meta.resource_uri;
+            } else {
+                result = base.getValue(this, 'url'); 
+            }
+            return result;
         },
 
         isDirty: function() {
@@ -385,13 +129,35 @@ define([
             return this._loaded;
         },
 
-        isLoadedWith: isLoadedWith,
+        isLoadable: function() {
+            var result = false;
+            if(!this.isNew()) {
+                result = true;
+            } else if(this.getParentRelation()) {
+                result = this.getParentRelation().isLoadable();
+            }
+            return result;
+        },
 
-        eachRelated: eachRelated,
+        isLoadedWith: api_utils.isLoadedWith,
+            
+        bfsRelated: api_utils.bfsRelated,
+
+        dfsRelated: api_utils.dfsRelated,
+
+        eachRelated: api_utils.eachRelated,
 
         getRelation: function(fieldName, attributes) {
             var field = this.relatedFields[fieldName];
             return this[field.getterName](attributes);
+        },
+
+        getParentRelation: function() {
+            var result = null;
+            if(_.isObject(this._parentRelation)) {
+                result = this._parentRelation.instnace;
+            }
+            return result;
         },
 
         bootstrap: function(data) {
@@ -423,15 +189,54 @@ define([
                     }
                 }
             }
-
+            
             if(!_.isEmpty(errors)) {
                 return errors;
             }
         },
 
+        clone: function(options) {
+            options = _.extend({
+                attributes: this.attributes
+            }, options);
+            
+            var result = options.to || new this.constructor();
+
+            if(result === this) {
+                return result;
+            }
+
+            if(options.withRelated) {
+                _.each(options.withRelated, function(relations) {
+                    relations = relations.split('__');
+                    var fieldName = _.first(relations);
+                    var relation = this.getRelation(fieldName);
+                    var nextRelations = _.rest(relations).join('__');
+                    var newOptions = _.extend({}, options, {
+                        to: result.getRelation(fieldName),
+                        withRelated: nextRelations ? [nextRelations] : null
+                    });
+                    delete newOptions.attributes;
+                    relation.clone(newOptions);
+                }, this);
+            }
+
+            result.url = this.url;
+            result._loaded = this._loaded;
+            result._isDirty = this._isDirty;
+            if(!result._parentRelation) {
+                result._parentRelation = _.clone(this._parentRelation);
+            }
+            result.set(options.attributes);
+
+
+            return result;
+        },
+
         parse: function(response, options) {
             var result = {};
-            var field, fieldName, relation;
+            var field, fieldName, relation, cache;
+            var relationOptions = _.extend({}, options, {parse: false});
 
             for(fieldName in this.fields) {
                 if(this.fields.hasOwnProperty(fieldName)) {
@@ -447,23 +252,41 @@ define([
             //generate valid urls for getRelation().
             this.id = result.id;
 
+
             for(fieldName in this.relatedFields) {
                 if(this.relatedFields.hasOwnProperty(fieldName)) {
                     field = this.relatedFields[fieldName];
                     if(response.hasOwnProperty(fieldName)) {
                         relation = this.getRelation(fieldName, result);
-                        if(field.many && _.isArray(response[fieldName])) {
-                            relation.reset(relation.parse(response[fieldName], options), options);
-                        }else if(!field.many && _.isObject(response[fieldName])) {
-                            relation.set(relation.parse(response[fieldName], options), options);
+                        if(response[fieldName].meta.loaded) {
+                            if(field.many) {
+                                relation.reset(
+                                        relation.parse(response[fieldName], relationOptions),
+                                        relationOptions);
+                            } else {
+                                relation.set(
+                                        relation.parse(response[fieldName], relationOptions),
+                                        relationOptions);
+                            }
+
                         } else {
-                            relation.url = response[fieldName];
+                            if(field.many) {
+                                relation.meta = response[fieldName].meta;
+                            } else {
+                                relation.set_meta(response[fieldName].meta);
+                            }
                         }
                     }
                 }
             }
             
+            this._isDirty = false;
             this._loaded = true;
+            
+            if(this.session && !options.noSession) {
+                this.session.putModel(this.clone({attributes: result}));
+            }
+
             return result;
         },
 
@@ -471,7 +294,6 @@ define([
             var result = {};
             var field, fieldName, relation;
             options = options || {};
-            options.level = options.level || 5;
 
             for(fieldName in this.fields) {
                 if(this.fields.hasOwnProperty(fieldName)) {
@@ -481,35 +303,126 @@ define([
             }
             
             if(options.withRelated) {
-                for(fieldName in this.relatedFields) {
-                    if(this.relatedFields.hasOwnProperty(fieldName)) {
-                        field = this.relatedFields[fieldName];
-                        relation = this.getRelation(fieldName);
-                        if(relation.isLoaded() && options.level > 1) {
-                            var newOptions = _.clone(options);
-                            newOptions.level -= 1;
-                            result[fieldName] = relation.toJSON(newOptions);
-                        } else {
-                            result[fieldName] = field.many ? [] : {};
-                        }
+                _.each(options.withRelated, function(relations) {
+                    relations = relations.split('__');
+                    var fieldName = _.first(relations);
+                    var field = this.relatedFields[fieldName];
+                    var relation = this.getRelation(fieldName);
+                    var nextRelations = _.rest(relations).join('__');
+                    var newOptions = _.extend({}, options, {
+                        withRelated: nextRelations ? [nextRelations] : null
+                    });
+                    result[fieldName] = relation.toJSON(newOptions);
+                }, this);
+            }
+
+            return result;
+        },
+        
+        sync: api_utils.sync,
+
+        query: function() {
+            return new api_query.ApiQuery({model: this});
+        },
+
+        filterBy: function(filters) {
+            return new api_query.ApiQuery({model: this}).filterBy(filters);
+        },
+
+        withRelated: function() {
+            var query = new api_query.ApiQuery({model: this});
+            return query.withRelated.apply(query, arguments);
+        },
+
+        fetchFromSession: function(options) {
+            var result = false;
+            var fetch, model;
+            var loadedEvents = 'loaded loaded:read';
+            options = options || {};
+
+            var triggerFetchEvents = function(model) {
+                var withRelated;
+                if(options.query) {
+                    withRelated = options.query.state.withRelations().pluck('value');
+                }
+
+                if(withRelated) {
+                    model.eachRelated(withRelated, function(current) {
+                        current.instance.trigger(loadedEvents, current.instance);
+                    });
+                }
+                
+                model.trigger(loadedEvents, model);
+                if(_.isFunction(options.success)) {
+                    options.success(model, null, options);
+                }
+            };
+
+            if(this.session && !options.noSession) {
+
+                model = this.session.getModel(this.key(), options.query);
+
+                if(model) {
+                    result.clone({
+                        to: this,
+                        withRelated: withRelated
+                    });
+
+                    triggerFetchEvents(this);
+                    result = true;
+                } else {
+                    fetch = this.session.getFetch(this.key(), options.query);
+                    if(fetch) {
+                        var that = this;
+                        fetch.success.push(function(instance, response) {
+                            instance.clone({ to: that });
+                            triggerFetchEvents(that);
+                        });
+                        result = true;
+                    } else {
+                        this.session.putFetch(this, this.key(), options.query);
                     }
                 }
             }
 
             return result;
         },
-        
-        sync: sync,
 
-        filterBy: function(filters) {
-            return new ApiQuery({model: this}).filterBy(filters);
+        fetch: function(options) {
+            var handled = this.fetchFromSession(options);
+            if(!handled) {
+                Backbone.Model.prototype.fetch.call(this, options);
+            }
+        },
+        
+        save: function(key, value, options) {
+            if(this.session && this.isNew()) {
+                if(this.collection) {
+                    this.session.removeCollection(this.collection);
+                }
+                this.session.removeCollection(new this.collectionConstructor());
+            }
+            return Backbone.Model.prototype.save.call(this, key, value, options);
         },
 
-        withRelated: function() {
-            var query = new ApiQuery({model: this});
-            return query.withRelated.apply(query, arguments);
+        destroy: function(options) {
+            if(this.session && !this.isNew()) {
+                if(this.collection) {
+                    this.session.removeCollection(this.collection);
+                }
+                this.session.removeCollection(new this.collectionConstructor());
+            }
+            return Backbone.Model.prototype.destroy.call(this, options);
         }
 
+    }, {
+
+        key: function(id) {
+            var baseUrl = base.getValue(this.prototype, 'baseUrl');
+            var urlRoot = base.getValue(this.prototype, 'urlRoot');
+            var result = baseUrl + urlRoot + '/' + encodeURIComponent(id);
+            return result;
+        }
     });
 
     ApiModel.extend = function(protoProps, classProps) {
@@ -565,7 +478,9 @@ define([
             options = options || {};
 
             Backbone.Collection.prototype.constructor.call(this, models, options);
-
+            
+            this.meta = {};
+            this._parentRelation = null;
             this._loading = false;
             this._loaded = false;
         
@@ -583,18 +498,46 @@ define([
         baseUrl: "/api/v1",
 
         url: function() {
-            url = this.baseUrl + base.getValue(this, "urlRoot");
-            return url;
+            var result, parent, field;
+            var baseUrl = base.getValue(this, 'baseUrl');
+            var urlRoot = base.getValue(this, 'urlRoot');
+         
+            if(this.meta.resource_uri) {
+                result = this.meta.resource_uri;
+            }
+            else if(this._parentRelation) {
+                parent = this._parentRelation.instance;
+                field = this._parentRelation.field;
+                result = base.getValue(parent, 'url') + '/' + encodeURIComponent(field.name);
+            } else {
+                result = baseUrl + urlRoot;
+            }
+            return result;
+        },
+
+        key: function() {
+            var result;
+            if(this.meta.resource_uri) {
+                result = this.meta.resource_uri;
+            } else {
+                result = base.getValue(this, 'url');
+            }
+            return result;
         },
 
         model: function(attributes, options) {
             var result;
             var constructor = this.modelConstructor();
+
             if(this.session && attributes.id) {
-                result = this.session.getModel(constructor, attributes.id);
-            } else {
+                result = this.session.getModel(
+                        constructor.key(attributes.id));
+            }
+
+            if(!result) {
                 result = new constructor(attributes, options);
             }
+
             return result;
         },
 
@@ -606,57 +549,171 @@ define([
             return this._loaded;
         },
 
-        isLoadedWith: isLoadedWith,
+        isLoadable: function() {
+            return true;
+        },
 
-        eachRelated: eachRelated,
+        isLoadedWith: api_utils.isLoadedWith,
 
-        parse: function(response, options) {
-            var result = [];
-            var i;
-            for(i = 0; i<response.length; i++) {
-                var model = this.model({
-                    id: response[i].id
-                });
-                model.set(model.parse(response[i], options), options);
-                result.push(model);
+        eachRelated: api_utils.eachRelated,
+
+        bfsRelated: api_utils.bfsRelated,
+
+        dfsRelated: api_utils.dfsRelated,
+
+        getParentRelation: function() {
+            var result = null;
+            if(_.isObject(this._parentRelation)) {
+                result = this._parentRelation.instnace;
             }
-            this._loaded = true;
+            return relation;
+        },
+
+        clone: function(options) {
+            options = _.extend({
+                    models: this.models
+            }, options);
+
+            var result = options.to ||  new this.constructor();
+            if(result === this) {
+                return result;
+            }
+
+            var models = _.map(options.models, function(model) {
+                return model.clone({
+                    withRelated: options.withRelated
+                });
+            });
+
+            result.meta = _.clone(this.meta);
+            result.url = this.url;
+            result._loaded = this._loaded;
+            if(!result.parentRelation) {
+                result._parentRelation = _.clone(this._parentRelation);
+            }
+            result.reset(models);
+
             return result;
         },
 
-        sync: sync,
+        parse: function(response, options) {
+            var result = [], cache;
+            var i;
+            options = options || {};
+
+            for(i = 0; i<response.results.length; i++) {
+                var model = this.model({
+                    id: response.results[i].id
+                });
+                model.set(model.parse(response.results[i], options), options);
+                result.push(model);
+            }
+
+            this.meta = response.meta;
+            this._loaded = true;
+
+            if(this.session && !options.noSession) {
+                this.session.putCollection(
+                        this.clone({models: result}),
+                        this.key(),
+                        options.query);
+            }
+
+            return result;
+        },
+
+        sync: api_utils.sync,
+
+        query: function() {
+            return new api_query.ApiQuery({collection: this});
+        },
 
         filterBy: function(filters) {
-            return new ApiQuery({collection: this}).filterBy(filters);
+            return new api_query.ApiQuery({collection: this}).filterBy(filters);
         },
 
         withRelated: function() {
-            var query = new ApiQuery({collection: this});
+            var query = new api_query.ApiQuery({collection: this});
             return query.withRelated.apply(query, arguments);
         },
 
         orderBy: function() {
-            var query = new ApiQuery({collection: this});
+            var query = new api_query.ApiQuery({collection: this});
             return query.orderBy.apply(query, arguments);
         },
 
         slice: function(start, end) {
-            return new ApiQuery({collection: this}).slice(start, end);
+            return new api_query.ApiQuery({collection: this}).slice(start, end);
+        },
+
+        fetchFromSession: function(options) {
+            var result = false;
+            var fetch, collection;
+            var loadedEvents = 'loaded loaded:read';
+            options = options || {};
+
+            var triggerFetchEvents = function(collection) {
+                collection.trigger(loadedEvents, collection);
+                if(_.isFunction(options.success)) {
+                    options.success(collection, null, options);
+                }
+            };
+            
+            if(this.session && !options.noSession) {
+                collection = this.session.getCollection(this.key(), options.query);
+                if(collection) {
+                    collection.clone({ to: this });
+                    triggerFetchEvents(collection);
+                    result = true;
+                } else {
+                    fetch = this.session.getFetch(this.key(), options.query);
+                    if(fetch) {
+                        var that = this;
+                        fetch.success.push(function(instance, response, options) {
+                            instance.clone({ to: that });
+                            triggerFetchEvents(that);
+                        });
+                        result = true;
+                    } else {
+                        this.session.putFetch(this, this.key(), options.query);
+                    }
+
+                }
+            }
+
+            return result;
+        },
+
+        fetch: function(options) {
+            var handled = this.fetchFromSession(options);
+
+            if(!handled) {
+                Backbone.Collection.prototype.fetch.call(this, options);
+            }
         },
 
         save: function(options) {
             var openRequests = 0;
             var errors = 0;
             var that = this;
+            var test = this;
             options = options || {};
 
             var syncSuccess = function() {
                 openRequests--;
                 if(openRequests === 0) {
+                    if(that.session && !options.noSession) {
+                        that.session.putCollection(
+                                that,
+                                that.key(),
+                                options.query);
+                    }
+
                     if(errors > 0 && options.error) {
                         options.error(that);
                     } else if(errors === 0 && options.success) {
                         options.success(that);
+
                     }
                 }
             };
@@ -665,14 +722,21 @@ define([
                 openRequests--;
                 errors++;
                 if(openRequests === 0) {
+                    if(that.session && !options.noSession) {
+                        that.session.removeCollection(
+                                that,
+                                that.key(),
+                                options.query);
+                    }
+
                     if(options.error) {
                         options.error(that);
                     }
                 }
             };
 
+
             //destroy models with id's which have been removed from
-            //the collection prior to save()
             _.each(this.toDestroy, function(model) {
                 if(!this.get(model.id)) {
                     openRequests++;
@@ -693,9 +757,9 @@ define([
                     });
                 }
             });
-
             this.toDestroy = [];
             
+
             //if no saving is needed still trigger success callback
             if(openRequests === 0 && options.success) {
                 options.success(this);
@@ -709,6 +773,14 @@ define([
         }
 
 
+    }, {
+
+        key: function() {
+            var baseUrl = base.getValue(this.prototype, 'baseUrl');
+            var urlRoot = base.getValue(this.prototype, 'urlRoot');
+            var result = baseUrl + urlRoot;
+            return result;
+        }
     });
 
     return {

@@ -1,6 +1,3 @@
-from operator import itemgetter
-
-
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
@@ -8,9 +5,9 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 
-from trpycore.encode.basic import basic_encode, basic_decode
+from trpycore.encode.basic import basic_encode
 from techresidents_web.common.models import Skill, Topic
-from techresidents_web.job.models import PositionTypePref, TechnologyPref, LocationPref
+from techresidents_web.job.models import JobPositionTypePref, JobTechnologyPref, JobLocationPref
 
 
 
@@ -118,13 +115,13 @@ def compute_profile_completion(request):
                 profile_percent_complete += 15
 
     #15% for each job preference they've added
-    position_prefs_count = PositionTypePref.objects.filter(user=request.user).count()
+    position_prefs_count = JobPositionTypePref.objects.filter(user=request.user).count()
     if position_prefs_count > 0:
         profile_percent_complete += 15
-    technology_prefs_count = TechnologyPref.objects.filter(user=request.user).count()
+    technology_prefs_count = JobTechnologyPref.objects.filter(user=request.user).count()
     if technology_prefs_count > 0:
         profile_percent_complete += 15
-    location_prefs_count = LocationPref.objects.filter(user=request.user).count()
+    location_prefs_count = JobLocationPref.objects.filter(user=request.user).count()
     if location_prefs_count > 0:
         profile_percent_complete += 15
 

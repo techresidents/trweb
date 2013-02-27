@@ -50,15 +50,62 @@ define([
             this.$el.unbind(namespace);
         },
 
+        listenTo: function(obj, name, callback) {
+            var wrapper = function() {
+                if(this._listeners && !_.isEmpty(this._listeners)) {
+                    callback.apply(this, arguments);
+                }
+            };
+
+            Backbone.View.prototype.listenTo.call(this, obj, name, wrapper);
+        },
+
+        append: function(view, selector) {
+            var target = selector ? this.$(selector) : this.$el;
+            target.append(view.render().el);
+            view.delegateEvents();
+            return this;
+        },
+
+        assign: function(view, selector) {
+            view.setElement(this.$(selector)).render();
+            return this;
+        },
+
+        html: function(view, selector) {
+            var target = selector ? this.$(selector) : this.$el;
+            target.html(view.render().el);
+            view.delegateEvents();
+            return this;
+        },
+
+        destroyChildViews: function() {
+            var childViews = base.getValue(this, 'childViews');
+            if(this.childViews) {
+                _.each(childViews, function(view) {
+                    if(view) {
+                        if(_.isFunction(view.destroy)) {
+                            view.destroy();
+                        } else {
+                            view.remove();
+                            view.undelegateEvents();
+                        }
+                    }
+                });
+            }
+        },
+
         destroy: function() {
             var childViews = base.getValue(this, 'childViews');
             if(this.childViews) {
                 _.each(childViews, function(view) {
-                    if(_.isFunction(view.destroy)) {
-                        view.destroy();
-                    } else {
-                        view.remove();
-                        view.undelegateEvents();
+                    if(view) {
+                        if(_.isFunction(view.destroy)) {
+                            view.destroy();
+                        } else {
+                            view.remove();
+                            view.undelegateEvents();
+                        }
                     }
                 });
             }

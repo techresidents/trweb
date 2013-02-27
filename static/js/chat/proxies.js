@@ -1,4 +1,5 @@
 define([
+    'alert/models',
     'common/notifications',
     'core/proxy',
     'chat/agenda/proxies',
@@ -17,6 +18,7 @@ define([
     'chat/whiteboard/proxies',
     'resource/models'
 ], function(
+    alert_models,
     notifications,
     proxy,
     agenda_proxies,
@@ -139,7 +141,8 @@ define([
             
             setTimeout(function() {
                 that.facade.trigger(notifications.ALERT, {
-                    severity: 'warning',
+                    severity: alert_models.SEVERITY.WARNING,
+                    style: alert_models.STYLE.BLOCK,
                     message: 'Chat will terminate in 1 minute ...'
                 });
             }, end - now  - 60000);

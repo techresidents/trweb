@@ -1,0 +1,10 @@
+<ul>
+    <% _.each(filters, function(filter) { %>
+    <li>
+        <label>
+            <input data-name="<%= filter.name %>" type="checkbox">
+            <%= filter.name %>
+        </label>
+    </li>
+    <% }); %>
+</ul>

@@ -2,12 +2,14 @@ define([
     'jquery',
     'underscore',
     'core/view',
+    'api/loader',
     'text!talent/search/templates/search.html',
     'text!talent/search/templates/user.html'
 ], function(
     $,
     _,
     view,
+    api_loader,
     search_template,
     user_template) {
     
@@ -44,46 +46,51 @@ define([
         tagName: 'ul',
         
         initialize: function() {
-            this.collection.bind('loaded', this.loaded, this);
-            this.collection.bind('reset', this.render, this);
-            this.collection.bind('add', this.added, this);
+            //bind events
+            this.listenTo(this.collection, 'reset', this.onReset);
+            this.listenTo(this.collection, 'add', this.onAdd);
+
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.collection }
+            ]);
+            this.loader.load();
+            
+            //child views
             this.childViews = [];
-
-            if(!this.collection.isLoading()) {
-                this.load();
-            }
+            this.initChildViews();
         },
 
-        loaded: function(instance) {
-            if(instance === this.collection) {
-                this.load();
-            }
+        initChildViews: function() {
+            this.destroyChildViews();
+            this.childViews = [];
+            this.collection.each(this.createChildView, this);
         },
 
-        load: function() {
-            if(!this.collection.isLoaded()) {
-                this.collection.fetch();
-            }
+        createChildView: function(model) {
+            var view = new SearchUserView({
+                model: model
+            }).render();
+            this.childViews.push(view);
+            return view;
         },
 
         render: function() {
             _.each(this.childViews, function(view) {
-                view.destroy();
-            });
-
-            this.childViews = [];
-            this.collection.each(this.added, this);
+                this.append(view);
+            }, this);
             return this;
         },
-        
-        added: function(model) {
-            var view = new SearchUserView({
-                model: model
-            }).render();
 
-            this.childViews.push(view);
-            this.$el.append(view.el);
+        onReset: function() {
+            this.initChildViews();
+            this.render();
+        },
+
+        onAdd: function(model) {
+            var view = this.createChildView(model);
+            this.append(view);
         }
+        
     });
 
     /**
@@ -109,45 +116,30 @@ define([
             return [this.userListView];
         },
 
-        initialize: function() {
-            this.template =  _.template(search_template);
-            
-            if(!this.collection.isLoading()) {
-                this.load();
-            }
-
-            //child views
-            this.userListView = null;
-
-            if(!this.collection.isLoading()) {
-                this.load();
-            }
-        },
-
-        loaded: function(instance) {
-            if(instance === this.collection) {
-                this.load();
-            }
-        },
-
-        load: function() {
-            if(!this.collection.isLoaded()) {
-                this.collection.fetch();
-            }
-        },
-
-        render: function() {
-            _.each(this.childViews, function(view) {
-                view.destroy();
-            });
-
-            this.$el.html(this.template());
-
+        initChildViews: function() {
             this.userListView = new SearchUserListView({
                 el: this.$(this.listSelector),
                 collection: this.collection
-            }).render();
+            });
+        },
 
+        initialize: function() {
+            this.template =  _.template(search_template);
+            
+            //loader
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.collection }
+            ]);
+            this.loader.load();
+
+            //child views
+            this.userListView = null;
+            this.initChildViews();
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.assign(this.userListView, this.listSelector);
             return this;
         }
     });

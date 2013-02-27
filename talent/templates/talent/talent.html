@@ -3,7 +3,7 @@
 {% load url from future %}
 {% load verbatim %}
 
-{% block title %}Tech Residents - Talent{% endblock %}
+{% block title %}Talent | Tech Residents{% endblock %}
 
 {% block extrahead %}
     <link href="{% static "css/talent.css" %}" rel="stylesheet">
@@ -16,14 +16,10 @@
     <!-- All of these data structures are generated on the server w/out user input, so it's safe -->
     {% autoescape off %}
         <script>
-            data =  {
+            TR = {
+                CURRENT_USER: {{current_user_json}},
+                XD: { remote: "{{TR_XD_REMOTE}}" }
             };
-        </script>
-    {% endautoescape %}
-
-    {% autoescape off %}
-        <script>
-            TR = { XD: { remote: "{{TR_XD_REMOTE}}" } };
         </script>
     {% endautoescape %}
 

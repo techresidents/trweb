@@ -119,6 +119,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'techresidents_web.common.middleware.DemoMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -166,6 +167,7 @@ INSTALLED_APPS = (
     'techresidents_web.talent',
     'techresidents_web.cloudfiles_storage',
     'techresidents_web.notification',
+    'techresidents_web.requisition',
 )
 
 
@@ -286,8 +288,9 @@ TR_LOGIN_USING_HTTPS = False
 
 #Set the location of the cross domain (XD) server for use with easyXDM.
 TR_XD_REMOTE = 'http://localhost:6767/static/js/easyXDM/cors/index.html'
-#TR_XD_REMOTE = 'http://iville.local:6767/static/js/easyXDM/cors/index.html'
+#TR_XD_REMOTE = 'http://einstein.local:6767/static/js/easyXDM/cors/index.html'
 TR_API_ENDPOINT = 'http://localhost:6767/api/v1'
+
 
 #Google Analytics
 GA_ID = 'UA-36319157-2'
@@ -314,3 +317,9 @@ ANONYMOUS_USERNAMES = [
     'anonymous9@techresidents.com',
     'anonymous10@techresidents.com',
 ]
+
+#Demo middleware settings
+DEMO_USERS = {
+    '6e790facf4ea40c780fd30af16ba96cd': 'demo@techresidents.com',
+    '728ff1fc723d49d08b34a5825be13054': 'demo+e@techresidents.com'
+}

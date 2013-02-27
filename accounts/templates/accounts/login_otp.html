@@ -23,7 +23,7 @@
                     <fieldset>
                         <legend>Tech Residents Login</legend>
                         <div class="control-group{% if form.code.errors %} error{% endif %}">
-                            {{ form.code.label_tag }}
+                            <label class="control-label"> {{ form.code.label_tag }}</label>
                             <div class="controls">
                                 {{ form.code }}
                                 {% for error in form.code.errors %}

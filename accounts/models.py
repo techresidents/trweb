@@ -14,8 +14,8 @@ DEVELOPER_TENANT_ID = 1
 
 class Tenant(models.Model):
     """Tenant model"""
-    name = models.CharField(max_length=100)
-    domain = models.CharField(max_length=255)
+    name = models.CharField(max_length=100, unique=True)
+    domain = models.CharField(max_length=255, unique=True)
 
 class UserManager(BaseUserManager):
 
@@ -66,7 +66,7 @@ class User(AbstractBaseUser):
 
     timezone = models.CharField(max_length=255)
 
-    tenant = models.ForeignKey(Tenant, default=DEVELOPER_TENANT_ID)
+    tenant = models.ForeignKey(Tenant, default=DEVELOPER_TENANT_ID, related_name="users")
 
     objects = UserManager()
 
@@ -157,8 +157,8 @@ class CodeType(models.Model):
 
 class Code(models.Model):
     """Represents code for things like registration and pw reset """
-    user = models.ForeignKey(User)
-    type = models.ForeignKey(CodeType)
+    user = models.ForeignKey(User, related_name="+")
+    type = models.ForeignKey(CodeType, related_name="+")
     code = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)
     used = models.DateTimeField(null=True)
@@ -186,6 +186,15 @@ class OneTimePassword(models.Model):
     """One time password."""
     class Meta:
         db_table = "accounts_one_time_password"
-    type = models.ForeignKey(OneTimePasswordType)
+    type = models.ForeignKey(OneTimePasswordType, related_name="+")
     secret = models.CharField(max_length=1024)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name="+")
+
+class IdentityGrant(models.Model):
+    """Identity grant model used to grant a tenant access to a user's identity."""
+    class Meta:
+        db_table = "accounts_identity_grant"
+    
+    tenant = models.ForeignKey(Tenant, related_name="+")
+    user = models.ForeignKey(User, related_name="+")
+
