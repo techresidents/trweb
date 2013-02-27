@@ -439,6 +439,7 @@ define([
         },
 
         toUri: function(options) {
+            var result;
             var terms = [];
             var uriObject = this.toUriObject();
             options = _.extend({
@@ -451,8 +452,11 @@ define([
             _.each(uriObject, function(value, key) {
                 terms.push(key + '=' + value);
             });
-
-            return terms.join('+');
+            
+            //use encodeURI instead of encodeURIComponent 
+            //for better looking uri's.
+            result = encodeURI(terms.join('+'));
+            return result;
         }
     }, {
 
@@ -462,6 +466,7 @@ define([
 
             if(_.isString(query)) {
                 //i.e. query = 'status__in=OPEN,CLOSED+slice=10,20+order_by=created_ASC'
+                query = decodeURIComponent(query);
                 var terms = query.split('+');
                 _.each(terms, function(terms) {
                     parts = terms.split('=');
