@@ -283,7 +283,12 @@ define([
             this.registerCommand(notifications.APP_START, AppStartCommand);
             this.registerCommand(notifications.VIEW_NAVIGATE, NavigateCommand);
         },
-
+        
+        /**
+         * Initialize router and history. 
+         * This should not be called until dom is ready, since i.e. hash-based
+         * history relies on an iframe.
+         */
         initializeRouter: function() {
             //var pushState = !!(window.history && window.history.pushState);
             Backbone.history.start({
@@ -312,7 +317,6 @@ define([
          */
         start: function() {
             this.trigger(notifications.APP_START, TR.data);
-            this.initializeRouter();
         },
         
         /**
@@ -331,6 +335,7 @@ define([
 
     //DOM ready notification
     $(document).ready(function() {
+        talentAppFacade.initializeRouter();
         talentAppFacade.trigger(notifications.DOM_READY);
     });
 });

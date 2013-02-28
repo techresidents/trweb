@@ -5,9 +5,9 @@ from django.template import RequestContext
 
 from trpycore.encode.basic import basic_encode
 from techresidents_web.api.client import ApisvcClient
-from techresidents_web.common.decorators import staff_required
+from techresidents_web.common.decorators import employer_required
 
-@staff_required
+@employer_required
 def talent(request):
     """Talent application view"""
 

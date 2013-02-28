@@ -23,6 +23,9 @@ DATABASES = {
     }
 }
 
+#Allowed hosts
+ALLOWED_HOSTS = ['.techresidents.com', 'localdev']
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -119,6 +122,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'techresidents_web.common.middleware.DemoMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -316,3 +320,9 @@ ANONYMOUS_USERNAMES = [
     'anonymous9@techresidents.com',
     'anonymous10@techresidents.com',
 ]
+
+#Demo middleware settings
+DEMO_USERS = {
+    '6e790facf4ea40c780fd30af16ba96cd': 'demo@techresidents.com',
+    '728ff1fc723d49d08b34a5825be13054': 'demo+e@techresidents.com'
+}
