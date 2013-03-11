@@ -250,36 +250,38 @@ define([
             this.query = options.query.withRelated('location');
             this.template =  _.template(list_template);
 
+            this.query.fetch();
+
             //child views
             this.requisitionGridView = null;
             this.paginatorView = null;
-
-            this.query.fetch();
+            this.initChildViews();
         },
 
-        childViews: function() {
-            return [this.requisitionGridView, this.paginatorView];
-        },
-
-        render: function() {
+        initChildViews: function() {
             this.destroyChildViews();
-            this.$el.html(this.template());
-
-            // setup grid view
             this.requisitionGridView = new RequisitionGridView({
                 collection: this.collection,
                 query: this.query
-            }).render();
-            this.$(this.contentSelector).append(this.requisitionGridView.el);
-
-            // setup paginator
+            });
             this.paginatorView = new paginator_views.PaginatorView({
                 maxPages: 10,
                 collection: this.collection,
                 query: this.query
-            }).render();
-            this.$(this.contentSelector).append(this.paginatorView.el);
+            });
+        },
 
+        childViews: function() {
+            return [
+                this.requisitionGridView,
+                this.paginatorView
+            ];
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.append(this.requisitionGridView, this.contentSelector);
+            this.append(this.paginatorView, this.contentSelector);
             return this;
         }
     });
