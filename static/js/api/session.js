@@ -44,7 +44,10 @@ define([
             this.expire = options.expire;
 
             if(!caches.hasOwnProperty(this.name)) {
-                caches[this.name] = {};
+                caches[this.name] = {
+                    byKey: {},       //map from unique key to model/collection
+                    byCollection: {} //map from collection class to collection key map
+                };
             } 
             this.cache = caches[this.name];
         },
@@ -68,7 +71,7 @@ define([
                 uriObject = query.toUriObject();
             }
             
-            entry = this.cache[key];
+            entry = this.cache.byKey[key];
             if(entry) {
                 model = entry.model.clone();
                 if(uriObject['with']) {
@@ -89,7 +92,7 @@ define([
         putModel: function(model, key) {
             key = key || model.key();
             
-            this.cache[key] = {
+            this.cache.byKey[key] = {
                 model: model.clone(),
                 timestamp: new Date().getTime()
             };
@@ -97,7 +100,7 @@ define([
 
         removeModel: function(model, key) {
             key = key || model.key();
-            delete this.cache[key];
+            delete this.cache.byKey[key];
         },
 
         getCollection: function(key, query) {
@@ -110,7 +113,7 @@ define([
                 uriObject = query.toUriObject();
             }
 
-            entry = this.cache[key];
+            entry = this.cache.byKey[key];
             if(entry) {
                 models = _.map(entry.modelKeys, function(key) {
                     return this.getModel(key);
@@ -138,29 +141,48 @@ define([
         },
 
         putCollection: function(collection, key, query) {
+            var byCollection, baseKey;
             key = key || collection.key();
             key = this._expandKey(key, query);
 
-            this.cache[key] = {
+            this.cache.byKey[key] = {
                 modelKeys: collection.map(function(model) {
                     return model.key();
                 }),
                 collection: collection.clone().reset(),
                 timestamp: new Date().getTime()
             };
+            
+            baseKey = collection.constructor.key();
+            byCollection = this.cache.byCollection[baseKey];
+            if(!byCollection) {
+                byCollection = this.cache.byCollection[baseKey] = {};
+            }
+            byCollection[key] = key;
         },
 
         removeCollection: function(collection, key, query) {
+            var baseKey = collection.constructor.key();
             key = key || collection.key();
             key = this._expandKey(key, query);
-            delete this.cache[key];
+            delete this.cache.byKey[key];
+            delete this.cache.byCollection[baseKey][key];
+        },
+
+        removeAllCollections: function(collection) {
+            var baseKey = collection.constructor.key();
+            var keys = _.keys(this.cache.byCollection[baseKey]);
+            _.each(keys, function(key) {
+                delete this.cache.byKey[key];
+            }, this);
+            this.cache.byCollection[baseKey] = {};
         },
 
         getFetch: function(key, query) {
             key = key || instance.key();
             key = 'fetch:' + this._expandKey(key, query);
             var result = null;
-            var entry = this.cache[key];
+            var entry = this.cache.byKey[key];
 
             if(entry) {
                 result = entry.fetch;
@@ -173,7 +195,7 @@ define([
             key = key || instance.key();
             key = this._expandFetchKey(key, query);
 
-            this.cache[key] = {
+            this.cache.byKey[key] = {
                 timestamp: new Date().getTime(),
                 fetch:  {
                     success: [],
@@ -185,12 +207,12 @@ define([
                 var entry;
                 var syncKey = this._expandFetchKey(instance.key(), options.query);
                 if(syncKey === key) {
-                    entry = this.cache[key];
+                    entry = this.cache.byKey[key];
                     if(entry) {
                         _.each(entry.fetch.success, function(callback) {
                             callback(instance, response, options);
                         }, this);
-                    delete this.cache[key];
+                    delete this.cache.byKey[key];
                     instance.off('sync', syncHandler);
                     }
                 }
@@ -200,13 +222,13 @@ define([
                 var entry;
                 var syncKey = this._expandFetchKey(instance.key(), options.query);
                 if(syncKey === key) {
-                    entry = this.cache[key];
+                    entry = this.cache.byKey[key];
                     if(entry) {
                         _.each(entry.fetch.error, function(callback) {
                             callback(instance, response, options);
                         }, this);
                     }
-                    delete this.cache[key];
+                    delete this.cache.byKey[key];
                     instance.off('error', errorHandler);
                 }
             };
