@@ -397,20 +397,14 @@ define([
         
         save: function(key, value, options) {
             if(this.session && this.isNew()) {
-                if(this.collection) {
-                    this.session.removeCollection(this.collection);
-                }
-                this.session.removeCollection(new this.collectionConstructor());
+                this.session.removeAllCollections(new this.collectionConstructor());
             }
             return Backbone.Model.prototype.save.call(this, key, value, options);
         },
 
         destroy: function(options) {
             if(this.session && !this.isNew()) {
-                if(this.collection) {
-                    this.session.removeCollection(this.collection);
-                }
-                this.session.removeCollection(new this.collectionConstructor());
+                this.session.removeAllCollections(new this.collectionConstructor());
             }
             return Backbone.Model.prototype.destroy.call(this, options);
         }
