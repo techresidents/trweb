@@ -465,8 +465,6 @@ define([
 
         jobPrefsSelector: '#user-job-prefs',
 
-        skillsFilterSelector: '#user-skills-filter',
-
         skillsSelector: '#user-skills',
 
         chatsSelector: '#user-chats',

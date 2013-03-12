@@ -1,13 +1,12 @@
+<div class="user-position-prefs-container">
 
+    <div class="span2">
+        <div class="user-logo"></div>
+        <p class="user-ID"><%= model.id %></p>
+    </div>
 
-
-<div class="user-position-prefs-container user-section-border-left">
-
-    <div class="user-logo"></div>
-    <p class="user-ID"><%= model.id %></p>
-
-    <div>
-        <h4>Seeking jobs</h4>
+    <div class="span2">
+        <h4>Seeking</h4>
         <ul class="position-prefs">
             <% if (!model.position_prefs.length) { %>
                 <span><em>No jobs provided</em></span>
@@ -25,8 +24,8 @@
         </ul>
     </div>
 
-    <div>
-        <h4>In these locations</h4>
+    <div class="span2">
+        <h4>Located In</h4>
         <ul class="location-prefs">
             <% if (!model.location_prefs.length) { %>
                 <span><em>No locations provided</em></span>
@@ -48,8 +47,8 @@
         </ul>
     </div>
 
-    <div>
-        <h4>Working with</h4>
+    <div class="span2">
+        <h4>Using</h4>
         <ul class="technology-prefs">
             <% if (!model.technology_prefs.length) { %>
                 <span><em>No technologies provided</em></span>

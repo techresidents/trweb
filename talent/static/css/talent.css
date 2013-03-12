@@ -266,13 +266,11 @@
     margin-left: 0px;
 }
 
-
 .user-position-prefs-container {
+    margin-top: 10px;
+}
+.user-position-prefs-container > [class^="span"] {
     margin-left: 0px;
-    margin-right: 0px;
-    padding-left: 19px;
-    padding-bottom: 19px;
-    padding-top: 0px;
 }
 
 .user-position-prefs-container a:hover {
@@ -308,10 +306,6 @@
     border-right: 1px solid #E3E3E3;
 }
 
-.user-skills-container {
-    margin-bottom: 10px;
-}
-
 .user-skills-container > div {
     display: inline-block;
     border: 1px solid #E3E3E3;
@@ -341,7 +335,33 @@
     background-color: #DFF0D8;
 }
 
-.user-skills-list-container {
+.user-skills-legend-novice {
+    background-color: #F2DEDE;
+}
+
+.user-skills-legend-proficient {
+    background-color: #D9EDF7;
+}
+
+.user-skills-legend-expert {
+    background-color: #DFF0D8;
+}
+
+.user-skills-legend {
+    display: inline;
+}
+
+.user-skills-legend > div {
+    display: inline-block;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    margin-right: 5px;
+    padding: 3px 7px 3px 7px;
+    color: rgb(104,104,104);
+}
+
+.user-skills-list-container > div {
+    display: inline;
 }
 
 #chat-sessions > div {
