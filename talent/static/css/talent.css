@@ -320,7 +320,7 @@
     margin-bottom: 10px;
     padding-left: 5px;
     padding-right: 5px;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 36px;
 }
 
@@ -342,19 +342,6 @@
 }
 
 .user-skills-list-container {
-    padding-left: 20px;
-    border-left-style: solid;
-    border-left-color: #E3E3E3;
-    border-left-width: 1px;
-}
-
-.user-skills-filter-container {
-    margin-left: 0px;
-    margin-right: 0px;
-    padding-top: 0px;
-    padding-right: 20px;
-    padding-left: 20px;
-    padding-bottom: 20px;
 }
 
 #chat-sessions > div {

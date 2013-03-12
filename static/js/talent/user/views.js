@@ -8,7 +8,6 @@ define([
     'text!talent/user/templates/user.html',
     'text!talent/user/templates/jobprefs.html',
     'text!talent/user/templates/skills.html',
-    'text!talent/user/templates/skills_filter.html',
     'text!talent/user/templates/skill.html',
     'text!talent/user/templates/chats.html',
     'text!talent/user/templates/chat.html'
@@ -22,7 +21,6 @@ define([
     user_template,
     jobprefs_template,
     skills_template,
-    skills_filter_template,
     skill_template,
     chats_template,
     chat_template) {
@@ -31,7 +29,6 @@ define([
      * User View Events
      */
     var EVENTS = {
-        UPDATE_SKILLS_FILTER: 'user:updateSkillsFilter',
         PLAY_CHAT: 'user:playChat'
     };
 
@@ -303,50 +300,6 @@ define([
     });
 
     /**
-     * Talent user skills filter view.
-     * @constructor
-     * @param {Object} options
-     *   filtersList: list of Technology types the user can filter by (required)
-     */
-    var UserSkillsFilterView = view.View.extend({
-
-        filterSelector: '.user-skills-filter-container',
-
-        events: {
-            'change .user-skills-filter-container input:checkbox' : 'filterUpdated'
-        },
-
-        initialize: function(options) {
-            this.template = _.template(skills_filter_template);
-            this.filtersList = options.filtersList;
-        },
-
-        render: function() {
-            var context = {
-                filtersList: this.filtersList
-            };
-            this.$el.html(this.template(context));
-            return this;
-        },
-
-        /**
-         * Handle when user modifies the skills filter
-         * @param e The DOM event
-         */
-        filterUpdated: function(e){
-            var exclusionFilters = [];
-            // get all disabled filters
-            this.$(this.filterSelector + " input:checkbox:not(:checked)").each(function() {
-                exclusionFilters.push($(this).val()); // here 'this' refers to the element returned by each()
-            });
-            var eventBody = {
-                filters: exclusionFilters
-            };
-            this.triggerEvent(EVENTS.UPDATE_SKILLS_FILTER, eventBody);
-        }
-    });
-
-    /**
      * Talent user skill view.
      * @constructor
      * @param {Object} options
@@ -404,8 +357,6 @@ define([
         initialize: function(options) {
             this.template =  _.template(skills_template);
             this.collectionWithRelated = ['technology'];
-
-            this.exclusionFilters = [];
             
             //bind events
             this.listenTo(this.collection, 'reset', this.onReset);
@@ -458,11 +409,9 @@ define([
             _.each(this.expertViews, function(view) {
                 this.append(view, this.expertSkillsSelector);
             }, this);
-            
-            // Apply any active filter settings
-            this.filter(this.exclusionFilters);
 
             // Activate tooltips
+            // TODO remove on destroy. Apply tooltip to child view instead?
             this.$('[rel=tooltip]').tooltip();
 
             return this;
@@ -494,26 +443,6 @@ define([
             return view;
         },
 
-        /**
-         * Show/Hide skill Views based upon filter options
-         * @param exclusionFiltersList A list of filters to apply.
-         * All views that match any of the input filters will be
-         * hidden from view.
-         */
-        filter: function(exclusionFiltersList) {
-            this.exclusionFilters = exclusionFiltersList;
-            _.each(this.childViews(), function(v) {
-                    if (_.contains(this.exclusionFilters, v.model.get_technology().get_type())) {
-                        v.$el.hide();
-                    }
-                    else {
-                        v.$el.show();
-                    }
-                },
-                this
-            );
-        },
-
         onReset: function() {
             this.initChildViews();
             this.render();
@@ -542,14 +471,9 @@ define([
 
         chatsSelector: '#user-chats',
 
-        events: {
-            'user:updateSkillsFilter': 'onSkillsFilterUpdated'
-        },
-
         childViews: function() {
             return [
                 this.jobPrefsView,
-                this.skillsFilterView,
                 this.skillsView,
                 this.chatsView
             ];
@@ -576,25 +500,15 @@ define([
 
             //child views
             this.jobPrefsView = null;
-            this.skillsFilterView = null;
             this.skillsView = null;
             this.chatsView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
-            // Create tuples for skills filters (displayName, dbValue)
-            var languages = {displayName: 'Languages', value: 'Language'};
-            var frameworks = {displayName: 'Frameworks', value: 'Framework'};
-            var persistence = {displayName: 'Persistence', value: 'Persistence'};
-            var filtersList = [languages, frameworks, persistence];
 
             this.jobPrefsView = new UserJobPrefsView({
                 model: this.model
-            });
-
-            this.skillsFilterView = new UserSkillsFilterView({
-                filtersList: filtersList
             });
 
             this.skillsView = new UserSkillsView({
@@ -615,20 +529,9 @@ define([
             this.$el.html(this.template(context));
 
             this.assign(this.jobPrefsView, this.jobPrefsSelector);
-            this.assign(this.skillsFilterView, this.skillsFilterSelector);
             this.assign(this.skillsView, this.skillsSelector);
             this.assign(this.chatsView, this.chatsSelector);
             return this;
-        },
-
-        /**
-         * Handle when user updates their skills filter.
-         * @param event The DOM event
-         * @param eventBody Expecting the attribute 'filters' to be specified
-         * which provides a list of the active exclusion filters
-         */
-        onSkillsFilterUpdated: function(event, eventBody) {
-            this.skillsView.filter(eventBody.filters);
         }
 
     });
