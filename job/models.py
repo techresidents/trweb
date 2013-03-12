@@ -40,6 +40,7 @@ class JobRequisition(models.Model):
     telecommute = models.BooleanField()
     relocation = models.BooleanField()
     employer_requisition_identifier = models.CharField(max_length=100, null=True)
+    deleted = models.BooleanField(default=False)
 
 class JobRequisitionTechnology(models.Model):
     """Job requisition technology model"""
