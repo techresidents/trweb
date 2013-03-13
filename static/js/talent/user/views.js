@@ -60,7 +60,11 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(jobprefs_template);
-            this.modelWithRelated = ['position_prefs', 'technology_prefs', 'location_prefs'];
+            this.modelWithRelated = [
+                'position_prefs',
+                'technology_prefs',
+                'location_prefs'
+            ];
 
             //bind events
             this.loader = new api_loader.ApiLoader([
@@ -154,8 +158,7 @@ define([
         toggleExpandButtonText: function(selector) {
             if ($(selector).text() === 'more') {
                 $(selector).text('less');
-            }
-            else {
+            } else {
                 $(selector).text('more');
             }
         }
@@ -469,13 +472,26 @@ define([
      */
     var UserNoteView = view.View.extend({
 
+        textareaSelector: '.user-notes',
+        saveStatusSelector: '.user-notes-save-status',
+
+        events: {
+            'blur textarea': 'onBlur'
+        },
+
+        SaveStatusEnum: {
+            PENDING : 'Saving note...',
+            SAVED : 'Note saved.'
+        },
+
         initialize: function(options) {
             this.candidateModel = options.candidateModel;
             this.employeeModel = options.employeeModel;
             this.model = null;
+            this.saveTimeout = null;
+            this.saveStatus = null;
             // We enable this view for editing once we know the
             // existing note has loaded, if it exists.
-            this.enabled = false;
             this.template = _.template(notes_template);
 
             // Clone the collection since we will be filtering it
@@ -492,9 +508,15 @@ define([
             this.noteQuery.fetch();
         },
 
+        destroy: function() {
+            if (this.saveStatus === this.SaveStatusEnum.PENDING) {
+                this._save();
+            }
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
         render: function() {
             var context = {
-                enabled: this.enabled,
                 model: this.model ? this.model.toJSON() : null
             };
             this.$el.html(this.template(context));
@@ -504,6 +526,7 @@ define([
         onReset: function() {
             if (this.notesCollection.length) {
                 this.model = this.notesCollection.first();
+                this.saveStatus = this.SaveStatusEnum.SAVED;
             } else {
                 this.model = new api.JobNote({
                     employee_id: this.employeeModel.id,
@@ -511,8 +534,40 @@ define([
                     tenant_id: this.employeeModel.get_tenant_id()
                 });
             }
-            this.enabled = true;
             this.render();
+        },
+
+        onBlur: function() {
+            // Don't save if the user hasn't previously saved a note, and
+            // the textarea is currently empty. This will prevent saving
+            // empty notes.
+            if (this.saveStatus === null &&
+                this.$(this.textareaSelector).val().length === 0) {
+                // no-op
+            } else {
+                this._scheduleSave();
+            }
+        },
+
+        updateSaveStatus: function() {
+            this.$(this.saveStatusSelector).text(this.saveStatus);
+        },
+
+        _scheduleSave: function() {
+            this.saveStatus = this.SaveStatusEnum.PENDING;
+            this.updateSaveStatus();
+            // clear any existing scheduled saves
+            clearTimeout(this.saveTimeout);
+            // schedule save for 10 secs in future
+            // Wrap the save function callback using JQuery's proxy() since
+            // setTimeout doesn't support passing a context.
+            this.saveTimeout = setTimeout($.proxy(this._save, this), 10000);
+        },
+
+        _save: function() {
+            // TODO this.model.save();
+            this.saveStatus = this.SaveStatusEnum.SAVED;
+            this.updateSaveStatus();
         }
     });
 

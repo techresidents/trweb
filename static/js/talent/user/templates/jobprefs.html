@@ -10,10 +10,11 @@
             <% } else { %>
 
                 <% _.each(model.position_prefs, function(position) { %>
-                    <li><%= position.type %> <em><%= position.salary_start ? fmt.num(position.salary_start, 'cn0') : '' %></em></li>
+                    <li><%= position.type %></li>
+                    <li><em><%= position.salary_start ? fmt.num(position.salary_start, 'cn0') : '' %></em></li>
                 <% }); %>
 
-                <% if (model.position_prefs.length > 3) { %>
+                <% if (model.position_prefs.length > 1) { %>
                     <a class="slide-toggle">more</a>
                 <% } %>
 
@@ -21,7 +22,7 @@
         </ul>
     </div>
 
-    <div class="span1 user-position-prefs-well-text">~in~</div>
+    <div class="span1 user-position-prefs-well-text">~ in ~</div>
 
     <div class="span2 well">
         <ul class="location-prefs unstyled">
@@ -45,7 +46,7 @@
         </ul>
     </div>
 
-    <div class="span1 user-position-prefs-well-text">~with~</div>
+    <div class="span1 user-position-prefs-well-text">~ with ~</div>
 
     <div class="span2 well">
         <ul class="technology-prefs unstyled">
