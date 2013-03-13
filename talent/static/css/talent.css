@@ -257,27 +257,29 @@
 }
 
 .user-ID {
-    padding-left: 38px;
+    padding-left: 130px;
 }
 
 .no-span-margin {
     margin-left: 0px;
 }
 
+.user-actions-container .user-logo {
+    margin: 0px auto;
+    margin-top: 25px;
+    width: 120px;
+    height: 90px;
+}
+
+.user-notes-container > * {
+    margin-left: 20px;
+}
 .user-position-prefs-container > [class^="span"] {
     margin-left: 0px;
 }
 
 .user-position-prefs-container a:hover {
     cursor: pointer;
-}
-
-.user-position-prefs-container .user-logo {
-    margin: 0px auto;
-    margin-top: 5px;
-    width: 40px;
-    height: 30px;
-    display: inline-block;
 }
 
 .user-position-prefs-container .user-border {

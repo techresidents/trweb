@@ -5,12 +5,15 @@ define([
     'core/array',
     'core/view',
     'api/loader',
+    'api/models',
     'text!talent/user/templates/user.html',
     'text!talent/user/templates/jobprefs.html',
     'text!talent/user/templates/skills.html',
     'text!talent/user/templates/skill.html',
     'text!talent/user/templates/chats.html',
-    'text!talent/user/templates/chat.html'
+    'text!talent/user/templates/chat.html',
+    'text!talent/user/templates/actions.html',
+    'text!talent/user/templates/notes.html'
 ], function(
     $,
     _,
@@ -18,12 +21,15 @@ define([
     array,
     view,
     api_loader,
+    api,
     user_template,
     jobprefs_template,
     skills_template,
     skill_template,
     chats_template,
-    chat_template) {
+    chat_template,
+    actions_template,
+    notes_template) {
 
     /**
      * User View Events
@@ -36,7 +42,7 @@ define([
      * Talent user job preferences view.
      * @constructor
      * @param {Object} options
-     *   model: {User} (required)
+     *   model: {User} Represents the developer (required)
      */
     var UserJobPrefsView = view.View.extend({
 
@@ -455,29 +461,129 @@ define([
     });
 
     /**
+     * Talent user note view.
+     * @constructor
+     * @param {Object} options
+     *   candidateModel: {User} (required)
+     *   employeeModel: {User} (required)
+     */
+    var UserNoteView = view.View.extend({
+
+        initialize: function(options) {
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
+            this.model = null;
+            // We enable this view for editing once we know the
+            // existing note has loaded, if it exists.
+            this.enabled = false;
+            this.template = _.template(notes_template);
+
+            // Clone the collection since we will be filtering it
+            // TODO this.notesCollection = this.candidateModel.get_job_notes().clone();
+            this.notesCollection = new api.JobNoteCollection();
+            this.notesCollection.on('reset', this.onReset, this);
+
+            // Since we retrieved all notes on the candidate, we need to
+            // filter the collection down to just the employee's notes
+            this.noteQuery = this.notesCollection.filterBy({
+                employee_id: this.employeeModel.id,
+                tenant_id: this.employeeModel.get_tenant_id()
+            });
+            this.noteQuery.fetch();
+        },
+
+        render: function() {
+            var context = {
+                enabled: this.enabled,
+                model: this.model ? this.model.toJSON() : null
+            };
+            this.$el.html(this.template(context));
+            return this;
+        },
+
+        onReset: function() {
+            if (this.notesCollection.length) {
+                this.model = this.notesCollection.first();
+            } else {
+                this.model = new api.JobNote({
+                    employee_id: this.employeeModel.id,
+                    candidate_id: this.candidateModel.id,
+                    tenant_id: this.employeeModel.get_tenant_id()
+                });
+            }
+            this.enabled = true;
+            this.render();
+        }
+    });
+
+    /**
+     * Talent user actions view.
+     * @constructor
+     * @param {Object} options
+     *    candidateModel: {User} (required)
+     *    employeeModel: {User} (required)
+     */
+    var UserActionsView = view.View.extend({
+
+        noteSelector: '#user-note',
+
+        childViews: function() {
+            return [
+                this.noteView
+            ];
+        },
+
+        initialize: function(options) {
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
+            this.template = _.template(actions_template);
+
+            //child views
+            this.noteView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.noteView = new UserNoteView({
+                candidateModel: this.candidateModel,
+                employeeModel: this.employeeModel
+            });
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.assign(this.noteView, this.noteSelector);
+            return this;
+        }
+    });
+
+    /**
      * Talent user view.
      * @constructor
      * @param {Object} options
-     *   model: {User} (required)
+     *   candidateModel: {User} Represents the developer (required)
+     *   employeeModel: {User} Represents the employee (required)
      *   playerState: PlayerState model (required)
      */
     var UserView = view.View.extend({
 
         jobPrefsSelector: '#user-job-prefs',
-
         skillsSelector: '#user-skills',
-
         chatsSelector: '#user-chats',
+        actionsSelector: '#user-actions',
 
         childViews: function() {
             return [
                 this.jobPrefsView,
                 this.skillsView,
-                this.chatsView
+                this.chatsView,
+                this.actionsView
             ];
         },
 
         initialize: function(options) {
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
             this.playerState = options.playerState;
             this.template =  _.template(user_template);
             this.modelWithRelated = [
@@ -489,10 +595,10 @@ define([
             ];
 
             //bind events
-            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.candidateModel, 'change', this.render);
 
             this.loader = new api_loader.ApiLoader([
-                { instance: this.model, withRelated: this.modelWithRelated }
+                { instance: this.candidateModel, withRelated: this.modelWithRelated }
             ]);
             this.loader.load();
 
@@ -500,28 +606,34 @@ define([
             this.jobPrefsView = null;
             this.skillsView = null;
             this.chatsView = null;
+            this.actionsView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
 
             this.jobPrefsView = new UserJobPrefsView({
-                model: this.model
+                model: this.candidateModel
             });
 
             this.skillsView = new UserSkillsView({
-                collection: this.model.get_skills()
+                collection: this.candidateModel.get_skills()
             });
             
             this.chatsView = new UserHighlightSessionsView({
-                collection: this.model.get_highlight_sessions(),
+                collection: this.candidateModel.get_highlight_sessions(),
                 playerState: this.playerState
+            });
+
+            this.actionsView = new UserActionsView({
+                candidateModel: this.candidateModel,
+                employeeModel: this.employeeModel
             });
         },
 
         render: function() {
             var context = {
-                model: this.model.toJSON(),
+                model: this.candidateModel.toJSON(),
                 fmt: this.fmt // date formatting
             };
             this.$el.html(this.template(context));
@@ -529,6 +641,7 @@ define([
             this.assign(this.jobPrefsView, this.jobPrefsSelector);
             this.assign(this.skillsView, this.skillsSelector);
             this.assign(this.chatsView, this.chatsSelector);
+            this.assign(this.actionsView, this.actionsSelector);
             return this;
         }
 
