@@ -3,8 +3,7 @@
 </div>
 <div class="span8 user-position-prefs-container">
 
-    <div class="span3">
-        <h4>Positions</h4>
+    <div class="span2 well">
         <ul class="position-prefs unstyled">
             <% if (!model.position_prefs.length) { %>
                 <span><em>No jobs provided</em></span>
@@ -22,8 +21,9 @@
         </ul>
     </div>
 
-    <div class="span3">
-        <h4>Locations</h4>
+    <div class="span1 user-position-prefs-well-text">~in~</div>
+
+    <div class="span2 well">
         <ul class="location-prefs unstyled">
             <% if (!model.location_prefs.length) { %>
                 <span><em>No locations provided</em></span>
@@ -45,8 +45,9 @@
         </ul>
     </div>
 
-    <div class="span2">
-        <h4>Technologies</h4>
+    <div class="span1 user-position-prefs-well-text">~using~</div>
+
+    <div class="span2 well">
         <ul class="technology-prefs unstyled">
             <% if (!model.technology_prefs.length) { %>
                 <span><em>No technologies provided</em></span>

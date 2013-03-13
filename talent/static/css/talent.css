@@ -285,6 +285,21 @@
     margin-bottom: 10px;
 }
 
+.user-position-prefs-container .well {
+    padding: 5px;
+    min-height: 90px;
+    border-color: #EA8F00;
+    background-color: rgba(234,143,0,0.1);
+}
+
+.user-position-prefs-well-text {
+    line-height: 90px;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: bold;
+    text-align: center;
+}
+
 .user-section-border {
     border: 1px solid #E3E3E3;
 }
@@ -324,25 +339,28 @@
 
 .user-skills-novice > div {
     background-color: #F2DEDE;
+    border-color: #CA7C7A;
 }
 
 .user-skills-proficient > div {
     background-color: #D9EDF7;
+    border-color: #1C4D83;
 }
 
 .user-skills-expert > div {
     background-color: #DFF0D8;
+    border-color: #297339;
 }
 
-.user-skills-legend-novice {
+.user-skills-legend .novice {
     background-color: #F2DEDE;
 }
 
-.user-skills-legend-proficient {
+.user-skills-legend .proficient {
     background-color: #D9EDF7;
 }
 
-.user-skills-legend-expert {
+.user-skills-legend .expert {
     background-color: #DFF0D8;
 }
 
