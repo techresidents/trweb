@@ -152,10 +152,21 @@ define([
                 filters: [
                     { name: 'City', field: 'city',  filterView: {
                             ctor: filter_views.ChoicesFilterView,
-                            options: { name: 'City', field: 'city', choices: ['Boston', 'San Francisco'] }
+                            options: { choices: ['Boston', 'San Francisco'] }
                         }
                     },
-                    { name: 'State', field: 'state', filterView: { options: { name: 'State', field: 'city' } } }
+
+                    { name: 'State', field: 'state',  filterView: {
+                            ctor: filter_views.ChoicesFilterView,
+                            options: { choices: ['MA', 'CA'] }
+                        }
+                    },
+
+                    { name: 'Date', field: 'zip',  filterView: {
+                            ctor: filter_views.DateRangeFilterView,
+                            options: {}
+                        }
+                    }
                 ]
             };
 
@@ -170,7 +181,8 @@ define([
             this.filtersView = new filter_views.FiltersView({
                 config: this.filtersConfig,
                 collection: this.collection,
-                query: this.query
+                query: this.query,
+                horizontal: true
             });
 
             this.gridView = new grid_views.GridView({

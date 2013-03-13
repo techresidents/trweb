@@ -259,6 +259,10 @@ html {
     padding: 5px 5px;
 }
 
+.drop-absolute {
+    position: absolute;
+}
+
 .drop-inner {
     position: relative;
 }
@@ -280,7 +284,7 @@ html {
     padding: 5px 5px;
 }
 
-.drop-open .drop-content {
+.drop-open > .drop-content {
     display: block;
 }
 
@@ -327,6 +331,15 @@ html {
     margin: 0px;
 }
 
+.filters.horizontal .filter-factory, .filter, .filter .btn-group {
+    display: inline-block;
+}
+
+.filter-factory {
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
 .filter {
     margin-bottom: 5px;
     margin-right: 5px;
@@ -344,3 +357,47 @@ html {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.date-month td, th {
+    cursor: pointer;
+    border-radius: 4px;
+    text-align: center;
+    width: 20px;
+    height: 20px;
+    padding: 4px 5px;
+}
+
+.date-month td:hover {
+    background-color: #EEEEEE;
+}
+
+.date-month td.selected {
+    color: #FFFFFF;
+    background-color: #006DCC;
+}
+
+.date-month td.selected:hover {
+    color: #FFFFFF;
+    background-color: #006DCC;
+}
+
+.date-month td.leftover {
+    color: #888888;
+}
+
+.date-month .next, .prev {
+    font-size: 20px;
+}
+
+.date-month .next:hover, .prev:hover {
+    background-color: #EEEEEE;
+}
+
+.date-range form {
+    margin: 0 0 5px;
+}
+
+.date-range input[type="radio"] {
+    margin-bottom: 8px;
+}
+
