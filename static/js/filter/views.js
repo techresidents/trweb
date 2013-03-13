@@ -2,24 +2,29 @@ define([
     'jquery',
     'underscore',
     'core/base',
+    'core/date',
     'core/view',
     'api/query',
     'choices/models',
     'choices/views',
+    'date/views',
     'drop/views',
     'filter/models',
     'text!filter/templates/filters.html',
     'text!filter/templates/filter.html',
     'text!filter/templates/filter_factory.html',
     'text!filter/templates/filter_factory_drop.html'
+
 ], function(
     $,
     _,
     base,
+    date,
     view,
     api_query,
     choices_models,
     choices_views,
+    date_views,
     drop_views,
     filter_models,
     filters_template,
@@ -73,6 +78,7 @@ define([
             }, _.result(this.viewConfig, 'options')); 
 
             this.dropView = new drop_views.DropView({
+                autocloseGroup: 'filter',
                 view: {
                     ctor: this.viewConfig.ctor,
                     options: viewOptions
@@ -98,6 +104,10 @@ define([
                 'filter',
                 'filter-' + this.name.toLowerCase().replace(' ', '-')
             ];
+        },
+
+        getSubview: function() {
+            return this.dropView.childView;
         },
 
         filters: function(name, op) {
@@ -153,7 +163,7 @@ define([
                 }
             }, options);
 
-            FilterView.prototype.initialize(options);
+            FilterView.prototype.initialize.call(this, options);
             this.choiceCollection.reset(this.filterToChoiceModels());
 
             this.listenTo(this.choiceCollection, 'change:selected', this.onSelected);
@@ -231,26 +241,98 @@ define([
      */
     var DateRangeFilterView = FilterView.extend({
 
+        events: function() {
+            var result = _.extend({
+            }, _.result(FilterView.prototype, 'events'));
+            result[date_views.EVENTS.DATE_RANGE_CHANGED] = 'onDateRangeChanged';
+            return result;
+        },
+
         initialize: function(options) {
             options = _.extend({
                 viewConfig: {
-                    ctor: choices_views.ChoicesView,
-                    options: {
-                        collection: this.choiceCollection
-                    }
+                    ctor: date_views.DateRangeView,
+                    options: {}
                 }
             }, options);
 
-            FilterView.prototype.initialize(options);
+            FilterView.prototype.initialize.call(this, options);
+            
+            var range = this.filterToDateRange(this.getFilter());
+            if(range) {
+                this.getSubview().setDateRange(range);
+            }
         },
 
         title: function() {
-            var result = 'ALL';
-            filter = _.first(this.filters(this.field, 'range'));
+            var range, result = 'ALL';
+            filter = this.getFilter();
             if(filter) {
-                result = filter.value();
+                range = this.filterToDateRange(filter);
+
+                if(date.DateRange.allTime().equals(range)) {
+                    result = 'ALL';
+                } else if(date.DateRange.today().equals(range)) {
+                    result = 'Today';
+                } else if(date.DateRange.thisWeek().equals(range)) {
+                    result = 'This week';
+                } else if(date.DateRange.thisMonth().equals(range)) {
+                    result = 'This month';
+                } else {
+                    result = range.start.format('MM/dd/yy') + '-' + range.end.format('MM/dd/yy');
+                }
             }
             return result;
+        },
+
+        filterToDateRange: function(filter) {
+            var start, end, values, result;
+            if(filter) {
+                values = filter.value().split(',');
+                start = date.Date.fromTimestamp(parseFloat(values[0]));
+                end = date.Date.fromTimestamp(parseFloat(values[1]));
+                result =new date.DateRange(start, end);
+            }
+            return result;
+        },
+
+        dateRangeToFilter: function(range) {
+            var result, values;
+            if(range && range.start && range.end) {
+                values = [range.start.getTime() / 1000.0, range.end.getTime() / 1000.0];
+                result = new api_query.ApiQueryFilter({
+                    name: this.field,
+                    value: values.join(','),
+                    op: 'range'
+                });
+            }
+            return result;
+        },
+
+        getFilter: function() {
+            return _.first(this.filters(this.field, 'range'));
+        },
+
+        setFilter: function(filter) {
+            var filters = this.query.state.filters();
+            filters.remove(filters.where({name: this.field}));
+            if(filter) {
+                this.query.state.filters().add(filter);
+            } 
+            this.updateTitle();
+        },
+
+        onDateRangeChanged: function(e, eventBody) {
+            var range = eventBody.dateRange;
+            if(date.DateRange.allTime().equals(range)) {
+                this.setFilter(null);
+            } else if(range.start && range.end) {
+                this.setFilter(this.dateRangeToFilter(range));
+            }
+
+            this.triggerEvent(EVENTS.FILTER_APPLY, {
+                field: this.field
+            });
         }
     });
 
@@ -297,6 +379,7 @@ define([
 
         initChildViews: function() {
             this.dropView = new drop_views.DropView({
+                autocloseGroup: 'filter',
                 view: {
                     ctor: choices_views.ChoicesView,
                     options: {
@@ -356,7 +439,8 @@ define([
      * @param {Object} options
      *   config: {Object} config (required)
      *   collection: {ApiCollection} collection (required)
-     *   query: {ApiQuery} query (optional)
+     *   query: {ApiQuery} query (required)
+     *   horizontal: {Boolean} (optional)
      */
     var FiltersView = view.View.extend({
 
@@ -385,7 +469,8 @@ define([
             this.context = options.context;
             this.config = options.config;
             this.collection = options.collection;
-            this.query = options.query || this.collection.query();
+            this.query = options.query;
+            this.horizontal = options.horizontal || false;
             this.filterConfigMap = {};
 
             _.each(this.config.filters, function(config) {
@@ -408,7 +493,11 @@ define([
         },
 
         classes: function() {
-            return ['filters'];
+            var result = ['filters'];
+            if(this.horizontal) {
+                result.push('horizontal');
+            }
+            return result;
         },
 
         render: function() {
@@ -496,7 +585,8 @@ define([
     return {
         EVENTS: EVENTS,
         FiltersView: FiltersView,
-        ChoicesFilterView: ChoicesFilterView
+        ChoicesFilterView: ChoicesFilterView,
+        DateRangeFilterView: DateRangeFilterView
     };
 
 });
