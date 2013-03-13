@@ -24,13 +24,16 @@ define([
      * @constructor
      * @param {Object} options
      *   view: {Object} Content view options (required)
+     *   targetView: {View} (optional)
+     *   targetSelector {String} (optional)
+     *   autoclose: {Boolean} (optional)
+     *   autocloseGroup: {String} (optional)
      */
     var DropView = view.View.extend({
 
         defaultTemplate: drop_template,
 
         events: {
-            'click .drop-content': 'onDropContentClick'
         },
 
         childViews: function() {
@@ -47,7 +50,10 @@ define([
             this.template = _.template(options.template);
             this.context = options.context;
             this.autoclose = options.autoclose;
+            this.autocloseGroup = options.autocloseGroup || 'default';
             this.viewConfig = options.view;
+            this.targetView = options.targetView;
+            this.targetSelector = options.targetSelector;
             this.childView = null;
             this.isOpen = false;
             
@@ -82,11 +88,25 @@ define([
         },
 
         classes: function() {
-            return ['drop'];
+            var result = ['drop'];
+            if(this.targetView) {
+                result.push('drop-absolute');
+            }
+            return result;
+        },
+
+        target: function() {
+            var result;
+            if(this.targetView) {
+                result = this.targetView.$(this.targetSelector);
+            }
+            return result;
         },
 
         render: function() {
-            var context = _.extend({}, base.getValue(this, 'context', this));
+            var context = _.extend({
+                cid: this.cid
+            }, base.getValue(this, 'context', this));
 
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
@@ -101,9 +121,28 @@ define([
             return new config.ctor(options);
         },
 
+        position: function() {
+            var offset, parentOffset;
+            var target = this.target();
+            if(target) {
+                offset = target.offset();
+                offset.top += target.outerHeight();
+
+                //find first parent with absolute/relative position and get its offset
+                //so we can negate it in order to position next to the target.
+                parentOffset = this.$el.offsetParent().offset();
+                if(parentOffset) {
+                    offset.top -= parentOffset.top;
+                    offset.left -= parentOffset.left;
+                }
+                this.$el.css(offset);
+            }
+        },
+
         open: function() {
-            var inner = this.$('.drop-inner');
+            var inner = this.$('.drop-inner:first');
             if(!this.isOpen) {
+                this.position();
                 inner.addClass('drop-open');
                 this.isOpen = !this.isOpen;
                 this.triggerEvent(EVENTS.DROP_OPENED, this);
@@ -111,7 +150,7 @@ define([
         },
 
         close: function() {
-            var inner = this.$('.drop-inner');
+            var inner = this.$('.drop-inner:first');
             if(this.isOpen) {
                 inner.removeClass('drop-open');
                 this.isOpen = !this.isOpen;
@@ -128,33 +167,36 @@ define([
         },
 
         onClick: function(e) {
-            if(!this.isOpen) {
+            if(!this.isOpen || !this.autoclose) {
                 return;
             }
 
             var target = $(e.target);
+
             var inDom = target.closest(document.documentElement).length ? true : false;
+            var inDropButton = target.closest('.drop-button').length ? true : false;
+            var inDropContent = false;
+            var dropContent = target.closest('.drop-content');
+            if(dropContent.length) {
+                if(dropContent.first().data('cid') === this.cid) {
+                    inDropContent = true;
+                }
+            }
 
             //check to see if the target is in the dom.
             //child view click events which result in a re-render of the drop view
             //will no longer be in the dom so we can't check to see if its
             //part of the .drop-content, so ignore all events from views 
             //not in the dom.
-            if(inDom && !target.closest('.drop-button, .drop-content').length) {
+            if(inDom && !inDropButton && !inDropContent) {
                 this.close();
             }
         },
 
-        onDropContentClick: function(e) {
-            //if autoclose is true prevent drop view from closing
-            //on click inside .drop-content
-            if(this.autoclose) {
-                e.stopPropagation();
-            }
-        },
-
         onDropOpened: function(e, view) {
-            if(view.cid !== this.cid) {
+            if(this.autoclose &&
+               view.cid !== this.cid &&
+               view.autocloseGroup === this.autocloseGroup) {
                 this.close();
             }
         }
