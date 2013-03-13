@@ -1,19 +1,17 @@
-<div class="user-position-prefs-container">
+<div class="span7">
+    <h3 class="user-section-border-bottom">Wants</h3>
+</div>
+<div class="span8 user-position-prefs-container">
 
-    <div class="span2">
-        <div class="user-logo"></div>
-        <p class="user-ID"><%= model.id %></p>
-    </div>
-
-    <div class="span2">
-        <h4>Seeking</h4>
-        <ul class="position-prefs">
+    <div class="span3">
+        <h4>Positions</h4>
+        <ul class="position-prefs unstyled">
             <% if (!model.position_prefs.length) { %>
                 <span><em>No jobs provided</em></span>
             <% } else { %>
 
                 <% _.each(model.position_prefs, function(position) { %>
-                    <li><%= position.type %> <%= position.salary_start ? fmt.num(position.salary_start, 'cn0') : '' %></li>
+                    <li><%= position.type %> <em><%= position.salary_start ? fmt.num(position.salary_start, 'cn0') : '' %></em></li>
                 <% }); %>
 
                 <% if (model.position_prefs.length > 3) { %>
@@ -24,9 +22,9 @@
         </ul>
     </div>
 
-    <div class="span2">
-        <h4>Located In</h4>
-        <ul class="location-prefs">
+    <div class="span3">
+        <h4>Locations</h4>
+        <ul class="location-prefs unstyled">
             <% if (!model.location_prefs.length) { %>
                 <span><em>No locations provided</em></span>
             <% } else { %>
@@ -48,8 +46,8 @@
     </div>
 
     <div class="span2">
-        <h4>Using</h4>
-        <ul class="technology-prefs">
+        <h4>Technologies</h4>
+        <ul class="technology-prefs unstyled">
             <% if (!model.technology_prefs.length) { %>
                 <span><em>No technologies provided</em></span>
             <% } else { %>
@@ -67,7 +65,3 @@
     </div>
 
 </div>
-
-
-
-
