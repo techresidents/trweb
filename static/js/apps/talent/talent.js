@@ -8,13 +8,13 @@ define([
     'core/mediator',
     'core/view',
     'current/proxies',
-    'talent/playback/mediators',
+//    'talent/playback/mediators',
     'talent/player/mediators',
     'talent/player/models',
     'talent/player/proxies',
-    'talent/search/mediators',
-    'talent/tracker/mediators',
-    'talent/user/mediators',
+//    'talent/search/mediators',
+//    'talent/tracker/mediators',
+//    'talent/user/mediators',
     'text!apps/talent/talent.html'
 ], function(
     $,
@@ -26,13 +26,13 @@ define([
     mediator,
     view,
     current_proxies,
-    playback_mediators,
+//    playback_mediators,
     player_mediators,
     player_models,
     player_proxies,
-    search_mediators,
-    tracker_mediators,
-    user_mediators,
+//    search_mediators,
+//    tracker_mediators,
+//    user_mediators,
     talent_app_template) {
     
     /**
@@ -51,39 +51,60 @@ define([
             this.facade = options.facade;
 
         },
+        
+        ensureMediator:  function(mediatorClass) {
+            var mediator = this.facade.getMediator(mediatorClass.NAME);
+            if(!mediator) {
+                mediator = new mediatorClass();
+                this.facade.registerMediator(mediator);
+            }
+            return mediator;
+        },
 
         playback: function(id) {
-            this.facade.trigger(notifications.VIEW_CREATE, {
-                type: playback_mediators.PlaybackMediator.VIEW_TYPE,
-                options: {
-                    id: id
-                }
-            });
+            require(['talent/playback/mediators'], _.bind(function(mediators) {
+                this.ensureMediator(mediators.PlaybackMediator);
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: mediators.PlaybackMediator.VIEW_TYPE,
+                    options: {
+                        id: id
+                    }
+                });
+            }, this));
         },
 
         tracker: function(query) {
-            this.facade.trigger(notifications.VIEW_CREATE, {
-                type: tracker_mediators.TrackerMediator.VIEW_TYPE,
-                options: {
-                    query: query
-                }
-            });
+            require(['talent/tracker/mediators'], _.bind(function(mediators) {
+                this.ensureMediator(mediators.TrackerMediator);
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: mediators.TrackerMediator.VIEW_TYPE,
+                    options: {
+                        query: query
+                    }
+                });
+            }, this));
         },
 
         search: function() {
-            this.facade.trigger(notifications.VIEW_CREATE, {
-                type: search_mediators.SearchMediator.VIEW_TYPE,
-                options: {}
-            });
+            require(['talent/search/mediators'], _.bind(function(mediators) {
+                this.ensureMediator(mediators.SearchMediator);
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: mediators.SearchMediator.VIEW_TYPE,
+                    options: {}
+                });
+            }, this));
         },
 
         user: function(id) {
-            this.facade.trigger(notifications.VIEW_CREATE, {
-                type: user_mediators.UserMediator.VIEW_TYPE,
-                options: {
-                    id: id
-                }
-            });
+            require(['talent/user/mediators'], _.bind(function(mediators) {
+                this.ensureMediator(mediators.UserMediator);
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: mediators.UserMediator.VIEW_TYPE,
+                    options: {
+                        id: id
+                    }
+                });
+            }, this));
         }
     });
 
@@ -190,10 +211,10 @@ define([
 
             //create and register sub-mediators
             this.facade.registerMediator(new player_mediators.PlayerMediator());
-            this.facade.registerMediator(new playback_mediators.PlaybackMediator());
-            this.facade.registerMediator(new search_mediators.SearchMediator());
-            this.facade.registerMediator(new tracker_mediators.TrackerMediator());
-            this.facade.registerMediator(new user_mediators.UserMediator());
+            //this.facade.registerMediator(new playback_mediators.PlaybackMediator());
+            //this.facade.registerMediator(new search_mediators.SearchMediator());
+            //this.facade.registerMediator(new tracker_mediators.TrackerMediator());
+            //this.facade.registerMediator(new user_mediators.UserMediator());
 
             //create player view
             this.facade.trigger(notifications.VIEW_CREATE, {
