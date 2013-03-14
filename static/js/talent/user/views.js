@@ -13,7 +13,7 @@ define([
     'text!talent/user/templates/chats.html',
     'text!talent/user/templates/chat.html',
     'text!talent/user/templates/actions.html',
-    'text!talent/user/templates/notes.html'
+    'text!talent/user/templates/note.html'
 ], function(
     $,
     _,
@@ -29,7 +29,7 @@ define([
     chats_template,
     chat_template,
     actions_template,
-    notes_template) {
+    note_template) {
 
     /**
      * User View Events
@@ -523,7 +523,7 @@ define([
             // We enable this view for editing once we know the
             // existing note has loaded, if it exists. This prevents
             // us from creating a new note and overwriting an existing note.
-            this.template = _.template(notes_template);
+            this.template = _.template(note_template);
 
             // Clone the collection since we will be filtering it
             // TODO this.notesCollection = this.candidateModel.get_job_notes().clone();
