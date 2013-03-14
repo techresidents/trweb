@@ -8,13 +8,9 @@ define([
     'core/mediator',
     'core/view',
     'current/proxies',
-//    'talent/playback/mediators',
     'talent/player/mediators',
     'talent/player/models',
     'talent/player/proxies',
-//    'talent/search/mediators',
-//    'talent/tracker/mediators',
-//    'talent/user/mediators',
     'text!apps/talent/talent.html'
 ], function(
     $,
@@ -26,13 +22,9 @@ define([
     mediator,
     view,
     current_proxies,
-//    playback_mediators,
     player_mediators,
     player_models,
     player_proxies,
-//    search_mediators,
-//    tracker_mediators,
-//    user_mediators,
     talent_app_template) {
     
     /**
@@ -211,10 +203,6 @@ define([
 
             //create and register sub-mediators
             this.facade.registerMediator(new player_mediators.PlayerMediator());
-            //this.facade.registerMediator(new playback_mediators.PlaybackMediator());
-            //this.facade.registerMediator(new search_mediators.SearchMediator());
-            //this.facade.registerMediator(new tracker_mediators.TrackerMediator());
-            //this.facade.registerMediator(new user_mediators.UserMediator());
 
             //create player view
             this.facade.trigger(notifications.VIEW_CREATE, {
