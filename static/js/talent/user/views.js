@@ -472,8 +472,8 @@ define([
      */
     var UserNoteView = view.View.extend({
 
-        textareaSelector: '.user-notes',
-        saveStatusSelector: '.user-notes-save-status',
+        textareaSelector: '.user-note',
+        saveStatusSelector: '.user-note-save-status',
 
         events: {
             'blur textarea': 'onBlur'
@@ -481,7 +481,37 @@ define([
 
         SaveStatusEnum: {
             PENDING : 'Saving note...',
-            SAVED : 'Note saved.'
+            SAVED : 'Saved.'
+        },
+
+        /**
+         * Method to schedule saving the note in the future.
+         * This method is required to prevent the user from
+         * saving their note every second (or more), and triggering
+         * a large number of writes on the db.
+         * @private
+         * @param secs Number of secs to delay until saving (optional)
+         *        Default value is 5 seconds.
+         */
+        _scheduleSave: function(secs) {
+            var delay = secs ? secs*1000 : 5000; // 5 sec default
+            this.saveStatus = this.SaveStatusEnum.PENDING;
+            this.updateSaveStatus();
+            // clear any existing scheduled saves
+            clearTimeout(this.saveTimeout);
+            // Wrap the save function callback using JQuery's proxy() since
+            // setTimeout doesn't support passing a context.
+            this.saveTimeout = setTimeout($.proxy(this._save, this), delay);
+        },
+
+        /**
+         * Save note.
+         * @private
+         */
+        _save: function() {
+            // TODO this.model.save();
+            this.saveStatus = this.SaveStatusEnum.SAVED;
+            this.updateSaveStatus();
         },
 
         initialize: function(options) {
@@ -491,7 +521,8 @@ define([
             this.saveTimeout = null;
             this.saveStatus = null;
             // We enable this view for editing once we know the
-            // existing note has loaded, if it exists.
+            // existing note has loaded, if it exists. This prevents
+            // us from creating a new note and overwriting an existing note.
             this.template = _.template(notes_template);
 
             // Clone the collection since we will be filtering it
@@ -524,6 +555,7 @@ define([
         },
 
         onReset: function() {
+            // Load Note if it exists or create new Note
             if (this.notesCollection.length) {
                 this.model = this.notesCollection.first();
                 this.saveStatus = this.SaveStatusEnum.SAVED;
@@ -534,13 +566,13 @@ define([
                     tenant_id: this.employeeModel.get_tenant_id()
                 });
             }
+            // Display the note
             this.render();
         },
 
         onBlur: function() {
-            // Don't save if the user hasn't previously saved a note, and
-            // the textarea is currently empty. This will prevent saving
-            // empty notes.
+            // Don't save if the user hasn't previously saved a note and
+            // the textarea is empty. This will prevent saving empty notes.
             if (this.saveStatus === null &&
                 this.$(this.textareaSelector).val().length === 0) {
                 // no-op
@@ -549,25 +581,11 @@ define([
             }
         },
 
+        /**
+         * Update the save status in the UI
+         */
         updateSaveStatus: function() {
             this.$(this.saveStatusSelector).text(this.saveStatus);
-        },
-
-        _scheduleSave: function() {
-            this.saveStatus = this.SaveStatusEnum.PENDING;
-            this.updateSaveStatus();
-            // clear any existing scheduled saves
-            clearTimeout(this.saveTimeout);
-            // schedule save for 10 secs in future
-            // Wrap the save function callback using JQuery's proxy() since
-            // setTimeout doesn't support passing a context.
-            this.saveTimeout = setTimeout($.proxy(this._save, this), 10000);
-        },
-
-        _save: function() {
-            // TODO this.model.save();
-            this.saveStatus = this.SaveStatusEnum.SAVED;
-            this.updateSaveStatus();
         }
     });
 

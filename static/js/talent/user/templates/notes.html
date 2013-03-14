@@ -1,8 +1,8 @@
-<div class="user-notes-container">
+<div class="user-note-container">
     <% if (!model) { %>
         <span><em>Loading notes...</em></span>
     <% } else { %>
-        <span class="user-notes-save-status"></span>
-        <textarea class="input-xlarge user-notes" name="note" rows="5" placeholder="Your notes" maxlength="1024"><%= model.note %></textarea>
+        <span class="user-note-save-status"></span>
+        <textarea class="input-xlarge user-note" name="note" rows="5" placeholder="Your notes" maxlength="1024"><%= model.note %></textarea>
     <% } %>
 </div>

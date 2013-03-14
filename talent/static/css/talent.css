@@ -271,11 +271,11 @@
     height: 90px;
 }
 
-.user-notes-container > * {
+.user-note-container > * {
     margin-left: 20px;
 }
 
-.user-notes-save-status {
+.user-note-save-status {
     color: #999999;
 }
 
