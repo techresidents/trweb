@@ -2,6 +2,7 @@
         appDir: ".",
         baseUrl: "../../",
         dir: "../../../../static_minified/js/apps/talent",
+        findNestedDependencies: true,
         modules: [
                 { name: "apps/talent/main" }
         ],

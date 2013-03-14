@@ -1,13 +1,17 @@
 define([
     'underscore',
-    'globalize'
-], function(_, Globalize) {
+    'globalize',
+    'core/date'
+], function(_, Globalize, core_date) {
 
     var date = function(value, format) {
         var result;
         if(_.isDate(value)) {
             result = Globalize.format(value, format);
-        } else if(_.isNumber(value)) {
+        } else if(value instanceof core_date.DateTime) {
+            result = Globalize.format(value.date, format);
+        }
+        else if(_.isNumber(value)) {
             result = Globalize.format(new Date(value*1000), format);
         }
         return result;

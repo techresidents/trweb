@@ -2,6 +2,7 @@
     appDir: ".",
     baseUrl: "../../",
     dir: "../../../../static_minified/js/apps/requisition",
+    findNestedDependencies: true,
     modules: [
         { name: "apps/requisition/main" }
     ],

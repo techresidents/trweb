@@ -2,6 +2,7 @@
         appDir: ".",
         baseUrl: "../../",
         dir: "../../../../static_minified/js/apps/whiteboard",
+        findNestedDependencies: true,
         modules: [
                 { name: "apps/whiteboard/main" }
         ],
