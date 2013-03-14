@@ -13,7 +13,9 @@ define([
     'text!talent/user/templates/chats.html',
     'text!talent/user/templates/chat.html',
     'text!talent/user/templates/actions.html',
-    'text!talent/user/templates/note.html'
+    'text!talent/user/templates/note.html',
+    'text!talent/user/templates/reqbrief.html',
+    'text!talent/user/templates/vote_buttons.html'
 ], function(
     $,
     _,
@@ -29,7 +31,9 @@ define([
     chats_template,
     chat_template,
     actions_template,
-    note_template) {
+    note_template,
+    reqbrief_template,
+    vote_buttons_template) {
 
     /**
      * User View Events
@@ -472,7 +476,7 @@ define([
      */
     var UserNoteView = view.View.extend({
 
-        textareaSelector: '.user-note',
+        textareaSelector: '.user-note-input',
         saveStatusSelector: '.user-note-save-status',
 
         events: {
@@ -590,6 +594,140 @@ define([
     });
 
     /**
+     * Application Vote Button View.
+     * @constructor
+     * @param {Object} options
+     *   candidateModel: {User} (required)
+     *   employeeModel: {User} (required)
+     */
+    var VoteButtonsView = view.View.extend({
+
+        buttonGroupSelector: '.btn-group button',
+
+        events: {
+            'click .active': 'onUnclick',
+            'click button:not([class="active"])': 'onClick'
+        },
+
+        /**
+         * Save
+         * @param e
+         * @private
+         */
+        _save: function(e) {
+            var voteValue = null;
+            // Determine which button is set
+            var target = this.$(e.target);
+            if (target.hasClass('active') && target.hasClass('yes-vote')) {
+                voteValue = true;
+            }
+            else if (target.hasClass('active') && target.hasClass('no-vote')) {
+                voteValue = false;
+            }
+            // TODO this.model.save(voteValue)
+        },
+
+        initialize: function() {
+            // TODO load model and toggle vote button
+            this.model = null;
+            this.template = _.template(vote_buttons_template);
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            return this;
+        },
+
+        onClick: function(e) {
+            this.select(e);
+            this.addButtonColor(e);
+            this._save(e);
+        },
+
+        onUnclick: function(e) {
+            this.deselect(e);
+            this._save(e);
+        },
+
+        addButtonColor: function(e) {
+            // Only set button color if button wasn't already active
+            var target = this.$(e.target);
+            if (target.hasClass('yes-vote')) {
+                // Add green color to Yes button
+                this.$(this.buttonGroupSelector).removeClass('btn-danger');
+                target.addClass('btn-success');
+            }
+            else if (target.hasClass('no-vote')) {
+                // Add red color to No button
+                this.$(this.buttonGroupSelector).removeClass('btn-success');
+                target.addClass('btn-danger');
+            }
+        },
+
+        select: function(e) {
+            // Append the class 'active' to the element so we know when
+            // saving which button is toggled.  If we didn't do this, then
+            // bootstrap would add this class after our handlers finished.
+            // Doing this will hopefully prevent any state-related bugs.
+            var target = this.$(e.target);
+            if (!target.hasClass('active')) {
+                target.addClass('active');
+            }
+        },
+
+        deselect: function(e) {
+            var target = this.$(e.target);
+            if (target.hasClass('active')) {
+                // Stop event propogation to prevent bootstrap from
+                // adding the class 'active' to the button downstream.
+                e.stopImmediatePropagation();
+                // Remove any button colors
+                this.$(this.buttonGroupSelector).removeClass('btn-success btn-danger');
+                // Deselect button
+                target.removeClass('active');
+            }
+        }
+    });
+
+    /**
+     * Talent requisition brief view.
+     * @constructor
+     * @param {Object} options
+     *    candidateModel: {User} (required)
+     *    employeeModel: {User} (required)
+     */
+    var ReqBriefView = view.View.extend({
+
+        voteButtonsSelector: '.vote-buttons-container',
+
+        childViews: function() {
+            return [
+                this.voteButtonsView
+            ];
+        },
+
+        initialize: function() {
+            this.template = _.template(reqbrief_template);
+
+            //child views
+            this.voteButtonsView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.voteButtonsView = new VoteButtonsView();
+        },
+
+        render: function() {
+            var context = {
+            };
+            this.$el.html(this.template(context));
+            this.assign(this.voteButtonsView, this.voteButtonsSelector);
+            return this;
+        }
+    });
+
+    /**
      * Talent user actions view.
      * @constructor
      * @param {Object} options
@@ -598,11 +736,13 @@ define([
      */
     var UserActionsView = view.View.extend({
 
-        noteSelector: '#user-note',
+        noteSelector: '.user-note',
+        reqBriefsSelector: '.req-briefs',
 
         childViews: function() {
             return [
-                this.noteView
+                this.noteView,
+                this.reqBriefsView
             ];
         },
 
@@ -613,6 +753,7 @@ define([
 
             //child views
             this.noteView = null;
+            this.reqBriefsView = null;
             this.initChildViews();
         },
 
@@ -621,11 +762,13 @@ define([
                 candidateModel: this.candidateModel,
                 employeeModel: this.employeeModel
             });
+            this.reqBriefsView = new ReqBriefView();
         },
 
         render: function() {
             this.$el.html(this.template());
             this.assign(this.noteView, this.noteSelector);
+            this.assign(this.reqBriefsView, this.reqBriefsSelector);
             return this;
         }
     });
