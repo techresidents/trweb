@@ -401,3 +401,25 @@ html {
     margin-bottom: 8px;
 }
 
+.ratingstars {
+    unicode-bidi: bidi-override;
+    direction: rtl;
+}
+.ratingstars > span {
+    display: inline-block;
+    position: relative;
+    font-size: 18px;
+}
+.ratingstars > span.rated,
+.ratingstars > span:hover,
+.ratingstars > span:hover ~ span {
+    color: transparent;
+}
+.ratingstars > span.rated:before,
+.ratingstars > span:hover:before,
+.ratingstars > span:hover ~ span:before {
+    content: "\2605";
+    position: absolute;
+    left: 0;
+    color: #EA8F00;
+}

@@ -1,0 +1,9 @@
+<span class="ratingstars">
+    <% _.each(stars, function(star) { %>
+        <% if (star.lit) { %>
+            <span class="<%= star.label %> rated">☆</span>
+        <% } else { %>
+            <span class="<%= star.label %>">☆</span>
+        <% } %>
+    <% }); %>
+</span>

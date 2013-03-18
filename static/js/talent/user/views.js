@@ -6,6 +6,7 @@ define([
     'core/view',
     'api/loader',
     'api/models',
+    'ratingstars/views',
     'text!talent/user/templates/user.html',
     'text!talent/user/templates/jobprefs.html',
     'text!talent/user/templates/skills.html',
@@ -24,6 +25,7 @@ define([
     view,
     api_loader,
     api,
+    ratingstars_views,
     user_template,
     jobprefs_template,
     skills_template,
@@ -698,11 +700,13 @@ define([
      */
     var ReqBriefView = view.View.extend({
 
+        ratingStarsSelector: '.rating-stars-container',
         voteButtonsSelector: '.vote-buttons-container',
 
         childViews: function() {
             return [
-                this.voteButtonsView
+                this.voteButtonsView,
+                this.ratingStarsView
             ];
         },
 
@@ -711,11 +715,13 @@ define([
 
             //child views
             this.voteButtonsView = null;
+            this.ratingStarsView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
             this.voteButtonsView = new VoteButtonsView();
+            this.ratingStarsView = new ratingstars_views.RatingStarsView({});
         },
 
         render: function() {
@@ -723,6 +729,7 @@ define([
             };
             this.$el.html(this.template(context));
             this.assign(this.voteButtonsView, this.voteButtonsSelector);
+            this.assign(this.ratingStarsView, this.ratingStarsSelector);
             return this;
         }
     });
