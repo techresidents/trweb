@@ -628,7 +628,7 @@ define(/** @exports core/date */[
 
         
         /**
-         * @returns {core/iterator~Iterator} Date range iterator.
+         * @returns {module:core/date~DateRange.Iterator} Date range iterator.
          */
         iterator: function() {
             return new DateRange.Iterator(this);
@@ -670,7 +670,7 @@ define(/** @exports core/date */[
             /**
              * Iterator constructor
              * @constructs
-             * @augments module:core/iterator~Iterator
+             * @augments module:core/iter~Iterator
              * @param {module:core/date~DateRange} dateRange DateRange object
              *  to iterator over.
              */
