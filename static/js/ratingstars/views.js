@@ -32,12 +32,56 @@ define([
 
         // TODO
         // add autosave optional flag
-        // research xbrowser support for star character
+        // use inline divs instead of spans, or <li>
+        // pass percentage to template
+        // in template, apply style using percentage
+        // look at overlapping divs in player
 
-        allStarsSelector: '.ratingstars > span',
+        allStarsSelector: '.rating-stars > .rating-star',
 
         events: {
-            'click .ratingstars > span': 'onClickStar'
+            'mouseover .rating-star': 'onMouseover',
+            'mouseout .rating-star': 'onMouseout',
+            'click .rating-star': 'onClick'
+        },
+
+        /**
+         * Drain background color from all stars
+         * @private
+         */
+        _drainFill: function() {
+            this.$(this.allStarsSelector).children().
+                removeClass('rating-star-on').
+                removeClass('rating-star-hover');
+        },
+
+        /**
+         * Fill in all stars with hover color up to the position of the mouse
+         * @param currentTarget
+         * @private
+         */
+        _hoverFill: function(currentTarget) {
+            currentTarget.children().filter('.rating-star-background').addClass('rating-star-hover');
+            currentTarget.prevAll().children().filter('.rating-star-background').addClass('rating-star-hover');
+        },
+
+        /**
+         * Fill in all stars that are set
+         * @param currentTarget
+         * @private
+         */
+        _selectedFill: function() {
+            var starID = null;
+            var starElement = null;
+            var currentRating = this.getRating();
+            if (currentRating) {
+                starID = '.star' + currentRating;
+                starElement = this.$(this.allStarsSelector).children().filter(starID);
+                // fill in last star
+                starElement.addClass('rating-star-on');
+                // fill in all previous stars
+                starElement.parent().prevAll().children().filter('.rating-star-background').addClass('rating-star-on');
+            }
         },
 
         /**
@@ -46,7 +90,7 @@ define([
          * @returns {number} Star rating
          * @private
          */
-        _determineRating: function(target) {
+        _determineRating: function(currentTarget) {
 
             // Note that the order of stars from left-to-right in the
             // HTML is 5,4,3,2,1. This is because there's no way to traverse
@@ -57,7 +101,7 @@ define([
             var starIndex = 0; // no stars selected
             var i = null;
             for (i = 1; i <= this.totalStars; i++) {
-                if (target.hasClass('star' + i)) {
+                if (currentTarget.children().hasClass('star' + i)) {
                     starIndex = i;
                     break;
                 }
@@ -102,11 +146,9 @@ define([
                         lit = true;
                     }
                 }
-                // Add items such that the last star is first in the array.
-                // This needs to happen since the HTML reads from right-to-left.
-                starsToRender.unshift({
+                starsToRender.push({
                     // label makes it easy to determine which stars is clicked
-                    label: 'star' + i,
+                    starID: 'star' + i,
                     lit: lit
                 });
             }
@@ -117,9 +159,20 @@ define([
             return this;
         },
 
-        onClickStar: function(e) {
-            var target = $(e.currentTarget);
-            var rating = this._determineRating(target);
+        onMouseover: function(e) {
+            var currentTarget = this.$(e.currentTarget);
+            this._drainFill();
+            this._hoverFill(currentTarget);
+        },
+
+        onMouseout: function(e) {
+            this._drainFill(); // remove all hover color
+            this._selectedFill(); // fill in selected stars
+        },
+
+        onClick: function(e) {
+            var currentTarget = this.$(e.currentTarget);
+            var rating = this._determineRating(currentTarget);
             this.setRating(rating);
             this.render();
             this.triggerEvent(EVENTS.RATING_CHANGED, {

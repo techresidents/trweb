@@ -401,25 +401,35 @@ html {
     margin-bottom: 8px;
 }
 
-.ratingstars {
-    unicode-bidi: bidi-override;
-    direction: rtl;
-}
-.ratingstars > span {
+.rating-stars > .rating-star {
     display: inline-block;
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
     position: relative;
-    font-size: 18px;
 }
-.ratingstars > span.rated,
-.ratingstars > span:hover,
-.ratingstars > span:hover ~ span {
-    color: transparent;
-}
-.ratingstars > span.rated:before,
-.ratingstars > span:hover:before,
-.ratingstars > span:hover ~ span:before {
-    content: "\2605";
+
+.rating-star-image {
     position: absolute;
-    left: 0;
-    color: #EA8F00;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    background-image: url("../img/star_fg_white.png");
+}
+
+.rating-star-background {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #8d8d8d;
+}
+
+.rating-star-on {
+    background-color: #EA8F00;
+}
+
+.rating-star-hover {
+    background-color: #EA8F00;
 }
