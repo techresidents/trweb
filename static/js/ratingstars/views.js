@@ -67,8 +67,16 @@ define([
          * @private
          */
         _hoverFill: function(currentTarget) {
-            currentTarget.children().filter(this.starBackgroundColorClass).addClass(this.starHoverClass);
-            currentTarget.prevAll().children().filter(this.starBackgroundColorClass).addClass(this.starHoverClass);
+            // Fill star at current mouse position
+            currentTarget.
+                children().
+                filter(this.starBackgroundColorClass).
+                addClass(this.starHoverClass);
+            // Fill all previous stars
+            currentTarget.prevAll()
+                .children().
+                filter(this.starBackgroundColorClass).
+                addClass(this.starHoverClass);
         },
 
         /**
