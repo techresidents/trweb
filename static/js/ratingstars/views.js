@@ -28,14 +28,16 @@ define([
      *   attribute: {String} model attribute (optional)
      *   totalStars: {Number} number of stars. Defaults to 5 (optional)
      *   rating: {Number} set the star rating. Defaults to 0 (optional)
+     *   autosave: {Boolean} Pass True to automatically save rating changes.
+     *      Requires you to specify the 'model' and 'attribute' options.
+     *      Defaults to False.
      */
     var RatingStarsView = view.View.extend({
 
-        // TODO
-        // add autosave optional flag
-        // clear, or select no stars
-
+        // selectors
         allStarsSelector: '.rating-stars > .rating-star',
+
+        // class names
         starOnClass: 'rating-star-on',
         starHoverClass: 'rating-star-hover',
         starBackgroundColorClass: '.rating-star-background',
@@ -48,7 +50,7 @@ define([
         },
 
         /**
-         * Drain background color from all stars
+         * Drain background color (the fill) from all stars
          * @private
          */
         _drainFill: function() {
@@ -76,13 +78,6 @@ define([
          * @private
          */
         _determineRating: function(currentTarget) {
-
-            // Note that the order of stars from left-to-right in the
-            // HTML is 5,4,3,2,1. This is because there's no way to traverse
-            // ancestors in CSS which is required to highlight stars that
-            // precede the highlighted star. The work-around was to reverse
-            // the reading direction for this element in CSS.
-
             var starIndex = 0; // no stars selected
             var i = null;
             for (i = 1; i <= this.totalStars; i++) {
@@ -94,19 +89,34 @@ define([
             return starIndex;
         },
 
+        /**
+         * Save rating
+         * @private
+         */
+        _save: function() {
+            if (this.autosave) {
+                this.model.save();
+            } else {
+                this.triggerEvent(EVENTS.RATING_CHANGED, {
+                    rating: this.getRating()
+                });
+            }
+        },
+
         initialize: function(options) {
             this.model = options.model ? options.model : null;
             this.attribute = options.attribute ? options.attribute : null;
             this.totalStars = options.totalStars ? options.totalStars : 5;
+            this.autosave = options.autosave ? options.autosave : false;
             this.template = _.template(ratingstars_template);
 
-            // Set model if not passed in
+            // Create a model if not passed in
             if (!this.model) {
                 this.model = new Backbone.Model({rating: null});
                 this.attribute = 'rating';
             }
 
-            // Set rating
+            // Set initial rating
             if (options.rating && options.rating <= this.totalStars) {
                 this.setRating(options.rating);
             } else {
@@ -114,7 +124,7 @@ define([
             }
 
             // Listen for changes to underlying model
-            this.listenTo(this.model, 'change:' + this.attribute, this.render);
+            this.listenTo(this.model, 'change:' + this.attribute, this.onChange);
         },
 
         getRating: function() {
@@ -164,6 +174,11 @@ define([
             this.$el.html(this.template(context));
 
             return this;
+        },
+
+        onChange: function() {
+            this._save();
+            this.render();
         },
 
         onMouseover: function(e) {
