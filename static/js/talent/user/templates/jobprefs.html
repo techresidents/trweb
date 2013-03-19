@@ -1,23 +1,20 @@
+<div class="span7">
+    <h3 class="user-section-border-bottom">Wants</h3>
+</div>
+<div class="span8 user-position-prefs-container">
 
-
-
-<div class="user-position-prefs-container user-section-border-left">
-
-    <div class="user-logo"></div>
-    <p class="user-ID"><%= model.id %></p>
-
-    <div>
-        <h4>Seeking jobs</h4>
-        <ul class="position-prefs">
+    <div class="span2 well">
+        <ul class="position-prefs unstyled">
             <% if (!model.position_prefs.length) { %>
                 <span><em>No jobs provided</em></span>
             <% } else { %>
 
                 <% _.each(model.position_prefs, function(position) { %>
-                    <li><%= position.type %> <%= position.salary_start ? fmt.num(position.salary_start, 'cn0') : '' %></li>
+                    <li><%= position.type %></li>
+                    <li><em><%= position.salary_start ? fmt.num(position.salary_start, 'cn0') : '' %></em></li>
                 <% }); %>
 
-                <% if (model.position_prefs.length > 3) { %>
+                <% if (model.position_prefs.length > 1) { %>
                     <a class="slide-toggle">more</a>
                 <% } %>
 
@@ -25,9 +22,10 @@
         </ul>
     </div>
 
-    <div>
-        <h4>In these locations</h4>
-        <ul class="location-prefs">
+    <div class="span1 user-position-prefs-well-text">~ in ~</div>
+
+    <div class="span2 well">
+        <ul class="location-prefs unstyled">
             <% if (!model.location_prefs.length) { %>
                 <span><em>No locations provided</em></span>
             <% } else { %>
@@ -48,9 +46,10 @@
         </ul>
     </div>
 
-    <div>
-        <h4>Working with</h4>
-        <ul class="technology-prefs">
+    <div class="span1 user-position-prefs-well-text">~ with ~</div>
+
+    <div class="span2 well">
+        <ul class="technology-prefs unstyled">
             <% if (!model.technology_prefs.length) { %>
                 <span><em>No technologies provided</em></span>
             <% } else { %>
@@ -68,7 +67,3 @@
     </div>
 
 </div>
-
-
-
-

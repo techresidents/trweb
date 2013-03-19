@@ -5,13 +5,18 @@ define([
     'core/array',
     'core/view',
     'api/loader',
+    'api/models',
+    'ratingstars/views',
     'text!talent/user/templates/user.html',
     'text!talent/user/templates/jobprefs.html',
     'text!talent/user/templates/skills.html',
-    'text!talent/user/templates/skills_filter.html',
     'text!talent/user/templates/skill.html',
     'text!talent/user/templates/chats.html',
-    'text!talent/user/templates/chat.html'
+    'text!talent/user/templates/chat.html',
+    'text!talent/user/templates/actions.html',
+    'text!talent/user/templates/note.html',
+    'text!talent/user/templates/reqbrief.html',
+    'text!talent/user/templates/vote_buttons.html'
 ], function(
     $,
     _,
@@ -19,19 +24,23 @@ define([
     array,
     view,
     api_loader,
+    api,
+    ratingstars_views,
     user_template,
     jobprefs_template,
     skills_template,
-    skills_filter_template,
     skill_template,
     chats_template,
-    chat_template) {
+    chat_template,
+    actions_template,
+    note_template,
+    reqbrief_template,
+    vote_buttons_template) {
 
     /**
      * User View Events
      */
     var EVENTS = {
-        UPDATE_SKILLS_FILTER: 'user:updateSkillsFilter',
         PLAY_CHAT: 'user:playChat'
     };
 
@@ -39,7 +48,7 @@ define([
      * Talent user job preferences view.
      * @constructor
      * @param {Object} options
-     *   model: {User} (required)
+     *   model: {User} Represents the developer (required)
      */
     var UserJobPrefsView = view.View.extend({
 
@@ -57,7 +66,11 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(jobprefs_template);
-            this.modelWithRelated = ['position_prefs', 'technology_prefs', 'location_prefs'];
+            this.modelWithRelated = [
+                'position_prefs',
+                'technology_prefs',
+                'location_prefs'
+            ];
 
             //bind events
             this.loader = new api_loader.ApiLoader([
@@ -151,8 +164,7 @@ define([
         toggleExpandButtonText: function(selector) {
             if ($(selector).text() === 'more') {
                 $(selector).text('less');
-            }
-            else {
+            } else {
                 $(selector).text('more');
             }
         }
@@ -303,50 +315,6 @@ define([
     });
 
     /**
-     * Talent user skills filter view.
-     * @constructor
-     * @param {Object} options
-     *   filtersList: list of Technology types the user can filter by (required)
-     */
-    var UserSkillsFilterView = view.View.extend({
-
-        filterSelector: '.user-skills-filter-container',
-
-        events: {
-            'change .user-skills-filter-container input:checkbox' : 'filterUpdated'
-        },
-
-        initialize: function(options) {
-            this.template = _.template(skills_filter_template);
-            this.filtersList = options.filtersList;
-        },
-
-        render: function() {
-            var context = {
-                filtersList: this.filtersList
-            };
-            this.$el.html(this.template(context));
-            return this;
-        },
-
-        /**
-         * Handle when user modifies the skills filter
-         * @param e The DOM event
-         */
-        filterUpdated: function(e){
-            var exclusionFilters = [];
-            // get all disabled filters
-            this.$(this.filterSelector + " input:checkbox:not(:checked)").each(function() {
-                exclusionFilters.push($(this).val()); // here 'this' refers to the element returned by each()
-            });
-            var eventBody = {
-                filters: exclusionFilters
-            };
-            this.triggerEvent(EVENTS.UPDATE_SKILLS_FILTER, eventBody);
-        }
-    });
-
-    /**
      * Talent user skill view.
      * @constructor
      * @param {Object} options
@@ -404,8 +372,6 @@ define([
         initialize: function(options) {
             this.template =  _.template(skills_template);
             this.collectionWithRelated = ['technology'];
-
-            this.exclusionFilters = [];
             
             //bind events
             this.listenTo(this.collection, 'reset', this.onReset);
@@ -458,11 +424,9 @@ define([
             _.each(this.expertViews, function(view) {
                 this.append(view, this.expertSkillsSelector);
             }, this);
-            
-            // Apply any active filter settings
-            this.filter(this.exclusionFilters);
 
             // Activate tooltips
+            // TODO remove on destroy. Apply tooltip to child view instead?
             this.$('[rel=tooltip]').tooltip();
 
             return this;
@@ -494,26 +458,6 @@ define([
             return view;
         },
 
-        /**
-         * Show/Hide skill Views based upon filter options
-         * @param exclusionFiltersList A list of filters to apply.
-         * All views that match any of the input filters will be
-         * hidden from view.
-         */
-        filter: function(exclusionFiltersList) {
-            this.exclusionFilters = exclusionFiltersList;
-            _.each(this.childViews(), function(v) {
-                    if (_.contains(this.exclusionFilters, v.model.get_technology().get_type())) {
-                        v.$el.hide();
-                    }
-                    else {
-                        v.$el.show();
-                    }
-                },
-                this
-            );
-        },
-
         onReset: function() {
             this.initChildViews();
             this.render();
@@ -526,36 +470,343 @@ define([
     });
 
     /**
+     * Talent user note view.
+     * @constructor
+     * @param {Object} options
+     *   candidateModel: {User} (required)
+     *   employeeModel: {User} (required)
+     */
+    var UserNoteView = view.View.extend({
+
+        textareaSelector: '.user-note-input',
+        saveStatusSelector: '.user-note-save-status',
+
+        events: {
+            'blur textarea': 'onBlur'
+        },
+
+        SaveStatusEnum: {
+            PENDING : 'Saving note...',
+            SAVED : 'Saved.'
+        },
+
+        /**
+         * Method to schedule saving the note in the future.
+         * This method is required to prevent the user from
+         * saving their note every second (or more), and triggering
+         * a large number of writes on the db.
+         * @private
+         * @param secs Number of secs to delay until saving (optional)
+         *        Default value is 5 seconds.
+         */
+        _scheduleSave: function(secs) {
+            var delay = secs ? secs*1000 : 5000; // 5 sec default
+            this.saveStatus = this.SaveStatusEnum.PENDING;
+            this.updateSaveStatus();
+            // clear any existing scheduled saves
+            clearTimeout(this.saveTimeout);
+            // Wrap the save function callback using JQuery's proxy() since
+            // setTimeout doesn't support passing a context.
+            this.saveTimeout = setTimeout($.proxy(this._save, this), delay);
+        },
+
+        /**
+         * Save note.
+         * @private
+         */
+        _save: function() {
+            // TODO this.model.save();
+            this.saveStatus = this.SaveStatusEnum.SAVED;
+            this.updateSaveStatus();
+        },
+
+        initialize: function(options) {
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
+            this.model = null;
+            this.saveTimeout = null;
+            this.saveStatus = null;
+            // We enable this view for editing once we know the
+            // existing note has loaded, if it exists. This prevents
+            // us from creating a new note and overwriting an existing note.
+            this.template = _.template(note_template);
+
+            // Clone the collection since we will be filtering it
+            // TODO this.notesCollection = this.candidateModel.get_job_notes().clone();
+            this.notesCollection = new api.JobNoteCollection();
+            this.notesCollection.on('reset', this.onReset, this);
+
+            // Since we retrieved all notes on the candidate, we need to
+            // filter the collection down to just the employee's notes
+            this.noteQuery = this.notesCollection.filterBy({
+                employee_id: this.employeeModel.id,
+                tenant_id: this.employeeModel.get_tenant_id()
+            });
+            this.noteQuery.fetch();
+        },
+
+        destroy: function() {
+            if (this.saveStatus === this.SaveStatusEnum.PENDING) {
+                this._save();
+            }
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
+        render: function() {
+            var context = {
+                model: this.model ? this.model.toJSON() : null
+            };
+            this.$el.html(this.template(context));
+            return this;
+        },
+
+        onReset: function() {
+            // Load Note if it exists or create new Note
+            if (this.notesCollection.length) {
+                this.model = this.notesCollection.first();
+                this.saveStatus = this.SaveStatusEnum.SAVED;
+            } else {
+                this.model = new api.JobNote({
+                    employee_id: this.employeeModel.id,
+                    candidate_id: this.candidateModel.id,
+                    tenant_id: this.employeeModel.get_tenant_id()
+                });
+            }
+            // Display the note
+            this.render();
+        },
+
+        onBlur: function() {
+            // Don't save if the user hasn't previously saved a note and
+            // the textarea is empty. This will prevent saving empty notes.
+            if (this.saveStatus === null &&
+                this.$(this.textareaSelector).val().length === 0) {
+                // no-op
+            } else {
+                this._scheduleSave();
+            }
+        },
+
+        /**
+         * Update the save status in the UI
+         */
+        updateSaveStatus: function() {
+            this.$(this.saveStatusSelector).text(this.saveStatus);
+        }
+    });
+
+    /**
+     * Application Vote Button View.
+     * @constructor
+     * @param {Object} options
+     *   candidateModel: {User} (required)
+     *   employeeModel: {User} (required)
+     */
+    var VoteButtonsView = view.View.extend({
+
+        buttonGroupSelector: '.btn-group button',
+
+        events: {
+            'click .active': 'onUnclick',
+            'click button:not([class="active"])': 'onClick'
+        },
+
+        /**
+         * Save
+         * @param e
+         * @private
+         */
+        _save: function(e) {
+            var voteValue = null;
+            // Determine which button is set
+            var target = this.$(e.target);
+            if (target.hasClass('active') && target.hasClass('yes-vote')) {
+                voteValue = true;
+            }
+            else if (target.hasClass('active') && target.hasClass('no-vote')) {
+                voteValue = false;
+            }
+            // TODO this.model.save(voteValue)
+        },
+
+        initialize: function() {
+            // TODO load model and toggle vote button
+            this.model = null;
+            this.template = _.template(vote_buttons_template);
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            return this;
+        },
+
+        onClick: function(e) {
+            this.select(e);
+            this.addButtonColor(e);
+            this._save(e);
+        },
+
+        onUnclick: function(e) {
+            this.deselect(e);
+            this._save(e);
+        },
+
+        addButtonColor: function(e) {
+            // Only set button color if button wasn't already active
+            var target = this.$(e.target);
+            if (target.hasClass('yes-vote')) {
+                // Add green color to Yes button
+                this.$(this.buttonGroupSelector).removeClass('btn-danger');
+                target.addClass('btn-success');
+            }
+            else if (target.hasClass('no-vote')) {
+                // Add red color to No button
+                this.$(this.buttonGroupSelector).removeClass('btn-success');
+                target.addClass('btn-danger');
+            }
+        },
+
+        select: function(e) {
+            // Append the class 'active' to the element so we know when
+            // saving which button is toggled.  If we didn't do this, then
+            // bootstrap would add this class after our handlers finished.
+            // Doing this will hopefully prevent any state-related bugs.
+            var target = this.$(e.target);
+            if (!target.hasClass('active')) {
+                target.addClass('active');
+            }
+        },
+
+        deselect: function(e) {
+            var target = this.$(e.target);
+            if (target.hasClass('active')) {
+                // Stop event propogation to prevent bootstrap from
+                // adding the class 'active' to the button downstream.
+                e.stopImmediatePropagation();
+                // Remove any button colors
+                this.$(this.buttonGroupSelector).removeClass('btn-success btn-danger');
+                // Deselect button
+                target.removeClass('active');
+            }
+        }
+    });
+
+    /**
+     * Talent requisition brief view.
+     * @constructor
+     * @param {Object} options
+     *    candidateModel: {User} (required)
+     *    employeeModel: {User} (required)
+     */
+    var ReqBriefView = view.View.extend({
+
+        ratingStarsSelector: '.rating-stars-container',
+        voteButtonsSelector: '.vote-buttons-container',
+
+        childViews: function() {
+            return [
+                this.voteButtonsView,
+                this.ratingStarsView
+            ];
+        },
+
+        initialize: function() {
+            this.template = _.template(reqbrief_template);
+
+            //child views
+            this.voteButtonsView = null;
+            this.ratingStarsView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.voteButtonsView = new VoteButtonsView();
+            this.ratingStarsView = new ratingstars_views.RatingStarsView({});
+        },
+
+        render: function() {
+            var context = {
+            };
+            this.$el.html(this.template(context));
+            this.assign(this.voteButtonsView, this.voteButtonsSelector);
+            this.assign(this.ratingStarsView, this.ratingStarsSelector);
+            return this;
+        }
+    });
+
+    /**
+     * Talent user actions view.
+     * @constructor
+     * @param {Object} options
+     *    candidateModel: {User} (required)
+     *    employeeModel: {User} (required)
+     */
+    var UserActionsView = view.View.extend({
+
+        noteSelector: '.user-note',
+        reqBriefsSelector: '.req-briefs',
+
+        childViews: function() {
+            return [
+                this.noteView,
+                this.reqBriefsView
+            ];
+        },
+
+        initialize: function(options) {
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
+            this.template = _.template(actions_template);
+
+            //child views
+            this.noteView = null;
+            this.reqBriefsView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.noteView = new UserNoteView({
+                candidateModel: this.candidateModel,
+                employeeModel: this.employeeModel
+            });
+            this.reqBriefsView = new ReqBriefView();
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.assign(this.noteView, this.noteSelector);
+            this.assign(this.reqBriefsView, this.reqBriefsSelector);
+            return this;
+        }
+    });
+
+    /**
      * Talent user view.
      * @constructor
      * @param {Object} options
-     *   model: {User} (required)
+     *   candidateModel: {User} Represents the developer (required)
+     *   employeeModel: {User} Represents the employee (required)
      *   playerState: PlayerState model (required)
      */
     var UserView = view.View.extend({
 
         jobPrefsSelector: '#user-job-prefs',
-
-        skillsFilterSelector: '#user-skills-filter',
-
         skillsSelector: '#user-skills',
-
         chatsSelector: '#user-chats',
-
-        events: {
-            'user:updateSkillsFilter': 'onSkillsFilterUpdated'
-        },
+        actionsSelector: '#user-actions',
 
         childViews: function() {
             return [
                 this.jobPrefsView,
-                this.skillsFilterView,
                 this.skillsView,
-                this.chatsView
+                this.chatsView,
+                this.actionsView
             ];
         },
 
         initialize: function(options) {
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
             this.playerState = options.playerState;
             this.template =  _.template(user_template);
             this.modelWithRelated = [
@@ -567,68 +818,54 @@ define([
             ];
 
             //bind events
-            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.candidateModel, 'change', this.render);
 
             this.loader = new api_loader.ApiLoader([
-                { instance: this.model, withRelated: this.modelWithRelated }
+                { instance: this.candidateModel, withRelated: this.modelWithRelated }
             ]);
             this.loader.load();
 
             //child views
             this.jobPrefsView = null;
-            this.skillsFilterView = null;
             this.skillsView = null;
             this.chatsView = null;
+            this.actionsView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
-            // Create tuples for skills filters (displayName, dbValue)
-            var languages = {displayName: 'Languages', value: 'Language'};
-            var frameworks = {displayName: 'Frameworks', value: 'Framework'};
-            var persistence = {displayName: 'Persistence', value: 'Persistence'};
-            var filtersList = [languages, frameworks, persistence];
 
             this.jobPrefsView = new UserJobPrefsView({
-                model: this.model
-            });
-
-            this.skillsFilterView = new UserSkillsFilterView({
-                filtersList: filtersList
+                model: this.candidateModel
             });
 
             this.skillsView = new UserSkillsView({
-                collection: this.model.get_skills()
+                collection: this.candidateModel.get_skills()
             });
             
             this.chatsView = new UserHighlightSessionsView({
-                collection: this.model.get_highlight_sessions(),
+                collection: this.candidateModel.get_highlight_sessions(),
                 playerState: this.playerState
+            });
+
+            this.actionsView = new UserActionsView({
+                candidateModel: this.candidateModel,
+                employeeModel: this.employeeModel
             });
         },
 
         render: function() {
             var context = {
-                model: this.model.toJSON(),
+                model: this.candidateModel.toJSON(),
                 fmt: this.fmt // date formatting
             };
             this.$el.html(this.template(context));
 
             this.assign(this.jobPrefsView, this.jobPrefsSelector);
-            this.assign(this.skillsFilterView, this.skillsFilterSelector);
             this.assign(this.skillsView, this.skillsSelector);
             this.assign(this.chatsView, this.chatsSelector);
+            this.assign(this.actionsView, this.actionsSelector);
             return this;
-        },
-
-        /**
-         * Handle when user updates their skills filter.
-         * @param event The DOM event
-         * @param eventBody Expecting the attribute 'filters' to be specified
-         * which provides a list of the active exclusion filters
-         */
-        onSkillsFilterUpdated: function(event, eventBody) {
-            this.skillsView.filter(eventBody.filters);
         }
 
     });

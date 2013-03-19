@@ -421,3 +421,48 @@ html {
     margin-right: 8px;
 }
 
+.rating-stars {
+    cursor: pointer;
+}
+
+.rating-stars > .clear-rating {
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+.rating-stars > .clear-rating > i {
+    vertical-align: top;
+}
+
+.rating-stars > .rating-star {
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    position: relative;
+}
+
+.rating-star-image {
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    background-image: url("../img/star_fg_white.png");
+}
+
+.rating-star-background {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #8d8d8d;
+}
+
+.rating-star-on {
+    background-color: #EA8F00;
+}
+
+.rating-star-hover {
+    background-color: #EA8F00;
+}
