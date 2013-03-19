@@ -52,8 +52,10 @@ define([
          */
         _drainFill: function() {
             this.$(this.allStarsSelector).children().
+                filter(this.starBackgroundColorClass).
                 removeClass(this.starOnClass).
-                removeClass(this.starHoverClass);
+                removeClass(this.starHoverClass).
+                css({ 'width': '100%'}); // don't show partial stars when unlit
         },
 
         /**
@@ -64,25 +66,6 @@ define([
         _hoverFill: function(currentTarget) {
             currentTarget.children().filter(this.starBackgroundColorClass).addClass(this.starHoverClass);
             currentTarget.prevAll().children().filter(this.starBackgroundColorClass).addClass(this.starHoverClass);
-        },
-
-        /**
-         * Fill in all stars that are set
-         * @param currentTarget
-         * @private
-         */
-        _selectedFill: function() {
-            var starID = null;
-            var starElement = null;
-            var currentRating = this.getRating();
-            if (currentRating) {
-                starID = '.star' + currentRating;
-                starElement = this.$(this.allStarsSelector).children().filter(starID);
-                // fill in last star
-                starElement.addClass(this.starOnClass);
-                // fill in all previous stars
-                starElement.parent().prevAll().children().filter(this.starBackgroundColorClass).addClass(this.starOnClass);
-            }
         },
 
         /**
@@ -163,7 +146,7 @@ define([
                     // Is partial star lit?
                     if (partialStar > 0 && partialStar < 1) {
                         lit = true;
-                        fillPercentage = partialStar * 100;
+                        fillPercentage = (currentRating % 1) * 100;
                     }
                 }
                 starsToRender.push({
@@ -190,13 +173,13 @@ define([
 
         onMouseout: function(e) {
             this._drainFill(); // remove all hover color
-            this._selectedFill(); // fill in set stars
+            this.render(); // fill in set stars
         },
 
         onClick: function(e) {
             var currentTarget = this.$(e.currentTarget);
             var rating = this._determineRating(currentTarget);
-            this.setRating(rating);
+            this.setRating(rating+0.5);
             this.render();
             this.triggerEvent(EVENTS.RATING_CHANGED, {
                 rating: rating

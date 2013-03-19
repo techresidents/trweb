@@ -401,11 +401,14 @@ html {
     margin-bottom: 8px;
 }
 
+.rating-stars {
+    cursor: pointer;
+}
+
 .rating-stars > .rating-star {
     display: inline-block;
     height: 16px;
     width: 16px;
-    cursor: pointer;
     position: relative;
 }
 
