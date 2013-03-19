@@ -155,9 +155,9 @@ define([
                 headerCellView: new grid_views.GridHeaderCellView.Factory({
                     sort: 'created'
                 }),
-                cellView: new grid_views.GridCellView.Factory(function(model) {
+                cellView: new grid_views.GridCellView.Factory(function(options) {
                     var value = format.date(
-                        model.get_created(),
+                        options.model.get_created(),
                         'MM/dd/yy'
                     );
                     return {
@@ -185,10 +185,10 @@ define([
                 headerCellView: new grid_views.GridHeaderCellView.Factory({
                     sort: 'title' 
                 }),
-                cellView: new grid_views.GridLinkCellView.Factory(function(model) {
+                cellView: new grid_views.GridLinkCellView.Factory(function(options) {
                     return {
-                        href: '/requisition/view/' + model.get_id(),
-                        value: model.get_title()
+                        href: '/requisition/view/' + options.model.get_id(),
+                        value: options.model.get_title()
                     };
                 })
             };
@@ -197,9 +197,9 @@ define([
         locationColumn: function() {
             return {
                 column: 'Location',
-                cellView: new grid_views.GridCellView.Factory(function(model) {
+                cellView: new grid_views.GridCellView.Factory(function(options) {
                     var value = null;
-                    var location = model.get_location();
+                    var location = options.model.get_location();
                     if (location.get_city()) {
                         value = location.get_city() + ', ' + location.get_state();
                     } else {

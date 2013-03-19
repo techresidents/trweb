@@ -14,9 +14,15 @@ define(/** @exports core/factory */[
          * @augments module:core/base~Base
          * @param {constructor|object} ctorOrOptions 
          *   Class constructor or object literal with 'ctor' attribute
-         * @param {object} [options] Options to pass to ctor.
+         * @param {object|function(options)} [options] Options to pass to ctor.
+         *   options may be an options object literal or a function taking an
+         *   options object literal and returning an options object literal
+         *   of additional options to be passed to the ctor.
+         *   <br><br>
          *   Note that additional options can be added at creation time
-         *   through {@link module:core/factory~Factory#create}
+         *   through {@link module:core/factory~Factory#create}, but may
+         *   be overriden by the factory options.
+         *   <br><br>
          *   This parameter is not required if ctorOrOptions is an
          *   object literal.
          *
@@ -49,37 +55,18 @@ define(/** @exports core/factory */[
         
         /**
          * Create new instance.
-         * @param {object|function} [options] Additional options to  pass to ctor.
-         *   An object or a function which returns an options object. 
-         *   Note that these options override any options passed
-         *   in through the constructor.
+         * @param {object} [options] Additional options to pass to ctor.
+         * <br><br>
+         * Note that the options provided may be overriden by the
+         * factory options which will take precedence.
          */
-        create: function(options, optionsFunctionArg) {
-            var createOptions = _.extend({},
-                base.getValue(this, 'options', optionsFunctionArg),
-                options);
+        create: function(options) {
+            options = options || {};
+            var createOptions = _.extend(options,
+                base.getValue(this, 'options', options));
 
             var result = new this.ctor(createOptions);
             return result;
-        },
-
-        /**
-         * Extend options object literal that will be passed to the
-         * constructor.
-         * @param {object|function} options
-         *   An object or a function which returns an options object.
-         *   Note that these options override any options passed
-         *   in through the constructor.
-         */
-        extendOptions: function(options) {
-            var currentOptions = {options: this.options};
-            var newOptions = {options: options};
-            this.options = function(optionsFunctionArg) {
-                var result = _.extend(
-                        base.getValue(currentOptions, 'options', optionsFunctionArg),
-                        base.getValue(newOptions, 'options', optionsFunctionArg));
-                return result;
-            };
         }
     });
 

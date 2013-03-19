@@ -77,10 +77,10 @@ define([
         userColumn: function() {
             return {
                 column: 'User',
-                cellView: new grid_views.GridLinkCellView.Factory(function(model) {
+                cellView: new grid_views.GridLinkCellView.Factory(function(options) {
                     return {
-                        href: '/talent/user/' + model.get_user_id(),
-                        value: model.get_user_id()
+                        href: '/talent/user/' + options.model.get_user_id(),
+                        value: options.model.get_user_id()
                     };
                 })
             };

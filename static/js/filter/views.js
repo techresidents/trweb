@@ -76,14 +76,6 @@ define([
         },
 
         initChildViews: function() {
-            if(view instanceof factory.Factory) {
-                //extend view factory options
-                this.viewFactory.extendOptions({
-                    collection: this.colleciton,
-                    query: this.query
-                });
-            }
-
             this.dropView = new drop_views.DropView({
                 autocloseGroup: 'filter',
                 view: this.view

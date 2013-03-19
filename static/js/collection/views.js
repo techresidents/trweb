@@ -126,7 +126,7 @@ define([
         },
 
         createChildView: function(options) {
-            var view = this.viewFactory.create(options, options.model);
+            var view = this.viewFactory.create(options);
             return view;
         },
 

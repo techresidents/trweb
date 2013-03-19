@@ -258,7 +258,7 @@ define(/** @exports grid/views */[
             var view = config.headerCellView.create({
                 config: config,
                 query: this.query
-            }, this);
+            });
 
             this.childViews.push(view);
         }
@@ -575,7 +575,7 @@ define(/** @exports grid/views */[
                 config: config,
                 model: this.model,
                 query: this.query
-            }, this.model);
+            });
 
             this.childViews.push(view);
             return view;
@@ -669,7 +669,7 @@ define(/** @exports grid/views */[
             var view = config.headerRowView.create({
                 config: config.columns,
                 query: this.query
-            }, this);
+            });
 
             return view;
         },
@@ -683,7 +683,7 @@ define(/** @exports grid/views */[
                 config: config.columns,
                 model: model,
                 query: this.query
-            }, this);
+            });
 
             this.rowViews.push(view);
 
