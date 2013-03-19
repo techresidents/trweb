@@ -27,17 +27,18 @@ define([
      *   model: {Model} model (optional)
      *   attribute: {String} model attribute (optional)
      *   totalStars: {Number} number of stars. Defaults to 5 (optional)
+     *   rating: {Number} set the star rating. Defaults to 0 (optional)
      */
     var RatingStarsView = view.View.extend({
 
         // TODO
         // add autosave optional flag
-        // use inline divs instead of spans, or <li>
-        // pass percentage to template
-        // in template, apply style using percentage
-        // look at overlapping divs in player
+        // clear, or select no stars
 
         allStarsSelector: '.rating-stars > .rating-star',
+        starOnClass: 'rating-star-on',
+        starHoverClass: 'rating-star-hover',
+        starBackgroundColorClass: '.rating-star-background',
 
         events: {
             'mouseover .rating-star': 'onMouseover',
@@ -51,8 +52,8 @@ define([
          */
         _drainFill: function() {
             this.$(this.allStarsSelector).children().
-                removeClass('rating-star-on').
-                removeClass('rating-star-hover');
+                removeClass(this.starOnClass).
+                removeClass(this.starHoverClass);
         },
 
         /**
@@ -61,8 +62,8 @@ define([
          * @private
          */
         _hoverFill: function(currentTarget) {
-            currentTarget.children().filter('.rating-star-background').addClass('rating-star-hover');
-            currentTarget.prevAll().children().filter('.rating-star-background').addClass('rating-star-hover');
+            currentTarget.children().filter(this.starBackgroundColorClass).addClass(this.starHoverClass);
+            currentTarget.prevAll().children().filter(this.starBackgroundColorClass).addClass(this.starHoverClass);
         },
 
         /**
@@ -78,9 +79,9 @@ define([
                 starID = '.star' + currentRating;
                 starElement = this.$(this.allStarsSelector).children().filter(starID);
                 // fill in last star
-                starElement.addClass('rating-star-on');
+                starElement.addClass(this.starOnClass);
                 // fill in all previous stars
-                starElement.parent().prevAll().children().filter('.rating-star-background').addClass('rating-star-on');
+                starElement.parent().prevAll().children().filter(this.starBackgroundColorClass).addClass(this.starOnClass);
             }
         },
 
@@ -115,9 +116,17 @@ define([
             this.totalStars = options.totalStars ? options.totalStars : 5;
             this.template = _.template(ratingstars_template);
 
+            // Set model if not passed in
             if (!this.model) {
                 this.model = new Backbone.Model({rating: null});
                 this.attribute = 'rating';
+            }
+
+            // Set rating
+            if (options.rating && options.rating <= this.totalStars) {
+                this.setRating(options.rating);
+            } else {
+                this.setRating(0);
             }
 
             // Listen for changes to underlying model
@@ -135,27 +144,41 @@ define([
 
         render: function() {
             var starsToRender = [];
-            var rating = this.getRating();
-            var i = null;
-            var lit = null;
-
+            var currentRating = this.getRating();
+            var i = null, lit = null, fillPercentage = null, partialStar = null;
             for (i = 1; i <= this.totalStars; i++) {
                 lit = false;
-                if (rating) {
-                    if (i <= rating) {
+                fillPercentage = 0;
+                if (currentRating) {
+                    // Here we take the difference between the index and the
+                    // star rating.  If the difference is between 0 and 1, then
+                    // we will fill in the star partially after filling all
+                    // previous stars.
+                    partialStar = i - currentRating;
+                    // Is full star lit?
+                    if (i <= currentRating) {
                         lit = true;
+                        fillPercentage = 100;
+                    }
+                    // Is partial star lit?
+                    if (partialStar > 0 && partialStar < 1) {
+                        lit = true;
+                        fillPercentage = partialStar * 100;
                     }
                 }
                 starsToRender.push({
-                    // label makes it easy to determine which stars is clicked
+                    // starID makes it easy to determine which star is clicked
                     starID: 'star' + i,
-                    lit: lit
+                    lit: lit,
+                    percentage: fillPercentage
                 });
             }
+
             var context = {
                 stars: starsToRender
             };
             this.$el.html(this.template(context));
+
             return this;
         },
 
@@ -167,7 +190,7 @@ define([
 
         onMouseout: function(e) {
             this._drainFill(); // remove all hover color
-            this._selectedFill(); // fill in selected stars
+            this._selectedFill(); // fill in set stars
         },
 
         onClick: function(e) {
