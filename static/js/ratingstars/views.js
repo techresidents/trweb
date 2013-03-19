@@ -43,7 +43,8 @@ define([
         events: {
             'mouseover .rating-star': 'onMouseover',
             'mouseout .rating-star': 'onMouseout',
-            'click .rating-star': 'onClick'
+            'click .rating-star': 'onClick',
+            'click .clear-rating': 'onClear'
         },
 
         /**
@@ -179,11 +180,16 @@ define([
         onClick: function(e) {
             var currentTarget = this.$(e.currentTarget);
             var rating = this._determineRating(currentTarget);
-            this.setRating(rating+0.5);
+            this.setRating(rating);
             this.render();
             this.triggerEvent(EVENTS.RATING_CHANGED, {
                 rating: rating
             });
+        },
+
+        onClear: function(e) {
+            this.setRating(0);
+            this.render();
         }
     });
 

@@ -405,6 +405,16 @@ html {
     cursor: pointer;
 }
 
+.rating-stars > .clear-rating {
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+.rating-stars > .clear-rating > i {
+    vertical-align: top;
+}
+
 .rating-stars > .rating-star {
     display: inline-block;
     height: 16px;
