@@ -5,12 +5,12 @@ define([
 ], function($, _, Backbone) {
     
     /**
-     * Choice
+     * Selection
      * @constructor
      * @param {Object} attributes Optional model attributes.
      * @param {Object} options Optional options
      */
-    var Choice = Backbone.Model.extend({
+    var Selection = Backbone.Model.extend({
 
         defaults: {
             value: null,
@@ -23,30 +23,21 @@ define([
         
         selected: function() {
             return this.get('selected');
-        },
-
-        toJSON: function() {
-            return {
-                id: this.id || this.cid,
-                value: this.value(),
-                selected: this.selected()
-            };
         }
-
     });
 
     /**
-     * ChoiceCollection
+     * SelectionCollection
      * @constructor
      * @param {Object} attributes Optional model attributes.
      * @param {Object} options Optional options
      */
-    var ChoiceCollection = Backbone.Collection.extend({
-        model: Choice
+    var SelectionCollection = Backbone.Collection.extend({
+        model: Selection
     });
 
     return {
-        Choice: Choice,
-        ChoiceCollection: ChoiceCollection
+        Selection: Selection,
+        SelectionCollection: SelectionCollection
     };
 });

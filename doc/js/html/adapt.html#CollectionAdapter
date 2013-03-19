@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: CollectionAdapter</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Class: CollectionAdapter</h1>
+    
+    
+
+
+
+<section>
+    
+<header>
+    <h2>
+        <span class="ancestors"><a href="adapt.html">core/adapt</a>~</span>
+    
+    CollectionAdapter
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt>
+    <h4 class="name" id="CollectionAdapter"><span class="type-signature"></span>new CollectionAdapter<span class="signature">(options, collection, adaptedCollection, map, <span class="optional">sync</span>)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Collection Adapter constructor
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">Options object</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>collection</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Collection</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">Collection to be adapted</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>adaptedCollection</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Collection</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">Collection to adapt to</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>map</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">Map function which takes a collection model
+  and returns an adaptedCollection model.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sync</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+            
+            <td class="description last">If true collection
+  will be sync'd to adaptedCollection at construction.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        adapt.js, line 25
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+    
+    
+        <h3 class="subsection-title">Extends</h3>
+        
+        <ul>
+            <li><a href="base-Base.html">module:core/base~Base</a></li>
+        </ul>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="adapt.html">core/adapt</a></li><li><a href="base.html">core/base</a></li><li><a href="factory.html">core/factory</a></li><li><a href="view.html">core/view</a></li></ul><h3>Classes</h3><ul><li><a href="provided..html">All commands should inherit from this class and override 
+the execute method. The execute method should receive a 
+single 'options' argument. Options will be a object literal
+containing the execution arguments.
+
+All commands must be short lived and should NOT maintain
+state. Typically a Command will be registered with facade,
+and associated with a notification.
+
+The facade will then instantiate the command in response
+to the associated notification and invoke the command's
+execute method.
+
+All non-async commands must be return a boolean value
+from the execute() method indicating success or failure. 
+Based on this value options.onSuccess or options.onError
+callbacks with be invoked if provided.</a></li><li><a href="adapt.html#CollectionAdapter">CollectionAdapter</a></li><li><a href="adapt-ModelCollectionAdapter.html">ModelCollectionAdapter</a></li><li><a href="base-Base.html">Base</a></li><li><a href="factory-Factory.html">Factory</a></li><li><a href="view-View.html">View</a></li><li><a href="system..html">There is only one instance of the facade per application.
+It is responsible for facilitating communication between
+the disparate parts of the system.</a></li><li><a href="arrays..html">This class should be subclassed by async commands.
+
+Convenience onSuccess and onError methods are provided
+which are intended to be passed to the async facility
+performing the operaion. This is typically an Ajax 
+request through a library which supports invoking
+a success or error callback.
+
+Simply pass this.onSuccess and this.onError to your
+Ajax library and these methods will take care of
+invoking the user specified callbacks in options.onSuccess
+and options.onError (if provided).
+
+Since the arguments passed to this.onSuccess and this.onError
+by the Ajax library are dynamic, this class provides 
+asyncCallbackArgs, asyncSuccessCallbackArgs, and asyncErrorCallbackArgs
+properties which should be overriden with the argument names
+so that arguments can in turn be passed meaningfully to
+the user specified callbacks.
+
+Note that the options.onSuccess and options.onError will be invoked
+with the following two arguments:
+
+1) {Object} options (same options passed into execute method())
+2) {Object} response object containing boolean status and
+            arguments named in the callback args arrays.</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addSubCommand">addSubCommand</a></li><li><a href="global.html#asyncCallbackArgs">asyncCallbackArgs</a></li><li><a href="global.html#asyncErrorCallbackArgs">asyncErrorCallbackArgs</a></li><li><a href="global.html#asyncSuccessCallbackArgs">asyncSuccessCallbackArgs</a></li><li><a href="global.html#eventNotifications">eventNotifications</a></li><li><a href="global.html#execute">execute</a></li><li><a href="global.html#initialize">initialize</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#notifications">notifications</a></li><li><a href="global.html#run">run</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Mar 19 2013 11:31:32 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>

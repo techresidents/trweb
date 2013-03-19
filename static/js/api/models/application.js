@@ -35,7 +35,8 @@ define([
             user_id: new fields.StringField(),
             requisition_id: new fields.StringField(),
             type: new fields.StringField(),
-            status: new fields.StringField()
+            status: new fields.StringField(),
+            created: new fields.DateTimeField({nullable: true})
         },
 
         relatedFields: {

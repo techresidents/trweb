@@ -1,9 +1,17 @@
-define([
+define(/** @exports core/format */[
     'underscore',
     'globalize',
     'core/date'
 ], function(_, Globalize, core_date) {
 
+    /**
+     * Format date with Globalize.
+     * <br>
+     * See {@link https://github.com/jquery/globalize#dates} for formats.
+     * @param {Date|DateTime|timestamp} value Value to format
+     * @param {string} format Globalize format string.
+     * @returns {string} Formatted date string.
+     */
     var date = function(value, format) {
         var result;
         if(_.isDate(value)) {
@@ -17,6 +25,14 @@ define([
         return result;
     };
 
+    /**
+     * Format value with Globalize.
+     * <br>
+     * See {@link https://github.com/jquery/globalize#format} for formats.
+     * @param {number} value Value to format
+     * @param {string} format Globalize format string.
+     * @returns {string} Formatted string.
+     */
     var format = function(value, format) {
         return Globalize.format(value, format);
     };

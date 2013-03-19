@@ -170,7 +170,7 @@ define([
         },
 
         onPage: function(e) {
-            var target = $(e.target);
+            var target = $(e.currentTarget);
             var page = target.data('page');
             this.page(page);
         }

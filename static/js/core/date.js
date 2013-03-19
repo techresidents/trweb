@@ -1,4 +1,4 @@
-define([
+define(/** @exports core/date */[
     'globalize',
     'core/base',
     'core/iter'
@@ -53,7 +53,27 @@ define([
         }
     };
 
-    var Interval = base.Base.extend({ 
+    var Interval = base.Base.extend(
+    /** @lends module:core/date~Interval.prototype */ { 
+        
+        /**
+         * Interval constructor.
+         * @constructs
+         * @augments module:core/base~Base
+         * @param {number} years Number of years
+         * @param {number} [months] Number of months
+         * @param {number} [days] Number of  days
+         * @param {number} [hours] Number of hours
+         * @param {number} [minutes] Number of minutes
+         * @param {number} [seconds] Number of seconds
+         * @param {number} [milliseconds] Number of milliseconds
+         * @classdesc
+         * Interval which can be added to {@link module:core/date~Date}
+         * and {@link module:core/date~DateTime} objects through
+         * their add() methods.
+         * <br><br>
+         * Note that subtraction is possible through negative params.
+         */
         initialize: function(years, months, days, hours, minutes, seconds) {
             this.years = years || 0;
             this.months = months || 0;
@@ -63,6 +83,11 @@ define([
             this.seconds = seconds || 0;
         },
 
+        /**
+         * Compare to other Interval object.
+         * @param {module:core/date~Interval} Interval object
+         * @returns {boolean} true if equal, false otherwise.
+         */
         equals: function(other) {
             if(!other) {
                 return false;
@@ -74,9 +99,12 @@ define([
                    other.hours === this.hours &&
                    other.minutes === this.minutes &&
                    other.seconds === this.seconds;
-
         },
 
+        /**
+         * Add interval object.
+         * @param {module:core/date~Interval} interval
+         */
         add: function(interval) {
             this.years += interval.years;
             this.months += interval.months;
@@ -87,7 +115,19 @@ define([
         }
     });
 
-    var DateDate = base.Base.extend({
+    var DateDate = base.Base.extend(
+    /** @lends module:core/date~Date.prototype */ {
+
+        /**
+         * Date constructor.
+         * @constructs
+         * @augments module:core/base~Base
+         * @param {number|object} year Year number or Date object.
+         * @param {number} [month] Month typically (0-11)
+         * @param {number} [date] Date typically (1-31)
+         * @classdesc
+         * Date class conforming to native Date inteface plus more.
+         */
         initialize: function(year, month, date) {
             if(typeof year === 'number') {
                 this.date = new Date(year, month || 0, date || 1);
@@ -102,10 +142,19 @@ define([
             }
         },
 
+        /**
+         * Clone date object.
+         * @returns {module:core/date~Date} New date object
+         */
         clone: function() {
             return new DateDate(this.date);
         },
 
+        /**
+         * Compare to other Date object.
+         * @param {Date|module:core/date~Date} Date object to compare.
+         * @returns {boolean} True if dates are equal, false otherwise.
+         */
         equals: function(other) {
             if(!other) {
                 return false;
@@ -114,147 +163,253 @@ define([
                    other.getMonth() === this.getMonth() &&
                    other.getDate() === this.getDate();
         },
-
+        
+        /**
+         * Format date with Globalize.
+         * <br>
+         * See {@link https://github.com/jquery/globalize#dates} for formats.
+         * @param {string} fmt Globalize format string.
+         * @returns {string} Formatted date string.
+         */
         format: function(fmt) {
             return Globalize.format(this.date, fmt);
         },
-
-        parseFormat: function(formats) {
-            return Globalize.parseDate(this.date, this.formats);
-        },
-
+        
+        /**
+         * @returns {number} Four digit year.
+         */
         getFullYear: function() {
             return this.date.getFullYear();
         },
 
+        /**
+         * @returns {number} Two digit year.
+         */
         getYear: function() {
             return this.date.getYear();
         },
 
+        /**
+         * @returns {number} Month number (0-11)
+         */
         getMonth: function() {
             return this.date.getMonth();
         },
 
+        /**
+         * @returns {number} Date number (1-31)
+         */
         getDate: function() {
             return this.date.getDate();
         },
 
+        /**
+         * @returns {number} Hours number (0-23)
+         */
         getHours: function() {
             return this.date.getHours();
         },
 
+        /**
+         * @returns {number} Minutes number (0-59)
+         */
         getMinutes: function() {
             return this.date.getMinutes();
         },
 
+        /**
+         * @returns {number} Seconds number (0-59)
+         */
         getSeconds: function() {
             return this.date.getSeconds();
         },
 
+        /**
+         * @returns {number} Milliseconds number (0-999)
+         */
         getMilliseconds: function() {
             return this.date.getMilliseconds();
         },
 
+        /**
+         * @returns {number} Number of milliseconds since Jan 1, 1970.
+         */
         getTime: function() {
             return this.date.getTime();
         },
 
+        /**
+         * @returns {number} Day of the week (0-6)
+         */
         getDay: function() {
             return this.date.getDay();
         },
 
+        /**
+         * @returns {number} Four digit year according to UTC.
+         */
         getUTCFullYear: function() {
             return this.date.getUTCFullYear();
         },
 
+        /**
+         * @returns {number} Two digit year according to UTC.
+         */
         getUTCYear: function() {
             return this.date.getUTCYear();
         },
 
+        /**
+         * @returns {number} Month (0-11) according to UTC.
+         */
         getUTCMonth: function() {
             return this.date.getUTCMonth();
         },
 
+        /**
+         * @returns {number} Date (1-31) according to UTC.
+         */
         getUTCDate: function() {
             return this.date.getUTCDate();
         },
 
+        /**
+         * @returns {number} Hours (0-23) according to UTC.
+         */
         getUTCHours: function() {
             return this.date.getUTCHours();
         },
 
+        /**
+         * @returns {number} Minutes (0-59) according to UTC.
+         */
         getUTCMinutes: function() {
             return this.date.getUTCMinutes();
         },
 
+        /**
+         * @returns {number} Seconds (0-59) according to UTC.
+         */
         getUTCSeconds: function() {
             return this.date.getUTCSeconds();
         },
 
+        /**
+         * @returns {number} Milliseconds (0-999) according to UTC.
+         */
         getUTCMilliseconds: function() {
             return this.date.getUTCMilliseconds();
         },
 
+        /**
+         * @returns {number} Day of the week (0-6) according to UTC.
+         */
         getUTCDay: function() {
             return this.date.getUTCDay();
         },
 
+        /**
+         * @param {number} value Four digit year
+         */
         setFullYear: function(value) {
             this.date.setFullYear(value);
         },
 
+        /**
+         * @param {number} value Month
+         */
         setMonth: function(value) {
             this.date.setMonth(value);
         },
 
+        /**
+         * @param {number} value Date
+         */
         setDate: function(value) {
             this.date.setDate(value);
         },
 
+        /**
+         * @param {number} value Hours
+         */
         setHours: function(value) {
             this.date.setHours(value);
         },
 
+        /**
+         * @param {number} value Minutes
+         */
         setMinutes: function(value) {
             this.date.setMinutes(value);
         },
 
+        /**
+         * @param {number} value Seconds
+         */
         setSeconds: function(value) {
             this.date.setSeconds(value);
         },
 
+        /**
+         * @param {number} value Millseconds
+         */
         setMilliseconds: function(value) {
             this.date.setMillieconds(value);
         },
 
+        /**
+         * @param {number} value Four digit year
+         */
         setUTCFullYear: function(value) {
             this.date.setUTCFullYear(value);
         },
 
+        /**
+         * @param {number} value Month
+         */
         setUTCMonth: function(value) {
             this.date.setUTCMonth(value);
         },
 
+        /**
+         * @param {number} value Date
+         */
         setUTCDate: function(value) {
             this.date.setUTCDate(value);
         },
 
+        /**
+         * @param {number} value Hours
+         */
         setUTCHours: function(value) {
             this.date.setUTCHours(value);
         },
 
+        /**
+         * @param {number} value Minutes
+         */
         setUTCMinutes: function(value) {
             this.date.setUTCMinutes(value);
         },
 
+        /**
+         * @param {number} value Seconds
+         */
         setUTCSeconds: function(value) {
             this.date.setUTCSeconds(value);
         },
 
+        /**
+         * @param {number} value Milliseconds
+         */
         setUTCMilliseconds: function(value) {
             this.date.setUTCMilliseconds(value);
         },
 
+        /**
+         * Add interval to Date object.
+         * @param {module:core/date~Interval} Interval
+         */
         add: function(interval) {
             if(interval.years || interval.months) {
                 var month = this.getMonth() + interval.months + interval.years * 12;
@@ -289,50 +444,89 @@ define([
             return this;
         },
 
+        /**
+         * @returns {string} date string
+         */
         toDateString: function() {
             return this.date.toDateString();
         },
 
+        /**
+         * @returns {string} GMT date string
+         */
         toGMTString: function() {
             return this.date.toGMTString();
         },
 
+        /**
+         * @returns {string} ISO date string
+         */
         toISOString: function() {
             return this.date.toISOString();
         },
 
+        /**
+         * @returns {string} JSON date string
+         */
         toJSON: function() {
             return this.date.toJSON();
         },
 
+        /**
+         * @returns {string} Locale date string
+         */
         toLocaleDateString: function() {
             return this.date.toLocaleString();
         },
 
+        /**
+         * @returns {string} Locale time string
+         */
         toLocaleTimeString: function() {
             return this.date.toLocaleTimeString();
         },
 
+        /**
+         * @returns {string} Date string
+         */
         toString: function() {
             return this.date.toString();
         },
 
+        /**
+         * @returns {string} Time string
+         */
         toTimeString: function() {
             return this.date.toTimeString();
         },
 
+        /**
+         * @returns {string} UTC date string
+         */
         toUTCString: function() {
             return this.date.toUTCString();
         },
 
+        /**
+         * @returns {number} Milliseconds since Jan 1, 1970 according to UTC.
+         */
         UTC: function() {
             return this.date.UTC();
         },
 
+        /**
+         * @returns {number} Milliseconds since Jan 1, 1970 according to UTC.
+         */
         valueOf: function() {
             return this.date.valueOf();
         }
-    }, {
+    }, /** @lends module:core/date~Date */ {
+
+        /**
+         * Create a Date object from a Unix timestamp.
+         * @param {number} timetsamp Unix timestamp in seconds.
+         * @returns {module:core/date~Date}
+         */
         fromTimestamp: function(timestamp) {
             var date = new Date(0);
             date.setUTCSeconds(timestamp);
@@ -340,7 +534,23 @@ define([
         }
     });
 
-    var DateTime = DateDate.extend({
+    var DateTime = DateDate.extend(
+    /** @lends module:core/date~DateTime.prototype */{
+
+        /**
+         * DateTime constructor.
+         * @constructs
+         * @augments module:core/date~Date
+         * @param {number|object} year Year number or Date object.
+         * @param {number} [month] Month typically (0-11)
+         * @param {number} [date] Date integer typically (1-31)
+         * @param {number} [hours] Hours typically (0-23)
+         * @param {number} [minutes] Minutes typically (0-59)
+         * @param {number} [seconds] Minutes typically (0-59)
+         * @param {number} [milliseconds] Milliseconds typically (0-999)
+         * @classdesc
+         * DateTime class which implements native Date interface plus more.
+         */
         initialize: function(year, month, date, hours, minutes, seconds, milliseconds) {
             if(typeof year === 'number') {
                 this.date = new Date(year,
@@ -355,11 +565,20 @@ define([
                 this.date = new Date(Date.now());
             }
         },
-
+        
+        /**
+         * Clone DateTime object
+         * @returns {module:core/date~DateTime}
+         */
         clone: function() {
             return new DateTime(this.date);
         },
 
+        /**
+         * Compare to other DateTime object.
+         * @param {module:core/date~DateTime} other
+         * @returns {boolean} true if equal, false otherwise
+         */
         equals: function(other) {
             if(!other) {
                 return false;
@@ -367,6 +586,10 @@ define([
             return other.getTime() === this.getTime();
         },
 
+        /**
+         * Add interval to DateTime object.
+         * @param {module:core/date~Interval} Interval
+         */
         add: function(interval) {
             Date.Date.prototype.add.call(this, interval);
 
@@ -386,21 +609,37 @@ define([
         }
     });
 
-    /**
-     * Date Range class.
-     * @constructor
-     */
-    var DateRange = base.Base.extend({
+    var DateRange = base.Base.extend(
+    /** @lends module:core/date~DateRange.prototype */{
+
+        /**
+         * DateRange constructor
+         * @constructs
+         * @augments module:core/base~Base
+         * @param {module:core/date~Date} start Start date
+         * @param {module:core/date~Date} end End date
+         * @classdesc
+         * Date range class with iterator.
+         */
         initialize: function(start, end) {
             this.start = start;
             this.end = end;
         },
 
         
+        /**
+         * @returns {core/iterator~Iterator} Date range iterator.
+         */
         iterator: function() {
             return new DateRange.Iterator(this);
         },
 
+
+        /**
+         * Compare to other DateRange object.
+         * @param {module:core/date~DateRange} other DateRange object
+         * @returns {boolean} true if equal, false otherwise
+         */
         equals: function(other) {
             if(!other) {
                 return false;
@@ -417,17 +656,33 @@ define([
                 return !other.start && this.end.equals(other.end);
             }
         }
-    }, {
+    }, /** @lends module:core/date~DateRange */{
+
+        /** Minimum Date object (Jan 1, 1900) */
         MIN_DATE: new DateDate(0, 0, 1),
 
+        /** Maximum Date object (Dec 31, 9999) */
         MAX_DATE: new DateDate(9999, 11, 31),
 
-        Iterator: iter.Iterator.extend({
+        Iterator: iter.Iterator.extend(
+        /** @lends module:core/date~DateRange.Iterator.prototype */{
+
+            /**
+             * Iterator constructor
+             * @constructs
+             * @augments module:core/iterator~Iterator
+             * @param {module:core/date~DateRange} dateRange DateRange object
+             *  to iterator over.
+             */
             initialize: function(dateRange) {
                 this.nextDate = dateRange.start.clone();
                 this.endDate = dateRange.end.clone();
             },
             
+            /**
+             * Get next Date in iterator.
+             * @returns {module:core/date~Date} Date object
+             */
             next: function() {
                 if(this.nextDate.date > this.endDate.date) {
                     throw iter.StopIteration;
@@ -438,12 +693,26 @@ define([
             }
         }),
         
+        /**
+         * Get Date object offset days from date.
+         * @param {module:core/date~Date} date Date object
+         * @param {number} offset Offset in days
+         * @returns {module:core/date~Date} object which
+         *  is offset days from date.
+         */
         offsetInDays: function(date, offset) {
             var result = date.clone();
             result.add(new Interval(0, 0, offset));
             return result;
         },
 
+        /**
+         * Get Date object offset months from date (with day of month set to 1).
+         * @param {module:core/date~Date} date Date object
+         * @param {number} offset Offset in months
+         * @returns {module:core/date~Date} object which
+         *  is offset months from date (with day of month set to 1).
+         */
         offsetInMonths: function(date, offset) {
             var result = date.clone();
             result.setDate(1);
@@ -451,17 +720,36 @@ define([
             return result;
         },
 
+        /**
+         * Get today DateRange iterator
+         * @param {module:core/date~Date} [today] Date object to
+         *  use as today for calculations.
+         * @returns {module:core/date~DateRange.Iterator} DateRange iterator
+         */
         today: function(today) {
             today = today || new DateDate();
             return new DateRange(today.clone(), today.clone());
         },
 
+        /**
+         * Get yesterday DateRange iterator
+         * @param {module:core/date~Date} [today] Date object to
+         *  use as today for calculations.
+         * @returns {module:core/date~DateRange.Iterator} DateRange iterator
+         */
         yesterday: function(today) {
             today = today || new DateDate();
             var yesterday = this.offsetInDays(today, -1);
             return new DateRange(yesterday, yesterday.clone());
         },
 
+        /**
+         * Get this week DateRange iterator which is Sunday - 
+         * Saturday of the current week.
+         * @param {module:core/date~Date} [today] Date object to
+         *  use as today for calculations.
+         * @returns {module:core/date~DateRange.Iterator} DateRange iterator
+         */
         thisWeek: function(today) {
             today = today || new DateDate();
             var start = DateRange.offsetInDays(today, -today.getDay());
@@ -469,6 +757,12 @@ define([
             return new DateRange(start, end);
         },
 
+        /**
+         * Get this month DateRange iterator
+         * @param {module:core/date~Date} [today] Date object to
+         *  use as today for calculations.
+         * @returns {module:core/date~DateRange.Iterator} DateRange iterator
+         */
         thisMonth: function(today) {
             today = today || new DateDate();
             var start = DateRange.offsetInMonths(today, 0);
@@ -478,6 +772,18 @@ define([
             return new DateRange(start, end);
         },
 
+        /**
+         * Get calendar month DateRange iterator.
+         * Iterator consists of the all weeks (Sunday - Saturday)
+         * which contain a day in the current calendar month.
+         * This iterator typically contains days from the
+         * previous and next month. 
+         * <br>
+         * The primary use for this iterator is calendar widgets.
+         * @param {module:core/date~Date} [today] Date object to
+         *  use as today for calculations.
+         * @returns {module:core/date~DateRange.Iterator} DateRange iterator
+         */
         calendarMonth: function(today) {
             var month = DateRange.thisMonth(today);
             var start = DateRange.offsetInDays(month.start, -month.start.getDay());
@@ -485,6 +791,12 @@ define([
             return new DateRange(start, end);
         },
 
+        /**
+         * Get all time DateRange iterator (Jan 1, 1900 - 12/31/9999)
+         * @param {module:core/date~Date} [today] Date object to
+         *  use as today for calculations.
+         * @returns {module:core/date~DateRange.Iterator} DateRange iterator
+         */
         allTime: function() {
             return new DateRange(
                     DateRange.MIN_DATE.clone(),

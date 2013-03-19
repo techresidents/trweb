@@ -3,6 +3,7 @@ define([
     'underscore',
     'globalize',
     'core/date',
+    'core/factory',
     'core/iter',
     'core/view',
     'drop/views',
@@ -14,6 +15,7 @@ define([
     _,
     Globalize,
     date,
+    factory,
     iter,
     view,
     drop_views,
@@ -118,7 +120,7 @@ define([
         },
 
         onClickDay: function(e) {
-            var target = $(e.target);
+            var target = $(e.currentTarget);
             var timestamp = target.data('timestamp');
             var datetime = new date.Date(new Date(timestamp));
             if(!datetime.equals(this.getDate())) {
@@ -255,18 +257,17 @@ define([
         },
 
         initChildViews: function() {
+            var viewFactory = new factory.Factory(DatePickerView, {
+                model: this.model,
+                attribute: this.attribute
+            });
+
             this.dropView = new drop_views.DropView({
                 autoclose: this.autoclose,
                 autocloseGroup: this.autocloseGroup,
                 targetView: this.inputView,
                 targetSelector: this.inputSelector,
-                view: {
-                    ctor: DatePickerView,
-                    options: {
-                        model: this.model,
-                        attribute: this.attribute
-                    }
-                }
+                view: viewFactory
             });
         },
 
@@ -514,7 +515,7 @@ define([
 
         onRadioChanged: function(e) {
             var range;
-            var target = $(e.target);
+            var target = $(e.currentTarget);
             var mode = target.val();
 
             switch(mode) {

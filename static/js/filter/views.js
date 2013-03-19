@@ -3,13 +3,14 @@ define([
     'underscore',
     'core/base',
     'core/date',
+    'core/factory',
     'core/view',
     'api/query',
-    'choices/models',
-    'choices/views',
     'date/views',
     'drop/views',
     'filter/models',
+    'select/models',
+    'select/views',
     'text!filter/templates/filters.html',
     'text!filter/templates/filter.html',
     'text!filter/templates/filter_factory.html',
@@ -20,13 +21,14 @@ define([
     _,
     base,
     date,
+    factory,
     view,
     api_query,
-    choices_models,
-    choices_views,
     date_views,
     drop_views,
     filter_models,
+    select_models,
+    select_views,
     filters_template,
     filter_template,
     filter_factory_template,
@@ -51,7 +53,9 @@ define([
 
         events: {
             'click .drop-button': 'onToggle',
-            'click .filter-close': 'onClose'
+            'click .filter-close': 'onClose',
+            'open .drop': '_onDropOpened',
+            'close .drop': '_onDropClosed'
         },
         
         childViews: function() {
@@ -64,25 +68,25 @@ define([
             this.name = options.name;
             this.field = options.field;
             this.query = options.query;
-            this.viewConfig = options.viewConfig;
-
+            this.view = options.view;
+            
             //child views
             this.dropView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
-            var viewOptions = _.extend({
-                collection: this.collection,
-                query: this.query
-            }, _.result(this.viewConfig, 'options')); 
+            if(view instanceof factory.Factory) {
+                //extend view factory options
+                this.viewFactory.extendOptions({
+                    collection: this.colleciton,
+                    query: this.query
+                });
+            }
 
             this.dropView = new drop_views.DropView({
                 autocloseGroup: 'filter',
-                view: {
-                    ctor: this.viewConfig.ctor,
-                    options: viewOptions
-                }
+                view: this.view
             });
         },
 
@@ -128,6 +132,12 @@ define([
             this.$('.filter-wrap-title').text(this.title());
         },
 
+        onFilterOpened: function() {
+        },
+
+        onFilterClosed: function() {
+        },
+
         onToggle: function(e) {
             this.dropView.toggle();
         },
@@ -136,68 +146,95 @@ define([
             this.triggerEvent(EVENTS.FILTER_VIEW_DESTROY, {
                 field: this.field
             });
+        },
+
+        _onDropOpened: function(e, eventBody) {
+            if(eventBody.view === this.dropView) {
+                this.onFilterOpened();
+            }
+        },
+
+        _onDropClosed: function(e, eventBody) {
+            if(eventBody.view === this.dropView) {
+                this.onFilterClosed();
+            }
         }
     });
 
     /**
-     * Choices Filter View.
+     * Select Filter View.
      * @constructor
      * @param {Object} options
      *   collection: {ApiCollection} collection (required)
      *   query: {ApiQuery} query (required)
      *   field: {String} (required)
-     *   choices: {Array} of choices
+     *   selections: {Array} of selections
      */
-    var ChoicesFilterView = FilterView.extend({
+    var SelectFilterView = FilterView.extend({
 
         initialize: function(options) {
-            this.choices = options.choices;
-            this.choiceCollection = new choices_models.ChoiceCollection();
+            this.selections = options.selections;
+            this.selectionCollection = new select_models.SelectionCollection();
+            this.filterToSelection = options.filterToSelection || this.passThrough;
+            this.selectionToFilter = options.selectionToFilter || this.passThrough;
+            
+            var view = new select_views.MultiSelectView({
+                collection: this.selectionCollection
+            });
 
             options = _.extend({
-                viewConfig: {
-                    ctor: choices_views.ChoicesView,
-                    options: {
-                        collection: this.choiceCollection
-                    }
-                }
+                view: view
             }, options);
 
             FilterView.prototype.initialize.call(this, options);
-            this.choiceCollection.reset(this.filterToChoiceModels());
+            this.selectionCollection.reset(this.filterToSelectionModels());
 
-            this.listenTo(this.choiceCollection, 'change:selected', this.onSelected);
+            this.listenTo(this.selectionCollection, 'change:selected', this.onSelected);
         },
 
         title: function() {
             var result = 'ALL';
             filter = _.first(this.filters(this.field, 'in'));
             if(filter) {
-                result = filter.value();
+                result = this.filterToSelection(filter.value());
             }
             return result;
         },
 
-        filterToChoiceModels: function() {
+        passThrough: function(value) {
+            return value;
+        },
+
+        filterToSelectionModels: function() {
             var models, filter, selected = [];
 
             filter = _.first(this.filters(this.field, 'in'));
             if(filter) {
-                selected = filter.value().split(',');
+                selected = _.map(filter.value().split(','), this.filterToSelection);
             }
-            models = _.map(this.choices, function(choice) {
-                return new choices_models.Choice({
-                    value: choice,
-                    selected: _.contains(selected, choice)
+
+            if(this.selections) {
+                models = _.map(this.selections, function(selection) {
+                    return new select_models.Selection({
+                        value: selection,
+                        selected: _.contains(selected, selection)
+                    });
+                }, this);
+            } else {
+                models = _.map(selected, function(value) {
+                    return new select_models.Selection({
+                        value: value,
+                        selected: true
+                    });
                 });
-            }, this);
+            }
 
             return models;
         },
 
-        choiceCollectionToFilter: function() {
+        selectionCollectionToFilter: function() {
             var filter = null;
-            var selected = this.choiceCollection.where({selected: true});
+            var selected = this.selectionCollection.where({selected: true});
             var values = _.map(selected, function(model) {
                 return model.value();
             }, this);
@@ -205,17 +242,17 @@ define([
             if(values.length) {
                 filter = new api_query.ApiQueryFilter({
                     name: this.field,
-                    value: values.join(','),
+                    value: _.map(values, this.selectionToFilter).join(','),
                     op: 'in'
                 });
             }
             return filter;
         },
 
-        onSelected: function(choiceModel) {
+        onSelected: function(selectionModel) {
             this.query.state.filters().remove(this.filters(this.field, 'in'));
             var filters = this.query.state.filters();
-            var filter = this.choiceCollectionToFilter();
+            var filter = this.selectionCollectionToFilter();
 
             filters.remove(filters.where({name: this.field}));
             if(filter) {
@@ -230,6 +267,49 @@ define([
         }
 
     });
+
+    SelectFilterView.Factory = factory.buildFactory(SelectFilterView);
+
+    /**
+     * Auto Select Filter View.
+     * @constructor
+     * @param {Object} options
+     *   collection: {ApiCollection} collection (required)
+     *   query: {ApiQuery} query (required)
+     *   field: {String} (required)
+     *   choices: {Array} of choices
+     */
+    var AutoSelectFilterView = SelectFilterView.extend({
+
+        initialize: function(options) {
+            this.selectionCollection = new select_models.SelectionCollection();
+            this.filterToSelection = options.filterToSelection || this.passThrough;
+            this.selectionToFilter = options.selectionToFilter || this.passThrough;
+            
+            var view = new select_views.AutoMultiSelectView({
+                collection: this.selectionCollection,
+                auto: options.auto,
+                inputPlaceholder: options.inputPlaceholder || 'search'
+            });
+            
+            options = _.extend({
+                view: view
+            }, options);
+
+            FilterView.prototype.initialize.call(this, options);
+
+            this.selectionCollection.reset(this.filterToSelectionModels());
+            this.listenTo(this.selectionCollection, 'change:selected', this.onSelected);
+        },
+
+        onFilterOpened: function() {
+            this.dropView.childView.refresh();
+            this.dropView.childView.input().focus();
+        }
+
+    });
+
+    AutoSelectFilterView.Factory = factory.buildFactory(AutoSelectFilterView);
 
     /**
      * Date Range Filter View.
@@ -250,10 +330,7 @@ define([
 
         initialize: function(options) {
             options = _.extend({
-                viewConfig: {
-                    ctor: date_views.DateRangeView,
-                    options: {}
-                }
+                view: new date_views.DateRangeView()
             }, options);
 
             FilterView.prototype.initialize.call(this, options);
@@ -336,6 +413,8 @@ define([
         }
     });
 
+    DateRangeFilterView.Factory = factory.buildFactory(DateRangeFilterView);
+
     /**
      * Filter Factory View.
      * @constructor
@@ -360,8 +439,8 @@ define([
             this.config = options.config;
             this.collection = options.collection;
             this.filterConfigMap = {};
-            this.choiceCollection = new choices_models.ChoiceCollection(
-                this.configToChoiceModels()
+            this.selectionCollection = new select_models.SelectionCollection(
+                this.configToSelectionModels()
             );
 
             _.each(this.config.filters, function(config) {
@@ -370,7 +449,7 @@ define([
 
             //bind events
             this.listenTo(this.collection, 'reset add remove', this.onFilterViewUpdate);
-            this.listenTo(this.choiceCollection, 'change:selected', this.onSelected);
+            this.listenTo(this.selectionCollection, 'change:selected', this.onSelected);
             
             //child views
             this.dropView = null;
@@ -378,14 +457,13 @@ define([
         },
 
         initChildViews: function() {
+            var view = new factory.Factory(select_views.MultiSelectView, {
+                collection: this.selectionCollection
+            });
+
             this.dropView = new drop_views.DropView({
                 autocloseGroup: 'filter',
-                view: {
-                    ctor: choices_views.ChoicesView,
-                    options: {
-                        collection: this.choiceCollection
-                    }
-                }
+                view: view
             });
         },
 
@@ -400,10 +478,10 @@ define([
             return ['filter-factory'];
         },
 
-        configToChoiceModels: function() {
+        configToSelectionModels: function() {
             var selected = this.collection.pluck('field');
             var models = _.map(this.config.filters, function(filterConfig) {
-                return new choices_models.Choice({
+                return new select_models.Selection({
                     value: filterConfig.name,
                     selected: _.contains(selected, filterConfig.field)
                 });
@@ -412,7 +490,7 @@ define([
         },
 
         onFilterViewUpdate: function(model) {
-            this.choiceCollection.reset(this.configToChoiceModels());
+            this.selectionCollection.reset(this.configToSelectionModels());
         },
 
         onSelected: function(model) {
@@ -525,21 +603,18 @@ define([
 
         createFilterView: function(field) {
             var filterConfig = this.filterConfigMap[field];
-            var name = filterConfig.name;
-            var ctor = filterConfig.filterView.ctor;
-            var options = _.extend({
-                name: name,
-                field: field,
-                collection: this.collection,
+            var view = filterConfig.filterView.create({
+                name: filterConfig.name,
+                field: filterConfig.field,
+                collection: this.colleciton,
                 query: this.query
-            }, _.result(filterConfig.filterView, 'options'));
-
-            var view = new ctor(options);
+            });
 
             this.filterViews.add({
                 field: field,
                 view: view
             });
+
             return view;
         },
 
@@ -556,7 +631,6 @@ define([
                 this.filter();
             }
         },
-
 
         filter: function() {
             var pageSize = 20;
@@ -585,7 +659,8 @@ define([
     return {
         EVENTS: EVENTS,
         FiltersView: FiltersView,
-        ChoicesFilterView: ChoicesFilterView,
+        SelectFilterView: SelectFilterView,
+        AutoSelectFilterView: AutoSelectFilterView,
         DateRangeFilterView: DateRangeFilterView
     };
 

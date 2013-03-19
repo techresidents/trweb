@@ -84,7 +84,7 @@ define([
             var result, parts, op;
 
             //i.e. 'requisition__status__in=OPEN,CLOSED'
-            if(!value) {
+            if(value === undefined || value === null) {
                 parts = value.split(value, '=');
                 name = _.first(parts);
                 value = _.rest(parts).join('=');
@@ -352,7 +352,6 @@ define([
             var withRelations = this.state.withRelations();
             _.each(arguments, function(arg) {
                 if(_.isArray(arg)) {
-                    console.log('array');
                     _.each(arg, function(value) {
                         if(value) {
                             withRelations.add(new ApiQueryWithRelation({

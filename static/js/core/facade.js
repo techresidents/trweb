@@ -1,4 +1,4 @@
-define([
+define(/** @exports core/facade*/[
     'jquery',
     'underscore',
     'backbone',
@@ -6,9 +6,9 @@ define([
 ], function($, _, Backbone, base) { 
 
     /**
-     * Facde class.
+     * Facde constructor.
      * @constructor
-     * 
+     * @classdesc
      * There is only one instance of the facade per application.
      * It is responsible for facilitating communication between
      * the disparate parts of the system.
@@ -23,7 +23,8 @@ define([
     };
     Facade.extend = base.extend;
 
-    _.extend(Facade.prototype, {
+    _.extend(Facade.prototype, 
+    /** @lends module:core/facade~Facade.prototype */ {
 
         initialize: function() {},
 

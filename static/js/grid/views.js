@@ -1,10 +1,14 @@
-define([
+define(/** @exports grid/views */[
     'jquery',
     'underscore',
+    'core/adapt',
     'core/base',
+    'core/factory',
     'core/view',
     'api/query',
     'drop/views',
+    'menu/models',
+    'menu/views',
     'text!grid/templates/grid.html',
     'text!grid/templates/grid_header_cell.html',
     'text!grid/templates/grid_cell.html',
@@ -13,10 +17,14 @@ define([
 ], function(
     $,
     _,
+    adapt,
     base,
+    factory,
     view,
     api_query,
     drop_views,
+    menu_models,
+    menu_views,
     grid_template,
     grid_header_cell_template,
     grid_cell_template,
@@ -28,17 +36,7 @@ define([
         GRID_SORT: 'GRID_SORT_EVENT'
     };
 
-
-    /**
-     * Grid Hover Cell View.
-     * @constructor
-     * @param {Object} options
-     *   config: {Object} grid config (required)
-     *   query: {ApiQuery} query (required)
-     *   model: {ApiModel} model (required)
-     *   view: {Object} view options (required) 
-     */
-    var GridHoverCellView = view.View.extend({
+    var GridHoverCellView = view.View.extend( /** @lends module:grid/views~GridHoverCellView.prototype */ {
 
         events: {
         },
@@ -46,7 +44,18 @@ define([
         childViews: function() {
             return [this.childView];
         },
-
+        
+        /**
+         * Grid Hover Cell View.
+         * @constructs
+         * @param {object} options options
+         * @param {object} options.config Grid config
+         * @param {ApiQuery} options.query Query
+         * @param {ApiModel} options.model Model
+         * @param {module:core/view~View|module:core/factory~Factory} options.view
+         *   View or view factory
+         * @augments module:core/view~View
+         */
         initialize: function(options) {
             options = _.extend({
                 template: ''
@@ -78,7 +87,7 @@ define([
             this.append(this.childView);
             return this;
         },
-
+        
         createChildView: function(config) {
             var options = _.extend({
                 config: this.config,
@@ -89,6 +98,11 @@ define([
             return new config.ctor(options);
         }
     });
+
+    /**
+     * {@link module:core/factory~Factory|Factory} class for convenience.
+     */
+    GridHoverCellView.Factory = factory.buildFactory(GridHoverCellView);
 
     /**
      * Grid Header Cell View.
@@ -186,6 +200,11 @@ define([
     });
 
     /**
+     * {@link module:core/factory~Factory|Factory} class for convenience.
+     */
+    GridHeaderCellView.Factory = factory.buildFactory(GridHeaderCellView);
+
+    /**
      * Grid Header Row View.
      * @constructor
      * @param {Object} options
@@ -232,21 +251,23 @@ define([
         },
 
         createCellView: function(cellConfig) {
-            var config = _.extend({
-                headerCellView: {}
-            }, cellConfig);
+            var config = _.extend({}, cellConfig);
+            config.headerCellView = config.headerCellView ||
+                new GridHeaderCellView.Factory();
 
-            var ctor = config.headerCellView.ctor || GridHeaderCellView;
-
-            var options = _.extend({
+            var view = config.headerCellView.create({
                 config: config,
                 query: this.query
-            }, base.getValue(config.headerCellView, 'options', this));
+            }, this);
 
-            var view = new ctor(options);
             this.childViews.push(view);
         }
     });
+
+    /**
+     * {@link module:core/factory~Factory|Factory} class for convenience.
+     */
+    GridHeaderRowView.Factory = factory.buildFactory(GridHeaderRowView);
 
     /**
      * Grid Cell View.
@@ -327,18 +348,19 @@ define([
         },
 
         openHoverView: function() {
+            var view;
+
             if(this.config.hoverView && !this.hoverView) {
-                this.hoverView = new drop_views.DropView({
-                    view: {
-                        ctor: GridHoverCellView,
-                        options: {
-                            config: this.config,
-                            model: this.model,
-                            query: this.query,
-                            view: this.config.hoverView
-                        }
-                    }
+                view = this.config.hoverView.create({
+                    config: this.config,
+                    model: this.model,
+                    query: this.query
                 });
+
+                this.hoverView = new drop_views.DropView({
+                    view: view
+                });
+
                 this.append(this.hoverView);
             }
 
@@ -365,6 +387,11 @@ define([
             }
         }
     });
+
+    /**
+     * {@link module:core/factory~Factory|Factory} class for convenience.
+     */
+    GridCellView.Factory = factory.buildFactory(GridCellView);
 
     /**
      * Grid Link Cell View.
@@ -396,6 +423,11 @@ define([
     });
 
     /**
+     * {@link module:core/factory~Factory|Factory} class for convenience.
+     */
+    GridLinkCellView.Factory = factory.buildFactory(GridLinkCellView);
+
+    /**
      * Grid Action Cell View.
      * @constructor
      * @param {Object} options
@@ -411,7 +443,7 @@ define([
         events: {
             'click button': 'onToggle',
             'mouseleave': 'onMouseLeave',
-            'DROP_MENU_SELECTED_EVENT': 'onDropMenuSelected'
+            'select .menu': 'onDropMenuSelect'
         },
 
         childViews: function() {
@@ -425,7 +457,12 @@ define([
 
             GridCellView.prototype.initialize.call(this, options);
 
-            this.actions = options.actions;
+            this.menuItemsAdapter = new adapt.ModelCollectionAdapter({
+                events: this,
+                map: options.map,
+                model: this.model,
+                adaptedCollection: new menu_models.MenuItemCollection()
+            });
 
             //child views
             this.childView = this.createChildView();
@@ -444,8 +481,9 @@ define([
         },
 
         createChildView: function() {
-            return new drop_views.DropMenuView({
-                items: this.actions
+            var collection = this.menuItemsAdapter.adaptedCollection;
+            return new menu_views.DropMenuView({
+                collection: collection
             });
         },
 
@@ -457,16 +495,22 @@ define([
             this.childView.close();
         },
 
-        onDropMenuSelected: function(e, item) {
-            var eventBody = {
-                action: item,
+        onDropMenuSelect: function(e, eventBody) {
+            var newEventBody = {
+                menuItem: eventBody.model,
                 model: this.model,
                 query: this.query
             };
             e.stopPropagation();
-            this.triggerEvent(EVENTS.GRID_ACTION, eventBody);
+            this.childView.close();
+            this.triggerEvent(EVENTS.GRID_ACTION, newEventBody);
         }
     });
+
+    /**
+     * {@link module:core/factory~Factory|Factory} class for convenience.
+     */
+    GridActionCellView.Factory = factory.buildFactory(GridActionCellView);
 
     /**
      * Grid Row View.
@@ -523,21 +567,15 @@ define([
         },
 
         createCellView: function(cellConfig) {
-            var config = _.extend({
-                cellView: {
-                    ctor: GridCellView
-                }
-            }, cellConfig);
-
-            var ctor = config.cellView.ctor || GridCellView;
-
-            var options = _.extend({
+            var config = _.extend({}, cellConfig);
+            config.cellView = config.cellView ||
+                new GridCellView.Factory();
+            
+            var view = config.cellView.create({
                 config: config,
                 model: this.model,
                 query: this.query
-            }, base.getValue(config.cellView, 'options', this.model));
-            
-            var view = new ctor(options);
+            }, this.model);
 
             this.childViews.push(view);
             return view;
@@ -546,6 +584,11 @@ define([
         onRowClick: function(e) {
         }
     });
+
+    /**
+     * {@link module:core/factory~Factory|Factory} class for convenience.
+     */
+    GridRowView.Factory = factory.buildFactory(GridRowView);
 
     /**
      * Grid View.
@@ -618,40 +661,30 @@ define([
         },
 
         createHeaderRow: function() {
-            var config = _.extend({
-                headerRowView: {
-                    ctor: GridHeaderRowView
-                }
-            }, this.config);
+            var config = _.extend({}, this.config); 
 
-            var ctor = config.headerRowView.ctor || GridHeaderRowView;
+            config.headerRowView = config.headerRowView ||
+                new GridHeaderRowView.Factory();
 
-            var options = _.extend({
+            var view = config.headerRowView.create({
                 config: config.columns,
                 query: this.query
-            }, base.getValue(config.headerRowView, 'options', this));
-
-            var view = new ctor(options);
+            }, this);
 
             return view;
         },
 
         createRow: function(model) {
-            var config = _.extend({
-                rowView: {
-                    ctor: GridRowView
-                }
-            }, this.config);
+            var config = _.extend({}, this.config);
+            config.rowView = config.rowView ||
+                new GridRowView.Factory();
 
-            var ctor = config.rowView.ctor || GridRowView;
-        
-            var options = _.extend({
+            var view = config.rowView.create({
                 config: config.columns,
                 model: model,
                 query: this.query
-            }, base.getValue(config.rowView, 'options', model));
+            }, this);
 
-            var view = new ctor(options);
             this.rowViews.push(view);
 
             return view;
