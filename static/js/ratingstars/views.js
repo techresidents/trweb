@@ -50,74 +50,20 @@ define([
             'click .clear-rating': 'onClear'
         },
 
-        /**
-         * Drain background color (the fill) from all stars
-         * @private
-         */
-        _drainFill: function() {
-            this.$(this.allStarsSelector).children().
-                filter(this.starBackgroundColorClass).
-                removeClass(this.starOnClass).
-                removeClass(this.starHoverClass).
-                css({ 'width': '100%'}); // don't show partial stars when unlit
-        },
-
-        /**
-         * Fill in all stars with hover color up to the position of the mouse
-         * @param currentTarget
-         * @private
-         */
-        _hoverFill: function(currentTarget) {
-            // Fill star at current mouse position
-            currentTarget.
-                children().
-                filter(this.starBackgroundColorClass).
-                addClass(this.starHoverClass);
-            // Fill all previous stars
-            currentTarget.prevAll()
-                .children().
-                filter(this.starBackgroundColorClass).
-                addClass(this.starHoverClass);
-        },
-
-        /**
-         * Determine which rating the user selected
-         * @param target JQuery target element
-         * @returns {number} Star rating
-         * @private
-         */
-        _determineRating: function(currentTarget) {
-            var starIndex = 0; // no stars selected
-            var i = null;
-            for (i = 1; i <= this.totalStars; i++) {
-                if (currentTarget.children().hasClass('star' + i)) {
-                    starIndex = i;
-                    break;
-                }
-            }
-            return starIndex;
-        },
-
-        /**
-         * Save rating
-         * @private
-         */
-        _save: function() {
-            if (this.autosave) {
-                this.model.save();
-            } else {
-                this.triggerEvent(EVENTS.RATING_CHANGED, {
-                    rating: this.getRating()
-                });
-            }
-        },
-
         initialize: function(options) {
-            this.label = options.label ? options.label : '';
-            this.model = options.model ? options.model : null;
-            this.attribute = options.attribute ? options.attribute : null;
-            this.totalStars = options.totalStars ? options.totalStars : 5;
-            this.autosave = options.autosave ? options.autosave : false;
+            options = _.extend({
+                label: '',
+                model: null,
+                attribute: null,
+                totalStars: 5,
+                autosave: false
+            }, options);
+
+            this.label = options.label;
+            this.model = options.model;
+            this.attribute = options.attribute;
+            this.totalStars = options.totalStars;
+            this.autosave = options.autosave;
             this.template = _.template(ratingstars_template);
 
             // Create a model if not passed in
@@ -216,6 +162,68 @@ define([
         onClear: function(e) {
             this.setRating(0);
             this.render();
+        },
+
+        /**
+         * Drain background color (the fill) from all stars
+         * @private
+         */
+        _drainFill: function() {
+            this.$(this.allStarsSelector).children().
+                filter(this.starBackgroundColorClass).
+                removeClass(this.starOnClass).
+                removeClass(this.starHoverClass).
+                css({ 'width': '100%'}); // don't show partial stars when unlit
+        },
+
+        /**
+         * Fill in all stars with hover color up to the position of the mouse
+         * @param currentTarget
+         * @private
+         */
+        _hoverFill: function(currentTarget) {
+            // Fill star at current mouse position
+            currentTarget.
+                children().
+                filter(this.starBackgroundColorClass).
+                addClass(this.starHoverClass);
+            // Fill all previous stars
+            currentTarget.prevAll()
+                .children().
+                filter(this.starBackgroundColorClass).
+                addClass(this.starHoverClass);
+        },
+
+        /**
+         * Determine which rating the user selected
+         * @param target JQuery target element
+         * @returns {number} Star rating
+         * @private
+         */
+        _determineRating: function(currentTarget) {
+            var starIndex = 0; // no stars selected
+            var i = null;
+            for (i = 1; i <= this.totalStars; i++) {
+                if (currentTarget.children().hasClass('star' + i)) {
+                    starIndex = i;
+                    break;
+                }
+            }
+            return starIndex;
+        },
+
+        /**
+         * Save rating
+         * @private
+         */
+        _save: function() {
+            if (this.autosave) {
+                this.model.save();
+            } else {
+                this.triggerEvent(EVENTS.RATING_CHANGED, {
+                    rating: this.getRating()
+                });
+            }
         }
     });
 

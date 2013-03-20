@@ -3,10 +3,12 @@ define([
     'underscore',
     'jquery.bootstrap',
     'core/array',
+    'core/factory',
     'core/view',
     'api/loader',
     'api/models',
     'ratingstars/views',
+    'ui/collection/views',
     'text!talent/user/templates/user.html',
     'text!talent/user/templates/jobprefs.html',
     'text!talent/user/templates/skills.html',
@@ -15,17 +17,19 @@ define([
     'text!talent/user/templates/chat.html',
     'text!talent/user/templates/actions.html',
     'text!talent/user/templates/note.html',
-    'text!talent/user/templates/reqbrief.html',
+    'text!talent/user/templates/applicationbrief.html',
     'text!talent/user/templates/vote_buttons.html'
 ], function(
     $,
     _,
     none,
     array,
+    factory,
     view,
     api_loader,
     api,
     ratingstars_views,
+    collection_views,
     user_template,
     jobprefs_template,
     skills_template,
@@ -34,7 +38,7 @@ define([
     chat_template,
     actions_template,
     note_template,
-    reqbrief_template,
+    applicationbrief_template,
     vote_buttons_template) {
 
     /**
@@ -715,13 +719,13 @@ define([
     });
 
     /**
-     * Talent requisition brief view.
+     * Talent application brief view.
      * @constructor
      * @param {Object} options
      *    candidateModel: {User} (required)
      *    employeeModel: {User} (required)
      */
-    var ReqBriefView = view.View.extend({
+    var ApplicationBriefView = view.View.extend({
 
         ratingCommunicationSelector: '.rating-communication-container',
         ratingTechnicalSelector: '.rating-technical-container',
@@ -738,7 +742,7 @@ define([
         },
 
         initialize: function(options) {
-            this.template = _.template(reqbrief_template);
+            this.template = _.template(applicationbrief_template);
 
             //child views
             this.voteButtonsView = null;
@@ -783,12 +787,12 @@ define([
     var UserActionsView = view.View.extend({
 
         noteSelector: '.user-note',
-        reqBriefsSelector: '.req-briefs',
+        applicationBriefsSelector: '.application-briefs',
 
         childViews: function() {
             return [
                 this.noteView,
-                this.reqBriefsView
+                this.applicationBriefsView
             ];
         },
 
@@ -799,7 +803,7 @@ define([
 
             //child views
             this.noteView = null;
-            this.reqBriefsView = null;
+            this.applicationBriefsView = null;
             this.initChildViews();
         },
 
@@ -808,7 +812,11 @@ define([
                 candidateModel: this.candidateModel,
                 employeeModel: this.employeeModel
             });
-            this.reqBriefsView = new ReqBriefView({});
+//            this.applicationBriefsView = new collection_views.CollectionView({
+//                collection: [],
+//                viewFactory: new factory.Factory(ApplicationBriefView, {})
+//            });
+            this.applicationBriefsView = new ApplicationBriefView({});
         },
 
         render: function() {
@@ -817,7 +825,7 @@ define([
             };
             this.$el.html(this.template(context));
             this.append(this.noteView, this.noteSelector);
-            this.append(this.reqBriefsView, this.reqBriefsSelector);
+            this.append(this.applicationBriefsView, this.applicationBriefsSelector);
             return this;
         }
     });

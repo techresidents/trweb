@@ -270,16 +270,16 @@
     margin-left: 10px;
 }
 
-.req-brief-container {
+.app-brief-container {
     margin-left: 20px;
     margin-bottom: 5px;
 }
 
-.req-brief-vote-container {
+.app-brief-vote-container {
     float: left;
 }
 
-.req-brief-vote-container > a {
+.app-brief-vote-container > a {
     display: block;
 }
 
