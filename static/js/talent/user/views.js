@@ -487,7 +487,8 @@ define([
 
         SaveStatusEnum: {
             PENDING : 'Saving note...',
-            SAVED : 'Saved.'
+            SAVED : 'Saved.',
+            FAILED : 'Save failed. Please refresh the page and try again.'
         },
 
         /**
@@ -502,7 +503,7 @@ define([
         _scheduleSave: function(secs) {
             var delay = secs ? secs*1000 : 5000; // 5 sec default
             this.saveStatus = this.SaveStatusEnum.PENDING;
-            this.updateSaveStatus();
+            this.updateSaveStatusUI();
             // clear any existing scheduled saves
             clearTimeout(this.saveTimeout);
             // Wrap the save function callback using JQuery's proxy() since
@@ -515,9 +516,31 @@ define([
          * @private
          */
         _save: function() {
-            // TODO this.model.save();
-            this.saveStatus = this.SaveStatusEnum.SAVED;
-            this.updateSaveStatus();
+            var that = this;
+            var attributes = {
+                employee_id: this.model.get_employee_id(),
+                candidate_id: this.model.get_candidate_id(),
+                tenant_id: this.model.get_tenant_id(),
+                note: this.$(this.textareaSelector).val()
+            };
+            var isValid = this.model.validate(attributes);
+            if (isValid === undefined) {
+                // undefined implies the model attributes are valid
+                this.model.save(attributes, {
+                    wait: true,
+                    success: function(model) {
+                        that.saveStatus = that.SaveStatusEnum.SAVED;
+                        that.updateSaveStatusUI();
+                    },
+                    error: function(model) {
+                        that.saveStatus = that.SaveStatusEnum.FAILED;
+                        that.updateSaveStatusUI();
+                    }
+                });
+            } else {
+                this.saveStatus = this.SaveStatusEnum.FAILED;
+                this.updateSaveStatusUI();
+            }
         },
 
         initialize: function(options) {
@@ -527,7 +550,7 @@ define([
             this.saveTimeout = null;
             this.saveStatus = null;
             // We enable this view for editing once we know the
-            // existing note has loaded, if it exists. This prevents
+            // existing note model has loaded, if it exists. This prevents
             // us from creating a new note and overwriting an existing note.
             this.template = _.template(note_template);
 
@@ -542,7 +565,7 @@ define([
                 employee_id: this.employeeModel.id,
                 tenant_id: this.employeeModel.get_tenant_id()
             });
-            this.noteQuery.fetch();
+            this.noteQuery.fetch(); // invokes 'reset' on notes collection
         },
 
         destroy: function() {
@@ -590,7 +613,7 @@ define([
         /**
          * Update the save status in the UI
          */
-        updateSaveStatus: function() {
+        updateSaveStatusUI: function() {
             this.$(this.saveStatusSelector).text(this.saveStatus);
         }
     });
@@ -700,28 +723,42 @@ define([
      */
     var ReqBriefView = view.View.extend({
 
-        ratingStarsSelector: '.rating-stars-container',
+        ratingCommunicationSelector: '.rating-communication-container',
+        ratingTechnicalSelector: '.rating-technical-container',
+        ratingCultureSelector: '.rating-culture-container',
         voteButtonsSelector: '.vote-buttons-container',
 
         childViews: function() {
             return [
                 this.voteButtonsView,
-                this.ratingStarsView
+                this.ratingCommunicationView,
+                this.ratingTechnicalView,
+                this.ratingCultureView
             ];
         },
 
-        initialize: function() {
+        initialize: function(options) {
             this.template = _.template(reqbrief_template);
 
             //child views
             this.voteButtonsView = null;
-            this.ratingStarsView = null;
+            this.ratingCommunicationView = null;
+            this.ratingTechnicalView = null;
+            this.ratingCultureView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
             this.voteButtonsView = new VoteButtonsView();
-            this.ratingStarsView = new ratingstars_views.RatingStarsView({});
+            this.ratingCommunicationView = new ratingstars_views.RatingStarsView({
+                label: 'Comm'
+            });
+            this.ratingTechnicalView = new ratingstars_views.RatingStarsView({
+                label: 'Tech'
+            });
+            this.ratingCultureView = new ratingstars_views.RatingStarsView({
+                label: 'Fit '
+            });
         },
 
         render: function() {
@@ -729,7 +766,9 @@ define([
             };
             this.$el.html(this.template(context));
             this.assign(this.voteButtonsView, this.voteButtonsSelector);
-            this.assign(this.ratingStarsView, this.ratingStarsSelector);
+            this.assign(this.ratingCommunicationView, this.ratingCommunicationSelector);
+            this.assign(this.ratingTechnicalView, this.ratingTechnicalSelector);
+            this.assign(this.ratingCultureView, this.ratingCultureSelector);
             return this;
         }
     });
@@ -769,13 +808,16 @@ define([
                 candidateModel: this.candidateModel,
                 employeeModel: this.employeeModel
             });
-            this.reqBriefsView = new ReqBriefView();
+            this.reqBriefsView = new ReqBriefView({});
         },
 
         render: function() {
-            this.$el.html(this.template());
-            this.assign(this.noteView, this.noteSelector);
-            this.assign(this.reqBriefsView, this.reqBriefsSelector);
+            var context = {
+                candidateModel: this.candidateModel
+            };
+            this.$el.html(this.template(context));
+            this.append(this.noteView, this.noteSelector);
+            this.append(this.reqBriefsView, this.reqBriefsSelector);
             return this;
         }
     });

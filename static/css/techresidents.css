@@ -421,8 +421,15 @@ html {
     margin-right: 8px;
 }
 
+.rating-star-label {
+    display: inline-block;
+    width: 50px;
+    text-align: right;
+}
+
 .rating-stars {
     cursor: pointer;
+    display: inline;
 }
 
 .rating-stars > .clear-rating {
@@ -432,7 +439,7 @@ html {
 }
 
 .rating-stars > .clear-rating > i {
-    vertical-align: top;
+    vertical-align: text-bottom;
 }
 
 .rating-stars > .rating-star {
@@ -440,6 +447,7 @@ html {
     height: 16px;
     width: 16px;
     position: relative;
+    vertical-align: text-bottom;
 }
 
 .rating-star-image {

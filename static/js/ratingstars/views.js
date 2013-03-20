@@ -24,6 +24,7 @@ define([
      * Rating Stars View.
      * @constructor
      * @param {Object} options
+     *   label: {String} text label (optional)
      *   model: {Model} model (optional)
      *   attribute: {String} model attribute (optional)
      *   totalStars: {Number} number of stars. Defaults to 5 (optional)
@@ -112,6 +113,7 @@ define([
         },
 
         initialize: function(options) {
+            this.label = options.label ? options.label : '';
             this.model = options.model ? options.model : null;
             this.attribute = options.attribute ? options.attribute : null;
             this.totalStars = options.totalStars ? options.totalStars : 5;
@@ -177,6 +179,7 @@ define([
             }
 
             var context = {
+                label: this.label,
                 stars: starsToRender
             };
             this.$el.html(this.template(context));

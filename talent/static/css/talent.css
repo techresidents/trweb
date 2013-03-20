@@ -265,6 +265,30 @@
     margin-left: 0px;
 }
 
+.ratings-container {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.req-brief-container {
+    margin-left: 20px;
+    margin-bottom: 5px;
+}
+
+.req-brief-vote-container {
+    float: left;
+}
+
+.req-brief-vote-container > a {
+    display: block;
+}
+
+.vote-buttons-container {
+    margin-top: 6px;
+    display: inline-block;
+    vertical-align: top;
+}
+
 .user-actions-container .user-logo {
     margin: 0px auto;
     margin-top: 25px;
