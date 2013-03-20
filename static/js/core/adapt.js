@@ -124,7 +124,10 @@ define(/** @exports core/adapt */[
         sync: function() {
             var adaptedModels = [];
             this.collection.map(function(model) {
-                adapatedModels.push(this._createAdaptedModel(model));
+                var adaptedModel = this._createAdaptedModel(model);
+                if(adaptedModel) {
+                    adaptedModels.push(adaptedModel);
+                }
             }, this);
             this.adaptedCollection.reset(adaptedModels);
         },
@@ -148,13 +151,19 @@ define(/** @exports core/adapt */[
 
         onChange: function(model) {
             var adaptedModel = this.getAdaptedModel(model);
-            adaptedModel.set(this.map(model));
+            if(adaptedModel) {
+                adaptedModel.set(this.map(model));
+            }
         },
 
         _createAdaptedModel: function(model) {
-            var adaptedModel = new this.adaptedCollection.model(this.map(model));
-            adaptedModel.sourceModel = model; 
-            this.modelMap[model.cid] = adaptedModel.cid;
+            var adaptedModel = null;
+            var adaptedModelAttributes = this.map(model);
+            if(adaptedModelAttributes) {
+                adaptedModel = new this.adaptedCollection.model(adaptedModelAttributes);
+                adaptedModel.sourceModel = model; 
+                this.modelMap[model.cid] = adaptedModel.cid;
+            }
             return adaptedModel;
         }
 

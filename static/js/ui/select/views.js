@@ -267,7 +267,6 @@ define([
         }
     });
 
-
     /**
      * Auto Multi Select View.
      * @constructor
@@ -292,12 +291,9 @@ define([
 
             this.template = _.template(options.template);
             this.collection = options.collection;
-            this.autoCollection = new this.collection.constructor();
-            this.auto = options.auto;
+            this.matcher = options.matcher;
             this.inputPlaceholder = options.inputPlaceholder;
-
-            //bind events
-            this.listenTo(this.autoCollection, 'reset', this.onAutoCollectionReset);
+            this.matchCollection = new this.collection.constructor();
 
             //child views
             this.listView = null;
@@ -343,8 +339,12 @@ define([
         },
 
         refresh: function() {
+            var that = this;
             var value = this.input().val();
-            this.auto(value, this.autoCollection);
+            this.matcher.match(value, 8, function(search, results) {
+                that.matchCollection.reset(results);
+                that.updateCollection();
+            });
         },
 
         input: function() {
@@ -355,8 +355,8 @@ define([
             var models = this.collection.where({selected: true});
             var workingCollection = new this.collection.constructor(models);
 
-            this.autoCollection.each(function(model) {
-                if(!workingCollection.where({value: model.value()}).length) {
+            this.matchCollection.each(function(model) {
+                if(!workingCollection.where({value: model.get('value')}).length) {
                     models.push(model);
                 }
             }, this);
@@ -394,10 +394,6 @@ define([
                     model: model
                 });
             }
-        },
-
-        onAutoCollectionReset: function() {
-            this.updateCollection();
         },
 
         onChange: function(e) {

@@ -1,8 +1,10 @@
 define([
     'jquery',
     'underscore',
+    'core/factory',
     'core/view',
     'api/models',
+    'ui/ac/matcher',
     'ui/filter/views',
     'ui/grid/views',
     'ui/paginator/views',
@@ -10,8 +12,10 @@ define([
 ], function(
     $,
     _,
+    factory,
     view,
     api,
+    ac_matcher,
     filter_views,
     grid_views,
     paginator_views,
@@ -141,28 +145,30 @@ define([
         },
 
         requisitionFilter: function() {
-            var auto = function(search, collection) {
-                var query = new api.RequisitionCollection().filterBy({
-                    'title__istartswith': search
-                }).slice(0, 8);
+            var RequisitionQueryFactory = factory.Factory.extend({
+                initialize: function(options) {},
+                create: function(options) {
+                    return new api.RequisitionCollection().filterBy({
+                        'title__istartswith': options.search
+                    });
+                }
+            });
 
-                query.fetch({
-                    success: function() {
-                        collection.reset(query.instance.map(function(model) {
-                            return {
-                                value: model.get_title()
-                            };
-                        }));
-                    }
-                });
-            };
+            var matcher = new ac_matcher.QueryMatcher({
+                queryFactory: new RequisitionQueryFactory(),
+                map: function(model) {
+                    return {
+                        value: model.get_title()
+                    };
+                }
+            });
         
             return {
                 name: 'Requsition',
                 field: 'requisition__title',
                 filterView: new filter_views.AutoSelectFilterView.Factory({
                     inputPlaceholder: 'Requisition title',
-                    auto: auto
+                    matcher: matcher
                 })
             };
         },
