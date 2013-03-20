@@ -1,4 +1,4 @@
-define([
+define(/** @exports core/base */[
     'jquery',
     'underscore'
 ], function($, _) {
@@ -7,10 +7,10 @@ define([
      * Inherit from parent constructor while adding the specified prototypeProperties and staticProperties.
      *
      * @param {function} parent contructor from which to inherit.
-     * @param {Object} prototypeProperties properties to add object prototype
-     * @param {Object} staticProperties properties to add to class (function)
+     * @param {object} prototypeProperties properties to add object prototype
+     * @param {object} staticProperties properties to add to class (function)
      *
-     * @return {function} Constructor to create a new object with the specified
+     * @returns {function} Constructor to create a new object with the specified
      * inheritance chain.
      */
     var inherits = function(parent, prototypeProperties, staticProperties) {
@@ -55,10 +55,10 @@ define([
     /**
      * Propagating extend method intended to be added to a constructor to make
      * inheritance easy. See Base for an example.
-     * @param {Object} prototypeProperties
-     * @param {Object} staticProperties
+     * @param {object} prototypeProperties Prototype properties
+     * @param {object} staticProperties Static properties
      *
-     * @return {function} constructor to object with specified inheritance
+     * @returns {function} constructor to object with specified inheritance
      */
     var extend = function(prototypeProperties, staticProperties) {
 
@@ -76,11 +76,11 @@ define([
      * Get the value of property from object, regardless if
      * it's a property or method.
      *
-     * @param {Object} object
-     * @param {string} property name
-     * @param {Object} optional argument to pass to function if property is function
+     * @param {object} object Object instance
+     * @param {string} property Property name
+     * @param {object} [arg] argument to pass to function if property is function
      *
-     * @return object[property] if object[property] is not a function,
+     * @returns {object}  object[property] if object[property] is not a function,
      *         object[property]() otherwise.
      */
     var getValue = function(object, property, arg) {
@@ -100,6 +100,7 @@ define([
      * Base class with propagating extend method.
      * Constructor will invoke initialize method with
      * all arguments.
+     * @constructor
      */
     var Base = function() {
         this.initialize.apply(this, arguments);
@@ -108,9 +109,6 @@ define([
 
     _.extend(Base.prototype, {
         
-        /**
-         * Initialize method to be overriden in sublcasses.
-         */
         initialize: function() {}
     });
 

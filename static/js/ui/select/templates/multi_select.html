@@ -1,0 +1,10 @@
+<ul class="multi-select-list">
+    <% _.each(collection, function(model) { %>
+    <li class="selection" data-id="<%= model.id %>">
+        <label>
+            <input type="checkbox" <%= model.selected ? 'checked="checked"' : '' %> >
+            <%= model.value %>
+        </label>
+    </li>
+    <% }); %>
+</ul>

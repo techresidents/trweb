@@ -1,4 +1,4 @@
-define([
+define(/** @exports core/command */[
     'jquery',
     'underscore',
     'core/base',
@@ -8,20 +8,20 @@ define([
     /**
      * Command base class.
      * @constructor
-     * 
+     * @classdesc
      * All commands should inherit from this class and override 
      * the execute method. The execute method should receive a 
      * single 'options' argument. Options will be a object literal
      * containing the execution arguments.
-     *
+     * <br><br>
      * All commands must be short lived and should NOT maintain
-     * state. Typically a Command will be registered with facade,
+     * state. Typically a Command will be registered with the facade,
      * and associated with a notification.
-     *
+     * <br><br>
      * The facade will then instantiate the command in response
      * to the associated notification and invoke the command's
      * execute method.
-     *
+     * <br><br>
      * All non-async commands must be return a boolean value
      * from the execute() method indicating success or failure. 
      * Based on this value options.onSuccess or options.onError
@@ -33,7 +33,8 @@ define([
     };
     Command.extend = base.extend;
 
-    _.extend(Command.prototype, {
+    _.extend(Command.prototype,
+    /** @lends module:core/command~Command.prototype */ {
         
         /**
          * Overriden by subclass.
@@ -42,13 +43,12 @@ define([
         
         /**
          * Overriden by sublcass.
-         * @param {Object} options
-         *   {function} onSuccess optional callback
-         *   {function} onError optional callback
-         *   {Object} context optional callback context
-         *
-         *   Note that all callback will be invoked with
-         *   the sample options argument as the sole parameter.
+         * @param {Object} options Options object
+         * @param {function} [options.onSuccess] Success callback which
+         *   will be invoked with options object as sole parameter.
+         * @param {function} [options.onError] Error callback which
+         *   will be invoked with options object as sole parameter.
+         * @param {object} [options.context] Callback context
          */
         execute: function() {},
         
@@ -74,35 +74,38 @@ define([
     /**
      * Async command base class.
      * @constructor
-     *
+     * @augments module:core/command~Command
+     * @classdesc
      * This class should be subclassed by async commands.
-     *
+     * <br><br>
      * Convenience onSuccess and onError methods are provided
      * which are intended to be passed to the async facility
      * performing the operaion. This is typically an Ajax 
      * request through a library which supports invoking
      * a success or error callback.
-     *
+     * <br><br>
      * Simply pass this.onSuccess and this.onError to your
      * Ajax library and these methods will take care of
      * invoking the user specified callbacks in options.onSuccess
      * and options.onError (if provided).
-     *
+     * <br><br>
      * Since the arguments passed to this.onSuccess and this.onError
      * by the Ajax library are dynamic, this class provides 
      * asyncCallbackArgs, asyncSuccessCallbackArgs, and asyncErrorCallbackArgs
      * properties which should be overriden with the argument names
      * so that arguments can in turn be passed meaningfully to
      * the user specified callbacks.
-     *
+     * <br><br>
      * Note that the options.onSuccess and options.onError will be invoked
      * with the following two arguments:
-     *
+     * <br>
      * 1) {Object} options (same options passed into execute method())
+     * <br>
      * 2) {Object} response object containing boolean status and
      *             arguments named in the callback args arrays.
      */
-    var AsyncCommand = Command.extend({
+    var AsyncCommand = Command.extend(
+    /** @lends module:core/command~AsyncCommand.prototype */{
 
         /**
          * Overriden by sublcass.
@@ -193,14 +196,16 @@ define([
     /**
      * Macro Command
      * @constructor
+     * @augments module:core/command~Command
      */
-    var MacroCommand = Command.extend({
+    var MacroCommand = Command.extend(
+    /** @lends module:core/command~MacroCommand.prototype */{
 
         subCommands: [],
 
         /**
          * Add sub command.
-         * @param {function} command sub command constructor
+         * @param {constructor} command Sub command constructor
          */
         addSubCommand: function(command) {
             this.subCommands.push(command);

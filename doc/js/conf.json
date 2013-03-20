@@ -1,0 +1,21 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "source": {
+        "include": ["../../static/js/core", "../../static/js/api"],
+        "includePattern": ".+\\.js(doc)?$",
+        "excludePattern": "3ps\/"
+    },
+    "plugins": [],
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    },
+    "opts": {
+        "destination": "./html/",
+        "lenient": true,
+        "recurse": true
+    },
+    "jsVersion": 180
+}

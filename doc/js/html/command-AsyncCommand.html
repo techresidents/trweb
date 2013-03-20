@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: AsyncCommand</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Class: AsyncCommand</h1>
+    
+    
+
+
+
+<section>
+    
+<header>
+    <h2>
+        <span class="ancestors"><a href="command.html">core/command</a>~</span>
+    
+    AsyncCommand
+    </h2>
+    
+        <div class="class-description">This class should be subclassed by async commands.
+<br><br>
+Convenience onSuccess and onError methods are provided
+which are intended to be passed to the async facility
+performing the operaion. This is typically an Ajax 
+request through a library which supports invoking
+a success or error callback.
+<br><br>
+Simply pass this.onSuccess and this.onError to your
+Ajax library and these methods will take care of
+invoking the user specified callbacks in options.onSuccess
+and options.onError (if provided).
+<br><br>
+Since the arguments passed to this.onSuccess and this.onError
+by the Ajax library are dynamic, this class provides 
+asyncCallbackArgs, asyncSuccessCallbackArgs, and asyncErrorCallbackArgs
+properties which should be overriden with the argument names
+so that arguments can in turn be passed meaningfully to
+the user specified callbacks.
+<br><br>
+Note that the options.onSuccess and options.onError will be invoked
+with the following two arguments:
+<br>
+1) {Object} options (same options passed into execute method())
+<br>
+2) {Object} response object containing boolean status and
+            arguments named in the callback args arrays.</div>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt>
+    <h4 class="name" id="AsyncCommand"><span class="type-signature"></span>new AsyncCommand<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Async command base class.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        command.js, line 107
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+    
+    
+        <h3 class="subsection-title">Extends</h3>
+        
+        <ul>
+            <li><a href="command-Command.html">module:core/command~Command</a></li>
+        </ul>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Members</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="asyncCallbackArgs"><span class="type-signature"></span>asyncCallbackArgs<span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Overriden by sublcass.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        command.js, line 118
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="asyncErrorCallbackArgs"><span class="type-signature"></span>asyncErrorCallbackArgs<span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Overriden by sublcass if asyncCallbackArgs not provided.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        command.js, line 128
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="asyncSuccessCallbackArgs"><span class="type-signature"></span>asyncSuccessCallbackArgs<span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Overriden by sublcass if asyncCallbackArgs not provided.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        command.js, line 123
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="execute"><span class="type-signature"></span>execute<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Overriden by sublcass.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        command.js, line 113
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="initialize"><span class="type-signature"></span>initialize<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Overriden by subclass.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="command-Command.html#initialize">module:core/command~Command#initialize</a>
+    </li></dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        command.js, line 42
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="adapt.html">core/adapt</a></li><li><a href="array.html">core/array</a></li><li><a href="base.html">core/base</a></li><li><a href="command.html">core/command</a></li><li><a href="date.html">core/date</a></li><li><a href="facade.html">core/facade</a></li><li><a href="factory.html">core/factory</a></li><li><a href="format.html">core/format</a></li><li><a href="iter.html">core/iter</a></li><li><a href="mediator.html">core/mediator</a></li><li><a href="notification.html">core/notification</a></li><li><a href="proxy.html">core/proxy</a></li><li><a href="view.html">core/view</a></li></ul><h3>Classes</h3><ul><li><a href="adapt-CollectionAdapter.html">CollectionAdapter</a></li><li><a href="adapt-ModelCollectionAdapter.html">ModelCollectionAdapter</a></li><li><a href="base-Base.html">Base</a></li><li><a href="command-AsyncCommand.html">AsyncCommand</a></li><li><a href="command-Command.html">Command</a></li><li><a href="command-MacroCommand.html">MacroCommand</a></li><li><a href="date-Date.html">Date</a></li><li><a href="date-DateRange.html">DateRange</a></li><li><a href="date-DateRange.Iterator.html">Iterator</a></li><li><a href="date-DateTime.html">DateTime</a></li><li><a href="date-Interval.html">Interval</a></li><li><a href="facade-Facade.html">Facade</a></li><li><a href="factory-Factory.html">Factory</a></li><li><a href="iter-Iterator.html">Iterator</a></li><li><a href="mediator-Mediator.html">Mediator</a></li><li><a href="notification-NotificationBus.html">NotificationBus</a></li><li><a href="proxy-CollectionProxy.html">CollectionProxy</a></li><li><a href="proxy-ModelProxy.html">ModelProxy</a></li><li><a href="proxy-Proxy.html">Proxy</a></li><li><a href="view-View.html">View</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Mar 19 2013 17:35:07 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>

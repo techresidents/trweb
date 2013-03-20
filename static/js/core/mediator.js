@@ -1,4 +1,4 @@
-define([
+define(/** @exports core/mediator */[
     'jquery',
     'underscore',
     'core/base',
@@ -18,7 +18,8 @@ define([
 
     Mediator.extend = base.extend;
 
-    _.extend(Mediator.prototype, {
+    _.extend(Mediator.prototype, 
+    /** @lends module:core/mediator~Mediator.prototype */ {
         
         /**
          * Overriden in subclass.
@@ -36,6 +37,12 @@ define([
          */
         notifications: [],
 
+
+        /**
+         * Register notification handlers.
+         * @param {array} notifications Array of notification tuples,
+         *  [ ['NOTIFICATION_NAME', 'handlerName'] ]
+         */
         registerNotifications: function(notifications) {
             var index;
 
@@ -57,6 +64,11 @@ define([
             }
         },
 
+        /**
+         * Unregister notification handlers.
+         * @param {array} notifications Array of notification tuples,
+         *  [ ['NOTIFICATION_NAME', 'handlerName'] ]
+         */
         unregisterNotifications: function(notifications) {
             var index;
 

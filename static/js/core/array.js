@@ -1,11 +1,11 @@
-define([
+define(/** @exports core/array */[
     'core/base'
 ], function(
     base) {
 
     /**
      * Default compare function for array.
-     * @return 1 if a > b,
+     * @returns 1 if a > b,
      *         0 if a === b,
      *         -1 if a < b 
      */
@@ -15,11 +15,12 @@ define([
 
     /**
      * Binary search array for target using compareFunction.
-     * @param {array} array
-     * @param {Object} target
-     * @param {function} compareFunction conforming to defaultCompare.
+     * @param {array} array Array to search.
+     * @param {Object} target Value to search for.
+     * @param {function} [compareFunction={@link module:core/array~defaultCompare}]
+     *   Compare function conforming to defaultCompare.
      *
-     * @return {number} index of target if found,
+     * @returns {number} index of target if found,
      *                  insertion index as (-index -1) otherwise
      */
     var binarySearch = function(array, target, compareFunction) {
@@ -48,9 +49,10 @@ define([
      * Binary insert target into array using compareFunction.
      * @param {array} array
      * @param {Object} target to insert
-     * @param {function} compareFunction conforming to defaultCompare.
+     * @param {function} [compareFunction={@link module:core/array~defaultCompare}]
+     *   Compare function conforming to defaultCompare.
      *
-     * @return {number} insertion index
+     * @returns {number} insertion index
      */
     var binaryInsert = function(array, target, compareFunction) {
         compareFunction = compareFunction || defaultCompare;

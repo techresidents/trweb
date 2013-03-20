@@ -42,9 +42,7 @@ define([
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-                //var collection = new api.ApplicationCollection();
-                this.collection = new api.LocationCollection();
-                //this.collection.fetch();
+                this.collection = new api.ApplicationCollection();
                 if(notification.options.query) {
                     this.query = api_query.ApiQuery.parse(
                             this.collection,
