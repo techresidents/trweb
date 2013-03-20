@@ -487,7 +487,8 @@ define([
 
         SaveStatusEnum: {
             PENDING : 'Saving note...',
-            SAVED : 'Saved.'
+            SAVED : 'Saved.',
+            FAILED : 'Save failed. Please refresh the page and try again.'
         },
 
         /**
@@ -502,7 +503,7 @@ define([
         _scheduleSave: function(secs) {
             var delay = secs ? secs*1000 : 5000; // 5 sec default
             this.saveStatus = this.SaveStatusEnum.PENDING;
-            this.updateSaveStatus();
+            this.updateSaveStatusUI();
             // clear any existing scheduled saves
             clearTimeout(this.saveTimeout);
             // Wrap the save function callback using JQuery's proxy() since
@@ -515,9 +516,31 @@ define([
          * @private
          */
         _save: function() {
-            // TODO this.model.save();
-            this.saveStatus = this.SaveStatusEnum.SAVED;
-            this.updateSaveStatus();
+            var that = this;
+            var attributes = {
+                employee_id: this.model.get_employee_id(),
+                candidate_id: this.model.get_candidate_id(),
+                tenant_id: this.model.get_tenant_id(),
+                note: this.$(this.textareaSelector).val()
+            };
+            var isValid = this.model.validate(attributes);
+            if (isValid === undefined) {
+                // undefined implies the model attributes are valid
+                this.model.save(attributes, {
+                    wait: true,
+                    success: function(model) {
+                        that.saveStatus = that.SaveStatusEnum.SAVED;
+                        that.updateSaveStatusUI();
+                    },
+                    error: function(model) {
+                        that.saveStatus = that.SaveStatusEnum.FAILED;
+                        that.updateSaveStatusUI();
+                    }
+                });
+            } else {
+                this.saveStatus = this.SaveStatusEnum.FAILED;
+                this.updateSaveStatusUI();
+            }
         },
 
         initialize: function(options) {
@@ -527,7 +550,7 @@ define([
             this.saveTimeout = null;
             this.saveStatus = null;
             // We enable this view for editing once we know the
-            // existing note has loaded, if it exists. This prevents
+            // existing note model has loaded, if it exists. This prevents
             // us from creating a new note and overwriting an existing note.
             this.template = _.template(note_template);
 
@@ -542,7 +565,7 @@ define([
                 employee_id: this.employeeModel.id,
                 tenant_id: this.employeeModel.get_tenant_id()
             });
-            this.noteQuery.fetch();
+            this.noteQuery.fetch(); // invokes 'reset' on notes collection
         },
 
         destroy: function() {
@@ -590,7 +613,7 @@ define([
         /**
          * Update the save status in the UI
          */
-        updateSaveStatus: function() {
+        updateSaveStatusUI: function() {
             this.$(this.saveStatusSelector).text(this.saveStatus);
         }
     });
