@@ -700,28 +700,42 @@ define([
      */
     var ReqBriefView = view.View.extend({
 
-        ratingStarsSelector: '.rating-stars-container',
+        ratingCommunicationSelector: '.rating-communication-container',
+        ratingTechnicalSelector: '.rating-technical-container',
+        ratingCultureSelector: '.rating-culture-container',
         voteButtonsSelector: '.vote-buttons-container',
 
         childViews: function() {
             return [
                 this.voteButtonsView,
-                this.ratingStarsView
+                this.ratingCommunicationView,
+                this.ratingTechnicalView,
+                this.ratingCultureView
             ];
         },
 
-        initialize: function() {
+        initialize: function(options) {
             this.template = _.template(reqbrief_template);
 
             //child views
             this.voteButtonsView = null;
-            this.ratingStarsView = null;
+            this.ratingCommunicationView = null;
+            this.ratingTechnicalView = null;
+            this.ratingCultureView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
             this.voteButtonsView = new VoteButtonsView();
-            this.ratingStarsView = new ratingstars_views.RatingStarsView({});
+            this.ratingCommunicationView = new ratingstars_views.RatingStarsView({
+                label: 'Comm'
+            });
+            this.ratingTechnicalView = new ratingstars_views.RatingStarsView({
+                label: 'Tech'
+            });
+            this.ratingCultureView = new ratingstars_views.RatingStarsView({
+                label: 'Fit '
+            });
         },
 
         render: function() {
@@ -729,7 +743,9 @@ define([
             };
             this.$el.html(this.template(context));
             this.assign(this.voteButtonsView, this.voteButtonsSelector);
-            this.assign(this.ratingStarsView, this.ratingStarsSelector);
+            this.assign(this.ratingCommunicationView, this.ratingCommunicationSelector);
+            this.assign(this.ratingTechnicalView, this.ratingTechnicalSelector);
+            this.assign(this.ratingCultureView, this.ratingCultureSelector);
             return this;
         }
     });
@@ -769,13 +785,16 @@ define([
                 candidateModel: this.candidateModel,
                 employeeModel: this.employeeModel
             });
-            this.reqBriefsView = new ReqBriefView();
+            this.reqBriefsView = new ReqBriefView({});
         },
 
         render: function() {
-            this.$el.html(this.template());
-            this.assign(this.noteView, this.noteSelector);
-            this.assign(this.reqBriefsView, this.reqBriefsSelector);
+            var context = {
+                candidateModel: this.candidateModel
+            };
+            this.$el.html(this.template(context));
+            this.append(this.noteView, this.noteSelector);
+            this.append(this.reqBriefsView, this.reqBriefsSelector);
             return this;
         }
     });
