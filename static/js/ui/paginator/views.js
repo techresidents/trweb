@@ -4,7 +4,7 @@ define([
     'core/base',
     'core/view',
     'api/query',
-    'text!paginator/templates/paginator.html'
+    'text!ui/paginator/templates/paginator.html'
 ], function(
     $,
     _,

@@ -6,15 +6,15 @@ define([
     'core/factory',
     'core/view',
     'api/query',
-    'date/views',
-    'drop/views',
-    'filter/models',
-    'select/models',
-    'select/views',
-    'text!filter/templates/filters.html',
-    'text!filter/templates/filter.html',
-    'text!filter/templates/filter_factory.html',
-    'text!filter/templates/filter_factory_drop.html'
+    'ui/date/views',
+    'ui/drop/views',
+    'ui/filter/models',
+    'ui/select/models',
+    'ui/select/views',
+    'text!ui/filter/templates/filters.html',
+    'text!ui/filter/templates/filter.html',
+    'text!ui/filter/templates/filter_factory.html',
+    'text!ui/filter/templates/filter_factory_drop.html'
 
 ], function(
     $,

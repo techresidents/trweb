@@ -6,14 +6,14 @@ define(/** @exports grid/views */[
     'core/factory',
     'core/view',
     'api/query',
-    'drop/views',
-    'menu/models',
-    'menu/views',
-    'text!grid/templates/grid.html',
-    'text!grid/templates/grid_header_cell.html',
-    'text!grid/templates/grid_cell.html',
-    'text!grid/templates/grid_link_cell.html',
-    'text!grid/templates/grid_action_cell.html'
+    'ui/drop/views',
+    'ui/menu/models',
+    'ui/menu/views',
+    'text!ui/grid/templates/grid.html',
+    'text!ui/grid/templates/grid_header_cell.html',
+    'text!ui/grid/templates/grid_cell.html',
+    'text!ui/grid/templates/grid_link_cell.html',
+    'text!ui/grid/templates/grid_action_cell.html'
 ], function(
     $,
     _,

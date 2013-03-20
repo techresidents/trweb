@@ -5,8 +5,8 @@ define([
     'core/factory',
     'core/view',
     'events/type',
-    'text!drop/templates/drop.html',
-    'text!drop/templates/drop_menu.html'
+    'text!ui/drop/templates/drop.html',
+    'text!ui/drop/templates/drop_menu.html'
 ], function(
     $,
     _,

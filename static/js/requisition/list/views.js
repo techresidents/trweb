@@ -3,8 +3,8 @@ define([
     'underscore',
     'core/format',
     'core/view',
-    'grid/views',
-    'paginator/views',
+    'ui/grid/views',
+    'ui/paginator/views',
     'api/loader',
     'text!requisition/list/templates/list.html',
     'text!requisition/list/templates/confirm_delete_modal.html'

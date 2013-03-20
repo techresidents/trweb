@@ -3,9 +3,9 @@ define([
     'underscore',
     'core/view',
     'api/models',
-    'filter/views',
-    'grid/views',
-    'paginator/views',
+    'ui/filter/views',
+    'ui/grid/views',
+    'ui/paginator/views',
     'text!talent/tracker/templates/tracker.html'
 ], function(
     $,

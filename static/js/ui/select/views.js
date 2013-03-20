@@ -3,12 +3,12 @@ define([
     'underscore',
     'core/view',
     'events/type',
-    'select/models',
-    'template/views',
-    'text!select/templates/select.html',
-    'text!select/templates/multi_select.html',
-    'text!select/templates/auto_multi_select.html',
-    'text!select/templates/auto_multi_select_list.html'
+    'ui/select/models',
+    'ui/template/views',
+    'text!ui/select/templates/select.html',
+    'text!ui/select/templates/multi_select.html',
+    'text!ui/select/templates/auto_multi_select.html',
+    'text!ui/select/templates/auto_multi_select_list.html'
 ], function(
     $,
     _,

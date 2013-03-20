@@ -6,10 +6,10 @@ define([
     'core/factory',
     'core/iter',
     'core/view',
-    'drop/views',
-    'text!date/templates/date_month.html',
-    'text!date/templates/date_picker.html',
-    'text!date/templates/date_range.html'
+    'ui/drop/views',
+    'text!ui/date/templates/date_month.html',
+    'text!ui/date/templates/date_picker.html',
+    'text!ui/date/templates/date_range.html'
 ], function(
     $,
     _,
