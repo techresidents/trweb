@@ -116,8 +116,16 @@ html {
     padding-top: 45px;
 }
 
+.normal-font {
+    font-weight: normal;
+}
+
 .nowrap {
     white-space: nowrap;
+}
+
+.orange-text {
+    color: #EA8F00;
 }
 
 .read-horizontal-form .read-form-group {
@@ -174,7 +182,7 @@ html {
 
 
 .grid-table  {
-    background-color: transparent
+    background-color: transparent;
     border-collapse: collapse;
     border-spacing: 0;
     width: 100%;

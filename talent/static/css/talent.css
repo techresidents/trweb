@@ -257,10 +257,6 @@
     background-image: url("../img/person-speaking.png");
 }
 
-.user-ID {
-    padding-left: 130px;
-}
-
 .no-span-margin {
     margin-left: 0px;
 }
@@ -280,19 +276,13 @@
 
 .app-brief-vote-container > a {
     display: block;
+    width: 115px;
 }
 
 .vote-buttons-container {
     margin-top: 6px;
     display: inline-block;
     vertical-align: top;
-}
-
-.user-actions-container .user-logo {
-    margin: 0px auto;
-    margin-top: 25px;
-    width: 120px;
-    height: 90px;
 }
 
 .user-actions-container > * {
@@ -321,14 +311,14 @@
     min-height: 90px;
     border-color: rgba(234,143,0,0.5);
     background-color: rgba(234, 143, 0, 0.05);
+    margin-right: 20px;
 }
 
-.user-position-prefs-well-text {
-    line-height: 90px;
+.user-position-prefs-position-heading {
     font-size: 14px;
     font-style: italic;
     font-weight: bold;
-    text-align: center;
+    margin-bottom: 5px;
 }
 
 .user-section-border {
