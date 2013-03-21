@@ -145,17 +145,20 @@ define([
         },
 
         requisitionFilter: function() {
-            var RequisitionQueryFactory = factory.Factory.extend({
-                initialize: function(options) {},
-                create: function(options) {
-                    return new api.RequisitionCollection().filterBy({
-                        'title__istartswith': options.search
-                    });
-                }
-            });
+            var createQuery = function(options) {
+                /*
+                return new api.RequisitionCollection().filterBy({
+                    'title__istartswith': options.search
+                });
+                */
+                return new api.RequisitionCollection().query();
+            };
 
             var matcher = new ac_matcher.QueryMatcher({
-                queryFactory: new RequisitionQueryFactory(),
+                queryFactory: new factory.FunctionFactory(createQuery),
+                stringify: function(model) {
+                    return model.get_title();
+                },
                 map: function(model) {
                     return {
                         value: model.get_title()

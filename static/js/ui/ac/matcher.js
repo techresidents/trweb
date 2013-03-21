@@ -9,15 +9,6 @@ define(/** @exports ui/ac/matcher */[
     base,
     core_string) {
 
-
-   var stringify = function(value) {
-       var result = value;
-       if(!_.isString(value)) {
-           result = String(value);
-       }
-       return result;
-   };
-
     var MatcherBase = base.Base.extend(
     /** @lends module:ui/ac/matcher~MatcherBase.prototype */ {
         
@@ -29,7 +20,7 @@ define(/** @exports ui/ac/matcher */[
          */
         initialize: function(options) {
             options = _.extend({
-                stringify: stringify
+                stringify: core_string.stringify
             }, options);
             this.setStringify(options.stringify);
         },
@@ -43,6 +34,27 @@ define(/** @exports ui/ac/matcher */[
         },
         
         match: function(search, maxResults, matchHandler) {
+        },
+
+        _getPrefixMatches: function(items, token, maxResults) {
+            var results = [];
+            var escapedToken = core_string.regExpEscape(token);
+            var regex = new RegExp('(^|\\W+)' + escapedToken, 'i');
+
+            _.each(items, function(item) {
+                if(results.length < maxResults) {
+                    var string = this.stringify(item);
+                    if(string.match(regex)) {
+                        results.push(item);
+                    }
+                }
+            }, this);
+
+            results = _.sortBy(results, function(item) {
+                return this.stringify(item);
+            }, this);
+
+            return results;
         }
     });
 
@@ -70,27 +82,11 @@ define(/** @exports ui/ac/matcher */[
         },
 
         match: function(search, maxResults, matchHandler) {
-            var matches = this._getPrefixMatches(search, maxResults);
+            var matches = this._getPrefixMatches(
+                    this.collection.models,
+                    search,
+                    maxResults);
             matchHandler(search, matches);
-        },
-
-        _getPrefixMatches: function(token, maxResults) {
-            var results = [];
-            var escapedToken = core_string.regExpEscape(token);
-            var regex = new RegExp('(^|\\W+)' + escapedToken, 'i');
-
-            this.collection.each(function(model) {
-                if(results.length < maxResults) {
-                    var string = this.stringify(model);
-                    if(string.match(regex)) {
-                        results.push(model);
-                    }
-                }
-            }, this);
-
-            results.sort();
-
-            return results;
         }
     });
     
@@ -129,22 +125,28 @@ define(/** @exports ui/ac/matcher */[
         match: function(search, maxResults, matchHandler) {
             var that = this;
             var query = this.queryFactory.create({
-                search: search
-            }).slice(0, maxResults);
+                search: search,
+                maxResults: maxResults
+            });
 
             query.fetch({
                 success: function() {
-                    that.onQuerySuccess(query, matchHandler);
+                    that.onQuerySuccess(search, maxResults, matchHandler, query);
                 }
             });
         },
 
-        onQuerySuccess: function(query, matchHandler) {
+        onQuerySuccess: function(search, maxResults, matchHandler, query) {
             var collection = query.instance;
-            var matches = collection.models;
+            var matches = this._getPrefixMatches(
+                    collection.models,
+                    search,
+                    maxResults);
+
             if(this.map) {
-                matches = collection.map(this.map);
+                matches = _.map(matches, this.map);
             }
+
             matchHandler(query, matches);
         }
     });

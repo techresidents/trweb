@@ -9,7 +9,7 @@ define(/** @exports core/factory */[
     var Factory = base.Base.extend(
     /** @lends module:core/factory~Factory.prototype */{
         /**
-         * Factory class for creating arbitrary classes.
+         * Factory class for creating new objects.
          * @constructs
          * @augments module:core/base~Base
          * @param {constructor|object} ctorOrOptions 
@@ -69,6 +69,43 @@ define(/** @exports core/factory */[
             return result;
         }
     });
+    
+    var FunctionFactory = Factory.extend(
+    /** @lends module:core/factory~FunctionFactory.prototype */ {
+
+        /**
+         * Factory to create new objects from a function.
+         * @constructs
+         * @augments module:core/factory~Factory
+         * @param {function} createFunction Function that takes an 
+         *  options object literal and returns a new object.
+         * @example
+         * var createQuery = function(options) {
+         *   return new api.UserCollection().filterBy({
+         *     'first_name__istartswith': options.search 
+         *   });
+         * };
+         *
+         * var queryFactory = new FunctionFactory(createQuery);
+         * var query = queryFactory.create({
+         *   search: 'Jeff'
+         * });
+         *
+         */
+        initialize: function(createFunction) {
+            this.createFunction = createFunction;
+        },
+
+        /**
+         * Create new instance.
+         * @param {object} [options] Options object literal to pass
+         *  to the create function.
+         * @returns {object} New object.
+         */
+        create: function(options) {
+            return this.createFunction(options);
+        }
+    });
 
 
     /**
@@ -87,6 +124,7 @@ define(/** @exports core/factory */[
 
     return {
         Factory: Factory,
+        FunctionFactory: FunctionFactory,
         buildFactory: buildFactory
     };
 });
