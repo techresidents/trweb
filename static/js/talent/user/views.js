@@ -626,8 +626,8 @@ define([
      * Application Vote Button View.
      * @constructor
      * @param {Object} options
-     *   candidateModel: {User} (required)
-     *   employeeModel: {User} (required)
+     *    model: {Application} (required)
+     *    employeeModel: {User} (required)
      */
     var VoteButtonsView = view.View.extend({
 
@@ -638,49 +638,63 @@ define([
             'click button:not([class="active"])': 'onClick'
         },
 
-        /**
-         * Save
-         * @param e
-         * @private
-         */
-        _save: function(e) {
-            var voteValue = null;
-            // Determine which button is set
-            var target = this.$(e.target);
-            if (target.hasClass('active') && target.hasClass('yes-vote')) {
-                voteValue = true;
-            }
-            else if (target.hasClass('active') && target.hasClass('no-vote')) {
-                voteValue = false;
-            }
-            // TODO this.model.save(voteValue)
-        },
-
-        initialize: function() {
-            // TODO load model and toggle vote button
-            this.model = null;
+        initialize: function(options) {
+            this.model = options.model;
+            this.employeeModel = options.employeeModel;
+            this.voteModel = null;
             this.template = _.template(vote_buttons_template);
+
+            // load application votes
+            this.appVotesCollection = this.model.get_application_votes();
+            this.listenTo(this.appVotesCollection, 'reset', this.onReset);
+
+            // Since we retrieved all application votes on the application, we
+            // need to filter the collection down to just this employee's vote
+            this.appVoteQuery = this.appVotesCollection.filterBy({
+                user_id: this.employeeModel.id
+            });
+            this.appVoteQuery.fetch(); // invokes 'reset' on collection
         },
 
         render: function() {
-            this.$el.html(this.template());
+            var context = {
+                toggled: this.voteModel ? this.voteModel.get_yes() : null
+            };
+            this.$el.html(this.template(context));
             return this;
         },
 
+        onReset: function() {
+            // Load Score if it exists or create new one
+            if (this.appVotesCollection.length) {
+                this.voteModel = this.appVotesCollection.first();
+            } else {
+                this.voteModel = new api.ApplicationVote({
+                    tenant_id: this.employeeModel.get_tenant_id(),
+                    user_id: this.employeeModel.id,
+                    application_id: this.model.id,
+                    yes: null
+                });
+            }
+            // Display the vote
+            this.render();
+        },
+
         onClick: function(e) {
-            this.select(e);
-            this.addButtonColor(e);
-            this._save(e);
+            var currentTarget = this.$(e.currentTarget);
+            this.select(currentTarget);
+            this.addButtonColor(currentTarget);
+            this._save(this._determineVoteValue(currentTarget));
         },
 
         onUnclick: function(e) {
-            this.deselect(e);
-            this._save(e);
+            var currentTarget = this.$(e.currentTarget);
+            this.deselect(currentTarget, e);
+            this._save(this._determineVoteValue(currentTarget));
         },
 
-        addButtonColor: function(e) {
+        addButtonColor: function(target) {
             // Only set button color if button wasn't already active
-            var target = this.$(e.target);
             if (target.hasClass('yes-vote')) {
                 // Add green color to Yes button
                 this.$(this.buttonGroupSelector).removeClass('btn-danger');
@@ -693,19 +707,18 @@ define([
             }
         },
 
-        select: function(e) {
+        select: function(target) {
             // Append the class 'active' to the element so we know when
             // saving which button is toggled.  If we didn't do this, then
             // bootstrap would add this class after our handlers finished.
             // Doing this will hopefully prevent any state-related bugs.
-            var target = this.$(e.target);
             if (!target.hasClass('active')) {
                 target.addClass('active');
             }
         },
 
-        deselect: function(e) {
-            var target = this.$(e.target);
+        deselect: function(target, e) {
+            console.log(target);
             if (target.hasClass('active')) {
                 // Stop event propogation to prevent bootstrap from
                 // adding the class 'active' to the button downstream.
@@ -715,6 +728,41 @@ define([
                 // Deselect button
                 target.removeClass('active');
             }
+        },
+
+        _determineVoteValue: function(target) {
+            // Determine which button is set
+            var voteValue = null; // null is a valid vote state
+            if (target.hasClass('active') && target.hasClass('yes-vote')) {
+                voteValue = true;
+            }
+            else if (target.hasClass('active') && target.hasClass('no-vote')) {
+                voteValue = false;
+            }
+            return voteValue;
+        },
+
+        /**
+         * Save
+         * @param e
+         * @private
+         */
+        _save: function(vote) {
+            attributes = {
+                tenant_id: this.voteModel.get_tenant_id(),
+                user_id: this.voteModel.get_user_id(),
+                application_id: this.voteModel.get_application_id(),
+                yes: vote
+            };
+            this.voteModel.save(attributes, {
+                wait: true,
+                success: function(model) {
+                    console.log('save success');
+                },
+                error: function(model) {
+                    console.log('save error');
+                }
+            });
         }
     });
 
@@ -773,7 +821,10 @@ define([
         },
 
         initChildViews: function() {
-            this.voteButtonsView = new VoteButtonsView();
+            this.voteButtonsView = new VoteButtonsView({
+                model: this.model,
+                employeeModel: this.employeeModel
+            });
             this.ratingCommunicationView = new ratingstars_views.RatingStarsView({
                 label: 'Comm'
             });
@@ -786,6 +837,7 @@ define([
         },
 
         render: function() {
+            console.log('appBriefRender');
             var context = {
                 model: this.model.toJSON()
             };
@@ -812,6 +864,7 @@ define([
         },
 
         onReset: function() {
+            console.log('appBriefReset');
             // Load Score if it exists or create new one
             if (this.appScoresCollection.length) {
                 this.scoreModel = this.appScoresCollection.first();
