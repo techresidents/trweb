@@ -856,10 +856,10 @@ define([
                 );
             }
 
-            this.assign(this.voteButtonsView, this.voteButtonsSelector);
-            this.assign(this.ratingCommunicationView, this.ratingCommunicationSelector);
-            this.assign(this.ratingTechnicalView, this.ratingTechnicalSelector);
-            this.assign(this.ratingCultureView, this.ratingCultureSelector);
+            this.append(this.voteButtonsView, this.voteButtonsSelector);
+            this.append(this.ratingCommunicationView, this.ratingCommunicationSelector);
+            this.append(this.ratingTechnicalView, this.ratingTechnicalSelector);
+            this.append(this.ratingCultureView, this.ratingCultureSelector);
             return this;
         },
 
