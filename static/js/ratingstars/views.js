@@ -28,10 +28,6 @@ define([
      *   model: {Model} model (optional)
      *   attribute: {String} model attribute (optional)
      *   totalStars: {Number} number of stars. Defaults to 5 (optional)
-     *   rating: {Number} set the star rating. Defaults to 0 (optional)
-     *   autosave: {Boolean} Pass True to automatically save rating changes.
-     *      Requires you to specify the 'model' and 'attribute' options.
-     *      Defaults to False.
      */
     var RatingStarsView = view.View.extend({
 
@@ -55,27 +51,19 @@ define([
                 label: '',
                 model: null,
                 attribute: null,
-                totalStars: 5,
-                autosave: false
+                totalStars: 5
             }, options);
 
             this.label = options.label;
             this.model = options.model;
             this.attribute = options.attribute;
             this.totalStars = options.totalStars;
-            this.autosave = options.autosave;
             this.template = _.template(ratingstars_template);
 
             // Create a model if not passed in
             if (!this.model) {
                 this.model = new Backbone.Model({rating: null});
                 this.attribute = 'rating';
-            }
-
-            // Set initial rating
-            if (options.rating && options.rating <= this.totalStars) {
-                this.setRating(options.rating);
-            } else {
                 this.setRating(0);
             }
 
@@ -134,7 +122,6 @@ define([
         },
 
         onChange: function() {
-            this._save();
             this.render();
         },
 
@@ -210,20 +197,6 @@ define([
                 }
             }
             return starIndex;
-        },
-
-        /**
-         * Save rating
-         * @private
-         */
-        _save: function() {
-            if (this.autosave) {
-                this.model.save();
-            } else {
-                this.triggerEvent(EVENTS.RATING_CHANGED, {
-                    rating: this.getRating()
-                });
-            }
         }
     });
 
