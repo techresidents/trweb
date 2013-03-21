@@ -280,7 +280,7 @@ define([
             
             var view = new select_views.AutoMultiSelectView({
                 collection: this.selectionCollection,
-                auto: options.auto,
+                matcher: options.matcher,
                 inputPlaceholder: options.inputPlaceholder || 'search'
             });
             

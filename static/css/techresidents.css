@@ -322,8 +322,23 @@ html {
     overflow: hidden;
 }
 
-.select, .multi-select ul {
+.select ul, .multi-select ul {
     list-style: none;
+    margin: 0px;
+}
+
+.select li, .multi-select li {
+    font-weight: normal;
+    line-height: 20px;
+    padding: 3px 15px;
+}
+
+.multi-select li label {
+    margin: 0px;
+}
+
+.select li.highlighted {
+    background-color: #EEEEEE;
 }
 
 .auto-multi-select ul {

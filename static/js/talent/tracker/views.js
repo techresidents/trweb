@@ -1,8 +1,11 @@
 define([
     'jquery',
     'underscore',
+    'core/factory',
     'core/view',
     'api/models',
+    'ui/ac/matcher',
+    'ui/ac/views',
     'ui/filter/views',
     'ui/grid/views',
     'ui/paginator/views',
@@ -10,8 +13,11 @@ define([
 ], function(
     $,
     _,
+    factory,
     view,
     api,
+    ac_matcher,
+    ac_views,
     filter_views,
     grid_views,
     paginator_views,
@@ -141,28 +147,31 @@ define([
         },
 
         requisitionFilter: function() {
-            var auto = function(search, collection) {
-                var query = new api.RequisitionCollection().filterBy({
-                    'title__istartswith': search
-                }).slice(0, 8);
-
-                query.fetch({
-                    success: function() {
-                        collection.reset(query.instance.map(function(model) {
-                            return {
-                                value: model.get_title()
-                            };
-                        }));
-                    }
+            var createQuery = function(options) {
+                return new api.RequisitionCollection().filterBy({
+                    'title__istartswith': options.search
                 });
+                //return new api.RequisitionCollection().query();
             };
+
+            var matcher = new ac_matcher.QueryMatcher({
+                queryFactory: new factory.FunctionFactory(createQuery),
+                stringify: function(model) {
+                    return model.get_title();
+                },
+                map: function(model) {
+                    return {
+                        value: model.get_title()
+                    };
+                }
+            });
         
             return {
                 name: 'Requsition',
                 field: 'requisition__title',
                 filterView: new filter_views.AutoSelectFilterView.Factory({
                     inputPlaceholder: 'Requisition title',
-                    auto: auto
+                    matcher: matcher
                 })
             };
         },
@@ -207,6 +216,14 @@ define([
         },
 
         initChildViews: function() {
+            this.acView = new ac_views.AutoCompleteView({
+                inputView: this,
+                inputSelector: '.testinput',
+                matcher: new ac_matcher.ArrayMatcher({
+                    data: ['Abc', 'bcd', 'cda', 'ef', 'az']
+                })
+            });
+
             this.filtersView = new TrackerFiltersView({
                 collection: this.collection,
                 query: this.query,
@@ -231,6 +248,7 @@ define([
             this.append(this.filtersView, '.content');
             this.append(this.gridView, '.content');
             this.append(this.paginatorView, '.content');
+            this.append(this.acView, '.content');
             return this;
         }
     });

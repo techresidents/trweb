@@ -3,6 +3,7 @@ define([
     'underscore',
     'core/view',
     'events/type',
+    'ui/input/views',
     'ui/select/models',
     'ui/template/views',
     'text!ui/select/templates/select.html',
@@ -14,6 +15,7 @@ define([
     _,
     view,
     events_type,
+    input_views,
     select_models,
     template_views,
     select_template,
@@ -45,10 +47,8 @@ define([
             this.selectedClass = options.selectedClass;
             this.highlightedClass = options.highlightedClass;
             this.collection = options.collection;
-            this.highlightedModel = null;
 
-            //bind events
-            this.listenTo(this.collection, 'reset add remove', this.render);
+            this.setCollection(this.collection);
         },
 
         context: function() {
@@ -68,7 +68,6 @@ define([
         },
 
         render: function() {
-            this.highlightedModel = null;
             var context = this.context();
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
@@ -79,8 +78,25 @@ define([
             return '.selection[data-id=' + model.cid + ']'; 
         },
 
+        getCollection: function() {
+            return this.collection();
+        },
+
+        setCollection: function(collection) {
+            if(this.collection) {
+                this.stopListening(this.collection);
+            }
+
+            if(collection) {
+                this.collection = collection;
+                this.listenTo(this.collection, 'reset add remove', this.render);
+            }
+        },
+
         getSelected: function() {
-            return this.collection.where({selected: true});
+            var selected = this.collection.where({selected: true});
+            var result = selected.length ? selected[0] : null;
+            return result;
         },
 
         select: function(model, triggerEvent) {
@@ -128,7 +144,9 @@ define([
         },
 
         getHighlighted: function() {
-            return this.highlightedModel;
+            var highlighted = this.collection.where({highlighted: true});
+            var result = highlighted.length ? highlighted[0] : null;
+            return result;
         },
 
         highlight: function(model, triggerEvent) {
@@ -138,8 +156,11 @@ define([
 
             this.unhighlight(triggerEvent);
 
+            model.set({
+                highlighted: true
+            });
+
             this.$(this.modelSelector(model)).addClass(this.highlightedClass);
-            this.highlightedModel = model;
 
             if(triggerEvent) {
                 this.triggerEvent(events_type.EventType.HIGHLIGHT, {
@@ -154,9 +175,11 @@ define([
                 return;
             }
 
-            this.$(this.modelSelector(model)).removeClass(this.highlightedClass);
+            model.set({
+                highlighted: false
+            });
 
-            this.highlightedModel = null;
+            this.$(this.modelSelector(model)).removeClass(this.highlightedClass);
 
             if(triggerEvent) {
                 this.triggerEvent(events_type.EventType.UNHIGHLIGHT, {
@@ -267,7 +290,6 @@ define([
         }
     });
 
-
     /**
      * Auto Multi Select View.
      * @constructor
@@ -279,27 +301,29 @@ define([
         defaultTemplate: auto_multi_select_template,
 
         events: {
-            'change .selection': 'onChange',
-            'keyup .search': 'onKeyUp'
+            'change .selection': 'onSelectionChange',
+            'change .input-handler': 'onInputChange' 
         },
 
         
         initialize: function(options) {
             options = _.extend({
                 template: this.defaultTemplate,
-                inputPlaceholder: 'search'
+                inputPlaceholder: 'search',
+                throttle: 250,
+                updateDuringTyping: false
             }, options);
 
             this.template = _.template(options.template);
             this.collection = options.collection;
-            this.autoCollection = new this.collection.constructor();
-            this.auto = options.auto;
+            this.matcher = options.matcher;
             this.inputPlaceholder = options.inputPlaceholder;
-
-            //bind events
-            this.listenTo(this.autoCollection, 'reset', this.onAutoCollectionReset);
+            this.throttle = options.throttle;
+            this.updateDuringTyping = options.updateDuringTyping;
+            this.matchCollection = new this.collection.constructor();
 
             //child views
+            this.inputHandlerView = null;
             this.listView = null;
             this.initChildViews();
         },
@@ -317,6 +341,13 @@ define([
                 };
             };
 
+            this.inputHandlerView = new input_views.InputHandlerView({
+                inputView: this,
+                inputSelector: '.search',
+                throttle: this.throttle,
+                updateDuringTyping: this.updateDuringTyping
+            });
+
             this.listView = new template_views.TemplateView({
                 collection: this.collection,
                 template: auto_multi_select_list_template,
@@ -325,7 +356,7 @@ define([
         },
 
         childViews: function() {
-            return [this.listView];
+            return [this.inputHandlerView, this.listView];
         },
 
         classes: function() {
@@ -338,13 +369,18 @@ define([
             };
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
+            this.append(this.inputHandlerView);
             this.append(this.listView);
             return this;
         },
 
         refresh: function() {
+            var that = this;
             var value = this.input().val();
-            this.auto(value, this.autoCollection);
+            this.matcher.match(value, 8, function(search, results) {
+                that.matchCollection.reset(results);
+                that.updateCollection();
+            });
         },
 
         input: function() {
@@ -355,8 +391,8 @@ define([
             var models = this.collection.where({selected: true});
             var workingCollection = new this.collection.constructor(models);
 
-            this.autoCollection.each(function(model) {
-                if(!workingCollection.where({value: model.value()}).length) {
+            this.matchCollection.each(function(model) {
+                if(!workingCollection.where({value: model.get('value')}).length) {
                     models.push(model);
                 }
             }, this);
@@ -396,11 +432,11 @@ define([
             }
         },
 
-        onAutoCollectionReset: function() {
-            this.updateCollection();
+        onInputChange: function(e) {
+            this.refresh();
         },
 
-        onChange: function(e) {
+        onSelectionChange: function(e) {
             var checked = e.target.checked;
             var id = $(e.currentTarget).data('id');
             var model = this.collection.get(id);
@@ -410,13 +446,7 @@ define([
             } else {
                 this.unselect(model, true);
             }
-        },
-
-        onKeyUp: function(e) {
-            this.refresh();
         }
-
-
     });
 
     return {

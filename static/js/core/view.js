@@ -176,9 +176,10 @@ define(/** @exports core/view */[
                     }
                 });
             }
-
+    
             this.remove();
             this.undelegateEvents();
+            this.removeEventListeners();
         }
     });
 
