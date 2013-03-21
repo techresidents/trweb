@@ -3,6 +3,7 @@ define([
     'underscore',
     'core/view',
     'events/type',
+    'ui/input/views',
     'ui/select/models',
     'ui/template/views',
     'text!ui/select/templates/select.html',
@@ -14,6 +15,7 @@ define([
     _,
     view,
     events_type,
+    input_views,
     select_models,
     template_views,
     select_template,
@@ -278,24 +280,29 @@ define([
         defaultTemplate: auto_multi_select_template,
 
         events: {
-            'change .selection': 'onChange',
-            'keyup .search': 'onKeyUp'
+            'change .selection': 'onSelectionChange',
+            'change .input-handler': 'onInputChange' 
         },
 
         
         initialize: function(options) {
             options = _.extend({
                 template: this.defaultTemplate,
-                inputPlaceholder: 'search'
+                inputPlaceholder: 'search',
+                throttle: 250,
+                updateDuringTyping: false
             }, options);
 
             this.template = _.template(options.template);
             this.collection = options.collection;
             this.matcher = options.matcher;
             this.inputPlaceholder = options.inputPlaceholder;
+            this.throttle = options.throttle;
+            this.updateDuringTyping = options.updateDuringTyping;
             this.matchCollection = new this.collection.constructor();
 
             //child views
+            this.inputHandlerView = null;
             this.listView = null;
             this.initChildViews();
         },
@@ -313,6 +320,13 @@ define([
                 };
             };
 
+            this.inputHandlerView = new input_views.InputHandlerView({
+                inputView: this,
+                inputSelector: '.search',
+                throttle: this.throttle,
+                updateDuringTyping: this.updateDuringTyping
+            });
+
             this.listView = new template_views.TemplateView({
                 collection: this.collection,
                 template: auto_multi_select_list_template,
@@ -321,7 +335,7 @@ define([
         },
 
         childViews: function() {
-            return [this.listView];
+            return [this.inputHandlerView, this.listView];
         },
 
         classes: function() {
@@ -334,6 +348,7 @@ define([
             };
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
+            this.append(this.inputHandlerView);
             this.append(this.listView);
             return this;
         },
@@ -396,7 +411,11 @@ define([
             }
         },
 
-        onChange: function(e) {
+        onInputChange: function(e) {
+            this.refresh();
+        },
+
+        onSelectionChange: function(e) {
             var checked = e.target.checked;
             var id = $(e.currentTarget).data('id');
             var model = this.collection.get(id);
@@ -406,13 +425,7 @@ define([
             } else {
                 this.unselect(model, true);
             }
-        },
-
-        onKeyUp: function(e) {
-            this.refresh();
         }
-
-
     });
 
     return {
