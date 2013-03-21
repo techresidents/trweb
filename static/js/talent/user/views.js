@@ -495,58 +495,6 @@ define([
             FAILED : 'Save failed. Please refresh the page and try again.'
         },
 
-        /**
-         * Method to schedule saving the note in the future.
-         * This method is required to prevent the user from
-         * saving their note every second (or more), and triggering
-         * a large number of writes on the db.
-         * @private
-         * @param secs Number of secs to delay until saving (optional)
-         *        Default value is 5 seconds.
-         */
-        _scheduleSave: function(secs) {
-            var delay = secs ? secs*1000 : 5000; // 5 sec default
-            this.saveStatus = this.SaveStatusEnum.PENDING;
-            this.updateSaveStatusUI();
-            // clear any existing scheduled saves
-            clearTimeout(this.saveTimeout);
-            // Wrap the save function callback using JQuery's proxy() since
-            // setTimeout doesn't support passing a context.
-            this.saveTimeout = setTimeout($.proxy(this._save, this), delay);
-        },
-
-        /**
-         * Save note.
-         * @private
-         */
-        _save: function() {
-            var that = this;
-            var attributes = {
-                employee_id: this.model.get_employee_id(),
-                candidate_id: this.model.get_candidate_id(),
-                tenant_id: this.model.get_tenant_id(),
-                note: this.$(this.textareaSelector).val()
-            };
-            var isValid = this.model.validate(attributes);
-            if (isValid === undefined) {
-                // undefined implies the model attributes are valid
-                this.model.save(attributes, {
-                    wait: true,
-                    success: function(model) {
-                        that.saveStatus = that.SaveStatusEnum.SAVED;
-                        that.updateSaveStatusUI();
-                    },
-                    error: function(model) {
-                        that.saveStatus = that.SaveStatusEnum.FAILED;
-                        that.updateSaveStatusUI();
-                    }
-                });
-            } else {
-                this.saveStatus = this.SaveStatusEnum.FAILED;
-                this.updateSaveStatusUI();
-            }
-        },
-
         initialize: function(options) {
             this.candidateModel = options.candidateModel;
             this.employeeModel = options.employeeModel;
@@ -619,7 +567,59 @@ define([
          */
         updateSaveStatusUI: function() {
             this.$(this.saveStatusSelector).text(this.saveStatus);
-        }
+        },
+
+        /**
+         * Method to schedule saving the note in the future.
+         * This method is required to prevent the user from
+         * saving their note every second (or more), and triggering
+         * a large number of writes on the db.
+         * @private
+         * @param secs Number of secs to delay until saving (optional)
+         *        Default value is 5 seconds.
+         */
+        _scheduleSave: function(secs) {
+            var delay = secs ? secs*1000 : 5000; // 5 sec default
+            this.saveStatus = this.SaveStatusEnum.PENDING;
+            this.updateSaveStatusUI();
+            // clear any existing scheduled saves
+            clearTimeout(this.saveTimeout);
+            // Wrap the save function callback using JQuery's proxy() since
+            // setTimeout doesn't support passing a context.
+            this.saveTimeout = setTimeout($.proxy(this._save, this), delay);
+        },
+
+        /**
+         * Save note.
+         * @private
+         */
+        _save: function() {
+            var that = this;
+            var attributes = {
+                employee_id: this.model.get_employee_id(),
+                candidate_id: this.model.get_candidate_id(),
+                tenant_id: this.model.get_tenant_id(),
+                note: this.$(this.textareaSelector).val()
+            };
+            var isValid = this.model.validate(attributes);
+            if (isValid === undefined) {
+                // undefined implies the model attributes are valid
+                this.model.save(attributes, {
+                    wait: true,
+                    success: function(model) {
+                        that.saveStatus = that.SaveStatusEnum.SAVED;
+                        that.updateSaveStatusUI();
+                    },
+                    error: function(model) {
+                        that.saveStatus = that.SaveStatusEnum.FAILED;
+                        that.updateSaveStatusUI();
+                    }
+                });
+            } else {
+                this.saveStatus = this.SaveStatusEnum.FAILED;
+                this.updateSaveStatusUI();
+            }
+        },
     });
 
     /**
@@ -722,7 +722,7 @@ define([
      * Talent application brief view.
      * @constructor
      * @param {Object} options
-     *    candidateModel: {User} (required)
+     *    model: {Application} (required)
      *    employeeModel: {User} (required)
      */
     var ApplicationBriefView = view.View.extend({
@@ -731,6 +731,12 @@ define([
         ratingTechnicalSelector: '.rating-technical-container',
         ratingCultureSelector: '.rating-culture-container',
         voteButtonsSelector: '.vote-buttons-container',
+
+        events: {
+            'RATING_CHANGED_EVENT .rating-culture-container': 'onCulturalFitScoreChange',
+            'RATING_CHANGED_EVENT .rating-technical-container': 'onTechnicalScoreChange',
+            'RATING_CHANGED_EVENT .rating-communication-container': 'onCommunicationScoreChange'
+        },
 
         childViews: function() {
             return [
@@ -742,7 +748,14 @@ define([
         },
 
         initialize: function(options) {
+            this.model = options.model;
+            this.employeeModel = options.employeeModel;
+            this.scoreModel = null;
             this.template = _.template(applicationbrief_template);
+
+            // load application scores
+            this.appScoresCollection = this.model.get_application_scores();
+            this.listenTo(this.appScoresCollection, 'reset', this.onReset);
 
             //child views
             this.voteButtonsView = null;
@@ -750,6 +763,13 @@ define([
             this.ratingTechnicalView = null;
             this.ratingCultureView = null;
             this.initChildViews();
+
+            // Since we retrieved all application scores on the application, we
+            // need to filter the collection down to just this employee's score
+            this.appScoreQuery = this.appScoresCollection.filterBy({
+                user_id: this.employeeModel.id
+            });
+            this.appScoreQuery.fetch(); // invokes 'reset' on collection
         },
 
         initChildViews: function() {
@@ -767,13 +787,81 @@ define([
 
         render: function() {
             var context = {
+                model: this.model.toJSON()
             };
             this.$el.html(this.template(context));
+
+            // set scores in score views
+            if (this.scoreModel) {
+                this.ratingCommunicationView.setRating(
+                    this.scoreModel.get_communication_score()
+                );
+                this.ratingTechnicalView.setRating(
+                    this.scoreModel.get_technical_score()
+                );
+                this.ratingCultureView.setRating(
+                    this.scoreModel.get_cultural_fit_score()
+                );
+            }
+
             this.assign(this.voteButtonsView, this.voteButtonsSelector);
             this.assign(this.ratingCommunicationView, this.ratingCommunicationSelector);
             this.assign(this.ratingTechnicalView, this.ratingTechnicalSelector);
             this.assign(this.ratingCultureView, this.ratingCultureSelector);
             return this;
+        },
+
+        onReset: function() {
+            // Load Score if it exists or create new one
+            if (this.appScoresCollection.length) {
+                this.scoreModel = this.appScoresCollection.first();
+            } else {
+                this.scoreModel = new api.ApplicationScore({
+                    tenant_id: this.employeeModel.get_tenant_id(),
+                    user_id: this.employeeModel.id,
+                    application_id: this.model.id,
+                    technical_score: 0,
+                    communication_score: 0,
+                    cultural_fit_score: 0
+                });
+            }
+            // Display the score
+            this.render();
+        },
+
+        /**
+         * Listen for changes to the cultural fit rating
+         * @param e JQuery event
+         * @param eventBody
+         *      rating: new score
+         */
+        onCulturalFitScoreChange: function(e, eventBody) {
+            this._saveScore({cultural_fit_score: eventBody.rating});
+        },
+
+        onTechnicalScoreChange: function(e, eventBody) {
+            this._saveScore({technical_score: eventBody.rating});
+        },
+
+        onCommunicationScoreChange: function(e, eventBody) {
+            this._saveScore({communication_score: eventBody.rating});
+        },
+
+        _saveScore: function(attributes) {
+            attributes = _.extend({
+                tenant_id: this.scoreModel.get_tenant_id(),
+                user_id: this.scoreModel.get_user_id(),
+                application_id: this.scoreModel.get_application_id()
+            }, attributes);
+            this.scoreModel.save(attributes, {
+                wait: true,
+                success: function(model) {
+                    console.log('save success');
+                },
+                error: function(model) {
+                    console.log('save error');
+                }
+            });
         }
     });
 
@@ -789,6 +877,10 @@ define([
         noteSelector: '.user-note',
         applicationBriefsSelector: '.application-briefs',
 
+        events: {
+            'click #add-req-button': 'onClick'
+        },
+
         childViews: function() {
             return [
                 this.noteView,
@@ -801,6 +893,15 @@ define([
             this.employeeModel = options.employeeModel;
             this.template = _.template(actions_template);
 
+            // load applications
+            this.applicationsCollection = this.candidateModel.get_applications();
+            // Since we retrieved all applications on the candidate, we need to
+            // filter the collection down to just the employer's applications
+            this.applicationsQuery = this.applicationsCollection.filterBy({
+                tenant_id: this.employeeModel.get_tenant_id()
+            });
+            this.applicationsQuery.fetch(); // invokes 'reset' on collection
+
             //child views
             this.noteView = null;
             this.applicationBriefsView = null;
@@ -812,11 +913,12 @@ define([
                 candidateModel: this.candidateModel,
                 employeeModel: this.employeeModel
             });
-//            this.applicationBriefsView = new collection_views.CollectionView({
-//                collection: [],
-//                viewFactory: new factory.Factory(ApplicationBriefView, {})
-//            });
-            this.applicationBriefsView = new ApplicationBriefView({});
+            this.applicationBriefsView = new collection_views.CollectionView({
+                collection: this.applicationsCollection,
+                viewFactory: new factory.Factory(ApplicationBriefView, {
+                    employeeModel: this.employeeModel
+                })
+            });
         },
 
         render: function() {
@@ -827,6 +929,55 @@ define([
             this.append(this.noteView, this.noteSelector);
             this.append(this.applicationBriefsView, this.applicationBriefsSelector);
             return this;
+        },
+
+        onClick: function(e) {
+            var reqID = this.$('#req-input').val();
+            var application = this._createApplication(reqID);
+            this._saveApplication(application);
+        },
+
+        _createApplication: function(reqID) {
+            return new api.Application({
+                user_id: this.candidateModel.id,
+                tenant_id: this.employeeModel.get_tenant_id(),
+                requisition_id: reqID,
+                type: 'EMPLOYEE_EVENT',
+                status: 'NEW'
+            });
+        },
+
+        /**
+         * Save application.
+         * @private
+         */
+        _saveApplication: function(app) {
+            var that = this;
+            var attributes = {
+                user_id: app.get_user_id(),
+                tenant_id: app.get_tenant_id(),
+                requisition_id: app.get_requisition_id(),
+                type: app.get_type(),
+                status: app.get_status()
+            };
+            var isValid = app.validate(attributes);
+            if (isValid === undefined) {
+                console.log('validation passed');
+                // undefined implies the model attributes are valid
+                app.save(attributes, {
+                    wait: true,
+                    success: function(model) {
+                        console.log('save successful');
+                        that.$('#req-input').val('');
+                    },
+                    error: function(model) {
+                        console.log('save failed');
+                    }
+                });
+            } else {
+                console.log('validation failed');
+                console.log(isValid);
+            }
         }
     });
 

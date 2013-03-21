@@ -271,7 +271,6 @@
 }
 
 .app-brief-container {
-    margin-left: 20px;
     margin-bottom: 5px;
 }
 
@@ -296,7 +295,7 @@
     height: 90px;
 }
 
-.user-note-container > * {
+.user-actions-container > * {
     margin-left: 20px;
 }
 
