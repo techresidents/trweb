@@ -47,10 +47,8 @@ define([
             this.selectedClass = options.selectedClass;
             this.highlightedClass = options.highlightedClass;
             this.collection = options.collection;
-            this.highlightedModel = null;
 
-            //bind events
-            this.listenTo(this.collection, 'reset add remove', this.render);
+            this.setCollection(this.collection);
         },
 
         context: function() {
@@ -70,7 +68,6 @@ define([
         },
 
         render: function() {
-            this.highlightedModel = null;
             var context = this.context();
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
@@ -81,8 +78,25 @@ define([
             return '.selection[data-id=' + model.cid + ']'; 
         },
 
+        getCollection: function() {
+            return this.collection();
+        },
+
+        setCollection: function(collection) {
+            if(this.collection) {
+                this.stopListening(this.collection);
+            }
+
+            if(collection) {
+                this.collection = collection;
+                this.listenTo(this.collection, 'reset add remove', this.render);
+            }
+        },
+
         getSelected: function() {
-            return this.collection.where({selected: true});
+            var selected = this.collection.where({selected: true});
+            var result = selected.length ? selected[0] : null;
+            return result;
         },
 
         select: function(model, triggerEvent) {
@@ -130,7 +144,9 @@ define([
         },
 
         getHighlighted: function() {
-            return this.highlightedModel;
+            var highlighted = this.collection.where({highlighted: true});
+            var result = highlighted.length ? highlighted[0] : null;
+            return result;
         },
 
         highlight: function(model, triggerEvent) {
@@ -140,8 +156,11 @@ define([
 
             this.unhighlight(triggerEvent);
 
+            model.set({
+                highlighted: true
+            });
+
             this.$(this.modelSelector(model)).addClass(this.highlightedClass);
-            this.highlightedModel = model;
 
             if(triggerEvent) {
                 this.triggerEvent(events_type.EventType.HIGHLIGHT, {
@@ -156,9 +175,11 @@ define([
                 return;
             }
 
-            this.$(this.modelSelector(model)).removeClass(this.highlightedClass);
+            model.set({
+                highlighted: false
+            });
 
-            this.highlightedModel = null;
+            this.$(this.modelSelector(model)).removeClass(this.highlightedClass);
 
             if(triggerEvent) {
                 this.triggerEvent(events_type.EventType.UNHIGHLIGHT, {

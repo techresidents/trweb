@@ -58,6 +58,38 @@ define(/** @exports ui/ac/matcher */[
         }
     });
 
+    var ArrayMatcher = MatcherBase.extend(
+    /** @lends module:ui/ac/matcher~ArrayMatcher.prototype */ {
+        
+        /**
+         * Matcher constructor
+         * @constructor
+         * @augments module:ui/ac/matcher~MatcherBase
+         * @param {object} options Options object
+         */
+        initialize: function(options) {
+            MatcherBase.prototype.initialize.call(this, options);
+            this.setData(options.data);
+        },
+
+        getData: function() {
+            return this.data;
+        },
+
+        setData: function(data) {
+            this.data = data;
+            return this;
+        },
+
+        match: function(search, maxResults, matchHandler) {
+            var matches = this._getPrefixMatches(
+                    this.data,
+                    search,
+                    maxResults);
+            matchHandler(search, matches);
+        }
+    });
+
     var CollectionMatcher = MatcherBase.extend(
     /** @lends module:ui/ac/matcher~CollectionMatcher.prototype */ {
         
@@ -145,14 +177,18 @@ define(/** @exports ui/ac/matcher */[
 
             if(this.map) {
                 matches = _.map(matches, this.map);
+                matches = _.filter(matches, function(match) {
+                    return (!_.isNull(match)) && (!_.isUndefined(match));
+                });
             }
 
-            matchHandler(query, matches);
+            matchHandler(search, matches);
         }
     });
 
     return {
         MatcherBase: MatcherBase,
+        ArrayMatcher: ArrayMatcher,
         CollectionMatcher: CollectionMatcher,
         QueryMatcher: QueryMatcher
     };

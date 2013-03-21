@@ -14,7 +14,8 @@ define([
 
         defaults: {
             value: null,
-            selected: false
+            selected: false,
+            highlighted: false
         },
 
         value: function() {
@@ -23,6 +24,10 @@ define([
         
         selected: function() {
             return this.get('selected');
+        },
+
+        highlighted: function() {
+            return this.get('highlighted');
         }
     });
 
