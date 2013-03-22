@@ -44,6 +44,7 @@ define([
         initialize: function(options) {
             options = _.extend({
                 autoclose: true,
+                useTargetWidth: false,
                 template: this.defaultTemplate,
                 context: {}
             }, options);
@@ -52,6 +53,7 @@ define([
             this.context = options.context;
             this.autoclose = options.autoclose;
             this.autocloseGroup = options.autocloseGroup || 'default';
+            this.useTargetWidth = options.useTargetWidth;
             this.view = options.view;
             this.targetView = options.targetView;
             this.targetSelector = options.targetSelector;
@@ -143,10 +145,24 @@ define([
             }
         },
 
+        setWidth: function() {
+            if(!this.useTargetWidth) {
+                return;
+            }
+
+            var content = this.$('.drop-content');
+            var contentWidth = content.width();
+            var contentOuterWidth = content.outerWidth();
+            var contentExtraWidth = contentOuterWidth - contentWidth;
+            var targetOuterWidth = this.target().outerWidth(false);
+            content.width(targetOuterWidth - contentExtraWidth);
+        },
+
         open: function() {
             var inner = this.$('.drop-inner:first');
             if(!this.isOpen) {
                 this.position();
+                this.setWidth();
                 inner.addClass('drop-open');
                 this.isOpen = !this.isOpen;
                 this.triggerEvent(events_type.EventType.OPEN, {

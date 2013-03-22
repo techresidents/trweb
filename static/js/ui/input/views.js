@@ -2,6 +2,7 @@ define(/** @exports ui/input/views */[
     'jquery',
     'underscore',
     'backbone',
+    'core/string',
     'core/view',
     'events/keycodes',
     'events/type'
@@ -9,9 +10,15 @@ define(/** @exports ui/input/views */[
     $,
     _,
     Backbone,
+    core_string,
     view,
     kc,
     events_type) {
+    
+    var EventType = {
+        CHANGE: events_type.EventType.CHANGE,
+        ENTER_KEY: 'enterkey'
+    };
 
     var InputHandlerView = view.View.extend(
     /** @lends module:ui/input/views~InputHandlerView.prototype */ {
@@ -25,13 +32,19 @@ define(/** @exports ui/input/views */[
         initialize: function(options) {
             options = _.extend({
                 throttle: 150,
-                updateDuringTyping: false
+                trim: true,
+                updateDuringTyping: false,
+                preventDefaultOnEnter: true,
+                blurOnEnter: true
             }, options);
 
             this.throttle = options.throttle;
             this.model = options.model;
             this.modelAttribute = options.modelAttribute;
+            this.trim = options.trim;
             this.updateDuringTyping = options.updateDuringTyping;
+            this.preventDefaultOnEnter = options.preventDefaultOnEnter;
+            this.blurOnEnter = options.blurOnEnter;
             this._lastInputValue = '';
             this._timer = null;
 
@@ -79,6 +92,24 @@ define(/** @exports ui/input/views */[
             this.throttle = throttle;
         },
 
+        getPreventDefaultOnEnter: function() {
+            return this.preventDefaultOnEnter;
+        },
+
+        setPreventDefaultOnEnter: function(value) {
+            this.preventDefaultOnEnter = value;
+            return this;
+        },
+
+        getBlurOnEnter: function() {
+            return this.blurOnEnter;
+        },
+
+        setBlurOnEnter: function(value) {
+            this.blurOnEnter = value;
+            return this;
+        },
+
         getModel: function() {
             return this.model;
         },
@@ -123,9 +154,14 @@ define(/** @exports ui/input/views */[
         },
 
         setInputValue: function(value, triggerEvent) {
+            if(this.trim) {
+                value = core_string.trim(value);
+            }
+
+            this._lastInputValue = value;
             this.model.set(this.modelAttribute, value);
+
             if(triggerEvent) {
-                this._lastInputValue = value;
                 this.triggerEvent(events_type.EventType.CHANGE, {
                     value: value
                 });
@@ -143,7 +179,11 @@ define(/** @exports ui/input/views */[
         },
 
         onModelChange: function() {
-            this.getInput().val(this.getInputValue());
+            var modelValue = this.getInputValue();
+            var inputValue = this.getInput().val();
+            if(!this.trim || modelValue !== core_string.trim(inputValue)) {
+                this.getInput().val(modelValue);
+            }
         },
 
         onFocus: function(e) {
@@ -159,8 +199,18 @@ define(/** @exports ui/input/views */[
             switch(e.keyCode) {
                 case kc.KeyCodes.ENTER:
                     this._update();
-                    e.preventDefault();
-                    e.stopPropagation();
+                    if(this.preventDefaultOnEnter) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if(this.blurOnEnter) {
+                            this.getInput().blur();
+                        }
+
+                        this.triggerEvent(EventType.ENTER_KEY, {
+                            value: this.getInputValue()
+                        });
+                    }
                     break;
                 default:
                     if(!this.updateDuringType) {
@@ -176,6 +226,9 @@ define(/** @exports ui/input/views */[
 
         _update: function() {
             var value = this.getInput().val();
+            if(this.trim) {
+                value = core_string.trim(value);
+            }
             if(value !== this._lastInputValue) {
                 this.setInputValue(value, true);
             }
@@ -201,6 +254,7 @@ define(/** @exports ui/input/views */[
     });
 
     return {
+        EventType: EventType,
         InputHandlerView: InputHandlerView
     };
 
