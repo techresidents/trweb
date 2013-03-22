@@ -730,7 +730,6 @@ define([
         },
 
         deselect: function(target, e) {
-            console.log(target);
             if (target.hasClass('active')) {
                 // Stop event propogation to prevent bootstrap from
                 // adding the class 'active' to the button downstream.
@@ -809,20 +808,28 @@ define([
 
         initialize: function(options) {
             this.model = options.model;
+            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model.get_requisition(), 'change', this.render);
             this.employeeModel = options.employeeModel;
             this.scoreModel = null;
             this.template = _.template(applicationbrief_template);
 
             // load application scores
             this.appScoresCollection = this.model.get_application_scores();
-            this.listenTo(this.appScoresCollection, 'reset', this.onReset);
+            this.listenTo(this.appScoresCollection, 'reset', this.onAppScoresReset);
 
-            //child views
+            // child views
             this.voteButtonsView = null;
             this.ratingCommunicationView = null;
             this.ratingTechnicalView = null;
             this.ratingCultureView = null;
             this.initChildViews();
+
+            // load application with requisition
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: ['requisition'] }
+            ]);
+            this.loader.load(); // invokes 'change' event on this.model when loaded
 
             // Since we retrieved all application scores on the application, we
             // need to filter the collection down to just this employee's score
@@ -848,11 +855,21 @@ define([
             });
         },
 
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$("[rel=tooltip]").tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
         render: function() {
             console.log('appBriefRender');
+            var requisitionTitle = this.model.get_requisition().get_title();
             var context = {
-                model: this.model.toJSON()
+                model: this.model.toJSON(),
+                req_name: requisitionTitle ? requisitionTitle : this.model.get_requisition_id()
             };
+            console.log(context);
             this.$el.html(this.template(context));
 
             // set scores in score views
@@ -872,11 +889,14 @@ define([
             this.append(this.ratingCommunicationView, this.ratingCommunicationSelector);
             this.append(this.ratingTechnicalView, this.ratingTechnicalSelector);
             this.append(this.ratingCultureView, this.ratingCultureSelector);
+
+            this.$('[rel=tooltip]').tooltip(); // Activate tooltips
+
             return this;
         },
 
-        onReset: function() {
-            console.log('appBriefReset');
+        onAppScoresReset: function() {
+            console.log('ApplicationScoresReset');
             // Load Score if it exists or create new one
             if (this.appScoresCollection.length) {
                 this.scoreModel = this.appScoresCollection.first();
@@ -1141,7 +1161,7 @@ define([
     var UserActionsView = view.View.extend({
 
         noteSelector: '.user-note',
-        applicationCreateSelector: '.application-create',
+        applicationCreateSelector: '.application-create-container',
         applicationBriefsSelector: '.application-briefs',
 
         childViews: function() {

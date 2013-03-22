@@ -261,32 +261,32 @@
     margin-left: 0px;
 }
 
-.ratings-container {
-    display: inline-block;
-    margin-left: 10px;
-}
-
-.application-create {
+.application-create-container {
     margin-bottom: 10px;
 }
 
 .app-brief-container {
+    margin-bottom: 10px;
+}
+
+.app-brief-container.well {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.app-brief-container a {
+    display: block;
+    font-weight: bold;
     margin-bottom: 5px;
 }
 
-.app-brief-vote-container {
-    float: left;
+.ratings-container {
+    display: inline-block;
 }
-
-.app-brief-vote-container > a {
-    display: block;
-    width: 75px;
-}
-
 .vote-buttons-container {
-    margin-top: 6px;
     display: inline-block;
     vertical-align: top;
+    margin-left: 15px;
 }
 
 .user-actions-container > * {
