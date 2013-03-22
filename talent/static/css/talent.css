@@ -270,8 +270,11 @@
 }
 
 .app-brief-container.well {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding: 10px;
+}
+
+.app-brief-container > div {
+    display: inline-block;
 }
 
 .app-brief-container a {
@@ -280,13 +283,29 @@
     margin-bottom: 5px;
 }
 
-.ratings-container {
+.ratings-decision-container {
+    vertical-align: top;
+    margin-left: 5px;
+}
+
+.ratings-decision-container > div {
     display: inline-block;
 }
-.vote-buttons-container {
-    display: inline-block;
-    vertical-align: top;
-    margin-left: 15px;
+
+.ratings-decision-container .rating-bracket {
+    line-height: 50px;
+    font-size: 60px;
+    font-weight: lighter;
+}
+
+.ratings-decision-container .vote-buttons-container {
+    margin-left: 5px;
+}
+
+.ratings-decision-container .vote-buttons-container .vote-decision-text {
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 3px;
 }
 
 .user-actions-container > * {
