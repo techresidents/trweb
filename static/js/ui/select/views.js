@@ -309,6 +309,7 @@ define([
         initialize: function(options) {
             options = _.extend({
                 template: this.defaultTemplate,
+                maxResults: 8,
                 inputPlaceholder: 'search',
                 throttle: 250,
                 updateDuringTyping: false
@@ -317,6 +318,7 @@ define([
             this.template = _.template(options.template);
             this.collection = options.collection;
             this.matcher = options.matcher;
+            this.maxResults = options.maxResults;
             this.inputPlaceholder = options.inputPlaceholder;
             this.throttle = options.throttle;
             this.updateDuringTyping = options.updateDuringTyping;
@@ -377,7 +379,7 @@ define([
         refresh: function() {
             var that = this;
             var value = this.input().val();
-            this.matcher.match(value, 8, function(search, results) {
+            this.matcher.match(value, this.maxResults, function(search, results) {
                 that.matchCollection.reset(results);
                 that.updateCollection();
             });
