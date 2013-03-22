@@ -341,6 +341,10 @@ html {
     padding: 3px 15px;
 }
 
+.select ul:hover {
+    cursor: pointer;
+}
+
 .multi-select li label {
     margin: 0px;
 }

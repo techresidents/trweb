@@ -173,13 +173,14 @@ define(/** @exports ui/ac/matcher */[
             var matches = this._getPrefixMatches(
                     collection.models,
                     search,
-                    maxResults);
+                    collection.length);
 
             if(this.map) {
                 matches = _.map(matches, this.map);
                 matches = _.filter(matches, function(match) {
                     return (!_.isNull(match)) && (!_.isUndefined(match));
                 });
+                matches = _.first(matches, maxResults);
             }
 
             matchHandler(search, matches);

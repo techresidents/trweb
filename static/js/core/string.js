@@ -21,9 +21,39 @@ define(/** @exports core/string */[
     var stringify = function(value) {
         return String(value);
     };
+    
+    /**
+     * Trim white space from start and end of string.
+     * @param {string} string String to trim
+     * @returns {string} Trimmed string
+     */
+    var trim = function(string) {
+        return string.replace(/^\s+|\s+$/g, '');
+    };
+
+    /**
+     * Trim white space from start of string
+     * @param {string} string String to trim
+     * @returns {string} Trimmed string
+     */
+    var ltrim = function(string) {
+        return string.replace(/^\s+/, '');
+    };
+
+    /**
+     * Trim white space from end of string
+     * @param {string} string String to trim
+     * @returns {string} Trimmed string
+     */
+    var rtrim = function(string) {
+        return string.replace(/\s+$/, '');
+    };
 
     return {
         regExpEscape: regExpEscape,
-        stringify: stringify
+        stringify: stringify,
+        trim: trim,
+        ltrim: ltrim,
+        rtrim: rtrim
     };
 });

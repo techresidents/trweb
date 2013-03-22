@@ -3,8 +3,8 @@ define(/** @exports ui/ac/ac */[
     'underscore',
     'backbone',
     'core/factory',
-    'core/string',
     'core/view',
+    'events/type',
     'ui/ac/inputhandler',
     'ui/drop/views',
     'ui/select/models',
@@ -14,12 +14,17 @@ define(/** @exports ui/ac/ac */[
     _,
     Backbone,
     factory,
-    core_string,
     view,
+    events_type,
     ac_inputhandler,
     drop_views,
     select_models,
     select_views) {
+
+    var EventType = {
+        SELECT: events_type.EventType.SELECT,
+        ENTER_KEY: 'enterkey'
+    };
     
     var defaultInputHandlerViewFactory = new factory.Factory(
             ac_inputhandler.ACInputHandlerView,
@@ -31,6 +36,12 @@ define(/** @exports ui/ac/ac */[
     
     var AutoCompleteView = view.View.extend(
     /** @lends module:ui/ac/ac~AutoCompleteView.prototype */ {
+
+        events: {
+            'select .drop': 'onDropSelect',
+            'change .input-handler': 'onInputChange',
+            'enterkey .input-handler': 'onInputEnterKey'
+        },
         
         /**
          * AutoCompleteView constructor
@@ -40,19 +51,24 @@ define(/** @exports ui/ac/ac */[
          */
         initialize: function(options) {
             options = _.extend({
+                forceSelection: true,
                 maxResults: 8,
-                inputHandlerView: defaultInputHandlerViewFactory,
                 selectView: defaultSelectViewFactory,
-                stringify: core_string.stringify
+                inputHandlerView: defaultInputHandlerViewFactory,
+                throttle: 250,
+                preventDefaultOnEnter: true
             }, options);
 
-            this.matcher = options.matcher;
+            this.forceSelection = options.forceSelection;
             this.maxResults = options.maxResults;
             this.inputView = options.inputView;
             this.inputSelector = options.inputSelector;
-            this.stringify = options.stringify;
-            this.inputModel = new Backbone.Model({search: ''});
+            this.throttle = options.throttle;
+            this.preventDefaultOnEnter = options.preventDefaultOnEnter;
+            this.matcher = options.matcher;
             this.selectionCollection = new select_models.SelectionCollection();
+            this.lastMatches = null;
+            this.lastSelectedMatch = null;
 
             //child views
             this.dropView = null;
@@ -61,7 +77,6 @@ define(/** @exports ui/ac/ac */[
             this.initChildViews();
 
             //bind events
-            this.listenTo(this.inputModel, 'change:search', this.onInputChange);
             this.listenTo(this.selectionCollection, 'change:selected', this.onSelectedChange);
             this.listenTo(this.selectionCollection, 'change:highlighted', this.onHighlightedChange);
         },
@@ -73,7 +88,9 @@ define(/** @exports ui/ac/ac */[
             } 
             this.inputHandlerView.setAutoComplete(this);
             this.inputHandlerView.setInput(this.inputView, this.inputSelector);
-            this.inputHandlerView.setModel(this.inputModel, 'search');
+            this.inputHandlerView.setThrottle(this.throttle);
+            this.inputHandlerView.setPreventDefaultOnEnter(
+                    this.preventDefaultOnEnter);
 
             //select view
             if(this.selectView instanceof factory.Factory) {
@@ -85,7 +102,8 @@ define(/** @exports ui/ac/ac */[
             this.dropView = new drop_views.DropView({
                 view: this.selectView,
                 targetView: this.inputView,
-                targetSelector: this.inputSelector
+                targetSelector: this.inputSelector,
+                useTargetWidth: true
             });
         },
 
@@ -99,6 +117,18 @@ define(/** @exports ui/ac/ac */[
             this.append(this.inputHandlerView);
             this.append(this.dropView);
             return this;
+        },
+
+        clear: function() {
+            this.inputHandlerView.setInputValue('');
+        },
+
+        focus: function() {
+            this.inputHandlerView.getInput().focus();
+        },
+
+        blur: function() {
+            this.inputHandlerView.getInput().blur();
         },
 
         highlightNext: function() {
@@ -145,13 +175,30 @@ define(/** @exports ui/ac/ac */[
             }
         },
 
+        selectInput: function() {
+            var search = this.inputHandlerView.getInputValue();
+            var searchMatch = this._valueToMatch(search);
+
+            if(searchMatch) {
+                this.setLastSelectedMatch(searchMatch, true);
+            } else if(this.forceSelection) {
+                this.clear();
+            }
+            this.closeOnDelay();
+        },
+
         selectHighlighted: function() {
+            var value;
             var model = this.selectView.getHighlighted();
             if(model) {
-                this.inputHandlerView.setInputValue(model.get('value'));
+                value = model.get('value');
+                this.setLastSelectedMatch(this._valueToMatch(value), true);
+                this.inputHandlerView.setInputValue(value);
                 this.close();
                 return true;
-            } 
+            }
+
+            this.close();
             return false;
         },
 
@@ -163,31 +210,39 @@ define(/** @exports ui/ac/ac */[
             this.dropView.close();
         },
 
+        closeOnDelay: function() {
+            setTimeout(_.bind(this.close, this), 100);
+        },
+
         isOpen: function() {
             return this.dropView.isOpen;
         },
 
-        isClosed: function() {
-            return !this.dropView.isOpen;
+        getLastSelectedMatch: function() {
+            return this.lastSelectedMatch;
         },
 
-        onInputChange: function() {
-            var search = this.inputModel.get('search');
-            if(search) {
-                this.matcher.match(
-                        search,
-                        this.maxResults,
-                        _.bind(this.onMatches, this));
-            } else {
-                this.close();
+        setLastSelectedMatch: function(match, triggerEvent) {
+            var value = this._matchToValue(match);
+            if(this._equalsLastValue(value)) {
+                return;
+            }
+
+            this.lastSelectedMatch = match;
+            if(triggerEvent) {
+                this.triggerEvent(events_type.EventType.SELECT, {
+                    match: match,
+                    value: this._matchToValue(match)
+                });
             }
         },
 
         onMatches: function(search, matches) {
-            var input = this.inputModel.get('search');
+            this.lastMatches = matches;
+            var input = this.inputHandlerView.getInputValue();
             var models = _.map(matches, function(match) {
                 return {
-                    value: this.stringify(match)
+                    value: this.matcher.stringify(match)
                 };
             }, this);
 
@@ -202,16 +257,80 @@ define(/** @exports ui/ac/ac */[
         onSelectedChange: function(model) {
             if(model.get('selected')) {
                 var value = model.get('value');
+                this.setLastSelectedMatch(this._valueToMatch(value), true);
                 this.inputHandlerView.setInputValue(value);
                 this.close();
             }
         },
 
         onHighlightedChange: function(model) {
+        },
+
+        onInputChange: function(e, eventBody) {
+            var search = this.inputHandlerView.getInputValue();
+            if(search) {
+                this.matcher.match(
+                        search,
+                        this.maxResults,
+                        _.bind(this.onMatches, this));
+            } else if(!search) {
+                // Delay the close to give drop down view events
+                // a chance to process. If we close too early
+                // a click on the drop down may be missed.
+                this.closeOnDelay();
+            }
+        },
+
+        onInputEnterKey: function(e, eventBody) {
+            e.stopPropagation();
+
+            var value = eventBody.value;
+            if(this._equalsLastValue(value)) {
+                this.triggerEvent(EventType.ENTER_KEY, {
+                    value: value,
+                    match: this.lastSelectedMatch
+                });
+            } else if(!this.forceSelection) {
+                this.triggerEvent(EventType.ENTER_KEY, {
+                    value: value,
+                    match: null
+                });
+            } else {
+                this.focus();
+            }
+        },
+
+        onDropSelect: function(e) {
+            e.stopPropagation();
+        },
+
+        _matchToValue: function(match) {
+            var result;
+            if(match) {
+                result = this.matcher.stringify(match);
+            }
+            return result;
+        },
+
+        _valueToMatch: function(value) {
+            var match = _.find(this.lastMatches, function(match) {
+                return this.matcher.stringify(match).toLowerCase() === value.toLowerCase();
+            }, this);
+            return match;
+        },
+
+        _equalsLastValue: function(value) {
+            var result = false;
+            var lastValue = this._matchToValue(this.lastSelectedMatch) || '';
+            if(value && lastValue) {
+                result = value.toLowerCase() === lastValue.toLowerCase();
+            }
+            return result;
         }
     });
 
     return {
+        EventType: EventType,
         AutoCompleteView: AutoCompleteView
     };
 
