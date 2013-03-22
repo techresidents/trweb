@@ -266,6 +266,10 @@
     margin-left: 10px;
 }
 
+.application-create {
+    margin-bottom: 10px;
+}
+
 .app-brief-container {
     margin-bottom: 5px;
 }
@@ -276,7 +280,7 @@
 
 .app-brief-vote-container > a {
     display: block;
-    width: 115px;
+    width: 75px;
 }
 
 .vote-buttons-container {

@@ -23,6 +23,7 @@ define([
     'text!talent/user/templates/note.html',
     'text!talent/user/templates/applicationbrief.html',
     'text!talent/user/templates/applicationcreate.html',
+    'text!talent/user/templates/requisition_select.html',
     'text!talent/user/templates/vote_buttons.html'
 ], function(
     $,
@@ -49,6 +50,7 @@ define([
     note_template,
     applicationbrief_template,
     applicationcreate_template,
+    requisition_select_template,
     vote_buttons_template) {
 
     /**
@@ -928,9 +930,8 @@ define([
         }
     });
 
-
     /**
-     * Talent user create applications view.
+     * Talent user requisition select view.
      * This view displays a list of requisitions and creates applications
      * for the selected items.  If the candidate already has an application for
      * a requisition, that requisition is not listed in this view.
@@ -939,14 +940,17 @@ define([
      *    applicationsCollection: {ApplicationsCollection} (required)
      *      The candidate's applications.
      */
-    var ApplicationCreateView = view.View.extend({
+    var RequisitionSelectView = view.View.extend({
 
-        selectViewSelector: '.req-autocomplete',
+        autoSelectSelector: '.autoselect',
+
+        events: {
+            'click .save': 'onSave'
+        },
 
         childViews: function() {
             return [
-                this.dropView,
-                this.selectView
+                this.autoSelectView
             ];
         },
 
@@ -954,7 +958,7 @@ define([
             var that = this;
             this.applicationsCollection = options.applicationsCollection;
             this.requisitionSelectionCollection = new select_models.SelectionCollection();
-            this.template = _.template(applicationcreate_template);
+            this.template = _.template(requisition_select_template);
 
             // Create objects required to support Requisition autocomplete
             // This query is used to seed the results which will then be parsed
@@ -980,43 +984,43 @@ define([
                     // results here again to only return requisitions
                     // that are not already included in the applications
                     // collection.
-                    if (!that.applicationsCollection.where({id: model.id}).length) {
-                        console.log('application matched %s', model.id);
+                    if (!that.applicationsCollection.where({requisition_id: model.id}).length) {
                         ret = {
                             id: model.id,
                             value: model.get_title()
                         };
+                    } else {
+                        console.log('application matched req %s', model.id);
                     }
                     return ret;
                 }
             });
 
             // init child views
-            this.dropView = null;
-            this.selectView = null;
+            this.autoSelectView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
-            this.selectView = new select_views.AutoMultiSelectView({
-                inputPlaceholder: 'Search Requisitions',
+            this.autoSelectView = new select_views.AutoMultiSelectView({
+                inputPlaceholder: 'Search requisition titles',
                 collection: this.requisitionSelectionCollection,
                 matcher: this.matcher
             });
-//            this.dropView = new drop_views.DropView({
-//                view: this.selectView,
-//                autoclose: true
-//            });
         },
 
         render: function() {
             var context = {};
             this.$el.html(this.template(context));
-            this.append(this.selectView, this.selectViewSelector);
+            this.append(this.autoSelectView, this.autoSelectSelector);
             return this;
         },
 
-        // TODO move out of here
+        onSave: function(e) {
+            console.log('onSave');
+        },
+
+        // TODO
         _createApplication: function(reqID) {
             return new api.Application({
                 user_id: this.candidateModel.id,
@@ -1058,6 +1062,72 @@ define([
                 console.log('validation failed');
                 console.log(isValid);
             }
+        }
+    });
+
+
+    /**
+     * Talent user create applications view.
+     * This view displays a list of requisitions and creates applications
+     * for the selected items.  If the candidate already has an application for
+     * a requisition, that requisition is not listed in this view.
+     * @constructor
+     * @param {Object} options
+     *    applicationsCollection: {ApplicationsCollection} (required)
+     *      The candidate's applications.
+     */
+    var ApplicationCreateView = view.View.extend({
+
+        events: {
+            'click .drop-button': 'onToggle',
+            'open .drop': 'onDropOpened',
+            'click .cancel': 'onClose'
+        },
+
+        childViews: function() {
+            return [
+                this.dropView,
+                this.selectView
+            ];
+        },
+
+        initialize: function(options) {
+            this.applicationsCollection = options.applicationsCollection;
+            this.template = _.template(applicationcreate_template);
+
+            // init child views
+            this.dropView = null;
+            this.selectView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.selectView = new RequisitionSelectView({
+                applicationsCollection: this.applicationsCollection
+            });
+            this.dropView = new drop_views.DropView({
+                view: this.selectView
+            });
+        },
+
+        render: function() {
+            var context = {};
+            this.$el.html(this.template(context));
+            this.append(this.dropView);
+            return this;
+        },
+
+        onToggle: function(e) {
+            this.dropView.toggle();
+        },
+
+        onClose: function(e) {
+            this.dropView.close();
+        },
+
+        onDropOpened: function(e) {
+            this.dropView.childView.autoSelectView.refresh();
+            this.dropView.childView.autoSelectView.input().focus();
         }
     });
 
