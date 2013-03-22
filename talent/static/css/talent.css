@@ -318,6 +318,10 @@
     margin-right: 20px;
 }
 
+.user-position-prefs-container .span2-5 {
+    width: 200px;
+}
+
 .user-position-prefs-position-heading {
     font-size: 14px;
     font-style: italic;

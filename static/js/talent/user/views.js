@@ -1025,7 +1025,8 @@ define([
             this.autoSelectView = new select_views.AutoMultiSelectView({
                 inputPlaceholder: 'Search requisition titles',
                 collection: this.requisitionSelectionCollection,
-                matcher: this.matcher
+                matcher: this.matcher,
+                maxResults: 5
             });
         },
 
