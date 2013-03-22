@@ -8,7 +8,11 @@ define([
     'api/loader',
     'api/models',
     'ratingstars/views',
+    'ui/ac/matcher',
     'ui/collection/views',
+    'ui/drop/views',
+    'ui/select/views',
+    'ui/select/models',
     'text!talent/user/templates/user.html',
     'text!talent/user/templates/jobprefs.html',
     'text!talent/user/templates/skills.html',
@@ -18,6 +22,7 @@ define([
     'text!talent/user/templates/actions.html',
     'text!talent/user/templates/note.html',
     'text!talent/user/templates/applicationbrief.html',
+    'text!talent/user/templates/applicationcreate.html',
     'text!talent/user/templates/vote_buttons.html'
 ], function(
     $,
@@ -29,7 +34,11 @@ define([
     api_loader,
     api,
     ratingstars_views,
+    ac_matcher,
     collection_views,
+    drop_views,
+    select_views,
+    select_models,
     user_template,
     jobprefs_template,
     skills_template,
@@ -39,6 +48,7 @@ define([
     actions_template,
     note_template,
     applicationbrief_template,
+    applicationcreate_template,
     vote_buttons_template) {
 
     /**
@@ -918,78 +928,95 @@ define([
         }
     });
 
+
     /**
-     * Talent user actions view.
+     * Talent user create applications view.
+     * This view displays a list of requisitions and creates applications
+     * for the selected items.  If the candidate already has an application for
+     * a requisition, that requisition is not listed in this view.
      * @constructor
      * @param {Object} options
-     *    candidateModel: {User} (required)
-     *    employeeModel: {User} (required)
+     *    applicationsCollection: {ApplicationsCollection} (required)
+     *      The candidate's applications.
      */
-    var UserActionsView = view.View.extend({
+    var ApplicationCreateView = view.View.extend({
 
-        noteSelector: '.user-note',
-        applicationBriefsSelector: '.application-briefs',
-
-        events: {
-            'click #add-req-button': 'onClick'
-        },
+        selectViewSelector: '.req-autocomplete',
 
         childViews: function() {
             return [
-                this.noteView,
-                this.applicationBriefsView
+                this.dropView,
+                this.selectView
             ];
         },
 
         initialize: function(options) {
-            this.candidateModel = options.candidateModel;
-            this.employeeModel = options.employeeModel;
-            this.template = _.template(actions_template);
+            var that = this;
+            this.applicationsCollection = options.applicationsCollection;
+            this.requisitionSelectionCollection = new select_models.SelectionCollection();
+            this.template = _.template(applicationcreate_template);
 
-            // load applications
-            this.applicationsCollection = this.candidateModel.get_applications();
-            // Since we retrieved all applications on the candidate, we need to
-            // filter the collection down to just the employer's applications
-            this.applicationsQuery = this.applicationsCollection.filterBy({
-                tenant_id: this.employeeModel.get_tenant_id()
+            // Create objects required to support Requisition autocomplete
+            // This query is used to seed the results which will then be parsed
+            // by the search string.
+            // TODO add filter parameter for tenant ID?
+            this.createQuery = function(options) {
+                return new api.RequisitionCollection().filterBy({
+                    'title__istartswith': options.search
+                });
+            };
+            // This matcher is used to compare the results of the query with
+            // the match criteria specified by the user.
+            this.matcher = new ac_matcher.QueryMatcher({
+                queryFactory: new factory.FunctionFactory(this.createQuery),
+                stringify: function(model) {
+                    // stringify: convert model into searchable text string
+                    return model.get_title();
+                },
+                map: function(model) {
+                    // map: convert *matched* results
+                    var ret = null;
+                    // To prevent using a crazy query, filter the
+                    // results here again to only return requisitions
+                    // that are not already included in the applications
+                    // collection.
+                    if (!that.applicationsCollection.where({id: model.id}).length) {
+                        console.log('application matched %s', model.id);
+                        ret = {
+                            id: model.id,
+                            value: model.get_title()
+                        };
+                    }
+                    return ret;
+                }
             });
-            this.applicationsQuery.fetch(); // invokes 'reset' on collection
 
-            //child views
-            this.noteView = null;
-            this.applicationBriefsView = null;
+            // init child views
+            this.dropView = null;
+            this.selectView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
-            this.noteView = new UserNoteView({
-                candidateModel: this.candidateModel,
-                employeeModel: this.employeeModel
+            this.selectView = new select_views.AutoMultiSelectView({
+                inputPlaceholder: 'Search Requisitions',
+                collection: this.requisitionSelectionCollection,
+                matcher: this.matcher
             });
-            this.applicationBriefsView = new collection_views.CollectionView({
-                collection: this.applicationsCollection,
-                viewFactory: new factory.Factory(ApplicationBriefView, {
-                    employeeModel: this.employeeModel
-                })
-            });
+//            this.dropView = new drop_views.DropView({
+//                view: this.selectView,
+//                autoclose: true
+//            });
         },
 
         render: function() {
-            var context = {
-                candidateModel: this.candidateModel
-            };
+            var context = {};
             this.$el.html(this.template(context));
-            this.append(this.noteView, this.noteSelector);
-            this.append(this.applicationBriefsView, this.applicationBriefsSelector);
+            this.append(this.selectView, this.selectViewSelector);
             return this;
         },
 
-        onClick: function(e) {
-            var reqID = this.$('#req-input').val();
-            var application = this._createApplication(reqID);
-            this._saveApplication(application);
-        },
-
+        // TODO move out of here
         _createApplication: function(reqID) {
             return new api.Application({
                 user_id: this.candidateModel.id,
@@ -1031,6 +1058,76 @@ define([
                 console.log('validation failed');
                 console.log(isValid);
             }
+        }
+    });
+
+    /**
+     * Talent user actions view.
+     * @constructor
+     * @param {Object} options
+     *    candidateModel: {User} (required)
+     *    employeeModel: {User} (required)
+     */
+    var UserActionsView = view.View.extend({
+
+        noteSelector: '.user-note',
+        applicationCreateSelector: '.application-create',
+        applicationBriefsSelector: '.application-briefs',
+
+        childViews: function() {
+            return [
+                this.noteView,
+                this.applicationCreateView,
+                this.applicationBriefsView
+            ];
+        },
+
+        initialize: function(options) {
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
+            this.template = _.template(actions_template);
+
+            // load applications
+            this.applicationsCollection = this.candidateModel.get_applications();
+            // Since we retrieved all applications on the candidate, we need to
+            // filter the collection down to just the employer's applications
+            this.applicationsQuery = this.applicationsCollection.filterBy({
+                tenant_id: this.employeeModel.get_tenant_id()
+            });
+            this.applicationsQuery.fetch(); // invokes 'reset' on collection
+
+            //child views
+            this.noteView = null;
+            this.applicationCreateView = null;
+            this.applicationBriefsView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.noteView = new UserNoteView({
+                candidateModel: this.candidateModel,
+                employeeModel: this.employeeModel
+            });
+            this.applicationCreateView = new ApplicationCreateView({
+                applicationsCollection: this.applicationsCollection
+            });
+            this.applicationBriefsView = new collection_views.CollectionView({
+                collection: this.applicationsCollection,
+                viewFactory: new factory.Factory(ApplicationBriefView, {
+                    employeeModel: this.employeeModel
+                })
+            });
+        },
+
+        render: function() {
+            var context = {
+                candidateModel: this.candidateModel
+            };
+            this.$el.html(this.template(context));
+            this.append(this.noteView, this.noteSelector);
+            this.append(this.applicationCreateView, this.applicationCreateSelector);
+            this.append(this.applicationBriefsView, this.applicationBriefsSelector);
+            return this;
         }
     });
 
