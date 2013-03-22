@@ -869,7 +869,6 @@ define([
                 model: this.model.toJSON(),
                 req_name: requisitionTitle ? requisitionTitle : this.model.get_requisition_id()
             };
-            console.log(context);
             this.$el.html(this.template(context));
 
             // set scores in score views
@@ -1009,8 +1008,6 @@ define([
                             id: model.id,
                             value: model.get_title()
                         };
-                    } else {
-                        console.log('application matched req %s', model.id);
                     }
                     return ret;
                 }
