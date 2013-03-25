@@ -285,7 +285,7 @@
 
 .ratings-decision-container {
     vertical-align: top;
-    margin-left: 5px;
+    margin-left: 2px;
 }
 
 .ratings-decision-container > div {
@@ -299,7 +299,7 @@
 }
 
 .ratings-decision-container .vote-buttons-container {
-    margin-left: 5px;
+    margin-left: 3px;
 }
 
 .ratings-decision-container .vote-buttons-container .vote-decision-text {

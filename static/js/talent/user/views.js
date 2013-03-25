@@ -564,12 +564,25 @@ define([
         },
 
         onBlur: function() {
+            var currentNote = this.$(this.textareaSelector).val();
+            var isNoteModified = true;
+
             // Don't save if the user hasn't previously saved a note and
             // the textarea is empty. This will prevent saving empty notes.
             if (this.saveStatus === null &&
-                this.$(this.textareaSelector).val().length === 0) {
-                // no-op
-            } else {
+                currentNote.length === 0) {
+                isNoteModified = false;
+            }
+
+            // Don't save if current text is identical to previously saved text
+            // Checking for a SAVED status here also ensures that this.model
+            // will not be null when get_note() is invoked.
+            if (this.saveStatus === this.SaveStatusEnum.SAVED &&
+                this.model.get_note() === currentNote) {
+                isNoteModified = false;
+            }
+
+            if (isNoteModified) {
                 this._scheduleSave();
             }
         },
@@ -587,11 +600,11 @@ define([
          * saving their note every second (or more), and triggering
          * a large number of writes on the db.
          * @private
-         * @param secs Number of secs to delay until saving (optional)
-         *        Default value is 5 seconds.
+         * @param secs Number of millisecs to delay until saving (optional)
+         *        Default value is 500 milliseconds.
          */
-        _scheduleSave: function(secs) {
-            var delay = secs ? secs*1000 : 5000; // 5 sec default
+        _scheduleSave: function(millisecs) {
+            var delay = millisecs ? millisecs : 500; // 500 millisec default
             this.saveStatus = this.SaveStatusEnum.PENDING;
             this.updateSaveStatusUI();
             // clear any existing scheduled saves
@@ -975,6 +988,8 @@ define([
 
         initialize: function(options) {
             var that = this;
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
             this.applicationsCollection = options.applicationsCollection;
             this.requisitionSelectionCollection = new select_models.SelectionCollection();
             this.template = _.template(requisition_select_template);
@@ -1035,18 +1050,31 @@ define([
         },
 
         onSave: function(e) {
-            console.log('onSave');
+            this.requisitionSelectionCollection.each(
+                this._createApplication,
+                this
+            );
+            // TODO clear selected items. Do it on success callback?
         },
 
-        // TODO
-        _createApplication: function(reqID) {
-            return new api.Application({
-                user_id: this.candidateModel.id,
-                tenant_id: this.employeeModel.get_tenant_id(),
-                requisition_id: reqID,
-                type: 'EMPLOYEE_EVENT',
-                status: 'NEW'
-            });
+        /**
+         * Create application
+         * @param requisitionSelectionModel
+         * @private
+         */
+        _createApplication: function(requisitionSelectionModel) {
+            console.log(requisitionSelectionModel.toJSON());
+            // Only create applications for the selected reqs
+            if (requisitionSelectionModel.selected()) {
+                var application = new api.Application({
+                    user_id: this.candidateModel.id,
+                    tenant_id: this.employeeModel.get_tenant_id(),
+                    requisition_id: requisitionSelectionModel.id,
+                    type: 'EMPLOYEE_EVENT',
+                    status: 'NEW'
+                });
+                console.log(application.toJSON());
+            }
         },
 
         /**
@@ -1111,6 +1139,8 @@ define([
 
         initialize: function(options) {
             this.applicationsCollection = options.applicationsCollection;
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
             this.template = _.template(applicationcreate_template);
 
             // init child views
@@ -1121,7 +1151,9 @@ define([
 
         initChildViews: function() {
             this.selectView = new RequisitionSelectView({
-                applicationsCollection: this.applicationsCollection
+                applicationsCollection: this.applicationsCollection,
+                candidateModel: this.candidateModel,
+                employeeModel: this.employeeModel
             });
             this.dropView = new drop_views.DropView({
                 view: this.selectView
@@ -1197,7 +1229,9 @@ define([
                 employeeModel: this.employeeModel
             });
             this.applicationCreateView = new ApplicationCreateView({
-                applicationsCollection: this.applicationsCollection
+                applicationsCollection: this.applicationsCollection,
+                candidateModel: this.candidateModel,
+                employeeModel: this.employeeModel
             });
             this.applicationBriefsView = new collection_views.CollectionView({
                 collection: this.applicationsCollection,
