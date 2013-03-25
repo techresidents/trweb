@@ -257,46 +257,58 @@
     background-image: url("../img/person-speaking.png");
 }
 
-.user-ID {
-    padding-left: 130px;
-}
-
 .no-span-margin {
     margin-left: 0px;
 }
 
-.ratings-container {
-    display: inline-block;
-    margin-left: 10px;
+.application-create-container {
+    margin-bottom: 10px;
 }
 
-.req-brief-container {
-    margin-left: 20px;
+.app-brief-container {
+    margin-bottom: 10px;
+}
+
+.app-brief-container.well {
+    padding: 10px;
+}
+
+.app-brief-container > div {
+    display: inline-block;
+}
+
+.app-brief-container a {
+    display: block;
+    font-weight: bold;
     margin-bottom: 5px;
 }
 
-.req-brief-vote-container {
-    float: left;
-}
-
-.req-brief-vote-container > a {
-    display: block;
-}
-
-.vote-buttons-container {
-    margin-top: 6px;
-    display: inline-block;
+.ratings-decision-container {
     vertical-align: top;
+    margin-left: 5px;
 }
 
-.user-actions-container .user-logo {
-    margin: 0px auto;
-    margin-top: 25px;
-    width: 120px;
-    height: 90px;
+.ratings-decision-container > div {
+    display: inline-block;
 }
 
-.user-note-container > * {
+.ratings-decision-container .rating-bracket {
+    line-height: 50px;
+    font-size: 60px;
+    font-weight: lighter;
+}
+
+.ratings-decision-container .vote-buttons-container {
+    margin-left: 5px;
+}
+
+.ratings-decision-container .vote-buttons-container .vote-decision-text {
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 3px;
+}
+
+.user-actions-container > * {
     margin-left: 20px;
 }
 
@@ -322,14 +334,18 @@
     min-height: 90px;
     border-color: rgba(234,143,0,0.5);
     background-color: rgba(234, 143, 0, 0.05);
+    margin-right: 20px;
 }
 
-.user-position-prefs-well-text {
-    line-height: 90px;
+.user-position-prefs-container .span2-5 {
+    width: 200px;
+}
+
+.user-position-prefs-position-heading {
     font-size: 14px;
     font-style: italic;
     font-weight: bold;
-    text-align: center;
+    margin-bottom: 5px;
 }
 
 .user-section-border {

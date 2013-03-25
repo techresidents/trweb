@@ -171,7 +171,7 @@ define([
 
         removeAllCollections: function(collection) {
             var baseKey = collection.constructor.key();
-            var keys = _.keys(this.cache.byCollection[baseKey]);
+            var keys = _.keys(this.cache.byCollection[baseKey] || {});
             _.each(keys, function(key) {
                 delete this.cache.byKey[key];
             }, this);
