@@ -10,6 +10,7 @@ define(/** @exports core/proxy */[
      * @constructor
      */
     var Proxy = function(options) {
+        this.cid = _.unique('proxy');
         this.facade = facade.getInstance();
         this.options = options || {};
         this.initialize.apply(this, arguments);

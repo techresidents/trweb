@@ -231,7 +231,7 @@ define([
             this.view = new RequisitionAppView(options);
             this.view.render();
 
-            this.view.addEventListener(RequisitionAppView.EVENTS.DESTROY_VIEW, this.onDestroyView, this);
+            this.view.addEventListener(this.cid, RequisitionAppView.EVENTS.DESTROY_VIEW, this.onDestroyView, this);
 
             //create and register sub-mediators
             this.facade.registerMediator(new alert_mediators.AlertMediator());

@@ -22,7 +22,7 @@ define(/** @exports ui/input/views */[
 
     var InputHandlerView = view.View.extend(
     /** @lends module:ui/input/views~InputHandlerView.prototype */ {
-        
+
         /**
          * InputHandlerView constructor
          * @constructor
@@ -52,25 +52,18 @@ define(/** @exports ui/input/views */[
             this.setInput(options.inputView, options.inputSelector);
         },
 
-
-        delegateEventName: function(eventName) {
-            //use delegate events so they're removed on destroy()
-            return eventName + '.delegateGlobalEvents' + this.cid;
-        },
-
         delegateInputEvents: function() {
-            var input = this.getInput();
-            if(input) {
-                input.on(this.delegateEventName('focus'), _.bind(this.onFocus, this));
-                input.on(this.delegateEventName('blur'), _.bind(this.onBlur, this));
-                input.on(this.delegateEventName('keypress'), _.bind(this.onKeyPress, this));
+            if(this.inputView) {
+                this.undelegateInputEvents();
+                this.inputView.addEventListener(this.cid, 'focus', this.onFocus, this, this.inputSelector);
+                this.inputView.addEventListener(this.cid, 'blur', this.onBlur, this, this.inputSelector);
+                this.inputView.addEventListener(this.cid, 'keypress', this.onKeyPress, this, this.inputSelector);
             }
         },
 
         undelegateInputEvents: function() {
-            var input = this.getInput();
-            if(input) {
-                input.off(this.delegateEventName(''));
+            if(this.inputView) {
+                this.inputView.removeEventListeners(this.cid);
             }
         },
 

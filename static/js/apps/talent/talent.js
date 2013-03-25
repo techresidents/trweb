@@ -199,7 +199,7 @@ define([
             this.view = new TalentAppView(options);
             this.view.render();
 
-            this.view.addEventListener(TalentAppView.EVENTS.DESTROY_VIEW, this.onDestroyView, this);
+            this.view.addEventListener(this.cid, TalentAppView.EVENTS.DESTROY_VIEW, this.onDestroyView, this);
 
             //create and register sub-mediators
             this.facade.registerMediator(new player_mediators.PlayerMediator());

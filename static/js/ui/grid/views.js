@@ -4,6 +4,7 @@ define(/** @exports grid/views */[
     'core/adapt',
     'core/base',
     'core/factory',
+    'core/format',
     'core/view',
     'api/query',
     'ui/drop/views',
@@ -20,6 +21,7 @@ define(/** @exports grid/views */[
     adapt,
     base,
     factory,
+    fmt,
     view,
     api_query,
     drop_views,
@@ -338,9 +340,10 @@ define(/** @exports grid/views */[
         },
 
         render: function() {
+            var defaultContext = this.defaultContext();
             var context = _.extend(
-                    this.defaultContext(),
-                    base.getValue(this, 'context', this));
+                    defaultContext,
+                    base.getValue(this, 'context', defaultContext));
 
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
@@ -426,6 +429,43 @@ define(/** @exports grid/views */[
      * {@link module:core/factory~Factory|Factory} class for convenience.
      */
     GridLinkCellView.Factory = factory.buildFactory(GridLinkCellView);
+
+    /**
+     * Grid Date Cell View.
+     * @constructor
+     * @param {Object} options
+     *   config: {Object} grid config (required)
+     *   model: {ApiModel} model (required)
+     *   query: {ApiQuery} query (required)
+     *   context: {Object} template context (required)
+     */
+    var GridDateCellView = GridCellView.extend({
+
+        initialize: function(options) {
+            var format = options.format || 'MM/dd/yy';
+            var context = function(options) {
+                return {
+                    value: fmt.date(options.value, format)
+                };
+            };
+            options = _.extend({
+                context: context
+                }, options);
+            
+            GridCellView.prototype.initialize.call(this, options);
+        },
+        
+        classes: function() {
+            var result = GridCellView.prototype.classes.call(this);
+            result.push('grid-date-cell');
+            return result;
+        }
+    });
+
+    /**
+     * {@link module:core/factory~Factory|Factory} class for convenience.
+     */
+    GridDateCellView.Factory = factory.buildFactory(GridDateCellView);
 
     /**
      * Grid Action Cell View.
@@ -728,6 +768,7 @@ define(/** @exports grid/views */[
         GridHeaderCellView: GridHeaderCellView,
         GridRowView: GridRowView,
         GridCellView: GridCellView,
+        GridDateCellView: GridDateCellView,
         GridLinkCellView: GridLinkCellView,
         GridActionCellView: GridActionCellView
     };

@@ -80,9 +80,9 @@ define([
                 });
 
                 // Add event listeners
-                this.view.addEventListener(requisition_views.EVENTS.SAVED, this.onSaved, this);
-                this.view.addEventListener(requisition_views.EVENTS.SAVE_FAILED, this.onSaveFailed, this);
-                this.view.addEventListener(requisition_views.EVENTS.CANCELED, this.onCanceled, this);
+                this.view.addEventListener(this.cid, requisition_views.EVENTS.SAVED, this.onSaved, this);
+                this.view.addEventListener(this.cid, requisition_views.EVENTS.SAVE_FAILED, this.onSaveFailed, this);
+                this.view.addEventListener(this.cid, requisition_views.EVENTS.CANCELED, this.onCanceled, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),

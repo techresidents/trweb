@@ -22,7 +22,8 @@ define([
             options = _.extend({
                 modelEvents: 'change',
                 collectionEvents: 'reset add remove',
-                load: false
+                load: false,
+                classes: []
             }, options);
 
             this.model = options.model;
@@ -33,6 +34,7 @@ define([
             this.collectionWithRelated = options.collectionWithRelated;
             this.context = options.context;
             this.load = options.load;
+            this._classes = options.classes;
             this.template = _.template(options.template);
 
             var loaderArgs = [];
@@ -62,7 +64,7 @@ define([
         },
 
         classes: function() {
-            return [];
+            return this._classes;
         },
 
         render: function() {

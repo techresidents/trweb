@@ -62,10 +62,10 @@ define([
             });
 
             //vew event listeners
-            this.view.addEventListener(discuss_views.EVENTS.NEXT, this.onNextTopic, this);
-            this.view.addEventListener(discuss_views.EVENTS.START, this.onStartTopic, this);
-            this.view.addEventListener(tag_views.EVENTS.ADD_TAG, this.onAddTag, this);
-            this.view.addEventListener(tag_views.EVENTS.DELETE_TAG, this.onDeleteTag, this);
+            this.view.addEventListener(this.cid, discuss_views.EVENTS.NEXT, this.onNextTopic, this);
+            this.view.addEventListener(this.cid, discuss_views.EVENTS.START, this.onStartTopic, this);
+            this.view.addEventListener(this.cid, tag_views.EVENTS.ADD_TAG, this.onAddTag, this);
+            this.view.addEventListener(this.cid, tag_views.EVENTS.DELETE_TAG, this.onDeleteTag, this);
             
             //notify system of view creation
             this.facade.trigger(notifications.VIEW_CREATED, {

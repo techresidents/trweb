@@ -3,188 +3,23 @@ define([
     'underscore',
     'core/factory',
     'core/view',
-    'api/models',
     'ui/ac/matcher',
     'ui/ac/views',
-    'ui/filter/views',
-    'ui/grid/views',
     'ui/paginator/views',
+    'talent/tracker/grid',
+    'talent/tracker/filter',
     'text!talent/tracker/templates/tracker.html'
 ], function(
     $,
     _,
     factory,
     view,
-    api,
     ac_matcher,
     ac_views,
-    filter_views,
-    grid_views,
     paginator_views,
+    tracker_grid,
+    tracker_filter,
     tracker_template) {
-
-    var EVENTS = {
-        QUERY_CHANGED: 'TRACKER_QUERY_CHANGED_EVENT'
-    };
-
-    /**
-     * Tracker Grid view.
-     * @constructor
-     * @param {Object} options
-     *   collection: {ApplicationCollection} collection (required)
-     *   query: {ApiQuery} query (required)
-     */
-    var TrackerGridView = grid_views.GridView.extend({
-
-        initialize: function(options) {
-            options = _.extend({
-                config: TrackerGridView.config()
-            }, options);
-
-            grid_views.GridView.prototype.initialize.call(this, options);
-        }
-    }, {
-        config: function() {
-            var config = {
-                columns: [
-                    TrackerGridView.statusColumn(),
-                    TrackerGridView.requisitionColumn(),
-                    TrackerGridView.userColumn(),
-                    TrackerGridView.actionColumn()
-                ]
-            };
-            return config;
-        },
-        
-        statusColumn: function() {
-            return   {
-                column: 'Status',
-                headerCellView: new grid_views.GridHeaderCellView.Factory({
-                    sort: 'status'
-                }),
-                cellView: new grid_views.GridCellView.Factory({
-                    valueAttribute: 'status'
-                })
-            };
-        },
-
-        requisitionColumn: function() {
-            return {
-                column: 'Requisition',
-                headerCellView: new grid_views.GridHeaderCellView.Factory({
-                    sort: 'requisition__title'
-                }),
-                cellView: new grid_views.GridCellView.Factory({
-                    valueAttribute: 'requisition__title'
-                })
-            };
-        },
-
-        userColumn: function() {
-            return {
-                column: 'User',
-                cellView: new grid_views.GridLinkCellView.Factory(function(options) {
-                    return {
-                        href: '/talent/user/' + options.model.get_user_id(),
-                        value: options.model.get_user_id()
-                    };
-                })
-            };
-        },
-
-        actionColumn: function() {
-            var map = function(model) {
-                return [
-                    {key: 'open', label: 'Open', handler: function() {console.log('blah');}},
-                    {key: 'divider'},
-                    {key: 'close', label: 'Close'}
-                ];
-            };
-
-            return {
-                column: '',
-                cellView: new grid_views.GridActionCellView.Factory({
-                    map: map
-                })
-            };
-        }
-    });
-
-    /**
-     * Tracker Filters View.
-     * @constructor
-     * @param {Object} options
-     */
-    var TrackerFiltersView = filter_views.FiltersView.extend({
-
-        initialize: function(options) {
-            options = _.extend({
-                config: TrackerFiltersView.config()
-            }, options);
-
-            filter_views.FiltersView.prototype.initialize.call(this, options);
-        }
-    }, {
-        config: function() {
-            var config = {
-                filters: [
-                    TrackerFiltersView.cityFilter(),
-                    TrackerFiltersView.requisitionFilter(),
-                    TrackerFiltersView.dateFilter()
-                ]
-            };
-            return config;
-        },
-
-        cityFilter: function() {
-            return {
-                name: 'City',
-                field: 'city',
-                filterView: new filter_views.SelectFilterView.Factory({
-                    selections: ['Boston', 'San Francisco']
-                })
-            };
-        },
-
-        requisitionFilter: function() {
-            var createQuery = function(options) {
-                return new api.RequisitionCollection().filterBy({
-                    'title__istartswith': options.search
-                });
-                //return new api.RequisitionCollection().query();
-            };
-
-            var matcher = new ac_matcher.QueryMatcher({
-                queryFactory: new factory.FunctionFactory(createQuery),
-                stringify: function(model) {
-                    return model.get_title();
-                },
-                map: function(model) {
-                    return {
-                        value: model.get_title()
-                    };
-                }
-            });
-        
-            return {
-                name: 'Requsition',
-                field: 'requisition__title',
-                filterView: new filter_views.AutoSelectFilterView.Factory({
-                    inputPlaceholder: 'Requisition title',
-                    matcher: matcher
-                })
-            };
-        },
-
-        dateFilter: function() {
-            return {
-                name: 'Date',
-                field: 'zip',
-                filterView: new filter_views.DateRangeFilterView.Factory()
-            };
-        }
-    });
-
 
     /**
      * Tracker view.
@@ -196,10 +31,6 @@ define([
     var TrackerView = view.View.extend({
             
         events: {
-        },
-
-        childViews: function() {
-            return [this.filtersView, this.gridView, this.paginatorView];
         },
 
         initialize: function(options) {
@@ -215,22 +46,28 @@ define([
             this.initChildViews();
         },
 
-        initChildViews: function() {
-            this.acView = new ac_views.AutoCompleteView({
-                inputView: this,
-                inputSelector: '.testinput',
-                matcher: new ac_matcher.ArrayMatcher({
-                    data: ['Abc', 'bcd', 'cda', 'ef', 'az']
-                })
-            });
+        childViews: function() {
+            return [this.filtersView, this.gridView, this.paginatorView];
+        },
 
-            this.filtersView = new TrackerFiltersView({
+        initChildViews: function() {
+            this.matcher = new ac_matcher.CollectionMatcher({
+                collection: this.collection,
+                stringify: function(model) {
+                    return model.get_requisition().get_title() + ' (' + model.id + ')';
+                }
+            });
+            this.macView = new ac_views.MultiAutoCompleteView({
+                collection: this.collection.clone(),
+                matcher: this.matcher
+            });
+            this.filtersView = new tracker_filter.TrackerFiltersView({
                 collection: this.collection,
                 query: this.query,
                 horizontal: true
             });
 
-            this.gridView = new TrackerGridView({
+            this.gridView = new tracker_grid.TrackerGridView({
                 collection: this.collection,
                 query: this.query
             });
@@ -246,15 +83,14 @@ define([
         render: function() {
             this.$el.html(this.template());
             this.append(this.filtersView, '.content');
+            this.append(this.macView, '.content');
             this.append(this.gridView, '.content');
             this.append(this.paginatorView, '.content');
-            this.append(this.acView, '.content');
             return this;
         }
     });
 
     return {
-        EVENTS: EVENTS,
         TrackerView: TrackerView
     };
 });
