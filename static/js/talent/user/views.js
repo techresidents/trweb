@@ -7,7 +7,7 @@ define([
     'core/view',
     'api/loader',
     'api/models',
-    'ratingstars/views',
+    'ui/rating/stars/views',
     'ui/ac/matcher',
     'ui/collection/views',
     'ui/drop/views',

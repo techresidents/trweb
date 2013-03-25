@@ -4,7 +4,7 @@ define([
     'jquery.bootstrap',
     'core/array',
     'core/view',
-    'text!ratingstars/templates/ratingstars.html'
+    'text!ui/rating/stars/templates/ratingstars.html'
 ], function(
     $,
     _,
