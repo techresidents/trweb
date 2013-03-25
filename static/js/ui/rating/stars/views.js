@@ -4,6 +4,7 @@ define([
     'jquery.bootstrap',
     'core/array',
     'core/view',
+    'events/type',
     'text!ui/rating/stars/templates/ratingstars.html'
 ], function(
     $,
@@ -11,13 +12,14 @@ define([
     none,
     array,
     view,
+    events_type,
     ratingstars_template) {
 
     /**
      * Rating Events
      */
-    var EVENTS = {
-        RATING_CHANGED: 'RATING_CHANGED_EVENT'
+    var EventType = {
+        CHANGE: events_type.EventType.CHANGE
     };
 
     /**
@@ -141,8 +143,8 @@ define([
             var rating = this._determineRating(currentTarget);
             this.setRating(rating);
             this.render();
-            this.triggerEvent(EVENTS.RATING_CHANGED, {
-                rating: rating
+            this.triggerEvent(EventType.CHANGE, {
+                value: rating
             });
         },
 
@@ -201,7 +203,7 @@ define([
     });
 
     return {
-        EVENTS: EVENTS,
+        EventType: EventType,
         RatingStarsView: RatingStarsView
     };
 });

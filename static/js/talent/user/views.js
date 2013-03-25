@@ -809,9 +809,9 @@ define([
         tooltipSelector: '[rel=tooltip]',
 
         events: {
-            'RATING_CHANGED_EVENT .rating-culture-container': 'onCulturalFitScoreChange',
-            'RATING_CHANGED_EVENT .rating-technical-container': 'onTechnicalScoreChange',
-            'RATING_CHANGED_EVENT .rating-communication-container': 'onCommunicationScoreChange'
+            'change .rating-culture-container': 'onCulturalFitScoreChange',
+            'change .rating-technical-container': 'onTechnicalScoreChange',
+            'change .rating-communication-container': 'onCommunicationScoreChange'
         },
 
         childViews: function() {
@@ -933,18 +933,18 @@ define([
          * Listen for changes to the cultural fit rating
          * @param e JQuery event
          * @param eventBody
-         *      rating: new score
+         *      value: new score
          */
         onCulturalFitScoreChange: function(e, eventBody) {
-            this._saveScore({cultural_fit_score: eventBody.rating});
+            this._saveScore({cultural_fit_score: eventBody.value});
         },
 
         onTechnicalScoreChange: function(e, eventBody) {
-            this._saveScore({technical_score: eventBody.rating});
+            this._saveScore({technical_score: eventBody.value});
         },
 
         onCommunicationScoreChange: function(e, eventBody) {
-            this._saveScore({communication_score: eventBody.rating});
+            this._saveScore({communication_score: eventBody.value});
         },
 
         _saveScore: function(attributes) {
