@@ -825,8 +825,8 @@ define([
 
         initialize: function(options) {
             this.model = options.model;
-            this.listenTo(this.model, 'change', this.render);
-            this.listenTo(this.model.get_requisition(), 'change', this.render);
+            this.listenTo(this.model, 'change', this.onAppModelChange);
+            this.listenTo(this.model.get_requisition(), 'change', this.onReqModelChange);
             this.employeeModel = options.employeeModel;
             this.scoreModel = null;
             this.template = _.template(applicationbrief_template);
@@ -880,7 +880,6 @@ define([
         },
 
         render: function() {
-            console.log('appBriefRender');
             var requisitionTitle = this.model.get_requisition().get_title();
             var context = {
                 model: this.model.toJSON(),
@@ -909,6 +908,14 @@ define([
             this.$(this.tooltipSelector).tooltip(); // Activate tooltips
 
             return this;
+        },
+
+        onAppModelChange: function() {
+            this.render();
+        },
+
+        onReqModelChange: function() {
+            this.render();
         },
 
         onAppScoresReset: function() {
