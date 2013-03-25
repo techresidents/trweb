@@ -792,6 +792,9 @@ define([
 
     /**
      * Talent application brief view.
+     * This view displays a brief version of an application.  It allows
+     * employers to see/edit a candidate's score and vote for a specific
+     * requisition.
      * @constructor
      * @param {Object} options
      *    model: {Application} (required)
@@ -803,6 +806,7 @@ define([
         ratingTechnicalSelector: '.rating-technical-container',
         ratingCultureSelector: '.rating-culture-container',
         voteButtonsSelector: '.vote-buttons-container',
+        tooltipSelector: '[rel=tooltip]',
 
         events: {
             'RATING_CHANGED_EVENT .rating-culture-container': 'onCulturalFitScoreChange',
@@ -871,7 +875,7 @@ define([
         destroy: function() {
             // Need to hide any tooltips since this view could be removed
             // from the DOM before a mouseleave() event fires
-            this.$("[rel=tooltip]").tooltip('hide');
+            this.$(this.tooltipSelector).tooltip('hide');
             view.View.prototype.destroy.apply(this, arguments);
         },
 
@@ -902,13 +906,12 @@ define([
             this.append(this.ratingTechnicalView, this.ratingTechnicalSelector);
             this.append(this.ratingCultureView, this.ratingCultureSelector);
 
-            this.$('[rel=tooltip]').tooltip(); // Activate tooltips
+            this.$(this.tooltipSelector).tooltip(); // Activate tooltips
 
             return this;
         },
 
         onAppScoresReset: function() {
-            console.log('ApplicationScoresReset');
             // Load Score if it exists or create new one
             if (this.appScoresCollection.length) {
                 this.scoreModel = this.appScoresCollection.first();
@@ -964,9 +967,8 @@ define([
 
     /**
      * Talent user requisition select view.
-     * This view displays a list of requisitions and creates applications
-     * for the selected items.  If the candidate already has an application for
-     * a requisition, that requisition is not listed in this view.
+     * This view displays a list of requisitions. If the candidate already has
+     * an application for a requisition, that requisition is not listed.
      * @constructor
      * @param {Object} options
      *    applicationsCollection: {ApplicationsCollection} (required)
@@ -974,11 +976,8 @@ define([
      */
     var RequisitionSelectView = view.View.extend({
 
-        autoSelectSelector: '.autoselect',
-
-        events: {
-            'click .save': 'onSave'
-        },
+        autoSelectViewSelector: '.autoselectview',
+        searchInputSelector: 'input.search',
 
         childViews: function() {
             return [
@@ -988,8 +987,6 @@ define([
 
         initialize: function(options) {
             var that = this;
-            this.candidateModel = options.candidateModel;
-            this.employeeModel = options.employeeModel;
             this.applicationsCollection = options.applicationsCollection;
             this.requisitionSelectionCollection = new select_models.SelectionCollection();
             this.template = _.template(requisition_select_template);
@@ -1005,14 +1002,15 @@ define([
             };
             // This matcher is used to compare the results of the query with
             // the match criteria specified by the user.
+            // The matcher methods do the following:
+            //      stringify: convert model into searchable text string
+            //      map: convert *matched* results
             this.matcher = new ac_matcher.QueryMatcher({
                 queryFactory: new factory.FunctionFactory(this.createQuery),
                 stringify: function(model) {
-                    // stringify: convert model into searchable text string
                     return model.get_title();
                 },
                 map: function(model) {
-                    // map: convert *matched* results
                     var ret = null;
                     // To prevent using a crazy query, filter the
                     // results here again to only return requisitions
@@ -1045,16 +1043,93 @@ define([
         render: function() {
             var context = {};
             this.$el.html(this.template(context));
-            this.append(this.autoSelectView, this.autoSelectSelector);
+            this.append(this.autoSelectView, this.autoSelectViewSelector);
+            return this;
+        }
+    });
+
+
+    /**
+     * Talent user create applications view.
+     * This view displays a list of requisitions and creates applications
+     * for the selected items.  If the candidate already has an application for
+     * a requisition, that requisition is not listed in this view.
+     * @constructor
+     * @param {Object} options
+     *    applicationsCollection: {ApplicationsCollection} (required)
+     *      The candidate's applications.
+     *      candidateModel: {User} Represents the developer (required)
+     *      employeeModel: {User} Represents the employee (required)
+     */
+    var ApplicationCreateView = view.View.extend({
+
+        events: {
+            'click .drop-button': 'onToggle',
+            'open .drop': 'onDropViewOpened',
+            'close .drop': 'onDropViewClosed',
+            'click .cancel': 'onClose',
+            'click .save': 'onSave'
+        },
+
+        childViews: function() {
+            return [
+                this.dropView,
+                this.selectView
+            ];
+        },
+
+        initialize: function(options) {
+            this.applicationsCollection = options.applicationsCollection;
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
+            this.template = _.template(applicationcreate_template);
+
+            // init child views
+            this.dropView = null;
+            this.selectView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.selectView = new RequisitionSelectView({
+                applicationsCollection: this.applicationsCollection
+            });
+            this.dropView = new drop_views.DropView({
+                view: this.selectView
+            });
+        },
+
+        render: function() {
+            var context = {};
+            this.$el.html(this.template(context));
+            this.append(this.dropView);
             return this;
         },
 
+        onToggle: function(e) {
+            this.dropView.toggle();
+        },
+
+        onClose: function(e) {
+            this.dropView.close();
+        },
+
         onSave: function(e) {
-            this.requisitionSelectionCollection.each(
+            this.selectView.requisitionSelectionCollection.each(
                 this._createApplication,
-                this
+                this // context
             );
-            // TODO clear selected items. Do it on success callback?
+            this.dropView.close();
+        },
+
+        onDropViewOpened: function(e) {
+            this.dropView.childView.autoSelectView.refresh();
+            this.dropView.childView.autoSelectView.input().focus();
+        },
+
+        onDropViewClosed: function(e) {
+            this.selectView.requisitionSelectionCollection.reset();
+            this.$(this.selectView.searchInputSelector).val('');
         },
 
         /**
@@ -1063,8 +1138,7 @@ define([
          * @private
          */
         _createApplication: function(requisitionSelectionModel) {
-            console.log(requisitionSelectionModel.toJSON());
-            // Only create applications for the selected reqs
+            // Only create applications for the selected requisitions
             if (requisitionSelectionModel.selected()) {
                 var application = new api.Application({
                     user_id: this.candidateModel.id,
@@ -1073,7 +1147,8 @@ define([
                     type: 'EMPLOYEE_EVENT',
                     status: 'NEW'
                 });
-                console.log(application.toJSON());
+                // TODO trigger event to save application
+                this._saveApplication(application);
             }
         },
 
@@ -1098,7 +1173,7 @@ define([
                     wait: true,
                     success: function(model) {
                         console.log('save successful');
-                        that.$('#req-input').val('');
+                        that.applicationsCollection.add(model);
                     },
                     error: function(model) {
                         console.log('save failed');
@@ -1111,78 +1186,9 @@ define([
         }
     });
 
-
-    /**
-     * Talent user create applications view.
-     * This view displays a list of requisitions and creates applications
-     * for the selected items.  If the candidate already has an application for
-     * a requisition, that requisition is not listed in this view.
-     * @constructor
-     * @param {Object} options
-     *    applicationsCollection: {ApplicationsCollection} (required)
-     *      The candidate's applications.
-     */
-    var ApplicationCreateView = view.View.extend({
-
-        events: {
-            'click .drop-button': 'onToggle',
-            'open .drop': 'onDropOpened',
-            'click .cancel': 'onClose'
-        },
-
-        childViews: function() {
-            return [
-                this.dropView,
-                this.selectView
-            ];
-        },
-
-        initialize: function(options) {
-            this.applicationsCollection = options.applicationsCollection;
-            this.candidateModel = options.candidateModel;
-            this.employeeModel = options.employeeModel;
-            this.template = _.template(applicationcreate_template);
-
-            // init child views
-            this.dropView = null;
-            this.selectView = null;
-            this.initChildViews();
-        },
-
-        initChildViews: function() {
-            this.selectView = new RequisitionSelectView({
-                applicationsCollection: this.applicationsCollection,
-                candidateModel: this.candidateModel,
-                employeeModel: this.employeeModel
-            });
-            this.dropView = new drop_views.DropView({
-                view: this.selectView
-            });
-        },
-
-        render: function() {
-            var context = {};
-            this.$el.html(this.template(context));
-            this.append(this.dropView);
-            return this;
-        },
-
-        onToggle: function(e) {
-            this.dropView.toggle();
-        },
-
-        onClose: function(e) {
-            this.dropView.close();
-        },
-
-        onDropOpened: function(e) {
-            this.dropView.childView.autoSelectView.refresh();
-            this.dropView.childView.autoSelectView.input().focus();
-        }
-    });
-
     /**
      * Talent user actions view.
+     * This view displays views which allow employers to evaluate candidates.
      * @constructor
      * @param {Object} options
      *    candidateModel: {User} (required)
