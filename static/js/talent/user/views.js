@@ -73,6 +73,7 @@ define([
         technologyPrefsSelector: '.technology-prefs',
         expandableItemsSelector: '.expandable-list-items',
         slideToggleSelector: '.slide-toggle',
+        tooltipSelector: '[rel=tooltip]',
 
         events: {
             'click .position-prefs .slide-toggle' : 'togglePositionPrefs',
@@ -100,6 +101,13 @@ define([
             });
         },
 
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$(this.tooltipSelector).tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
         render: function() {
             var context = {
                 model: this.model.toJSON({ withRelated: this.modelWithRelated }),
@@ -113,6 +121,8 @@ define([
                 this.locationPrefsSelector,
                 this.technologyPrefsSelector];
             _.each(expandableSections, this.addExpandableStyle, this);
+
+            this.$(this.tooltipSelector).tooltip(); // Activate tooltips
 
             return this;
         },
@@ -1070,6 +1080,8 @@ define([
      */
     var ApplicationCreateView = view.View.extend({
 
+        tooltipSelector: '[rel=tooltip]',
+
         events: {
             'click .drop-button': 'onToggle',
             'open .drop': 'onDropViewOpened',
@@ -1106,10 +1118,18 @@ define([
             });
         },
 
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$(this.tooltipSelector).tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
         render: function() {
             var context = {};
             this.$el.html(this.template(context));
             this.append(this.dropView);
+            this.$(this.tooltipSelector).tooltip(); // Activate tooltips
             return this;
         },
 
