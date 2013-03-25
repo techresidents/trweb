@@ -52,13 +52,15 @@ define([
             this.attribute = options.attribute;
             this.daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Tu', 'Fr', 'Sa'];
             this.months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
+        
             if(!this.model) {
                 this.model = new Backbone.Model({date: null});
                 this.attribute = 'date';
             }
+            
+            this.today = this.getDate() || new date.Date();
 
-            this.listenTo(this.model, 'change:' + this.attribute, this.render);
+            this.listenTo(this.model, 'change:' + this.attribute, this.onChange);
         },
 
         classes: function() {
@@ -74,6 +76,15 @@ define([
             return this;
         },
 
+        getToday: function() {
+            return this.today;
+        },
+
+        setToday: function(value) {
+            this.today = value || this.getDate() || new date.Date();
+            return this;
+        },
+
         render: function() {
             var context = this.context();
             this.$el.html(this.template(context));
@@ -84,10 +95,9 @@ define([
         context: function() {
             var days, weeks = [];
             var current = this.getDate();
-            var today = new date.Date();
-            var range = date.DateRange.calendarMonth(current || today).iterator();
-            var month = current ? current.getMonth() : today.getMonth();
-            var year = current ? current.getFullYear() : today.getFullYear();
+            var range = date.DateRange.calendarMonth(this.today).iterator();
+            var month = this.today.getMonth();
+            var year = this.today.getFullYear();
 
             var addDay = function(datetime) {
                 days.push({
@@ -119,6 +129,11 @@ define([
             };
         },
 
+        onChange: function() {
+            this.today = this.getDate().clone();
+            this.render();
+        },
+
         onClickDay: function(e) {
             var target = $(e.currentTarget);
             var timestamp = target.data('timestamp');
@@ -132,21 +147,13 @@ define([
         },
 
         onClickNext: function(e) {
-            var datetime = this.getDate() || new date.Date();
-            datetime = datetime.clone().add(new date.Interval(0, 1));
-            this.setDate(datetime);
-            this.triggerEvent(EVENTS.DATE_CHANGED, {
-                date: datetime
-            });
+            this.today.add(new date.Interval(0, 1));
+            this.render();
         },
 
         onClickPrev: function(e) {
-            var datetime = this.getDate() || new date.Date();
-            datetime = datetime.clone().add(new date.Interval(0, -1));
-            this.setDate(datetime);
-            this.triggerEvent(EVENTS.DATE_CHANGED, {
-                date: datetime
-            });
+            this.today.add(new date.Interval(0, -1));
+            this.render();
         }
     });
 
@@ -210,6 +217,15 @@ define([
 
         setDate: function(date) {
             this.model.set(this.attribute, date);
+            return this;
+        },
+        
+        getToday: function() {
+            return this.monthView.getToday();
+        },
+
+        setToday: function(value) {
+            this.monthView.setToday(value);
             return this;
         }
     });

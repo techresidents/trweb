@@ -493,3 +493,61 @@ html {
 .rating-star-hover {
     background-color: #EA8F00;
 }
+
+.multi-autocomplete {
+    overflow: hidden;
+}
+
+.multi-autocomplete .outer-container {
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+    line-height: 25px;
+}
+
+.multi-autocomplete.focus .outer-container {
+    border-color: rgba(82, 168, 236, 0.8);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+    outline: 0 none;
+}
+
+.multi-autocomplete .list-container {
+    display: inline-block;
+}
+
+.multi-autocomplete .list-container ul {
+    cursor: text;
+    display: inline-block;
+    list-style: none;
+    margin: 0px;
+}
+
+.multi-autocomplete .list-container ul li {
+    cursor: default;
+    display: inline-block;
+    margin: 5px;
+}
+
+.multi-autocomplete .input-container {
+    display: inline-block;
+}
+
+.multi-autocomplete .input-container > input {
+    border: 0px;
+    margin: 0 0 0 4px;
+    padding: 0px;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.075) inset;
+    min-width: 200px;
+}
+
+.multi-autocomplete-item {
+    padding: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px 6px 6px 6px;
+    background-color: #eeeeee;
+}
+
+.multi-autocomplete-item .close {
+    margin-left: 3px;
+}

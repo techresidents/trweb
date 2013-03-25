@@ -10,6 +10,7 @@ define(/** @exports core/mediator */[
      * @constructor
      */
     var Mediator = function(options) {
+        this.cid = _.unique('mediator');
         this.facade = facade.getInstance();
         this.options = options || {};
         this.registerNotifications();

@@ -53,8 +53,8 @@ define([
                     playerState: this.playerStateProxy.model
                 });
 
-                this.view.addEventListener(playback_views.EVENTS.PLAY, this.onPlay, this);
-                this.view.addEventListener(playback_views.EVENTS.PAUSE, this.onPause, this);
+                this.view.addEventListener(this.cid, playback_views.EVENTS.PLAY, this.onPlay, this);
+                this.view.addEventListener(this.cid, playback_views.EVENTS.PAUSE, this.onPause, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),

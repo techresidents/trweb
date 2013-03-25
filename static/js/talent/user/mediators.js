@@ -66,7 +66,7 @@ define([
                     playerState: this.playerStateProxy.model
                 });
 
-                this.view.addEventListener(user_views.EVENTS.PLAY_CHAT, this.onPlay, this);
+                this.view.addEventListener(this.cid, user_views.EVENTS.PLAY_CHAT, this.onPlay, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),

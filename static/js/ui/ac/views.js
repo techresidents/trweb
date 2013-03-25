@@ -4,22 +4,32 @@ define(/** @exports ui/ac/ac */[
     'backbone',
     'core/factory',
     'core/view',
+    'events/keycodes',
     'events/type',
     'ui/ac/inputhandler',
+    'ui/collection/views',
     'ui/drop/views',
     'ui/select/models',
-    'ui/select/views'
+    'ui/select/views',
+    'ui/template/views',
+    'text!ui/ac/templates/multi_autocomplete.html',
+    'text!ui/ac/templates/multi_autocomplete_item.html'
 ], function(
     $,
     _,
     Backbone,
     factory,
     view,
+    kc,
     events_type,
     ac_inputhandler,
+    collection_views,
     drop_views,
     select_models,
-    select_views) {
+    select_views,
+    template_views,
+    multi_autocomplete_template,
+    multi_autocomplete_item_template) {
 
     var EventType = {
         SELECT: events_type.EventType.SELECT,
@@ -53,8 +63,11 @@ define(/** @exports ui/ac/ac */[
             options = _.extend({
                 forceSelection: true,
                 maxResults: 8,
+                dropTargetView: options.inputView,
+                dropTargetSelector: options.inputSelector,
                 selectView: defaultSelectViewFactory,
                 inputHandlerView: defaultInputHandlerViewFactory,
+                stringify: options.matcher.stringify,
                 throttle: 250,
                 preventDefaultOnEnter: true
             }, options);
@@ -63,6 +76,9 @@ define(/** @exports ui/ac/ac */[
             this.maxResults = options.maxResults;
             this.inputView = options.inputView;
             this.inputSelector = options.inputSelector;
+            this.dropTargetView = options.dropTargetView;
+            this.dropTargetSelector = options.dropTargetSelector;
+            this.stringify = options.stringify;
             this.throttle = options.throttle;
             this.preventDefaultOnEnter = options.preventDefaultOnEnter;
             this.matcher = options.matcher;
@@ -97,14 +113,18 @@ define(/** @exports ui/ac/ac */[
                 this.selectView = this.selectView.create();
             } 
             this.selectView.setCollection(this.selectionCollection);
-
+            
             //drop view
             this.dropView = new drop_views.DropView({
                 view: this.selectView,
-                targetView: this.inputView,
-                targetSelector: this.inputSelector,
+                targetView: this.dropTargetView,
+                targetSelector: this.dropTargetSelector,
                 useTargetWidth: true
             });
+        },
+
+        childViews: function() {
+            return [this.inputHandlerView, this.dropView];
         },
 
         classes: function() {
@@ -121,6 +141,12 @@ define(/** @exports ui/ac/ac */[
 
         clear: function() {
             this.inputHandlerView.setInputValue('');
+        },
+
+        clearLastMatch: function() {
+            this.lastSelectedMatch = null;
+            this.lastMatches = null;
+            this.selectionCollection.reset();
         },
 
         focus: function() {
@@ -192,9 +218,9 @@ define(/** @exports ui/ac/ac */[
             var model = this.selectView.getHighlighted();
             if(model) {
                 value = model.get('value');
-                this.setLastSelectedMatch(this._valueToMatch(value), true);
                 this.inputHandlerView.setInputValue(value);
                 this.close();
+                this.setLastSelectedMatch(this._valueToMatch(value), true);
                 return true;
             }
 
@@ -242,7 +268,7 @@ define(/** @exports ui/ac/ac */[
             var input = this.inputHandlerView.getInputValue();
             var models = _.map(matches, function(match) {
                 return {
-                    value: this.matcher.stringify(match)
+                    value: this.stringify(match)
                 };
             }, this);
 
@@ -257,9 +283,9 @@ define(/** @exports ui/ac/ac */[
         onSelectedChange: function(model) {
             if(model.get('selected')) {
                 var value = model.get('value');
-                this.setLastSelectedMatch(this._valueToMatch(value), true);
                 this.inputHandlerView.setInputValue(value);
                 this.close();
+                this.setLastSelectedMatch(this._valueToMatch(value), true);
             }
         },
 
@@ -307,14 +333,14 @@ define(/** @exports ui/ac/ac */[
         _matchToValue: function(match) {
             var result;
             if(match) {
-                result = this.matcher.stringify(match);
+                result = this.stringify(match);
             }
             return result;
         },
 
         _valueToMatch: function(value) {
             var match = _.find(this.lastMatches, function(match) {
-                return this.matcher.stringify(match).toLowerCase() === value.toLowerCase();
+                return this.stringify(match).toLowerCase() === value.toLowerCase();
             }, this);
             return match;
         },
@@ -329,9 +355,158 @@ define(/** @exports ui/ac/ac */[
         }
     });
 
+    var MultiAutoCompleteItemView = template_views.TemplateView.extend({
+        initialize: function(options) {
+            this.stringify = options.stringify;
+            
+            options.template = multi_autocomplete_item_template;
+            options.classes = ['multi-autocomplete-item'];
+            options.context = function(view) {
+                return {
+                    value: this.stringify(view.model)
+                };
+            };
+
+            template_views.TemplateView.prototype.initialize.call(this, options);
+        }
+    });
+
+    MultiAutoCompleteItemView.Factory = factory.buildFactory(
+            MultiAutoCompleteItemView);
+
+    var MultiAutoCompleteView = view.View.extend({
+
+        defaultTemplate: multi_autocomplete_template,
+
+        inputSelector: '.input-container input',
+
+        events: {
+            'click .outer-container': 'onOuterClick',
+            'select .autocomplete': 'onSelect',
+            'click .close': 'onClose',
+            'keypress .input-container input': 'onInputKeypress',
+            'focus .input-container input': 'onInputFocus',
+            'blur .input-container input': 'onInputBlur'
+        },
+
+        initialize: function(options) {
+            options = _.extend({
+                template: this.defaultTemplate,
+                stringify: options.matcher.stringify
+            }, options);
+            
+            this.template = _.template(options.template);
+            this.collection = options.collection;
+            this.matcher = options.matcher;
+            this.stringify = options.stringify;
+            this.placeholder = options.placeholder;
+            this.viewFactory = options.viewFactory || 
+                new MultiAutoCompleteItemView.Factory({
+                    stringify: options.stringify
+                });
+
+            //bind events
+            this.listenTo(this.collection, 'reset add remove', this.onCollectionChange);
+            
+            //child views
+            this.autocompleteView = null;
+            this.listView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.autocompleteView = new AutoCompleteView({
+                inputView: this,
+                inputSelector: this.inputSelector,
+                dropTargetView: this,
+                dropTargetSelector: '.outer-container',
+                matcher: this.matcher,
+                stringify: this.stringify,
+                forceSelection: true
+            });
+            
+            this.listView = new collection_views.ListView({
+                collection: this.collection,
+                viewFactory: this.viewFactory
+            });
+        },
+
+        childViews: function() {
+            return [this.listView, this.autocompleteView];
+        },
+
+        classes: function() {
+            return ['multi-autocomplete'];
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.$el.attr('class', this.classes().join(' '));
+            this.append(this.autocompleteView);
+            this.append(this.listView, '.list-container');
+            this.applyPlaceholder();
+            return this;
+        },
+
+        applyPlaceholder: function() {
+            if(this.placeholder) {
+                if(this.collection.length === 0) {
+                    this.$(this.inputSelector).attr('placeholder', this.placeholder);
+                } else if(this.collection.length === 1) {
+                    this.$(this.inputSelector).attr('placeholder', null);
+                }
+            }
+        },
+
+        onCollectionChange: function() {
+            this.applyPlaceholder();
+        },
+
+        onOuterClick: function(e) {
+            this.autocompleteView.focus();
+        },
+
+        onSelect: function(e, eventBody) {
+            var model = eventBody.match;
+            this.collection.add(model);
+            this.autocompleteView.clear();
+            this.autocompleteView.clearLastMatch();
+            this.autocompleteView.focus();
+        },
+
+        onInputKeypress: function(e) {
+            switch(e.keyCode) {
+                case kc.KeyCodes.BACKSPACE:
+                    if(!this.$(this.inputSelector).val() &&
+                       this.collection.length) {
+                        this.collection.pop();
+                    }
+                    break;
+            }
+        },
+
+        onClose: function(e) {
+            var id = this.listView.eventToId(e);
+            var model = this.collection.get(id);
+            if(model) {
+                this.collection.remove(model);
+            }
+            this.autocompleteView.focus();
+        },
+
+        onInputFocus: function(e) {
+            this.$el.addClass('focus');
+        },
+
+        onInputBlur: function(e) {
+            this.$el.removeClass('focus');
+        }
+    });
+
     return {
         EventType: EventType,
-        AutoCompleteView: AutoCompleteView
+        AutoCompleteView: AutoCompleteView,
+        MultiAutoCompleteView: MultiAutoCompleteView
     };
 
 });

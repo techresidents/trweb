@@ -52,9 +52,9 @@ define([
             });
 
             //add view events listeners
-            this.view.addEventListener(agenda_views.EVENTS.NEXT, this.onNext, this);
-            this.view.addEventListener(agenda_views.EVENTS.SELECT, this.onSelect, this);
-            this.view.addEventListener(agenda_views.EVENTS.DELETE_TAG, this.onDeleteTag, this);
+            this.view.addEventListener(this.cid, agenda_views.EVENTS.NEXT, this.onNext, this);
+            this.view.addEventListener(this.cid, agenda_views.EVENTS.SELECT, this.onSelect, this);
+            this.view.addEventListener(this.cid, agenda_views.EVENTS.DELETE_TAG, this.onDeleteTag, this);
 
             //notify system that view is created
             this.facade.trigger(notifications.VIEW_CREATED, {

@@ -2,11 +2,13 @@ define([
     'jquery',
     'underscore',
     'core/base',
+    'core/factory',
     'core/view'
 ], function(
     $,
     _,
     base,
+    factory,
     view) {
 
     var EVENTS = {
@@ -59,8 +61,10 @@ define([
             var view = this.viewFactory.create({
                 model: model
             });
+            view.$el.addClass(this.childClasses().join(' '));
+            view.$el.data('id', model.id || model.cid);
             this.childViews.push(view);
-            this.modelViewMap[model] = view;
+            this.modelViewMap[model.cid] = view;
             return view;
         },
 
@@ -75,6 +79,18 @@ define([
 
         classes: function() {
             return ['collection'];
+        },
+
+        childClasses: function() {
+            return ['item'];
+        },
+
+        eventToId: function(e) {
+            var currentTarget = this.$(e.currentTarget);
+            var id = currentTarget.parents().filter(function() {
+                return $.hasData(this) && $(this).data('id');
+            }).first().data('id');
+            return id;
         },
 
         render: function() {
@@ -95,15 +111,15 @@ define([
         },
 
         onAdd: function(model) {
-            var view = this.createChildView();
+            var view = this.createChildView(model);
             this.appendChildView(view);
         },
 
         onRemove: function(model) {
-            var view = this.modelViewMap[model];
+            var view = this.modelViewMap[model.cid];
             if(view) {
                 this.removeChildView(view);
-                delete this.modelViewMap[model];
+                delete this.modelViewMap[model.cid];
             }
         }
 
@@ -122,7 +138,7 @@ define([
         },
 
         childViews: function() {
-            return this.childView;
+            return [this.childView];
         },
 
         createChildView: function(options) {
@@ -157,7 +173,7 @@ define([
         initialize: function(options) {
             options = _.extend({
                 wrap: true
-            });
+            }, options);
 
             if(options.wrap) {
                 var originalViewFactory = options.viewFactory;

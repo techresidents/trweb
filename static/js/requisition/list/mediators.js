@@ -90,11 +90,11 @@ define([
                 });
 
                 // Add event listeners
-                this.view.addEventListener(requisition_list_views.EVENTS.VIEW_REQ, this.onViewReq, this);
-                this.view.addEventListener(requisition_list_views.EVENTS.EDIT_REQ, this.onEditReq, this);
-                this.view.addEventListener(requisition_list_views.EVENTS.OPEN_REQ, this.onOpenReq, this);
-                this.view.addEventListener(requisition_list_views.EVENTS.CLOSE_REQ, this.onCloseReq, this);
-                this.view.addEventListener(requisition_list_views.EVENTS.DELETE_REQ, this.onDeleteReq, this);
+                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.VIEW_REQ, this.onViewReq, this);
+                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.EDIT_REQ, this.onEditReq, this);
+                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.OPEN_REQ, this.onOpenReq, this);
+                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.CLOSE_REQ, this.onCloseReq, this);
+                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.DELETE_REQ, this.onDeleteReq, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
@@ -244,7 +244,7 @@ define([
                         model: model
                     })
                 });
-                modalView.addEventListener(requisition_list_views.EVENTS.DELETE_REQ_CONFIRMED, this.onDeleteReqConfirmed, this);
+                modalView.addEventListener(this.cid, requisition_list_views.EVENTS.DELETE_REQ_CONFIRMED, this.onDeleteReqConfirmed, this);
                 modalView.render();
             }
         },

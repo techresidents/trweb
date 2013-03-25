@@ -6,12 +6,20 @@ define(/** @exports core/view */[
     'core/format'
 ], function($, _, Backbone, base, format) {
 
-    /**
-     * View base class.
-     * @constructor
-     */
     var View = Backbone.View.extend(
     /** @lends module:core/view~View.prototype */{
+
+        /**
+         * View base class.
+         * @constructs
+         */
+        constructor: function() {
+            // map of event listeners from cid of component adding
+            // events to event object.
+            this.eventListeners = {};
+
+            Backbone.View.prototype.constructor.apply(this, arguments);
+        },
 
         fmt: format,
 
@@ -26,13 +34,14 @@ define(/** @exports core/view */[
         
         /**
          * Add event listener
+         * @param {string} cid Component id of component adding listener
          * @param {string} eventName Event name
          * @param {function} method Callback method
          * @param {object} context Context to invoke callback with
          * @param {string} [selector] Event selector
          */
-        addEventListener: function(eventName, method, context, selector) {
-            var namespace = '.eventListener' + this.cid;
+        addEventListener: function(cid, eventName, method, context, selector) {
+            var namespace = '.eventListener' + cid + this.cid;
 
             if(!_.isFunction(method)) {
                 throw new Error('method must be a function');
@@ -44,30 +53,47 @@ define(/** @exports core/view */[
             //bind context to method
             method = _.bind(method, context);
 
-            if(selector) {
+            if(!selector) {
                 this.$el.bind(eventName, method);
             } else {
                 this.$el.delegate(selector, eventName, method);
+            }
+            
+            //add to event listeners map
+            if(!this.eventListeners.hasOwnProperty(cid)) {
+                this.eventListeners[this.cid] = this.cid;
             }
             return this;
         },
 
         /**
          * Remove event listener
+         * @param {string} cid Component id to remove listeners for
          * @param {string} eventName Event name
          */
-        removeEventListener: function(eventName) {
-            var namespace = '.eventListener' + this.cid;
+        removeEventListener: function(cid, eventName) {
+            var namespace = '.eventListener' + cid + this.cid;
             eventName += namespace;
             this.$el.unbind(eventName);
         },
         
         /**
          * Remove all event listeners
+         * @param {string} cid Component id to remove listeners for.
+         *  If cid is  not provided, all event listeners will be removed.
          */
-        removeEventListeners: function() {
-            var namespace = '.eventListener' + this.cid;
-            this.$el.unbind(namespace);
+        removeEventListeners: function(cid) {
+            if(cid) {
+                var namespace = '.eventListener' + cid + this.cid;
+                this.$el.unbind(namespace);
+                delete this.eventListeners[cid];
+            } else {
+                _.each(this.eventListeners, function(value, key) {
+                    var namespace = '.eventListener' + key;
+                    this.$el.unbind(namespace);
+                    delete this.eventListeners[key];
+                }, this);
+            }
         },
         
         /**

@@ -46,8 +46,8 @@ define([
             });
 
             //add vew events listeners
-            this.view.addEventListener(tag_views.EVENTS.ADD_TAG, this.onAdd, this);
-            this.view.addEventListener(tag_views.EVENTS.DELETE_TAG, this.onDelete, this);
+            this.view.addEventListener(this.cid, tag_views.EVENTS.ADD_TAG, this.onAdd, this);
+            this.view.addEventListener(this.cid, tag_views.EVENTS.DELETE_TAG, this.onDelete, this);
             
             //notify system of view creation
             this.facade.trigger(notifications.VIEW_CREATED, {

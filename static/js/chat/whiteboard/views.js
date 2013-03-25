@@ -584,8 +584,8 @@ define([
             this.wbCollection.bind("add", this.onWhiteboardAdded, this);
             this.wbCollection.bind("remove", this.onWhiteboardRemoved, this);
 
-            this.addEventListener(EVENTS.CLEAR_WHITEBOARD, this.onClear, this);
-            this.addEventListener(EVENTS.UNDO, this.onUndo, this);
+            this.addEventListener(this.cid, EVENTS.CLEAR_WHITEBOARD, this.onClear, this);
+            this.addEventListener(this.cid, EVENTS.UNDO, this.onUndo, this);
 
         },
 

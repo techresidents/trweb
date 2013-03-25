@@ -46,16 +46,16 @@ define([
             });
 
             // setup event listeners
-            this.view.addEventListener(color_views.EVENTS.SELECT, this.onMarkerColorSelected, this);
-            this.view.addEventListener(whiteboard_views.EVENTS.SELECT_TOOL, this.onToolSelected, this);
-            this.view.addEventListener(whiteboard_views.EVENTS.SELECT_WHITEBOARD, this.onWhiteboardSelected, this);
+            this.view.addEventListener(this.cid, color_views.EVENTS.SELECT, this.onMarkerColorSelected, this);
+            this.view.addEventListener(this.cid, whiteboard_views.EVENTS.SELECT_TOOL, this.onToolSelected, this);
+            this.view.addEventListener(this.cid, whiteboard_views.EVENTS.SELECT_WHITEBOARD, this.onWhiteboardSelected, this);
 
-            this.view.addEventListener(whiteboard_views.EVENTS.CREATE_WHITEBOARD, this.onCreateWhiteboard, this);
-            this.view.addEventListener(whiteboard_views.EVENTS.DELETE_WHITEBOARD, this.onDeleteWhiteboard, this);
-            this.view.addEventListener(whiteboard_views.EVENTS.CLEAR_WHITEBOARD, this.onClearWhiteboard, this);
+            this.view.addEventListener(this.cid, whiteboard_views.EVENTS.CREATE_WHITEBOARD, this.onCreateWhiteboard, this);
+            this.view.addEventListener(this.cid, whiteboard_views.EVENTS.DELETE_WHITEBOARD, this.onDeleteWhiteboard, this);
+            this.view.addEventListener(this.cid, whiteboard_views.EVENTS.CLEAR_WHITEBOARD, this.onClearWhiteboard, this);
 
-            this.view.addEventListener(whiteboard_views.EVENTS.CREATE_WHITEBOARD_PATH, this.onCreateWhiteboardPath, this);
-            this.view.addEventListener(whiteboard_views.EVENTS.DELETE_WHITEBOARD_PATH, this.onDeleteWhiteboardPath, this);
+            this.view.addEventListener(this.cid, whiteboard_views.EVENTS.CREATE_WHITEBOARD_PATH, this.onCreateWhiteboardPath, this);
+            this.view.addEventListener(this.cid, whiteboard_views.EVENTS.DELETE_WHITEBOARD_PATH, this.onDeleteWhiteboardPath, this);
 
 
             /*

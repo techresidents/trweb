@@ -155,14 +155,9 @@ define([
                 headerCellView: new grid_views.GridHeaderCellView.Factory({
                     sort: 'created'
                 }),
-                cellView: new grid_views.GridCellView.Factory(function(options) {
-                    var value = format.date(
-                        options.model.get_created(),
-                        'MM/dd/yy'
-                    );
-                    return {
-                        value: value
-                    };
+                cellView: new grid_views.GridDateCellView.Factory({
+                    valueAttribute: 'created',
+                    format: 'MM/dd/yy'
                 })
             };
         },
