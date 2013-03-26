@@ -6,6 +6,7 @@ from django.template import RequestContext
 
 
 from trpycore.encode.basic import basic_encode
+from techresidents_web.common.decorators import developer_required, employer_required
 from techresidents_web.common.models import Skill, Topic
 from techresidents_web.job.models import JobPositionTypePref, JobTechnologyPref, JobLocationPref
 
@@ -135,7 +136,7 @@ def home(request):
     else:
         return home_developer(request)
 
-@login_required
+@developer_required
 def home_developer(request):
     """Developer home"""
 
@@ -203,7 +204,7 @@ def home_developer(request):
 
     return render_to_response('home/home.html', context, context_instance=RequestContext(request))
 
-@login_required
+@employer_required
 def home_employer(request):
     """Employer home"""
 
