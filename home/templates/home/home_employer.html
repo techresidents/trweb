@@ -53,9 +53,41 @@
             <h1>Welcome to Tech Residents</h1>
         </div>
 
-        <div class="row">
+        <div class="row employer-home-container">
+            <div class="span4">
+                <div class="well">
+                    <h4>{{ full_name }}</h4>
+                    <h4>{{ employer_name }}</h4>
+                    {% if recommended_actions|length > 0 %}
+                        <p>Recommended actions:</p>
+                        <ul>
+                        {% for action in recommended_actions %}
+                            {% if action.category == 'requisition' %}
+                                <li><p>Create a <a href="{{ action.link }}">requisition</a>. A requisition is required to score developers and make offers.</p></li>
+                            {% elif action.category == 'talent' %}
+                                <li><p>Search for <a href="{{ action.link }}">talent</a></p></li>
+                            {% endif %}
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
             <div class="span8">
-                <p class="lead alert alert-info"><strong>Our next hiring event is schedueld for the end of Q1.</strong></p>
+                <div class="well all-activities-container">
+
+                    <div class="activity-header">
+                        <h3>Recent Activity</h3>
+                    </div>
+
+                    {% for activity_ctx in activities %}
+                        <div class="well">
+                            <div class="activity-container">
+                                <p>{{ activity_ctx }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
             </div>
         </div>
     </div>
@@ -64,13 +96,7 @@
     <script src="{% static "js/3ps/bootstrap/bootstrap-min.js" %}"></script>
     <script>
         $(document).ready(function(){
-
             $("[rel=tooltip]").tooltip();
-
-            $(".home-topic-container").click(function(){
-                window.location=$(this).find("a").attr("href");
-                return false;
-            });
         });
     </script>
 

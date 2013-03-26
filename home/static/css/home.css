@@ -48,3 +48,24 @@
 .home-topic-row:hover + .home-topic-row > .home-topic-divider {
     margin: 0px;
 }
+
+.employer-home-container .all-activities-container {
+    min-height: 400px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.employer-home-container all-activities-container .activity-header {
+    padding-left: 19px;
+    border-top: 0px;
+}
+
+.employer-home-container .all-activities-container .well {
+    background-color: white;
+    border-color: #EA8F00;
+    border-radius: 15px;
+}
+
+.employer-home-container .all-activities-container .activity-container p {
+    margin-bottom: 0px;
+}
