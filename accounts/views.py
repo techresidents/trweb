@@ -14,6 +14,7 @@ from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
 
 from techresidents_web.accounts import forms
+from techresidents_web.common.decorators import developer_required
 from techresidents_web.accounts.models import OneTimePassword
 from techresidents_web.job.models import JobPositionType, JobPositionTypePref, JobTechnologyPref, JobLocationPref
 from techresidents_web.common.models import Skill, Technology, TechnologyType, ExpertiseType
@@ -302,7 +303,7 @@ def logout(request):
     redirect_to = request.REQUEST.get("next", settings.LOGIN_URL)
     return HttpResponseRedirect(redirect_to)
 
-@login_required
+@developer_required
 def profile_account(request):
     if request.method == 'POST':
         form = forms.ProfileAccountForm(request, data=request.POST)
@@ -334,7 +335,7 @@ def profile_account(request):
 
     return render_to_response('accounts/profile_account.html', context,  context_instance=RequestContext(request))
 
-@login_required
+@developer_required
 def profile_password(request):
     if request.method == 'POST':
         form = forms.ProfilePasswordForm(request, data=request.POST)
@@ -350,7 +351,7 @@ def profile_password(request):
     }
     return render_to_response('accounts/profile_password.html', context, context_instance=RequestContext(request))
 
-@login_required
+@developer_required
 def profile_chats(request):
     if request.method == 'POST':
         form = forms.ProfileChatsForm(request, data=request.POST)
@@ -372,7 +373,7 @@ def profile_chats(request):
 
     return render_to_response('accounts/profile_chats.html', context, context_instance=RequestContext(request))
 
-@login_required
+@developer_required
 def profile_jobs(request):
     if request.method == 'POST':
         form = forms.ProfileJobsForm(request, data=request.POST)
@@ -441,7 +442,7 @@ def profile_jobs(request):
 
     return render_to_response('accounts/profile_jobs.html', context, context_instance=RequestContext(request))
 
-@login_required
+@developer_required
 def profile_skills_languages(request):
     technology_type = 'Language'
     if request.method == 'POST':
@@ -459,7 +460,7 @@ def profile_skills_languages(request):
 
     return render_to_response('accounts/profile_skills_languages.html', context, context_instance=RequestContext(request))
 
-@login_required
+@developer_required
 def profile_skills_frameworks(request):
     technology_type = 'Framework'
     if request.method == 'POST':
@@ -477,7 +478,7 @@ def profile_skills_frameworks(request):
 
     return render_to_response('accounts/profile_skills_frameworks.html', context, context_instance=RequestContext(request))
 
-@login_required
+@developer_required
 def profile_skills_persistence(request):
     technology_type = 'Persistence'
     if request.method == 'POST':
@@ -495,7 +496,7 @@ def profile_skills_persistence(request):
 
     return render_to_response('accounts/profile_skills_persistence.html', context, context_instance=RequestContext(request))
 
-@login_required
+@developer_required
 def profile_skills_common(request, technology_type_name):
     """ Pulled out the code that was common between the language_skills
         and framework_skill views.
