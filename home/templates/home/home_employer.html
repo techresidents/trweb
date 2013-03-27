@@ -54,42 +54,43 @@
         </div>
 
         <div class="row employer-home-container">
-            <div class="span4">
+            <div class="span3">
                 <div class="well">
                     <h4>{{ full_name }}</h4>
                     <h4>{{ employer_name }}</h4>
-                    {% if recommended_actions|length > 0 %}
-                        <p>Recommended actions:</p>
-                        <ul>
-                        {% for action in recommended_actions %}
-                            {% if action.category == 'requisition' %}
-                                <li><p>Create a <a href="{{ action.link }}">requisition</a>. A requisition is required to score developers and extend interview offers.</p></li>
-                            {% elif action.category == 'talent' %}
-                                <li><p>Search for <a href="{{ action.link }}">talent</a></p></li>
-                            {% endif %}
-                        {% endfor %}
-                        </ul>
-                    {% endif %}
+                </div>
+                <div class="well">
+                    <h4>Announcements</h4>
+                    <ul>
+                        <li><em>No announcements at this time</em></li>
+                    </ul>
                 </div>
             </div>
-            <div class="span8">
-                <div class="well all-activities-container">
-
-                    <div class="activity-header">
-                        <h3>Announcements <small>New features, upcoming events</small></h3>
-                    </div>
-
-                    {% for date, announcement in announcements %}
-                        <div class="well">
-                            <div class="activity-container">
-                                <p class="date">{{ date }}</p>
-                                <p>{{ announcement }}</p>
-                            </div>
-                        </div>
-                    {% endfor %}
-
+            <div class="span9 steps-container">
+                <h3>Get Started <small>In 3 simple steps</small></h3>
+                <div class="span3">
+                    <h4>1. Create a Requisition</h4>
+                    <p>Job requisitions are required to score developers
+                        for a position and extend interview offers.</p>
+                    <p>You can <a href="/requisition/create/">create a requisition</a>
+                        now, or you can come back to this step later.</p>
+                </div>
+                <div class="span3">
+                    <h4>2. Search for Talent</h4>
+                    <p>While searching for talent, you can take notes on candidates
+                        and score them in the context of one of
+                        your job requisitions.</p>
+                    <p>Start <a href="/talent/">searching</a> for talent now.</p>
+                </div>
+                <div class="span3">
+                    <h4>3. Make an Offer</h4>
+                    <p>After you and your team have found a talented developer and
+                        voted to move forward in the hiring process, extend them
+                        an interview offer using our tools.
+                    </p>
                 </div>
             </div>
+
         </div>
     </div>
 
