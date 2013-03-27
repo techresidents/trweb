@@ -69,3 +69,7 @@
 .employer-home-container .all-activities-container .activity-container p {
     margin-bottom: 0px;
 }
+
+.employer-home-container .all-activities-container .activity-container p.date{
+    font-weight: bold;
+}

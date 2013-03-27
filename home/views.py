@@ -237,10 +237,16 @@ def home_employer(request):
         "full_name": request.user.get_full_name(),
         "employer_name": request.user.tenant.name,
         "recommended_actions": recommended_actions,
-        "activities": ["3/27/13  Brian created requisition Software Engineer",
-                       "3/28/13  Brian voted for candidate Z10zk",
-                       "3/28/13  Brian scored candidate z10zk for requisition Software Engineer",
-                       "4/01/13  Jeff voted for candidate 10zk for requisition Software Engineer"]
+        "announcements": [
+            ("March 26, 2013",
+             "Now you can create requisitions to track, score, "
+             "and extend interview offers to candidates. Click "
+             "the Requisitions link at the top of the screen to "
+             "create your first requisition."),
+            ("March 15, 2013",
+             "Our first hiring event has been postponed to Q2. Stay"
+             " tuned for more details.")
+        ]
     }
 
     return render_to_response('home/home_employer.html', context, context_instance=RequestContext(request))

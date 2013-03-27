@@ -63,7 +63,7 @@
                         <ul>
                         {% for action in recommended_actions %}
                             {% if action.category == 'requisition' %}
-                                <li><p>Create a <a href="{{ action.link }}">requisition</a>. A requisition is required to score developers and make offers.</p></li>
+                                <li><p>Create a <a href="{{ action.link }}">requisition</a>. A requisition is required to score developers and extend interview offers.</p></li>
                             {% elif action.category == 'talent' %}
                                 <li><p>Search for <a href="{{ action.link }}">talent</a></p></li>
                             {% endif %}
@@ -76,13 +76,14 @@
                 <div class="well all-activities-container">
 
                     <div class="activity-header">
-                        <h3>Recent Activity</h3>
+                        <h3>Announcements <small>New features, upcoming events</small></h3>
                     </div>
 
-                    {% for activity_ctx in activities %}
+                    {% for date, announcement in announcements %}
                         <div class="well">
                             <div class="activity-container">
-                                <p>{{ activity_ctx }}</p>
+                                <p class="date">{{ date }}</p>
+                                <p>{{ announcement }}</p>
                             </div>
                         </div>
                     {% endfor %}
