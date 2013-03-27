@@ -48,50 +48,41 @@
         }
     </script>
 
-    <div class="container">
+    <div class="container employer-home-container">
         <div class="page-header">
             <h1>Welcome to Tech Residents</h1>
         </div>
 
-        <div class="row employer-home-container">
-            <div class="span3">
-                <div class="well">
-                    <h4>{{ full_name }}</h4>
-                    <h4>{{ employer_name }}</h4>
-                </div>
-                <div class="well">
-                    <h4>Announcements</h4>
-                    <ul>
-                        <li><em>No announcements at this time</em></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="span9 steps-container">
+        <div class="row">
+            <div class="span12">
                 <h3>Get Started <small>In 3 simple steps</small></h3>
-                <div class="span3">
-                    <h4>1. Create a Requisition</h4>
-                    <p>Job requisitions are required to score developers
-                        for a position and extend interview offers.</p>
-                    <p>You can <a href="/requisition/create/">create a requisition</a>
-                        now, or you can come back to this step later.</p>
-                </div>
-                <div class="span3">
-                    <h4>2. Search for Talent</h4>
-                    <p>While searching for talent, you can take notes on candidates
-                        and score them in the context of one of
-                        your job requisitions.</p>
-                    <p>Start <a href="/talent/">searching</a> for talent now.</p>
-                </div>
-                <div class="span3">
-                    <h4>3. Make an Offer</h4>
-                    <p>After you and your team have found a talented developer and
-                        voted to move forward in the hiring process, extend them
-                        an interview offer using our tools.
-                    </p>
-                </div>
             </div>
-
         </div>
+
+        <div class="row steps-container">
+            <div class="span3 offset1">
+                <h4 class="blue">1. Create a Requisition</h4>
+                <p>Job requisitions are required to score developers
+                    for a position and extend interview offers.</p>
+                <p>You can <a href="/requisition/create/">create a requisition</a>
+                    now, or you can skip ahead and come back to this step later.</p>
+            </div>
+            <div class="span3">
+                <h4 class="orange">2. Search for Talent</h4>
+                <p>While searching for talent, you can take notes on candidates
+                    and score them in the context of one of
+                    your job requisitions.</p>
+                <p>Start <a href="/talent/">searching</a> for talent now.</p>
+            </div>
+            <div class="span3">
+                <h4 class="green">3. Make an Offer</h4>
+                <p>After you and your team have found a talented developer and
+                    voted to move forward in the hiring process, extend them
+                    an interview offer using our tools.
+                </p>
+            </div>
+        </div>
+
     </div>
 
     <script src="{% static "js/3ps/jquery/jquery-min.js" %}"></script>
