@@ -32,7 +32,7 @@ define([
          * Execute command
          * @param {object} options Options object
          * @param {object} [options.model] Application model to create.
-         * This is not required if optional attribute options are provided.
+         * This is not required if model attributes below  are provided.
          * @param {string} [options.user_id] Application model user_id.
          * This is not required if model is provided with attribute.
          * @param {string} [options.requisition_id] Application model
@@ -47,11 +47,11 @@ define([
             var currentUser = currentProxy.currentUser();
             var model = options.model || new api.Application();
             
-            attributes = _.defaults({}, model.attributes, {
+            attributes = _.defaults({
                 requisition_id: options.requisition_id,
                 user_id: options.user_id,
                 tenant_id: options.tenant_id
-            });
+            }, model.attributes);
             
             attributes.status = 'REVIEW';
             if(currentUser.id === model.user_id) {
@@ -86,13 +86,18 @@ define([
         /**
          * Execute command
          * @param {object} options Options object
-         * @param {object} options.model Application model to update
-         * @param {object} options.status New application status
+         * @param {object} options.model Application model to update.
+         * @param {object} [options.status] New application status.
+         * Not required if model contains updated status.
          * @param {function} [options.onSuccess] Success callback 
          * @param {function} [options.onError] Error callback 
          */
         execute: function(options) {
             var model = options.model;
+            var attributes = _.defaults({
+                status: options.status
+            }, model.attributes);
+
             var success = function() {
                 this.onSuccess();
                 this.facade.trigger(talent_notifications.CREATE_APPLICATION_LOG, {
@@ -101,7 +106,7 @@ define([
                 });
             };
 
-            model.save({status: options.status}, {
+            model.save(attributes, {
                 wait: true,
                 success: _.bind(success, this),
                 error: _.bind(this.onError, this)
@@ -126,7 +131,12 @@ define([
         /**
          * Execute command
          * @param {object} options Options object
-         * @param {object} options.model Application model to create log for.
+         * @param {object} options.application Application model to create
+         * log entry for.
+         * @param {object} [options.model] ApplicationLog model to create.
+         * This is not required if model attributes below are provided.
+         * @param {string} [options.note] Application log note.
+         * This is not required if model is provided with attribute.
          * @param {function} [options.onSuccess] Success callback 
          * @param {function} [options.onError] Error callback 
          */
@@ -134,18 +144,17 @@ define([
             var currentProxy = this.facade.getProxy(
                 current_proxies.CurrentProxy.NAME);
             var currentUser = currentProxy.currentUser();
-            var model = options.model || new api.ApplicationLog();
             var application = options.application;
+            var model = options.model || new api.ApplicationLog();
+            var attributes = _.defaults({
+                note: options.note
+            }, model.attributes);
+            
+            attributes.user_id = currentUser.id;
+            attributes.tenant_id = currentUser.get_tenant_id();
+            attributes.application_id = application.id;
 
-            model.set_user_id(currentUser.id);
-            model.set_tenant_id(currentUser.get_tenant_id());
-            model.set_application_id(application.id);
-
-            if(options.note) {
-                model.set_note(options.note);
-            }
-
-            model.save(null, {
+            model.save(attributes, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this)
             });
@@ -169,9 +178,13 @@ define([
         /**
          * Execute command
          * @param {object} options Options object
-         * @param {object} options.model InterviewOffer model
-         *   Required model attributes: type, expires 
          * @param {object} options.application Application model
+         * @param {object} [options.model] InterviewOffer model to create
+         * This is not required if model attributes below are provided.
+         * @param {string} [options.type] InterviewOffer type.
+         * This is not required if model is provided with attribute.
+         * @param {date} [options.expires] InterviewOffer expires date.
+         * This is not required if model is provided with attribute.
          * @param {function} [options.onSuccess] Success callback 
          * @param {function} [options.onError] Error callback 
          */
@@ -179,10 +192,14 @@ define([
             var currentProxy = this.facade.getProxy(
                 current_proxies.CurrentProxy.NAME);
             var currentUser = currentProxy.currentUser();
-            var model = options.model;
             var application = options.application;
+            var model = options.model || new api.InterviewOffer();
+            var attributes = _.defaults({
+                type: options.type,
+                expires: options.expires
+            }, model.attributes);
 
-            var updateApplicationStatus = function() {
+            var success = function() {
                 application.get_interview_offers().add(model);
 
                 this.facade.trigger(talent_notifications.UPDATE_APPLICATION_STATUS, {
@@ -192,14 +209,14 @@ define([
                 });
             };
 
-            model.save({
-                application_id: application.id,
-                employee_id: currentUser.id,
-                tenant_id: currentUser.get_tenant_id(),
-                candidate_id: application.get_user_id(),
-                status: 'PENDING'
-            }, {
-                success: _.bind(updateApplicationStatus, this),
+            attributes.application_id = application.id;
+            attributes.employee_id = currentUser.id;
+            attributes.tenant_id = currentUser.get_tenant_id();
+            attributes.candidate_id = application.get_user_id();
+            attributes.status = 'PENDING';
+
+            model.save(attributes, {
+                success: _.bind(success, this),
                 error: _.bind(this.onError, this)
             });
 
@@ -223,9 +240,9 @@ define([
         /**
          * Execute command
          * @param {object} options Options object
-         * @param {object} options.model InterviewOffer model
-         *   Required model attributes: type, expires 
          * @param {object} options.application Application model
+         * @param {object} options.model InterviewOffer model to rescind.
+         * @param {string} [options.applicationStatus] New application status.
          * @param {function} [options.onSuccess] Success callback 
          * @param {function} [options.onError] Error callback 
          */
@@ -233,11 +250,11 @@ define([
             var currentProxy = this.facade.getProxy(
                 current_proxies.CurrentProxy.NAME);
             var currentUser = currentProxy.currentUser();
-            var model = options.model;
             var application = options.application;
+            var model = options.model;
             var applicationStatus = options.applicationStatus;
 
-            var updateApplicationStatus = function() {
+            var success = function() {
                 application.get_interview_offers().add(model);
                 this.facade.trigger(talent_notifications.UPDATE_APPLICATION_STATUS, {
                     model: application,
@@ -249,7 +266,7 @@ define([
             model.save({
                 status: 'RESCINDED'
             }, {
-                success: _.bind(updateApplicationStatus, this),
+                success: _.bind(success, this),
                 error: _.bind(this.onError, this)
             });
 
