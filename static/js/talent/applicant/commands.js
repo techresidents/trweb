@@ -55,13 +55,13 @@ define([
             
             attributes.status = 'REVIEW';
             if(currentUser.id === model.user_id) {
-                attributes.type = 'CANDIDATAE';
+                attributes.type = 'CANDIDATE';
             } else {
                 attributes.type = 'EMPLOYEE_EVENT';
                 attributes.tenant_id = currentUser.get_tenant_id();
             }
 
-            model.save(null, {
+            model.save(attributes, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this)
             });
