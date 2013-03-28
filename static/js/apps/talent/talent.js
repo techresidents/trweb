@@ -212,6 +212,8 @@ define([
         talent_notifications.CREATE_APPLICATION;
     EventNotificationMap[talent_events.UPDATE_APPLICATION_STATUS] =
         talent_notifications.UPDATE_APPLICATION_STATUS;
+    EventNotificationMap[talent_events.CREATE_APPLICATION_LOG] =
+        talent_notifications.CREATE_APPLICATION_LOG;
     EventNotificationMap[talent_events.MAKE_INTERVIEW_OFFER] =
         talent_notifications.MAKE_INTERVIEW_OFFER;
     EventNotificationMap[talent_events.RESCIND_INTERVIEW_OFFER] =
@@ -347,12 +349,15 @@ define([
             this.registerCommand(notifications.APP_START, AppStartCommand);
             this.registerCommand(notifications.VIEW_NAVIGATE, NavigateCommand);
             
-            /* application commands */
+            /* APPLICATION COMMANDS */
             this.registerCommand(talent_notifications.CREATE_APPLICATION,
                 applicant_commands.CreateApplication);
             this.registerCommand(talent_notifications.UPDATE_APPLICATION_STATUS,
                 applicant_commands.UpdateApplicationStatus);
-            /* interview offer commands */
+            /* APPLICATION LOG COMMANDS */
+            this.registerCommand(talent_notifications.CREATE_APPLICATION_LOG,
+                applicant_commands.CreateApplicationLog);
+            /* INTERVIEW OFFER COMMANDS */
             this.registerCommand(talent_notifications.MAKE_INTERVIEW_OFFER,
                 applicant_commands.MakeInterviewOffer);
             this.registerCommand(talent_notifications.RESCIND_INTERVIEW_OFFER,

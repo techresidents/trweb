@@ -1,5 +1,6 @@
 define([
     'underscore',
+    'api/models',
     'common/notifications',
     'core/command',
     'current/proxies',
@@ -7,6 +8,7 @@ define([
     'talent/notifications'
 ], function(
     _,
+    api,
     notifications,
     command,
     current_proxies,
@@ -14,7 +16,7 @@ define([
     talent_notifications) {
 
     /**
-     * ApplicationCreate constructor
+     * CreateApplication constructor
      * @constructor
      * @classdesc
      * Create a new Application.
@@ -29,8 +31,13 @@ define([
         /**
          * Execute command
          * @param {object} options Options object
-         * @param {object} options.model Application model to create.
-         * Required model attributes: user_id, requisition_id 
+         * @param {object} [options.model] Application model to create.
+         * This is not required if optional attribute options are provided.
+         * @param {string} [options.user_id] Application model user_id.
+         * This is not required if model is provided with attribute.
+         * @param {string} [options.requisition_id] Application model
+         * requisition_id.  This is not required if model is provided
+         * with attribute.
          * @param {function} [options.onSuccess] Success callback 
          * @param {function} [options.onError] Error callback 
          */
@@ -38,22 +45,27 @@ define([
             var currentProxy = this.facade.getProxy(
                 current_proxies.CurrentProxy.NAME);
             var currentUser = currentProxy.currentUser();
-            var model = options.model;
-
+            var model = options.model || new api.Application();
+            
+            attributes = _.defaults({}, model.attributes, {
+                requisition_id: options.requisition_id,
+                user_id: options.user_id,
+                tenant_id: options.tenant_id
+            });
+            
+            attributes.state = 'REVIEW';
             if(currentUser.id === model.user_id) {
-                model.set_type('CANDIDATAE');
+                attributes.type = 'CANDIDATAE';
             } else {
-                model.set_type('EMPLOYEE_EVENT');
+                attributes.type = 'EMPLOYEE_EVENT';
+                attributes.tenant_id = currentUser.get_tenant_id();
             }
-
-            if(!model.get_status()) {
-                mode.set_status('NEW');
-            }
-
-            model.save(null, {
+            
+            model.save(attributes, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this)
             });
+
             return true;
         }
     });
@@ -81,8 +93,59 @@ define([
          */
         execute: function(options) {
             var model = options.model;
+            var success = function() {
+                this.onSuccess();
+                this.facade.trigger(talent_notifications.CREATE_APPLICATION_LOG, {
+                    application: model,
+                    note: 'Status changed to ' + options.status
+                });
+            };
+
             model.save({status: options.status}, {
                 wait: true,
+                success: _.bind(success, this),
+                error: _.bind(this.onError, this)
+            });
+            return true;
+        }
+    });
+
+    /**
+     * CreateApplicationLog constructor
+     * @constructor
+     * @classdesc
+     * Create a new application log entry.
+     */
+    var CreateApplicationLog = command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['model', 'response'],
+
+        /**
+         * Execute command
+         * @param {object} options Options object
+         * @param {object} options.model Application model to create log for.
+         * @param {function} [options.onSuccess] Success callback 
+         * @param {function} [options.onError] Error callback 
+         */
+        execute: function(options) {
+            var currentProxy = this.facade.getProxy(
+                current_proxies.CurrentProxy.NAME);
+            var currentUser = currentProxy.currentUser();
+            var model = options.model || new api.ApplicationLog();
+            var application = options.application;
+
+            model.set_user_id(currentUser.id);
+            model.set_tenant_id(currentUser.get_tenant_id());
+            model.set_application_id(application.id);
+
+            if(options.note) {
+                model.set_note(options.note);
+            }
+
+            model.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this)
             });
@@ -255,6 +318,7 @@ define([
     return {
         CreateApplication: CreateApplication,
         UpdateApplicationStatus: UpdateApplicationStatus,
+        CreateApplicationLog: CreateApplicationLog,
         MakeInterviewOffer: MakeInterviewOffer,
         RescindInterviewOffer: RescindInterviewOffer,
         ShowMakeInterviewOffer: ShowMakeInterviewOffer,
