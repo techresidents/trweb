@@ -47,7 +47,7 @@ define([
             }
 
             if(!model.get_status()) {
-                mode.set_status('NEW');
+                model.set_status('NEW');
             }
 
             model.save(null, {

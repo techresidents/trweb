@@ -13,6 +13,7 @@ define([
     'ui/drop/views',
     'ui/select/views',
     'ui/select/models',
+    'talent/events',
     'text!talent/user/templates/user.html',
     'text!talent/user/templates/jobprefs.html',
     'text!talent/user/templates/skills.html',
@@ -40,6 +41,7 @@ define([
     drop_views,
     select_views,
     select_models,
+    talent_events,
     user_template,
     jobprefs_template,
     skills_template,
@@ -1167,6 +1169,7 @@ define([
         _createApplication: function(requisitionSelectionModel) {
             // Only create applications for the selected requisitions
             if (requisitionSelectionModel.selected()) {
+                var that = this;
                 var application = new api.Application({
                     user_id: this.candidateModel.id,
                     tenant_id: this.employeeModel.get_tenant_id(),
@@ -1174,41 +1177,13 @@ define([
                     type: 'EMPLOYEE_EVENT',
                     status: 'NEW'
                 });
-                // TODO trigger event to save application
-                this._saveApplication(application);
-            }
-        },
-
-        /**
-         * Save application.
-         * @private
-         */
-        _saveApplication: function(app) {
-            var that = this;
-            var attributes = {
-                user_id: app.get_user_id(),
-                tenant_id: app.get_tenant_id(),
-                requisition_id: app.get_requisition_id(),
-                type: app.get_type(),
-                status: app.get_status()
-            };
-            var isValid = app.validate(attributes);
-            if (isValid === undefined) {
-                console.log('validation passed');
-                // undefined implies the model attributes are valid
-                app.save(attributes, {
-                    wait: true,
-                    success: function(model) {
-                        console.log('save successful');
-                        that.applicationsCollection.add(model);
-                    },
-                    error: function(model) {
-                        console.log('save failed');
+                var eventBody = {
+                    model: application,
+                    onSuccess: function() {
+                        that.applicationsCollection.add(application);
                     }
-                });
-            } else {
-                console.log('validation failed');
-                console.log(isValid);
+                };
+                this.triggerEvent(talent_events.CREATE_APPLICATION, eventBody);
             }
         }
     });
