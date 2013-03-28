@@ -7,7 +7,7 @@ define([
     'core/view',
     'api/loader',
     'api/models',
-    'ratingstars/views',
+    'ui/rating/stars/views',
     'ui/ac/matcher',
     'ui/collection/views',
     'ui/drop/views',
@@ -73,6 +73,7 @@ define([
         technologyPrefsSelector: '.technology-prefs',
         expandableItemsSelector: '.expandable-list-items',
         slideToggleSelector: '.slide-toggle',
+        tooltipSelector: '[rel=tooltip]',
 
         events: {
             'click .position-prefs .slide-toggle' : 'togglePositionPrefs',
@@ -100,6 +101,13 @@ define([
             });
         },
 
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$(this.tooltipSelector).tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
         render: function() {
             var context = {
                 model: this.model.toJSON({ withRelated: this.modelWithRelated }),
@@ -113,6 +121,8 @@ define([
                 this.locationPrefsSelector,
                 this.technologyPrefsSelector];
             _.each(expandableSections, this.addExpandableStyle, this);
+
+            this.$(this.tooltipSelector).tooltip(); // Activate tooltips
 
             return this;
         },
@@ -564,12 +574,25 @@ define([
         },
 
         onBlur: function() {
+            var currentNote = this.$(this.textareaSelector).val();
+            var isNoteModified = true;
+
             // Don't save if the user hasn't previously saved a note and
             // the textarea is empty. This will prevent saving empty notes.
             if (this.saveStatus === null &&
-                this.$(this.textareaSelector).val().length === 0) {
-                // no-op
-            } else {
+                currentNote.length === 0) {
+                isNoteModified = false;
+            }
+
+            // Don't save if current text is identical to previously saved text
+            // Checking for a SAVED status here also ensures that this.model
+            // will not be null when get_note() is invoked.
+            if (this.saveStatus === this.SaveStatusEnum.SAVED &&
+                this.model.get_note() === currentNote) {
+                isNoteModified = false;
+            }
+
+            if (isNoteModified) {
                 this._scheduleSave();
             }
         },
@@ -587,11 +610,11 @@ define([
          * saving their note every second (or more), and triggering
          * a large number of writes on the db.
          * @private
-         * @param secs Number of secs to delay until saving (optional)
-         *        Default value is 5 seconds.
+         * @param secs Number of millisecs to delay until saving (optional)
+         *        Default value is 500 milliseconds.
          */
-        _scheduleSave: function(secs) {
-            var delay = secs ? secs*1000 : 5000; // 5 sec default
+        _scheduleSave: function(millisecs) {
+            var delay = millisecs ? millisecs : 500; // 500 millisec default
             this.saveStatus = this.SaveStatusEnum.PENDING;
             this.updateSaveStatusUI();
             // clear any existing scheduled saves
@@ -779,6 +802,9 @@ define([
 
     /**
      * Talent application brief view.
+     * This view displays a brief version of an application.  It allows
+     * employers to see/edit a candidate's score and vote for a specific
+     * requisition.
      * @constructor
      * @param {Object} options
      *    model: {Application} (required)
@@ -790,11 +816,12 @@ define([
         ratingTechnicalSelector: '.rating-technical-container',
         ratingCultureSelector: '.rating-culture-container',
         voteButtonsSelector: '.vote-buttons-container',
+        tooltipSelector: '[rel=tooltip]',
 
         events: {
-            'RATING_CHANGED_EVENT .rating-culture-container': 'onCulturalFitScoreChange',
-            'RATING_CHANGED_EVENT .rating-technical-container': 'onTechnicalScoreChange',
-            'RATING_CHANGED_EVENT .rating-communication-container': 'onCommunicationScoreChange'
+            'change .rating-culture-container': 'onCulturalFitScoreChange',
+            'change .rating-technical-container': 'onTechnicalScoreChange',
+            'change .rating-communication-container': 'onCommunicationScoreChange'
         },
 
         childViews: function() {
@@ -808,8 +835,8 @@ define([
 
         initialize: function(options) {
             this.model = options.model;
-            this.listenTo(this.model, 'change', this.render);
-            this.listenTo(this.model.get_requisition(), 'change', this.render);
+            this.listenTo(this.model, 'change', this.onAppModelChange);
+            this.listenTo(this.model.get_requisition(), 'change', this.onReqModelChange);
             this.employeeModel = options.employeeModel;
             this.scoreModel = null;
             this.template = _.template(applicationbrief_template);
@@ -858,12 +885,11 @@ define([
         destroy: function() {
             // Need to hide any tooltips since this view could be removed
             // from the DOM before a mouseleave() event fires
-            this.$("[rel=tooltip]").tooltip('hide');
+            this.$(this.tooltipSelector).tooltip('hide');
             view.View.prototype.destroy.apply(this, arguments);
         },
 
         render: function() {
-            console.log('appBriefRender');
             var requisitionTitle = this.model.get_requisition().get_title();
             var context = {
                 model: this.model.toJSON(),
@@ -889,13 +915,20 @@ define([
             this.append(this.ratingTechnicalView, this.ratingTechnicalSelector);
             this.append(this.ratingCultureView, this.ratingCultureSelector);
 
-            this.$('[rel=tooltip]').tooltip(); // Activate tooltips
+            this.$(this.tooltipSelector).tooltip(); // Activate tooltips
 
             return this;
         },
 
+        onAppModelChange: function() {
+            this.render();
+        },
+
+        onReqModelChange: function() {
+            this.render();
+        },
+
         onAppScoresReset: function() {
-            console.log('ApplicationScoresReset');
             // Load Score if it exists or create new one
             if (this.appScoresCollection.length) {
                 this.scoreModel = this.appScoresCollection.first();
@@ -917,18 +950,18 @@ define([
          * Listen for changes to the cultural fit rating
          * @param e JQuery event
          * @param eventBody
-         *      rating: new score
+         *      value: new score
          */
         onCulturalFitScoreChange: function(e, eventBody) {
-            this._saveScore({cultural_fit_score: eventBody.rating});
+            this._saveScore({cultural_fit_score: eventBody.value});
         },
 
         onTechnicalScoreChange: function(e, eventBody) {
-            this._saveScore({technical_score: eventBody.rating});
+            this._saveScore({technical_score: eventBody.value});
         },
 
         onCommunicationScoreChange: function(e, eventBody) {
-            this._saveScore({communication_score: eventBody.rating});
+            this._saveScore({communication_score: eventBody.value});
         },
 
         _saveScore: function(attributes) {
@@ -951,9 +984,8 @@ define([
 
     /**
      * Talent user requisition select view.
-     * This view displays a list of requisitions and creates applications
-     * for the selected items.  If the candidate already has an application for
-     * a requisition, that requisition is not listed in this view.
+     * This view displays a list of requisitions. If the candidate already has
+     * an application for a requisition, that requisition is not listed.
      * @constructor
      * @param {Object} options
      *    applicationsCollection: {ApplicationsCollection} (required)
@@ -961,11 +993,8 @@ define([
      */
     var RequisitionSelectView = view.View.extend({
 
-        autoSelectSelector: '.autoselect',
-
-        events: {
-            'click .save': 'onSave'
-        },
+        autoSelectViewSelector: '.autoselectview',
+        searchInputSelector: 'input.search',
 
         childViews: function() {
             return [
@@ -990,14 +1019,15 @@ define([
             };
             // This matcher is used to compare the results of the query with
             // the match criteria specified by the user.
+            // The matcher methods do the following:
+            //      stringify: convert model into searchable text string
+            //      map: convert *matched* results
             this.matcher = new ac_matcher.QueryMatcher({
                 queryFactory: new factory.FunctionFactory(this.createQuery),
                 stringify: function(model) {
-                    // stringify: convert model into searchable text string
                     return model.get_title();
                 },
                 map: function(model) {
-                    // map: convert *matched* results
                     var ret = null;
                     // To prevent using a crazy query, filter the
                     // results here again to only return requisitions
@@ -1030,23 +1060,123 @@ define([
         render: function() {
             var context = {};
             this.$el.html(this.template(context));
-            this.append(this.autoSelectView, this.autoSelectSelector);
+            this.append(this.autoSelectView, this.autoSelectViewSelector);
+            return this;
+        }
+    });
+
+
+    /**
+     * Talent user create applications view.
+     * This view displays a list of requisitions and creates applications
+     * for the selected items.  If the candidate already has an application for
+     * a requisition, that requisition is not listed in this view.
+     * @constructor
+     * @param {Object} options
+     *    applicationsCollection: {ApplicationsCollection} (required)
+     *      The candidate's applications.
+     *      candidateModel: {User} Represents the developer (required)
+     *      employeeModel: {User} Represents the employee (required)
+     */
+    var ApplicationCreateView = view.View.extend({
+
+        tooltipSelector: '[rel=tooltip]',
+
+        events: {
+            'click .drop-button': 'onToggle',
+            'open .drop': 'onDropViewOpened',
+            'close .drop': 'onDropViewClosed',
+            'click .cancel': 'onClose',
+            'click .save': 'onSave'
+        },
+
+        childViews: function() {
+            return [
+                this.dropView,
+                this.selectView
+            ];
+        },
+
+        initialize: function(options) {
+            this.applicationsCollection = options.applicationsCollection;
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
+            this.template = _.template(applicationcreate_template);
+
+            // init child views
+            this.dropView = null;
+            this.selectView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.selectView = new RequisitionSelectView({
+                applicationsCollection: this.applicationsCollection
+            });
+            this.dropView = new drop_views.DropView({
+                view: this.selectView
+            });
+        },
+
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$(this.tooltipSelector).tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
+        render: function() {
+            var context = {};
+            this.$el.html(this.template(context));
+            this.append(this.dropView);
+            this.$(this.tooltipSelector).tooltip(); // Activate tooltips
             return this;
         },
 
-        onSave: function(e) {
-            console.log('onSave');
+        onToggle: function(e) {
+            this.dropView.toggle();
         },
 
-        // TODO
-        _createApplication: function(reqID) {
-            return new api.Application({
-                user_id: this.candidateModel.id,
-                tenant_id: this.employeeModel.get_tenant_id(),
-                requisition_id: reqID,
-                type: 'EMPLOYEE_EVENT',
-                status: 'NEW'
-            });
+        onClose: function(e) {
+            this.dropView.close();
+        },
+
+        onSave: function(e) {
+            this.selectView.requisitionSelectionCollection.each(
+                this._createApplication,
+                this // context
+            );
+            this.dropView.close();
+        },
+
+        onDropViewOpened: function(e) {
+            this.dropView.childView.autoSelectView.refresh();
+            this.dropView.childView.autoSelectView.input().focus();
+        },
+
+        onDropViewClosed: function(e) {
+            this.selectView.requisitionSelectionCollection.reset();
+            this.$(this.selectView.searchInputSelector).val('');
+        },
+
+        /**
+         * Create application
+         * @param requisitionSelectionModel
+         * @private
+         */
+        _createApplication: function(requisitionSelectionModel) {
+            // Only create applications for the selected requisitions
+            if (requisitionSelectionModel.selected()) {
+                var application = new api.Application({
+                    user_id: this.candidateModel.id,
+                    tenant_id: this.employeeModel.get_tenant_id(),
+                    requisition_id: requisitionSelectionModel.id,
+                    type: 'EMPLOYEE_EVENT',
+                    status: 'NEW'
+                });
+                // TODO trigger event to save application
+                this._saveApplication(application);
+            }
         },
 
         /**
@@ -1070,7 +1200,7 @@ define([
                     wait: true,
                     success: function(model) {
                         console.log('save successful');
-                        that.$('#req-input').val('');
+                        that.applicationsCollection.add(model);
                     },
                     error: function(model) {
                         console.log('save failed');
@@ -1083,74 +1213,9 @@ define([
         }
     });
 
-
-    /**
-     * Talent user create applications view.
-     * This view displays a list of requisitions and creates applications
-     * for the selected items.  If the candidate already has an application for
-     * a requisition, that requisition is not listed in this view.
-     * @constructor
-     * @param {Object} options
-     *    applicationsCollection: {ApplicationsCollection} (required)
-     *      The candidate's applications.
-     */
-    var ApplicationCreateView = view.View.extend({
-
-        events: {
-            'click .drop-button': 'onToggle',
-            'open .drop': 'onDropOpened',
-            'click .cancel': 'onClose'
-        },
-
-        childViews: function() {
-            return [
-                this.dropView,
-                this.selectView
-            ];
-        },
-
-        initialize: function(options) {
-            this.applicationsCollection = options.applicationsCollection;
-            this.template = _.template(applicationcreate_template);
-
-            // init child views
-            this.dropView = null;
-            this.selectView = null;
-            this.initChildViews();
-        },
-
-        initChildViews: function() {
-            this.selectView = new RequisitionSelectView({
-                applicationsCollection: this.applicationsCollection
-            });
-            this.dropView = new drop_views.DropView({
-                view: this.selectView
-            });
-        },
-
-        render: function() {
-            var context = {};
-            this.$el.html(this.template(context));
-            this.append(this.dropView);
-            return this;
-        },
-
-        onToggle: function(e) {
-            this.dropView.toggle();
-        },
-
-        onClose: function(e) {
-            this.dropView.close();
-        },
-
-        onDropOpened: function(e) {
-            this.dropView.childView.autoSelectView.refresh();
-            this.dropView.childView.autoSelectView.input().focus();
-        }
-    });
-
     /**
      * Talent user actions view.
+     * This view displays views which allow employers to evaluate candidates.
      * @constructor
      * @param {Object} options
      *    candidateModel: {User} (required)
@@ -1197,7 +1262,9 @@ define([
                 employeeModel: this.employeeModel
             });
             this.applicationCreateView = new ApplicationCreateView({
-                applicationsCollection: this.applicationsCollection
+                applicationsCollection: this.applicationsCollection,
+                candidateModel: this.candidateModel,
+                employeeModel: this.employeeModel
             });
             this.applicationBriefsView = new collection_views.CollectionView({
                 collection: this.applicationsCollection,

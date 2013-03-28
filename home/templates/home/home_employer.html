@@ -48,29 +48,52 @@
         }
     </script>
 
-    <div class="container">
+    <div class="container employer-home-container">
         <div class="page-header">
             <h1>Welcome to Tech Residents</h1>
         </div>
 
         <div class="row">
-            <div class="span8">
-                <p class="lead alert alert-info"><strong>Our next hiring event is schedueld for the end of Q1.</strong></p>
+            <div class="span12">
+                <h3>Get Started <small>In 3 simple steps</small></h3>
             </div>
         </div>
+
+        <div class="row steps-container">
+            <div class="span3 offset1">
+                <h4 class="blue">1. Create a Requisition</h4>
+                <p>Job requisitions are required to score developers
+                    for a position and extend interview offers. You can create
+                    a requisition now, or you can skip ahead and come back to
+                    this step later.</p>
+                <a href="/requisition/create/" class="btn btn-info">Create Requisition</a>
+            </div>
+            <div class="span3">
+                <h4 class="orange">2. Search for Talent</h4>
+                <p>While searching for talent you can take notes,
+                    score candidates in the context of one of your job requisitions,
+                    and vote to make an interview offer.</p>
+                <a href="/talent/" class="btn btn-warning">Search Talent</a>
+            </div>
+            <div class="span3">
+                <h4 class="green">3. Make an Offer</h4>
+                <p>After you have found a talented developer and
+                    decided to move forward in the hiring process, extend them
+                    an interview offer using our tools.</p>
+                <p>Note that if you work with a team that will have an impact
+                    on your hiring decision, we encourage each member of the
+                    team to create an account so they can individually
+                    score and vote on candidates.<p>
+            </div>
+        </div>
+
     </div>
 
     <script src="{% static "js/3ps/jquery/jquery-min.js" %}"></script>
     <script src="{% static "js/3ps/bootstrap/bootstrap-min.js" %}"></script>
     <script>
         $(document).ready(function(){
-
             $("[rel=tooltip]").tooltip();
-
-            $(".home-topic-container").click(function(){
-                window.location=$(this).find("a").attr("href");
-                return false;
-            });
         });
     </script>
 

@@ -1,10 +1,10 @@
 <div class="span7">
-    <h3 class="user-section-border-bottom">Profile <span class="orange-text normal-font">{<%= model.id %>}</span></h3>
+    <h3 class="user-section-border-bottom">User Profile <span rel="tooltip" title="Anonymous user ID" class="orange-text normal-font">{<%= model.id %>}</span></h3>
 </div>
 <div class="span8 user-position-prefs-container">
 
     <div class="span2-5">
-        <p class="user-position-prefs-position-heading">Seeking Positions</p>
+        <p>Seeking Positions</p>
         <div class="well">
             <ul class="position-prefs unstyled">
                 <% if (!model.position_prefs.length) { %>
@@ -25,7 +25,7 @@
     </div>
 
     <div class="span2-5">
-        <p class="user-position-prefs-position-heading">Located In</p>
+        <p>Located In</p>
         <div class="well">
             <ul class="location-prefs unstyled">
                 <% if (!model.location_prefs.length) { %>
@@ -50,7 +50,7 @@
     </div>
 
     <div class="span2-5">
-        <p class="user-position-prefs-position-heading">With Technology</p>
+        <p>With Technologies</p>
         <div class="well">
             <ul class="technology-prefs unstyled">
                 <% if (!model.technology_prefs.length) { %>
