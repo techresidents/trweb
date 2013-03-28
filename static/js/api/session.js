@@ -1,10 +1,12 @@
 define([
     'jquery',
     'underscore',
+    'backbone',
     'core/base'
 ], function(
     $,
     _,
+    Backbone,
     base) {
     
     /**
@@ -54,9 +56,9 @@ define([
 
         gc: function() {
             var now = new Date().getTime();
-            _.each(this.cache, function(entry, key) {
+            _.each(this.cache.byKey, function(entry, key) {
                 if(now > entry.timestamp + this.expire) {
-                    delete this.cache[key];
+                    delete this.cache.byKey[key];
                 }
             }, this);
         },
@@ -65,7 +67,7 @@ define([
             var entry, state;
             var model;
             var uriObject = {}, result = null;
-            key = this._expandKey(key, query);
+            key = this.expandKey(key, query);
 
             if(query) {
                 uriObject = query.toUriObject();
@@ -91,23 +93,25 @@ define([
 
         putModel: function(model, key) {
             key = key || model.key();
-            
+
             this.cache.byKey[key] = {
                 model: model.clone(),
                 timestamp: new Date().getTime()
             };
+            this.trigger('put:' + key, model);
         },
 
         removeModel: function(model, key) {
             key = key || model.key();
             delete this.cache.byKey[key];
+            this.trigger('remove:' + key);
         },
 
         getCollection: function(key, query) {
             var entry, state;
             var collection, model;
             var uriObject = {}, result = null;
-            key = this._expandKey(key, query);
+            key = this.expandKey(key, query);
 
             if(query) {
                 uriObject = query.toUriObject();
@@ -143,7 +147,7 @@ define([
         putCollection: function(collection, key, query) {
             var byCollection, baseKey;
             key = key || collection.key();
-            key = this._expandKey(key, query);
+            key = this.expandKey(key, query);
 
             this.cache.byKey[key] = {
                 modelKeys: collection.map(function(model) {
@@ -159,14 +163,17 @@ define([
                 byCollection = this.cache.byCollection[baseKey] = {};
             }
             byCollection[key] = key;
+
+            this.trigger('put:' + key, collection);
         },
 
         removeCollection: function(collection, key, query) {
             var baseKey = collection.constructor.key();
             key = key || collection.key();
-            key = this._expandKey(key, query);
+            key = this.expandKey(key, query);
             delete this.cache.byKey[key];
             delete this.cache.byCollection[baseKey][key];
+            this.trigger('remove:' + key);
         },
 
         removeAllCollections: function(collection) {
@@ -174,13 +181,14 @@ define([
             var keys = _.keys(this.cache.byCollection[baseKey] || {});
             _.each(keys, function(key) {
                 delete this.cache.byKey[key];
+                this.trigger('remove:' + key);
             }, this);
             this.cache.byCollection[baseKey] = {};
         },
 
         getFetch: function(key, query) {
             key = key || instance.key();
-            key = 'fetch:' + this._expandKey(key, query);
+            key = 'fetch:' + this.expandKey(key, query);
             var result = null;
             var entry = this.cache.byKey[key];
 
@@ -193,7 +201,7 @@ define([
 
         putFetch: function(instance, key, query) {
             key = key || instance.key();
-            key = this._expandFetchKey(key, query);
+            key = this.expandFetchKey(key, query);
 
             this.cache.byKey[key] = {
                 timestamp: new Date().getTime(),
@@ -205,7 +213,7 @@ define([
 
             var syncHandler = function(instance, response, options) {
                 var entry;
-                var syncKey = this._expandFetchKey(instance.key(), options.query);
+                var syncKey = this.expandFetchKey(instance.key(), options.query);
                 if(syncKey === key) {
                     entry = this.cache.byKey[key];
                     if(entry) {
@@ -220,7 +228,7 @@ define([
 
             var errorHandler = function(instance, response, options) {
                 var entry;
-                var syncKey = this._expandFetchKey(instance.key(), options.query);
+                var syncKey = this.expandFetchKey(instance.key(), options.query);
                 if(syncKey === key) {
                     entry = this.cache.byKey[key];
                     if(entry) {
@@ -237,7 +245,7 @@ define([
             instance.on('error', errorHandler, this);
         },
 
-        _expandKey: function(key, query) {
+        expandKey: function(key, query) {
             var result = key;
             var uri;
             if(query) {
@@ -249,8 +257,8 @@ define([
             return result;
         },
 
-        _expandFetchKey: function(key, query) {
-            return 'fetch:' + this._expandKey(key, query);
+        expandFetchKey: function(key, query) {
+            return 'fetch:' + this.expandKey(key, query);
         }
 
     }, {
@@ -267,6 +275,8 @@ define([
             return result;
         }
     });
+
+    _.extend(ApiSession.prototype, Backbone.Events);
 
     return {
         ApiSession: ApiSession

@@ -4,6 +4,23 @@ define(/** @exports core/string */[
     base) {
 
     /**
+     * Test if string is equal to a string in array of options
+     * @param {string} string String to test
+     * @param {array} options Array of strings to test 
+     * @returns {boolean} True if string in options, false otherwise
+     */
+    var oneOf = function(string, options) {
+        var i, result = false;
+        for(i = 0; i < options.length; i++) {
+            if(string === options[i]) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    };
+
+    /**
      * Escape string for use in regular expression.
      * @param {string} string String or object castable to String
      * @returns {string} Escaped string
@@ -50,6 +67,7 @@ define(/** @exports core/string */[
     };
 
     return {
+        oneOf: oneOf,
         regExpEscape: regExpEscape,
         stringify: stringify,
         trim: trim,

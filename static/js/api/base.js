@@ -191,6 +191,7 @@ define([
             }
             
             if(!_.isEmpty(errors)) {
+                console.log(errors);
                 return errors;
             }
         },
@@ -396,7 +397,7 @@ define([
         },
         
         save: function(key, value, options) {
-            if(this.session && this.isNew()) {
+            if(this.session) {
                 this.session.removeAllCollections(new this.collectionConstructor());
             }
             return Backbone.Model.prototype.save.call(this, key, value, options);

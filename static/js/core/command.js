@@ -2,8 +2,9 @@ define(/** @exports core/command */[
     'jquery',
     'underscore',
     'core/base',
-    'core/facade'
-], function($, _, base, facade) { 
+    'core/facade',
+    'common/notifications'
+], function($, _, base, facade, notifications) { 
 
     /**
      * Command base class.
@@ -127,6 +128,8 @@ define(/** @exports core/command */[
          */
         asyncErrorCallbackArgs: [],
 
+        defaultErrorMessage: 'Unexpected error, please try again.',
+
         run: function(options) {
             this.options = options;
             this.execute.apply(this, arguments);
@@ -173,6 +176,12 @@ define(/** @exports core/command */[
                     this.options.context || this,
                     this.options,
                     result);
+            } else {
+                this.facade.trigger(notifications.ALERT, {
+                    severity: 'error',
+                    message: this.options.errorMessage ||
+                             this.defaultErrorMessage
+                });
             }
         },
 

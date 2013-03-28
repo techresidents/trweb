@@ -1,11 +1,13 @@
 define([
     'jquery',
     'underscore',
-    'core/base'
+    'core/base',
+    'core/date'
 ], function(
     $,
     _,
-    base) {
+    base,
+    date) {
     
     var Field = base.Base.extend({
         defaults: {
@@ -115,8 +117,12 @@ define([
                 result = null;
             }
             else if(_.isString(value)) {
-                result = new Date(value);
+                result = new date.Date(new Date(value));
             } else if(_.isDate(value)) {
+                result = new date.Date(value);
+            } else if(value instanceof date.DateTime) {
+                result = new date.Date(value.date);
+            } else if(value instanceof date.Date) {
                 result = value;
             } else {
                 throw new Error(this.name + ": invalid date");
@@ -126,7 +132,9 @@ define([
 
         toJSON: function(value) {
             var result;
-            if(_.isDate(value)) {
+            if(_.isDate(value) ||
+               value instanceof date.Date || 
+               value instanceof date.DateTime) {
                 result = value.toISOString().substring(0,10);
             } else {
                 throw new Error(this.name + ": invalid date");
@@ -142,9 +150,12 @@ define([
                 result = null;
             }
             else if(_.isNumber(value)) {
-                result = new Date(0);
-                result.setUTCSeconds(value);
+                result = date.DateTime.fromTimestamp(value);
             } else if(_.isDate(value)) {
+                result = new date.DateTime(value);
+            } else if(value instanceof date.Date) {
+                result = new date.DateTime(value.date);
+            } else if(value instanceof date.DateTime) {
                 result = value;
             } else {
                 throw new Error(this.name + ":invalid datetime");
@@ -157,7 +168,9 @@ define([
             if(_.isNull(value) || _.isUndefined(value)) {
                 result = null;
             }
-            else if(_.isDate(value)) {
+            else if(_.isDate(value) ||
+                    value instanceof date.Date || 
+                    value instanceof date.DateTime) {
                 result = value.getTime()/1000.0;
             } else {
                 throw new Error(this.name + ": invalid datetime");

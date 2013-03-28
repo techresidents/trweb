@@ -131,6 +131,22 @@ define(/** @exports core/view */[
         },
 
         /**
+         * Prepend view to the dom at the element specified in selector.
+         * Additionally this method will re-render and  re-delegate
+         * view events.
+         * @param {module:core/view~View} view View object to prepend
+         * @param {string} [selector] Selector to prepend view to. If
+         *  not provided the view will be appened to this.$el.
+         * @returns {module:core/view~View} this
+         */
+        prepend: function(view, selector) {
+            var target = selector ? this.$(selector) : this.$el;
+            target.prepend(view.render().el);
+            view.delegateEvents();
+            return this;
+        },
+
+        /**
          * Assign view to dom at the element specified in selector.
          * This will result in a view.setElement() and view.render().
          * @param {module:core/view~View} view View object to assign
@@ -206,6 +222,20 @@ define(/** @exports core/view */[
             this.remove();
             this.undelegateEvents();
             this.removeEventListeners();
+        },
+
+        /**
+         * @returns {boolean} true if is an alert view, false otherwise.
+         */
+        isAlert: function() {
+            return false;
+        },
+
+        /**
+         * @returns {boolean} true if is a modal view, false otherwise.
+         */
+        isModal: function() {
+            return false;
         }
     });
 

@@ -16,6 +16,8 @@ define(/** @exports core/format */[
         var result;
         if(_.isDate(value)) {
             result = Globalize.format(value, format);
+        } else if(value instanceof core_date.Date) {
+            result = Globalize.format(value.date, format);
         } else if(value instanceof core_date.DateTime) {
             result = Globalize.format(value.date, format);
         }

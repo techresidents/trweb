@@ -37,7 +37,8 @@ define([
             application_id: new fields.StringField(),
             type: new fields.StringField(),
             status: new fields.StringField(),
-            expires: new fields.DateTimeField()
+            expires: new fields.DateTimeField(),
+            created: new fields.DateTimeField({nullable: true})
         },
 
         relatedFields: {
