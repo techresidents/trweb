@@ -138,11 +138,11 @@ define([
         config: function() {
             var config = {
                 columns: [
-                    RequisitionGridView.createdColumn(),
-                    RequisitionGridView.internalIdColumn(),
                     RequisitionGridView.titleColumn(),
                     RequisitionGridView.locationColumn(),
                     RequisitionGridView.statusColumn(),
+                    RequisitionGridView.internalIdColumn(),
+                    RequisitionGridView.createdColumn(),
                     RequisitionGridView.actionColumn()
                 ]
             };
