@@ -2,11 +2,15 @@ define([
     'jquery',
     'underscore',
     'core/view',
+    'talent/events',
+    'talent/applicant/handler',
     'ui/grid/views'
 ], function(
     $,
     _,
     view,
+    talent_events,
+    applicant_handler,
     grid_views) {
 
     /**
@@ -19,26 +23,42 @@ define([
     var TrackerGridView = grid_views.GridView.extend({
 
         initialize: function(options) {
-            options = _.extend({
-                config: TrackerGridView.config()
-            }, options);
-
-            grid_views.GridView.prototype.initialize.call(this, options);
-        }
-    }, {
-        config: function() {
             var config = {
                 columns: [
-                    TrackerGridView.statusColumn(),
+                    TrackerGridView.applicationColumn(),
                     TrackerGridView.requisitionColumn(),
                     TrackerGridView.userColumn(),
                     TrackerGridView.createdColumn(),
-                    TrackerGridView.actionColumn()
+                    TrackerGridView.statusColumn(),
+                    TrackerGridView.actionColumn(this)
                 ]
             };
-            return config;
+
+            options = _.extend({
+                config: config
+            }, options);
+
+            grid_views.GridView.prototype.initialize.call(this, options);
         },
-        
+
+        classes: function() {
+            var result = grid_views.GridView.prototype.classes.call(this);
+            result = result.concat(['tracker-grid']);
+            return result;
+        }
+    }, {
+        applicationColumn: function() {
+            return {
+                column: 'Application',
+                cellView: new grid_views.GridLinkCellView.Factory(function(options) {
+                    return {
+                        href: '/talent/application/' + options.model.id,
+                        value: options.model.id
+                    };
+                })
+            };
+        },
+
         statusColumn: function() {
             return   {
                 column: 'Status',
@@ -88,15 +108,14 @@ define([
             };
         },
 
-        actionColumn: function() {
+        actionColumn: function(view) {
             var map = function(model) {
-                return [
-                    {key: 'open', label: 'Open', handler: function() {console.log('blah');}},
-                    {key: 'divider'},
-                    {key: 'close', label: 'Close'}
-                ];
+                handler = new applicant_handler.ApplicantHandler({
+                    model: model,
+                    view: view
+                });
+                return handler.menuItems();
             };
-
             return {
                 column: '',
                 cellView: new grid_views.GridActionCellView.Factory({

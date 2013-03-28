@@ -93,7 +93,7 @@ define([
             this.loader = new api_loader.ApiLoader([
                 { instance: this.model, withRelated: this.modelWithRelated }
             ], {
-                successOnAlreadyLoaded: true
+                triggerAlways: true
             });
             
             this.loader.load({

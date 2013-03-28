@@ -448,3 +448,8 @@
     font-weight: normal;
     color: #999;
 }
+
+.tracker-grid .grid-cell-requisition {
+    width: auto;
+    white-space: nowrap;
+}
