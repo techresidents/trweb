@@ -16,6 +16,7 @@ define([
             key: null,
             label: null,
             enabled: true,
+            visible: true,
             handler: null
         },
 
@@ -29,6 +30,10 @@ define([
         
         enabled: function() {
             return this.get('enabled');
+        },
+
+        visible: function() {
+            return this.get('visible');
         },
 
         handler: function() {

@@ -130,7 +130,12 @@ define([
         },
 
         onChange: function() {
-            this.today = this.getDate().clone();
+            var current = this.getDate();
+            if(current) {
+                this.today = current.clone();
+            } else {
+                this.today = new date.Date();
+            }
             this.render();
         },
 
@@ -303,20 +308,18 @@ define([
             }
         },
 
-        delegateEventName: function(eventName) {
-            //use delegate events so they're removed on destroy()
-            return eventName + '.delegateGlobalEvents' + this.cid;
-        },
-
         delegateEvents: function() {
             view.View.prototype.delegateEvents.apply(this, arguments);
-            this.input().on(this.delegateEventName('focus'), _.bind(this.onFocus, this));
-            this.input().on(this.delegateEventName('blur'), _.bind(this.onBlur, this));
-            this.input().on(this.delegateEventName('keyup'), _.bind(this.onKeyUp, this));
+            this.inputView.addEventListener(this.cid, 'focus',
+                    this.onFocus, this, this.inputSelector);
+            this.inputView.addEventListener(this.cid, 'blur',
+                    this.onBlur, this, this.inputSelector);
+            this.inputView.addEventListener(this.cid, 'keyup', 
+                    this.onKeyUp, this, this.inputSelector);
         },
 
         undelegateEvents: function() {
-            this.input().off(this.delegateEventName(''));
+            this.inputView.removeEventListeners(this.cid);
             view.View.prototype.undelegateEvents.apply(this, arguments);
         },
 
@@ -358,27 +361,23 @@ define([
             var newDate;
             var currentDate = this.getDate();
             var value = this.input().val();
-            var update = false;
 
             if(value) {
                 newDate = Globalize.parseDate(value, this.formats);
                 if(newDate) {
-                    update = true;
                     newDate = new date.Date(newDate);
                 }
             } else {
                 newDate = null;
                 update = true;
             }
-            
-            if(update) {
-                if((newDate && currentDate && !currentDate.equals(newDate)) ||
-                   newDate !== currentDate) {
-                    this.setDate(newDate);
-                    this.triggerEvent(EVENTS.DATE_CHANGED, {
-                        date: newDate
-                    });
-                }
+
+            if((newDate && currentDate && !currentDate.equals(newDate)) ||
+               newDate !== currentDate) {
+                this.setDate(newDate);
+                this.triggerEvent(EVENTS.DATE_CHANGED, {
+                    date: newDate
+                });
             }
         }
     });

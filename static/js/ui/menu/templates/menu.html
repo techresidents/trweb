@@ -1,5 +1,5 @@
 <ul>
-    <% _.each(collection, function(model) { %>
+    <% _.each(_.where(collection, {visible: true}), function(model) { %>
     <% if(model.key === 'divider') { %>
     <div class="menu-divider"</>
     <% } else { %>

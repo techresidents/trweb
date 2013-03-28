@@ -239,7 +239,7 @@ html {
 }
 
 .grid-action-cell {
-    width: 40px;
+    width: 30px;
 }
 .grid-action-cell-inner{
     position: relative;
@@ -304,6 +304,7 @@ html {
 
 .menu ul {
     list-style: none outside none;
+    margin: 0px;
 }
 
 .menu li > a {
@@ -410,7 +411,7 @@ html {
     text-align: center;
     width: 20px;
     height: 20px;
-    padding: 4px 5px;
+    padding: 2px 5px;
 }
 
 .date-month td:hover {
@@ -558,4 +559,10 @@ html {
 
 .multi-autocomplete-item .close {
     margin-left: 3px;
+}
+
+.loader {
+    margin: 0 auto;
+    height: 1px;
+    width: 1px;
 }
