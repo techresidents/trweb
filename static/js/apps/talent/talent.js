@@ -208,12 +208,17 @@ define([
      * Event to Notification map
      */
     var EventNotificationMap = {};
+    /* APPLICATION EVENTS*/
     EventNotificationMap[talent_events.CREATE_APPLICATION] =
         talent_notifications.CREATE_APPLICATION;
     EventNotificationMap[talent_events.UPDATE_APPLICATION_STATUS] =
         talent_notifications.UPDATE_APPLICATION_STATUS;
+    EventNotificationMap[talent_events.SCORE_APPLICANT] =
+        talent_notifications.SCORE_APPLICANT;
+    /* APPLICATION LOG EVENTS*/
     EventNotificationMap[talent_events.CREATE_APPLICATION_LOG] =
         talent_notifications.CREATE_APPLICATION_LOG;
+    /* INTERVIEW OFFER EVENTS*/
     EventNotificationMap[talent_events.MAKE_INTERVIEW_OFFER] =
         talent_notifications.MAKE_INTERVIEW_OFFER;
     EventNotificationMap[talent_events.RESCIND_INTERVIEW_OFFER] =
@@ -354,6 +359,8 @@ define([
                 applicant_commands.CreateApplication);
             this.registerCommand(talent_notifications.UPDATE_APPLICATION_STATUS,
                 applicant_commands.UpdateApplicationStatus);
+            this.registerCommand(talent_notifications.SCORE_APPLICANT,
+                applicant_commands.ScoreApplicant);
             /* APPLICATION LOG COMMANDS */
             this.registerCommand(talent_notifications.CREATE_APPLICATION_LOG,
                 applicant_commands.CreateApplicationLog);

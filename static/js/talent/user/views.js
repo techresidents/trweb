@@ -967,20 +967,11 @@ define([
         },
 
         _saveScore: function(attributes) {
-            attributes = _.extend({
-                tenant_id: this.scoreModel.get_tenant_id(),
-                user_id: this.scoreModel.get_user_id(),
-                application_id: this.scoreModel.get_application_id()
+            eventBody = _.extend({
+                model: this.scoreModel,
+                application: this.model
             }, attributes);
-            this.scoreModel.save(attributes, {
-                wait: true,
-                success: function(model) {
-                    console.log('save success');
-                },
-                error: function(model) {
-                    console.log('save error');
-                }
-            });
+            this.triggerEvent(talent_events.SCORE_APPLICANT, eventBody);
         }
     });
 
@@ -1078,7 +1069,6 @@ define([
      *    applicationsCollection: {ApplicationsCollection} (required)
      *      The candidate's applications.
      *      candidateModel: {User} Represents the developer (required)
-     *      employeeModel: {User} Represents the employee (required)
      */
     var ApplicationCreateView = view.View.extend({
 
@@ -1102,7 +1092,6 @@ define([
         initialize: function(options) {
             this.applicationsCollection = options.applicationsCollection;
             this.candidateModel = options.candidateModel;
-            this.employeeModel = options.employeeModel;
             this.template = _.template(applicationcreate_template);
 
             // init child views
@@ -1172,10 +1161,7 @@ define([
                 var that = this;
                 var application = new api.Application({
                     user_id: this.candidateModel.id,
-                    tenant_id: this.employeeModel.get_tenant_id(),
-                    requisition_id: requisitionSelectionModel.id,
-                    type: 'EMPLOYEE_EVENT',
-                    status: 'NEW'
+                    requisition_id: requisitionSelectionModel.id
                 });
                 var eventBody = {
                     model: application,
@@ -1238,8 +1224,7 @@ define([
             });
             this.applicationCreateView = new ApplicationCreateView({
                 applicationsCollection: this.applicationsCollection,
-                candidateModel: this.candidateModel,
-                employeeModel: this.employeeModel
+                candidateModel: this.candidateModel
             });
             this.applicationBriefsView = new collection_views.CollectionView({
                 collection: this.applicationsCollection,

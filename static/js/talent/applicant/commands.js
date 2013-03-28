@@ -47,7 +47,7 @@ define([
             var currentUser = currentProxy.currentUser();
             var model = options.model || new api.Application();
             
-            attributes = _.defaults({
+            var attributes = _.defaults({
                 requisition_id: options.requisition_id,
                 user_id: options.user_id,
                 tenant_id: options.tenant_id
@@ -62,7 +62,71 @@ define([
             }
 
             model.save(attributes, {
+                wait: true,
                 success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+
+            return true;
+        }
+    });
+
+    /**
+     * ScoreApplicant constructor
+     * @constructor
+     * @classdesc
+     * Score an applicant.
+     */
+    var ScoreApplicant = command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['model', 'response'],
+
+        /**
+         * Execute command
+         * @param {object} options Options object
+         *
+         * @param {object} [options.model] ApplicationScore model to create.
+         * This is not required if model attributes below  are provided.
+         *
+         * @param {string} [options.user_id] ApplicationScore model user_id.
+         * This is not required if model is provided with attribute.
+         *
+         * @param {string} [options.application_id] ApplicationScore model
+         * application_id.  This is not required if model is provided
+         * with attribute.
+         *
+         * @param {function} [options.onSuccess] Success callback
+         * @param {function} [options.onError] Error callback
+         */
+        execute: function(options) {
+            var currentProxy = this.facade.getProxy(
+                current_proxies.CurrentProxy.NAME);
+            var currentUser = currentProxy.currentUser();
+            var application = options.application;
+            var model = options.model || new api.ApplicationScore();
+
+            var attributes = _.defaults({
+                tenant_id: currentUser.get_tenant_id(),
+                application_id: application.id,
+                user_id: options.user_id,
+                technical_score: options.technical_score,
+                communication_score: options.communication_score,
+                cultural_fit_score: options.cultural_fit_score
+            }, model.attributes);
+
+            // For convenience, update the applications scores collection
+            var success = function(model) {
+                var scores = application.get_application_scores();
+                scores.add(model);
+                this.onSuccess();
+            };
+
+            model.save(attributes, {
+                wait: true,
+                success: _.bind(success, this),
                 error: _.bind(this.onError, this)
             });
 
@@ -334,6 +398,7 @@ define([
 
     return {
         CreateApplication: CreateApplication,
+        ScoreApplicant: ScoreApplicant,
         UpdateApplicationStatus: UpdateApplicationStatus,
         CreateApplicationLog: CreateApplicationLog,
         MakeInterviewOffer: MakeInterviewOffer,
