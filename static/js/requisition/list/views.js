@@ -138,11 +138,11 @@ define([
         config: function() {
             var config = {
                 columns: [
-                    RequisitionGridView.createdColumn(),
-                    RequisitionGridView.internalIdColumn(),
                     RequisitionGridView.titleColumn(),
                     RequisitionGridView.locationColumn(),
                     RequisitionGridView.statusColumn(),
+                    RequisitionGridView.internalIdColumn(),
+                    RequisitionGridView.createdColumn(),
                     RequisitionGridView.actionColumn()
                 ]
             };
@@ -221,26 +221,15 @@ define([
 
         actionColumn: function() {
             var map = function(model) {
-                var openOrCloseAction = null;
-                if (model.get_status() === "OPEN") {
-                    openOrCloseAction = {
-                        key: 'close',
-                        label: 'Close'
-                    };
-                } else {
-                    openOrCloseAction = {
-                        key: 'open',
-                        label: 'Open'
-                    };
-                }
-
+                var showOpen = model.get_status() === "CLOSED";
                 return [
                     {key: 'view', label: 'View'},
                     {key: 'edit', label: 'Edit'},
                     {key: 'divider'},
-                    openOrCloseAction,
-                    {key: 'divider'},
-                    {key: 'delete', label: 'Delete'}
+                    {key: 'open', label: 'Open', visible: showOpen},
+                    {key: 'close', label: 'Close', visible: !showOpen},
+                    {key: 'divider', visible: false},
+                    {key: 'delete', label: 'Delete', visible: false} // TODO
                 ];
             };
 

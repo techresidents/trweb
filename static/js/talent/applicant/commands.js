@@ -53,15 +53,15 @@ define([
                 tenant_id: options.tenant_id
             });
             
-            attributes.state = 'REVIEW';
+            attributes.status = 'REVIEW';
             if(currentUser.id === model.user_id) {
                 attributes.type = 'CANDIDATAE';
             } else {
                 attributes.type = 'EMPLOYEE_EVENT';
                 attributes.tenant_id = currentUser.get_tenant_id();
             }
-            
-            model.save(attributes, {
+
+            model.save(null, {
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this)
             });
