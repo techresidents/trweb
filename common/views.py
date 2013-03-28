@@ -69,11 +69,23 @@ def employer_learn_more(request):
 
 @never_cache
 def about(request):
-    context = {}
+    navbar_template = 'navbar_unauthenticated.html'
+    if (request.user.is_authenticated()):
+        navbar_template = 'navbar_authenticated.html'
+
+    context = {
+        'base_template': navbar_template
+    }
     return render_to_response('common/about.html', context,  context_instance=RequestContext(request))
 
 @never_cache
 def contact(request):
-    context = {}
+    navbar_template = 'navbar_unauthenticated.html'
+    if (request.user.is_authenticated()):
+        navbar_template = 'navbar_authenticated.html'
+
+    context = {
+        'base_template': navbar_template
+    }
     return render_to_response('common/contact.html', context,  context_instance=RequestContext(request))
 
