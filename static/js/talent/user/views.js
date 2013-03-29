@@ -676,13 +676,13 @@ define([
         },
 
         initialize: function(options) {
-            this.model = options.model;
+            this.applicationModel = options.applicationModel;
             this.employeeModel = options.employeeModel;
             this.voteModel = null;
             this.template = _.template(vote_buttons_template);
 
             // load application votes
-            this.appVotesCollection = this.model.get_application_votes();
+            this.appVotesCollection = this.applicationModel.get_application_votes();
             this.listenTo(this.appVotesCollection, 'reset', this.onReset);
 
             // Since we retrieved all application votes on the application, we
@@ -707,9 +707,7 @@ define([
                 this.voteModel = this.appVotesCollection.first();
             } else {
                 this.voteModel = new api.ApplicationVote({
-                    tenant_id: this.employeeModel.get_tenant_id(),
-                    user_id: this.employeeModel.id,
-                    application_id: this.model.id,
+                    application_id: this.applicationModel.id,
                     yes: null
                 });
             }
@@ -784,21 +782,14 @@ define([
          * @private
          */
         _save: function(vote) {
-            attributes = {
-                tenant_id: this.voteModel.get_tenant_id(),
-                user_id: this.voteModel.get_user_id(),
-                application_id: this.voteModel.get_application_id(),
+            var attributes = {
                 yes: vote
             };
-            this.voteModel.save(attributes, {
-                wait: true,
-                success: function(model) {
-                    console.log('save success');
-                },
-                error: function(model) {
-                    console.log('save error');
-                }
-            });
+            var eventBody = _.extend({
+                model: this.voteModel,
+                application: this.applicationModel
+            }, attributes);
+            this.triggerEvent(talent_events.CAST_APPLICANT_VOTE, eventBody);
         }
     });
 
@@ -870,7 +861,7 @@ define([
 
         initChildViews: function() {
             this.voteButtonsView = new VoteButtonsView({
-                model: this.model,
+                applicationModel: this.model,
                 employeeModel: this.employeeModel
             });
             this.ratingCommunicationView = new ratingstars_views.RatingStarsView({
@@ -936,8 +927,6 @@ define([
                 this.scoreModel = this.appScoresCollection.first();
             } else {
                 this.scoreModel = new api.ApplicationScore({
-                    tenant_id: this.employeeModel.get_tenant_id(),
-                    user_id: this.employeeModel.id,
                     application_id: this.model.id,
                     technical_score: 0,
                     communication_score: 0,
@@ -967,7 +956,7 @@ define([
         },
 
         _saveScore: function(attributes) {
-            eventBody = _.extend({
+            var eventBody = _.extend({
                 model: this.scoreModel,
                 application: this.model
             }, attributes);

@@ -70,72 +70,6 @@ define([
             return true;
         }
     });
-
-    /**
-     * ScoreApplicant constructor
-     * @constructor
-     * @classdesc
-     * Score an applicant.
-     */
-    var ScoreApplicant = command.AsyncCommand.extend({
-
-        /**
-         * OnSuccess and onError argument names
-         */
-        asyncCallbackArgs: ['model', 'response'],
-
-        /**
-         * Execute command
-         * @param {object} options Options object
-         * @param {object} options.application Application model.
-         * @param {object} [options.model] ApplicationScore model to create.
-         * This is not required if model attributes below are provided.
-         * @param {string} [options.user_id] ApplicationScore model user_id.
-         * This is not required if model is provided with attribute.
-         * @param {string} [options.technical_score] ApplicationScore model
-         * technical_score.  This is not required if model is provided
-         * with attribute.
-         * @param {string} [options.communication_score] ApplicationScore model
-         * communication_score.  This is not required if model is provided
-         * with attribute.
-         * @param {string} [options.cultural_fit_score] ApplicationScore model
-         * cultural_fit_score.  This is not required if model is provided
-         * with attribute.
-         * @param {function} [options.onSuccess] Success callback
-         * @param {function} [options.onError] Error callback
-         */
-        execute: function(options) {
-            var currentProxy = this.facade.getProxy(
-                current_proxies.CurrentProxy.NAME);
-            var currentUser = currentProxy.currentUser();
-            var application = options.application;
-            var model = options.model || new api.ApplicationScore();
-
-            var attributes = _.defaults({
-                tenant_id: currentUser.get_tenant_id(),
-                application_id: application.id,
-                user_id: options.user_id,
-                technical_score: options.technical_score,
-                communication_score: options.communication_score,
-                cultural_fit_score: options.cultural_fit_score
-            }, model.attributes);
-
-            // For convenience, update the applications scores collection
-            var success = function(model) {
-                var scores = application.get_application_scores();
-                scores.add(model);
-                this.onSuccess();
-            };
-
-            model.save(attributes, {
-                wait: true,
-                success: _.bind(success, this),
-                error: _.bind(this.onError, this)
-            });
-
-            return true;
-        }
-    });
     
     /**
      * UpdateApplicationStatus constructor
@@ -178,6 +112,131 @@ define([
                 success: _.bind(success, this),
                 error: _.bind(this.onError, this)
             });
+            return true;
+        }
+    });
+
+    /**
+     * ScoreApplicant constructor
+     * @constructor
+     * @classdesc
+     * Score an applicant.
+     */
+    var ScoreApplicant = command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['model', 'response'],
+
+        /**
+         * Execute command
+         * @param {object} options Options object
+         * @param {object} options.application Application model.
+         * @param {object} [options.model] ApplicationScore model to create.
+         * This is not required if model attributes below are provided.
+         * @param {string} [options.technical_score] ApplicationScore model
+         * technical_score.  This is not required if model is provided
+         * with attribute.
+         * @param {string} [options.communication_score] ApplicationScore model
+         * communication_score.  This is not required if model is provided
+         * with attribute.
+         * @param {string} [options.cultural_fit_score] ApplicationScore model
+         * cultural_fit_score.  This is not required if model is provided
+         * with attribute.
+         * @param {function} [options.onSuccess] Success callback
+         * @param {function} [options.onError] Error callback
+         */
+        execute: function(options) {
+            var currentProxy = this.facade.getProxy(
+                current_proxies.CurrentProxy.NAME);
+            var currentUser = currentProxy.currentUser();
+            var application = options.application;
+            var model = options.model || new api.ApplicationScore();
+
+            var attributes = _.defaults({
+                tenant_id: currentUser.get_tenant_id(),
+                user_id: currentUser.id,
+                application_id: application.id,
+                technical_score: options.technical_score,
+                communication_score: options.communication_score,
+                cultural_fit_score: options.cultural_fit_score
+            }, model.attributes);
+
+            // For convenience, update the applications scores collection
+            var success = function(model) {
+                var scores = application.get_application_scores();
+                scores.add(model);
+                this.onSuccess();
+            };
+
+            model.save(attributes, {
+                wait: true,
+                success: _.bind(success, this),
+                error: _.bind(this.onError, this)
+            });
+
+            return true;
+        }
+    });
+
+    /**
+     * CastApplicantVote constructor
+     * @constructor
+     * @classdesc
+     * Vote on an applicant.
+     */
+    var CastApplicantVote = command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['model', 'response'],
+
+        /**
+         * Execute command
+         * @param {object} options Options object
+         * @param {object} options.application Application model.
+         * @param {object} [options.model] ApplicationVote model to create.
+         * This is not required if model attributes below are provided.
+         * @param {string} [options.yes] ApplicationVote model vote value.
+         * This is not required if model is provided with attribute.
+         * @param {function} [options.onSuccess] Success callback
+         * @param {function} [options.onError] Error callback
+         */
+        execute: function(options) {
+            var currentProxy = this.facade.getProxy(
+                current_proxies.CurrentProxy.NAME);
+            var currentUser = currentProxy.currentUser();
+            var application = options.application;
+            var model = options.model || new api.ApplicationScore();
+
+            var attributes = _.defaults({
+                tenant_id: currentUser.get_tenant_id(),
+                user_id: currentUser.id,
+                application_id: application.id
+            }, model.attributes);
+
+            // Since vote value can be null,  _.defaults() could overwrite
+            // the options.yes attribute. Thus, we explicitly set the
+            // value here.
+            if (options.hasOwnProperty('yes')) {
+                attributes.yes = options.yes;
+            }
+
+            // For convenience, update the applications votes collection
+            var success = function(model) {
+                var votes = application.get_application_votes();
+                votes.add(model);
+                this.onSuccess();
+            };
+
+            model.save(attributes, {
+                wait: true,
+                success: _.bind(success, this),
+                error: _.bind(this.onError, this)
+            });
+
             return true;
         }
     });
@@ -401,8 +460,9 @@ define([
 
     return {
         CreateApplication: CreateApplication,
-        ScoreApplicant: ScoreApplicant,
         UpdateApplicationStatus: UpdateApplicationStatus,
+        ScoreApplicant: ScoreApplicant,
+        CastApplicantVote: CastApplicantVote,
         CreateApplicationLog: CreateApplicationLog,
         MakeInterviewOffer: MakeInterviewOffer,
         RescindInterviewOffer: RescindInterviewOffer,

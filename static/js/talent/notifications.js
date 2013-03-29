@@ -7,6 +7,7 @@ define([
         CREATE_APPLICATION: 'talent:CreateApplication',
         UPDATE_APPLICATION_STATUS: 'talent:UpdateApplicationStatus',
         SCORE_APPLICANT: 'talent:ScoreApplicant',
+        CAST_APPLICANT_VOTE: 'talent:CastApplicantVote',
 
         /* APPLICATION LOG ACTIONS */
         CREATE_APPLICATION_LOG: 'talent:CreateApplicationLog',

@@ -215,6 +215,8 @@ define([
         talent_notifications.UPDATE_APPLICATION_STATUS;
     EventNotificationMap[talent_events.SCORE_APPLICANT] =
         talent_notifications.SCORE_APPLICANT;
+    EventNotificationMap[talent_events.CAST_APPLICANT_VOTE] =
+        talent_notifications.CAST_APPLICANT_VOTE;
     /* APPLICATION LOG EVENTS*/
     EventNotificationMap[talent_events.CREATE_APPLICATION_LOG] =
         talent_notifications.CREATE_APPLICATION_LOG;
@@ -361,6 +363,8 @@ define([
                 applicant_commands.UpdateApplicationStatus);
             this.registerCommand(talent_notifications.SCORE_APPLICANT,
                 applicant_commands.ScoreApplicant);
+            this.registerCommand(talent_notifications.CAST_APPLICANT_VOTE,
+                applicant_commands.CastApplicantVote);
             /* APPLICATION LOG COMMANDS */
             this.registerCommand(talent_notifications.CREATE_APPLICATION_LOG,
                 applicant_commands.CreateApplicationLog);
