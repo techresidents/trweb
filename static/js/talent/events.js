@@ -6,6 +6,7 @@ define([
         CREATE_APPLICATION: 'create_application',
         UPDATE_APPLICATION_STATUS: 'update_application_status',
         SCORE_APPLICANT: 'score_applicant',
+        CAST_APPLICANT_VOTE: 'cast_applicant_vote',
 
         /* APPLICATION LOG EVENTS */
         CREATE_APPLICATION_LOG: 'create_application_log',
