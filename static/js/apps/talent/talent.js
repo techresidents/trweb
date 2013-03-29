@@ -278,9 +278,7 @@ define([
         },
 
         onNotificationEvent: function(e, eventBody) {
-            console.log(e.type);
             var notification = EventNotificationMap[e.type];
-            console.log(notification);
             if(notification) {
                 this.facade.trigger(notification, eventBody);
             }

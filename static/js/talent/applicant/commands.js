@@ -47,12 +47,13 @@ define([
             var currentUser = currentProxy.currentUser();
             var model = options.model || new api.Application();
             
-            var attributes = _.defaults({
+            var attributes = _.defaults({}, model.attributes, {
                 requisition_id: options.requisition_id,
                 user_id: options.user_id,
                 tenant_id: options.tenant_id
             }, model.attributes);
             
+            attributes.creator_id = currentUser.id;
             attributes.status = 'REVIEW';
             if(currentUser.id === model.user_id) {
                 attributes.type = 'CANDIDATE';
@@ -330,7 +331,7 @@ define([
 
                 this.facade.trigger(talent_notifications.UPDATE_APPLICATION_STATUS, {
                     model: application,
-                    status: 'INTERVIEW_OFFERED',
+                    status: 'INTERVIEW_OFFER_PENDING',
                     onSuccess: _.bind(this.onSuccess, this)
                 });
             };

@@ -22,8 +22,8 @@ define([
     'text!talent/user/templates/chat.html',
     'text!talent/user/templates/actions.html',
     'text!talent/user/templates/note.html',
-    'text!talent/user/templates/applicationbrief.html',
-    'text!talent/user/templates/applicationcreate.html',
+    'text!talent/user/templates/application_brief.html',
+    'text!talent/user/templates/application_create.html',
     'text!talent/user/templates/requisition_select.html',
     'text!talent/user/templates/vote_buttons.html'
 ], function(
@@ -50,8 +50,8 @@ define([
     chat_template,
     actions_template,
     note_template,
-    applicationbrief_template,
-    applicationcreate_template,
+    application_brief_template,
+    application_create_template,
     requisition_select_template,
     vote_buttons_template) {
 
@@ -832,7 +832,7 @@ define([
             this.listenTo(this.model.get_requisition(), 'change', this.onReqModelChange);
             this.employeeModel = options.employeeModel;
             this.scoreModel = null;
-            this.template = _.template(applicationbrief_template);
+            this.template = _.template(application_brief_template);
 
             // load application scores
             this.appScoresCollection = this.model.get_application_scores();
@@ -1081,7 +1081,7 @@ define([
         initialize: function(options) {
             this.applicationsCollection = options.applicationsCollection;
             this.candidateModel = options.candidateModel;
-            this.template = _.template(applicationcreate_template);
+            this.template = _.template(application_create_template);
 
             // init child views
             this.dropView = null;

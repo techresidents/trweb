@@ -26,6 +26,12 @@ define([
             }, options);
 
             filter_views.FiltersView.prototype.initialize.call(this, options);
+        },
+
+        classes: function() {
+            var result = filter_views.FiltersView.prototype.classes.call(this);
+            result = result.concat(['tracker-filters']);
+            return result;
         }
     }, {
         config: function() {
@@ -44,7 +50,11 @@ define([
                 name: 'Status',
                 field: 'status',
                 filterView: new filter_views.SelectFilterView.Factory({
-                    selections: ['NEW', 'REVIEW']
+                    selections: [
+                        'NEW', 'REVIEW', 'INTERVIEW_OFFER_PENDING',
+                        'INTERVIEW_OFFER_ACCEPTED', 'INTERVIEW_OFFER_DECLINED',
+                        'INTERVIEW_OFFER_RESCINDED', 'INTERVIEW_OFFER_EXPIRED',
+                        'REJECTED']
                 })
             };
         },

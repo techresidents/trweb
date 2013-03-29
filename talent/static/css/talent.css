@@ -89,7 +89,7 @@
 
 .player-scrubber-buffer {
     position: absolute;
-    top 0;
+    top: 0;
     width: 0%;
     height: 100%;
     background-color: #777777;
@@ -97,7 +97,7 @@
 
 .player-scrubber-progress {
     position: absolute;
-    top 0;
+    top: 0;
     width: 0%;
     height: 100%;
     background-color: #EA8F00;
@@ -105,7 +105,7 @@
 
 .player-scrubber-tracker {
     position: absolute;
-    top 0;
+    top: 0;
     left: 0;
     width: 2px;
     height: 100%;
@@ -452,4 +452,8 @@
 .tracker-grid .grid-cell-requisition {
     width: auto;
     white-space: nowrap;
+}
+
+.tracker-filters .filter-status .drop-content {
+    min-width: 280px;
 }

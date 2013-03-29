@@ -77,8 +77,12 @@ define([
                 headerCellView: new grid_views.GridHeaderCellView.Factory({
                     sort: 'requisition__title'
                 }),
-                cellView: new grid_views.GridCellView.Factory({
-                    valueAttribute: 'requisition__title'
+                cellView: new grid_views.GridLinkCellView.Factory(function(options) {
+                    var requisition = options.model.get_requisition();
+                    return {
+                        href: '/requisition/view/' + requisition.id,
+                        value: requisition.get_title()
+                    };
                 })
             };
         },
