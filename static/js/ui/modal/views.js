@@ -17,6 +17,7 @@ define([
         CLOSE: 'close',
         OK: 'ok',
         SAVE: 'save',
+        ACTION: 'action',
         CANCEL: 'cancel'
     };
 
@@ -26,7 +27,8 @@ define([
             'click .close': 'onClose',
             'click .ok': 'onOk',
             'click .save': 'onSave',
-            'click .cancel': 'onCancel'
+            'click .cancel': 'onCancel',
+            'click .action': 'onAction'
         },
 
         /**
@@ -34,12 +36,18 @@ define([
          * @constructs
          * @param {object} options Options object
          * @param {module:core/view~View|module:core/factory~Factory}
-         * options.viewOrFactory View or View factory object
+         * options.viewOrFactory View or View factory object.
+         * View should implement onOk, onCancel, onClose, onSave, and
+         * onAction handler methods for all buttons which should be displayed.
+         * All handler method should return true to close the modal.
+         * If onAction is implemented view.action will be used for the
+         * button label.
          * @param {string} options.title Modal title
          * @param {function} [options.ok] Ok callback function
          * @param {function} [options.cancel] Cancel callback function
          * @param {function} [options.close] Close callback function
          * @param {function} [options.save] Save callback function
+         * @param {function} [options.action] Action callback function
          * @param {boolean} [options.exitOnBackdropClick=true] Exit on
          * backdrop click
          * @param {boolean} [options.exitOnEscapeKey=true] Exit on esacpe key
@@ -65,6 +73,7 @@ define([
             this.save = options.save;
             this.cancel = options.cancel;
             this.close = options.close;
+            this.action = options.action;
             
             //child views
             this.view = null;
@@ -86,10 +95,12 @@ define([
         context: function() {
             return {
                 title: this.title,
+                action: this.view.action,
                 showClose: _.isFunction(this.view.onClose),
                 showCancel: _.isFunction(this.view.onCancel),
                 showOk: _.isFunction(this.view.onOk),
-                showSave: _.isFunction(this.view.onSave)
+                showSave: _.isFunction(this.view.onSave),
+                showAction: _.isFunction(this.view.onAction)
             };
         },
 
@@ -151,6 +162,19 @@ define([
                 this.triggerEvent(EventType.SAVE);
                 if(_.isFunction(this.save)) {
                     this.save();
+                }
+                if(this.autoDestroy) {
+                    this.destroy();
+                }
+            }
+        },
+
+        onAction: function() {
+            if(this.view.onAction()) {
+                this.hide();
+                this.triggerEvent(EventType.ACTION);
+                if(_.isFunction(this.action)) {
+                    this.action();
                 }
                 if(this.autoDestroy) {
                     this.destroy();

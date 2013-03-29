@@ -33,6 +33,7 @@ define([
             id: new fields.StringField({primaryKey: true}),
             tenant_id: new fields.StringField(),
             user_id: new fields.StringField(),
+            creator_id: new fields.StringField(),
             requisition_id: new fields.StringField(),
             type: new fields.StringField(),
             status: new fields.StringField(),
@@ -47,6 +48,10 @@ define([
             user: new fields.ForeignKey({
                 relation: user_models.User,
                 backref: "applications"
+            }),
+
+            creator: new fields.ForeignKey({
+                relation: user_models.User
             }),
 
             requisition: new fields.ForeignKey({

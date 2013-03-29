@@ -1,6 +1,6 @@
 <form class="form-horizontal">
     <div class="control-group">
-        <label class="control-label">Type</label>
+        <label class="control-label">Offer</label>
         <div class="controls">
             <select>
                 <option value="PHONE">Phone Interview</option>
@@ -11,7 +11,19 @@
     <div class="control-group">
         <label class="control-label">Expiration</label>
         <div class="controls">
-            <input type="text" placeholder="mm/dd/yyyy">
+            <input class="expiration" type="text" placeholder="mm/dd/yyyy">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Requisition</label>
+        <div class="controls">
+            <input type="text" value="<%= application.requisition.title %>" disabled="disabled">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Developer</label>
+        <div class="controls">
+            <input type="text" value="<%= application.user_id %>" disabled="disabled">
         </div>
     </div>
 </form>

@@ -1,5 +1,15 @@
 <form class="form-horizontal">
     <div class="control-group">
+        <label class="control-label">New Application Status</label>
+        <div class="controls">
+            <select>
+                <option value="INTERVIEW_OFFER_RESCINDED">Interview Offer Rescinded</option>
+                <option value="REVIEW">Review</option>
+                <option value="REJECTED">Rejected</option>
+            </select>
+        </div>
+    </div>
+    <div class="control-group">
         <label class="control-label">Offer</label>
         <div class="controls">
             <input type="text" value="<%= offer.type %>" disabled="disabled">
@@ -24,16 +34,6 @@
         </div>
     </div>
     <div class="divider"></div>
-    <div class="control-group">
-        <label class="control-label">New Application Status</label>
-        <div class="controls">
-            <select>
-                <option value="INTERVIEW_OFFER_RESCINDED">Interview Offer Rescinded</option>
-                <option value="REVIEW">Review</option>
-                <option value="REJECTED">Rejected</option>
-            </select>
-        </div>
-    </div>
 </form>
 <div class="alert alert-info">
     <strong>Note:</strong> Rescinded interview offers will be visible to developers.

@@ -114,6 +114,7 @@ class JobApplication(models.Model):
     
     tenant = models.ForeignKey(Tenant, related_name="job_applications")
     user = models.ForeignKey(User, related_name="job_applications")
+    creator = models.ForeignKey(User, related_name="+")
     requisition = models.ForeignKey(JobRequisition, related_name="job_applications")
     created = models.DateTimeField(auto_now_add=True)
     type = models.ForeignKey(JobApplicationType, related_name="+")

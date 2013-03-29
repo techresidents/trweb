@@ -79,7 +79,7 @@ define([
                         ApplicantHandler.UPDATE_APPLICATION_STATUS,
                         ApplicantHandler.MAKE_INTERVIEW_OFFER];
                     break;
-                case 'INTERVIEW_OFFERED':
+                case 'INTERVIEW_OFFER_PENDING':
                     result = [ApplicantHandler.RESCIND_INTERVIEW_OFFER];
                     break;
                 case 'INTERVIEW_OFFER_ACCEPTED':
@@ -96,7 +96,7 @@ define([
                 case 'INTERVIEW_OFFER_EXPIRED':
                     result = [ApplicantHandler.UPDATE_APPLICATION_STATUS];
                     break;
-                case 'JOB_OFFERED':
+                case 'JOB_OFFER_PENDING':
                     break;
                 case 'JOB_OFFER_ACCEPTED':
                     break;
@@ -126,7 +126,7 @@ define([
                 case 'REVIEW':
                     result = ['NEW', 'REJECTED'];
                     break;
-                case 'INTERVIEW_OFFERED':
+                case 'INTERVIEW_OFFER_PENDING':
                     break;
                 case 'INTERVIEW_OFFER_ACCEPTED':
                     result = ['NEW', 'REVIEW', 'REJECTED'];
@@ -140,7 +140,7 @@ define([
                 case 'INTERVIEW_OFFER_EXPIRED':
                     result = ['NEW', 'REVIEW', 'REJECTED'];
                     break;
-                case 'JOB_OFFERED':
+                case 'JOB_OFFER_PENDING':
                     break;
                 case 'JOB_OFFER_ACCEPTED':
                     break;

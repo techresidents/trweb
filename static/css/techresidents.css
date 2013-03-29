@@ -378,6 +378,10 @@ html {
     margin: 0 3px 0 0;
 }
 
+.filters.horizontal {
+    margin-bottom: 10px;
+}
+
 .filters.horizontal .filter-factory, .filter, .filter .btn-group {
     display: inline-block;
 }

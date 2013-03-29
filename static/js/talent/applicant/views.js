@@ -8,7 +8,6 @@ define([
     'core/format',
     'core/view',
     'ui/ac/matcher',
-    'ui/ac/views',
     'ui/date/views',
     'ui/paginator/views',
     'talent/applicant/grid',
@@ -28,7 +27,6 @@ define([
     fmt,
     view,
     ac_matcher,
-    ac_views,
     date_views,
     paginator_views,
     tracker_grid,
@@ -75,10 +73,6 @@ define([
                     return model.get_requisition().get_title() + ' (' + model.id + ')';
                 }
             });
-            this.macView = new ac_views.MultiAutoCompleteView({
-                collection: this.collection.clone(),
-                matcher: this.matcher
-            });
             this.filtersView = new tracker_filter.TrackerFiltersView({
                 collection: this.collection,
                 query: this.query,
@@ -101,7 +95,6 @@ define([
         render: function() {
             this.$el.html(this.template());
             this.append(this.filtersView, '.content');
-            this.append(this.macView, '.content');
             this.append(this.gridView, '.content');
             this.append(this.paginatorView, '.content');
             return this;
@@ -154,6 +147,14 @@ define([
         initialize: function(options) {
             this.template =  _.template(make_interview_offer_template);
             this.model = options.model;
+            this.action = 'Make Interview Offer';
+
+            //loader
+            this.loader = new api_loader.ApiLoader([{
+                instance: this.model,
+                withRelated: ['requisition']
+            }]);
+            this.loader.load();
 
             //child views
             this.dateView = null;
@@ -169,14 +170,27 @@ define([
             expirationDate.add(new date.Interval(0, 0, 7));
             this.dateView = new date_views.DatePickerDropView({
                 inputView: this,
-                inputSelector: 'input'
+                inputSelector: 'input.expiration'
             });
             this.dateView.setDate(expirationDate);
         },
+
+        context: function() {
+            return {
+                application: this.model.toJSON({
+                    withRelated: ['requisition']
+                })
+            };
+        },
         
         render: function() {
-            this.$el.html(this.template());
-            this.append(this.dateView);
+            if(this.loader.isLoaded()) {
+                var context = this.context();
+                this.$el.html(this.template(context));
+                this.append(this.dateView);
+            } else {
+                this.$el.html();
+            }
             return this;
         },
 
@@ -184,7 +198,11 @@ define([
             return true;
         },
 
-        onSave: function() {
+        onCancel: function() {
+            return true;
+        },
+
+        onAction: function() {
             var result = false;
             var expires = this.dateView.getDate();
             var type = this.$('select :selected').val();
@@ -223,6 +241,7 @@ define([
                 instance: this.model,
                 withRelated: ['interview_offers', 'requisition']
             }]);
+            this.action = 'Rescind Interview Offer';
 
             //bind events
             this.listenTo(this.interviewOffers, 'reset', this.render);
@@ -274,7 +293,11 @@ define([
             return true;
         },
 
-        onSave: function() {
+        onCancel: function() {
+            return true;
+        },
+
+        onAction: function() {
             var applicationStatus = this.$('select :selected').val();
             this.triggerEvent(talent_events.RESCIND_INTERVIEW_OFFER, {
                 model: this.getOffer(),
