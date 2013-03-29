@@ -217,13 +217,18 @@ define([
             var attributes = _.defaults({
                 note: options.note
             }, model.attributes);
+
+            var success = function() {
+                application.get_application_logs().add(model);
+                this.onSuccess();
+            };
             
             attributes.user_id = currentUser.id;
             attributes.tenant_id = currentUser.get_tenant_id();
             attributes.application_id = application.id;
 
             model.save(attributes, {
-                success: _.bind(this.onSuccess, this),
+                success: _.bind(success, this),
                 error: _.bind(this.onError, this)
             });
             return true;
