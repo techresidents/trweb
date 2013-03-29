@@ -88,17 +88,20 @@ define([
         /**
          * Execute command
          * @param {object} options Options object
-         *
+         * @param {object} options.application Application model.
          * @param {object} [options.model] ApplicationScore model to create.
-         * This is not required if model attributes below  are provided.
-         *
+         * This is not required if model attributes below are provided.
          * @param {string} [options.user_id] ApplicationScore model user_id.
          * This is not required if model is provided with attribute.
-         *
-         * @param {string} [options.application_id] ApplicationScore model
-         * application_id.  This is not required if model is provided
+         * @param {string} [options.technical_score] ApplicationScore model
+         * technical_score.  This is not required if model is provided
          * with attribute.
-         *
+         * @param {string} [options.communication_score] ApplicationScore model
+         * communication_score.  This is not required if model is provided
+         * with attribute.
+         * @param {string} [options.cultural_fit_score] ApplicationScore model
+         * cultural_fit_score.  This is not required if model is provided
+         * with attribute.
          * @param {function} [options.onSuccess] Success callback
          * @param {function} [options.onError] Error callback
          */

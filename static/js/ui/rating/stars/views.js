@@ -151,6 +151,9 @@ define([
         onClear: function(e) {
             this.setRating(0);
             this.render();
+            this.triggerEvent(EventType.CHANGE, {
+                value: 0
+            });
         },
 
         /**
