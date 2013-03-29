@@ -32,6 +32,16 @@ define([
                     this.user = new api.User({id: options.user.id});
                     this.user.bootstrap(options.user);
                 }
+
+                //add current user to global session cache which 
+                //doesn't expire for 100 days. The cache user will
+                //only have its id and tenant_id to avoid getting
+                //out of sync. To get the current user simply
+                //execute 'new api.User{id: 'CURRENT})'
+                var cacheUser = new api.User();
+                cacheUser.set_id(this.user.id);
+                cacheUser.set_tenant_id(this.user.get_tenant_id());
+                cacheUser.session.putModel(cacheUser, api.User.key('CURRENT'), 8640000000);
             }
         },
         

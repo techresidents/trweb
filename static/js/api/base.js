@@ -66,8 +66,10 @@ define([
                 this._loaded = false;
                 this._isDirty = false;
 
-                this.bind('change', function() {
-                    this._isDirty = true;
+                this.bind('change', function(model, value) {
+                    if(!this._loading) {
+                        this._isDirty = true;
+                    }
                 }, this);
             } else {
                 //short circuited constrctor so return model.
@@ -191,7 +193,6 @@ define([
             }
             
             if(!_.isEmpty(errors)) {
-                console.log(errors);
                 return errors;
             }
         },
@@ -339,13 +340,14 @@ define([
             var result = false;
             var fetch, model;
             var loadedEvents = 'loaded loaded:read';
+            var withRelated;
             options = options || {};
 
+            if(options.query) {
+                withRelated = options.query.state.withRelations().pluck('value');
+            }
+
             var triggerFetchEvents = function(model) {
-                var withRelated;
-                if(options.query) {
-                    withRelated = options.query.state.withRelations().pluck('value');
-                }
 
                 if(withRelated) {
                     model.eachRelated(withRelated, function(current) {
@@ -364,7 +366,7 @@ define([
                 model = this.session.getModel(this.key(), options.query);
 
                 if(model) {
-                    result.clone({
+                    model.clone({
                         to: this,
                         withRelated: withRelated
                     });

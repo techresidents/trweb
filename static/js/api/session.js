@@ -57,7 +57,9 @@ define([
         gc: function() {
             var now = new Date().getTime();
             _.each(this.cache.byKey, function(entry, key) {
-                if(now > entry.timestamp + this.expire) {
+                var expire = entry.expire || this.expire;
+                if(now > entry.timestamp + expire) {
+                    console.log(key);
                     delete this.cache.byKey[key];
                 }
             }, this);
@@ -91,12 +93,13 @@ define([
             return result;
         },
 
-        putModel: function(model, key) {
+        putModel: function(model, key, expire) {
             key = key || model.key();
 
             this.cache.byKey[key] = {
                 model: model.clone(),
-                timestamp: new Date().getTime()
+                timestamp: new Date().getTime(),
+                expire: expire
             };
             this.trigger('put:' + key, model);
         },
@@ -144,7 +147,7 @@ define([
             return result;
         },
 
-        putCollection: function(collection, key, query) {
+        putCollection: function(collection, key, query, expire) {
             var byCollection, baseKey;
             key = key || collection.key();
             key = this.expandKey(key, query);
@@ -154,7 +157,8 @@ define([
                     return model.key();
                 }),
                 collection: collection.clone().reset(),
-                timestamp: new Date().getTime()
+                timestamp: new Date().getTime(),
+                expire: expire
             };
             
             baseKey = collection.constructor.key();
