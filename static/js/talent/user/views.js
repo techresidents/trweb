@@ -802,8 +802,6 @@ define([
      * @param {Object} options
      *    model: {Application} (required)
      *    employeeModel: {User} (required)
-     *
-     *    TODO app briefs show when closed
      */
     var ApplicationBriefView = view.View.extend({
 
@@ -1204,7 +1202,8 @@ define([
             // Since we retrieved all applications on the candidate, we need to
             // filter the collection down to just the employer's applications
             this.applicationsQuery = this.applicationsCollection.filterBy({
-                tenant_id: this.employeeModel.get_tenant_id()
+                tenant_id: this.employeeModel.get_tenant_id(),
+                requisition__status: 'OPEN'
             });
             this.applicationsQuery.fetch(); // invokes 'reset' on collection
 
