@@ -802,6 +802,8 @@ define([
      * @param {Object} options
      *    model: {Application} (required)
      *    employeeModel: {User} (required)
+     *
+     *    TODO app briefs show when closed
      */
     var ApplicationBriefView = view.View.extend({
 
@@ -972,6 +974,7 @@ define([
      * @param {Object} options
      *    applicationsCollection: {ApplicationsCollection} (required)
      *      The candidate's applications.
+     *    employeeModel: {User} Represents the employee (required)
      */
     var RequisitionSelectView = view.View.extend({
 
@@ -987,25 +990,28 @@ define([
         initialize: function(options) {
             var that = this;
             this.applicationsCollection = options.applicationsCollection;
+            this.employeeModel = options.employeeModel;
             this.requisitionSelectionCollection = new select_models.SelectionCollection();
             this.template = _.template(requisition_select_template);
 
             // Create objects required to support Requisition autocomplete
             // This query is used to seed the results which will then be parsed
             // by the search string.
-            // TODO add filter parameter for tenant ID?
-            this.createQuery = function(options) {
+            this.requisitionsQueryFactory = function(options) {
                 return new api.RequisitionCollection().filterBy({
+                    'tenant_id__eq': that.employeeModel.get_tenant_id(),
+                    'status__eq': 'OPEN',
                     'title__istartswith': options.search
                 });
             };
+
             // This matcher is used to compare the results of the query with
             // the match criteria specified by the user.
             // The matcher methods do the following:
             //      stringify: convert model into searchable text string
             //      map: convert *matched* results
-            this.matcher = new ac_matcher.QueryMatcher({
-                queryFactory: new factory.FunctionFactory(this.createQuery),
+            this.requisitionsMatcher = new ac_matcher.QueryMatcher({
+                queryFactory: new factory.FunctionFactory(this.requisitionsQueryFactory),
                 stringify: function(model) {
                     return model.get_title();
                 },
@@ -1034,7 +1040,7 @@ define([
             this.autoSelectView = new select_views.AutoMultiSelectView({
                 inputPlaceholder: 'Search requisition titles',
                 collection: this.requisitionSelectionCollection,
-                matcher: this.matcher,
+                matcher: this.requisitionsMatcher,
                 maxResults: 5
             });
         },
@@ -1058,6 +1064,7 @@ define([
      *    applicationsCollection: {ApplicationsCollection} (required)
      *      The candidate's applications.
      *      candidateModel: {User} Represents the developer (required)
+     *      employeeModel: {User} Represents the employee (required)
      */
     var ApplicationCreateView = view.View.extend({
 
@@ -1081,6 +1088,7 @@ define([
         initialize: function(options) {
             this.applicationsCollection = options.applicationsCollection;
             this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
             this.template = _.template(application_create_template);
 
             // init child views
@@ -1091,7 +1099,8 @@ define([
 
         initChildViews: function() {
             this.selectView = new RequisitionSelectView({
-                applicationsCollection: this.applicationsCollection
+                applicationsCollection: this.applicationsCollection,
+                employeeModel: this.employeeModel
             });
             this.dropView = new drop_views.DropView({
                 view: this.selectView
@@ -1213,7 +1222,8 @@ define([
             });
             this.applicationCreateView = new ApplicationCreateView({
                 applicationsCollection: this.applicationsCollection,
-                candidateModel: this.candidateModel
+                candidateModel: this.candidateModel,
+                employeeModel: this.employeeModel
             });
             this.applicationBriefsView = new collection_views.CollectionView({
                 collection: this.applicationsCollection,
