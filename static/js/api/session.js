@@ -59,7 +59,6 @@ define([
             _.each(this.cache.byKey, function(entry, key) {
                 var expire = entry.expire || this.expire;
                 if(now > entry.timestamp + expire) {
-                    console.log(key);
                     delete this.cache.byKey[key];
                 }
             }, this);
