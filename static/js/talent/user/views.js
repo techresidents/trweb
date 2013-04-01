@@ -502,7 +502,6 @@ define([
      * @constructor
      * @param {Object} options
      *   candidateModel: {User} (required)
-     *   employeeModel: {User} (required)
      */
     var UserNoteView = view.View.extend({
 
@@ -521,7 +520,7 @@ define([
 
         initialize: function(options) {
             this.candidateModel = options.candidateModel;
-            this.employeeModel = options.employeeModel;
+            this.employeeModel = new api.User({id: 'CURRENT'});
             this.model = null;
             this.saveTimeout = null;
             this.saveStatus = null;
@@ -656,7 +655,7 @@ define([
                 this.saveStatus = this.SaveStatusEnum.FAILED;
                 this.updateSaveStatusUI();
             }
-        },
+        }
     });
 
     /**
@@ -664,7 +663,6 @@ define([
      * @constructor
      * @param {Object} options
      *    model: {Application} (required)
-     *    employeeModel: {User} (required)
      */
     var VoteButtonsView = view.View.extend({
 
@@ -677,7 +675,7 @@ define([
 
         initialize: function(options) {
             this.applicationModel = options.applicationModel;
-            this.employeeModel = options.employeeModel;
+            this.employeeModel = new api.User({id: 'CURRENT'});
             this.voteModel = null;
             this.template = _.template(vote_buttons_template);
 
@@ -801,7 +799,6 @@ define([
      * @constructor
      * @param {Object} options
      *    model: {Application} (required)
-     *    employeeModel: {User} (required)
      */
     var ApplicationBriefView = view.View.extend({
 
@@ -830,7 +827,7 @@ define([
             this.model = options.model;
             this.listenTo(this.model, 'change', this.onAppModelChange);
             this.listenTo(this.model.get_requisition(), 'change', this.onReqModelChange);
-            this.employeeModel = options.employeeModel;
+            this.employeeModel = new api.User({id: 'CURRENT'});
             this.scoreModel = null;
             this.template = _.template(application_brief_template);
 
@@ -861,8 +858,7 @@ define([
 
         initChildViews: function() {
             this.voteButtonsView = new VoteButtonsView({
-                applicationModel: this.model,
-                employeeModel: this.employeeModel
+                applicationModel: this.model
             });
             this.ratingCommunicationView = new ratingstars_views.RatingStarsView({
                 label: 'Comm'
@@ -972,7 +968,6 @@ define([
      * @param {Object} options
      *    applicationsCollection: {ApplicationsCollection} (required)
      *      The candidate's applications.
-     *    employeeModel: {User} Represents the employee (required)
      */
     var RequisitionSelectView = view.View.extend({
 
@@ -988,7 +983,7 @@ define([
         initialize: function(options) {
             var that = this;
             this.applicationsCollection = options.applicationsCollection;
-            this.employeeModel = options.employeeModel;
+            this.employeeModel = new api.User({id: 'CURRENT'});
             this.requisitionSelectionCollection = new select_models.SelectionCollection();
             this.template = _.template(requisition_select_template);
 
@@ -1062,7 +1057,6 @@ define([
      *    applicationsCollection: {ApplicationsCollection} (required)
      *      The candidate's applications.
      *      candidateModel: {User} Represents the developer (required)
-     *      employeeModel: {User} Represents the employee (required)
      */
     var ApplicationCreateView = view.View.extend({
 
@@ -1086,7 +1080,6 @@ define([
         initialize: function(options) {
             this.applicationsCollection = options.applicationsCollection;
             this.candidateModel = options.candidateModel;
-            this.employeeModel = options.employeeModel;
             this.template = _.template(application_create_template);
 
             // init child views
@@ -1097,8 +1090,7 @@ define([
 
         initChildViews: function() {
             this.selectView = new RequisitionSelectView({
-                applicationsCollection: this.applicationsCollection,
-                employeeModel: this.employeeModel
+                applicationsCollection: this.applicationsCollection
             });
             this.dropView = new drop_views.DropView({
                 view: this.selectView
@@ -1176,7 +1168,6 @@ define([
      * @constructor
      * @param {Object} options
      *    candidateModel: {User} (required)
-     *    employeeModel: {User} (required)
      */
     var UserActionsView = view.View.extend({
 
@@ -1194,7 +1185,7 @@ define([
 
         initialize: function(options) {
             this.candidateModel = options.candidateModel;
-            this.employeeModel = options.employeeModel;
+            this.employeeModel = new api.User({id: 'CURRENT'});
             this.template = _.template(actions_template);
 
             // load applications
@@ -1216,19 +1207,15 @@ define([
 
         initChildViews: function() {
             this.noteView = new UserNoteView({
-                candidateModel: this.candidateModel,
-                employeeModel: this.employeeModel
+                candidateModel: this.candidateModel
             });
             this.applicationCreateView = new ApplicationCreateView({
                 applicationsCollection: this.applicationsCollection,
-                candidateModel: this.candidateModel,
-                employeeModel: this.employeeModel
+                candidateModel: this.candidateModel
             });
             this.applicationBriefsView = new collection_views.CollectionView({
                 collection: this.applicationsCollection,
-                viewFactory: new factory.Factory(ApplicationBriefView, {
-                    employeeModel: this.employeeModel
-                })
+                viewFactory: new factory.Factory(ApplicationBriefView, {})
             });
         },
 
@@ -1313,8 +1300,7 @@ define([
             });
 
             this.actionsView = new UserActionsView({
-                candidateModel: this.candidateModel,
-                employeeModel: this.employeeModel
+                candidateModel: this.candidateModel
             });
         },
 
