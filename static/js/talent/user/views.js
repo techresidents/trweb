@@ -515,7 +515,7 @@ define([
         SaveStatusEnum: {
             PENDING : 'Saving note...',
             SAVED : 'Saved.',
-            FAILED : 'Save failed. Please refresh the page and try again.'
+            ERROR : 'Error saving note.'
         },
 
         initialize: function(options) {
@@ -632,29 +632,21 @@ define([
         _save: function() {
             var that = this;
             var attributes = {
-                employee_id: this.model.get_employee_id(),
                 candidate_id: this.model.get_candidate_id(),
-                tenant_id: this.model.get_tenant_id(),
                 note: this.$(this.textareaSelector).val()
             };
-            var isValid = this.model.validate(attributes);
-            if (isValid === undefined) {
-                // undefined implies the model attributes are valid
-                this.model.save(attributes, {
-                    wait: true,
-                    success: function(model) {
-                        that.saveStatus = that.SaveStatusEnum.SAVED;
-                        that.updateSaveStatusUI();
-                    },
-                    error: function(model) {
-                        that.saveStatus = that.SaveStatusEnum.FAILED;
-                        that.updateSaveStatusUI();
-                    }
-                });
-            } else {
-                this.saveStatus = this.SaveStatusEnum.FAILED;
-                this.updateSaveStatusUI();
-            }
+            var eventBody = _.extend({
+                model: this.model,
+                onSuccess: function() {
+                    that.saveStatus = that.SaveStatusEnum.SAVED;
+                    that.updateSaveStatusUI();
+                },
+                onError: function() {
+                    that.saveStatus = that.SaveStatusEnum.ERROR;
+                    that.updateSaveStatusUI();
+                }
+            }, attributes);
+            this.triggerEvent(talent_events.TAKE_NOTE, eventBody);
         }
     });
 

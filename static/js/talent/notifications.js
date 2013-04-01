@@ -23,6 +23,9 @@ define([
         PLAYER_PAUSE: 'talent:PlayerPause',
 
         /* PLAYER NOTICES */
-        PLAYER_STATE_CHANGED: 'talent:PlayerStateChanged'
+        PLAYER_STATE_CHANGED: 'talent:PlayerStateChanged',
+
+        /* DEVELOPER NOTE ACTIONS */
+        TAKE_NOTE: 'talent:TakeNote'
     };
 });
