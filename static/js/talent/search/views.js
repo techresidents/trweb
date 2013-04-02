@@ -104,6 +104,7 @@ define([
      * @constructor
      * @param {Object} options
      *   collection: {UserCollection} (required)
+     *   query: {ApiQuery} query (required)
      */
     var SearchView = view.View.extend({
 
@@ -123,14 +124,11 @@ define([
             });
         },
 
-        initialize: function() {
+        initialize: function(options) {
             this.template =  _.template(search_template);
-            
-            //loader
-            this.loader = new api_loader.ApiLoader([
-                { instance: this.collection }
-            ]);
-            this.loader.load();
+            this.collection = options.collection;
+            this.query = options.query;
+            this.query.fetch();
 
             //child views
             this.userListView = null;

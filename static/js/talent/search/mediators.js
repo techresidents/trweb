@@ -37,9 +37,16 @@ define([
         },
 
         onCreateView: function(notification) {
-            if(notification.type === this.viewType()) {
+            if (notification.type === this.viewType()) {
+                var developerTenantID = 'zik0zk';
+                this.collection = new api.UserCollection();
+                this.collection.on('reset', this.onReset, this);
+                this.query = this.collection.filterBy({
+                    'tenant_id__eq':  developerTenantID
+                });
                 this.view = new talent_views.SearchView({
-                    collection: new api.UserCollection()
+                    collection: this.collection,
+                    query: this.query
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
@@ -50,7 +57,7 @@ define([
         },
 
         onDestroyView: function(notification) {
-            if(notification.type === this.viewType()) {
+            if (notification.type === this.viewType()) {
                 notification.view.destroy();
 
                 this.facade.trigger(notifications.VIEW_DESTROYED, {
@@ -61,6 +68,19 @@ define([
                     this.view = null;
                 }
             }
+        },
+
+        /**
+         * Method to listen for reset events on the collection
+         * and update the URL to include any query parameters.
+         */
+        onReset: function() {
+            this.facade.trigger(notifications.VIEW_NAVIGATE, {
+                type: this.viewType(),
+                query: this.query.toUri(),
+                trigger: false,
+                replace: false
+            });
         }
 
     }, {
