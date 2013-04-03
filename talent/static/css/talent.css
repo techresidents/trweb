@@ -457,3 +457,75 @@
 .tracker-filters .filter-status .drop-content {
     min-width: 280px;
 }
+
+.application .summary-container, .application .eval-container {
+    margin-bottom: 30px;
+}
+
+.application-summary span {
+    margin-right: 10px;
+}
+
+.application-summary > .container > span > a {
+    font-size: 16px;
+}
+
+.application-log-grid table {
+    table-layout: fixed;
+}
+
+.application-log-grid .grid-cell-user,
+.application-log-grid .grid-header-cell-user {
+    white-space: nowrap;
+    width: 150px;
+}
+
+.application-log-grid .grid-cell-created,
+.application-log-grid .grid-header-cell-created {
+    white-space: nowrap;
+    width: 150px;
+}
+
+.application-log-grid .grid-cell-note,
+.application-log-grid .grid-header-cell-note {
+    width: auto;
+}
+
+.application-log .pagination {
+    margin: 10px 0;
+}
+
+.application-log .pagination ul li > a {
+    line-height: 28px;
+    padding: 0 12px;
+}
+
+.application-log-add > textarea {
+    width: 350px;
+    height: 100px;
+}
+
+.application-log-add .actions > button {
+    margin-right: 5px;
+}
+
+.eval-grid table {
+    table-layout: fixed;
+}
+
+.eval-grid .grid-cell.grid-cell-vote,
+.eval-grid .grid-header-cell.grid-header-cell-vote {
+    width: 100px;
+}
+
+.eval-grid .grid-cell,
+.eval-grid .grid-header-cell {
+    width: auto;
+    white-space: nowrap;
+}
+
+.eval-grid .grid-cell-vote > div {
+    margin: 5px 0;
+}
+
+

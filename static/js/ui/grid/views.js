@@ -553,6 +553,46 @@ define(/** @exports grid/views */[
     GridActionCellView.Factory = factory.buildFactory(GridActionCellView);
 
     /**
+     * Grid Factory Cell View.
+     * @constructor
+     * @param {Object} options
+     *   config: {Object} grid config (required)
+     *   model: {ApiModel} model (required)
+     *   query: {ApiQuery} query (required)
+     */
+    var GridFactoryCellView = GridCellView.extend({
+
+        initialize: function(options) {
+            this.viewFactory = options.viewFactory;
+            GridCellView.prototype.initialize.call(this, options);
+
+            this.view = this.viewFactory.create({
+                config: options.config,
+                model: options.model,
+                query: options.query
+
+            });
+        },
+
+        childViews: function() {
+            var result = GridCellView.prototype.childViews.call(this);
+            result.push(this.view);
+        },
+
+        render: function() {
+            this.$el.html();
+            this.$el.attr('class', this.classes().join(' '));
+            this.append(this.view);
+            return this;
+        }
+    });
+
+    /**
+     * {@link module:core/factory~Factory|Factory} class for convenience.
+     */
+    GridFactoryCellView.Factory = factory.buildFactory(GridFactoryCellView);
+
+    /**
      * Grid Row View.
      * @constructor
      * @param {Object} options
@@ -770,7 +810,8 @@ define(/** @exports grid/views */[
         GridCellView: GridCellView,
         GridDateCellView: GridDateCellView,
         GridLinkCellView: GridLinkCellView,
-        GridActionCellView: GridActionCellView
+        GridActionCellView: GridActionCellView,
+        GridFactoryCellView: GridFactoryCellView
     };
 
 });

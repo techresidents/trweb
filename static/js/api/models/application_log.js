@@ -34,7 +34,8 @@ define([
             tenant_id: new fields.StringField(),
             user_id: new fields.StringField(),
             application_id: new fields.StringField(),
-            note: new fields.StringField()
+            note: new fields.StringField(),
+            created: new fields.DateTimeField({nullable: true})
         },
 
         relatedFields: {

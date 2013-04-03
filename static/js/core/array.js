@@ -1,6 +1,8 @@
 define(/** @exports core/array */[
+    'underscore',
     'core/base'
 ], function(
+    underscore,
     base) {
 
     /**
@@ -70,9 +72,25 @@ define(/** @exports core/array */[
         return index;
     };
 
+    /**
+     * Compute the average value of the array.
+     * @param {array} array
+     * @returns {number} Array average
+     */
+    var average = function(array) {
+        var result = 0;
+        if(array.length) {
+            result = _.reduce(array, function(result, v) {
+                return result + v;
+            }, 0) / array.length;
+        }
+        return result;
+    };
+
     return {
         binarySearch: binarySearch,
         binaryInsert: binaryInsert,
-        defaultCompare: defaultCompare
+        defaultCompare: defaultCompare,
+        average: average
     };
 });

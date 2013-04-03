@@ -607,6 +607,17 @@ define(/** @exports core/date */[
 
             return this;
         }
+    }, {
+        /**
+         * Create a DateTime object from a Unix timestamp.
+         * @param {number} timetsamp Unix timestamp in seconds.
+         * @returns {module:core/date~DateTime}
+         */
+        fromTimestamp: function(timestamp) {
+            var date = new Date(0);
+            date.setUTCSeconds(timestamp);
+            return new DateTime(date);
+        }
     });
 
     var DateRange = base.Base.extend(

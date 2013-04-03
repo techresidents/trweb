@@ -50,7 +50,8 @@ define([
                             this.collection,
                             notification.options.query);
                 } else {
-                    this.query = this.collection.query();
+                    this.query = this.collection.query()
+                        .orderBy('created__desc');
                 }
 
                 this.collection.on('reset', this.onReset, this);
@@ -128,7 +129,11 @@ define([
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
+                this.model = new api.Application({
+                    id: notification.options.id
+                });
                 this.view = new applicant_views.ApplicationView({
+                    model: this.model
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {

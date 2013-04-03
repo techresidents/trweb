@@ -2,12 +2,15 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'core/base'
+    'core/base',
+    'api/fetcher'
 ], function(
     $,
     _,
     Backbone,
-    base) {
+    base,
+    api_fetcher) {
+        
     
     /**
      * ApiQueryFilter
@@ -325,6 +328,8 @@ define([
             options = options || {};
             this.instance = options.model || options.collection;
             this.state = new ApiQueryState();
+            this.queryChain = [];
+            this.queryChainCallback = null;
         },
 
         noSession: function(value) {
@@ -400,19 +405,33 @@ define([
             return this;
         },
 
-        fetch: function(options) {
-            options = _.extend({
-                query: this,
-                noSession: this.state.noSession()
-            }, options);
-
-            if(!options.hasOwnProperty("data")) {
-                options.data = {};
+        chain: function(queryChain, callback) {
+            if(_.isArray(queryChain)) {
+                this.queryChain = queryChain;
+            } else {
+                this.queryChain = [queryChain];
             }
+            this.queryChainCallback = callback;
+            return this;
+        },
 
-            _.extend(options.data, this.toUriObject());
+        fetch: function(options) {
+            //handle chained queries
+            var queryChainSuccess = function() {
+                if(_.isFunction(this.queryChainCallback)) {
+                    var args = _.pluck(this.queryChain, 'instance');
+                    this.queryChainCallback.apply(this, args);
+                }
+                this.instance.fetch(this._fetchOptions(options));
+            };
+            if(this.queryChain.length) {
+                new api_fetcher.ApiFetcher(this.queryChain).fetch({
+                    success: _.bind(queryChainSuccess, this)
+                    });
+            } else {
+                this.instance.fetch(this._fetchOptions(options));
+            }
             
-            return this.instance.fetch(options);
         },
 
         toUriObject: function() {
@@ -456,6 +475,18 @@ define([
             //for better looking uri's.
             result = encodeURI(terms.join('+'));
             return result;
+        },
+
+        _fetchOptions: function(options) {
+            options = _.extend({
+                query: this,
+                noSession: this.state.noSession()
+            }, options);
+            if(!options.hasOwnProperty("data")) {
+                options.data = {};
+            }
+            _.extend(options.data, this.toUriObject());
+            return options;
         }
     }, {
 
