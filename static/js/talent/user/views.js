@@ -640,10 +640,6 @@ define([
                 onSuccess: function() {
                     that.saveStatus = that.SaveStatusEnum.SAVED;
                     that.updateSaveStatusUI();
-                },
-                onError: function() {
-                    that.saveStatus = that.SaveStatusEnum.ERROR;
-                    that.updateSaveStatusUI();
                 }
             }, attributes);
             this.triggerEvent(talent_events.TAKE_NOTE, eventBody);
