@@ -214,6 +214,7 @@ class JobNote(models.Model):
     employee = models.ForeignKey(User, related_name="+")
     candidate = models.ForeignKey(User, related_name="+")
     note = models.TextField(max_length=4096)
+    modified = models.DateField(auto_now_add=True, auto_now=True)
 
 class JobEvent(models.Model):
     """Job event model"""

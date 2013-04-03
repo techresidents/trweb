@@ -32,7 +32,8 @@ define([
             tenant_id: new fields.StringField(),
             candidate_id: new fields.StringField(),
             employee_id: new fields.StringField(),
-            note: new fields.StringField()
+            note: new fields.StringField(),
+            modified: new fields.DateTimeField({nullable: true})
         },
 
         relatedFields: {
