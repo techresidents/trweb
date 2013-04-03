@@ -129,6 +129,7 @@ class JobApplicationLog(models.Model):
     user = models.ForeignKey(User, related_name="+")
     application = models.ForeignKey(JobApplication, related_name="job_application_logs")
     note = models.TextField(max_length=4096)
+    created = models.DateTimeField(auto_now_add=True)
 
 class JobApplicationScore(models.Model):
     """Job application score model"""

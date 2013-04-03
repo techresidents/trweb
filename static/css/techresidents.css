@@ -154,6 +154,14 @@ html {
     margin-left: 190px;
 }
 
+.section-header h1,
+.section-header h2,
+.section-header h3,
+.section-header h4,
+.section-header h5 {
+    border-bottom: 2px solid #AAAAAA;
+}
+
 [class^="tr-icon-"] {
     display: inline-block;
     width: 14px;
@@ -300,6 +308,10 @@ html {
 
 .drop-open > .drop-content {
     display: block;
+}
+
+button.drop-button .caret {
+    margin-left: 2px;
 }
 
 .menu ul {

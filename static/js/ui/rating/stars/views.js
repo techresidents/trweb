@@ -30,6 +30,7 @@ define([
      *   model: {Model} model (optional)
      *   attribute: {String} model attribute (optional)
      *   totalStars: {Number} number of stars. Defaults to 5 (optional)
+     *   readonly: {boolean} Readonly model (optional)
      */
     var RatingStarsView = view.View.extend({
 
@@ -53,15 +54,17 @@ define([
                 label: '',
                 model: null,
                 attribute: null,
-                totalStars: 5
+                totalStars: 5,
+                readonly: false
             }, options);
 
             this.label = options.label;
             this.model = options.model;
             this.attribute = options.attribute;
             this.totalStars = options.totalStars;
+            this.readonly = options.readonly;
             this.template = _.template(ratingstars_template);
-
+            
             // Create a model if not passed in
             if (!this.model) {
                 this.model = new Backbone.Model({rating: null});
@@ -116,7 +119,8 @@ define([
 
             var context = {
                 label: this.label,
-                stars: starsToRender
+                stars: starsToRender,
+                readonly: this.readonly
             };
             this.$el.html(this.template(context));
 
@@ -128,17 +132,29 @@ define([
         },
 
         onMouseover: function(e) {
+            if(this.readonly) {
+                return;
+            }
+
             var currentTarget = this.$(e.currentTarget);
             this._drainFill();
             this._hoverFill(currentTarget);
         },
 
         onMouseout: function(e) {
+            if(this.readonly) {
+                return;
+            }
+
             this._drainFill(); // remove all hover color
             this.render(); // fill in set stars
         },
 
         onClick: function(e) {
+            if(this.readonly) {
+                return;
+            }
+
             var currentTarget = this.$(e.currentTarget);
             var rating = this._determineRating(currentTarget);
             this.setRating(rating);
@@ -149,6 +165,10 @@ define([
         },
 
         onClear: function(e) {
+            if(this.readonly) {
+                return;
+            }
+
             this.setRating(0);
             this.render();
             this.triggerEvent(EventType.CHANGE, {

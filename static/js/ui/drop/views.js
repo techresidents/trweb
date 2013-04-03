@@ -58,7 +58,6 @@ define([
             this.targetView = options.targetView;
             this.targetSelector = options.targetSelector;
             this.childView = null;
-            this.isOpen = false;
             
             //child views
             this.childView = this.createChildView(this.view);
@@ -158,13 +157,17 @@ define([
             content.width(targetOuterWidth - contentExtraWidth);
         },
 
+        isOpen: function() {
+            var inner = this.$('.drop-inner:first');
+            return inner.hasClass('drop-open');
+        },
+
         open: function() {
             var inner = this.$('.drop-inner:first');
-            if(!this.isOpen) {
+            if(!this.isOpen()) {
                 this.position();
                 this.setWidth();
                 inner.addClass('drop-open');
-                this.isOpen = !this.isOpen;
                 this.triggerEvent(events_type.EventType.OPEN, {
                     view: this
                 });
@@ -173,9 +176,8 @@ define([
 
         close: function() {
             var inner = this.$('.drop-inner:first');
-            if(this.isOpen) {
+            if(this.isOpen()) {
                 inner.removeClass('drop-open');
-                this.isOpen = !this.isOpen;
                 this.triggerEvent(events_type.EventType.CLOSE, {
                     view: this
                 });
@@ -183,7 +185,7 @@ define([
         },
 
         toggle: function() {
-            if(this.isOpen) {
+            if(this.isOpen()) {
                 this.close();
             } else {
                 this.open();
@@ -191,7 +193,7 @@ define([
         },
 
         onClick: function(e) {
-            if(!this.isOpen || !this.autoclose) {
+            if(!this.isOpen() || !this.autoclose) {
                 return;
             }
 

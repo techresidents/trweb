@@ -10,8 +10,10 @@ define([
     'ui/ac/matcher',
     'ui/date/views',
     'ui/paginator/views',
-    'talent/applicant/grid',
-    'talent/applicant/filter',
+    'talent/applicant/eval/views',
+    'talent/applicant/log/views',
+    'talent/applicant/summary/views',
+    'talent/applicant/tracker/views',
     'talent/events',
     'text!talent/applicant/templates/application.html',
     'text!talent/applicant/templates/make_interview_offer.html',
@@ -29,8 +31,10 @@ define([
     ac_matcher,
     date_views,
     paginator_views,
-    tracker_grid,
-    tracker_filter,
+    applicant_eval,
+    applicant_log,
+    applicant_summary,
+    applicant_tracker,
     talent_events,
     application_template,
     make_interview_offer_template,
@@ -73,13 +77,13 @@ define([
                     return model.get_requisition().get_title() + ' (' + model.id + ')';
                 }
             });
-            this.filtersView = new tracker_filter.TrackerFiltersView({
+            this.filtersView = new applicant_tracker.TrackerFiltersView({
                 collection: this.collection,
                 query: this.query,
                 horizontal: true
             });
 
-            this.gridView = new tracker_grid.TrackerGridView({
+            this.gridView = new applicant_tracker.TrackerGridView({
                 collection: this.collection,
                 query: this.query
             });
@@ -91,9 +95,13 @@ define([
             });
         },
 
+        classes: function() {
+            return ['tracker'];
+        },
         
         render: function() {
             this.$el.html(this.template());
+            this.$el.attr('class', this.classes().join(' '));
             this.append(this.filtersView, '.content');
             this.append(this.gridView, '.content');
             this.append(this.paginatorView, '.content');
@@ -113,21 +121,55 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(application_template);
+            this.model = options.model;
+            
+            //bind events
+            this.listenTo(this.model, 'change', this.render);
+
+            //load data
+            this.loader = new api_loader.ApiLoader([{
+                instance: this.model
+            }]);
+            this.loader.load();
 
             //child views
+            this.summaryView = null;
+            this.evalView = null;
+            this.logsView = null;
             this.initChildViews();
         },
 
         childViews: function() {
-            return [];
+            return [this.summaryView, this.evalView, this.logsView];
         },
 
         initChildViews: function() {
+            this.summaryView = new applicant_summary.ApplicationSummaryView({
+                model: this.model
+            });
+            this.evalView = new applicant_eval.TeamEvalView({
+                model: this.model
+            });
+            this.logsView = new applicant_log.ApplicationLogsView({
+                model: this.model
+            });
         },
 
+        classes: function() {
+            return ['application'];
+        },
         
         render: function() {
-            this.$el.html(this.template());
+            var context = {
+                model: this.model.toJSON()
+            };
+
+            this.$el.html(this.template(context));
+            this.$el.attr('class', this.classes().join(' '));
+            this.append(this.summaryView, '.summary-container');
+            this.append(this.evalView, '.eval-container');
+            this.append(this.logsView, '.log-container');
+
             return this;
         }
     });
@@ -155,6 +197,9 @@ define([
                 withRelated: ['requisition']
             }]);
             this.loader.load();
+
+            //bind events
+            this.listenTo(this.loader, 'loaded', this.render);
 
             //child views
             this.dateView = null;
@@ -244,7 +289,7 @@ define([
             this.action = 'Rescind Interview Offer';
 
             //bind events
-            this.listenTo(this.interviewOffers, 'reset', this.render);
+            this.listenTo(this.loader, 'loaded', this.render);
 
             this.loader.load();
         },

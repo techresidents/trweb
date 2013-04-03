@@ -25,6 +25,13 @@ define([
             }
         },
 
+        createApplicationLog: function(note) {
+            this.view.triggerEvent(talent_events.CREATE_APPLICATION_LOG, {
+                application: this.model,
+                note: note
+            });
+        },
+
         makeInterviewOffer: function() {
             this.view.triggerEvent(talent_events.SHOW_MAKE_INTERVIEW_OFFER, {
                 model: this.model

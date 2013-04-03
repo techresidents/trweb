@@ -241,7 +241,7 @@ define(/** @exports ui/ac/ac */[
         },
 
         isOpen: function() {
-            return this.dropView.isOpen;
+            return this.dropView.isOpen();
         },
 
         getLastSelectedMatch: function() {

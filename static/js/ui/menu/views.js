@@ -62,14 +62,26 @@ define([
      *   items: {Array} menu item objects (required)
      */
     var DropMenuView = drop_views.DropView.extend({
+
+        events: {
+            'select .drop-content': 'onSelect'
+        },
+
         initialize: function(options) {
             var view = new factory.Factory(MenuView, {
                 collection: options.collection
             });
+            delete options.collection;
 
-            drop_views.DropView.prototype.initialize.call(this, {
+            options = _.extend({
                 view: view
-            });
+            }, options);
+
+            drop_views.DropView.prototype.initialize.call(this, options);
+        },
+
+        onSelect: function(e) {
+            this.close();
         }
     });
 

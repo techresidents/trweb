@@ -336,6 +336,11 @@ define([
             return query.withRelated.apply(query, arguments);
         },
 
+        chain: function() {
+            var query = new api_query.ApiQuery({model: this});
+            return query.chain.apply(query, arguments);
+        },
+
         fetchFromSession: function(options) {
             var result = false;
             var fetch, model;
@@ -399,15 +404,42 @@ define([
         },
         
         save: function(key, value, options) {
-            if(this.session) {
-                this.session.removeAllCollections(new this.collectionConstructor());
+            var success, attributes = {};
+            if(key === null || key === undefined || typeof key === 'object') {
+                attributes = key;
+                options = value || {};
+            } else {
+                attributes = {};
+                attributes[key] = value;
+                options = options || {};
             }
-            return Backbone.Model.prototype.save.call(this, key, value, options);
+
+            if(this.session) {
+                success = options.success;
+                options.success = _.bind(function() {
+                    this.session.removeAllCollections(
+                        new this.collectionConstructor());
+                    if(success) {
+                        success.apply(this, arguments);
+                    }
+                }, this);
+            }
+            return Backbone.Model.prototype.save.call(this, attributes, options);
         },
 
         destroy: function(options) {
+            var success;
+            options = options || {};
+
             if(this.session && !this.isNew()) {
-                this.session.removeAllCollections(new this.collectionConstructor());
+                success = options.success;
+                options.success = _.bind(function() {
+                    this.session.removeAllCollections(
+                        new this.collectionConstructor());
+                    if(success) {
+                        success.apply(this, arguments);
+                    }
+                }, this);
             }
             return Backbone.Model.prototype.destroy.call(this, options);
         }
@@ -641,6 +673,11 @@ define([
 
         slice: function(start, end) {
             return new api_query.ApiQuery({collection: this}).slice(start, end);
+        },
+
+        chain: function() {
+            var query = new api_query.ApiQuery({collection: this});
+            return query.chain.apply(query, arguments);
         },
 
         fetchFromSession: function(options) {
