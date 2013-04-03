@@ -506,7 +506,7 @@ define([
                     salary_start: { required: true, number: true, maxlength: 10 },
                     salary_end: { required: true, number: true, maxlength: 10 },
                     location: { required: true, minlength: 2, maxlength: 100 },
-                    description: { required: true, minlength: 1, maxlength: 1024 }
+                    description: { required: true, minlength: 1, maxlength: 2048 }
                 },
                 messages: {
                     salary_start: {
@@ -861,7 +861,10 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template());
+            var context = {
+                fmt: this.fmt
+            }
+            this.$el.html(this.template(context));
             this.append(this.reqFormView, this.formContainerSelector);
             return this;
         }

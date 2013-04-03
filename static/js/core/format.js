@@ -41,9 +41,24 @@ define(/** @exports core/format */[
 
     var num = format;
 
+    /**
+     * Format text to display multiple lines when rendered.
+     * This function replaces '\n' with <br> to do this.
+     * @param value text string
+     * @returns {string} formatted string
+     */
+    var multiline = function(value) {
+        var result = value;
+        if (_.isString(value) && value.length) {
+            result = value.replace(/\n/g, '<br/>');
+        }
+        return result;
+    };
+
     return {
         date: date,
         format: format,
-        num: num
+        num: num,
+        multiline: multiline
     };
 });
