@@ -339,7 +339,7 @@ define([
     var JobTechnologyListItemHintView = Backbone.View.extend({
 
         tagName: "tr",
-        templateName: '#item-hint-template',
+        templateName: '#technology-item-hint-template',
 
         initialize: function() {
             this.template = _.template($(this.templateName).html());

@@ -12,6 +12,7 @@ define([
     'talent/events',
     'talent/notifications',
     'talent/applicant/commands',
+    'talent/user/commands',
     'talent/player/mediators',
     'talent/player/models',
     'talent/player/proxies',
@@ -30,6 +31,7 @@ define([
     talent_events,
     talent_notifications,
     applicant_commands,
+    user_commands,
     player_mediators,
     player_models,
     player_proxies,
@@ -43,7 +45,7 @@ define([
             'application/:id': 'application',
             'playback/:id': 'playback',
             'tracker(/:query)': 'tracker',
-            'user/:id': 'user',                
+            'user/:id': 'user',
             '*actions': 'search'
 
         },
@@ -229,6 +231,9 @@ define([
         talent_notifications.SHOW_MAKE_INTERVIEW_OFFER;
     EventNotificationMap[talent_events.SHOW_RESCIND_INTERVIEW_OFFER] =
         talent_notifications.SHOW_RESCIND_INTERVIEW_OFFER;
+    /* DEVELOPER NOTE EVENTS*/
+    EventNotificationMap[talent_events.TAKE_NOTE] =
+        talent_notifications.TAKE_NOTE;
 
     /**
      * Talent App Mediator
@@ -375,6 +380,9 @@ define([
                 applicant_commands.ShowMakeInterviewOffer);
             this.registerCommand(talent_notifications.SHOW_RESCIND_INTERVIEW_OFFER,
                 applicant_commands.ShowRescindInterviewOffer);
+            /* DEVELOPER NOTE COMMANDS */
+            this.registerCommand(talent_notifications.TAKE_NOTE,
+                user_commands.TakeNote);
         },
         
         /**

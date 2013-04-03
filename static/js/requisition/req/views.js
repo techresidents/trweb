@@ -507,6 +507,14 @@ define([
                     salary_end: { required: true, number: true, maxlength: 10 },
                     location: { required: true, minlength: 2, maxlength: 100 },
                     description: { required: true, minlength: 1, maxlength: 1024 }
+                },
+                messages: {
+                    salary_start: {
+                        number: "Please enter a valid number"
+                    },
+                    salary_end: {
+                        number: "Please enter a valid number"
+                    }
                 }
             });
         },
