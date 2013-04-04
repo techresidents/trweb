@@ -449,10 +449,41 @@
     color: #999;
 }
 
-.tracker-grid .grid-cell-requisition {
-    width: auto;
-    white-space: nowrap;
+.tracker-grid table {
+    table-layout: fixed;
 }
+
+.tracker-grid .grid-cell-application,
+.tracker-grid .grid-header-cell-application {
+    text-align: center;
+    width: 95px;
+}
+
+.tracker-grid .grid-cell-requisition,
+.tracker-grid .grid-header-cell-requisition {
+    width: auto;
+}
+
+.tracker-grid .grid-cell-applicant,
+.tracker-grid .grid-header-cell-applicant {
+    width: 100px;
+}
+
+.tracker-grid .grid-cell-created,
+.tracker-grid .grid-header-cell-created {
+    width: 105px;
+}
+
+.tracker-grid .grid-cell-status,
+.tracker-grid .grid-header-cell-status {
+    width: auto;
+}
+
+.tracker-grid .grid-cell:last-child,
+.tracker-grid .grid-header-cell:last-child {
+    width: 50px;
+}
+
 
 .tracker-filters .filter-status .drop-content {
     min-width: 280px;

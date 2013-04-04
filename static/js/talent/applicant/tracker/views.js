@@ -59,7 +59,7 @@ define([
                 cellView: new grid_views.GridLinkCellView.Factory(function(options) {
                     return {
                         href: '/talent/application/' + options.model.id,
-                        value: options.model.id
+                        value: '<i class="icon-list-alt"></i>'
                     };
                 })
             };
