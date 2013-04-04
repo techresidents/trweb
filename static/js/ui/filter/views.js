@@ -366,9 +366,12 @@ define([
         },
 
         dateRangeToFilter: function(range) {
-            var result, values;
+            var result, start, end, values;
             if(range && range.start && range.end) {
-                values = [range.start.getTime() / 1000.0, range.end.getTime() / 1000.0];
+                start = new date.DateTime(range.start.date);
+                end = new date.DateTime(range.end.date).add(
+                        new date.Interval(0, 0, 0, 23, 59, 59));
+                values = [start.getTimestamp(), end.getTimestamp()];
                 result = new api_query.ApiQueryFilter({
                     name: this.field,
                     value: values.join(','),

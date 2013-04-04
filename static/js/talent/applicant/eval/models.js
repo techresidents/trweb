@@ -103,11 +103,13 @@ define([
             var scoresQuery = scores.query();
             var votesQuery = votes.query();
             var userCollection = new api.UserCollection();
+            var currentUser = new api.User({id: 'CURRENT'});
 
             var query = userCollection
                 .chain([votesQuery, scoresQuery], function(votes, scores) {
-                    var userIds = votes.pluck('user_id');
+                    var userIds = [currentUser.id];
                     userIds = userIds.concat(scores.pluck('user_id'));
+                    userIds = userIds.concat(votes.pluck('user_id'));
                     userIds = _.uniq(userIds);
                     this.filterBy({'id__in': userIds});
             });

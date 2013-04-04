@@ -180,22 +180,22 @@ define([
             this.recording = false; //current recording status
             
             //add Tokbox event handlers
-            this.session.addEventListener(this.cid, "sessionConnected", _.bind(this.sessionConnectedHandler, this));
-            this.session.addEventListener(this.cid, "connectionCreated", _.bind(this.connectionCreatedHandler, this));
-            this.session.addEventListener(this.cid, "connectionDestroyed", _.bind(this.connectionDestroyedHandler, this));
-            this.session.addEventListener(this.cid, "streamCreated", _.bind(this.streamCreatedHandler, this));
-            this.session.addEventListener(this.cid, "streamDestroyed", _.bind(this.streamDestroyedHandler, this));
-            this.session.addEventListener(this.cid, "microphoneLevelChanged", _.bind(this.microphoneLevelHandler, this));
-            this.session.addEventListener(this.cid, "archiveCreated", _.bind(this.archiveCreatedHandler, this));
-            this.session.addEventListener(this.cid, "archiveClosed", _.bind(this.archiveClosedHandler, this));
-            this.session.addEventListener(this.cid, "sessionNotRecording", _.bind(this.sessionNotRecordingHandler, this));
-            this.session.addEventListener(this.cid, "sessionRecordingInProgress", _.bind(this.sessionRecordingInProgressHandler, this));
-            this.session.addEventListener(this.cid, "sessionRecordingStarted", _.bind(this.sessionRecordingStartedHandler, this));
-            this.session.addEventListener(this.cid, "sessionRecordingStopped", _.bind(this.sessionRecordingStoppedHandler, this));
-            this.session.addEventListener(this.cid, "streamNotRecording", _.bind(this.streamNotRecordingHandler, this));
-            this.session.addEventListener(this.cid, "streamRecordingInProgress", _.bind(this.streamRecordingInProgressHandler, this));
-            this.session.addEventListener(this.cid, "streamRecordingStarted", _.bind(this.streamRecordingStartedHandler, this));
-            this.session.addEventListener(this.cid, "streamRecordingStopped", _.bind(this.streamRecordingStoppedHandler, this));
+            this.session.addEventListener("sessionConnected", _.bind(this.sessionConnectedHandler, this));
+            this.session.addEventListener("connectionCreated", _.bind(this.connectionCreatedHandler, this));
+            this.session.addEventListener("connectionDestroyed", _.bind(this.connectionDestroyedHandler, this));
+            this.session.addEventListener("streamCreated", _.bind(this.streamCreatedHandler, this));
+            this.session.addEventListener("streamDestroyed", _.bind(this.streamDestroyedHandler, this));
+            this.session.addEventListener("microphoneLevelChanged", _.bind(this.microphoneLevelHandler, this));
+            this.session.addEventListener("archiveCreated", _.bind(this.archiveCreatedHandler, this));
+            this.session.addEventListener("archiveClosed", _.bind(this.archiveClosedHandler, this));
+            this.session.addEventListener("sessionNotRecording", _.bind(this.sessionNotRecordingHandler, this));
+            this.session.addEventListener("sessionRecordingInProgress", _.bind(this.sessionRecordingInProgressHandler, this));
+            this.session.addEventListener("sessionRecordingStarted", _.bind(this.sessionRecordingStartedHandler, this));
+            this.session.addEventListener("sessionRecordingStopped", _.bind(this.sessionRecordingStoppedHandler, this));
+            this.session.addEventListener("streamNotRecording", _.bind(this.streamNotRecordingHandler, this));
+            this.session.addEventListener("streamRecordingInProgress", _.bind(this.streamRecordingInProgressHandler, this));
+            this.session.addEventListener("streamRecordingStarted", _.bind(this.streamRecordingStartedHandler, this));
+            this.session.addEventListener("streamRecordingStopped", _.bind(this.streamRecordingStoppedHandler, this));
         },
 
         _getOrCreateUser: function(connectionData) {
