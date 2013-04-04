@@ -309,6 +309,13 @@ define(/** @exports core/date */[
         },
 
         /**
+         * @returns {number} Unix timestamp
+         */
+        getTimestamp: function(timestamp) {
+            return this.date.getTime() / 1000.0;
+        },
+
+        /**
          * @param {number} value Four digit year
          */
         setFullYear: function(value) {
@@ -507,6 +514,7 @@ define(/** @exports core/date */[
             return this.date.toUTCString();
         },
 
+
         /**
          * @returns {number} Milliseconds since Jan 1, 1970 according to UTC.
          */
@@ -591,7 +599,7 @@ define(/** @exports core/date */[
          * @param {module:core/date~Interval} Interval
          */
         add: function(interval) {
-            Date.Date.prototype.add.call(this, interval);
+            DateDate.prototype.add.call(this, interval);
 
             if(interval.hours) {
                 this.setHours(this.date.getHours() + interval.hours);
