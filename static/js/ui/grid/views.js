@@ -77,7 +77,7 @@ define(/** @exports grid/views */[
         classes: function() {
             var result = [
                 'grid-hover-cell',
-                'grid-hover-cell-' + this.config.column.toLowerCase().replace(' ', '-')
+                'grid-hover-cell-' + this.config.key
             ];
             return result;
         },
@@ -146,7 +146,7 @@ define(/** @exports grid/views */[
         classes: function() {
             var result = [
                 'grid-header-cell',
-                'grid-header-cell-' + this.config.column.toLowerCase().replace(' ', '-')
+                'grid-header-cell-' + this.config.key
             ];
             
             if(this.sort) {
@@ -316,7 +316,7 @@ define(/** @exports grid/views */[
         classes: function() {
             return [
                 'grid-cell',
-                'grid-cell-' + this.config.column.toLowerCase().replace(' ', '-')
+                'grid-cell-' + this.config.key
             ];
         },
 
@@ -699,7 +699,7 @@ define(/** @exports grid/views */[
 
             this.template = _.template(options.template);
             this.context = options.context;
-            this.config = options.config;
+            this.config = this._normalizeConfig(options.config);
             this.collection = options.collection;
             this.query = options.query || this.collection.query();
 
@@ -798,6 +798,17 @@ define(/** @exports grid/views */[
             this.query.slice(0, pageSize);
             this.query.state.orderBys().reset([orderByModel]);
             this.query.fetch();
+        },
+
+        _normalizeConfig: function(config) {
+            _.each(config.columns, function(columnConfig) {
+                var key;
+                if(columnConfig.column && !columnConfig.key) {
+                    key = columnConfig.column.toLowerCase().replace(' ', '-');
+                    columnConfig.key = key;
+                }
+            }, this);
+            return config;
         }
     });
 

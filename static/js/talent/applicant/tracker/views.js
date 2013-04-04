@@ -127,6 +127,7 @@ define([
                 return handler.menuItems();
             };
             return {
+                key: 'action',
                 column: '',
                 cellView: new grid_views.GridActionCellView.Factory({
                     map: map

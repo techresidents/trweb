@@ -476,14 +476,13 @@
 
 .tracker-grid .grid-cell-status,
 .tracker-grid .grid-header-cell-status {
-    width: auto;
+    width: 220px;
 }
 
-.tracker-grid .grid-cell:last-child,
-.tracker-grid .grid-header-cell:last-child {
+.tracker-grid .grid-cell-action,
+.tracker-grid .grid-header-cell-action {
     width: 50px;
 }
-
 
 .tracker-filters .filter-status .drop-content {
     min-width: 280px;
