@@ -95,7 +95,7 @@ define([
 
         userColumn: function() {
             return {
-                column: 'User',
+                column: 'Applicant',
                 cellView: new grid_views.GridLinkCellView.Factory(function(options) {
                     return {
                         href: '/talent/user/' + options.model.get_user_id(),
