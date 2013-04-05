@@ -53,15 +53,15 @@
         <p>With these technologies</p>
         <div class="well">
             <ul class="technology-prefs unstyled">
-                <% if (!model.technology_prefs.length) { %>
+                <% if (!sortedTechPrefs.length) { %>
                 <span><em>No technologies provided</em></span>
                 <% } else { %>
 
-                <% _.each(model.technology_prefs, function(technology) { %>
+                <% _.each(sortedTechPrefs, function(technology) { %>
                 <li><%= technology.name %></li>
                 <% }); %>
 
-                <% if (model.technology_prefs.length > 3) { %>
+                <% if (sortedTechPrefs.length > 3) { %>
                 <a class="slide-toggle">more</a>
                 <% } %>
 
