@@ -40,22 +40,24 @@ define([
 
         initialize: function(options) {
             this.view = null;
+            this.currentUser = new api.User({id: 'CURRENT'});
+            this.currentTenant = this.currentUser.get_tenant();
+            this.defaultCollection = this.currentTenant.get_applications();
+            this.defaultQuery = this.defaultCollection.query()
+                .orderBy('created__desc');
+
+            this.collection = null;
+            this.query = null;
         },
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-                this.collection = new api.ApplicationCollection();
-                if(notification.options.query) {
-                    this.query = api_query.ApiQuery.parse(
-                            this.collection,
-                            notification.options.query);
-                } else {
-                    this.query = this.collection.query()
-                        .orderBy('created__desc');
-                }
+                var uri = notification.options.query ||
+                    this.defaultQuery.toUri();
 
+                this.collection = this.defaultCollection.clone();
                 this.collection.on('reset', this.onReset, this);
-
+                this.query = api_query.ApiQuery.parse(this.collection, uri);
                 this.view = new applicant_views.TrackerView({
                     collection: this.collection,
                     query: this.query
@@ -88,9 +90,13 @@ define([
         },
 
         onReset: function() {
+            var uri = this.query.toUri();
+            if(uri === this.defaultQuery.toUri()) {
+                uri = null;
+            }
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
                 type: TrackerMediator.VIEW_TYPE,
-                query: this.query.toUri(),
+                query: uri,
                 trigger: false
             });
         }
