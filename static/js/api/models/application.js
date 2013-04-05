@@ -42,7 +42,8 @@ define([
 
         relatedFields: {
             tenant: new fields.ForeignKey({
-                relation: tenant_models.Tenant
+                relation: tenant_models.Tenant,
+                backref: "applications"
             }),
 
             user: new fields.ForeignKey({
