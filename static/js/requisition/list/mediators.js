@@ -76,7 +76,7 @@ define([
                 var user = this.currentProxy.currentUser();
                 this.collection = user.get_tenant().get_requisitions();
                 this.collection.on('reset', this.onReset, this);
-                this.query = this.collection.query().slice(0, 10);
+                this.query = this.collection.query().slice(0, 10).orderBy('created__desc');
                 if (notification.options.query) {
                     this.query = api_query.ApiQuery.parse(
                         this.collection,

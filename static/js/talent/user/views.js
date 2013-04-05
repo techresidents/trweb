@@ -84,6 +84,7 @@ define([
         },
 
         initialize: function(options) {
+            this.model = options.model;
             this.template =  _.template(jobprefs_template);
             this.modelWithRelated = [
                 'position_prefs',
@@ -111,8 +112,10 @@ define([
         },
 
         render: function() {
+            var sortedTechPrefsCollection = this._getSortedJobTechnologyPrefs();
             var context = {
                 model: this.model.toJSON({ withRelated: this.modelWithRelated }),
+                sortedTechPrefs: sortedTechPrefsCollection.toJSON(),
                 fmt: this.fmt // date formatting
             };
             this.$el.html(this.template(context));
@@ -195,6 +198,26 @@ define([
             } else {
                 $(selector).text('more');
             }
+        },
+
+        /**
+         * Convenience function to get a sorted job technology prefs collection.
+         * @returns A sorted {Technology} collection.
+         * @private
+         */
+        _getSortedJobTechnologyPrefs: function() {
+            var unsortedTechPrefsCollection = this.model.get_technology_prefs();
+            var sortedTechPrefsCollection = new Backbone.Collection();
+            sortedTechPrefsCollection.comparator = function(technology) {
+                // sort by Technology.name
+                return technology.get('name');
+            };
+
+            // Add technologies to the new sortable collection
+            unsortedTechPrefsCollection.each(function(technology) {
+                sortedTechPrefsCollection.add(technology);
+            }, this);
+            return sortedTechPrefsCollection;
         }
     });
 
