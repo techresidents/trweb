@@ -61,8 +61,16 @@ define([
         ],
 
         initialize: function(options) {
-            this.view = null;
+            var user;
             this.currentProxy = this.facade.getProxy(current_proxies.CurrentProxy.NAME);
+            user = this.currentProxy.currentUser();
+            this.defaultCollection = user.get_tenant().get_requisitions();
+            this.defaultQuery = this.defaultCollection.query()
+                .slice(0, 10).orderBy('created__desc');
+
+            this.view = null;
+            this.collection = null;
+            this.query = null;
         },
 
         /**
@@ -73,17 +81,11 @@ define([
          */
         onCreateView: function(notification) {
             if (notification.type === this.viewType()) {
-                var user = this.currentProxy.currentUser();
-                this.collection = user.get_tenant().get_requisitions();
+                // Setup query
+                var uri = notification.options.query || this.defaultQuery.toUri();
+                this.collection = this.defaultCollection.clone();
                 this.collection.on('reset', this.onReset, this);
-                this.query = this.collection.query().slice(0, 10).orderBy('created__desc');
-                if (notification.options.query) {
-                    this.query = api_query.ApiQuery.parse(
-                        this.collection,
-                        notification.options.query
-                    );
-                }
-
+                this.query = api_query.ApiQuery.parse(this.collection, uri);
                 this.view = new requisition_list_views.RequisitionsSummaryView({
                     collection: this.collection,
                     query: this.query
@@ -135,9 +137,17 @@ define([
          * and update the URL to include any query parameters.
          */
         onReset: function() {
+            // Fix back button bug. This will prevent an infinite loop
+            // where the back button takes the user to page such as
+            // /requisition/list which then redirects to
+            // /requisition/list?<defaultQuery>
+            var uri = this.query.toUri();
+            if (uri === this.defaultQuery.toUri()) {
+                uri = null;
+            }
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
                 type: this.viewType(),
-                query: this.query.toUri(),
+                query: uri,
                 trigger: false,
                 replace: false
             });

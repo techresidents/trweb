@@ -35,9 +35,7 @@ define([
             'create': 'create',
             'view/:id': 'read',
             'edit/:id': 'edit',
-            'list(/:query)': 'list',
-            '*list': 'list'
-
+            'list(/:query)': 'list'
         },
 
         initialize: function(options) {
