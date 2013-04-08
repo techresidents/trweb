@@ -212,8 +212,8 @@ class JobNote(models.Model):
         db_table = "job_note"
 
     tenant = models.ForeignKey(Tenant, related_name="+")
-    employee = models.ForeignKey(User, related_name="+")
-    candidate = models.ForeignKey(User, related_name="+")
+    employee = models.ForeignKey(User, related_name="job_notes")
+    candidate = models.ForeignKey(User, related_name="candidate_job_notes")
     note = models.TextField(max_length=4096)
     modified = models.DateField(auto_now_add=True, auto_now=True)
 
