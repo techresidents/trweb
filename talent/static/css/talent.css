@@ -488,16 +488,21 @@
     min-width: 280px;
 }
 
-.application .summary-container, .application .eval-container {
+.application .summary-container,
+.application .eval-container {
     margin-bottom: 30px;
 }
 
-.application-summary span {
+.application-summary > .container span {
     margin-right: 10px;
 }
 
 .application-summary > .container > span > a {
     font-size: 16px;
+}
+
+.application-summary > .container > button {
+    margin-right: 10px;
 }
 
 .application-log-grid table {
