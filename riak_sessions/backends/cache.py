@@ -107,8 +107,9 @@ class SessionStore(SessionBase):
         
         #Only store necessary data unencoded for consumption
         #in non-django applications.
-        unencoded_session_data = {"user_id": None}
-        for key in ["_auth_user_id", "_session_expiry", "chat_session"]:
+        unencoded_session_data = {"user_id": None, "tenant_id": None}
+        keys = ["_auth_user_id", "_session_expiry", "tenant_id", "chat_session"]
+        for key in keys:
             if key in session_data:
                 unencoded_session_data[key] = session_data[key]
                 if key == "_auth_user_id":
@@ -122,6 +123,7 @@ class SessionStore(SessionBase):
             "session_data": unencoded_session_data,
             "encoded_session_data": encoded_session_data,
             "user_id": unencoded_session_data["user_id"],
+            "tenant_id": unencoded_session_data["tenant_id"],
             "expire_time": calendar.timegm(self.get_expiry_date().timetuple())
         }
         

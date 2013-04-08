@@ -38,6 +38,7 @@ def login(request):
                 request.session.set_expiry(0)
             
             user = form.get_user()
+            request.session['tenant_id'] = user.tenant_id
             request.session['timezone'] = user.timezone
 
             if user.otp_enabled:
