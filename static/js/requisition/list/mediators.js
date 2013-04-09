@@ -6,8 +6,10 @@ define([
     'alert/models',
     'current/proxies',
     'api/models',
+    'api/query',
+    'modal/views',
     'requisition/notifications',
-    'requisition/list/views',
+    'requisition/list/views'
 ], function(
     _,
     notifications,
@@ -16,6 +18,8 @@ define([
     alert_models,
     current_proxies,
     api_models,
+    api_query,
+    modal_views,
     requisition_notifications,
     requisition_list_views
 ) {
@@ -57,77 +61,132 @@ define([
         ],
 
         initialize: function(options) {
-            this.view = null;
+            var user;
             this.currentProxy = this.facade.getProxy(current_proxies.CurrentProxy.NAME);
+            user = this.currentProxy.currentUser();
+            this.defaultCollection = user.get_tenant().get_requisitions();
+            this.defaultQuery = this.defaultCollection.query()
+                .slice(0, 10).orderBy('created__desc');
+
+            this.view = null;
+            this.collection = null;
+            this.query = null;
         },
 
+        /**
+         * onCreateView
+         * @param notification Notification options
+         *      type: Mediator's view type (required)
+         *      options.query: {ApiQuery} (optional)
+         */
         onCreateView: function(notification) {
             if (notification.type === this.viewType()) {
-                var user = this.currentProxy.currentUser();
-                var collection = user.get_tenant().get_requisitions();
+                // Setup query
+                var uri = notification.options.query || this.defaultQuery.toUri();
+                this.collection = this.defaultCollection.clone();
+                this.collection.on('reset', this.onReset, this);
+                this.query = api_query.ApiQuery.parse(this.collection, uri);
                 this.view = new requisition_list_views.RequisitionsSummaryView({
-                    collection: collection,
-                    query: collection.query().slice(0, 10)
+                    collection: this.collection,
+                    query: this.query
                 });
 
                 // Add event listeners
-                this.view.addEventListener(requisition_list_views.EVENTS.VIEW_REQ, this.onViewReq, this);
-                this.view.addEventListener(requisition_list_views.EVENTS.EDIT_REQ, this.onEditReq, this);
-                this.view.addEventListener(requisition_list_views.EVENTS.OPEN_REQ, this.onOpenReq, this);
-                this.view.addEventListener(requisition_list_views.EVENTS.CLOSE_REQ, this.onCloseReq, this);
+                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.VIEW_REQ, this.onViewReq, this);
+                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.EDIT_REQ, this.onEditReq, this);
+                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.OPEN_REQ, this.onOpenReq, this);
+                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.CLOSE_REQ, this.onCloseReq, this);
+                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.DELETE_REQ, this.onDeleteReq, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
                     view: this.view,
-                    options: notification.options
+                    options: _.extend(notification.options, {
+                        collection: this.collection,
+                        query: this.query
+                    })
                 });
             }
         },
 
+        /**
+         * onDestroyView
+         * @param notification Notification options
+         *      type: View type which indicates if this mediator is responsible
+         *          for destroying this view (required)
+         *      view: {View} (required)
+         *      options.collection: {RequisitionCollection} (required)
+         */
         onDestroyView: function(notification) {
             if (notification.type === this.viewType()) {
                 notification.view.destroy();
+                notification.options.collection.off('reset', this.onReset, this);
 
                 this.facade.trigger(notifications.VIEW_DESTROYED, {
                     type: this.viewType(),
                     view: notification.view
                 });
-                if(this.view === notification.view) {
+                if (this.view === notification.view) {
                     this.view = null;
                 }
             }
         },
 
         /**
+         * Method to listen for reset events on the collection
+         * and update the URL to include any query parameters.
+         */
+        onReset: function() {
+            // Fix back button bug. This will prevent an infinite loop
+            // where the back button takes the user to page such as
+            // /requisition/list which then redirects to
+            // /requisition/list?<defaultQuery>
+            var uri = this.query.toUri();
+            if (uri === this.defaultQuery.toUri()) {
+                uri = null;
+            }
+            this.facade.trigger(notifications.VIEW_NAVIGATE, {
+                type: this.viewType(),
+                query: uri,
+                trigger: false,
+                replace: false
+            });
+        },
+
+        /**
          * Method to bring the user to the req details view
          * @param e Event
          * @param eventBody Event body. Expecting:
-         *      id: model ID (required)
+         *      model: {Requisition} (required)
          */
         onViewReq: function(e, eventBody) {
-            this.facade.trigger(notifications.VIEW_NAVIGATE, {
-                type: this._getRequisitionMediatorViewType(),
-                options: {
-                    id: eventBody.id,
-                    action: 'read'
-                }
-            });
+            if (eventBody.model) {
+                this.facade.trigger(notifications.VIEW_NAVIGATE, {
+                    type: this._getRequisitionMediatorViewType(),
+                    options: {
+                        id: eventBody.model.id,
+                        action: 'read'
+                    }
+                });
+            }
         },
 
         /**
          * Method to bring the user to the edit req view
          * @param e Event
          * @param eventBody Event body
-         *      id: model ID (required)
+         *      model: {Requisition} (required)
          */
         onEditReq: function(e, eventBody) {
-            this.facade.trigger(notifications.VIEW_NAVIGATE, {
-                type: this._getRequisitionMediatorViewType(),
-                options: {
-                    id: eventBody.id,
-                    action: 'edit'
-                }
-            });
+            if (eventBody.model) {
+                this.facade.trigger(notifications.VIEW_NAVIGATE, {
+                    type: this._getRequisitionMediatorViewType(),
+                    options: {
+                        id: eventBody.model.id,
+                        action: 'edit'
+                    }
+                });
+            }
         },
 
         /**
@@ -171,6 +230,48 @@ define([
                         }
                     });
                 }
+            }
+        },
+
+        /**
+         * Listens for 'delete' button and
+         * asks the user to confirm delete.
+         * @param e Event
+         * @param eventBody Event body. Expecting:
+         *      model: {Requisition} (required)
+         */
+        onDeleteReq: function(e, eventBody) {
+            var model = eventBody.model;
+            if (model) {
+                // TODO create this modal once in init. The problem was
+                // that this ModalView calls remove() which removes events.
+                // Call detach instead?
+                var modalView = new modal_views.ModalView({
+                    title: 'Confirm Delete',
+                    exitOnBackdropClick: true,
+                    exitOnEscapeKey: true,
+                    view: new requisition_list_views.ConfirmDeleteModalView({
+                        model: model
+                    })
+                });
+                modalView.addEventListener(this.cid, requisition_list_views.EVENTS.DELETE_REQ_CONFIRMED, this.onDeleteReqConfirmed, this);
+                modalView.render();
+            }
+        },
+
+        /**
+         * Method to delete the specified Requisition
+         * @param e Event
+         * @param eventBody Event body. Expecting:
+         *      model: {Requisition} (required)
+         */
+        onDeleteReqConfirmed: function(e, eventBody) {
+            var model = eventBody.model;
+            if (model) {
+                console.log('destroying req');
+                // TODO setup apisvc for mark-as-delete behavior
+                //model.destroy();
+                // TODO show alert on error
             }
         },
 

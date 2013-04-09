@@ -1,0 +1,254 @@
+define(/** @exports ui/input/views */[
+    'jquery',
+    'underscore',
+    'backbone',
+    'core/string',
+    'core/view',
+    'events/keycodes',
+    'events/type'
+], function(
+    $,
+    _,
+    Backbone,
+    core_string,
+    view,
+    kc,
+    events_type) {
+    
+    var EventType = {
+        CHANGE: events_type.EventType.CHANGE,
+        ENTER_KEY: 'enterkey'
+    };
+
+    var InputHandlerView = view.View.extend(
+    /** @lends module:ui/input/views~InputHandlerView.prototype */ {
+
+        /**
+         * InputHandlerView constructor
+         * @constructor
+         * @augments module:core/view~View
+         * @param {object} options Options object
+         */
+        initialize: function(options) {
+            options = _.extend({
+                throttle: 150,
+                trim: true,
+                updateDuringTyping: false,
+                preventDefaultOnEnter: true,
+                blurOnEnter: true
+            }, options);
+
+            this.throttle = options.throttle;
+            this.model = options.model;
+            this.modelAttribute = options.modelAttribute;
+            this.trim = options.trim;
+            this.updateDuringTyping = options.updateDuringTyping;
+            this.preventDefaultOnEnter = options.preventDefaultOnEnter;
+            this.blurOnEnter = options.blurOnEnter;
+            this._lastInputValue = '';
+            this._timer = null;
+
+            this.setModel(options.model, options.modelAttribute);
+            this.setInput(options.inputView, options.inputSelector);
+        },
+
+        delegateInputEvents: function() {
+            if(this.inputView) {
+                this.undelegateInputEvents();
+                this.inputView.addEventListener(this.cid, 'focus', this.onFocus, this, this.inputSelector);
+                this.inputView.addEventListener(this.cid, 'blur', this.onBlur, this, this.inputSelector);
+                this.inputView.addEventListener(this.cid, 'keypress', this.onKeyPress, this, this.inputSelector);
+            }
+        },
+
+        undelegateInputEvents: function() {
+            if(this.inputView) {
+                this.inputView.removeEventListeners(this.cid);
+            }
+        },
+
+        delegateEvents: function() {
+            view.View.prototype.delegateEvents.apply(this, arguments);
+            this.delegateInputEvents();
+        },
+
+        undelegateEvents: function() {
+            this.undelegateInputEvents();
+            view.View.prototype.undelegateEvents.apply(this, arguments);
+        },
+
+        getThrottle: function() {
+            return this.throttle;
+        },
+
+        setThrottle: function(throttle) {
+            this.throttle = throttle;
+        },
+
+        getPreventDefaultOnEnter: function() {
+            return this.preventDefaultOnEnter;
+        },
+
+        setPreventDefaultOnEnter: function(value) {
+            this.preventDefaultOnEnter = value;
+            return this;
+        },
+
+        getBlurOnEnter: function() {
+            return this.blurOnEnter;
+        },
+
+        setBlurOnEnter: function(value) {
+            this.blurOnEnter = value;
+            return this;
+        },
+
+        getModel: function() {
+            return this.model;
+        },
+
+        setModel: function(model, attribute) {
+            if(!model) {
+                model = new Backbone.Model({value: ''});
+                attribute = 'value';
+            }
+
+            if(this.model) {
+                this.stopListening(this.model);
+            }
+            
+            this.model = model;
+            this.modelAttribute = attribute;
+            this.listenTo(this.model, 'change:' + attribute, this.onModelChange);
+        },
+
+        getInput: function() {
+            var result;
+            if(this.inputView) {
+                result = this.inputView.$(this.inputSelector);
+            }
+            return result;
+        },
+
+        setInput: function(inputView, inputSelector) {
+            if(this.inputView) {
+                this.undelegateInputEvents();
+            }
+            
+            if(inputView) {
+                this.inputView = inputView;
+                this.inputSelector = inputSelector;
+                this.delegateInputEvents();
+            }
+        },
+
+        getInputValue: function() {
+            return this.model.get(this.modelAttribute);
+        },
+
+        setInputValue: function(value, triggerEvent) {
+            if(this.trim) {
+                value = core_string.trim(value);
+            }
+
+            this._lastInputValue = value;
+            this.model.set(this.modelAttribute, value);
+
+            if(triggerEvent) {
+                this.triggerEvent(events_type.EventType.CHANGE, {
+                    value: value
+                });
+            }
+        },
+
+        classes: function() {
+            return ['input-handler'];
+        },
+
+        render: function() {
+            this.$el.html();
+            this.$el.attr('class', this.classes().join(' '));
+            return this;
+        },
+
+        onModelChange: function() {
+            var modelValue = this.getInputValue();
+            var inputValue = this.getInput().val();
+            if(!this.trim || modelValue !== core_string.trim(inputValue)) {
+                this.getInput().val(modelValue);
+            }
+        },
+
+        onFocus: function(e) {
+            this._startTimer();
+        },
+
+        onBlur: function(e) {
+            this._stopTimer();
+            this._update();
+        },
+
+        onKeyPress: function(e) {
+            switch(e.keyCode) {
+                case kc.KeyCodes.ENTER:
+                    this._update();
+                    if(this.preventDefaultOnEnter) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if(this.blurOnEnter) {
+                            this.getInput().blur();
+                        }
+
+                        this.triggerEvent(EventType.ENTER_KEY, {
+                            value: this.getInputValue()
+                        });
+                    }
+                    break;
+                default:
+                    if(!this.updateDuringType) {
+                        this._restartTimer();
+                    }
+                    break;
+            }
+        },
+
+        onTimer: function() {
+            this._update();
+        },
+
+        _update: function() {
+            var value = this.getInput().val();
+            if(this.trim) {
+                value = core_string.trim(value);
+            }
+            if(value !== this._lastInputValue) {
+                this.setInputValue(value, true);
+            }
+        },
+
+        _startTimer: function() {
+            if(!this._timer) {
+                this._timer = setInterval(_.bind(this.onTimer, this), this.throttle);
+            }
+        },
+
+        _stopTimer: function() {
+            if(this._timer) {
+                clearInterval(this._timer);
+                this._timer = null;
+            }
+        },
+
+        _restartTimer: function() {
+            this._stopTimer();
+            this._startTimer();
+        }
+    });
+
+    return {
+        EventType: EventType,
+        InputHandlerView: InputHandlerView
+    };
+
+});

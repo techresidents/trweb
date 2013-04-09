@@ -6,7 +6,8 @@ define([
     'api/session',
     'talent/notifications',
     'talent/user/views',
-    'talent/player/proxies'
+    'talent/player/proxies',
+    'current/proxies'
 ], function(
     _,
     notifications,
@@ -15,7 +16,8 @@ define([
     api_session,
     talent_notifications,
     user_views,
-    player_proxies) {
+    player_proxies,
+    current_proxies) {
 
     /**
      * User Mediator
@@ -40,6 +42,8 @@ define([
 
         initialize: function(options) {
             this.view = null;
+            this.currentProxy = this.facade.getProxy(
+                current_proxies.CurrentProxy.NAME);
             this.playerStateProxy = this.facade.getProxy(
                 player_proxies.PlayerStateProxy.NAME);
             this.session = new api_session.ApiSession.get();
@@ -47,20 +51,22 @@ define([
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-
-                var user = this.session.getModel(api.User.key(notification.options.id));
-                if(!user) {
-                    user = new api.User({
+                var candidate, employee;
+                employee = this.currentProxy.currentUser();
+                candidate = this.session.getModel(api.User.key(notification.options.id));
+                if(!candidate) {
+                    candidate = new api.User({
                         id: notification.options.id
                     });
                 }
 
                 this.view = new user_views.UserView({
-                    model: user,
+                    candidateModel: candidate,
+                    employeeModel: employee,
                     playerState: this.playerStateProxy.model
                 });
 
-                this.view.addEventListener(user_views.EVENTS.PLAY_CHAT, this.onPlay, this);
+                this.view.addEventListener(this.cid, user_views.EVENTS.PLAY_CHAT, this.onPlay, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),

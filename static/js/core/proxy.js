@@ -1,4 +1,4 @@
-define([
+define(/** @exports core/proxy */[
     'jquery',
     'underscore',
     'core/base',
@@ -7,9 +7,10 @@ define([
 
     /**
      * Proxy base class.
-     * @constructor.
+     * @constructor
      */
     var Proxy = function(options) {
+        this.cid = _.uniqueId('proxy');
         this.facade = facade.getInstance();
         this.options = options || {};
         this.initialize.apply(this, arguments);
@@ -17,7 +18,8 @@ define([
 
     Proxy.extend = base.extend;
 
-    _.extend(Proxy.prototype, {
+    _.extend(Proxy.prototype, 
+    /** @lends module:core/proxy~Proxy.prototype */ {
         
         /**
          * Overriden in subclass.
@@ -34,7 +36,8 @@ define([
      * Model Proxy base class.
      * @constructor
      */
-    var ModelProxy = Proxy.extend({
+    var ModelProxy = Proxy.extend(
+    /** @lends module:core/proxy~ModelProxy.prototype */ {
 
         /**
          * Overriden in subclass.
@@ -69,7 +72,8 @@ define([
      * Collection Proxy base class.
      * @constructor
      */
-    var CollectionProxy = Proxy.extend({
+    var CollectionProxy = Proxy.extend(
+    /** @lends module:core/proxy~CollectionProxy.prototype */ {
 
         /**
          * Overriden in subclass.

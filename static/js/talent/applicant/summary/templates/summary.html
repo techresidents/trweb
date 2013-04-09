@@ -1,0 +1,10 @@
+<div class="section-header">
+    <h3>Applicant <span class="normal-font"><a href="/talent/user/<%= model.user_id %>">{<%= model.user_id %>}</a></span> for <span class="normal-font"><a href="/requisition/view/<%= model.requisition.id %>"><%= model.requisition.title %></a></span></h3>
+</div>
+<div class="container">
+    <button class="drop-button btn btn-primary">Actions
+        <span class="caret"></span>
+    </button>
+    <span><strong>Created:</strong> <%= fmt.date(model.created, 'MM/dd/yy') %></span>
+    <span><strong>Status:</strong> <%= model.status %></span>
+</div>

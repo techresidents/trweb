@@ -3,35 +3,62 @@ define([
     'underscore',
     'jquery.bootstrap',
     'core/array',
+    'core/factory',
     'core/view',
     'api/loader',
+    'api/models',
+    'ui/rating/stars/views',
+    'ui/ac/matcher',
+    'ui/collection/views',
+    'ui/drop/views',
+    'ui/select/views',
+    'ui/select/models',
+    'talent/events',
     'text!talent/user/templates/user.html',
     'text!talent/user/templates/jobprefs.html',
     'text!talent/user/templates/skills.html',
-    'text!talent/user/templates/skills_filter.html',
     'text!talent/user/templates/skill.html',
     'text!talent/user/templates/chats.html',
-    'text!talent/user/templates/chat.html'
+    'text!talent/user/templates/chat.html',
+    'text!talent/user/templates/actions.html',
+    'text!talent/user/templates/note.html',
+    'text!talent/user/templates/application_brief.html',
+    'text!talent/user/templates/application_create.html',
+    'text!talent/user/templates/requisition_select.html',
+    'text!talent/user/templates/vote_buttons.html'
 ], function(
     $,
     _,
     none,
     array,
+    factory,
     view,
     api_loader,
+    api,
+    ratingstars_views,
+    ac_matcher,
+    collection_views,
+    drop_views,
+    select_views,
+    select_models,
+    talent_events,
     user_template,
     jobprefs_template,
     skills_template,
-    skills_filter_template,
     skill_template,
     chats_template,
-    chat_template) {
+    chat_template,
+    actions_template,
+    note_template,
+    application_brief_template,
+    application_create_template,
+    requisition_select_template,
+    vote_buttons_template) {
 
     /**
      * User View Events
      */
     var EVENTS = {
-        UPDATE_SKILLS_FILTER: 'user:updateSkillsFilter',
         PLAY_CHAT: 'user:playChat'
     };
 
@@ -39,7 +66,7 @@ define([
      * Talent user job preferences view.
      * @constructor
      * @param {Object} options
-     *   model: {User} (required)
+     *   model: {User} Represents the developer (required)
      */
     var UserJobPrefsView = view.View.extend({
 
@@ -48,6 +75,7 @@ define([
         technologyPrefsSelector: '.technology-prefs',
         expandableItemsSelector: '.expandable-list-items',
         slideToggleSelector: '.slide-toggle',
+        tooltipSelector: '[rel=tooltip]',
 
         events: {
             'click .position-prefs .slide-toggle' : 'togglePositionPrefs',
@@ -56,14 +84,19 @@ define([
         },
 
         initialize: function(options) {
+            this.model = options.model;
             this.template =  _.template(jobprefs_template);
-            this.modelWithRelated = ['position_prefs', 'technology_prefs', 'location_prefs'];
+            this.modelWithRelated = [
+                'position_prefs',
+                'technology_prefs',
+                'location_prefs'
+            ];
 
             //bind events
             this.loader = new api_loader.ApiLoader([
                 { instance: this.model, withRelated: this.modelWithRelated }
             ], {
-                successOnAlreadyLoaded: true
+                triggerAlways: true
             });
             
             this.loader.load({
@@ -71,9 +104,18 @@ define([
             });
         },
 
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$(this.tooltipSelector).tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
         render: function() {
+            var sortedTechPrefsCollection = this._getSortedJobTechnologyPrefs();
             var context = {
                 model: this.model.toJSON({ withRelated: this.modelWithRelated }),
+                sortedTechPrefs: sortedTechPrefsCollection.toJSON(),
                 fmt: this.fmt // date formatting
             };
             this.$el.html(this.template(context));
@@ -84,6 +126,8 @@ define([
                 this.locationPrefsSelector,
                 this.technologyPrefsSelector];
             _.each(expandableSections, this.addExpandableStyle, this);
+
+            this.$(this.tooltipSelector).tooltip(); // Activate tooltips
 
             return this;
         },
@@ -151,10 +195,29 @@ define([
         toggleExpandButtonText: function(selector) {
             if ($(selector).text() === 'more') {
                 $(selector).text('less');
-            }
-            else {
+            } else {
                 $(selector).text('more');
             }
+        },
+
+        /**
+         * Convenience function to get a sorted job technology prefs collection.
+         * @returns A sorted {Technology} collection.
+         * @private
+         */
+        _getSortedJobTechnologyPrefs: function() {
+            var unsortedTechPrefsCollection = this.model.get_technology_prefs();
+            var sortedTechPrefsCollection = new Backbone.Collection();
+            sortedTechPrefsCollection.comparator = function(technology) {
+                // sort by Technology.name
+                return technology.get('name');
+            };
+
+            // Add technologies to the new sortable collection
+            unsortedTechPrefsCollection.each(function(technology) {
+                sortedTechPrefsCollection.add(technology);
+            }, this);
+            return sortedTechPrefsCollection;
         }
     });
 
@@ -303,50 +366,6 @@ define([
     });
 
     /**
-     * Talent user skills filter view.
-     * @constructor
-     * @param {Object} options
-     *   filtersList: list of Technology types the user can filter by (required)
-     */
-    var UserSkillsFilterView = view.View.extend({
-
-        filterSelector: '.user-skills-filter-container',
-
-        events: {
-            'change .user-skills-filter-container input:checkbox' : 'filterUpdated'
-        },
-
-        initialize: function(options) {
-            this.template = _.template(skills_filter_template);
-            this.filtersList = options.filtersList;
-        },
-
-        render: function() {
-            var context = {
-                filtersList: this.filtersList
-            };
-            this.$el.html(this.template(context));
-            return this;
-        },
-
-        /**
-         * Handle when user modifies the skills filter
-         * @param e The DOM event
-         */
-        filterUpdated: function(e){
-            var exclusionFilters = [];
-            // get all disabled filters
-            this.$(this.filterSelector + " input:checkbox:not(:checked)").each(function() {
-                exclusionFilters.push($(this).val()); // here 'this' refers to the element returned by each()
-            });
-            var eventBody = {
-                filters: exclusionFilters
-            };
-            this.triggerEvent(EVENTS.UPDATE_SKILLS_FILTER, eventBody);
-        }
-    });
-
-    /**
      * Talent user skill view.
      * @constructor
      * @param {Object} options
@@ -404,8 +423,6 @@ define([
         initialize: function(options) {
             this.template =  _.template(skills_template);
             this.collectionWithRelated = ['technology'];
-
-            this.exclusionFilters = [];
             
             //bind events
             this.listenTo(this.collection, 'reset', this.onReset);
@@ -458,11 +475,9 @@ define([
             _.each(this.expertViews, function(view) {
                 this.append(view, this.expertSkillsSelector);
             }, this);
-            
-            // Apply any active filter settings
-            this.filter(this.exclusionFilters);
 
             // Activate tooltips
+            // TODO remove on destroy. Apply tooltip to child view instead?
             this.$('[rel=tooltip]').tooltip();
 
             return this;
@@ -494,26 +509,6 @@ define([
             return view;
         },
 
-        /**
-         * Show/Hide skill Views based upon filter options
-         * @param exclusionFiltersList A list of filters to apply.
-         * All views that match any of the input filters will be
-         * hidden from view.
-         */
-        filter: function(exclusionFiltersList) {
-            this.exclusionFilters = exclusionFiltersList;
-            _.each(this.childViews(), function(v) {
-                    if (_.contains(this.exclusionFilters, v.model.get_technology().get_type())) {
-                        v.$el.hide();
-                    }
-                    else {
-                        v.$el.show();
-                    }
-                },
-                this
-            );
-        },
-
         onReset: function() {
             this.initChildViews();
             this.render();
@@ -526,36 +521,754 @@ define([
     });
 
     /**
+     * Talent user note view.
+     * @constructor
+     * @param {Object} options
+     *   candidateModel: {User} (required)
+     */
+    var UserNoteView = view.View.extend({
+
+        textareaSelector: '.user-note-input',
+        saveStatusSelector: '.user-note-save-status',
+
+        events: {
+            'blur textarea': 'onBlur'
+        },
+
+        SaveStatusEnum: {
+            PENDING : 'Saving note...',
+            SAVED : 'Saved.',
+            ERROR : 'Error saving note.'
+        },
+
+        initialize: function(options) {
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = new api.User({id: 'CURRENT'});
+            this.model = null;
+            this.saveTimeout = null;
+            this.saveStatus = null;
+            // We enable this view for editing once we know the
+            // existing note model has loaded, if it exists. This prevents
+            // us from creating a new note and overwriting an existing note.
+            this.template = _.template(note_template);
+
+            // Clone the collection since we will be filtering it
+            // TODO this.notesCollection = this.candidateModel.get_job_notes().clone();
+            this.notesCollection = new api.JobNoteCollection();
+            this.notesCollection.on('reset', this.onReset, this);
+
+            // Since we retrieved all notes on the candidate, we need to
+            // filter the collection down to just the employee's notes
+            this.noteQuery = this.notesCollection.filterBy({
+                employee_id: this.employeeModel.id,
+                tenant_id: this.employeeModel.get_tenant_id()
+            });
+            this.noteQuery.fetch(); // invokes 'reset' on notes collection
+        },
+
+        destroy: function() {
+            if (this.saveStatus === this.SaveStatusEnum.PENDING) {
+                this._save();
+            }
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
+        render: function() {
+            var context = {
+                model: this.model ? this.model.toJSON() : null
+            };
+            this.$el.html(this.template(context));
+            return this;
+        },
+
+        onReset: function() {
+            // Load Note if it exists or create new Note
+            if (this.notesCollection.length) {
+                this.model = this.notesCollection.first();
+                this.saveStatus = this.SaveStatusEnum.SAVED;
+            } else {
+                this.model = new api.JobNote({
+                    employee_id: this.employeeModel.id,
+                    candidate_id: this.candidateModel.id,
+                    tenant_id: this.employeeModel.get_tenant_id()
+                });
+            }
+            // Display the note
+            this.render();
+        },
+
+        onBlur: function() {
+            var currentNote = this.$(this.textareaSelector).val();
+            var isNoteModified = true;
+
+            // Don't save if the user hasn't previously saved a note and
+            // the textarea is empty. This will prevent saving empty notes.
+            if (this.saveStatus === null &&
+                currentNote.length === 0) {
+                isNoteModified = false;
+            }
+
+            // Don't save if current text is identical to previously saved text
+            // Checking for a SAVED status here also ensures that this.model
+            // will not be null when get_note() is invoked.
+            if (this.saveStatus === this.SaveStatusEnum.SAVED &&
+                this.model.get_note() === currentNote) {
+                isNoteModified = false;
+            }
+
+            if (isNoteModified) {
+                this._scheduleSave();
+            }
+        },
+
+        /**
+         * Update the save status in the UI
+         */
+        updateSaveStatusUI: function() {
+            this.$(this.saveStatusSelector).text(this.saveStatus);
+        },
+
+        /**
+         * Method to schedule saving the note in the future.
+         * This method is required to prevent the user from
+         * saving their note every second (or more), and triggering
+         * a large number of writes on the db.
+         * @private
+         * @param secs Number of millisecs to delay until saving (optional)
+         *        Default value is 500 milliseconds.
+         */
+        _scheduleSave: function(millisecs) {
+            var delay = millisecs ? millisecs : 500; // 500 millisec default
+            this.saveStatus = this.SaveStatusEnum.PENDING;
+            this.updateSaveStatusUI();
+            // clear any existing scheduled saves
+            clearTimeout(this.saveTimeout);
+            // Wrap the save function callback using JQuery's proxy() since
+            // setTimeout doesn't support passing a context.
+            this.saveTimeout = setTimeout($.proxy(this._save, this), delay);
+        },
+
+        /**
+         * Save note.
+         * @private
+         */
+        _save: function() {
+            var that = this;
+            var attributes = {
+                candidate_id: this.model.get_candidate_id(),
+                note: this.$(this.textareaSelector).val()
+            };
+            var eventBody = _.extend({
+                model: this.model,
+                onSuccess: function() {
+                    that.saveStatus = that.SaveStatusEnum.SAVED;
+                    that.updateSaveStatusUI();
+                }
+            }, attributes);
+            this.triggerEvent(talent_events.TAKE_NOTE, eventBody);
+        }
+    });
+
+    /**
+     * Application Vote Button View.
+     * @constructor
+     * @param {Object} options
+     *    model: {Application} (required)
+     */
+    var VoteButtonsView = view.View.extend({
+
+        buttonGroupSelector: '.btn-group button',
+
+        events: {
+            'click .active': 'onUnclick',
+            'click button:not([class="active"])': 'onClick'
+        },
+
+        initialize: function(options) {
+            this.applicationModel = options.applicationModel;
+            this.employeeModel = new api.User({id: 'CURRENT'});
+            this.voteModel = null;
+            this.template = _.template(vote_buttons_template);
+
+            // load application votes
+            this.appVotesCollection = this.applicationModel.get_application_votes();
+            this.listenTo(this.appVotesCollection, 'reset', this.onReset);
+
+            // Since we retrieved all application votes on the application, we
+            // need to filter the collection down to just this employee's vote
+            this.appVoteQuery = this.appVotesCollection.filterBy({
+                user_id: this.employeeModel.id
+            });
+            this.appVoteQuery.fetch(); // invokes 'reset' on collection
+        },
+
+        render: function() {
+            var context = {
+                toggled: this.voteModel ? this.voteModel.get_yes() : null
+            };
+            this.$el.html(this.template(context));
+            return this;
+        },
+
+        onReset: function() {
+            // Load Score if it exists or create new one
+            if (this.appVotesCollection.length) {
+                this.voteModel = this.appVotesCollection.first();
+            } else {
+                this.voteModel = new api.ApplicationVote({
+                    application_id: this.applicationModel.id,
+                    yes: null
+                });
+            }
+            // Display the vote
+            this.render();
+        },
+
+        onClick: function(e) {
+            var currentTarget = this.$(e.currentTarget);
+            this.select(currentTarget);
+            this.addButtonColor(currentTarget);
+            this._save(this._determineVoteValue(currentTarget));
+        },
+
+        onUnclick: function(e) {
+            var currentTarget = this.$(e.currentTarget);
+            this.deselect(currentTarget, e);
+            this._save(this._determineVoteValue(currentTarget));
+        },
+
+        addButtonColor: function(target) {
+            // Only set button color if button wasn't already active
+            if (target.hasClass('yes-vote')) {
+                // Add green color to Yes button
+                this.$(this.buttonGroupSelector).removeClass('btn-danger');
+                target.addClass('btn-success');
+            }
+            else if (target.hasClass('no-vote')) {
+                // Add red color to No button
+                this.$(this.buttonGroupSelector).removeClass('btn-success');
+                target.addClass('btn-danger');
+            }
+        },
+
+        select: function(target) {
+            // Append the class 'active' to the element so we know when
+            // saving which button is toggled.  If we didn't do this, then
+            // bootstrap would add this class after our handlers finished.
+            // Doing this will hopefully prevent any state-related bugs.
+            if (!target.hasClass('active')) {
+                target.addClass('active');
+            }
+        },
+
+        deselect: function(target, e) {
+            if (target.hasClass('active')) {
+                // Stop event propogation to prevent bootstrap from
+                // adding the class 'active' to the button downstream.
+                e.stopImmediatePropagation();
+                // Remove any button colors
+                this.$(this.buttonGroupSelector).removeClass('btn-success btn-danger');
+                // Deselect button
+                target.removeClass('active');
+            }
+        },
+
+        _determineVoteValue: function(target) {
+            // Determine which button is set
+            var voteValue = null; // null is a valid vote state
+            if (target.hasClass('active') && target.hasClass('yes-vote')) {
+                voteValue = true;
+            }
+            else if (target.hasClass('active') && target.hasClass('no-vote')) {
+                voteValue = false;
+            }
+            return voteValue;
+        },
+
+        /**
+         * Save
+         * @param e
+         * @private
+         */
+        _save: function(vote) {
+            var attributes = {
+                yes: vote
+            };
+            var eventBody = _.extend({
+                model: this.voteModel,
+                application: this.applicationModel
+            }, attributes);
+            this.triggerEvent(talent_events.CAST_APPLICANT_VOTE, eventBody);
+        }
+    });
+
+    /**
+     * Talent application brief view.
+     * This view displays a brief version of an application.  It allows
+     * employers to see/edit a candidate's score and vote for a specific
+     * requisition.
+     * @constructor
+     * @param {Object} options
+     *    model: {Application} (required)
+     */
+    var ApplicationBriefView = view.View.extend({
+
+        ratingCommunicationSelector: '.rating-communication-container',
+        ratingTechnicalSelector: '.rating-technical-container',
+        ratingCultureSelector: '.rating-culture-container',
+        voteButtonsSelector: '.vote-buttons-container',
+        tooltipSelector: '[rel=tooltip]',
+
+        events: {
+            'change .rating-culture-container': 'onCulturalFitScoreChange',
+            'change .rating-technical-container': 'onTechnicalScoreChange',
+            'change .rating-communication-container': 'onCommunicationScoreChange'
+        },
+
+        childViews: function() {
+            return [
+                this.voteButtonsView,
+                this.ratingCommunicationView,
+                this.ratingTechnicalView,
+                this.ratingCultureView
+            ];
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.listenTo(this.model, 'change', this.onAppModelChange);
+            this.listenTo(this.model.get_requisition(), 'change', this.onReqModelChange);
+            this.employeeModel = new api.User({id: 'CURRENT'});
+            this.scoreModel = null;
+            this.template = _.template(application_brief_template);
+
+            // load application scores
+            this.appScoresCollection = this.model.get_application_scores();
+            this.listenTo(this.appScoresCollection, 'reset', this.onAppScoresReset);
+
+            // child views
+            this.voteButtonsView = null;
+            this.ratingCommunicationView = null;
+            this.ratingTechnicalView = null;
+            this.ratingCultureView = null;
+            this.initChildViews();
+
+            // load application with requisition
+            this.loader = new api_loader.ApiLoader([
+                { instance: this.model, withRelated: ['requisition'] }
+            ]);
+            this.loader.load(); // invokes 'change' event on this.model when loaded
+
+            // Since we retrieved all application scores on the application, we
+            // need to filter the collection down to just this employee's score
+            this.appScoreQuery = this.appScoresCollection.filterBy({
+                user_id: this.employeeModel.id
+            });
+            this.appScoreQuery.fetch(); // invokes 'reset' on collection
+        },
+
+        initChildViews: function() {
+            this.voteButtonsView = new VoteButtonsView({
+                applicationModel: this.model
+            });
+            this.ratingCommunicationView = new ratingstars_views.RatingStarsView({
+                label: 'Comm'
+            });
+            this.ratingTechnicalView = new ratingstars_views.RatingStarsView({
+                label: 'Tech'
+            });
+            this.ratingCultureView = new ratingstars_views.RatingStarsView({
+                label: 'Fit '
+            });
+        },
+
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$(this.tooltipSelector).tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
+        render: function() {
+            var requisitionTitle = this.model.get_requisition().get_title();
+            var context = {
+                model: this.model.toJSON(),
+                req_name: requisitionTitle ? requisitionTitle : this.model.get_requisition_id()
+            };
+            this.$el.html(this.template(context));
+
+            // set scores in score views
+            if (this.scoreModel) {
+                this.ratingCommunicationView.setRating(
+                    this.scoreModel.get_communication_score()
+                );
+                this.ratingTechnicalView.setRating(
+                    this.scoreModel.get_technical_score()
+                );
+                this.ratingCultureView.setRating(
+                    this.scoreModel.get_cultural_fit_score()
+                );
+            }
+
+            this.append(this.voteButtonsView, this.voteButtonsSelector);
+            this.append(this.ratingCommunicationView, this.ratingCommunicationSelector);
+            this.append(this.ratingTechnicalView, this.ratingTechnicalSelector);
+            this.append(this.ratingCultureView, this.ratingCultureSelector);
+
+            this.$(this.tooltipSelector).tooltip(); // Activate tooltips
+
+            return this;
+        },
+
+        onAppModelChange: function() {
+            this.render();
+        },
+
+        onReqModelChange: function() {
+            this.render();
+        },
+
+        onAppScoresReset: function() {
+            // Load Score if it exists or create new one
+            if (this.appScoresCollection.length) {
+                this.scoreModel = this.appScoresCollection.first();
+            } else {
+                this.scoreModel = new api.ApplicationScore({
+                    application_id: this.model.id,
+                    technical_score: 0,
+                    communication_score: 0,
+                    cultural_fit_score: 0
+                });
+            }
+            // Display the score
+            this.render();
+        },
+
+        /**
+         * Listen for changes to the cultural fit rating
+         * @param e JQuery event
+         * @param eventBody
+         *      value: new score
+         */
+        onCulturalFitScoreChange: function(e, eventBody) {
+            this._saveScore({cultural_fit_score: eventBody.value});
+        },
+
+        onTechnicalScoreChange: function(e, eventBody) {
+            this._saveScore({technical_score: eventBody.value});
+        },
+
+        onCommunicationScoreChange: function(e, eventBody) {
+            this._saveScore({communication_score: eventBody.value});
+        },
+
+        _saveScore: function(attributes) {
+            var eventBody = _.extend({
+                model: this.scoreModel,
+                application: this.model
+            }, attributes);
+            this.triggerEvent(talent_events.SCORE_APPLICANT, eventBody);
+        }
+    });
+
+    /**
+     * Talent user requisition select view.
+     * This view displays a list of requisitions. If the candidate already has
+     * an application for a requisition, that requisition is not listed.
+     * @constructor
+     * @param {Object} options
+     *    applicationsCollection: {ApplicationsCollection} (required)
+     *      The candidate's applications.
+     */
+    var RequisitionSelectView = view.View.extend({
+
+        autoSelectViewSelector: '.autoselectview',
+        searchInputSelector: 'input.search',
+
+        childViews: function() {
+            return [
+                this.autoSelectView
+            ];
+        },
+
+        initialize: function(options) {
+            var that = this;
+            this.applicationsCollection = options.applicationsCollection;
+            this.employeeModel = new api.User({id: 'CURRENT'});
+            this.requisitionSelectionCollection = new select_models.SelectionCollection();
+            this.template = _.template(requisition_select_template);
+
+            // Create objects required to support Requisition autocomplete
+            // This query is used to seed the results which will then be parsed
+            // by the search string.
+            this.requisitionsQueryFactory = function(options) {
+                return new api.RequisitionCollection().filterBy({
+                    'tenant_id__eq': that.employeeModel.get_tenant_id(),
+                    'status__eq': 'OPEN',
+                    'title__istartswith': options.search
+                });
+            };
+
+            // This matcher is used to compare the results of the query with
+            // the match criteria specified by the user.
+            // The matcher methods do the following:
+            //      stringify: convert model into searchable text string
+            //      map: convert *matched* results
+            this.requisitionsMatcher = new ac_matcher.QueryMatcher({
+                queryFactory: new factory.FunctionFactory(this.requisitionsQueryFactory),
+                stringify: function(model) {
+                    return model.get_title();
+                },
+                map: function(model) {
+                    var ret = null;
+                    // To prevent using a crazy query, filter the
+                    // results here again to only return requisitions
+                    // that are not already included in the applications
+                    // collection.
+                    if (!that.applicationsCollection.where({requisition_id: model.id}).length) {
+                        ret = {
+                            id: model.id,
+                            value: model.get_title()
+                        };
+                    }
+                    return ret;
+                }
+            });
+
+            // init child views
+            this.autoSelectView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.autoSelectView = new select_views.AutoMultiSelectView({
+                inputPlaceholder: 'Search requisition titles',
+                collection: this.requisitionSelectionCollection,
+                matcher: this.requisitionsMatcher,
+                maxResults: 5
+            });
+        },
+
+        render: function() {
+            var context = {};
+            this.$el.html(this.template(context));
+            this.append(this.autoSelectView, this.autoSelectViewSelector);
+            return this;
+        }
+    });
+
+
+    /**
+     * Talent user create applications view.
+     * This view displays a list of requisitions and creates applications
+     * for the selected items.  If the candidate already has an application for
+     * a requisition, that requisition is not listed in this view.
+     * @constructor
+     * @param {Object} options
+     *    applicationsCollection: {ApplicationsCollection} (required)
+     *      The candidate's applications.
+     *      candidateModel: {User} Represents the developer (required)
+     */
+    var ApplicationCreateView = view.View.extend({
+
+        tooltipSelector: '[rel=tooltip]',
+
+        events: {
+            'click .drop-button': 'onToggle',
+            'open .drop': 'onDropViewOpened',
+            'close .drop': 'onDropViewClosed',
+            'click .cancel': 'onClose',
+            'click .save': 'onSave'
+        },
+
+        childViews: function() {
+            return [
+                this.dropView,
+                this.selectView
+            ];
+        },
+
+        initialize: function(options) {
+            this.applicationsCollection = options.applicationsCollection;
+            this.candidateModel = options.candidateModel;
+            this.template = _.template(application_create_template);
+
+            // init child views
+            this.dropView = null;
+            this.selectView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.selectView = new RequisitionSelectView({
+                applicationsCollection: this.applicationsCollection
+            });
+            this.dropView = new drop_views.DropView({
+                view: this.selectView
+            });
+        },
+
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$(this.tooltipSelector).tooltip('hide');
+            view.View.prototype.destroy.apply(this, arguments);
+        },
+
+        render: function() {
+            var context = {};
+            this.$el.html(this.template(context));
+            this.append(this.dropView);
+            this.$(this.tooltipSelector).tooltip(); // Activate tooltips
+            return this;
+        },
+
+        onToggle: function(e) {
+            this.dropView.toggle();
+        },
+
+        onClose: function(e) {
+            this.dropView.close();
+        },
+
+        onSave: function(e) {
+            this.selectView.requisitionSelectionCollection.each(
+                this._createApplication,
+                this // context
+            );
+            this.dropView.close();
+        },
+
+        onDropViewOpened: function(e) {
+            this.dropView.childView.autoSelectView.refresh();
+            this.dropView.childView.autoSelectView.input().focus();
+        },
+
+        onDropViewClosed: function(e) {
+            this.selectView.requisitionSelectionCollection.reset();
+            this.$(this.selectView.searchInputSelector).val('');
+        },
+
+        /**
+         * Create application
+         * @param requisitionSelectionModel
+         * @private
+         */
+        _createApplication: function(requisitionSelectionModel) {
+            // Only create applications for the selected requisitions
+            if (requisitionSelectionModel.selected()) {
+                var that = this;
+                var application = new api.Application({
+                    user_id: this.candidateModel.id,
+                    requisition_id: requisitionSelectionModel.id
+                });
+                var eventBody = {
+                    model: application,
+                    onSuccess: function() {
+                        that.applicationsCollection.add(application);
+                    }
+                };
+                this.triggerEvent(talent_events.CREATE_APPLICATION, eventBody);
+            }
+        }
+    });
+
+    /**
+     * Talent user actions view.
+     * This view displays views which allow employers to evaluate candidates.
+     * @constructor
+     * @param {Object} options
+     *    candidateModel: {User} (required)
+     */
+    var UserActionsView = view.View.extend({
+
+        noteSelector: '.user-note',
+        applicationCreateSelector: '.application-create-container',
+        applicationBriefsSelector: '.application-briefs',
+
+        childViews: function() {
+            return [
+                this.noteView,
+                this.applicationCreateView,
+                this.applicationBriefsView
+            ];
+        },
+
+        initialize: function(options) {
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = new api.User({id: 'CURRENT'});
+            this.template = _.template(actions_template);
+
+            // load applications
+            this.applicationsCollection = this.candidateModel.get_applications();
+            // Since we retrieved all applications on the candidate, we need to
+            // filter the collection down to just the employer's applications
+            this.applicationsQuery = this.applicationsCollection.filterBy({
+                tenant_id: this.employeeModel.get_tenant_id(),
+                requisition__status: 'OPEN'
+            });
+            this.applicationsQuery.fetch(); // invokes 'reset' on collection
+
+            //child views
+            this.noteView = null;
+            this.applicationCreateView = null;
+            this.applicationBriefsView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.noteView = new UserNoteView({
+                candidateModel: this.candidateModel
+            });
+            this.applicationCreateView = new ApplicationCreateView({
+                applicationsCollection: this.applicationsCollection,
+                candidateModel: this.candidateModel
+            });
+            this.applicationBriefsView = new collection_views.CollectionView({
+                collection: this.applicationsCollection,
+                viewFactory: new factory.Factory(ApplicationBriefView, {})
+            });
+        },
+
+        render: function() {
+            var context = {
+                candidateModel: this.candidateModel
+            };
+            this.$el.html(this.template(context));
+            this.append(this.noteView, this.noteSelector);
+            this.append(this.applicationCreateView, this.applicationCreateSelector);
+            this.append(this.applicationBriefsView, this.applicationBriefsSelector);
+            return this;
+        }
+    });
+
+    /**
      * Talent user view.
      * @constructor
      * @param {Object} options
-     *   model: {User} (required)
+     *   candidateModel: {User} Represents the developer (required)
+     *   employeeModel: {User} Represents the employee (required)
      *   playerState: PlayerState model (required)
      */
     var UserView = view.View.extend({
 
         jobPrefsSelector: '#user-job-prefs',
-
-        skillsFilterSelector: '#user-skills-filter',
-
         skillsSelector: '#user-skills',
-
         chatsSelector: '#user-chats',
-
-        events: {
-            'user:updateSkillsFilter': 'onSkillsFilterUpdated'
-        },
+        actionsSelector: '#user-actions',
 
         childViews: function() {
             return [
                 this.jobPrefsView,
-                this.skillsFilterView,
                 this.skillsView,
-                this.chatsView
+                this.chatsView,
+                this.actionsView
             ];
         },
 
         initialize: function(options) {
+            this.candidateModel = options.candidateModel;
+            this.employeeModel = options.employeeModel;
             this.playerState = options.playerState;
             this.template =  _.template(user_template);
             this.modelWithRelated = [
@@ -567,68 +1280,53 @@ define([
             ];
 
             //bind events
-            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.candidateModel, 'change', this.render);
 
             this.loader = new api_loader.ApiLoader([
-                { instance: this.model, withRelated: this.modelWithRelated }
+                { instance: this.candidateModel, withRelated: this.modelWithRelated }
             ]);
             this.loader.load();
 
             //child views
             this.jobPrefsView = null;
-            this.skillsFilterView = null;
             this.skillsView = null;
             this.chatsView = null;
+            this.actionsView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
-            // Create tuples for skills filters (displayName, dbValue)
-            var languages = {displayName: 'Languages', value: 'Language'};
-            var frameworks = {displayName: 'Frameworks', value: 'Framework'};
-            var persistence = {displayName: 'Persistence', value: 'Persistence'};
-            var filtersList = [languages, frameworks, persistence];
 
             this.jobPrefsView = new UserJobPrefsView({
-                model: this.model
-            });
-
-            this.skillsFilterView = new UserSkillsFilterView({
-                filtersList: filtersList
+                model: this.candidateModel
             });
 
             this.skillsView = new UserSkillsView({
-                collection: this.model.get_skills()
+                collection: this.candidateModel.get_skills()
             });
             
             this.chatsView = new UserHighlightSessionsView({
-                collection: this.model.get_highlight_sessions(),
+                collection: this.candidateModel.get_highlight_sessions(),
                 playerState: this.playerState
+            });
+
+            this.actionsView = new UserActionsView({
+                candidateModel: this.candidateModel
             });
         },
 
         render: function() {
             var context = {
-                model: this.model.toJSON(),
+                model: this.candidateModel.toJSON(),
                 fmt: this.fmt // date formatting
             };
             this.$el.html(this.template(context));
 
             this.assign(this.jobPrefsView, this.jobPrefsSelector);
-            this.assign(this.skillsFilterView, this.skillsFilterSelector);
             this.assign(this.skillsView, this.skillsSelector);
             this.assign(this.chatsView, this.chatsSelector);
+            this.assign(this.actionsView, this.actionsSelector);
             return this;
-        },
-
-        /**
-         * Handle when user updates their skills filter.
-         * @param event The DOM event
-         * @param eventBody Expecting the attribute 'filters' to be specified
-         * which provides a list of the active exclusion filters
-         */
-        onSkillsFilterUpdated: function(event, eventBody) {
-            this.skillsView.filter(eventBody.filters);
         }
 
     });

@@ -39,7 +39,7 @@
 }
 
 .req-summary-grid .grid-cell-status {
-    width: 80px;
+    width: 90px;
 }
 
 .req-summary-grid .grid-cell-title {
@@ -56,9 +56,9 @@
     padding-right: 5px;
     font-size: 16px;
     line-height: 36px;
-    background-color: rgba(234, 143, 0, 0.15);
-    border-color: rgba(234, 143, 0, 0.5);
-    color: #ea8f00;
+    background-color: rgba(80, 85, 90, 0.15);
+    border-color: rgba(0, 0, 0, 0.5);
+    color: black;
 
 }
 
@@ -71,7 +71,7 @@
     display: inline-block;
     border-right: 1px;
     border-right-style: solid;
-    border-right-color: rgba(234, 143, 0, 0.5);
+    border-right-color: rgba(0, 0, 0, 0.5);
     margin-right: 2px;
     padding-left: 5px;
     padding-right: 5px;

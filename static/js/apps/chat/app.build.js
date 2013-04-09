@@ -2,6 +2,7 @@
         appDir: ".",
         baseUrl: "../../",
         dir: "../../../../static_minified/js/apps/chat",
+        findNestedDependencies: true,
         modules: [
                 { name: "apps/chat/main" }
         ],

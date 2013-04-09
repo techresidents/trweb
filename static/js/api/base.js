@@ -66,8 +66,10 @@ define([
                 this._loaded = false;
                 this._isDirty = false;
 
-                this.bind('change', function() {
-                    this._isDirty = true;
+                this.bind('change', function(model, value) {
+                    if(!this._loading) {
+                        this._isDirty = true;
+                    }
                 }, this);
             } else {
                 //short circuited constrctor so return model.
@@ -334,17 +336,23 @@ define([
             return query.withRelated.apply(query, arguments);
         },
 
+        chain: function() {
+            var query = new api_query.ApiQuery({model: this});
+            return query.chain.apply(query, arguments);
+        },
+
         fetchFromSession: function(options) {
             var result = false;
             var fetch, model;
             var loadedEvents = 'loaded loaded:read';
+            var withRelated;
             options = options || {};
 
+            if(options.query) {
+                withRelated = options.query.state.withRelations().pluck('value');
+            }
+
             var triggerFetchEvents = function(model) {
-                var withRelated;
-                if(options.query) {
-                    withRelated = options.query.state.withRelations().pluck('value');
-                }
 
                 if(withRelated) {
                     model.eachRelated(withRelated, function(current) {
@@ -363,7 +371,7 @@ define([
                 model = this.session.getModel(this.key(), options.query);
 
                 if(model) {
-                    result.clone({
+                    model.clone({
                         to: this,
                         withRelated: withRelated
                     });
@@ -396,21 +404,42 @@ define([
         },
         
         save: function(key, value, options) {
-            if(this.session && this.isNew()) {
-                if(this.collection) {
-                    this.session.removeCollection(this.collection);
-                }
-                this.session.removeCollection(new this.collectionConstructor());
+            var success, attributes = {};
+            if(key === null || key === undefined || typeof key === 'object') {
+                attributes = key;
+                options = value || {};
+            } else {
+                attributes = {};
+                attributes[key] = value;
+                options = options || {};
             }
-            return Backbone.Model.prototype.save.call(this, key, value, options);
+
+            if(this.session) {
+                success = options.success;
+                options.success = _.bind(function() {
+                    this.session.removeAllCollections(
+                        new this.collectionConstructor());
+                    if(success) {
+                        success.apply(this, arguments);
+                    }
+                }, this);
+            }
+            return Backbone.Model.prototype.save.call(this, attributes, options);
         },
 
         destroy: function(options) {
+            var success;
+            options = options || {};
+
             if(this.session && !this.isNew()) {
-                if(this.collection) {
-                    this.session.removeCollection(this.collection);
-                }
-                this.session.removeCollection(new this.collectionConstructor());
+                success = options.success;
+                options.success = _.bind(function() {
+                    this.session.removeAllCollections(
+                        new this.collectionConstructor());
+                    if(success) {
+                        success.apply(this, arguments);
+                    }
+                }, this);
             }
             return Backbone.Model.prototype.destroy.call(this, options);
         }
@@ -644,6 +673,11 @@ define([
 
         slice: function(start, end) {
             return new api_query.ApiQuery({collection: this}).slice(start, end);
+        },
+
+        chain: function() {
+            var query = new api_query.ApiQuery({collection: this});
+            return query.chain.apply(query, arguments);
         },
 
         fetchFromSession: function(options) {

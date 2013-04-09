@@ -61,6 +61,12 @@ define([
             this.currentProxy = this.facade.getProxy(current_proxies.CurrentProxy.NAME);
         },
 
+        /**
+         *
+         * @param notification Notification options
+         *      type: Mediator's view type (required)
+         *      options.id: Requisition model ID (optional)
+         */
         onCreateView: function(notification) {
             if (notification.type === this.viewType()) {
 
@@ -74,9 +80,9 @@ define([
                 });
 
                 // Add event listeners
-                this.view.addEventListener(requisition_views.EVENTS.SAVED, this.onSaved, this);
-                this.view.addEventListener(requisition_views.EVENTS.SAVE_FAILED, this.onSaveFailed, this);
-                this.view.addEventListener(requisition_views.EVENTS.CANCELED, this.onCanceled, this);
+                this.view.addEventListener(this.cid, requisition_views.EVENTS.SAVED, this.onSaved, this);
+                this.view.addEventListener(this.cid, requisition_views.EVENTS.SAVE_FAILED, this.onSaveFailed, this);
+                this.view.addEventListener(this.cid, requisition_views.EVENTS.CANCELED, this.onCanceled, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
@@ -111,7 +117,7 @@ define([
                 type: this.viewType(),
                 options: {
                     id: eventBody.id,
-                    action: "read"
+                    action: 'read'
                 }
             });
 
@@ -161,7 +167,7 @@ define([
                     type: this.viewType(),
                     options: {
                         id: eventBody.id,
-                        action: "read"
+                        action: 'read'
                     }
                 });
             } else {

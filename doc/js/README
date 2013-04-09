@@ -1,0 +1,3 @@
+To generate documentation with jsdoc3:
+
+$ jsdoc -c conf.json

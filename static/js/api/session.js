@@ -1,10 +1,12 @@
 define([
     'jquery',
     'underscore',
+    'backbone',
     'core/base'
 ], function(
     $,
     _,
+    Backbone,
     base) {
     
     /**
@@ -44,16 +46,20 @@ define([
             this.expire = options.expire;
 
             if(!caches.hasOwnProperty(this.name)) {
-                caches[this.name] = {};
+                caches[this.name] = {
+                    byKey: {},       //map from unique key to model/collection
+                    byCollection: {} //map from collection class to collection key map
+                };
             } 
             this.cache = caches[this.name];
         },
 
         gc: function() {
             var now = new Date().getTime();
-            _.each(this.cache, function(entry, key) {
-                if(now > entry.timestamp + this.expire) {
-                    delete this.cache[key];
+            _.each(this.cache.byKey, function(entry, key) {
+                var expire = entry.expire || this.expire;
+                if(now > entry.timestamp + expire) {
+                    delete this.cache.byKey[key];
                 }
             }, this);
         },
@@ -62,13 +68,13 @@ define([
             var entry, state;
             var model;
             var uriObject = {}, result = null;
-            key = this._expandKey(key, query);
+            key = this.expandKey(key, query);
 
             if(query) {
                 uriObject = query.toUriObject();
             }
             
-            entry = this.cache[key];
+            entry = this.cache.byKey[key];
             if(entry) {
                 model = entry.model.clone();
                 if(uriObject['with']) {
@@ -86,31 +92,34 @@ define([
             return result;
         },
 
-        putModel: function(model, key) {
+        putModel: function(model, key, expire) {
             key = key || model.key();
-            
-            this.cache[key] = {
+
+            this.cache.byKey[key] = {
                 model: model.clone(),
-                timestamp: new Date().getTime()
+                timestamp: new Date().getTime(),
+                expire: expire
             };
+            this.trigger('put:' + key, model);
         },
 
         removeModel: function(model, key) {
             key = key || model.key();
-            delete this.cache[key];
+            delete this.cache.byKey[key];
+            this.trigger('remove:' + key);
         },
 
         getCollection: function(key, query) {
             var entry, state;
             var collection, model;
             var uriObject = {}, result = null;
-            key = this._expandKey(key, query);
+            key = this.expandKey(key, query);
 
             if(query) {
                 uriObject = query.toUriObject();
             }
 
-            entry = this.cache[key];
+            entry = this.cache.byKey[key];
             if(entry) {
                 models = _.map(entry.modelKeys, function(key) {
                     return this.getModel(key);
@@ -137,30 +146,54 @@ define([
             return result;
         },
 
-        putCollection: function(collection, key, query) {
+        putCollection: function(collection, key, query, expire) {
+            var byCollection, baseKey;
             key = key || collection.key();
-            key = this._expandKey(key, query);
+            key = this.expandKey(key, query);
 
-            this.cache[key] = {
+            this.cache.byKey[key] = {
                 modelKeys: collection.map(function(model) {
                     return model.key();
                 }),
                 collection: collection.clone().reset(),
-                timestamp: new Date().getTime()
+                timestamp: new Date().getTime(),
+                expire: expire
             };
+            
+            baseKey = collection.constructor.key();
+            byCollection = this.cache.byCollection[baseKey];
+            if(!byCollection) {
+                byCollection = this.cache.byCollection[baseKey] = {};
+            }
+            byCollection[key] = key;
+
+            this.trigger('put:' + key, collection);
         },
 
         removeCollection: function(collection, key, query) {
+            var baseKey = collection.constructor.key();
             key = key || collection.key();
-            key = this._expandKey(key, query);
-            delete this.cache[key];
+            key = this.expandKey(key, query);
+            delete this.cache.byKey[key];
+            delete this.cache.byCollection[baseKey][key];
+            this.trigger('remove:' + key);
+        },
+
+        removeAllCollections: function(collection) {
+            var baseKey = collection.constructor.key();
+            var keys = _.keys(this.cache.byCollection[baseKey] || {});
+            _.each(keys, function(key) {
+                delete this.cache.byKey[key];
+                this.trigger('remove:' + key);
+            }, this);
+            this.cache.byCollection[baseKey] = {};
         },
 
         getFetch: function(key, query) {
             key = key || instance.key();
-            key = 'fetch:' + this._expandKey(key, query);
+            key = 'fetch:' + this.expandKey(key, query);
             var result = null;
-            var entry = this.cache[key];
+            var entry = this.cache.byKey[key];
 
             if(entry) {
                 result = entry.fetch;
@@ -171,9 +204,9 @@ define([
 
         putFetch: function(instance, key, query) {
             key = key || instance.key();
-            key = this._expandFetchKey(key, query);
+            key = this.expandFetchKey(key, query);
 
-            this.cache[key] = {
+            this.cache.byKey[key] = {
                 timestamp: new Date().getTime(),
                 fetch:  {
                     success: [],
@@ -183,14 +216,14 @@ define([
 
             var syncHandler = function(instance, response, options) {
                 var entry;
-                var syncKey = this._expandFetchKey(instance.key(), options.query);
+                var syncKey = this.expandFetchKey(instance.key(), options.query);
                 if(syncKey === key) {
-                    entry = this.cache[key];
+                    entry = this.cache.byKey[key];
                     if(entry) {
                         _.each(entry.fetch.success, function(callback) {
                             callback(instance, response, options);
                         }, this);
-                    delete this.cache[key];
+                    delete this.cache.byKey[key];
                     instance.off('sync', syncHandler);
                     }
                 }
@@ -198,15 +231,15 @@ define([
 
             var errorHandler = function(instance, response, options) {
                 var entry;
-                var syncKey = this._expandFetchKey(instance.key(), options.query);
+                var syncKey = this.expandFetchKey(instance.key(), options.query);
                 if(syncKey === key) {
-                    entry = this.cache[key];
+                    entry = this.cache.byKey[key];
                     if(entry) {
                         _.each(entry.fetch.error, function(callback) {
                             callback(instance, response, options);
                         }, this);
                     }
-                    delete this.cache[key];
+                    delete this.cache.byKey[key];
                     instance.off('error', errorHandler);
                 }
             };
@@ -215,7 +248,7 @@ define([
             instance.on('error', errorHandler, this);
         },
 
-        _expandKey: function(key, query) {
+        expandKey: function(key, query) {
             var result = key;
             var uri;
             if(query) {
@@ -227,8 +260,8 @@ define([
             return result;
         },
 
-        _expandFetchKey: function(key, query) {
-            return 'fetch:' + this._expandKey(key, query);
+        expandFetchKey: function(key, query) {
+            return 'fetch:' + this.expandKey(key, query);
         }
 
     }, {
@@ -245,6 +278,8 @@ define([
             return result;
         }
     });
+
+    _.extend(ApiSession.prototype, Backbone.Events);
 
     return {
         ApiSession: ApiSession

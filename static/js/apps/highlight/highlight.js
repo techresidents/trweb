@@ -68,7 +68,7 @@ define([
                 el: this.$('#highlight_sessions'),
                 collection: this.model.get_highlight_sessions()
             });
-            this.highlightSessionsView.addEventListener(highlight_views.EVENTS.DESTROY_STATUS_VIEW, this.removeStatusView, this);
+            this.highlightSessionsView.addEventListener(this.cid, highlight_views.EVENTS.DESTROY_STATUS_VIEW, this.removeStatusView, this);
             this.highlightSessionsView.render();
 
             return this;
@@ -134,8 +134,8 @@ define([
             this.view.render();
 
             // Add event listeners
-            this.view.addEventListener(highlight_views.EVENTS.SAVED, this.onSaved, this);
-            this.view.addEventListener(HighlightAppView.EVENTS.DESTROY_VIEW, this.onDestroyView, this);
+            this.view.addEventListener(this.cid, highlight_views.EVENTS.SAVED, this.onSaved, this);
+            this.view.addEventListener(this.cid, HighlightAppView.EVENTS.DESTROY_VIEW, this.onDestroyView, this);
 
             //create and register sub-mediators
             this.facade.registerMediator(new alert_mediators.AlertMediator());

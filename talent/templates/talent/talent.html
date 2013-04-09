@@ -1,4 +1,4 @@
-{% extends "talent/navbar_talent_app.html" %}
+{% extends "navbar_authenticated.html" %}
 {% load staticfiles %}
 {% load url from future %}
 {% load verbatim %}
@@ -33,3 +33,7 @@
     <script data-main="apps/talent/main" src="{% static "js/3ps/require/require-min.js" %}"></script>
 
 {% endblock %}
+
+<!-- No footer or analytics in talent app -->
+{% block footer %}{% endblock %}
+{% block analytics %}{% endblock %}

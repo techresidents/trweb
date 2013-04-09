@@ -81,6 +81,12 @@ html {
     margin-bottom: 0;
 }
 
+.list-scroll {
+    clear: both;
+    max-height: 270px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 
 .logo-small {
     display: block;
@@ -110,8 +116,16 @@ html {
     padding-top: 45px;
 }
 
+.normal-font {
+    font-weight: normal;
+}
+
 .nowrap {
     white-space: nowrap;
+}
+
+.orange-text {
+    color: #EA8F00;
 }
 
 .read-horizontal-form .read-form-group {
@@ -138,6 +152,14 @@ html {
 
 .read-horizontal-form .read-form-values {
     margin-left: 190px;
+}
+
+.section-header h1,
+.section-header h2,
+.section-header h3,
+.section-header h4,
+.section-header h5 {
+    border-bottom: 2px solid #AAAAAA;
 }
 
 [class^="tr-icon-"] {
@@ -168,7 +190,7 @@ html {
 
 
 .grid-table  {
-    background-color: transparent
+    background-color: transparent;
     border-collapse: collapse;
     border-spacing: 0;
     width: 100%;
@@ -225,7 +247,7 @@ html {
 }
 
 .grid-action-cell {
-    width: 40px;
+    width: 30px;
 }
 .grid-action-cell-inner{
     position: relative;
@@ -259,6 +281,10 @@ html {
     padding: 5px 5px;
 }
 
+.drop-absolute {
+    position: absolute;
+}
+
 .drop-inner {
     position: relative;
 }
@@ -280,22 +306,20 @@ html {
     padding: 5px 5px;
 }
 
-.drop-open .drop-content {
+.drop-open > .drop-content {
     display: block;
 }
 
-.drop-menu ul {
-    background-color: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 6px 6px 6px 6px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    list-style: none outside none;
-    margin: 2px 0 0;
-    min-width: 160px;
-    padding: 5px 0;
+button.drop-button .caret {
+    margin-left: 2px;
 }
 
-.drop-menu li > a {
+.menu ul {
+    list-style: none outside none;
+    margin: 0px;
+}
+
+.menu li > a {
     clear: both;
     color: #333333;
     display: block;
@@ -305,13 +329,13 @@ html {
     white-space: nowrap;
 }
 
-.drop-menu li > a:hover, .drop-menu li a:focus {
+.menu li > a:hover, .menu li a:focus {
     background-color: #0081C2;
     color: #FFFFFF;
     text-decoration: none;
 }
 
-.drop-menu-divider {
+.menu-divider {
     background-color: #E5E5E5;
     border-bottom: 1px solid #FFFFFF;
     height: 1px;
@@ -319,12 +343,64 @@ html {
     overflow: hidden;
 }
 
-.choices ul {
+.select ul, .multi-select ul {
+    list-style: none;
+    margin: 0px;
+}
+
+.select li, .multi-select li {
+    font-weight: normal;
+    line-height: 20px;
+    padding: 3px 15px;
+}
+
+.select ul:hover {
+    cursor: pointer;
+}
+
+.multi-select li label {
+    margin: 0px;
+}
+
+.select li.highlighted {
+    background-color: #EEEEEE;
+}
+
+.auto-multi-select ul {
     list-style: none;
 }
 
-.choices input {
-    margin: 0px;
+.auto-multi-select input[type="checkbox"] {
+    margin: 0 3px 0 0;
+}
+
+.auto-multi-seleect .search {
+    margin-top: 5px;
+}
+
+.auto-multi-select li.divider {
+    background-color: #E5E5E5;
+    border-bottom: 1px solid #FFFFFF;
+    height: 1px;
+    margin: 9px 1px;
+    overflow: hidden;
+}
+
+.multi-select input[type="checkbox"] {
+    margin: 0 3px 0 0;
+}
+
+.filters.horizontal {
+    margin-bottom: 10px;
+}
+
+.filters.horizontal .filter-factory, .filter, .filter .btn-group {
+    display: inline-block;
+}
+
+.filter-factory {
+    margin-bottom: 5px;
+    margin-right: 5px;
 }
 
 .filter {
@@ -343,4 +419,166 @@ html {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.date-month td, th {
+    cursor: pointer;
+    border-radius: 4px;
+    text-align: center;
+    width: 20px;
+    height: 20px;
+    padding: 2px 5px;
+}
+
+.date-month td:hover {
+    background-color: #EEEEEE;
+}
+
+.date-month td.selected {
+    color: #FFFFFF;
+    background-color: #006DCC;
+}
+
+.date-month td.selected:hover {
+    color: #FFFFFF;
+    background-color: #006DCC;
+}
+
+.date-month td.leftover {
+    color: #888888;
+}
+
+.date-month .next, .prev {
+    font-size: 20px;
+}
+
+.date-month .next:hover, .prev:hover {
+    background-color: #EEEEEE;
+}
+
+.date-range .form-inline {
+    margin: 0 0 5px;
+}
+
+.date-range .form-inline input[type="radio"] {
+    margin-bottom: 8px;
+    margin-right: 8px;
+}
+
+.rating-star-label {
+    display: inline-block;
+    width: 40px;
+    text-align: right;
+}
+
+.rating-stars {
+    cursor: pointer;
+    display: inline;
+}
+
+.rating-stars > .clear-rating {
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+.rating-stars > .clear-rating > i {
+    vertical-align: text-bottom;
+}
+
+.rating-stars > .rating-star {
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    position: relative;
+    vertical-align: text-bottom;
+}
+
+.rating-star-image {
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    background-image: url("../img/star_fg_well.png");
+}
+
+.rating-star-background {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #8d8d8d;
+}
+
+.rating-star-on {
+    background-color: #EA8F00;
+}
+
+.rating-star-hover {
+    background-color: #EA8F00;
+}
+
+.multi-autocomplete {
+    overflow: hidden;
+}
+
+.multi-autocomplete .outer-container {
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+    line-height: 25px;
+}
+
+.multi-autocomplete.focus .outer-container {
+    border-color: rgba(82, 168, 236, 0.8);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+    outline: 0 none;
+}
+
+.multi-autocomplete .list-container {
+    display: inline-block;
+}
+
+.multi-autocomplete .list-container ul {
+    cursor: text;
+    display: inline-block;
+    list-style: none;
+    margin: 0px;
+}
+
+.multi-autocomplete .list-container ul li {
+    cursor: default;
+    display: inline-block;
+    margin: 5px;
+}
+
+.multi-autocomplete .input-container {
+    display: inline-block;
+}
+
+.multi-autocomplete .input-container > input {
+    border: 0px;
+    margin: 0 0 0 4px;
+    padding: 0px;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.075) inset;
+    min-width: 200px;
+}
+
+.multi-autocomplete-item {
+    padding: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px 6px 6px 6px;
+    background-color: #eeeeee;
+}
+
+.multi-autocomplete-item .close {
+    margin-left: 3px;
+}
+
+.loader {
+    margin: 0 auto;
+    height: 1px;
+    width: 1px;
 }

@@ -32,13 +32,17 @@ define([
             this.template = _.template(alert_template);
         },
 
+        isAlert: function() {
+            return true;
+        },
+
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
             return this;
         },
 
         onDestroy: function() {
-            this.$el.remove();
+            this.destroy();
         }
     });
     

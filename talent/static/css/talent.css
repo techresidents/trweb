@@ -16,6 +16,7 @@
 .main-content {
     padding-bottom: 90px;
     overflow: hidden;
+    min-height: 500px;
 }
 
 .player {
@@ -88,7 +89,7 @@
 
 .player-scrubber-buffer {
     position: absolute;
-    top 0;
+    top: 0;
     width: 0%;
     height: 100%;
     background-color: #777777;
@@ -96,7 +97,7 @@
 
 .player-scrubber-progress {
     position: absolute;
-    top 0;
+    top: 0;
     width: 0%;
     height: 100%;
     background-color: #EA8F00;
@@ -104,7 +105,7 @@
 
 .player-scrubber-tracker {
     position: absolute;
-    top 0;
+    top: 0;
     left: 0;
     width: 2px;
     height: 100%;
@@ -256,36 +257,90 @@
     background-image: url("../img/person-speaking.png");
 }
 
-
-
-.user-ID {
-    padding-left: 38px;
-}
-
 .no-span-margin {
     margin-left: 0px;
 }
 
+.application-create-container {
+    margin-bottom: 10px;
+}
 
-.user-position-prefs-container {
+.app-brief-container {
+    margin-bottom: 10px;
+}
+
+.app-brief-container.well {
+    padding: 10px;
+}
+
+.app-brief-container > div {
+    display: inline-block;
+}
+
+.app-brief-container a {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.ratings-decision-container {
+    vertical-align: top;
+    margin-left: 2px;
+}
+
+.ratings-decision-container > div {
+    display: inline-block;
+}
+
+.ratings-decision-container .rating-bracket {
+    line-height: 50px;
+    font-size: 60px;
+    font-weight: lighter;
+}
+
+.ratings-decision-container .vote-buttons-container {
+    margin-left: 3px;
+}
+
+.ratings-decision-container .vote-buttons-container .vote-decision-text {
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 3px;
+}
+
+.user-actions-container > * {
+    margin-left: 20px;
+}
+
+.user-note-save-status {
+    color: #999999;
+}
+
+.user-position-prefs-container > [class^="span"] {
     margin-left: 0px;
-    margin-right: 0px;
-    padding-left: 19px;
-    padding-bottom: 19px;
-    padding-top: 0px;
 }
 
 .user-position-prefs-container a:hover {
     cursor: pointer;
 }
 
-.user-position-prefs-container .user-logo {
-    background-image: url("../img/person.png");
-    background-repeat: no-repeat;
-    background-size: 120px 90px;
-    background-position: left center;
-    height: 90px;
-    padding-bottom: 5px;
+.user-position-prefs-container .well {
+    padding: 5px;
+    min-height: 90px;
+    border-color: rgba(234,143,0,0.5);
+    background-color: rgba(234, 143, 0, 0.05);
+    margin-right: 20px;
+}
+
+.user-position-prefs-container .span2-5 {
+    width: 200px;
+}
+
+.user-position-prefs-container p {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .user-section-border {
@@ -308,10 +363,6 @@
     border-right: 1px solid #E3E3E3;
 }
 
-.user-skills-container {
-    margin-bottom: 10px;
-}
-
 .user-skills-container > div {
     display: inline-block;
     border: 1px solid #E3E3E3;
@@ -320,7 +371,7 @@
     margin-bottom: 10px;
     padding-left: 5px;
     padding-right: 5px;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 36px;
 }
 
@@ -331,30 +382,46 @@
 
 .user-skills-novice > div {
     background-color: #F2DEDE;
+    border-color: #CA7C7A;
 }
 
 .user-skills-proficient > div {
     background-color: #D9EDF7;
+    border-color: #1C4D83;
 }
 
 .user-skills-expert > div {
     background-color: #DFF0D8;
+    border-color: #297339;
 }
 
-.user-skills-list-container {
-    padding-left: 20px;
-    border-left-style: solid;
-    border-left-color: #E3E3E3;
-    border-left-width: 1px;
+.user-skills-legend .novice {
+    background-color: #F2DEDE;
 }
 
-.user-skills-filter-container {
-    margin-left: 0px;
-    margin-right: 0px;
-    padding-top: 0px;
-    padding-right: 20px;
-    padding-left: 20px;
-    padding-bottom: 20px;
+.user-skills-legend .proficient {
+    background-color: #D9EDF7;
+}
+
+.user-skills-legend .expert {
+    background-color: #DFF0D8;
+}
+
+.user-skills-legend {
+    display: inline;
+}
+
+.user-skills-legend > div {
+    display: inline-block;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    margin-right: 5px;
+    padding: 3px 7px 3px 7px;
+    color: rgb(104,104,104);
+}
+
+.user-skills-list-container > div {
+    display: inline;
 }
 
 #chat-sessions > div {
@@ -381,3 +448,119 @@
     font-weight: normal;
     color: #999;
 }
+
+.tracker-grid table {
+    table-layout: fixed;
+}
+
+.tracker-grid .grid-cell-application,
+.tracker-grid .grid-header-cell-application {
+    text-align: center;
+    width: 95px;
+}
+
+.tracker-grid .grid-cell-requisition,
+.tracker-grid .grid-header-cell-requisition {
+    width: auto;
+}
+
+.tracker-grid .grid-cell-applicant,
+.tracker-grid .grid-header-cell-applicant {
+    width: 100px;
+}
+
+.tracker-grid .grid-cell-created,
+.tracker-grid .grid-header-cell-created {
+    width: 105px;
+}
+
+.tracker-grid .grid-cell-status,
+.tracker-grid .grid-header-cell-status {
+    width: 220px;
+}
+
+.tracker-grid .grid-cell-action,
+.tracker-grid .grid-header-cell-action {
+    width: 50px;
+}
+
+.tracker-filters .filter-status .drop-content {
+    min-width: 280px;
+}
+
+.application .summary-container,
+.application .eval-container {
+    margin-bottom: 30px;
+}
+
+.application-summary > .container span {
+    margin-right: 10px;
+}
+
+.application-summary > .container > span > a {
+    font-size: 16px;
+}
+
+.application-summary > .container > button {
+    margin-right: 10px;
+}
+
+.application-log-grid table {
+    table-layout: fixed;
+}
+
+.application-log-grid .grid-cell-user,
+.application-log-grid .grid-header-cell-user {
+    white-space: nowrap;
+    width: 150px;
+}
+
+.application-log-grid .grid-cell-created,
+.application-log-grid .grid-header-cell-created {
+    white-space: nowrap;
+    width: 150px;
+}
+
+.application-log-grid .grid-cell-note,
+.application-log-grid .grid-header-cell-note {
+    width: auto;
+}
+
+.application-log .pagination {
+    margin: 10px 0;
+}
+
+.application-log .pagination ul li > a {
+    line-height: 28px;
+    padding: 0 12px;
+}
+
+.application-log-add > textarea {
+    width: 350px;
+    height: 100px;
+}
+
+.application-log-add .actions > button {
+    margin-right: 5px;
+}
+
+.eval-grid table {
+    table-layout: fixed;
+}
+
+.eval-grid .grid-cell.grid-cell-vote,
+.eval-grid .grid-header-cell.grid-header-cell-vote {
+    width: 100px;
+}
+
+.eval-grid .grid-cell,
+.eval-grid .grid-header-cell {
+    width: auto;
+    white-space: nowrap;
+}
+
+.eval-grid .grid-cell-vote > div {
+    margin: 5px 0;
+}
+
+

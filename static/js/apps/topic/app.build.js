@@ -2,6 +2,7 @@
         appDir: ".",
         baseUrl: "../../",
         dir: "../../../../static_minified/js/apps/topic",
+        findNestedDependencies: true,
         modules: [
                 { name: "apps/topic/main" }
         ],

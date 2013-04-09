@@ -44,6 +44,10 @@ define([
             this.exitOnEscapeKey = options.exitOnEscapeKey !== undefined ? options.exitOnEscapeKey : true;
         },
 
+        isModal: function() {
+            return true;
+        },
+
         render: function() {
             var state = {
                 title: this.title,

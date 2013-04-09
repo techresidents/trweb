@@ -6,8 +6,10 @@ from django.template import RequestContext
 
 
 from trpycore.encode.basic import basic_encode
+from techresidents_web.common.decorators import developer_required, employer_required
 from techresidents_web.common.models import Skill, Topic
-from techresidents_web.job.models import JobPositionTypePref, JobTechnologyPref, JobLocationPref
+from techresidents_web.job.models import JobPositionTypePref, JobTechnologyPref, JobLocationPref, \
+    JobRequisition
 
 
 
@@ -35,11 +37,34 @@ class ChatUserAction(BaseUserAction):
         super(ChatUserAction, self).__init__(category="chat", link=link)
         self.chat_name = chat_name
 
+def compute_recommended_employer_actions(request):
+    """Helper function to compute recommended next actions for employers
 
+    Returns a list of UserAction objects.
+    """
+    user_actions = []
+
+    # create a requisition
+    requisition_count = JobRequisition.objects. \
+        filter(tenant=request.user.tenant). \
+        count()
+    if requisition_count > 0:
+        relative_link = reverse("requisition.views.requisition")
+        absolute_link = request.build_absolute_uri(relative_link)
+        action = BaseUserAction(category="requisition", link=absolute_link)
+        user_actions.append(action)
+
+    # search for talent
+    relative_link = reverse("talent.views.talent")
+    absolute_link = request.build_absolute_uri(relative_link)
+    action = BaseUserAction(category="talent", link=absolute_link)
+    user_actions.append(action)
+
+    return user_actions
 
 def compute_recommended_actions(request, profile_completion_percentage, completed_topics_dict, incomplete_topics_dict):
     """Helper function to compute recommended
-    next actions for the users.
+    next actions for developers.
 
     Returns a list of UserAction objects.
     """
@@ -87,7 +112,7 @@ def compute_recommended_actions(request, profile_completion_percentage, complete
 
 def compute_profile_completion(request):
     """ Helper function to compute what percentage
-     of a user's profile has been completed.
+     of a developer's profile has been completed.
     """
     profile_percent_complete = 0
 
@@ -135,7 +160,7 @@ def home(request):
     else:
         return home_developer(request)
 
-@login_required
+@developer_required
 def home_developer(request):
     """Developer home"""
 
@@ -203,11 +228,25 @@ def home_developer(request):
 
     return render_to_response('home/home.html', context, context_instance=RequestContext(request))
 
-@login_required
+@employer_required
 def home_employer(request):
     """Employer home"""
 
+    recommended_actions = compute_recommended_employer_actions(request)
     context = {
+        "full_name": request.user.get_full_name(),
+        "employer_name": request.user.tenant.name,
+        "recommended_actions": recommended_actions,
+        "announcements": [
+            ("March 26, 2013",
+             "Now you can create requisitions to track, score, "
+             "and extend interview offers to candidates. Click "
+             "the Requisitions link at the top of the screen to "
+             "create your first requisition."),
+            ("March 15, 2013",
+             "Our first hiring event has been postponed to Q2. Stay"
+             " tuned for more details.")
+        ]
     }
 
     return render_to_response('home/home_employer.html', context, context_instance=RequestContext(request))

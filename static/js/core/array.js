@@ -1,11 +1,13 @@
-define([
+define(/** @exports core/array */[
+    'underscore',
     'core/base'
 ], function(
+    underscore,
     base) {
 
     /**
      * Default compare function for array.
-     * @return 1 if a > b,
+     * @returns 1 if a > b,
      *         0 if a === b,
      *         -1 if a < b 
      */
@@ -15,11 +17,12 @@ define([
 
     /**
      * Binary search array for target using compareFunction.
-     * @param {array} array
-     * @param {Object} target
-     * @param {function} compareFunction conforming to defaultCompare.
+     * @param {array} array Array to search.
+     * @param {Object} target Value to search for.
+     * @param {function} [compareFunction={@link module:core/array~defaultCompare}]
+     *   Compare function conforming to defaultCompare.
      *
-     * @return {number} index of target if found,
+     * @returns {number} index of target if found,
      *                  insertion index as (-index -1) otherwise
      */
     var binarySearch = function(array, target, compareFunction) {
@@ -48,9 +51,10 @@ define([
      * Binary insert target into array using compareFunction.
      * @param {array} array
      * @param {Object} target to insert
-     * @param {function} compareFunction conforming to defaultCompare.
+     * @param {function} [compareFunction={@link module:core/array~defaultCompare}]
+     *   Compare function conforming to defaultCompare.
      *
-     * @return {number} insertion index
+     * @returns {number} insertion index
      */
     var binaryInsert = function(array, target, compareFunction) {
         compareFunction = compareFunction || defaultCompare;
@@ -68,9 +72,25 @@ define([
         return index;
     };
 
+    /**
+     * Compute the average value of the array.
+     * @param {array} array
+     * @returns {number} Array average
+     */
+    var average = function(array) {
+        var result = 0;
+        if(array.length) {
+            result = _.reduce(array, function(result, v) {
+                return result + v;
+            }, 0) / array.length;
+        }
+        return result;
+    };
+
     return {
         binarySearch: binarySearch,
         binaryInsert: binaryInsert,
-        defaultCompare: defaultCompare
+        defaultCompare: defaultCompare,
+        average: average
     };
 });

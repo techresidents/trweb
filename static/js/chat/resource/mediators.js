@@ -42,7 +42,7 @@ define([
             });
 
             //add events listeners
-            this.view.addEventListener(resource_views.EVENTS.SELECT, this.onSelect, this);
+            this.view.addEventListener(this.cid, resource_views.EVENTS.SELECT, this.onSelect, this);
 
             //notify system of view creation
             this.facade.trigger(notifications.VIEW_CREATED, {

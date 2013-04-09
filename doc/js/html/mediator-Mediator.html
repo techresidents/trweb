@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: Mediator</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Class: Mediator</h1>
+    
+    
+
+
+
+<section>
+    
+<header>
+    <h2>
+        <span class="ancestors"><a href="mediator.html">core/mediator</a>~</span>
+    
+    Mediator
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt>
+    <h4 class="name" id="Mediator"><span class="type-signature"></span>new Mediator<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Mediator base class.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        mediator.js, line 12
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Members</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="name"><span class="type-signature"></span>name<span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Overriden in subclass.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        mediator.js, line 27
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="notifications"><span class="type-signature"></span>notifications<span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Overriden in subclass.
+Notitifcation handler tuples, i.e. [ ['NOTIFCATION_NAME', 'handler'], ]
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        mediator.js, line 38
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="initialize"><span class="type-signature"></span>initialize<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Overriden in subclass.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        mediator.js, line 32
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="registerNotifications"><span class="type-signature"></span>registerNotifications<span class="signature">(notifications)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Register notification handlers.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>notifications</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Array of notification tuples,
+ [ ['NOTIFICATION_NAME', 'handlerName'] ]</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        mediator.js, line 46
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="unregisterNotifications"><span class="type-signature"></span>unregisterNotifications<span class="signature">(notifications)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Unregister notification handlers.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>notifications</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Array of notification tuples,
+ [ ['NOTIFICATION_NAME', 'handlerName'] ]</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        mediator.js, line 72
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="adapt.html">core/adapt</a></li><li><a href="array.html">core/array</a></li><li><a href="base.html">core/base</a></li><li><a href="command.html">core/command</a></li><li><a href="date.html">core/date</a></li><li><a href="facade.html">core/facade</a></li><li><a href="factory.html">core/factory</a></li><li><a href="format.html">core/format</a></li><li><a href="iter.html">core/iter</a></li><li><a href="mediator.html">core/mediator</a></li><li><a href="notification.html">core/notification</a></li><li><a href="proxy.html">core/proxy</a></li><li><a href="string.html">core/string</a></li><li><a href="view.html">core/view</a></li></ul><h3>Classes</h3><ul><li><a href="adapt-CollectionAdapter.html">CollectionAdapter</a></li><li><a href="adapt-ModelCollectionAdapter.html">ModelCollectionAdapter</a></li><li><a href="base-Base.html">Base</a></li><li><a href="command-AsyncCommand.html">AsyncCommand</a></li><li><a href="command-Command.html">Command</a></li><li><a href="command-MacroCommand.html">MacroCommand</a></li><li><a href="date-Date.html">Date</a></li><li><a href="date-DateRange.html">DateRange</a></li><li><a href="date-DateRange.Iterator.html">Iterator</a></li><li><a href="date-DateTime.html">DateTime</a></li><li><a href="date-Interval.html">Interval</a></li><li><a href="facade-Facade.html">Facade</a></li><li><a href="factory-Factory.html">Factory</a></li><li><a href="factory-FunctionFactory.html">FunctionFactory</a></li><li><a href="iter-Iterator.html">Iterator</a></li><li><a href="mediator-Mediator.html">Mediator</a></li><li><a href="notification-NotificationBus.html">NotificationBus</a></li><li><a href="proxy-CollectionProxy.html">CollectionProxy</a></li><li><a href="proxy-ModelProxy.html">ModelProxy</a></li><li><a href="proxy-Proxy.html">Proxy</a></li><li><a href="view-View.html">View</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Mar 21 2013 09:59:32 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>

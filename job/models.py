@@ -40,6 +40,7 @@ class JobRequisition(models.Model):
     telecommute = models.BooleanField()
     relocation = models.BooleanField()
     employer_requisition_identifier = models.CharField(max_length=100, null=True)
+    deleted = models.BooleanField(default=False)
 
 class JobRequisitionTechnology(models.Model):
     """Job requisition technology model"""
@@ -113,6 +114,7 @@ class JobApplication(models.Model):
     
     tenant = models.ForeignKey(Tenant, related_name="job_applications")
     user = models.ForeignKey(User, related_name="job_applications")
+    creator = models.ForeignKey(User, related_name="+")
     requisition = models.ForeignKey(JobRequisition, related_name="job_applications")
     created = models.DateTimeField(auto_now_add=True)
     type = models.ForeignKey(JobApplicationType, related_name="+")
@@ -127,6 +129,7 @@ class JobApplicationLog(models.Model):
     user = models.ForeignKey(User, related_name="+")
     application = models.ForeignKey(JobApplication, related_name="job_application_logs")
     note = models.TextField(max_length=4096)
+    created = models.DateTimeField(auto_now_add=True)
 
 class JobApplicationScore(models.Model):
     """Job application score model"""
@@ -209,9 +212,10 @@ class JobNote(models.Model):
         db_table = "job_note"
 
     tenant = models.ForeignKey(Tenant, related_name="+")
-    employee = models.ForeignKey(User, related_name="+")
-    candidate = models.ForeignKey(User, related_name="+")
+    employee = models.ForeignKey(User, related_name="job_notes")
+    candidate = models.ForeignKey(User, related_name="candidate_job_notes")
     note = models.TextField(max_length=4096)
+    modified = models.DateField(auto_now_add=True, auto_now=True)
 
 class JobEvent(models.Model):
     """Job event model"""

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: ModelCollectionAdapter</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Class: ModelCollectionAdapter</h1>
+    
+    
+
+
+
+<section>
+    
+<header>
+    <h2>
+        <span class="ancestors"><a href="adapt.html">core/adapt</a>~</span>
+    
+    ModelCollectionAdapter
+    </h2>
+    
+        <div class="class-description">Adapter to convert from a model to a collection.
+This is useful to adapt a model for use with UI components
+which require collections. For example, to convert a model
+to a MenuItemCollection of allowed actions.
+<br><br>
+Changes to the model will be propagated to the 
+adaptedCollection, but not vice versa.</div>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt>
+    <h4 class="name" id="ModelCollectionAdapter"><span class="type-signature"></span>new ModelCollectionAdapter<span class="signature">(options)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        CollectionAdapter constructor.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Options object
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>model</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Model</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">Model to be adapted</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>adaptedCollection</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Collection</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">Collection to adapt to</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>map</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">Map function which takes a
+  model and returns an array of object literals containing the
+  adaptedCollection model attributes.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sync</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+            
+            <td class="description last">If true collection
+  will be sync'd to adaptedCollection at construction.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>events</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Events</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">Object containing an Events mixin
+(listenTo() method) to use to bind to collection events. This
+paramater is typically a View instance. If provided, it is
+not necessary to call stopListening() to unbind collection event 
+listeners. If possible this parameter should be provided to make
+event listener removal simpler.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+            </td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        adapt.js, line 225
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>  var model = new api.UserModel();
+  var adaptedCollection = new menu_models.MenuItemCollection();
+  var map = function(userModel) {
+    return [
+      {key: 'track', label: 'Track user'},
+      {key: 'request-interview', label: 'Request interview'},
+    ];
+  };
+
+  var adapter = new ModelColelctionAdapter({
+    model: model,
+    adaptedCollection: adaptedCollection,
+    events: this, //assuming this is View intance
+    sync: true
+  });
+
+  var menuView = new menu_views.Menu({
+    collection: adaptedCollection
+  });
+  </code></pre>
+
+    
+</dd>
+
+    
+    </div>
+    
+    
+        <h3 class="subsection-title">Extends</h3>
+        
+        <ul>
+            <li><a href="base-Base.html">module:core/base~Base</a></li>
+        </ul>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="getAdaptedCollection"><span class="type-signature"></span>getAdaptedCollection<span class="signature">()</span><span class="type-signature"> &rarr; {Collection}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get the adapted collection.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        adapt.js, line 255
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    Adapted collection instance.
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Collection</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="stopListening"><span class="type-signature"></span>stopListening<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Unbind collection event listeners.
+This method does not need to be called if an events
+options was provided at construction.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        adapt.js, line 247
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="sync"><span class="type-signature"></span>sync<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Reset the adapted collection from remapped model.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        adapt.js, line 262
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="adapt.html">core/adapt</a></li><li><a href="array.html">core/array</a></li><li><a href="base.html">core/base</a></li><li><a href="command.html">core/command</a></li><li><a href="date.html">core/date</a></li><li><a href="facade.html">core/facade</a></li><li><a href="factory.html">core/factory</a></li><li><a href="format.html">core/format</a></li><li><a href="iter.html">core/iter</a></li><li><a href="mediator.html">core/mediator</a></li><li><a href="notification.html">core/notification</a></li><li><a href="proxy.html">core/proxy</a></li><li><a href="string.html">core/string</a></li><li><a href="view.html">core/view</a></li></ul><h3>Classes</h3><ul><li><a href="adapt-CollectionAdapter.html">CollectionAdapter</a></li><li><a href="adapt-ModelCollectionAdapter.html">ModelCollectionAdapter</a></li><li><a href="base-Base.html">Base</a></li><li><a href="command-AsyncCommand.html">AsyncCommand</a></li><li><a href="command-Command.html">Command</a></li><li><a href="command-MacroCommand.html">MacroCommand</a></li><li><a href="date-Date.html">Date</a></li><li><a href="date-DateRange.html">DateRange</a></li><li><a href="date-DateRange.Iterator.html">Iterator</a></li><li><a href="date-DateTime.html">DateTime</a></li><li><a href="date-Interval.html">Interval</a></li><li><a href="facade-Facade.html">Facade</a></li><li><a href="factory-Factory.html">Factory</a></li><li><a href="factory-FunctionFactory.html">FunctionFactory</a></li><li><a href="iter-Iterator.html">Iterator</a></li><li><a href="mediator-Mediator.html">Mediator</a></li><li><a href="notification-NotificationBus.html">NotificationBus</a></li><li><a href="proxy-CollectionProxy.html">CollectionProxy</a></li><li><a href="proxy-ModelProxy.html">ModelProxy</a></li><li><a href="proxy-Proxy.html">Proxy</a></li><li><a href="view-View.html">View</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Mar 21 2013 09:59:30 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>

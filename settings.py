@@ -301,7 +301,7 @@ GA_ID = 'UA-36319157-2'
 #Tokbox settings
 TOKBOX_API_KEY = '15889991'
 TOKBOX_API_SECRET = '19a6fb225790a2cf3e048c58ef2fdcc425e7b599'
-TOKBOX_JS_URL = 'http://static.opentok.com/v0.91/js/TB.min.js'
+TOKBOX_JS_URL = 'http://static.opentok.com/v1.1/js/TB.min.js'
 
 #Django message settings
 #MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

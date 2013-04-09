@@ -1,19 +1,23 @@
 define([
     'jquery',
     'underscore',
+    'core/format',
     'core/view',
-    'grid/views',
-    'paginator/views',
+    'ui/grid/views',
+    'ui/paginator/views',
     'api/loader',
-    'text!requisition/list/templates/list.html'
+    'text!requisition/list/templates/list.html',
+    'text!requisition/list/templates/confirm_delete_modal.html'
 ], function(
     $,
     _,
+    format,
     view,
     grid_views,
     paginator_views,
     api_loader,
-    list_template) {
+    list_template,
+    confirm_delete_modal_template) {
 
     /**
      * Requisition List View Events
@@ -22,8 +26,39 @@ define([
         VIEW_REQ: 'requisitionList:ViewReq',
         EDIT_REQ: 'requisitionList:EditReq',
         OPEN_REQ: 'requisitionList:OpenReq',
-        CLOSE_REQ: 'requisitionList:CloseReq'
+        CLOSE_REQ: 'requisitionList:CloseReq',
+        DELETE_REQ: 'requisitionList:DeleteReq',
+        DELETE_REQ_CONFIRMED: 'requisitionList:DeleteReqConfirmed'
     };
+
+    /**
+     * Confirm Requisition Delete Modal View.
+     * @constructor
+     * @param {Object} options
+     *   model: {Requisition} (required)
+     */
+    var ConfirmDeleteModalView = view.View.extend({
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template = _.template(confirm_delete_modal_template);
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            return this;
+        },
+
+        onOk: function() {
+            var eventBody = {model: this.model};
+            this.triggerEvent(EVENTS.DELETE_REQ_CONFIRMED, eventBody);
+            return true;
+        },
+
+        onCancel: function() {
+            return true;
+        }
+    });
 
     /**
      * Requisition grid view.
@@ -45,8 +80,11 @@ define([
          * @param options
          */
         initialize: function(options) {
-            this._initConfig(options);
-            grid_views.GridView.prototype.initialize.apply(this, arguments);
+            options = _.extend({
+                config: RequisitionGridView.config()
+            }, options);
+
+            grid_views.GridView.prototype.initialize.call(this, options);
         },
 
         /**
@@ -60,127 +98,146 @@ define([
             return result;
         },
 
-        _initConfig: function(options) {
-            var that = this;
-            options.config = {
+        /**
+         * @Override
+         * Grid Action event handler
+         * @param e
+         * @param eventBody
+         *      model: {Requisition} (required)
+         *      action: {
+         *          key: 'value'      (required)
+         *          label: 'value'    (optional)
+         *          handler: function (optional)
+         *      }
+         */
+        onGridAction: function(e, eventBody) {
+            var menuItem = eventBody.menuItem;
+
+            if (menuItem) {
+                var listEventBody = {model: eventBody.model};
+                switch (menuItem.key()) {
+                    case 'view':
+                        this.triggerEvent(EVENTS.VIEW_REQ, listEventBody);
+                        break;
+                    case 'edit':
+                        this.triggerEvent(EVENTS.EDIT_REQ, listEventBody);
+                        break;
+                    case 'delete':
+                        this.triggerEvent(EVENTS.DELETE_REQ, listEventBody);
+                        break;
+                    case 'open':
+                        this.triggerEvent(EVENTS.OPEN_REQ, listEventBody);
+                        break;
+                    case 'close':
+                        this.triggerEvent(EVENTS.CLOSE_REQ, listEventBody);
+                        break;
+                }
+            }
+        }
+    }, {
+        config: function() {
+            var config = {
                 columns: [
-                    {
-                        column: 'Created',
-                        headerCellView: { options: { sort: 'created' } },
-                        cellView: {
-                            options: function (model) {
-                                var value = that.fmt.date(
-                                    model.get_created(),
-                                    'MM/dd/yy'
-                                );
-                                return {
-                                    value: value
-                                };
-                            }
-                        }
-                    },
-                    {
-                        column: 'Internal ID',
-                        headerCellView: { options: { sort: 'employer_requisition_identifier' } },
-                        cellView: { options: { valueAttribute: 'employer_requisition_identifier' } }
-                    },
-                    {
-                        column: 'Title',
-                        headerCellView: { options: { sort: 'title' } },
-                        cellView: {
-                            ctor: grid_views.GridLinkCellView,
-                            options: function (model) {
-                                return {
-                                    href: '/requisition/req/' + model.get_id(),
-                                    value: model.get_title()
-                                };
-                            }
-                        }
-                    },
-                    {
-                        column: 'Location',
-                        headerCellView: { options: { sort: 'location__state' } },
-                        cellView: {
-                            options: function (model) {
-                                var value = null;
-                                var location = model.get_location();
-                                if (location.get_city()) {
-                                    value = location.get_city() + ', ' + location.get_state();
-                                } else {
-                                    value = location.get_state();
-                                }
-                                return {
-                                    value: value
-                                };
-                            }
-                        }
-                    },
-                    {
-                        column: 'Status',
-                        headerCellView: { options: { sort: 'status' } },
-                        cellView: { options: { valueAttribute: 'status' } }
-                    },
-                    {
-                        column: 'Actions',
-                        cellView: {
-                            ctor: grid_views.GridActionCellView,
-                            options: function(model) {
-                                return that._getGridActions(model);
-                            }
-                        }
-                    }
+                    RequisitionGridView.titleColumn(),
+                    RequisitionGridView.locationColumn(),
+                    RequisitionGridView.statusColumn(),
+                    RequisitionGridView.internalIdColumn(),
+                    RequisitionGridView.createdColumn(),
+                    RequisitionGridView.actionColumn()
                 ]
+            };
+            return config;
+        },
+
+        createdColumn: function() {
+            return {
+                column: 'Created',
+                headerCellView: new grid_views.GridHeaderCellView.Factory({
+                    sort: 'created'
+                }),
+                cellView: new grid_views.GridDateCellView.Factory({
+                    valueAttribute: 'created',
+                    format: 'MM/dd/yy'
+                })
             };
         },
 
-        /**
-         * Method to generate grid actions
-         * @param model {Requisition} (required)
-         * @private
-         */
-        _getGridActions: function(model) {
-
-            var viewHandler = function() {
-                var eventBody = {id: model.id};
-                this.triggerEvent(EVENTS.VIEW_REQ, eventBody);
-            };
-            var editHandler = function() {
-                var eventBody = {id: model.id};
-                this.triggerEvent(EVENTS.EDIT_REQ, eventBody);
-            };
-            var openHandler = function() {
-                var eventBody = {model: model};
-                this.triggerEvent(EVENTS.OPEN_REQ, eventBody);
-            };
-            var closeHandler = function() {
-                var eventBody = {model: model};
-                this.triggerEvent(EVENTS.CLOSE_REQ, eventBody);
-            };
-
-            // Set handler based upon model's current status
-            var statusHandler = null;
-            if (model.get_status() === "OPEN") {
-                statusHandler = {
-                    key: 'close',
-                    label: 'Close',
-                    handler: closeHandler
-                };
-            } else {
-                statusHandler = {
-                    key: 'open',
-                    label: 'Open',
-                    handler: openHandler
-                };
-            }
+        internalIdColumn: function() {
             return {
-                actions: [
-                    {key: 'view', label: 'View', handler: viewHandler},
-                    {key: 'edit', label: 'Edit', handler: editHandler},
+                column: 'Internal ID',
+                headerCellView: new grid_views.GridHeaderCellView.Factory({
+                    sort: 'employer_requisition_identifier'
+                }),
+                cellView: new grid_views.GridCellView.Factory({
+                    valueAttribute: 'employer_requisition_identifier'
+                })
+            };
+        },
+
+        titleColumn: function() {
+            return {
+                column: 'Title',
+                headerCellView: new grid_views.GridHeaderCellView.Factory({
+                    sort: 'title' 
+                }),
+                cellView: new grid_views.GridLinkCellView.Factory(function(options) {
+                    return {
+                        href: '/requisition/view/' + options.model.get_id(),
+                        value: options.model.get_title()
+                    };
+                })
+            };
+        },
+
+        locationColumn: function() {
+            return {
+                column: 'Location',
+                cellView: new grid_views.GridCellView.Factory(function(options) {
+                    var value = null;
+                    var location = options.model.get_location();
+                    if (location.get_city()) {
+                        value = location.get_city() + ', ' + location.get_state();
+                    } else {
+                        value = location.get_state();
+                    }
+                    return {
+                        value: value
+                    };
+                })
+            };
+        },
+
+        statusColumn: function() {
+            return {
+                column: 'Status',
+                headerCellView: new grid_views.GridHeaderCellView.Factory({
+                    sort: 'status'
+                }),
+                cellView: new grid_views.GridCellView.Factory({
+                    valueAttribute: 'status'
+                })
+            };
+        },
+
+        actionColumn: function() {
+            var map = function(model) {
+                var showOpen = model.get_status() === "CLOSED";
+                return [
+                    {key: 'view', label: 'View'},
+                    {key: 'edit', label: 'Edit'},
                     {key: 'divider'},
-                    statusHandler,
-                    {key: 'divider'},
-                    {key: 'delete', label: 'Delete'}
-                ]
+                    {key: 'open', label: 'Open', visible: showOpen},
+                    {key: 'close', label: 'Close', visible: !showOpen},
+                    {key: 'divider', visible: false},
+                    {key: 'delete', label: 'Delete', visible: false} // TODO
+                ];
+            };
+
+            return {
+                column: '',
+                cellView: new grid_views.GridActionCellView.Factory({
+                    map: map
+                })
             };
         }
     });
@@ -197,57 +254,49 @@ define([
         contentSelector: '.content',
 
         initialize: function(options) {
-            console.log('ParentView init');
             this.collection = options.collection;
-            this.query = options.query;
+            this.query = options.query.withRelated('location');
             this.template =  _.template(list_template);
+
+            this.query.fetch();
 
             //child views
             this.requisitionGridView = null;
             this.paginatorView = null;
-
-            this.loader = new api_loader.ApiLoader([
-                {
-                    instance: this.collection,
-                    withRelated: ['location']
-                }
-            ]);
-
-            this.loader.load({
-                success: _.bind(this.render, this)
-            });
+            this.initChildViews();
         },
 
-        childViews: function() {
-            return [this.requisitionGridView, this.paginatorView];
-        },
-
-        render: function() {
-            console.log('ParentView render');
+        initChildViews: function() {
             this.destroyChildViews();
-            this.$el.html(this.template());
-
-            // setup grid view
             this.requisitionGridView = new RequisitionGridView({
                 collection: this.collection,
                 query: this.query
-            }).render();
-            this.$(this.contentSelector).append(this.requisitionGridView.el);
-
-            // setup paginator
+            });
             this.paginatorView = new paginator_views.PaginatorView({
                 maxPages: 10,
                 collection: this.collection,
                 query: this.query
-            }).render();
-            this.$(this.contentSelector).append(this.paginatorView.el);
+            });
+        },
 
+        childViews: function() {
+            return [
+                this.requisitionGridView,
+                this.paginatorView
+            ];
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.append(this.requisitionGridView, this.contentSelector);
+            this.append(this.paginatorView, this.contentSelector);
             return this;
         }
     });
 
     return {
         EVENTS: EVENTS,
-        RequisitionsSummaryView: RequisitionsSummaryView
+        RequisitionsSummaryView: RequisitionsSummaryView,
+        ConfirmDeleteModalView: ConfirmDeleteModalView
     };
 });
