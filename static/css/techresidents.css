@@ -418,6 +418,7 @@ button.drop-button .caret {
     max-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
+    vertical-align: middle;
     white-space: nowrap;
 }
 
