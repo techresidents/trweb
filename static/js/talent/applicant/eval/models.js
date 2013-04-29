@@ -111,7 +111,7 @@ define([
                     userIds = userIds.concat(scores.pluck('user_id'));
                     userIds = userIds.concat(votes.pluck('user_id'));
                     userIds = _.uniq(userIds);
-                    this.filterBy({'id__in': userIds});
+                    this.filterBy({'id__in': userIds.join(',')});
             });
 
             var map = function(user) {
