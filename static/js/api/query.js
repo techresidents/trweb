@@ -82,15 +82,16 @@ define([
             'endswith': 'endswith',
             'iendswith': 'iendswith',
             'range': 'range',
+            'ranges': 'ranges',
             'isnull': 'isnull'
         },
 
         parse: function(name, value) {
             var result, parts, op;
-
-            //i.e. 'requisition__status__in=OPEN,CLOSED'
+            
+            //i.e. name='requisition__status__in=OPEN,CLOSED'
             if(value === undefined || value === null) {
-                parts = value.split(value, '=');
+                parts = name.split('=');
                 name = _.first(parts);
                 value = _.rest(parts).join('=');
             }

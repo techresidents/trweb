@@ -6,6 +6,7 @@ define([
     'xd/xd',
     'xd/backbone',
     'api/config',
+    'api/facet',
     'api/fields',
     'api/query',
     'api/session',
@@ -18,6 +19,7 @@ define([
     xd,
     xdBackbone,
     api_config,
+    api_facet,
     api_fields,
     api_query,
     api_session,
@@ -509,6 +511,7 @@ define([
             Backbone.Collection.prototype.constructor.call(this, models, options);
             
             this.meta = {};
+            this._facets = new api_facet.FacetCollection();
             this._parentRelation = null;
             this._loading = false;
             this._loaded = false;
@@ -598,6 +601,10 @@ define([
             return relation;
         },
 
+        getFacets: function() {
+            return this._facets;
+        },
+
         clone: function(options) {
             options = _.extend({
                     models: this.models
@@ -620,6 +627,7 @@ define([
             if(!result.parentRelation) {
                 result._parentRelation = _.clone(this._parentRelation);
             }
+            result._facets.reset(this._facets.clone().models);
             result.reset(models);
 
             return result;
@@ -637,8 +645,9 @@ define([
                 model.set(model.parse(response.results[i], options), options);
                 result.push(model);
             }
-
+            
             this.meta = response.meta;
+            this._facets.reset(this._facets.parse(response.meta.facets));
             this._loaded = true;
 
             if(this.session && !options.noSession) {
