@@ -39,11 +39,9 @@ define([
         onCreateView: function(notification) {
             if (notification.type === this.viewType()) {
                 var developerTenantID = 'zik0zk';
-                this.collection = new api.UserCollection();
+                this.collection = new api.UserSearchCollection();
                 this.collection.on('reset', this.onReset, this);
-                this.query = this.collection.filterBy({
-                    'tenant_id__eq':  developerTenantID
-                });
+                this.query = this.collection.query();
                 this.view = new talent_views.SearchView({
                     collection: this.collection,
                     query: this.query

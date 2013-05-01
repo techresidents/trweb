@@ -24,7 +24,8 @@ define([
     'api/models/interview_offer',
     'api/models/job_offer',
     'api/models/job_note',
-    'api/models/job_event'
+    'api/models/job_event',
+    'api/models/user_search'
 ], function(
     $,
     _,
@@ -51,8 +52,8 @@ define([
     interview_offer_models,
     job_offer_models,
     job_note_models,
-    job_event_models
-    ) {
+    job_event_models,
+    user_search_models) {
 
 
     return {
@@ -101,6 +102,8 @@ define([
         JobNote: job_note_models.JobNote,
         JobNoteCollection: job_note_models.JobNoteCollection,
         JobEvent: job_event_models.JobEvent,
-        JobEventCollection: job_event_models.JobEventCollection
+        JobEventCollection: job_event_models.JobEventCollection,
+        UserSearch: user_search_models.UserSearch,
+        UserSearchCollection: user_search_models.UserSearchCollection
     };
 });

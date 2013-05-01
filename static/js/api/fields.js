@@ -265,6 +265,27 @@ define([
         }
     });
 
+    var CollectionField = Field.extend({
+        initialize: function(attributes) {
+            Field.prototype.initialize(attributes);
+            this.collectionConstructor = attributes.collection;
+        },
+
+        parse: function(value) {
+            var result;
+            if(_.isNull(value) || _.isUndefined(value)) {
+                result = null;
+            }
+            else if(_.isArray(value)) {
+                result = new this.collectionConstructor();
+                result.reset(result.parse(value));
+            } else {
+                throw new Error(this.name + ":invalid collection");
+            }
+            return result;
+        }
+    });
+
     var StructField = Field.extend({
         initialize: function(attributes) {
             Field.prototype.initialize(attributes);
@@ -447,6 +468,7 @@ define([
         TimestampField: TimestampField,
         DictField: DictField,
         ListField: ListField,
+        CollectionField: CollectionField,
         StructField: StructField,
         RelatedField: RelatedField,
         ForeignKey: ForeignKey,

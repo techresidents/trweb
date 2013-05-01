@@ -3,6 +3,7 @@ define([
     'underscore',
     'core/view',
     'api/loader',
+    'ui/facet/views',
     'text!talent/search/templates/search.html',
     'text!talent/search/templates/user.html'
 ], function(
@@ -10,6 +11,7 @@ define([
     _,
     view,
     api_loader,
+    facet_views,
     search_template,
     user_template) {
     
@@ -118,9 +120,24 @@ define([
         },
 
         initChildViews: function() {
+            /*
             this.userListView = new SearchUserListView({
                 el: this.$(this.listSelector),
                 collection: this.collection
+            });
+            */
+            
+            var config = {
+                facets: [
+                    { name: 'f_skills', title: 'Skills'},
+                    { name: 'f_location_prefs', title: 'Location Preferences'}
+                ]
+            };
+            this.facetsView = new facet_views.FacetsView({
+                config: config,
+                collection: this.collection.getFacets(),
+                query: this.query,
+                includeAll: true
             });
         },
 
@@ -137,7 +154,8 @@ define([
 
         render: function() {
             this.$el.html(this.template());
-            this.assign(this.userListView, this.listSelector);
+            //this.assign(this.userListView, this.listSelector);
+            this.append(this.facetsView, '.search-facets');
             return this;
         }
     });
