@@ -164,6 +164,7 @@ INSTALLED_APPS = (
     'techresidents_web.document',
     'techresidents_web.feedback',
     'techresidents_web.home',
+    'techresidents_web.index',
     'techresidents_web.job',
     'techresidents_web.topic',
     'techresidents_web.whiteboard',
