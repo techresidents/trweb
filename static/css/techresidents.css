@@ -631,10 +631,14 @@ button.drop-button .caret {
     display: none;
 }
 
+.facet-item label {
+    cursor: pointer;
+}
+
 .facet-item .name {
     display: inline-block;
     vertical-align: middle;
-    width: 150px;
+    max-width: 150px;
     font-size: 12px;
     white-space: nowrap;
     overflow: hidden;
@@ -645,7 +649,30 @@ button.drop-button .caret {
     font-size: 12px;
     font-weight: normal;
     line-height: 14px;
-    float: right;
     margin-top: 3px;
+    margin-left: 2px;
     margin-right: 20px;
 }
+
+.auto-facet .auto-controls {
+    display: none;
+    font-weight: normal;
+}
+
+.auto-facet.facet-open .auto-controls {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.auto-facet .auto-facet-input {
+    display: none;
+}
+
+.auto-facet.show-auto .auto-facet-input {
+    display: block;
+}
+
+.auto-facet.show-auto .add {
+    display: none;
+}
+

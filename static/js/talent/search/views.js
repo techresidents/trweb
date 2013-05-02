@@ -1,100 +1,32 @@
 define([
     'jquery',
     'underscore',
+    'core/factory',
+    'core/array',
     'core/view',
     'api/loader',
+    'ui/ac/matcher',
+    'ui/collection/views',
+    'ui/input/views',
     'ui/facet/views',
+    'ui/paginator/views',
     'text!talent/search/templates/search.html',
     'text!talent/search/templates/user.html'
 ], function(
     $,
     _,
+    factory,
+    array,
     view,
     api_loader,
+    ac_matcher,
+    collection_views,
+    input_views,
     facet_views,
+    paginator_views,
     search_template,
     user_template) {
     
-    /**
-     * Talent search user view.
-     * @constructor
-     * @param {Object} options
-     *   model: User model (required)
-     */
-    var SearchUserView = view.View.extend({
-
-        tagName: 'li',
-
-        initialize: function() {
-            this.template = _.template(user_template);
-        },
-
-        
-        render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
-            return this;
-        }
-    });
-
-    
-    /**
-     * Talent user list view.
-     * @constructor
-     * @param {Object} options
-     *   collection: UserCollection (required)
-     */
-    var SearchUserListView = view.View.extend({
-
-        tagName: 'ul',
-        
-        initialize: function() {
-            //bind events
-            this.listenTo(this.collection, 'reset', this.onReset);
-            this.listenTo(this.collection, 'add', this.onAdd);
-
-            this.loader = new api_loader.ApiLoader([
-                { instance: this.collection }
-            ]);
-            this.loader.load();
-            
-            //child views
-            this.childViews = [];
-            this.initChildViews();
-        },
-
-        initChildViews: function() {
-            this.destroyChildViews();
-            this.childViews = [];
-            this.collection.each(this.createChildView, this);
-        },
-
-        createChildView: function(model) {
-            var view = new SearchUserView({
-                model: model
-            }).render();
-            this.childViews.push(view);
-            return view;
-        },
-
-        render: function() {
-            _.each(this.childViews, function(view) {
-                this.append(view);
-            }, this);
-            return this;
-        },
-
-        onReset: function() {
-            this.initChildViews();
-            this.render();
-        },
-
-        onAdd: function(model) {
-            var view = this.createChildView(model);
-            this.append(view);
-        }
-        
-    });
-
     /**
      * Search View Events
      */
@@ -102,43 +34,95 @@ define([
     };
 
     /**
+     * Talent search user view.
+     * @constructor
+     * @param {object} options
+     * @param {UserSearch} options.model UserSearch model
+     */
+    var SearchUserView = view.View.extend({
+
+        initialize: function() {
+            this.template = _.template(user_template);
+        },
+
+        classes: function() {
+            return ['search-user'];
+        },
+
+        render: function() {
+            this.sort();
+            this.$el.html(this.template(this.model.toJSON()));
+            this.$el.attr('class', this.classes().join(' '));
+            return this;
+        },
+
+        sort: function() {
+            if(!this.model.get_skills()) {
+                return;
+            }
+
+            var skills = _.sortBy(this.model.get_skills(), function(skill) {
+                var expertise = 1;
+                var yrs_experience = skill.yrs_experience || 1;
+                switch(skill.expertise) {
+                    case 'Proficient':
+                        expertise = 2;
+                        break;
+                    case 'Expert':
+                        expertise = 3;
+                        break;
+                }
+                return -1 * (expertise*100 + yrs_experience);
+            });
+            
+            var args = [0, skills.length].concat(skills);
+            Array.prototype.splice.apply(this.model.get_skills(), args);
+        }
+    });
+
+
+    /**
+     * Talent search facets view.
+     * @constructor
+     * @param {object} options
+     * @param {UserSearchCollection} options.collection User Search collection
+     * @param {ApiQuery} options.query UserSearchCollection query
+     */
+    var SearchFacetsView = facet_views.FacetsView.extend({
+        initialize: function(options) {
+            var matcher = new ac_matcher.ArrayMatcher({
+                data: ['Python', 'Test']
+            });
+            var config = {
+                facets: [
+                    { name: 'f_skills', facetView: new facet_views.AutoFacetView.Factory({matcher: matcher })},
+                    { name: 'f_location_prefs'},
+                    { name: 'f_yrs_experience'},
+                    { name: 'f_position_prefs'},
+                    { name: 'f_joined'}
+                ]
+            };
+
+            options = _.extend({
+                config: config
+            }, options);
+
+            facet_views.FacetsView.prototype.initialize.call(this, options);
+        }
+    });
+
+    /**
      * Talent search view.
      * @constructor
-     * @param {Object} options
-     *   collection: {UserCollection} (required)
-     *   query: {ApiQuery} query (required)
+     * @param {object} options
+     * @param {UserSearchCollection options.collection UserSearchCollection
+     * @param {ApiQuery} options.query UserSearchCollection query
      */
     var SearchView = view.View.extend({
 
         events: {
-        },
-
-        listSelector: 'ul',
-
-        childViews: function() {
-            return [this.userListView];
-        },
-
-        initChildViews: function() {
-            /*
-            this.userListView = new SearchUserListView({
-                el: this.$(this.listSelector),
-                collection: this.collection
-            });
-            */
-            
-            var config = {
-                facets: [
-                    { name: 'f_skills', title: 'Skills'},
-                    { name: 'f_location_prefs', title: 'Location Preferences'}
-                ]
-            };
-            this.facetsView = new facet_views.FacetsView({
-                config: config,
-                collection: this.collection.getFacets(),
-                query: this.query,
-                includeAll: true
-            });
+            'enterkey .search-bar': 'onEnterKey',
+            'click .search-button': 'onClick'
         },
 
         initialize: function(options) {
@@ -148,16 +132,74 @@ define([
             this.query.fetch();
 
             //child views
-            this.userListView = null;
+            this.facetsView = null;
+            this.usersView = null;
+            this.inputHandlerView = null;
             this.initChildViews();
+        },
+
+        childViews: function() {
+            return [
+                this.facetsView,
+                this.inputHandlerView,
+                this.usersView,
+                this.paginatorView];
+        },
+
+        initChildViews: function() {
+            this.facetsView = new SearchFacetsView({
+                collection: this.collection.getFacets(),
+                query: this.query
+            });
+
+            this.inputHandlerView = new input_views.InputHandlerView({
+                inputView: this,
+                inputSelector: '.search-input'
+            });
+            var filter = _.first(this.query.state.filters().getFilters('q'));
+            if(filter) {
+                this.inputHandlerView.setInputValue(filter.value());
+            }
+
+            this.usersView = new collection_views.ListView({
+                collection: this.collection,
+                query: this.query,
+                viewFactory: new factory.Factory(SearchUserView, {})
+            });
+
+
+            this.paginatorView = new paginator_views.PaginatorView({
+                maxPages: 10,
+                collection: this.collection,
+                query: this.query
+            });
         },
 
         render: function() {
             this.$el.html(this.template());
-            //this.assign(this.userListView, this.listSelector);
             this.append(this.facetsView, '.search-facets');
+            this.append(this.inputHandlerView, '.search-bar');
+            this.append(this.usersView, '.search-container');
+            this.append(this.paginatorView, '.search-container');
             return this;
+        },
+
+        search: function(q) {
+            this.query.filterBy({
+                q: q
+            }).fetch();
+        },
+
+        onEnterKey: function(e) {
+            var q = this.inputHandlerView.getInputValue();
+            this.search(q);
+        },
+
+        onClick: function(e) {
+            var q = this.inputHandlerView.getInputValue();
+            this.search(q);
         }
+
     });
 
     return {

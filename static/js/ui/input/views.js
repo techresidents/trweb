@@ -166,15 +166,18 @@ define(/** @exports ui/input/views */[
         },
 
         render: function() {
+            var modelValue = this.getInputValue();
             this.$el.html();
             this.$el.attr('class', this.classes().join(' '));
+            this.getInput().val(modelValue);
             return this;
         },
 
         onModelChange: function() {
             var modelValue = this.getInputValue();
             var inputValue = this.getInput().val();
-            if(!this.trim || modelValue !== core_string.trim(inputValue)) {
+            if(!this.trim || !inputValue ||
+               modelValue !== core_string.trim(inputValue)) {
                 this.getInput().val(modelValue);
             }
         },
