@@ -65,6 +65,12 @@ define([
                 result[this.name() + '__' + this.op()] = this.value();
             }
             return result;
+        },
+
+        toString: function() {
+            var uriObject = this.toUriObject();
+            var pair = _.pairs(uriObject)[0];
+            return pair[0] + '=' + pair[1];
         }
 
     }, {
@@ -122,6 +128,16 @@ define([
      */
     var ApiQueryFilterCollection = Backbone.Collection.extend({
         model: ApiQueryFilter,
+
+        getFilters: function(name, op) {
+            var result;
+            if(op) {
+                result  = this.where({name: name, op: op});
+            } else {
+                result = this.where({name: name});
+            }
+            return result;
+        },
 
         toUriObject: function() {
             var result = {};
@@ -471,6 +487,9 @@ define([
                 delete uriObject['with'];
             }
             _.each(uriObject, function(value, key) {
+                if(!value || !key) {
+                    return;
+                }
                 //encode value and key using encodeURIPathSegment
                 //instead of encodeURIComponent since the URI
                 //is destined for the path segment. This makes
@@ -501,7 +520,7 @@ define([
             var result = instance.query();
             var parts, key, value, uriObject = {};
 
-            if(_.isString(query)) {
+            if(_.isString(query) && query) {
                 //i.e. query = 'status__in=OPEN,CLOSED;slice=10,20;order_by=created__ASC'
                 var terms = query.split(';');
                 _.each(terms, function(terms) {

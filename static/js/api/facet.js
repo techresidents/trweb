@@ -18,10 +18,10 @@ define([
 
         defaults: {
             name: null,
-            count: 0,
-            on: false,
-            on_filter: null,
-            off_filter: null
+            count: null,
+            enabled: false,
+            enable_filter: null,
+            disable_filter: null
         },
         
         name: function() {
@@ -32,16 +32,16 @@ define([
             return this.get('name');
         },
 
-        on: function() {
-            return this.get('on');
+        enabled: function() {
+            return this.get('enabled');
         },
 
-        on_filter: function() {
-            return this.get('on_filter');
+        enable_filter: function() {
+            return this.get('enable_filter');
         },
 
-        off_filter: function() {
-            return this.get('off_filter');
+        disable_filter: function() {
+            return this.get('disable_filter');
         }
     });
 
@@ -68,6 +68,7 @@ define([
             return {
                 name: null,
                 title: null,
+                filter: null,
                 items: new FacetItemCollection()
             };
         },
@@ -80,6 +81,10 @@ define([
             return this.get('title');
         },
 
+        filter: function() {
+            return this.get('filter');
+        },
+
         items:  function() {
             return this.get('items');
         },
@@ -88,6 +93,7 @@ define([
             var result = {
                 name: response.name,
                 title: response.title,
+                filter: response.filter,
                 items: this.items().reset(response.items)
             };
             return result;

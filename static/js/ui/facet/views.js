@@ -6,10 +6,13 @@ define([
     'core/factory',
     'core/view',
     'events/type',
+    'api/facet',
     'api/query',
+    'ui/ac/views',
     'ui/collection/views',
     'text!ui/facet/templates/facets.html',
     'text!ui/facet/templates/facet.html',
+    'text!ui/facet/templates/auto_facet.html',
     'text!ui/facet/templates/facet_item.html'
 ], function(
     $,
@@ -19,26 +22,32 @@ define([
     factory,
     view,
     events_type,
+    api_facet,
     api_query,
+    ac_views,
     collection_views,
     facets_template,
     facet_template,
+    auto_facet_template,
     facet_item_template) {
 
-    var EVENTS = {
-        FACET_OPEN: events_type.EventType.OPEN,
-        FACET_CLOSE: events_type.EventType.CLOSE,
-        FACET_ENABLE: 'FACET_ENABLE_EVENT',
-        FACET_DISABLE: 'FACET_DISABLE_EVENT'
+    var EventType = {
+        OPEN: events_type.EventType.OPEN,
+        CLOSE: events_type.EventType.CLOSE,
+        FILTER: 'FILTER_EVENT'
     };
 
     /**
      * Facet View.
      * @constructor
-     * @param {Object} options
-     *   name: {string} name Facet name
-     *   title: {string} name Facet title
-     *   model: {Facet} model Facet model
+     * @param {object} options
+     * @param {string} options.name facet name (i.e. f_skills)
+     * @param {string} options.title: facet title (i.e. Skills)
+     * @param {Facet} options.model Facet model
+     * @param {number} [options.sortOrder=1000] View sort order.
+     *   Views with lowest sortOrders will be display at top.
+     * @param {boolean} [options.open=true] If true view 
+     *   will be opened initially.
      */
     var FacetView = view.View.extend({
 
@@ -48,10 +57,6 @@ define([
             'click .header': 'onClick'
         },
         
-        childViews: function() {
-            return [this.facetItemsView];
-        },
-
         initialize: function(options) {
             options = _.extend({
                 template: this.defaultTemplate,
@@ -63,6 +68,7 @@ define([
             this.name = options.name;
             this.title = options.title;
             this.model = options.model;
+            this.query = options.query;
             this.viewFactory = options.viewFactory;
             this.sortOrder = options.sortOrder;
             
@@ -75,6 +81,10 @@ define([
             }
         },
 
+        childViews: function() {
+            return [this.facetItemsView];
+        },
+
         initChildViews: function() {
             this.facetItemsView = new collection_views.ListView({
                 viewFactory: this.viewFactory,
@@ -83,15 +93,19 @@ define([
         },
 
         render: function() {
-            var context = {
-                name: this.name,
-                title: this.title
-            };
+            var context = this.context();
 
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.facetItemsView, '.facet-items');
             return this;
+        },
+
+        context: function() {
+            return {
+                name: this.name,
+                title: this.title
+            };
         },
 
         classes: function() {
@@ -144,10 +158,136 @@ define([
     FacetView.Factory = factory.buildFactory(FacetView);
 
     /**
+     * Auto Facet View.
+     * @constructor
+     * @param {object} options
+     * @param {string} options.name facet name (i.e. f_skills)
+     * @param {string} options.title: facet title (i.e. Skills)
+     * @param {Facet} options.model Facet model
+     * @param {Matcher) options.matcher Autocomplete matcher
+     * @param {string} [options.placeholder] Input placeholder text
+     * @param {number} [options.sortOrder=1000] View sort order.
+     *   Views with lowest sortOrders will be display at top.
+     * @param {boolean} [options.open=true] If true view 
+     *   will be opened initially.
+     */
+    var AutoFacetView = FacetView.extend({
+
+        defaultTemplate: auto_facet_template,
+
+        events: _.extend({
+            'select .autocomplete': 'onSelect',
+            'click .add': 'onClickAdd'
+
+        }, FacetView.prototype.events),
+
+        initialize: function(options) {
+            this.matcher = options.matcher;
+            this.placeholder = options.placeholder || '';
+
+            //child views
+            this.acView = null;
+
+            //create facet items for filters which were added through
+            //autocomplete and will not be returned from the server.
+            this._createFacetItems();
+            
+            FacetView.prototype.initialize.call(this, options);
+        },
+        
+        childViews: function() {
+            result = FacetView.prototype.childViews.call(this);
+            return result;
+        },
+
+
+        initChildViews: function() {
+            FacetView.prototype.initChildViews.call(this);
+
+            this.acView = new ac_views.AutoCompleteView({
+                inputView: this,
+                inputSelector: '.auto-facet-input',
+                matcher: this.matcher
+            });
+        },
+
+        render: function() {
+            FacetView.prototype.render.call(this);
+            this.append(this.acView);
+            return this;
+        },
+
+        context: function() {
+            var result = FacetView.prototype.context.call(this);
+            result.placeholder = this.placeholder;
+            return result;
+        },
+
+        classes: function() {
+            var result = FacetView.prototype.classes.call(this);
+            result.push('auto-facet');
+            return result;
+        },
+
+        onSelect: function(e, eventBody) {
+            var enable_filter, disable_filter;
+            var match = eventBody.match;
+            var filter = api_query.ApiQueryFilter.parse(this.model.filter());
+            var facetItem = this.model.items().get(match);
+
+            this.acView.clear();
+            if(facetItem && facetItem.enabled()) {
+                return;
+            }
+
+            if(filter.value()) {
+                enable_filter = filter.setValue(filter.value() + ',' + match);
+            } else {
+                enable_filter = filter.setValue(match);
+            }
+
+            this.triggerEvent(EventType.FILTER, {
+                filter: filter
+            });
+        },
+
+        onClickAdd: function(e) {
+            //prevent url from changing to '#'
+            e.preventDefault();
+
+            this.$el.addClass('show-auto');
+            this.$('.auto-facet-input').focus();
+        },
+
+        _createFacetItems: function() {
+            var filter = api_query.ApiQueryFilter.parse(this.model.filter());
+            var values = filter.value();
+            if(!values) {
+                return;
+            }
+
+            values = values.split(',');
+            _.each(values, function(value) {
+                if(!this.model.items().get(value)) {
+                    var disableFilter = filter.clone().setValue(
+                        _.without(values, value).join(','));
+                    this.model.items().add({
+                        name: value,
+                        enabled: true,
+                        disable_filter: disableFilter
+                    });
+                }
+            }, this);
+        }
+    });
+
+    AutoFacetView.Factory = factory.buildFactory(AutoFacetView);
+
+    /**
      * Facet Item View.
      * @constructor
-     * @param {Object} options
-     *   model: {FacetItem} model FacetItem model
+     * @param {object} options
+     * @param {FacetItem} options.model FacetItem model
      */
     var FacetItemView = view.View.extend({
 
@@ -178,12 +318,12 @@ define([
             var checked = input.prop('checked');
 
             if(checked) {
-                this.triggerEvent(EVENTS.FACET_ENABLE, {
-                    facetItem: this.model
+                this.triggerEvent(EventType.FILTER, {
+                    filter: this.model.enable_filter()
                 });
             } else {
-                this.triggerEvent(EVENTS.FACET_DISABLE, {
-                    facetItem: this.model
+                this.triggerEvent(EventType.FILTER, {
+                    filter: this.model.disable_filter()
                 });
             }
         }
@@ -195,18 +335,20 @@ define([
     /**
      * Facets View.
      * @constructor
-     * @param {Object} options
-     *   config: {Object} config (required)
-     *   collection: {ApiCollection} collection (required)
-     *   query: {ApiQuery} query (required)
+     * @param {object} options
+     * @param {object} options.config: Facet config
+     * @param {ApiCollection} options.collection collection
+     * @param {ApiQuery} options.query ApiQuery query
+     * @param {boolean} [options.includeAll=true] Set to true to
+     *   include all facet views, even those not explicitly
+     *   configured.
      */
     var FacetsView = collection_views.ListView.extend({
 
         defaultTemplate: facets_template,
 
         events: {
-            'FACET_ENABLE_EVENT': 'onEnableFacet',
-            'FACET_DISABLE_EVENT': 'onDisableFacet'
+            'FILTER_EVENT': 'onFilter'
         },
         
         initialize: function(options) {
@@ -264,6 +406,7 @@ define([
                     name: options.model.name(),
                     title: title,
                     model: options.model,
+                    query: this.query,
                     viewFactory: facetItemViewFactory,
                     sortOrder: facetConfig.sortOrder || 1000,
                     open: facetConfig.open || true
@@ -298,20 +441,17 @@ define([
             this.render();
         },
 
-        onEnableFacet: function(e, eventBody) {
-            var filter = eventBody.facetItem.on_filter();
-            this._applyFilter(filter);
+        onFilter: function(e, eventBody) {
+            this._applyFilter(eventBody.filter);
         },
 
-        onDisableFacet: function(e, eventBody) {
-            var filter = eventBody.facetItem.off_filter();
-            this._applyFilter(filter);
-        },
-
-        _applyFilter: function(filterString) {
-            var filter = api_query.ApiQueryFilter.parse(filterString);
-            this.query.state.filters().remove(filter.name());
-            this.query.state.filters().add(filter);
+        _applyFilter: function(filter) {
+            if(_.isString(filter)) {
+                filter = api_query.ApiQueryFilter.parse(filter);
+            }
+            var filters = this.query.state.filters();
+            filters.remove(filters.getFilters(filter.name()));
+            filters.add(filter);
 
             var pageSize = 20;
             var slice = this.query.state.slice();
@@ -323,8 +463,10 @@ define([
     });
 
     return {
-        EVENTS: EVENTS,
-        FacetsView: FacetsView
+        EventType: EventType,
+        FacetsView: FacetsView,
+        FacetView: FacetView,
+        AutoFacetView: AutoFacetView
     };
 
 });
