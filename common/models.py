@@ -169,7 +169,7 @@ class Skill(models.Model):
         unique_together = ("user", "technology")
         db_table ="skill"
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name="skills")
     technology = models.ForeignKey(Technology)
     expertise_type = models.ForeignKey(ExpertiseType)
     yrs_experience = models.IntegerField()
