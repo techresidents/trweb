@@ -597,7 +597,11 @@ button.drop-button .caret {
 
 .facet .header {
     cursor: pointer;
-    margin: 10px 10px 10px 10px;
+    padding: 10px 10px 10px 10px;
+}
+
+.facet .header:hover {
+    background-color: #EEEEEE;
 }
 
 .facet.facet-open .facet-items {

@@ -35,7 +35,8 @@ define([
             joined: new fields.DateTimeField(),
             skills: new fields.ListField(),
             location_prefs: new fields.ListField(),
-            position_prefs: new fields.ListField()
+            position_prefs: new fields.ListField(),
+            technology_prefs: new fields.ListField()
         },
 
         relatedFields: {

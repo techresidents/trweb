@@ -98,6 +98,7 @@ define([
                     { name: 'f_skills', facetView: new facet_views.AutoFacetView.Factory({matcher: matcher })},
                     { name: 'f_location_prefs'},
                     { name: 'f_yrs_experience'},
+                    { name: 'f_technology_prefs'},
                     { name: 'f_position_prefs'},
                     { name: 'f_joined'}
                 ]
