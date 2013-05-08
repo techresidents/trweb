@@ -57,7 +57,7 @@ define(/** @exports ui/input/views */[
                 this.undelegateInputEvents();
                 this.inputView.addEventListener(this.cid, 'focus', this.onFocus, this, this.inputSelector);
                 this.inputView.addEventListener(this.cid, 'blur', this.onBlur, this, this.inputSelector);
-                this.inputView.addEventListener(this.cid, 'keypress', this.onKeyPress, this, this.inputSelector);
+                this.inputView.addEventListener(this.cid, 'keydown', this.onKeyDown, this, this.inputSelector);
             }
         },
 
@@ -191,7 +191,7 @@ define(/** @exports ui/input/views */[
             this._update();
         },
 
-        onKeyPress: function(e) {
+        onKeyDown: function(e) {
             switch(e.keyCode) {
                 case kc.KeyCodes.ENTER:
                     this._update();

@@ -560,6 +560,7 @@ define([
             // Since we retrieved all notes on the candidate, we need to
             // filter the collection down to just the employee's notes
             this.noteQuery = this.notesCollection.filterBy({
+                candidate_id: this.candidateModel.id,
                 employee_id: this.employeeModel.id,
                 tenant_id: this.employeeModel.get_tenant_id()
             });
