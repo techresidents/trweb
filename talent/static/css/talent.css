@@ -94,11 +94,12 @@
     cursor: pointer;
     position: relative;
     height: 40px;
-    background-color: #AAAAAA;
+    background-color: #eeeeee;
     width: 540px;
     border-width: 2px;
     border-style: solid;
     border-radius: 15px;
+    border-color: #eeeeee;
 }
 
 .player-scrubber-container > div {
