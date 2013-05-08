@@ -206,9 +206,14 @@ define([
         },
 
         search: function(q) {
+            var pageSize = 20;
+            var slice = this.query.state.slice();
+            if(slice) {
+                pageSize = slice.end() - slice.start();
+            }
             this.query.filterBy({
                 q: q
-            }).fetch();
+            }).slice(0, pageSize).fetch();
         },
 
         onEnterKey: function(e) {
