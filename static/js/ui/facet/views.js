@@ -236,6 +236,7 @@ define([
             var facetItem = this.model.items().get(value);
 
             this.acView.clear();
+            this.acView.clearLastMatch();
             if(facetItem && facetItem.enabled()) {
                 return;
             }

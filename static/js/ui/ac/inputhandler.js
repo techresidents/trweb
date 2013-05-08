@@ -46,7 +46,7 @@ define(/** @exports ui/ac/inputhandler */[
             this.autocomplete.selectInput();
         },
 
-        onKeyPress: function(e) {
+        onKeyDown: function(e) {
             switch(e.keyCode) {
                 case kc.KeyCodes.ESC:
                     if(this.autocomplete.isOpen()) {
