@@ -210,6 +210,10 @@ define(/** @exports ui/ac/ac */[
             } else if(this.forceSelection) {
                 this.clear();
             }
+
+            // Delay the close to give drop down view events
+            // a chance to process. If we close too early
+            // a click on the drop down may be missed.
             this.closeOnDelay();
         },
 
@@ -237,7 +241,7 @@ define(/** @exports ui/ac/ac */[
         },
 
         closeOnDelay: function() {
-            setTimeout(_.bind(this.close, this), 100);
+            setTimeout(_.bind(this.close, this), 250);
         },
 
         isOpen: function() {
