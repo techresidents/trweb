@@ -231,9 +231,9 @@ define([
 
         onSelect: function(e, eventBody) {
             var enable_filter, disable_filter;
-            var match = eventBody.match;
+            var value = eventBody.value;
             var filter = api_query.ApiQueryFilter.parse(this.model.filter());
-            var facetItem = this.model.items().get(match);
+            var facetItem = this.model.items().get(value);
 
             this.acView.clear();
             if(facetItem && facetItem.enabled()) {
@@ -241,9 +241,9 @@ define([
             }
 
             if(filter.value()) {
-                enable_filter = filter.setValue(filter.value() + ',' + match);
+                enable_filter = filter.setValue(filter.value() + ',' + value);
             } else {
-                enable_filter = filter.setValue(match);
+                enable_filter = filter.setValue(value);
             }
 
             this.triggerEvent(EventType.FILTER, {

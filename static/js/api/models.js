@@ -25,7 +25,8 @@ define([
     'api/models/job_offer',
     'api/models/job_note',
     'api/models/job_event',
-    'api/models/user_search'
+    'api/models/user_search',
+    'api/models/technology_search'
 ], function(
     $,
     _,
@@ -53,7 +54,8 @@ define([
     job_offer_models,
     job_note_models,
     job_event_models,
-    user_search_models) {
+    user_search_models,
+    technology_search_models) {
 
 
     return {
@@ -104,6 +106,8 @@ define([
         JobEvent: job_event_models.JobEvent,
         JobEventCollection: job_event_models.JobEventCollection,
         UserSearch: user_search_models.UserSearch,
-        UserSearchCollection: user_search_models.UserSearchCollection
+        UserSearchCollection: user_search_models.UserSearchCollection,
+        TechnologySearch: technology_search_models.TechnologySearch,
+        TechnologySearchCollection: technology_search_models.TechnologySearchCollection
     };
 });

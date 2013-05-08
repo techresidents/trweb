@@ -5,6 +5,7 @@ define([
     'core/array',
     'core/view',
     'api/loader',
+    'api/models',
     'ui/ac/matcher',
     'ui/collection/views',
     'ui/input/views',
@@ -19,6 +20,7 @@ define([
     array,
     view,
     api_loader,
+    api,
     ac_matcher,
     collection_views,
     input_views,
@@ -90,15 +92,33 @@ define([
      */
     var SearchFacetsView = facet_views.FacetsView.extend({
         initialize: function(options) {
-            var matcher = new ac_matcher.ArrayMatcher({
-                data: ['Python', 'Test']
+            var matcher = new ac_matcher.QueryMatcher({
+                queryFactory: new factory.FunctionFactory(function(options) {
+                    var query = new api.TechnologySearchCollection();
+                    query = query.filterBy({
+                        ac: options.search
+                    }).slice(0, options.maxResults);
+                    return query;
+                }),
+                stringify: function(technology) {
+                    return technology.get_name();
+                }
             });
+
             var config = {
                 facets: [
-                    { name: 'f_skills', facetView: new facet_views.AutoFacetView.Factory({matcher: matcher })},
+                    {
+                        name: 'f_skills',
+                        facetView: new facet_views.AutoFacetView.Factory({
+                            matcher: matcher })
+                    },
                     { name: 'f_location_prefs'},
                     { name: 'f_yrs_experience'},
-                    { name: 'f_technology_prefs'},
+                    {
+                        name: 'f_technology_prefs',
+                        facetView: new facet_views.AutoFacetView.Factory({
+                            matcher: matcher })
+                    },
                     { name: 'f_position_prefs'},
                     { name: 'f_joined'}
                 ]
