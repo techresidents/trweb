@@ -46,6 +46,7 @@ define([
             'playback/:id': 'playback',
             'tracker(/:query)': 'tracker',
             'user/:id': 'user',
+            'search(/:query)': 'search',
             '*actions': 'search'
 
         },
@@ -89,12 +90,14 @@ define([
             }, this));
         },
 
-        search: function() {
+        search: function(query) {
             require(['talent/search/mediators'], _.bind(function(mediators) {
                 this.ensureMediator(mediators.SearchMediator);
                 this.facade.trigger(notifications.VIEW_CREATE, {
                     type: mediators.SearchMediator.VIEW_TYPE,
-                    options: {}
+                    options: {
+                        query: query
+                    }
                 });
             }, this));
         },
@@ -139,6 +142,9 @@ define([
             switch(options.type) {
                 case 'SearchView':
                     uri = 'search';
+                    if(options.query) {
+                        uri += '/' + options.query;
+                    }
                     router.navigate(uri, {trigger: options.trigger});
                     break;
                 case 'TrackerView':

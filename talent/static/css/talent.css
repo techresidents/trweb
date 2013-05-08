@@ -9,7 +9,7 @@
     left: 0;
     right: 0;
     z-index: 99;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABaCAYAAACBvMdKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAADJJREFUeNrsyjEBACAIADCwf0bMgAW0Ar/bvazaNwZWDGV3H1EURVEURVEURfHb+AQYAAGvT73//pyjAAAAAElFTkSuQmCC);
+    background-color: #292929;
     background-repeat: repeat-x;
 }
 
@@ -35,6 +35,17 @@
     margin-top: 10px;
 }
 
+
+.player a {
+    color: #cccccc;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #444444;
+}
+
+.player a:hover {
+    color: #ea8f00;
+}
+
 .player-btn {
     width: 30px;
     height: 30px;
@@ -56,7 +67,7 @@
     vertical-align: top;
     margin-top: 42px;
     font-size: 14pt;
-    color: #666666;
+    color: #cccccc;
 }
 
 .player-play {
@@ -83,8 +94,16 @@
     cursor: pointer;
     position: relative;
     height: 40px;
-    background-color: #AAAAAA;
+    background-color: #eeeeee;
     width: 540px;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 15px;
+    border-color: #eeeeee;
+}
+
+.player-scrubber-container > div {
+    border-radius: 15px;
 }
 
 .player-scrubber-buffer {
@@ -154,6 +173,7 @@
     display: inline-block;
     margin-left: 5px;
     margin-right: 5px;
+    color: #cccccc;
 }
 
 .player-expand {
@@ -418,6 +438,7 @@
     margin-right: 5px;
     padding: 3px 7px 3px 7px;
     color: rgb(104,104,104);
+    vertical-align: text-bottom;
 }
 
 .user-skills-list-container > div {
@@ -436,7 +457,7 @@
 }
 
 .chat-title {
-    font-size: 18px;
+    font-size: 14pt;
     line-height: 20px;
     font-weight: bold;
     margin-right: 5px;
@@ -563,4 +584,19 @@
     margin: 5px 0;
 }
 
+.search-bar {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 
+.search-bar .search-input {
+    margin-bottom: 0px;
+}
+.search-container ul {
+    list-style: none;
+    margin: 0 0 0 0;
+}
+
+.search-container li {
+    margin-bottom: 5px;
+}

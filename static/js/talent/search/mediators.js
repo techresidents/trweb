@@ -3,13 +3,15 @@ define([
     'common/notifications',
     'core/mediator',
     'api/models',
+    'api/query',
     'talent/search/views'
 ], function(
     _,
     notifications,
     mediator,
     api,
-    talent_views) {
+    api_query,
+    search_views) {
 
     /**
      * Search Mediator
@@ -34,24 +36,34 @@ define([
 
         initialize: function(options) {
             this.view = null;
+            this.defaultCollection = new api.UserSearchCollection();
+            this.defaultQuery = this.defaultCollection.slice(0, 10);
+
+            this.collection = null;
+            this.query = null;
         },
 
         onCreateView: function(notification) {
             if (notification.type === this.viewType()) {
-                var developerTenantID = 'zik0zk';
-                this.collection = new api.UserCollection();
+                var uri = notification.options.query ||
+                    this.defaultQuery.toUri();
+
+                this.collection = this.defaultCollection.clone();
                 this.collection.on('reset', this.onReset, this);
-                this.query = this.collection.filterBy({
-                    'tenant_id__eq':  developerTenantID
-                });
-                this.view = new talent_views.SearchView({
+                this.query = api_query.ApiQuery.parse(this.collection, uri);
+
+                this.view = new search_views.SearchView({
                     collection: this.collection,
                     query: this.query
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
-                    view: this.view
+                    view: this.view,
+                    options: _.extend(notification.options, {
+                        collection: this.collection,
+                        query: this.query
+                    })
                 });
             }
         },
@@ -59,6 +71,7 @@ define([
         onDestroyView: function(notification) {
             if (notification.type === this.viewType()) {
                 notification.view.destroy();
+                notification.options.collection.off('reset', this.onReset, this);
 
                 this.facade.trigger(notifications.VIEW_DESTROYED, {
                     type: this.viewType(),
@@ -70,16 +83,15 @@ define([
             }
         },
 
-        /**
-         * Method to listen for reset events on the collection
-         * and update the URL to include any query parameters.
-         */
         onReset: function() {
+            var uri = this.query.toUri();
+            if(uri === this.defaultQuery.toUri()) {
+                uri = null;
+            }
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
-                type: this.viewType(),
-                query: this.query.toUri(),
-                trigger: false,
-                replace: false
+                type: SearchMediator.VIEW_TYPE,
+                query: uri,
+                trigger: false
             });
         }
 

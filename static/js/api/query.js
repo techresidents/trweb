@@ -3,12 +3,14 @@ define([
     'underscore',
     'backbone',
     'core/base',
+    'core/uri',
     'api/fetcher'
 ], function(
     $,
     _,
     Backbone,
     base,
+    uri,
     api_fetcher) {
         
     
@@ -63,6 +65,12 @@ define([
                 result[this.name() + '__' + this.op()] = this.value();
             }
             return result;
+        },
+
+        toString: function() {
+            var uriObject = this.toUriObject();
+            var pair = _.pairs(uriObject)[0];
+            return pair[0] + '=' + pair[1];
         }
 
     }, {
@@ -80,15 +88,16 @@ define([
             'endswith': 'endswith',
             'iendswith': 'iendswith',
             'range': 'range',
+            'ranges': 'ranges',
             'isnull': 'isnull'
         },
 
         parse: function(name, value) {
             var result, parts, op;
-
-            //i.e. 'requisition__status__in=OPEN,CLOSED'
+            
+            //i.e. name='requisition__status__in=OPEN,CLOSED'
             if(value === undefined || value === null) {
-                parts = value.split(value, '=');
+                parts = name.split('=');
                 name = _.first(parts);
                 value = _.rest(parts).join('=');
             }
@@ -119,6 +128,16 @@ define([
      */
     var ApiQueryFilterCollection = Backbone.Collection.extend({
         model: ApiQueryFilter,
+
+        getFilters: function(name, op) {
+            var result;
+            if(op) {
+                result  = this.where({name: name, op: op});
+            } else {
+                result = this.where({name: name});
+            }
+            return result;
+        },
 
         toUriObject: function() {
             var result = {};
@@ -468,12 +487,19 @@ define([
                 delete uriObject['with'];
             }
             _.each(uriObject, function(value, key) {
+                if(!value || !key) {
+                    return;
+                }
+                //encode value and key using encodeURIPathSegment
+                //instead of encodeURIComponent since the URI
+                //is destined for the path segment. This makes
+                //for better looking URI's.
+                value = uri.encodeURIPathSegment(value);
+                key = uri.encodeURIPathSegment(key);
                 terms.push(key + '=' + value);
             });
             
-            //use encodeURI instead of encodeURIComponent 
-            //for better looking uri's.
-            result = encodeURI(terms.join('+'));
+            result = terms.join(';');
             return result;
         },
 
@@ -492,15 +518,16 @@ define([
 
         parse: function(instance, query) {
             var result = instance.query();
-            var parts, uriObject = {};
+            var parts, key, value, uriObject = {};
 
-            if(_.isString(query)) {
-                //i.e. query = 'status__in=OPEN,CLOSED+slice=10,20+order_by=created_ASC'
-                query = decodeURIComponent(query);
-                var terms = query.split('+');
+            if(_.isString(query) && query) {
+                //i.e. query = 'status__in=OPEN,CLOSED;slice=10,20;order_by=created__ASC'
+                var terms = query.split(';');
                 _.each(terms, function(terms) {
                     parts = terms.split('=');
-                    uriObject[_.first(parts)] = decodeURIComponent(_.rest(parts).join('='));
+                    key = decodeURIComponent(_.first(parts));
+                    value  = decodeURIComponent(_.rest(parts).join('='));
+                    uriObject[key] = value;
                 });
             } else if(_.isObject(query)) {
                 uriObject = query;

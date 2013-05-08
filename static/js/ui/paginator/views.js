@@ -58,12 +58,15 @@ define([
         stats: function() {
             var start = 0, end = 0;
             var pageSize = 20, currentPage = 0, totalPages = 0;
-            var totalCount =0;
+            var totalCount = 0;
             var slice = this.query.state.slice();
 
             if(this.collection.isLoaded()) {
                 if(slice) {
                     pageSize = slice.end() - slice.start();
+                    if(pageSize === 0) {
+                        pageSize = 1;
+                    }
                     currentPage = Math.ceil(slice.end() / pageSize);
                 } else {
                     pageSize = 20;

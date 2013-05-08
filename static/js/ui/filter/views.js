@@ -357,7 +357,7 @@ define([
         filterToDateRange: function(filter) {
             var start, end, values, result;
             if(filter) {
-                values = filter.value().split(',');
+                values = filter.value().split(':');
                 start = date.Date.fromTimestamp(parseFloat(values[0]));
                 end = date.Date.fromTimestamp(parseFloat(values[1]));
                 result =new date.DateRange(start, end);
@@ -374,7 +374,7 @@ define([
                 values = [start.getTimestamp(), end.getTimestamp()];
                 result = new api_query.ApiQueryFilter({
                     name: this.field,
-                    value: values.join(','),
+                    value: values.join(':'),
                     op: 'range'
                 });
             }

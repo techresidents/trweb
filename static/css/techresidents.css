@@ -418,6 +418,7 @@ button.drop-button .caret {
     max-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
+    vertical-align: middle;
     white-space: nowrap;
 }
 
@@ -582,3 +583,100 @@ button.drop-button .caret {
     height: 1px;
     width: 1px;
 }
+
+.facets {
+    list-style: none;
+    margin: 0px;
+}
+
+.facet {
+    border-bottom: 1px solid #dddddd;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.facet .header {
+    cursor: pointer;
+    padding: 10px 10px 10px 10px;
+}
+
+.facet .header:hover {
+    background-color: #EEEEEE;
+}
+
+.facet.facet-open .facet-items {
+    display: block;
+}
+
+.facet.facet-open .arrow {
+    float: right;
+    border-top: 0px;
+    border-bottom: 5px solid #000000;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    margin-top: 6px;
+}
+
+.facet .arrow {
+    float: right;
+    border-top: 5px solid #000000;
+    border-bottom: 0px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    margin-top: 6px;
+}
+
+.facet-items ul {
+    list-style: none;
+    margin: 0px;
+}
+
+.facet-items {
+    display: none;
+}
+
+.facet-item label {
+    cursor: pointer;
+}
+
+.facet-item .name {
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 150px;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.facet-item .count {
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 14px;
+    margin-top: 3px;
+    margin-left: 2px;
+    margin-right: 20px;
+}
+
+.auto-facet .auto-controls {
+    display: none;
+    font-weight: normal;
+}
+
+.auto-facet.facet-open .auto-controls {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.auto-facet .auto-facet-input {
+    display: none;
+}
+
+.auto-facet.show-auto .auto-facet-input {
+    display: block;
+}
+
+.auto-facet.show-auto .add {
+    display: none;
+}
+

@@ -1,1 +1,25 @@
-<a href='/talent/user/<%= id %>'><%=id%> <%=first_name %></a>
+<a href='/talent/user/<%= id %>'>{<%= id %>}</a>
+<div class="skills">
+    <span><strong>Skills</strong></span>
+    <% _.each(skills, function(skill) { %>
+    <span><%= skill.name %>,</span>
+    <% }); %>
+</div>
+<div class="location-prefs">
+    <span><strong>Location Preference</strong></span>
+    <% _.each(location_prefs, function(location) { %>
+    <span><%= location.city %>,</span>
+    <% }); %>
+</div>
+<div class="technology-prefs">
+    <span><strong>Technology Preference</strong></span>
+    <% _.each(technology_prefs, function(technology) { %>
+    <span><%= technology.name %>,</span>
+    <% }); %>
+</div>
+<div class="position-prefs">
+    <span><strong>Position Preference</strong></span>
+    <% _.each(position_prefs, function(position) { %>
+    <span><%= position.type %>,</span>
+    <% }); %>
+</div>

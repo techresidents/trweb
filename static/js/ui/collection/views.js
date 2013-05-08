@@ -1,12 +1,14 @@
 define([
     'jquery',
     'underscore',
+    'core/array',
     'core/base',
     'core/factory',
     'core/view'
 ], function(
     $,
     _,
+    array,
     base,
     factory,
     view) {
@@ -37,6 +39,7 @@ define([
             this.collection = options.collection;
             this.viewFactory = options.viewFactory;
             this.selector = options.selector;
+            this.sort = options.sort;
             this.modelViewMap = {};
             
             //bind events
@@ -61,10 +64,19 @@ define([
             var view = this.viewFactory.create({
                 model: model
             });
-            view.$el.addClass(this.childClasses().join(' '));
-            view.$el.data('id', model.id || model.cid);
-            this.childViews.push(view);
-            this.modelViewMap[model.cid] = view;
+            if(view) {
+                view.$el.addClass(this.childClasses().join(' '));
+                view.$el.data('id', model.id || model.cid);
+                if(this.sort) {
+                    var sort = this.sort;
+                    array.binaryInsert(this.childViews, view, function(a, b) {
+                        return array.defaultCompare(sort(a), sort(b));
+                    });
+                } else {
+                    this.childViews.push(view);
+                }
+                this.modelViewMap[model.cid] = view;
+            }
             return view;
         },
 
@@ -100,7 +112,7 @@ define([
 
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
-
+            
             _.each(this.childViews, this.appendChildView, this);
             return this;
         },
@@ -112,7 +124,11 @@ define([
 
         onAdd: function(model) {
             var view = this.createChildView(model);
-            this.appendChildView(view);
+            if(this.sort) {
+                this.render();
+            } else {
+                this.appendChildView(view);
+            }
         },
 
         onRemove: function(model) {
@@ -132,18 +148,11 @@ define([
     var WrapperView = view.View.extend({
 
         initialize: function(options) {
-            this.viewFactory = options.viewFactory;
-            delete options.viewFactory;
-            this.childView = this.createChildView(options);
+            this.childView = options.view;
         },
 
         childViews: function() {
             return [this.childView];
-        },
-
-        createChildView: function(options) {
-            var view = this.viewFactory.create(options);
-            return view;
         },
 
         render: function() {
@@ -177,9 +186,21 @@ define([
 
             if(options.wrap) {
                 var originalViewFactory = options.viewFactory;
-                options.viewFactory = new factory.Factory(ListItemWrapperView, {
-                    viewFactory: originalViewFactory
+                options.viewFactory = new factory.FunctionFactory(function(options) {
+                    var view = null;
+                    var originalView = originalViewFactory.create(options);
+                    if(originalView) {
+                        view = new ListItemWrapperView({view: originalView});
+                    }
+                    return view;
                 });
+
+                if(options.sort) {
+                    var sort = options.sort;
+                    options.sort = function(view) {
+                        return sort(view.childView);
+                    };
+                }
             }
 
             CollectionView.prototype.initialize.call(this, options);
