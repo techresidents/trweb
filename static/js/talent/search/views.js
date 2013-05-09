@@ -112,15 +112,16 @@ define([
                         facetView: new facet_views.AutoFacetView.Factory({
                             matcher: matcher })
                     },
-                    { name: 'f_location_prefs'},
-                    { name: 'f_yrs_experience'},
+                    { name: 'f_location_prefs', open: false},
+                    { name: 'f_yrs_experience', open: false},
                     {
                         name: 'f_technology_prefs',
                         facetView: new facet_views.AutoFacetView.Factory({
-                            matcher: matcher })
+                            matcher: matcher }),
+                        open: false
                     },
-                    { name: 'f_position_prefs'},
-                    { name: 'f_joined'}
+                    { name: 'f_position_prefs', open: false},
+                    { name: 'f_joined', open: false}
                 ]
             };
 
@@ -151,6 +152,9 @@ define([
             this.collection = options.collection;
             this.query = options.query;
             this.query.fetch();
+            
+            //bind events
+            this.listenTo(this.collection, 'reset', this.onReset);
 
             //child views
             this.facetsView = null;
@@ -214,6 +218,10 @@ define([
             this.query.filterBy({
                 q: q
             }).slice(0, pageSize).fetch();
+        },
+
+        onReset: function() {
+            $('html,body').scrollTop(0);
         },
 
         onEnterKey: function(e) {

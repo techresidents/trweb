@@ -402,6 +402,7 @@ define([
                     this.facetViewFactory;
                 var facetItemViewFactory = facetConfig.facetItemView ||
                     this.facetItemViewFactory;
+                var open = facetConfig.open === false ? false : true;
                 
                 view = facetViewFactory.create({
                     name: options.model.name(),
@@ -410,7 +411,7 @@ define([
                     query: this.query,
                     viewFactory: facetItemViewFactory,
                     sortOrder: facetConfig.sortOrder || 1000,
-                    open: facetConfig.open || true
+                    open: open
                 });
             }
 
