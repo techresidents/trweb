@@ -8,7 +8,7 @@
 }
 
 .landing-container {
-    padding-top: 20px;
+    padding-top: 45px;
     padding-bottom: 20px;
 }
 
@@ -41,6 +41,10 @@
     color: black;
     font-size: 20px;
     font-weight: bold;
+}
+
+.landing-list {
+    margin-top: 15px;
 }
 
 .landing-list li {
