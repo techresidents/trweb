@@ -66,7 +66,7 @@ define([
             var skills = _.sortBy(this.model.get_skills(), function(skill) {
                 var expertise = 1;
                 var yrs_experience = skill.yrs_experience || 1;
-                switch(skill.expertise) {
+                switch(skill.expertise_type) {
                     case 'Proficient':
                         expertise = 2;
                         break;
@@ -110,14 +110,18 @@ define([
                     {
                         name: 'f_skills',
                         facetView: new facet_views.AutoFacetView.Factory({
-                            matcher: matcher })
+                            matcher: matcher,
+                            placeholder: 'e.g. Python'
+                        })
                     },
                     { name: 'f_location_prefs'},
                     { name: 'f_yrs_experience'},
                     {
                         name: 'f_technology_prefs',
                         facetView: new facet_views.AutoFacetView.Factory({
-                            matcher: matcher })
+                            matcher: matcher,
+                            placeholder: 'e.g. Python'
+                        })
                     },
                     { name: 'f_position_prefs'},
                     { name: 'f_joined'}
