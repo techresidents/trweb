@@ -4,26 +4,25 @@
 }
 
 #landing-banner {
-    height: 360px;
+    height: 700px;
 }
-
-#landing-lower-banner {
-    margin-bottom: 60px;
-}
-
-#landing-details-container {
-    margin-top: 20px;
-    margin-bottom: 0px;
-}
-
 
 .landing-container {
     padding-top: 20px;
+    padding-bottom: 20px;
 }
 
-.landing-blue-stripe {
-    background-color: #2A73A7;
-    background-repeat: repeat-x;
+.landing-headline .hero-unit {
+    background-color: transparent;
+}
+
+.landing-headline .hero-unit > * {
+    text-align: center;
+}
+
+.landing-headline .hero-unit h1 {
+    color: black;
+    font-size: 60px;
 }
 
 .landing-gray-stripe {
@@ -31,37 +30,17 @@
     background-repeat: repeat-x;
 }
 
-.landing-text-white {
-    color: white;
+.landing-photo {
+    background: url("../img/office6.png") fixed no-repeat;
 }
 
-.landing-text-offwhite {
-    color: #eeeeee;
-}
-
-.landing-text-orange {
-    color: #EA8F00;
-}
-
-.landing-brand-text {
+.landing-slogan {
+    margin-top: 20px;
+    margin-left: 140px;
+    margin-right: 140px;
+    color: black;
+    font-size: 20px;
     font-weight: bold;
-    font-family: Arial;
-    font-size: 65px;
-    line-height: 1;
-}
-
-.landing-messaging-text {
-    font-weight: bold;
-    font-family: Arial;
-    font-size: 38px;
-    line-height: 45pt;
-}
-
-.landing-messaging-details-text {
-    font-weight: lighter;
-    font-family: Helvetica;
-    font-size: 30px;
-    line-height: 33pt;
 }
 
 .landing-list li {
