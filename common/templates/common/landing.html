@@ -11,12 +11,14 @@
 {% endblock %}
 
 {% block extrahead %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link href="{% static "css/landing.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 
-    <div id="landing-banner" class="landing-photo">
+    <div id="landing-banner" class="landing-background-photo">
         <div class="landing-container container">
             <div class="row">
                 <div class="span12">
@@ -25,8 +27,8 @@
                             <h1>Talk Tech. Get Hired.</h1>
                             <p class="landing-slogan">A free platform for software developers to discuss real-world software topics and showcase their talent to hiring companies.</p>
                             <p>
-                                <a id="developers-scroll-btn" class="btn btn-primary btn-large" href="#">Developers</a>
-                                <a id="employers-scroll-btn" class="btn btn-primary btn-large" href="#">Employers</a>
+                                <a id="developers-scroll-btn" class="btn btn-primary btn-large" href="javascript:void(0)">Developers</a>
+                                <a id="employers-scroll-btn" class="btn btn-primary btn-large" href="javascript:void(0)">Employers</a>
                             </p>
                         </div>
                     </div>
@@ -56,7 +58,7 @@
                         <li><h4>Don't let your resumé speak for you</h4><p>Chat alone or with a friend about real-world software topics and let hiring companies compete for you.</p></li>
                         <li><h4>Earn what you're worth</h4><p>Our platform gives companies the opportunity to compete for you, ensuring that you get paid what you're worth.</p></li>
                         <li><h4>Get paid</h4><p>Get paid 20% of our recruitment fee, typically $2,400 - $6,000.</p></li>
-                        <li><h4>Privacy matters</h4><p>Your identity is kept hidden from hiring companies until you choose to reveal it.</p></li>
+                        <li><h4>Privacy matters</h4><p>Your identity is kept private from hiring companies until you decide to act on an offer.</p></li>
                         <li><h4>No commitment</h4><p>Our platform is free and there's no obligation to accept employer offers.</p></li>
                         <a class="btn btn-large btn-success" href="{% url 'accounts.views.register'%}">Sign Up</a>
                         <a class="btn btn-large btn-primary" href="{% url 'common.views.developer_learn_more'%}">Learn More</a>
@@ -80,7 +82,6 @@
                         <a class="btn btn-large btn-success" href="{% url 'accounts.views.register_employer'%}">Sign Up</a>
                         <a class="btn btn-large btn-primary" href="{% url 'common.views.employer_learn_more'%}">Learn More</a>
                     </ul>
-
                 </div>
             </div>
         </div>
@@ -93,13 +94,15 @@
             $("#developers-scroll-btn").click(function() {
                 $('html, body').animate({
                     scrollTop: $("#js-developer-info").offset().top
-                }, 1200);
+                }, 1100);
+                return false;
             });
 
             $("#employers-scroll-btn").click(function() {
                 $('html, body').animate({
                     scrollTop: $("#js-employer-info").offset().top
-                }, 1200);
+                }, 1100);
+                return false;
             });
 
         });
