@@ -52,7 +52,7 @@ define([
             var skills = _.sortBy(this.model.get_skills(), function(skill) {
                 var expertise = 1;
                 var yrs_experience = skill.yrs_experience || 1;
-                switch(skill.expertise) {
+                switch(skill.expertise_type) {
                     case 'Proficient':
                         expertise = 2;
                         break;

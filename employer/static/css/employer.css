@@ -687,3 +687,58 @@
 #wishlist-input {
     margin-bottom: 10px;
 }
+
+.search-bar {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.search-bar .search-input {
+    margin-bottom: 0px;
+}
+.search-container ul {
+    list-style: none;
+    margin: 0 0 0 0;
+}
+
+.search-container li {
+    margin-bottom: 5px;
+}
+
+.user-search-result {
+    border-bottom-color: #EA8F00;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    font-size: 13px;
+}
+
+.user-search-result-container {
+    padding-top: 5px;
+    padding-bottom: 10px;
+}
+
+.user-search-result-logo {
+    display: inline-block;
+    vertical-align: text-bottom;
+    width: 26px;
+    height: 20px;
+}
+
+.user-search-result-title {
+    font-size: 20px;
+}
+
+.user-search-result .skills {
+    margin-top: 4px;
+}
+
+.user-search-result .skills .user-skills-container {
+    display: inline-block;
+}
+
+.user-search-result .skills .user-skills-container > div {
+    margin-bottom: 2px;
+    margin-right: 1px;
+    font-size: 12px;
+    line-height: 24px;
+}
