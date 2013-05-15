@@ -26,11 +26,15 @@
     },
     
     packages: [
-        { name: 'core', location: 'packages/core' },
-        { name: 'xd', location: 'packages/xd' },
-        { name: 'events', location: 'packages/events' },
+        { name: 'alert', location: 'packages/alert' },
         { name: 'api', location: 'packages/api' },
-        { name: 'ui', location: 'packages/ui' }
+        { name: 'chat', location: 'packages/chat' },
+        { name: 'core', location: 'packages/core' },
+        { name: 'ctrl', location: 'packages/ctrl' },
+        { name: 'events', location: 'packages/events' },
+        { name: 'notifications', location: 'packages/notifications' },
+        { name: 'ui', location: 'packages/ui' },
+        { name: 'xd', location: 'packages/xd' }
     ],
 
     shim: {

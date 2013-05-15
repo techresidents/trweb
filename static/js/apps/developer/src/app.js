@@ -28,12 +28,36 @@ define([
      */
     var AppRouter = Backbone.Router.extend({
         routes: {
+            'chat/:id': 'chat',
+            'topic/:id': 'topic',
             '*actions': 'placeholder'
         },
         
         initialize: function(options) {
             this.facade = options.facade;
 
+        },
+
+        chat: function(id) {
+            require(['chat'], _.bind(function(chat) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: chat.mediators.chat.ChatMediator.VIEW_TYPE,
+                    options: {
+                        id: id
+                    }
+                });
+            }, this));
+        },
+
+        topic: function(id) {
+            require(['chat'], _.bind(function(chat) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: chat.mediators.topic.TopicMediator.VIEW_TYPE,
+                    options: {
+                        id: id
+                    }
+                });
+            }, this));
         },
 
         placeholder: function() {
