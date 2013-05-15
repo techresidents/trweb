@@ -1,0 +1,10 @@
+<% if(chatSession) { %>
+<p>
+    <a href="/talent/playback/<%= chatSession.id %>"><%= title %></a>
+    <% if(!hasArchive) { %>
+        <span class="player-alert"> - Archive is currently unavailable.</span>
+    <% } %>
+</p>
+<% } else { %>
+<p><%= title %></p>
+<% } %>

@@ -1,0 +1,73 @@
+<div class="span7">
+    <h3 class="user-section-border-bottom">User Profile <span rel="tooltip" title="Anonymous user ID" class="orange-text normal-font">{<%= model.id %>}</span></h3>
+</div>
+<div class="span8 user-position-prefs-container">
+
+    <div class="span2-5">
+        <p>Seeking position types</p>
+        <div class="well">
+            <ul class="position-prefs unstyled">
+                <% if (!model.position_prefs.length) { %>
+                <span><em>No jobs provided</em></span>
+                <% } else { %>
+
+                <% _.each(model.position_prefs, function(position) { %>
+                <li><%= position.type %> <em><%= position.salary_start ? fmt.num(position.salary_start/1000, 'cn0')+'k' : '' %></em></li>
+                <% }); %>
+
+                <% if (model.position_prefs.length > 3) { %>
+                <a class="slide-toggle">more</a>
+                <% } %>
+
+                <% } %>
+            </ul>
+        </div>
+    </div>
+
+    <div class="span2-5">
+        <p>In these locations</p>
+        <div class="well">
+            <ul class="location-prefs unstyled">
+                <% if (!model.location_prefs.length) { %>
+                <span><em>No locations provided</em></span>
+                <% } else { %>
+
+                <% _.each(model.location_prefs, function(location) { %>
+                <% if(location.city) { %>
+                <li><%= location.city %>, <%= location.state %></li>
+                <% } else { %>
+                <li><%= location.state %></li>
+                <% } %>
+                <% }); %>
+
+                <% if (model.location_prefs.length > 3) { %>
+                <a class="slide-toggle">more</a>
+                <% } %>
+
+                <% } %>
+            </ul>
+        </div>
+    </div>
+
+    <div class="span2-5">
+        <p>With these technologies</p>
+        <div class="well">
+            <ul class="technology-prefs unstyled">
+                <% if (!sortedTechPrefs.length) { %>
+                <span><em>No technologies provided</em></span>
+                <% } else { %>
+
+                <% _.each(sortedTechPrefs, function(technology) { %>
+                <li><%= technology.name %></li>
+                <% }); %>
+
+                <% if (sortedTechPrefs.length > 3) { %>
+                <a class="slide-toggle">more</a>
+                <% } %>
+
+                <% } %>
+            </ul>
+        </div>
+    </div>
+
+</div>

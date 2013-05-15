@@ -1,0 +1,7 @@
+<% if(model.vote === true) { %>
+<span class="alert alert-success"><i class="icon-thumbs-up"></i><strong> Yes</strong></span>
+<% } else if(model.vote === false ) { %>
+<span class="alert alert-error"><i class="icon-thumbs-down"></i><strong> No</strong></span>
+<% } else { %>
+<span></span>
+<% } %>

@@ -1,0 +1,25 @@
+<table>
+    <thead>
+        <tr>
+            <th class="prev">‹</th>
+            <th colspan="5" class="month"><%= month %> <%= year %></th>
+            <th class="next">›</th>
+        </tr>
+        <tr>
+        <% _.each(daysOfWeek, function(dayOfWeek) { %>
+            <th class="day-of-week"> <%= dayOfWeek %></th>
+        <% }); %>
+        </tr>
+    </thead>
+    <tbody>
+    <% _.each(weeks, function(week) { %>
+        <tr class="week">
+            <% _.each(week, function(day) { %>
+            <td data-timestamp="<%= day.timestamp %>" class="day<%= day.selected ? ' selected' : '' %><%= day.leftover ? ' leftover' : '' %>">
+                <%= day.date %>
+            </td>
+            <% }); %>
+        </tr>
+    <% }); %>
+    </tbody>
+</table>

@@ -3,8 +3,8 @@ define([
     'underscore',
     'backbone',
     'profile/models',
-    'typeahead/views',
-    'lookup/views'
+    'typeahead',
+    'lookup'
 ], function($, _, Backbone, models, typeahead, lookup) {
 
 
@@ -119,7 +119,7 @@ define([
 
         initialize: function() {
             this.setElement($("#skill-add"));
-            this.typeaheadView = new typeahead.TypeaheadView({
+            this.typeaheadView = new typeahead.views.TypeaheadView({
                 el: this.$("#skill-input"),
                 maxResults: 5,
                 forceSelection: true,
@@ -437,7 +437,7 @@ define([
             this.lookupValue = null;
             this.lookupData = null;
 
-            new lookup.LookupView({
+            new lookup.views.LookupView({
                 el: this.$("#technology-input"),
                 scope: 'technology',
                 property: 'name',
@@ -633,7 +633,7 @@ define([
             this.lookupValue = null;
             this.lookupData = null;
 
-            new lookup.LookupView({
+            new lookup.views.LookupView({
                 el: this.$("#location-input"),
                 scope: 'location',
                 property: 'name',

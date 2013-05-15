@@ -1,0 +1,28 @@
+<div class="modal">
+    <div class="modal-header">
+        <% if(showClose) { %>
+        <button class="close" type="button">x</button>
+        <% } %>
+        <h3><%= title %></h3>
+    </div>
+    <div class="modal-body">
+        <div class="content"></div>
+    </div>
+    <div class="modal-footer">
+        <% if(showAction) { %>
+        <button class="btn btn-primary action" type="button"><%= action %></button>
+        <% } %>
+
+        <% if(showSave) { %>
+        <button class="btn btn-primary save" type="button">Save</button>
+        <% } %>
+
+        <% if(showOk) { %>
+        <button class="btn btn-primary ok" type="button">Ok</button>
+        <% } %>
+
+        <% if(showCancel) { %>
+        <button class="btn cancel" type="button">Cancel</button>
+        <% } %>
+    </div>
+</div>
