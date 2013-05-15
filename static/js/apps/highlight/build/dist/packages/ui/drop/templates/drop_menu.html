@@ -1,8 +1,0 @@
-<ul>
-    <% _.each(items, function(item) { %>
-    <% if(item.key === 'divider') { %>
-    <div class="drop-menu-divider"</>
-    <% } else { %>
-    <li><a data-item="<%= item.key %>" class="drop-menu-item drop-menu-item-<%= item.key %>" href="javascript:void(0)"><%=item.label %></a></li>
-    <% }}); %>
-</ul>
