@@ -23,13 +23,13 @@
 {% if USER.is_employer %}
     <ul class="nav">
         <li>
-            <a href="{% url 'talent.views.talent' %}">Talent Search</a>
+            <a href="{% url 'employer.views.employer' %}search">Talent Search</a>
         </li>
         <li>
-            <a href="{% url 'talent.views.talent' %}tracker">Applicant Tracker</a>
+            <a href="{% url 'employer.views.employer' %}tracker">Applicant Tracker</a>
         </li>
         <li>
-            <a href="{% url 'requisition.views.requisition' %}list">Requisitions</a>
+            <a href="{% url 'employer.views.employer' %}requisition/list">Requisitions</a>
         </li>
         <li>
             <a href="{% url 'feedback.views.feedback' %}">Feedback</a>

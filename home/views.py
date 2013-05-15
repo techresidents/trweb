@@ -49,13 +49,13 @@ def compute_recommended_employer_actions(request):
         filter(tenant=request.user.tenant). \
         count()
     if requisition_count > 0:
-        relative_link = reverse("requisition.views.requisition")
+        relative_link = reverse("employer.views.employer")
         absolute_link = request.build_absolute_uri(relative_link)
         action = BaseUserAction(category="requisition", link=absolute_link)
         user_actions.append(action)
 
     # search for talent
-    relative_link = reverse("talent.views.talent")
+    relative_link = reverse("employer.views.employer")
     absolute_link = request.build_absolute_uri(relative_link)
     action = BaseUserAction(category="talent", link=absolute_link)
     user_actions.append(action)

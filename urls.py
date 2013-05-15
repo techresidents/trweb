@@ -26,8 +26,8 @@ urlpatterns = patterns('',
     url(r'^version/$', 'common.views.version'),
     url(r'^document/', include('document.urls')),
     url(r'^whiteboard/', include('whiteboard.urls')),
-    url(r'^talent/.*', include('talent.urls')),
-    url(r'^requisition/.*', include('requisition.urls')),
+    url(r'^d/.*', include('developer.urls')),
+    url(r'^e/.*', include('employer.urls')),
 )
 
 #Error handlers

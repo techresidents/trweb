@@ -1,0 +1,39 @@
+{% extends "navbar_authenticated.html" %}
+{% load staticfiles %}
+{% load url from future %}
+{% load verbatim %}
+
+{% block title %}Developer | Tech Residents{% endblock %}
+
+{% block extrahead %}
+    <link href="{% static "css/developer.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div id="app"></div>
+
+    <!-- All of these data structures are generated on the server w/out user input, so it's safe -->
+    {% autoescape off %}
+        <script>
+            TR = {
+                CURRENT_USER: {{current_user_json}},
+                XD: { remote: "{{TR_XD_REMOTE}}" }
+            };
+        </script>
+    {% endautoescape %}
+
+    <script>
+        var require = {
+            baseUrl: '/static/js',
+            urlArgs: '{{VERSION}}'
+        };
+    </script>
+
+    <script data-main="apps/developer/src/main" src="{% static "js/3ps/require/require-min.js" %}"></script>
+
+{% endblock %}
+
+<!-- No footer or analytics in developer app -->
+{% block footer %}{% endblock %}
+{% block analytics %}{% endblock %}
