@@ -30,6 +30,7 @@ define([
         routes: {
             'chat/:id': 'chat',
             'topic/:id': 'topic',
+            'topic/:id/talkingpoints': 'topicTalkingPoints',
             '*actions': 'placeholder'
         },
         
@@ -53,6 +54,17 @@ define([
             require(['chat'], _.bind(function(chat) {
                 this.facade.trigger(notifications.VIEW_CREATE, {
                     type: chat.mediators.topic.TopicMediator.VIEW_TYPE,
+                    options: {
+                        id: id
+                    }
+                });
+            }, this));
+        },
+
+        topicTalkingPoints: function(id) {
+            require(['chat'], _.bind(function(chat) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: chat.mediators.tlkpt.TalkingPointsMediator.VIEW_TYPE,
                     options: {
                         id: id
                     }
