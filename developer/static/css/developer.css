@@ -687,3 +687,23 @@
 #wishlist-input {
     margin-bottom: 10px;
 }
+
+
+.chat-topic-container {
+    margin-top: 40px;
+}
+.chat-topic .level1 {
+  margin-left: 0px;
+}
+.chat-topic .level2 {
+  margin-left: 30px;
+}
+.chat-topic .level3 {
+  margin-left: 60px;
+}
+.chat-topic .level4 {
+  margin-left: 90px;
+}
+.chat-topic .level5 {
+  margin-left: 120px;
+}
