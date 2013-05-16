@@ -49,12 +49,9 @@ define([
             if(notification.type === this.viewType()) {
                 var candidate, employee;
                 employee = this.currentProxy.currentUser();
-                candidate = this.session.getModel(api.models.User.key(notification.options.id));
-                if(!candidate) {
-                    candidate = new api.models.User({
-                        id: notification.options.id
-                    });
-                }
+                candidate = new api.models.User({
+                    id: notification.options.id
+                });
 
                 this.view = new user_views.UserView({
                     candidateModel: candidate,
