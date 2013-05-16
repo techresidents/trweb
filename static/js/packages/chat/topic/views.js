@@ -4,14 +4,16 @@ define([
     'backbone',
     'core',
     'api',
-    'text!./templates/details.html'
+    'text!./templates/topic.html',
+    'text!./templates/registration.html'
 ], function(
     $,
     _,
     Backbone,
     core,
     api,
-    topic_details_template) {
+    topic_template,
+    registration_template) {
 
     /**
      * Topic View
@@ -26,7 +28,7 @@ define([
 
         initialize: function(options) {
             this.model = options.model;
-            this.template =  _.template(topic_details_template);
+            this.template =  _.template(topic_template);
             this.modelWithRelated = ['tree'];
 
             //load data
@@ -49,7 +51,47 @@ define([
         }
     });
 
+    /**
+     * TopicRegistration View
+     * @constructor
+     * @param {Object} options
+     *   model: {Topic} model (required)
+     */
+    var TopicRegistrationView = core.view.View.extend({
+
+        events: {
+        },
+
+        topicSelector: '.chat-topic-view-hook',
+
+        childViews: function() {
+            return [this.topicView];
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template =  _.template(registration_template);
+
+            //child views
+            this.topicView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.topicView = new TopicView({
+                model: this.model
+            });
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.append(this.topicView, this.topicSelector);
+            return this;
+        }
+    });
+
     return {
-        TopicView: TopicView
+        TopicView: TopicView,
+        TopicRegistrationView: TopicRegistrationView
     };
 });

@@ -1,0 +1,30 @@
+<div class="chat-topic">
+    <% _.each(topic_tree, function(topic) { %>
+        <% if(topic.rank === 0) { %>
+        <h2 class="level<%-topic.level%>">
+            <%= topic.title %>
+            <% if(topic.duration < 60) { %>
+                <small> (<%= topic.duration %> sec)</small>
+            <% } else { %>
+                <small> (<%= fmt.format(topic.duration / 60, 'n0') %> min)</small>
+            <% } %>
+            <br>
+            <% if(topic.recommended_participants > 1) { %>
+                <small><%= topic.recommended_participants %> participants recommended</small>
+            <% } else { %>
+                 <small><%= topic.recommended_participants %> participant recommended</small>
+            <% } %>
+        </h2>
+        <% } else { %>
+        <h3 class="level<%-topic.level%>">
+            <%= topic.title %>
+            <% if(topic.duration < 60) { %>
+                <small> (<%= topic.duration %> sec)</small>
+            <% } else { %>
+                <small> (<%= fmt.format(topic.duration / 60, 'n0') %> min)</small>
+            <% } %>
+        </h3>
+        <% } %>
+        <p class="description level<%-topic.level%>"><%= topic.description %></p>
+    <% }); %>
+</div>

@@ -43,7 +43,7 @@ define([
                     id: notification.options.id
                 });
 
-                this.view = new topic_views.TopicView({
+                this.view = new topic_views.TopicRegistrationView({
                     model: topic
                 });
 
