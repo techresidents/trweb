@@ -23,18 +23,6 @@ class Concept(models.Model):
 
     objects = TreeManager()
 
-class ResourceType(models.Model):
-    class Meta:
-        db_table = "resource_type"
-    name = models.CharField(max_length=100, unique=True)
-    description = models.CharField(max_length=1024)
-
-class Resource(models.Model):
-    class Meta:
-        db_table = "resource"
-    type = models.ForeignKey(ResourceType)
-
-
 class TopicType(models.Model):
     class Meta:
         db_table = "topic_type"
@@ -81,7 +69,6 @@ class Topic(models.Model):
     public = models.BooleanField(default=True)
     active = models.BooleanField(default=True)
     user = models.ForeignKey(User)
-    resources = models.ManyToManyField(Resource)
 
     objects = TopicManager()
 

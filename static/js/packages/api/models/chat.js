@@ -3,14 +3,16 @@ define([
     'underscore',
     '../base',
     '../fields',
-    './topic'
+    './topic',
+    './user'
 
 ], function(
     $,
     _,
     api,
     fields,
-    topic_models) {
+    topic_models,
+    user_models) {
 
     var ChatCollection = api.ApiCollection.extend({
 
@@ -30,18 +32,19 @@ define([
         fields: {
             id: new fields.StringField({primaryKey: true}),
             topic_id: new fields.StringField(),
-            type: new fields.StringField(),
             start: new fields.DateTimeField({nullable: true}),
             end: new fields.DateTimeField({nullable: true}),
-            registration_start: new fields.DateTimeField({nullable: true}),
-            registration_end: new fields.DateTimeField({nullable: true}),
-            checkin_start: new fields.DateTimeField({nullable: true}),
-            checkin_end: new fields.DateTimeField({nullable: true})
+            max_participants: new fields.IntegerField(),
+            no_participants: new fields.IntegerField({nullable: true})
         },
         
         relatedFields: {
             topic: new fields.ForeignKey({
                 relation: topic_models.Topic
+            }),
+            users: new fields.ManyToMany({
+                relation: user_models.User,
+                backref: "chats"
             })
         }
     });

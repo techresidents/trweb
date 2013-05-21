@@ -3,14 +3,14 @@ define([
     'underscore',
     '../base',
     '../fields',
-    './chat_session'
+    './chat'
 
 ], function(
     $,
     _,
     api,
     fields,
-    chat_session_models) {
+    chat_models) {
 
     var ArchiveCollection = api.ApiCollection.extend({
 
@@ -29,8 +29,7 @@ define([
         
         fields: {
             id: new fields.StringField({primaryKey: true}),
-            type: new fields.StringField(),
-            chat_session_id: new fields.StringField(),
+            chat_id: new fields.StringField(),
             path: new fields.StringField(),
             mime_type: new fields.StringField(),
             url: new fields.StringField(),
@@ -45,8 +44,8 @@ define([
         },
         
         relatedFields: {
-            chat_session: new fields.ForeignKey({
-                relation: chat_session_models.ChatSession,
+            chat: new fields.ForeignKey({
+                relation: chat_models.Chat,
                 backref: "archives"
             })
         }

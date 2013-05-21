@@ -28,7 +28,8 @@
         raphael: '3ps/raphael/raphael',
         spin: '3ps/spin/spin',
         highcharts: '3ps/highcharts/js/highcharts.src',
-        soundmanager2: '3ps/soundmanager/script/soundmanager2'
+        soundmanager2: '3ps/soundmanager/script/soundmanager2',
+        twilio: 'http://static.twilio.com/libs/twiliojs/1.1/twilio.min'
     },
 
     packages: [
@@ -94,6 +95,10 @@
 
         'soundmanager2': {
             exports: 'soundManager'
+        },
+
+        'twilio': {
+            exports: 'Twilio'
         }
     }
 })

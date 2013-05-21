@@ -163,67 +163,11 @@ def home(request):
 @developer_required
 def home_developer(request):
     """Developer home"""
-
-    # Retrieve all topics user chatted about
-    completed_topics = Topic.objects.\
-        filter(chats__chat_sessions__users=request.user).\
-        filter(chats__chat_sessions__end__isnull=False).\
-        distinct("title").\
-        all()
-
-    topic_contexts = []
-    completed_topics_dict = {}  # for fast lookup
-    for topic in completed_topics:
-        completed_topics_dict[topic.title] = topic
-        topic_contexts.append({
-            "encoded_topic_id": basic_encode(topic.id),
-            "topic": topic,
-            "completed": True
-        })
-
-    # Retrieve all root topics
-    all_root_topics = Topic.objects.\
-        filter(rank=0).\
-        filter(public=True).\
-        filter(active=True).\
-        all()[:20]
-        # limit number of objects we pull back to 20.
-        # We currently don't have more than 20 chat topics.
-        # This is just a safety net.
-
-    incomplete_topics_dict = {} # for fast lookup
-    for topic in all_root_topics:
-        if topic.title not in completed_topics_dict:
-            incomplete_topics_dict[topic.title] = topic
-            topic_contexts.append({
-                "encoded_topic_id": basic_encode(topic.id),
-                "topic": topic,
-                "completed": False
-            })
-
-    profile_completion_percentage = compute_profile_completion(request)
-    recommended_actions = compute_recommended_actions(
-        request,
-        profile_completion_percentage,
-        completed_topics_dict,
-        incomplete_topics_dict
-    )
-
-    # Sort chat topics alphabetically by title
-    sorted_topics = sorted(topic_contexts, key=lambda k: (k['topic'].title).lower())
-    # Place the Tutorial topic first
-    for topic_dict in sorted_topics:
-        topic = topic_dict["topic"]
-        if topic.title == 'Tutorial':
-            sorted_topics.remove(topic_dict)
-            sorted_topics.insert(0, topic_dict)
-            break
-
     context = {
-        "chat_topics": sorted_topics,
+        "chat_topics": [],
         "full_name": request.user.get_full_name(),
-        "profile_completed": profile_completion_percentage,
-        "recommended_actions": recommended_actions
+        "profile_completed": 0,
+        "recommended_actions": []
     }
 
     return render_to_response('home/home.html', context, context_instance=RequestContext(request))

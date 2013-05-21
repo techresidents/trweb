@@ -2,11 +2,13 @@ define([
     'underscore',
     'notifications',
     'core',
+    'api',
     './views'
 ], function(
     _,
     notifications,
     core,
+    api,
     chat_views) {
 
     /**
@@ -31,18 +33,18 @@ define([
         ],
 
         initialize: function(options) {
+            this.model = null;
             this.view = null;
         },
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-                this.view = new chat_views.ChatView({
+                this.model = new api.models.Chat({
+                    id: notification.options.id
                 });
-
-                this.facade.trigger(notifications.VIEW_CREATED, {
-                    type: this.viewType(),
-                    view: this.view,
-                    options: notification.options
+                this.facade.trigger(notifications.PARTICIPATE_IN_CHAT, {
+                    model: this.model,
+                    onSuccess: _.bind(this.onParticipateSuccess, this)
                 });
             }
         },
@@ -59,6 +61,17 @@ define([
                     this.view = null;
                 }
             }
+        },
+
+        onParticipateSuccess: function(options, result) {
+            this.view = new chat_views.ChatView({
+                model: this.model
+            });
+
+            this.facade.trigger(notifications.VIEW_CREATED, {
+                type: this.viewType(),
+                view: this.view
+            });
         }
 
     }, {

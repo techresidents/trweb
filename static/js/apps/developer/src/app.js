@@ -282,6 +282,9 @@ define([
             /* APPLICATION LOG COMMANDS */
             this.registerCommand(notifications.CREATE_APPLICATION_LOG,
                 ctrl.commands.applicant.CreateApplicationLog);
+            /* CHAT COMMANDS */
+            this.registerCommand(notifications.PARTICIPATE_IN_CHAT,
+                ctrl.commands.chat.ParticipateInChat);
             /* INTERVIEW OFFER COMMANDS */
             this.registerCommand(notifications.MAKE_INTERVIEW_OFFER,
                 ctrl.commands.applicant.MakeInterviewOffer);
