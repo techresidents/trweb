@@ -18,6 +18,9 @@ define(/** @exports events */[
         SHOW_RESCIND_INTERVIEW_OFFER: 'show_rescind_interview_offer',
 
         /* DEVELOPER NOTE EVENTS*/
-        TAKE_NOTE: 'take_note'
+        TAKE_NOTE: 'take_note',
+
+        /* CHAT ACTIONS */
+        PARTICIPATE_IN_CHAT: 'participate_in_chat'
     };
 });
