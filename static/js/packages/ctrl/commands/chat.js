@@ -111,8 +111,40 @@ define([
             ParticipateInChat.__super__.onError.call(this, this.model, fault);
         }
     });
-    
+
+    /**
+     * UpdateTalkingPoints constructor
+     * @constructor
+     * @classdesc
+     * Update the talking points collection.
+     */
+    var UpdateTalkingPoints = core.command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['collection'],
+
+        /**
+         * Execute command
+         * @param {object} options Options object
+         * @param {object} [options.collection] TalkingPointCollection
+         * @param {function} [options.onSuccess] Success callback
+         * @param {function} [options.onError] Error callback
+         */
+        execute: function(options) {
+            var collection = options.collection;
+            collection.save({
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+
+            return true;
+        }
+    });
+
     return {
-        ParticipateInChat: ParticipateInChat
+        ParticipateInChat: ParticipateInChat,
+        UpdateTalkingPoints: UpdateTalkingPoints
     };
 });

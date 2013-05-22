@@ -167,6 +167,9 @@ define([
     /* DEVELOPER NOTE EVENTS*/
     EventNotificationMap[events.TAKE_NOTE] =
         notifications.TAKE_NOTE;
+    /* CHAT EVENTS */
+    EventNotificationMap[events.UPDATE_TALKING_POINTS] =
+        notifications.UPDATE_TALKING_POINTS;
 
     /**
      * App Mediator
@@ -297,6 +300,8 @@ define([
             /* CHAT COMMANDS */
             this.registerCommand(notifications.PARTICIPATE_IN_CHAT,
                 ctrl.commands.chat.ParticipateInChat);
+            this.registerCommand(notifications.UPDATE_TALKING_POINTS,
+                ctrl.commands.chat.UpdateTalkingPoints);
             /* INTERVIEW OFFER COMMANDS */
             this.registerCommand(notifications.MAKE_INTERVIEW_OFFER,
                 ctrl.commands.applicant.MakeInterviewOffer);
