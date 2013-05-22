@@ -160,3 +160,14 @@ class Skill(models.Model):
     technology = models.ForeignKey(Technology)
     expertise_type = models.ForeignKey(ExpertiseType)
     yrs_experience = models.IntegerField()
+
+
+class TalkingPoint(models.Model):
+    """Represents one of potentially many topic talking points """
+    class Meta:
+        db_table ="talking_point"
+
+    user = models.ForeignKey(User)
+    topic = models.ForeignKey(Topic, related_name="talking_points")
+    rank = models.IntegerField()
+    point = models.CharField(max_length=4096)
