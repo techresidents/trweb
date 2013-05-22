@@ -7,10 +7,10 @@ define([
     'events',
     'ui',
     '../topic/views',
-    'text!./templates/talking_points_summary.html',
+    'text!./templates/tlkpts_summary.html',
     'text!./templates/add_tlkpt.html',
-    'text!./templates/input_tlkpt.html',
-    'text!./templates/tlkpt.html'
+    'text!./templates/talking_point.html',
+    'text!./templates/topic_tlkpt_composite.html'
 ], function(
     $,
     _,
@@ -20,10 +20,10 @@ define([
     events,
     ui,
     topic_views,
-    talking_points_summary_template,
-    add_talking_point_template,
-    input_talking_point_template,
-    talking_point_template) {
+    tlkpts_summary_template,
+    add_tlkpt_template,
+    talking_point_template,
+    topic_tlkpt_composite_template) {
 
 
     /**
@@ -42,14 +42,11 @@ define([
         initialize: function(options) {
             this.topic = options.topic;
             this.collection = options.collection;
-            this.template =  _.template(add_talking_point_template);
+            this.template =  _.template(add_tlkpt_template);
         },
 
         render: function() {
-            var context = {
-                level: this.topic.get_level()
-            };
-            this.$el.html(this.template(context));
+            this.$el.html(this.template());
             return this;
         },
 
@@ -58,7 +55,7 @@ define([
             var model = new api.models.TalkingPoint({
                 user_id: userModel.id,
                 topic_id: this.topic.id,
-                rank: this.collection.length,
+                rank: this.collection.length, // rank values start at 0
                 point: ''
             });
             this.collection.add(model);
@@ -69,7 +66,7 @@ define([
      * TalkingPointListView View
      * @constructor
      * @param {Object} options
-     *   collection: {TalkingPointCollection} (required)
+     *   collection: {TalkingPointCollection} object (required)
      *   modelRankAttribute: {String} name of rank attribute
      */
     var TalkingPointListView = ui.collection.views.OrderedListView.extend({
@@ -77,19 +74,13 @@ define([
         initialize: function(options) {
             this.collection = options.collection;
             this.listenTo(this.collection, 'change', this.save);
-            this.listenTo(this.collection, 'remove', this.onCollectionRemove);
+            // Calling save on the collection after 'remove' event will
+            // destroy the removed model.
+            this.listenTo(this.collection, 'remove', this.save);
             ui.collection.views.OrderedListView.prototype.initialize.call(this, options);
         },
 
         save: function() {
-            var eventBody = {
-                collection: this.collection
-            };
-            this.triggerEvent(events.UPDATE_TALKING_POINTS, eventBody);
-        },
-
-        onCollectionRemove: function() {
-            // Calling save on the collection will destroy the removed model.
             var eventBody = {
                 collection: this.collection
             };
@@ -101,7 +92,6 @@ define([
      * TalkingPointListItemView View
      * @constructor
      * @param {Object} options
-     *   topic: {Topic} object (required)
      *   model: {TalkingPoint} object (required)
      */
     var TalkingPointListItemView = core.view.View.extend({
@@ -117,8 +107,7 @@ define([
         },
 
         initialize: function(options) {
-            this.topic = options.topic;
-            this.template =  _.template(input_talking_point_template);
+            this.template =  _.template(talking_point_template);
 
             // child views
             this.inputHandlerView = null;
@@ -136,9 +125,7 @@ define([
         },
 
         render: function() {
-            console.log('itemView render');
             var context = {
-                level: this.topic.get_level(),
                 model: this.model
             };
             this.$el.html(this.template(context));
@@ -161,16 +148,18 @@ define([
         }
     });
 
-    // TODO rename to TalkingPointTopicView.
+
     /**
-     * TalkingPointView View
-     * A TalkingPointView consists of one topic (no sub-topics) and
+     * TopicTalkingPointsCompositeView View
+     * A TopicTalkingPointsCompositeView consists of one topic (no sub-topics) and
      * any associated talking points.
      * @constructor
      * @param {Object} options
      *   model: {Topic} object must have ID (required)
      */
-    var TalkingPointView = core.view.View.extend({
+    var TopicTalkingPointsCompositeView = core.view.View.extend({
+
+        tlkptCompositeSelector: '.talking-point-composite-container',
 
         events: {
         },
@@ -188,7 +177,7 @@ define([
             this.model = options.model;
             this.modelWithRelated = ['talking_points'];
             this.collection = this.model.get_talking_points();
-            this.template =  _.template(talking_point_template);
+            this.template =  _.template(topic_tlkpt_composite_template);
 
             // bind events
             this.listenTo(this.collection, 'loaded', this.render);
@@ -221,18 +210,20 @@ define([
                     }
                     return ret;
                 },
-                viewFactory: new core.factory.Factory(TalkingPointListItemView, {
-                    topic: this.model
-                })
+                viewFactory: new core.factory.Factory(TalkingPointListItemView, {})
             });
         },
 
         render: function() {
             if (this.collection.isLoaded()) {
-                this.$el.html(this.template());
-                this.append(this.topicView);
-                this.append(this.talkingPointsListView);
-                this.append(this.addTalkingPointView);
+                console.log('render');
+                var context = {
+                    topic_level: this.model.get_level()
+                };
+                this.$el.html(this.template(context));
+                this.append(this.topicView, this.tlkptCompositeSelector);
+                this.append(this.talkingPointsListView, this.tlkptCompositeSelector);
+                this.append(this.addTalkingPointView, this.tlkptCompositeSelector);
             } else {
                 // TODO add loader view
                 console.log('%s render data not loaded yet', this.cid);
@@ -263,7 +254,7 @@ define([
 
         initialize: function(options) {
             this.model = options.model;
-            this.template =  _.template(talking_points_summary_template);
+            this.template =  _.template(tlkpts_summary_template);
             this.modelWithRelated = ['tree'];
 
             //load root topic and all sub-topic data
@@ -285,7 +276,7 @@ define([
             });
             this.talkingPointsView = new ui.collection.views.CollectionView({
                 collection: this.model.get_tree(),
-                viewFactory: new core.factory.Factory(TalkingPointView, {})
+                viewFactory: new core.factory.Factory(TopicTalkingPointsCompositeView, {})
             });
         },
 
@@ -304,7 +295,7 @@ define([
         AddTalkingPointView: AddTalkingPointView,
         TalkingPointListView: TalkingPointListView,
         TalkingPointListItemView: TalkingPointListItemView,
-        TalkingPointView: TalkingPointView,
+        TopicTalkingPointsCompositeView: TopicTalkingPointsCompositeView,
         TalkingPointsSummaryView: TalkingPointsSummaryView
     };
 });

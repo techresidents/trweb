@@ -712,11 +712,17 @@
     margin-top: 2px;
     margin-right: 5px;
 }
-
+.talking-point-input {
+    width: 85%;
+}
 .talking-point-close {
     line-height: 40px;
     vertical-align: middle;
 }
-.talking-point-input {
-    width: 85%;
+.talking-point-composite-container .level1,
+.talking-point-composite-container .level2,
+.talking-point-composite-container .level3,
+.talking-point-composite-container .level4,
+.talking-point-composite-container .level5 {
+    margin-left: 0px;
 }
