@@ -61,7 +61,7 @@ define(/** @exports core/view */[
             
             //add to event listeners map
             if(!this.eventListeners.hasOwnProperty(cid)) {
-                this.eventListeners[this.cid] = this.cid;
+                this.eventListeners[cid] = cid;
             }
             return this;
         },
