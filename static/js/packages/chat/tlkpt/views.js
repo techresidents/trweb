@@ -4,10 +4,12 @@ define([
     'backbone',
     'core',
     'api',
+    'events',
     'ui',
     '../topic/views',
     'text!./templates/talking_points_summary.html',
     'text!./templates/add_tlkpt.html',
+    'text!./templates/input_tlkpt.html',
     'text!./templates/tlkpt.html'
 ], function(
     $,
@@ -15,10 +17,12 @@ define([
     Backbone,
     core,
     api,
+    events,
     ui,
     topic_views,
     talking_points_summary_template,
     add_talking_point_template,
+    input_talking_point_template,
     talking_point_template) {
 
 
@@ -26,34 +30,145 @@ define([
      * AddTalkingPointView View
      * @constructor
      * @param {Object} options
-     *   topicLevel: {Number} topic level
+     *   topic: {Topic} object (required)
+     *   collection: {TalkingPointCollection} object (required)
      */
     var AddTalkingPointView = core.view.View.extend({
 
         events: {
+            'click .add': 'onAdd'
         },
 
         initialize: function(options) {
-            this.topicLevel = options.topicLevel;
+            this.topic = options.topic;
+            this.collection = options.collection;
             this.template =  _.template(add_talking_point_template);
         },
 
         render: function() {
             var context = {
-                level: this.topicLevel
+                level: this.topic.get_level()
             };
             this.$el.html(this.template(context));
             return this;
+        },
+
+        onAdd: function() {
+            var userModel = new api.models.User({id: 'CURRENT'});
+            var model = new api.models.TalkingPoint({
+                user_id: userModel.id,
+                topic_id: this.topic.id,
+                rank: this.collection.length,
+                point: ''
+            });
+            this.collection.add(model);
         }
     });
 
+    /**
+     * TalkingPointListView View
+     * @constructor
+     * @param {Object} options
+     *   collection: {TalkingPointCollection} (required)
+     *   modelRankAttribute: {String} name of rank attribute
+     */
+    var TalkingPointListView = ui.collection.views.OrderedListView.extend({
+
+        initialize: function(options) {
+            this.collection = options.collection;
+            this.listenTo(this.collection, 'change', this.save);
+            this.listenTo(this.collection, 'remove', this.onCollectionRemove);
+            ui.collection.views.OrderedListView.prototype.initialize.call(this, options);
+        },
+
+        save: function() {
+            var eventBody = {
+                collection: this.collection
+            };
+            this.triggerEvent(events.UPDATE_TALKING_POINTS, eventBody);
+        },
+
+        onCollectionRemove: function() {
+            // Calling save on the collection will destroy the removed model.
+            var eventBody = {
+                collection: this.collection
+            };
+            this.triggerEvent(events.UPDATE_TALKING_POINTS, eventBody);
+        }
+    });
+
+    /**
+     * TalkingPointListItemView View
+     * @constructor
+     * @param {Object} options
+     *   topic: {Topic} object (required)
+     *   model: {TalkingPoint} object (required)
+     */
+    var TalkingPointListItemView = core.view.View.extend({
+
+        inputSelector: '.talking-point-input',
+        inputHookSelector: '.talking-point-input-hook',
+
+        events: {
+        },
+
+        childViews: function() {
+            return [this.inputHandlerView];
+        },
+
+        initialize: function(options) {
+            this.topic = options.topic;
+            this.template =  _.template(input_talking_point_template);
+
+            // child views
+            this.inputHandlerView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.inputHandlerView = new ui.input.views.InputHandlerView({
+                model: this.model,
+                modelAttribute: 'point',
+                inputView: this,
+                inputSelector: this.inputSelector,
+                throttle: 1000
+            });
+        },
+
+        render: function() {
+            console.log('itemView render');
+            var context = {
+                level: this.topic.get_level(),
+                model: this.model
+            };
+            this.$el.html(this.template(context));
+            this.append(this.inputHandlerView, this.inputHookSelector);
+            return this;
+        },
+
+        delegateEvents: function() {
+            // TODO
+            //console.log('itemview delegate events');
+            core.view.View.prototype.delegateEvents.apply(this, arguments);
+            this.inputHandlerView.delegateEvents();
+        },
+
+        undelegateEvents: function() {
+            // TODO
+            //console.log('itemview undelegate events');
+            this.inputHandlerView.undelegateEvents();
+            core.view.View.prototype.undelegateEvents.apply(this, arguments);
+        }
+    });
+
+    // TODO rename to TalkingPointTopicView.
     /**
      * TalkingPointView View
      * A TalkingPointView consists of one topic (no sub-topics) and
      * any associated talking points.
      * @constructor
      * @param {Object} options
-     *   model: {Topic} model (required)
+     *   model: {Topic} object must have ID (required)
      */
     var TalkingPointView = core.view.View.extend({
 
@@ -69,12 +184,17 @@ define([
         },
 
         initialize: function(options) {
+            var userModel = new api.models.User({id: 'CURRENT'});
             this.model = options.model;
+            this.modelWithRelated = ['talking_points'];
+            this.collection = this.model.get_talking_points();
             this.template =  _.template(talking_point_template);
 
+            // bind events
+            this.listenTo(this.collection, 'loaded', this.render);
+
             //load data
-            // for the topic, load this user's talking points
-            this.tpCollection = null;
+            this.collection.filterBy({user_id: userModel.id}).fetch();
 
             //child views
             this.topicView = null;
@@ -88,18 +208,35 @@ define([
                 model: this.model
             });
             this.addTalkingPointView = new AddTalkingPointView({
-                topicLevel: this.model.get_level()
+                topic: this.model,
+                collection: this.collection
             });
-//            this.talkingPointsListView = new ui.collection.views.CollectionView({
-//                collection: this.tpCollection,
-//                viewFactory: new core.factory.Factory(TalkingPointInputView, {})
-//            });
+            this.talkingPointsListView = new TalkingPointListView({
+                collection: this.collection,
+                modelRankAttribute: 'rank',
+                sort: function (view) {
+                    var ret = 0;
+                    if (view && view.model) {
+                        ret = view.model.get_rank();
+                    }
+                    return ret;
+                },
+                viewFactory: new core.factory.Factory(TalkingPointListItemView, {
+                    topic: this.model
+                })
+            });
         },
 
         render: function() {
-            this.$el.html(this.template());
-            this.append(this.topicView);
-            this.append(this.addTalkingPointView);
+            if (this.collection.isLoaded()) {
+                this.$el.html(this.template());
+                this.append(this.topicView);
+                this.append(this.talkingPointsListView);
+                this.append(this.addTalkingPointView);
+            } else {
+                // TODO add loader view
+                console.log('%s render data not loaded yet', this.cid);
+            }
             return this;
         }
     });
@@ -165,6 +302,8 @@ define([
 
     return {
         AddTalkingPointView: AddTalkingPointView,
+        TalkingPointListView: TalkingPointListView,
+        TalkingPointListItemView: TalkingPointListItemView,
         TalkingPointView: TalkingPointView,
         TalkingPointsSummaryView: TalkingPointsSummaryView
     };

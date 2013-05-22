@@ -690,20 +690,33 @@
 
 
 .chat-topic-registration-container {
-    margin-top: 40px;
+    margin-top: 20px;
 }
 .chat-topic .level1 {
-  margin-left: 0px;
+    margin-left: 0px;
 }
 .chat-topic .level2 {
-  margin-left: 30px;
+    margin-left: 30px;
 }
 .chat-topic .level3 {
-  margin-left: 60px;
+    margin-left: 60px;
 }
 .chat-topic .level4 {
-  margin-left: 90px;
+    margin-left: 90px;
 }
 .chat-topic .level5 {
-  margin-left: 120px;
+    margin-left: 120px;
+}
+
+.talking-point-arrows-container {
+    margin-right: 5px;
+}
+
+.talking-point-arrows-container a.up,
+.talking-point-arrows-container a.down {
+    padding: 6px;
+}
+.talking-point-close {
+    line-height: 60px;
+    vertical-align: middle;
 }
