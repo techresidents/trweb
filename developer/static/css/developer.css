@@ -709,14 +709,14 @@
 }
 
 .talking-point-arrows-container {
+    margin-top: 2px;
     margin-right: 5px;
 }
 
-.talking-point-arrows-container a.up,
-.talking-point-arrows-container a.down {
-    padding: 6px;
-}
 .talking-point-close {
-    line-height: 60px;
+    line-height: 40px;
     vertical-align: middle;
+}
+.talking-point-input {
+    width: 85%;
 }
