@@ -73,7 +73,7 @@ define([
 
         initialize: function(options) {
             this.collection = options.collection;
-            this.listenTo(this.collection, 'change', this.save);
+            this.listenTo(this.collection, 'change:point change:rank', this.save);
             // Calling save on the collection after 'remove' event will
             // destroy the removed model.
             this.listenTo(this.collection, 'remove', this.save);

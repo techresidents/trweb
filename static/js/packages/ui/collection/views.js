@@ -7,9 +7,6 @@ define([
     _,
     core) {
 
-    var EVENTS = {
-    };
-
     /**
      * Collection View.
      * @constructor
@@ -267,7 +264,6 @@ define([
         },
 
         onRankUp: function(e) {
-            console.log('onRankUp');
             if (this.rankAttribute) {
                 var that = this;
                 var id = this.eventToId(e);
@@ -291,7 +287,6 @@ define([
         },
 
         onRankDown: function(e) {
-            console.log('onRankDown');
             if (this.rankAttribute) {
                 var that = this;
                 var id = this.eventToId(e);
@@ -316,7 +311,6 @@ define([
     });
 
     return {
-        EVENTS: EVENTS,
         CollectionView: CollectionView,
         ListView: ListView,
         OrderedListView: OrderedListView
