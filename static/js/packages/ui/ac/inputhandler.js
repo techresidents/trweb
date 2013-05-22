@@ -100,7 +100,7 @@ define(/** @exports ui/ac/inputhandler */[
                     }
                     break;
                 default:
-                    if(!this.updateDuringType) {
+                    if(!this.updateDuringTyping) {
                         this._restartTimer();
                     }
                     break;
