@@ -245,19 +245,10 @@ define([
         },
 
         onRemoveListItem: function(e) {
-            var that = this;
             var id = this.eventToId(e);
             var model = this.collection.get(id);
             if(model) {
                 this.collection.remove(model);
-                if (this.rankAttribute) {
-                    // Update the rank of each item below the removed item
-                    this.collection.each(function(m) {
-                        if(m.get(that.rankAttribute) > model.get(that.rankAttribute)) {
-                            m.set(that.rankAttribute, m.get(that.rankAttribute) - 1);
-                        }
-                    });
-                }
                 this.sortChildViews();
                 this.render();
             }
@@ -265,21 +256,20 @@ define([
 
         onRankUp: function(e) {
             if (this.rankAttribute) {
-                var that = this;
                 var id = this.eventToId(e);
                 var model = this.collection.get(id);
                 var rank = model.get(this.rankAttribute);
-                if(rank !== 0) {
-                    // Find the list item above this one, and move it down
-                    // one place (swap it)
-                    this.collection.each(function(m) {
-                        if(m.cid !== model.cid &&
-                            m.get(that.rankAttribute) === rank - 1) {
-                            m.set(that.rankAttribute, m.get(that.rankAttribute) + 1);
-                        }
-                    });
-                    // Move this item up the list by one spot (top rank is 0)
-                    model.set(this.rankAttribute, rank - 1);
+                var index = this.collection.indexOf(model);
+                if (index !== 0) {
+                    // Find the list item before this one, and swap it's rank
+                    var prevModel = this.collection.at(index-1);
+                    var prevRank = prevModel.get(this.rankAttribute);
+                    model._isDirty = true;
+                    model.set(this.rankAttribute, prevRank);
+                    model._isDirty = false;
+                    prevModel._isDirty = true;
+                    prevModel.set(this.rankAttribute, rank);
+                    this.collection.sort();
                     this.sortChildViews();
                     this.render();
                 }
@@ -288,21 +278,20 @@ define([
 
         onRankDown: function(e) {
             if (this.rankAttribute) {
-                var that = this;
                 var id = this.eventToId(e);
                 var model = this.collection.get(id);
                 var rank = model.get(this.rankAttribute);
-                if(rank < this.collection.length - 1) {
-                    // Find the list item below this one, and move it up
-                    // one place (swap it)
-                    this.collection.each(function(m) {
-                        if(m.cid !== model.cid &&
-                            m.get(that.rankAttribute) === rank + 1) {
-                            m.set(that.rankAttribute, m.get(that.rankAttribute) - 1);
-                        }
-                    });
-                    // Move this item down the list by one spot
-                    model.set(this.rankAttribute, rank + 1);
+                var index = this.collection.indexOf(model);
+                if (index < this.collection.length - 1) {
+                    // Find the list item after this one, and swap it's rank
+                    var nextModel = this.collection.at(index+1);
+                    var nextRank = nextModel.get(this.rankAttribute);
+                    model._isDirty = true;
+                    model.set(this.rankAttribute, nextRank);
+                    model._isDirty = false;
+                    nextModel._isDirty = true;
+                    nextModel.set(this.rankAttribute, rank);
+                    this.collection.sort();
                     this.sortChildViews();
                     this.render();
                 }

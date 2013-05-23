@@ -1,5 +1,6 @@
 define([
     'jquery',
+    'jquery.animatecolors',
     'underscore',
     'backbone',
     'core',
@@ -13,6 +14,7 @@ define([
     'text!./templates/topic_tlkpt_composite.html'
 ], function(
     $,
+    none,
     _,
     Backbone,
     core,
@@ -52,11 +54,17 @@ define([
 
         onAdd: function() {
             var userModel = new api.models.User({id: 'CURRENT'});
+            var rank = 0;
+            var highestRank = null;
+            if (this.collection.length) {
+                highestRank = this.collection.at(this.collection.length - 1).get_rank();
+                rank = highestRank + 1;
+            }
             var model = new api.models.TalkingPoint({
                 user_id: userModel.id,
                 topic_id: this.topic.id,
-                rank: this.collection.length, // rank values start at 0
-                point: ''
+                rank: rank,
+                point: null
             });
             this.collection.add(model);
         }
@@ -73,11 +81,20 @@ define([
 
         initialize: function(options) {
             this.collection = options.collection;
-            this.listenTo(this.collection, 'change:point change:rank', this.save);
+            this.listenTo(this.collection, 'change:point change:rank', this.onChange);
             // Calling save on the collection after 'remove' event will
             // destroy the removed model.
             this.listenTo(this.collection, 'remove', this.save);
             ui.collection.views.OrderedListView.prototype.initialize.call(this, options);
+        },
+
+        fadeTextColor: function(options, response) {
+
+        },
+
+        onChange: function() {
+            //TODO this.$('.talking-point-input').animate({color: 'rgba(42, 47, 76, 0.8)'});
+            this.save();
         },
 
         save: function() {
@@ -177,12 +194,17 @@ define([
             this.model = options.model;
             this.modelWithRelated = ['talking_points'];
             this.collection = this.model.get_talking_points();
+            this.collection.comparator = function(model) {
+                return model.get_rank();
+            };
             this.template =  _.template(topic_tlkpt_composite_template);
 
             // bind events
             this.listenTo(this.collection, 'loaded', this.render);
 
-            //load data
+            // load data
+            // this.collection has all tlkpts for this topic. Now
+            // we need to filter it down to just this user's tlkpts.
             this.collection.filterBy({user_id: userModel.id}).fetch();
 
             //child views
@@ -216,7 +238,6 @@ define([
 
         render: function() {
             if (this.collection.isLoaded()) {
-                console.log('render');
                 var context = {
                     topic_level: this.model.get_level()
                 };
@@ -224,9 +245,6 @@ define([
                 this.append(this.topicView, this.tlkptCompositeSelector);
                 this.append(this.talkingPointsListView, this.tlkptCompositeSelector);
                 this.append(this.addTalkingPointView, this.tlkptCompositeSelector);
-            } else {
-                // TODO add loader view
-                console.log('%s render data not loaded yet', this.cid);
             }
             return this;
         }
