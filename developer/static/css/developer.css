@@ -687,3 +687,45 @@
 #wishlist-input {
     margin-bottom: 10px;
 }
+
+
+.chat-topic-registration-container {
+    margin-top: 20px;
+}
+.chat-topic-registration-container .start-chat-btn{
+    margin-top: 15px;
+}
+.chat-topic .level1 {
+    margin-left: 0px;
+}
+.chat-topic .level2 {
+    margin-left: 30px;
+}
+.chat-topic .level3 {
+    margin-left: 60px;
+}
+.chat-topic .level4 {
+    margin-left: 90px;
+}
+.chat-topic .level5 {
+    margin-left: 120px;
+}
+
+.talking-point-arrows-container {
+    margin-top: 2px;
+    margin-right: 5px;
+}
+.talking-point-input {
+    width: 85%;
+}
+.talking-point-close {
+    line-height: 40px;
+    vertical-align: middle;
+}
+.talking-point-composite-container .level1,
+.talking-point-composite-container .level2,
+.talking-point-composite-container .level3,
+.talking-point-composite-container .level4,
+.talking-point-composite-container .level5 {
+    margin-left: 0px;
+}

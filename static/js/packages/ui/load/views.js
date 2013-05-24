@@ -7,7 +7,6 @@ define([
     $,
     _,
     core,
-    view,
     spinner_views) {
 
     var LoaderView = core.view.View.extend({

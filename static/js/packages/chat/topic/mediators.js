@@ -2,11 +2,13 @@ define([
     'underscore',
     'notifications',
     'core',
+    'api',
     './views'
 ], function(
     _,
     notifications,
     core,
+    api,
     topic_views) {
 
     /**
@@ -36,7 +38,13 @@ define([
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-                this.view = new topic_views.TopicView({
+
+                var topic = new api.models.Topic({
+                    id: notification.options.id
+                });
+
+                this.view = new topic_views.TopicRegistrationView({
+                    model: topic
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {

@@ -7,14 +7,16 @@ define([
     _,
     core) {
 
-    var EVENTS = {
-    };
-
     /**
      * Collection View.
      * @constructor
      * @param {Object} options
      *   collection: {Collection} collection (required)
+     *   template: UI template
+     *   context: UI context
+     *   viewFactory: child view factory
+     *   selector: UI selector
+     *   sort: sort function
      */
     var CollectionView = core.view.View.extend({
 
@@ -35,6 +37,7 @@ define([
             this.selector = options.selector;
             this.sort = options.sort;
             this.modelViewMap = {};
+            this.viewModelMap = {};
             
             //bind events
             this.listenTo(this.collection, 'reset', this.onReset);
@@ -50,6 +53,8 @@ define([
             this.destroyChildViews();
             this.childViews = [];
             this.modelViewMap = {};
+            this.viewModelMap = {};
+
 
             this.collection.each(this.createChildView, this);
         },
@@ -60,7 +65,6 @@ define([
             });
             if(view) {
                 view.$el.addClass(this.childClasses().join(' '));
-                view.$el.data('id', model.id || model.cid);
                 if(this.sort) {
                     var sort = this.sort;
                     core.array.binaryInsert(this.childViews, view, function(a, b) {
@@ -70,17 +74,28 @@ define([
                     this.childViews.push(view);
                 }
                 this.modelViewMap[model.cid] = view;
+                this.viewModelMap[view.cid] = model;
             }
             return view;
         },
 
         appendChildView: function(view) {
+            var model = this.viewModelMap[view.cid];
+            if (model) {
+                view.$el.data('id', model.id || model.cid);
+            }
             this.append(view, this.selector);
         },
 
         removeChildView: function(view) {
-            this.childViews = _.without(view);
+            this.childViews = _.without(this.childViews, view);
             view.destroy();
+        },
+
+        sortChildViews: function() {
+            if(this.sort) {
+                this.childViews = _.sortBy(this.childViews, this.sort);
+            }
         },
 
         classes: function() {
@@ -130,6 +145,7 @@ define([
             if(view) {
                 this.removeChildView(view);
                 delete this.modelViewMap[model.cid];
+                delete this.viewModelMap[view.cid];
             }
         }
 
@@ -205,9 +221,81 @@ define([
         }
     });
 
+    /**
+     * Ordered List View.
+     * @constructor
+     * @param {Object} options
+     *   collection: {Collection} a sortable collection (required)
+     *   modelRankAttribute: {String} name of the model attribute to manipulate if the
+     *      collection can be reordered by the user (optional)
+     */
+    var OrderedListView = ListView.extend({
+
+        tagName: 'ol',
+
+        events: {
+            'click .up': 'onRankUp',
+            'click .down': 'onRankDown',
+            'click .remove': 'onRemoveListItem'
+        },
+
+        initialize: function(options) {
+            this.rankAttribute = options.modelRankAttribute;
+            ListView.prototype.initialize.call(this, options);
+        },
+
+        onRemoveListItem: function(e) {
+            var id = this.eventToId(e);
+            var model = this.collection.get(id);
+            if(model) {
+                this.collection.remove(model);
+                this.sortChildViews();
+                this.render();
+            }
+        },
+
+        onRankUp: function(e) {
+            if (this.rankAttribute) {
+                var id = this.eventToId(e);
+                var model = this.collection.get(id);
+                var rank = model.get(this.rankAttribute);
+                var index = this.collection.indexOf(model);
+                if (index !== 0) {
+                    // Find the list item before this one, and swap it's rank
+                    var prevModel = this.collection.at(index-1);
+                    var prevRank = prevModel.get(this.rankAttribute);
+                    model.set(this.rankAttribute, prevRank);
+                    prevModel.set(this.rankAttribute, rank);
+                    this.collection.sort();
+                    this.sortChildViews();
+                    this.render();
+                }
+            }
+        },
+
+        onRankDown: function(e) {
+            if (this.rankAttribute) {
+                var id = this.eventToId(e);
+                var model = this.collection.get(id);
+                var rank = model.get(this.rankAttribute);
+                var index = this.collection.indexOf(model);
+                if (index < this.collection.length - 1) {
+                    // Find the list item after this one, and swap it's rank
+                    var nextModel = this.collection.at(index+1);
+                    var nextRank = nextModel.get(this.rankAttribute);
+                    model.set(this.rankAttribute, nextRank);
+                    nextModel.set(this.rankAttribute, rank);
+                    this.collection.sort();
+                    this.sortChildViews();
+                    this.render();
+                }
+            }
+        }
+    });
+
     return {
-        EVENTS: EVENTS,
         CollectionView: CollectionView,
-        ListView: ListView
+        ListView: ListView,
+        OrderedListView: OrderedListView
     };
 });

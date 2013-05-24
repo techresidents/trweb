@@ -30,6 +30,7 @@ define([
         routes: {
             'chat/:id': 'chat',
             'topic/:id': 'topic',
+            'topic/:id/talkingpoints': 'topicTalkingPoints',
             '*actions': 'placeholder'
         },
         
@@ -60,6 +61,17 @@ define([
             }, this));
         },
 
+        topicTalkingPoints: function(id) {
+            require(['chat'], _.bind(function(chat) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: chat.mediators.tlkpt.TalkingPointsMediator.VIEW_TYPE,
+                    options: {
+                        id: id
+                    }
+                });
+            }, this));
+        },
+
         placeholder: function() {
         }
     });
@@ -74,8 +86,12 @@ define([
                 trigger: true
             }, options);
             router = this.facade.router;
-            
-            switch(options.type) {
+
+            switch (options.type) {
+                case 'ChatView':
+                    uri = 'chat/' + options.id;
+                    router.navigate(uri, {trigger: options.trigger});
+                    break;
             }
         }
     });
@@ -131,6 +147,9 @@ define([
      * Event to Notification map
      */
     var EventNotificationMap = {};
+    /* VIEW EVENTS*/
+    EventNotificationMap[events.VIEW_NAVIGATE] =
+        notifications.VIEW_NAVIGATE;
     /* APPLICATION EVENTS*/
     EventNotificationMap[events.CREATE_APPLICATION] =
         notifications.CREATE_APPLICATION;
@@ -162,6 +181,11 @@ define([
     /* DEVELOPER NOTE EVENTS*/
     EventNotificationMap[events.TAKE_NOTE] =
         notifications.TAKE_NOTE;
+    /* CHAT EVENTS */
+    EventNotificationMap[events.CREATE_CHAT] =
+        notifications.CREATE_CHAT;
+    EventNotificationMap[events.UPDATE_TALKING_POINTS] =
+        notifications.UPDATE_TALKING_POINTS;
 
     /**
      * App Mediator
@@ -290,12 +314,16 @@ define([
             this.registerCommand(notifications.CREATE_APPLICATION_LOG,
                 ctrl.commands.applicant.CreateApplicationLog);
             /* CHAT COMMANDS */
+            this.registerCommand(notifications.CREATE_CHAT,
+                ctrl.commands.chat.CreateChat);
             this.registerCommand(notifications.PARTICIPATE_IN_CHAT,
                 ctrl.commands.chat.ParticipateInChat);
             this.registerCommand(notifications.UPDATE_CHAT_STATUS,
                 ctrl.commands.chat.UpdateChatStatus);
             this.registerCommand(notifications.UPDATE_CHAT_USER_STATUS,
                 ctrl.commands.chat.UpdateChatUserStatus);
+            this.registerCommand(notifications.UPDATE_TALKING_POINTS,
+                ctrl.commands.chat.UpdateTalkingPoints);
             /* INTERVIEW OFFER COMMANDS */
             this.registerCommand(notifications.MAKE_INTERVIEW_OFFER,
                 ctrl.commands.applicant.MakeInterviewOffer);

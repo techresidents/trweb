@@ -3,29 +3,25 @@ define([
     'notifications',
     'core',
     'api',
-    'ctrl',
-    'player',
     './views'
 ], function(
     _,
     notifications,
     core,
     api,
-    ctrl,
-    player,
-    user_views) {
+    talking_point_views) {
 
     /**
-     * User Mediator
+     * TalkingPoints Mediator
      * @constructor
      */
-    var UserMediator = core.mediator.Mediator.extend({
+    var TalkingPointsMediator = core.mediator.Mediator.extend({
         name: function() {
-            return UserMediator.NAME;
+            return TalkingPointsMediator.NAME;
         },
 
         viewType: function() {
-            return UserMediator.VIEW_TYPE;
+            return TalkingPointsMediator.VIEW_TYPE;
         },
 
         /**
@@ -38,28 +34,18 @@ define([
 
         initialize: function(options) {
             this.view = null;
-            this.currentProxy = this.facade.getProxy(
-                ctrl.proxies.current.CurrentProxy.NAME);
-            this.playerStateProxy = this.facade.getProxy(
-                ctrl.proxies.player.PlayerStateProxy.NAME);
-            this.session = new api.session.ApiSession.get();
         },
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-                var candidate, employee;
-                employee = this.currentProxy.currentUser();
-                candidate = new api.models.User({
+
+                var topic = new api.models.Topic({
                     id: notification.options.id
                 });
 
-                this.view = new user_views.UserView({
-                    candidateModel: candidate,
-                    employeeModel: employee,
-                    playerState: this.playerStateProxy.model
+                this.view = new talking_point_views.TalkingPointsSummaryView({
+                    model: topic
                 });
-
-                this.view.addEventListener(this.cid, user_views.EVENTS.PLAY_CHAT, this.onPlay, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
@@ -81,24 +67,16 @@ define([
                     this.view = null;
                 }
             }
-        },
-
-        onPlay: function(e, eventBody) {
-            var notificationBody = {
-                chatSession: eventBody.chatSession,
-                chatMinute: eventBody.chatMinute
-            };
-            this.facade.trigger(notifications.PLAYER_PLAY, notificationBody);
         }
 
     }, {
 
-        NAME: 'UserMediator',
-        
-        VIEW_TYPE: 'UserView'
+        NAME: 'TalkingPointsMediator',
+
+        VIEW_TYPE: 'TalkingPointsView'
     });
 
     return {
-        UserMediator: UserMediator
+        TalkingPointsMediator: TalkingPointsMediator
     };
 });

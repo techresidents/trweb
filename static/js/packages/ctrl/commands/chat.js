@@ -12,6 +12,45 @@ define([
     current_proxies) {
 
     /**
+     * CreateChat constructor
+     * @constructor
+     * @classdesc
+     * Create a chat
+     */
+    var CreateChat = core.command.AsyncCommand.extend({
+
+        /**
+         * Execute Command
+         * @param {object} [options.model] Chat model to create.
+         * This is not required if model attributes below are provided.
+         * @param {string} [options.topic_id] Chat model topic_id.
+         * This is not required if model is provided with attribute.
+         * @param {string} [options.max_participants] Chat model max_participants value.
+         * This is not required if model is provided with attribute.
+         * @param {function} [options.onSuccess] Success callback
+         * @param {function} [options.onError] Error callback
+         */
+        execute: function(options) {
+            var model = options.model || new api.models.Chat();
+
+            // Set model attributes
+            var attributes = _.defaults({
+                topic_id: options.topic_id,
+                max_participants: options.max_participants
+            }, model.attributes);
+
+            model.save(attributes, {
+                wait: true,
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+
+            return true;
+        }
+    });
+
+
+    /**
      * ParticipateInChat constructor
      * @constructor
      * @classdesc
@@ -112,6 +151,38 @@ define([
         }
     });
 
+
+    /**
+     * UpdateTalkingPoints constructor
+     * @constructor
+     * @classdesc
+     * Update the talking points collection.
+     */
+    var UpdateTalkingPoints = core.command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['collection'],
+
+        /**
+         * Execute Command
+         * @param {object} [options.collection] TalkingPointCollection
+         * @param {function} [options.onSuccess] Success callback
+         * @param {function} [options.onError] Error callback
+         */
+        execute: function(options) {
+            var collection = options.collection;
+            collection.save({
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+
+            return true;
+        }
+    });
+
+
     /**
      * UpdateChatStatus constructor
      * @constructor
@@ -161,9 +232,9 @@ define([
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this)
             });
-            
         }
     });
+            
 
     /**
      * UpdateChatUserStatus constructor
@@ -177,6 +248,7 @@ define([
          * OnSuccess and onError argument names
          */
         asyncCallbackArgs: ['model', 'response'],
+
 
         /**
          * Execute command
@@ -220,8 +292,10 @@ define([
     });
     
     return {
+        CreateChat: CreateChat,
         ParticipateInChat: ParticipateInChat,
         UpdateChatStatus: UpdateChatStatus,
-        UpdateChatUserStatus: UpdateChatUserStatus
+        UpdateChatUserStatus: UpdateChatUserStatus,
+        UpdateTalkingPoints: UpdateTalkingPoints
     };
 });

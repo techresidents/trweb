@@ -2,6 +2,9 @@ define(/** @exports events */[
 ], function() {
 
     return {
+        /* VIEW EVENTS */
+        VIEW_NAVIGATE: 'view_navigate',
+
         /* APPLICATION EVENTS */
         CREATE_APPLICATION: 'create_application',
         UPDATE_APPLICATION_STATUS: 'update_application_status',
@@ -21,8 +24,10 @@ define(/** @exports events */[
         TAKE_NOTE: 'take_note',
 
         /* CHAT ACTIONS */
+        CREATE_CHAT: 'create_chat',
         PARTICIPATE_IN_CHAT: 'participate_in_chat',
         UPDATE_CHAT_STATUS: 'update_chat_status',
-        UPDATE_CHAT_USER_STATUS: 'update_chat_user_status'
+        UPDATE_CHAT_USER_STATUS: 'update_chat_user_status',
+        UPDATE_TALKING_POINTS: 'update_talking_points'
     };
 });

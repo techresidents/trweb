@@ -64,9 +64,15 @@ define([
                 this._loaded = false;
                 this._isDirty = false;
 
-                this.bind('change', function(model, value) {
-                    if(!this._loading) {
-                        this._isDirty = true;
+                // Listen on 'all' instead of 'change' because the generic
+                // 'change' event is fired after 'change:<attribute>' events.
+                // We want the dirty flag to be set before other listeners
+                // process the event so that saves work properly.
+                this.bind('all', function(eventName, model, value) {
+                    if(eventName.indexOf('change') !== -1) {
+                        if(!this._loading) {
+                            this._isDirty = true;
+                        }
                     }
                 }, this);
             } else {
@@ -279,7 +285,7 @@ define([
                     }
                 }
             }
-            
+
             this._isDirty = false;
             this._loaded = true;
             
@@ -788,6 +794,10 @@ define([
             
             //create or update all models currently in collection
             this.each(function(model) {
+                // Don't resave a model that's in the process of loading
+                if(model.isLoading()) {
+                    return;
+                }
                 if(model.isNew() || model.isDirty()) {
                     openRequests++;
                     model.save(null, {

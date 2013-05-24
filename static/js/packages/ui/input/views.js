@@ -52,6 +52,8 @@ define(/** @exports ui/input/views */[
 
         delegateInputEvents: function() {
             if(this.inputView) {
+                // TODO
+                //console.log('%s delegateInputEvents', this.cid);
                 this.undelegateInputEvents();
                 this.inputView.addEventListener(this.cid, 'focus', this.onFocus, this, this.inputSelector);
                 this.inputView.addEventListener(this.cid, 'blur', this.onBlur, this, this.inputSelector);
@@ -61,6 +63,8 @@ define(/** @exports ui/input/views */[
 
         undelegateInputEvents: function() {
             if(this.inputView) {
+                // TODO
+                //console.log('%s undelegateInputEvents', this.cid);
                 this.inputView.removeEventListeners(this.cid);
             }
         },
@@ -190,6 +194,7 @@ define(/** @exports ui/input/views */[
         },
 
         onKeyDown: function(e) {
+            console.log('InputHandler keydown event');
             switch(e.keyCode) {
                 case kc.ENTER:
                     this._update();
@@ -207,7 +212,7 @@ define(/** @exports ui/input/views */[
                     }
                     break;
                 default:
-                    if(!this.updateDuringType) {
+                    if(!this.updateDuringTyping) {
                         this._restartTimer();
                     }
                     break;
