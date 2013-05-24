@@ -264,10 +264,10 @@ define([
                     // Find the list item before this one, and swap it's rank
                     var prevModel = this.collection.at(index-1);
                     var prevRank = prevModel.get(this.rankAttribute);
-                    model._isDirty = true;
+                    //model._isDirty = true;
                     model.set(this.rankAttribute, prevRank);
-                    model._isDirty = false;
-                    prevModel._isDirty = true;
+                    //model._isDirty = false;
+                    //prevModel._isDirty = true;
                     prevModel.set(this.rankAttribute, rank);
                     this.collection.sort();
                     this.sortChildViews();
@@ -286,10 +286,10 @@ define([
                     // Find the list item after this one, and swap it's rank
                     var nextModel = this.collection.at(index+1);
                     var nextRank = nextModel.get(this.rankAttribute);
-                    model._isDirty = true;
+                    //model._isDirty = true;
                     model.set(this.rankAttribute, nextRank);
-                    model._isDirty = false;
-                    nextModel._isDirty = true;
+                    //model._isDirty = false;
+                    //nextModel._isDirty = true;
                     nextModel.set(this.rankAttribute, rank);
                     this.collection.sort();
                     this.sortChildViews();
