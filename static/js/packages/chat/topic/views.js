@@ -4,6 +4,7 @@ define([
     'backbone',
     'core',
     'api',
+    'events',
     'text!./templates/topic.html',
     'text!./templates/topic_tree.html',
     'text!./templates/registration.html'
@@ -13,6 +14,7 @@ define([
     Backbone,
     core,
     api,
+    events,
     topic_template,
     topic_tree_template,
     registration_template) {
@@ -99,10 +101,12 @@ define([
      */
     var TopicRegistrationView = core.view.View.extend({
 
-        events: {
-        },
-
         topicSelector: '.chat-topic-view-hook',
+        setupBtnSelector: '.setup-chat-btn',
+
+        events: {
+            'click .setup-chat-btn': 'onSetupChat'
+        },
 
         childViews: function() {
             return [this.topicView];
@@ -127,6 +131,14 @@ define([
             this.$el.html(this.template());
             this.append(this.topicView, this.topicSelector);
             return this;
+        },
+
+        onSetupChat: function() {
+            eventBody = {
+                type: 'TalkingPointView',
+                id: this.model.id
+            };
+            this.triggerEvent(events.VIEW_NAVIGATE, eventBody);
         }
     });
 
