@@ -1,6 +1,5 @@
 define([
     'jquery',
-    'jquery.animatecolors',
     'underscore',
     'backbone',
     'core',
@@ -14,7 +13,6 @@ define([
     'text!./templates/topic_tlkpt_composite.html'
 ], function(
     $,
-    none,
     _,
     Backbone,
     core,
@@ -81,20 +79,11 @@ define([
 
         initialize: function(options) {
             this.collection = options.collection;
-            this.listenTo(this.collection, 'change:point change:rank', this.onChange);
+            this.listenTo(this.collection, 'change:point change:rank', this.save);
             // Calling save on the collection after 'remove' event will
             // destroy the removed model.
             this.listenTo(this.collection, 'remove', this.save);
             ui.collection.views.OrderedListView.prototype.initialize.call(this, options);
-        },
-
-        fadeTextColor: function(options, response) {
-
-        },
-
-        onChange: function() {
-            //TODO this.$('.talking-point-input').animate({color: 'rgba(42, 47, 76, 0.8)'});
-            this.save();
         },
 
         save: function() {
@@ -142,6 +131,7 @@ define([
         },
 
         render: function() {
+            console.log('ItemView render');
             var context = {
                 model: this.model
             };
@@ -200,7 +190,10 @@ define([
             this.template =  _.template(topic_tlkpt_composite_template);
 
             // bind events
-            this.listenTo(this.collection, 'loaded', this.render);
+            // Only listening on 'loaded:read' so that render is called
+            // after we invoke fetch(), and not whenever the collection
+            // is saved.
+            this.listenTo(this.collection, 'loaded:read', this.render);
 
             // load data
             // this.collection has all tlkpts for this topic. Now
@@ -238,6 +231,7 @@ define([
 
         render: function() {
             if (this.collection.isLoaded()) {
+                console.log('TopicTalkingPoint render');
                 var context = {
                     topic_level: this.model.get_level()
                 };
@@ -299,6 +293,7 @@ define([
         },
 
         render: function() {
+            console.log('TlkPt Summary render');
             this.$el.html(this.template());
             if (this.loader.isLoaded()) {
                 this.append(this.talkingPointsView, this.talkingPointsSelector);
