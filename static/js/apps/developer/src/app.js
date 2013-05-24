@@ -86,7 +86,7 @@ define([
                 trigger: true
             }, options);
             router = this.facade.router;
-            console.log(options);
+
             switch (options.type) {
                 case 'ChatView':
                     uri = 'chat/' + options.id;
