@@ -47,6 +47,8 @@ define([
         TAKE_NOTE: 'notification:TakeNote',
 
         /* CHAT ACTIONS */
-        PARTICIPATE_IN_CHAT: 'notification:ParticipateInChat'
+        PARTICIPATE_IN_CHAT: 'notification:ParticipateInChat',
+        UPDATE_CHAT_STATUS: 'notification:UpdateChatStatus',
+        UPDATE_CHAT_USER_STATUS: 'notification:UpdateChatUserStatus'
     };
 });

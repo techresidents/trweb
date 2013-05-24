@@ -21,6 +21,8 @@ define(/** @exports events */[
         TAKE_NOTE: 'take_note',
 
         /* CHAT ACTIONS */
-        PARTICIPATE_IN_CHAT: 'participate_in_chat'
+        PARTICIPATE_IN_CHAT: 'participate_in_chat',
+        UPDATE_CHAT_STATUS: 'update_chat_status',
+        UPDATE_CHAT_USER_STATUS: 'update_chat_user_status'
     };
 });

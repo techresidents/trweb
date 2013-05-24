@@ -111,8 +111,117 @@ define([
             ParticipateInChat.__super__.onError.call(this, this.model, fault);
         }
     });
+
+    /**
+     * UpdateChatStatus constructor
+     * @constructor
+     * @classdesc
+     * Update chat status.
+     */
+    var UpdateChatStatus = core.command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['model', 'response'],
+
+        /**
+         * Execute command
+         * @param {object} options Options object
+         * @param {string} options.chat Chat model which must
+         *   contain credential model.
+         * @param {string} options.status New chat status.
+         * @param {function} [options.onSuccess] Success callback 
+         * @param {function} [options.onError] Error callback 
+         */
+        execute: function(options) {
+            var currentProxy = this.facade.getProxy(
+                current_proxies.CurrentProxy.NAME);
+            var currentUser = currentProxy.currentUser();
+            var chat = options.chat;
+            var credential = chat.get_chat_credentials().first();
+
+            if(!credential) {
+                this.onError();
+            }
+
+            var message = new api.models.ChatMessage({
+                header: {
+                    type: 'CHAT_STATUS',
+                    chat_token: credential.get_token(),
+                    user_id: currentUser.id
+                },
+                chat_status_message: {
+                    user_id: currentUser.id,
+                    status: options.status
+                }
+            });
+            
+            message.save(null, {
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+            
+        }
+    });
+
+    /**
+     * UpdateChatUserStatus constructor
+     * @constructor
+     * @classdesc
+     * Update chat user's status.
+     */
+    var UpdateChatUserStatus = core.command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['model', 'response'],
+
+        /**
+         * Execute command
+         * @param {object} options Options object
+         * @param {string} options.chat Chat model which must
+         *   contain chat credential and participant models.
+         * @param {string} options.status New user status.
+         * @param {function} [options.onSuccess] Success callback 
+         * @param {function} [options.onError] Error callback 
+         */
+        execute: function(options) {
+            var currentProxy = this.facade.getProxy(
+                current_proxies.CurrentProxy.NAME);
+            var currentUser = currentProxy.currentUser();
+            var chat = options.chat;
+            var credential = chat.get_chat_credentials().first();
+            var participant = _.first(chat.get_chat_participants().where({
+                user_id: currentUser.id
+            }));
+
+            var message = new api.models.ChatMessage({
+                header: {
+                    type: 'USER_STATUS',
+                    chat_token: credential.get_token(),
+                    user_id: currentUser.id
+                },
+                user_status_message: {
+                    user_id: currentUser.id,
+                    status: options.status,
+                    first_name: currentUser.get_first_name(),
+                    participant: participant.get_participant()
+                }
+            });
+
+            message.save(null, {
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+            
+        }
+    });
     
     return {
-        ParticipateInChat: ParticipateInChat
+        ParticipateInChat: ParticipateInChat,
+        UpdateChatStatus: UpdateChatStatus,
+        UpdateChatUserStatus: UpdateChatUserStatus
     };
 });

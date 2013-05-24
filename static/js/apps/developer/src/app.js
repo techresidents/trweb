@@ -152,6 +152,13 @@ define([
         notifications.SHOW_MAKE_INTERVIEW_OFFER;
     EventNotificationMap[events.SHOW_RESCIND_INTERVIEW_OFFER] =
         notifications.SHOW_RESCIND_INTERVIEW_OFFER;
+    /* CHAT EVENTS */
+    EventNotificationMap[events.PARTICIPATE_IN_CHAT] =
+        notifications.PARTICIPATE_IN_CHAT;
+    EventNotificationMap[events.UPDATE_CHAT_STATUS] =
+        notifications.UPDATE_CHAT_STATUS;
+    EventNotificationMap[events.UPDATE_CHAT_USER_STATUS] =
+        notifications.UPDATE_CHAT_USER_STATUS;
     /* DEVELOPER NOTE EVENTS*/
     EventNotificationMap[events.TAKE_NOTE] =
         notifications.TAKE_NOTE;
@@ -285,6 +292,10 @@ define([
             /* CHAT COMMANDS */
             this.registerCommand(notifications.PARTICIPATE_IN_CHAT,
                 ctrl.commands.chat.ParticipateInChat);
+            this.registerCommand(notifications.UPDATE_CHAT_STATUS,
+                ctrl.commands.chat.UpdateChatStatus);
+            this.registerCommand(notifications.UPDATE_CHAT_USER_STATUS,
+                ctrl.commands.chat.UpdateChatUserStatus);
             /* INTERVIEW OFFER COMMANDS */
             this.registerCommand(notifications.MAKE_INTERVIEW_OFFER,
                 ctrl.commands.applicant.MakeInterviewOffer);
