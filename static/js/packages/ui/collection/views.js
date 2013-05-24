@@ -225,7 +225,7 @@ define([
      * Ordered List View.
      * @constructor
      * @param {Object} options
-     *   collection: {Collection} collection (required)
+     *   collection: {Collection} a sortable collection (required)
      *   modelRankAttribute: {String} name of the model attribute to manipulate if the
      *      collection can be reordered by the user (optional)
      */
@@ -264,10 +264,7 @@ define([
                     // Find the list item before this one, and swap it's rank
                     var prevModel = this.collection.at(index-1);
                     var prevRank = prevModel.get(this.rankAttribute);
-                    //model._isDirty = true;
                     model.set(this.rankAttribute, prevRank);
-                    //model._isDirty = false;
-                    //prevModel._isDirty = true;
                     prevModel.set(this.rankAttribute, rank);
                     this.collection.sort();
                     this.sortChildViews();
@@ -286,10 +283,7 @@ define([
                     // Find the list item after this one, and swap it's rank
                     var nextModel = this.collection.at(index+1);
                     var nextRank = nextModel.get(this.rankAttribute);
-                    //model._isDirty = true;
                     model.set(this.rankAttribute, nextRank);
-                    //model._isDirty = false;
-                    //nextModel._isDirty = true;
                     nextModel.set(this.rankAttribute, rank);
                     this.collection.sort();
                     this.sortChildViews();
