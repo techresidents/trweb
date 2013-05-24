@@ -86,8 +86,12 @@ define([
                 trigger: true
             }, options);
             router = this.facade.router;
-            
-            switch(options.type) {
+            console.log(options);
+            switch (options.type) {
+                case 'ChatView':
+                    uri = 'chat/' + options.id;
+                    router.navigate(uri, {trigger: options.trigger});
+                    break;
             }
         }
     });
@@ -143,6 +147,9 @@ define([
      * Event to Notification map
      */
     var EventNotificationMap = {};
+    /* VIEW EVENTS*/
+    EventNotificationMap[events.VIEW_NAVIGATE] =
+        notifications.VIEW_NAVIGATE;
     /* APPLICATION EVENTS*/
     EventNotificationMap[events.CREATE_APPLICATION] =
         notifications.CREATE_APPLICATION;

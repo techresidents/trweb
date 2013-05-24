@@ -306,16 +306,26 @@ define([
         },
 
         onStart: function() {
+            var that = this;
+            var chatModel = null;
+            var eventBody = null;
             var maxParticipants = 1;
             if (this.$(this.chatWithFriendSelector).is(":checked")) {
                 maxParticipants = 2;
             }
-            var chatModel = new api.models.Chat({
+            chatModel = new api.models.Chat({
                 topic_id: this.model.id,
                 max_participants: maxParticipants
             });
-            var eventBody = {
-                model: chatModel
+            eventBody = {
+                model: chatModel,
+                onSuccess: function(options, response) {
+                    var navigateEvtBody = {
+                        type: 'ChatView',
+                        id: options.model.id
+                    };
+                    that.triggerEvent(events.VIEW_NAVIGATE, navigateEvtBody);
+                }
             };
             this.triggerEvent(events.CREATE_CHAT, eventBody);
         }
