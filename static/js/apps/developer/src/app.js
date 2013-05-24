@@ -168,6 +168,8 @@ define([
     EventNotificationMap[events.TAKE_NOTE] =
         notifications.TAKE_NOTE;
     /* CHAT EVENTS */
+    EventNotificationMap[events.CREATE_CHAT] =
+        notifications.CREATE_CHAT;
     EventNotificationMap[events.UPDATE_TALKING_POINTS] =
         notifications.UPDATE_TALKING_POINTS;
 
@@ -298,6 +300,8 @@ define([
             this.registerCommand(notifications.CREATE_APPLICATION_LOG,
                 ctrl.commands.applicant.CreateApplicationLog);
             /* CHAT COMMANDS */
+            this.registerCommand(notifications.CREATE_CHAT,
+                ctrl.commands.chat.CreateChat);
             this.registerCommand(notifications.PARTICIPATE_IN_CHAT,
                 ctrl.commands.chat.ParticipateInChat);
             this.registerCommand(notifications.UPDATE_TALKING_POINTS,

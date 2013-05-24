@@ -692,6 +692,9 @@
 .chat-topic-registration-container {
     margin-top: 20px;
 }
+.chat-topic-registration-container .start-chat-btn{
+    margin-top: 15px;
+}
 .chat-topic .level1 {
     margin-left: 0px;
 }

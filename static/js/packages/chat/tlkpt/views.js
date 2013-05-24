@@ -252,10 +252,12 @@ define([
      */
     var TalkingPointsSummaryView = core.view.View.extend({
 
-        events: {
-        },
-
+        chatWithFriendSelector: '#chat-with-friend-radio-btn',
         talkingPointsSelector: '.talking-points-view-hook',
+
+        events: {
+            'click .start-chat-btn': 'onStart'
+        },
 
         childViews: function() {
             return [
@@ -301,6 +303,21 @@ define([
                 this.append(this.loaderView);
             }
             return this;
+        },
+
+        onStart: function() {
+            var maxParticipants = 1;
+            if (this.$(this.chatWithFriendSelector).is(":checked")) {
+                maxParticipants = 2;
+            }
+            var chatModel = new api.models.Chat({
+                topic_id: this.model.id,
+                max_participants: maxParticipants
+            });
+            var eventBody = {
+                model: chatModel
+            };
+            this.triggerEvent(events.CREATE_CHAT, eventBody);
         }
     });
 
