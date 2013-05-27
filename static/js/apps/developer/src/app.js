@@ -29,6 +29,7 @@ define([
     var AppRouter = Backbone.Router.extend({
         routes: {
             'chat/:id': 'chat',
+            'reel': 'reel',
             'topic/:id': 'topic',
             'topic/:id/talkingpoints': 'topicTalkingPoints',
             '*actions': 'placeholder'
@@ -45,6 +46,16 @@ define([
                     type: chat.mediators.chat.ChatMediator.VIEW_TYPE,
                     options: {
                         id: id
+                    }
+                });
+            }, this));
+        },
+
+        reel: function() {
+            require(['chat'], _.bind(function(chat) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: chat.mediators.reel.HighlightReelMediator.VIEW_TYPE,
+                    options: {
                     }
                 });
             }, this));
