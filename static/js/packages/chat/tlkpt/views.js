@@ -131,7 +131,6 @@ define([
         },
 
         render: function() {
-            console.log('ItemView render');
             var context = {
                 model: this.model
             };
@@ -193,18 +192,31 @@ define([
             // Only listening on 'loaded:read' so that render is called
             // after we invoke fetch(), and not whenever the collection
             // is saved.
-            this.listenTo(this.collection, 'loaded:read', this.render);
+            this.listenTo(this.collection, 'loaded:read', this.read);
 
             // load data
             // this.collection has all tlkpts for this topic. Now
             // we need to filter it down to just this user's tlkpts.
-            this.collection.filterBy({user_id: userModel.id}).fetch();
+            this.collection.filterBy({user_id: userModel.id}).fetch({
+                success: _.bind(this.initialLoad, this)
+            });
 
             //child views
             this.topicView = null;
             this.addTalkingPointView = null;
             this.talkingPointsListView = null;
             this.initChildViews();
+        },
+
+        initialLoad: function() {
+            console.log('TopicTlkPt fetch success triggering render');
+            this.render();
+        },
+
+        read: function() {
+            console.log('TopicTlkPt loaded:read');
+            //this.render();
+            // TODO verify this is OK.
         },
 
         initChildViews: function() {
@@ -231,7 +243,7 @@ define([
 
         render: function() {
             if (this.collection.isLoaded()) {
-                console.log('TopicTalkingPoint render');
+                console.log('TopicTalkingPoint Item render');
                 var context = {
                     topic_level: this.model.get_level()
                 };
@@ -239,6 +251,8 @@ define([
                 this.append(this.topicView, this.tlkptCompositeSelector);
                 this.append(this.talkingPointsListView, this.tlkptCompositeSelector);
                 this.append(this.addTalkingPointView, this.tlkptCompositeSelector);
+            } else {
+                console.log('TopicTalkingPt data not ready');
             }
             return this;
         }
@@ -295,7 +309,6 @@ define([
         },
 
         render: function() {
-            console.log('TlkPt Summary render');
             this.$el.html(this.template());
             if (this.loader.isLoaded()) {
                 this.append(this.talkingPointsView, this.talkingPointsSelector);
