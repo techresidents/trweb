@@ -132,6 +132,61 @@ define([
     });
 
     /**
+     * HighlightReelListView View
+     * @constructor
+     * @param {Object} options
+     *   collection: {ChatReelCollection} object (required)
+     */
+    var HighlightReelListView = ui.collection.views.OrderedListView.extend({
+
+        initialize: function(options) {
+            _.extend(options, {
+                viewFactory: new core.factory.Factory(HighlightReelItemView, {}),
+                modelRankAttribute: 'rank',
+                sort: this.viewSort
+            });
+            this.collection = options.collection;
+            // OrderedListView requires a sortable collection
+            this.collection.comparator = function(model) {
+                return model.get_rank();
+            };
+
+            // setup data bindings
+            this.listenTo(this.collection, 'change:rank', this.save);
+            // Calling save on the collection after 'remove' event will
+            // destroy the removed model.
+            this.listenTo(this.collection, 'remove', this.save);
+
+            // invoke super
+            ui.collection.views.OrderedListView.prototype.initialize.call(this, options);
+        },
+
+        save: function() {
+            var eventBody = {
+                collection: this.collection
+            };
+            console.log('ReelList save');
+            console.log(this.collection.toJSON());
+            //this.triggerEvent(events.UPDATE_TALKING_POINTS, eventBody);
+        },
+
+        /**
+         * viewSort
+         * HighlightReelListView requires a sort function to be defined that the
+         * underlying CollectionView will use to sort the views in the collection.
+         * @param view
+         * @returns {number}
+         */
+        viewSort: function(view) {
+            var ret = 0;
+            if (view && view.model) {
+                ret = view.model.get_rank();
+            }
+            return ret;
+        }
+    });
+
+    /**
      * HighlightReelView View
      * @constructor
      * @param {Object} options
@@ -171,9 +226,8 @@ define([
             this.addReelView = new AddReelView({
                 collection: this.collection
             });
-            this.reelView = new ui.collection.views.OrderedListView({
-                collection: this.collection,
-                viewFactory: new core.factory.Factory(HighlightReelItemView, {})
+            this.reelView = new HighlightReelListView({
+                collection: this.collection
             });
         },
 
@@ -189,6 +243,7 @@ define([
 
     return {
         HighlightReelItemView: HighlightReelItemView,
+        HighlightReelListView: HighlightReelListView,
         HighlightReelView: HighlightReelView
     };
 });
