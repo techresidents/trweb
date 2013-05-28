@@ -194,6 +194,8 @@ define([
         notifications.CREATE_CHAT;
     EventNotificationMap[events.UPDATE_TALKING_POINTS] =
         notifications.UPDATE_TALKING_POINTS;
+    EventNotificationMap[events.UPDATE_CHAT_REEL] =
+        notifications.UPDATE_CHAT_REEL;
 
     /**
      * App Mediator
@@ -328,6 +330,8 @@ define([
                 ctrl.commands.chat.ParticipateInChat);
             this.registerCommand(notifications.UPDATE_TALKING_POINTS,
                 ctrl.commands.chat.UpdateTalkingPoints);
+            this.registerCommand(notifications.UPDATE_CHAT_REEL,
+                ctrl.commands.chat.UpdateChatReel);
             /* INTERVIEW OFFER COMMANDS */
             this.registerCommand(notifications.MAKE_INTERVIEW_OFFER,
                 ctrl.commands.applicant.MakeInterviewOffer);

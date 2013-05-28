@@ -187,9 +187,41 @@ define([
         }
     });
 
+    /**
+     * UpdateChatReel constructor
+     * @constructor
+     * @classdesc
+     * Update the ChatReel collection.
+     */
+    var UpdateChatReel = core.command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['collection'],
+
+        /**
+         * Execute command
+         * @param {object} options Options object
+         * @param {object} [options.collection] ChatReelCollection
+         * @param {function} [options.onSuccess] Success callback
+         * @param {function} [options.onError] Error callback
+         */
+        execute: function(options) {
+            var collection = options.collection;
+            collection.save({
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+
+            return true;
+        }
+    });
+
     return {
         ParticipateInChat: ParticipateInChat,
         CreateChat: CreateChat,
-        UpdateTalkingPoints: UpdateTalkingPoints
+        UpdateTalkingPoints: UpdateTalkingPoints,
+        UpdateChatReel: UpdateChatReel
     };
 });

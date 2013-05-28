@@ -26,6 +26,7 @@ define(/** @exports events */[
         /* CHAT ACTIONS */
         CREATE_CHAT: 'create_chat',
         PARTICIPATE_IN_CHAT: 'participate_in_chat',
-        UPDATE_TALKING_POINTS: 'update_talking_points'
+        UPDATE_TALKING_POINTS: 'update_talking_points',
+        UPDATE_CHAT_REEL: 'update_chat_reel'
     };
 });

@@ -49,6 +49,7 @@ define([
         /* CHAT ACTIONS */
         CREATE_CHAT: 'notification:CreateChat',
         PARTICIPATE_IN_CHAT: 'notification:ParticipateInChat',
-        UPDATE_TALKING_POINTS: 'notification:UpdateTalkingPoints'
+        UPDATE_TALKING_POINTS: 'notification:UpdateTalkingPoints',
+        UPDATE_CHAT_REEL: 'notification:UpdateChatReel'
     };
 });
