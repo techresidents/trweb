@@ -733,6 +733,21 @@
     margin-left: 0px;
 }
 
+.highlight-reel-container li {
+    margin-top: 10px;
+    border-top: 2px;
+    border-top-style: solid;
+    border-top-color: #EA8F00;
+}
 .highlight-reel-item-arrows-container {
-    margin-right: 5px;
+    margin-right: 10px;
+}
+.highlight-reel-item-text-container {
+    display: block;
+}
+.highlight-reel-item-text-container h4 {
+    margin-bottom: 5px;
+}
+.highlight-reel-item-close {
+    line-height: 45px;
 }

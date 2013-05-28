@@ -52,9 +52,16 @@ define([
                 highestRank = this.collection.at(this.collection.length - 1).get_rank();
                 rank = highestRank + 1;
             }
+            var chat_id = '1q5h1q8'; // 7
+            if (rank === 1) {
+                chat_id = '4fti4g'; // 8
+            }
+            if (rank === 2) {
+                chat_id = '13ydj40'; // 9
+            }
             var model = new api.models.ChatReel({
                 user_id: userModel.id,
-                chat_id: '1q5h1q8', // 7 TODO placholder
+                chat_id: chat_id, //TODO placholder
                 rank: rank
             });
             model.save();
@@ -164,7 +171,7 @@ define([
             this.addReelView = new AddReelView({
                 collection: this.collection
             });
-            this.reelView = new ui.collection.views.CollectionView({
+            this.reelView = new ui.collection.views.OrderedListView({
                 collection: this.collection,
                 viewFactory: new core.factory.Factory(HighlightReelItemView, {})
             });

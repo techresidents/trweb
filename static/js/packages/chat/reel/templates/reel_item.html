@@ -6,9 +6,8 @@
         <a class="btn btn-tiny down"><i class="icon-arrow-down"></i></a>
     </div>
 </div>
-<div>
+<div class="highlight-reel-item-text-container">
+    <a class="highlight-reel-item-close close-inline remove pull-right">x</a>
     <h4><%= topic.get_title() %> <small>(<%= Math.round(topic.get_duration() / 60) %> mins)</small></h4>
-    <div>
-        <em><%= fmt.date(chat.get_start(), 'MM/dd/yy hh:mm tt')%></em>
-    </div>
+    <em><%= fmt.date(chat.get_start(), 'MM/dd/yy hh:mm tt')%></em>
 </div>
