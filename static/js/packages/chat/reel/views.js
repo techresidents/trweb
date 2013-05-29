@@ -367,16 +367,16 @@ define([
      */
     var ChatReelView = core.view.View.extend({
 
-        reelSelector: '.reel-hook',
-        addReelSelector: '.add-reel-hook',
+        chatReelListSelector: '.chat-reel-list-hook',
+        addChatButtonSelector: '.add-chat-btn-hook',
 
         events: {
         },
 
         childViews: function() {
             return [
-                this.addReelView,
-                this.reelView
+                this.addChatButtonView,
+                this.chatReelListView
             ];
         },
 
@@ -394,16 +394,16 @@ define([
             });
 
             //child views
-            this.addReelView = null;
-            this.reelView = null;
+            this.addChatButtonView = null;
+            this.chatReelListView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
-            this.addReelView = new AddChatButtonView({
+            this.addChatButtonView = new AddChatButtonView({
                 collection: this.collection
             });
-            this.reelView = new ChatReelListView({
+            this.chatReelListView = new ChatReelListView({
                 collection: this.collection
             });
         },
@@ -411,8 +411,8 @@ define([
         render: function() {
             this.$el.html(this.template());
             if (this.collection.isLoaded()) {
-                this.append(this.reelView, this.reelSelector);
-                this.append(this.addReelView, this.addReelSelector);
+                this.append(this.chatReelListView, this.chatReelListSelector);
+                this.append(this.addChatButtonView, this.addChatButtonSelector);
             }
             return this;
         }
