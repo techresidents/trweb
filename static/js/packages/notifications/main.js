@@ -50,6 +50,8 @@ define([
         CREATE_CHAT: 'notification:CreateChat',
         PARTICIPATE_IN_CHAT: 'notification:ParticipateInChat',
         UPDATE_TALKING_POINTS: 'notification:UpdateTalkingPoints',
-        UPDATE_CHAT_REEL: 'notification:UpdateChatReel'
+        CREATE_CHAT_REEL: 'notification:CreateChatReel',
+        UPDATE_CHAT_REEL: 'notification:UpdateChatReel',
+        SHOW_CHAT_REEL_SELECTOR: 'notification:ShowChatReelSelector'
     };
 });
