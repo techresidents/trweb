@@ -7,10 +7,10 @@ define([
     'events',
     'ui',
     'text!./templates/chat_select.html',
-    'text!./templates/add_reel_modal.html',
-    'text!./templates/add_reel.html',
-    'text!./templates/reel_item.html',
-    'text!./templates/reel.html'
+    'text!./templates/add_chat_button.html',
+    'text!./templates/add_chat_modal.html',
+    'text!./templates/chat_reel_item.html',
+    'text!./templates/chat_reel.html'
 ], function(
     $,
     _,
@@ -20,10 +20,10 @@ define([
     events,
     ui,
     chat_select_template,
-    add_reel_modal_template,
-    add_reel_template,
-    reel_item_template,
-    reel_template) {
+    add_chat_button_template,
+    add_chat_modal_template,
+    chat_reel_item_template,
+    chat_reel_template) {
 
     /**
      * AddChatButtonView View
@@ -39,7 +39,7 @@ define([
 
         initialize: function(options) {
             this.collection = options.collection;
-            this.template =  _.template(add_reel_template);
+            this.template =  _.template(add_chat_button_template);
         },
 
         render: function() {
@@ -167,7 +167,7 @@ define([
         initialize: function(options) {
             this.chatReelCollection = options.chatReelCollection;
             this.userModel = new api.models.User({id: 'CURRENT'});
-            this.template =  _.template(add_reel_modal_template);
+            this.template =  _.template(add_chat_modal_template);
 
             // child views
             this.chatSelectView = null;
@@ -256,7 +256,7 @@ define([
             this.modelWithRelated = ['chat__topic'];
             this.chatModel = this.model.get_chat();
             this.topicModel = this.model.get_chat().get_topic();
-            this.template =  _.template(reel_item_template);
+            this.template =  _.template(chat_reel_item_template);
 
             // set data bindings
             //this.listenTo(this.model, 'change', this.onChange);
@@ -387,7 +387,7 @@ define([
             this.collection.comparator = function(model) {
                 return model.get_rank();
             };
-            this.template =  _.template(reel_template);
+            this.template =  _.template(chat_reel_template);
 
             this.collection.filterBy({user_id: userModel.id}).orderBy('rank').fetch({
                 success: _.bind(this.render, this) // TODO test
