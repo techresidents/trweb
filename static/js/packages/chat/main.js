@@ -21,7 +21,7 @@ define(/** @exports alert */[
     
     var register = function(facade) {
         facade.registerMediator(new chat_mediators.ChatMediator());
-        facade.registerMediator(new reel_mediators.HighlightReelMediator());
+        facade.registerMediator(new reel_mediators.ChatReelMediator());
         facade.registerMediator(new topic_mediators.TopicMediator());
         facade.registerMediator(new tlkpt_mediators.TalkingPointsMediator());
     };

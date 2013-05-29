@@ -26,15 +26,14 @@ define([
     reel_template) {
 
     /**
-     * AddReelButtonView View
+     * AddChatButtonView View
      * @constructor
      * @param {Object} options
      *   collection: {ChatReelCollection} object (required)
      */
-    var AddReelButtonView = core.view.View.extend({
+    var AddChatButtonView = core.view.View.extend({
 
         events: {
-            //'click .add': 'onAddPlaceholder',
             'click .add': 'onAdd'
         },
 
@@ -52,39 +51,14 @@ define([
             this.triggerEvent(events.SHOW_CHAT_REEL_SELECTOR, {
                 chatReelCollection: this.collection
             });
-        },
-
-        onAddPlaceholder: function() {
-            console.log('adding chat_reel model');
-            var userModel = new api.models.User({id: 'CURRENT'});
-            var rank = 0;
-            var highestRank = null;
-            if (this.collection.length) {
-                highestRank = this.collection.at(this.collection.length - 1).get_rank();
-                rank = highestRank + 1;
-            }
-            var chat_id = '1q5h1q8'; // 7
-            if (rank === 1) {
-                chat_id = '4fti4g'; // 8
-            }
-            if (rank === 2) {
-                chat_id = '13ydj40'; // 9
-            }
-            var model = new api.models.ChatReel({
-                user_id: userModel.id,
-                chat_id: chat_id, //TODO placholder
-                rank: rank
-            });
-            model.save();
-            this.collection.add(model);
         }
     });
 
     /**
      * ChatSelectView.
-     * This view displays a search input and matched list of user chats.
-     * If the user's chat is already in their highlight reel,
-     * then that chat is not displayed.
+     * This view displays a search input and matched list chats that the
+     * user can add to their highlight reel. If the user's chat is already
+     * in their highlight reel, then that chat will not be displayed.
      * @constructor
      * @param {Object} options
      *    chatReelCollection: {ChatReelCollection} object (required)
@@ -104,6 +78,8 @@ define([
             this.chatSelectionCollection = new ui.select.models.SelectionCollection();
             this.template = _.template(chat_select_template);
 
+            /* This query factory is used to seed autocomplete results. These
+               initial results will then be parsed by the user's search string.*/
             this.queryFactory = function(options) {
                 var chatCollection = that.userModel.get_chats();
                 return chatCollection.withRelated('topic').filterBy({
@@ -111,12 +87,22 @@ define([
                 });
             };
 
+            /* A matcher is used to compare the results of the query with
+               the search string specified by the user. This function
+               is used to convert the chat models returned by the query factory
+               into a searchable string (so that the matching can happen against
+               the user specified string).*/
             this.stringify = function(model) {
                 return model.get_topic().get_title();
             };
 
+            /* Convert *matched* chat models into a simplified object to display
+               in the list of results. */
             this.resultsMap = function(model) {
                 var ret = null;
+                // To prevent using a crazy query factory, filter the results
+                // further to only return chats that are not already included
+                // in the ChatReel collection.
                 if (!that.chatReelCollection.where({chat_id: model.id}).length) {
                     var title = model.get_topic().get_title();
                     var date = that.fmt.date(model.get_start(), 'MM/dd/yy hh:mm tt');
@@ -152,74 +138,24 @@ define([
         },
 
         render: function() {
-            this.autoSelectView.refresh();
             var context = {};
             this.$el.html(this.template(context));
             this.append(this.autoSelectView, this.autoSelectViewSelector);
             return this;
-        },
-
-        /**
-         * _chatQueryFactory
-         * This query factory is used to seed autocomplete results.
-         * These initial results will then be parsed by the user's search
-         * string.
-         * @param options
-         * @returns {*}
-         */
-        _chatQueryFactory: function(userId, options) {
-            return new api.models.ChatCollection().filterBy({
-                'user_id__eq': userId,
-                'topic__title__istartswith': options.search
-            });
-        },
-
-        /**
-         * _stringifyChatModel
-         * A matcher is used to compare the results of the query with
-         * the search string specified by the user. This function
-         * is used to convert the chat models returned by the query factory
-         * into a searchable string (so that the matching can happen against
-         * the user specified string).
-         * @param model {Chat} object (required)
-         * @returns {String}
-         * @private
-         */
-        _stringifyChatModel: function(model) {
-            return model.get_topic().get_title();
-        },
-
-        /**
-         * _chatMatcherResultsMap
-         * Convert *matched* chat models into a simplified object to display
-         * in the list of results
-         * @param model {Chat} object (required)
-         * @returns Object literal {id:<>, value:<>}
-         * @private
-         */
-        _chatMatcherResultsMap: function(model) {
-            var ret = null;
-            // To prevent using a crazy query, filter the
-            // results here again to only return chats
-            // that are not already included in the ChatReel
-            // collection.
-            if (!this.chatReelCollection.where({chat_id: model.id}).length) {
-                ret = {
-                    id: model.id,
-                    value: model.get_topic().get_title()
-                };
-            }
-            return ret;
         }
     });
 
     /**
-     * AddReelModalView View
+     * AddChatModalView View
      * @constructor
+     * This view is designed to be used within a ModalView.
+     * It specifies the view to display within the modal,
+     * which modal buttons to show, and the behavior
+     * when the modal buttons are clicked.
      * @param {Object} options
      *  chatReelCollection: {ChatReelCollection} object (required)
      */
-    var AddReelModalView = core.view.View.extend({
+    var AddChatModalView = core.view.View.extend({
 
         events: {
         },
@@ -247,6 +183,11 @@ define([
         render: function() {
             this.$el.html(this.template());
             this.append(this.chatSelectView);
+
+            // populate initial list of chats
+            this.chatSelectView.autoSelectView.refresh();
+            this.$('input').focus(); // TODO not working
+
             return this;
         },
 
@@ -275,7 +216,6 @@ define([
         _createChatReel: function(chatSelectionModel) {
             // Only create chat reel objs for the selected chats
             if (chatSelectionModel.selected()) {
-                var that = this;
                 var highestRank = null;
                 var rank = 0;
                 // Find rank of last element in collection. Since this collection
@@ -301,12 +241,12 @@ define([
     });
 
     /**
-     * HighlightReelItemView View
+     * ChatReelItemView View
      * @constructor
      * @param {Object} options
      *   model: {ChatReel} object (required)
      */
-    var HighlightReelItemView = core.view.View.extend({
+    var ChatReelItemView = core.view.View.extend({
 
         events: {
         },
@@ -363,16 +303,16 @@ define([
     });
 
     /**
-     * HighlightReelListView View
+     * ChatReelListView View
      * @constructor
      * @param {Object} options
      *   collection: {ChatReelCollection} a sortable collection (required)
      */
-    var HighlightReelListView = ui.collection.views.OrderedListView.extend({
+    var ChatReelListView = ui.collection.views.OrderedListView.extend({
 
         initialize: function(options) {
             _.extend(options, {
-                viewFactory: new core.factory.Factory(HighlightReelItemView, {}),
+                viewFactory: new core.factory.Factory(ChatReelItemView, {}),
                 modelRankAttribute: 'rank',
                 sort: this.viewSort
             });
@@ -405,7 +345,7 @@ define([
 
         /**
          * viewSort
-         * HighlightReelListView requires a sort function to be defined that the
+         * ChatReelListView requires a sort function to be defined that the
          * underlying CollectionView will use to sort the views in the collection.
          * @param view
          * @returns {number}
@@ -420,12 +360,12 @@ define([
     });
 
     /**
-     * HighlightReelView View
+     * ChatReelView View
      * @constructor
      * @param {Object} options
      *   collection: {ChatReelCollection} object (required)
      */
-    var HighlightReelView = core.view.View.extend({
+    var ChatReelView = core.view.View.extend({
 
         reelSelector: '.reel-hook',
         addReelSelector: '.add-reel-hook',
@@ -443,7 +383,7 @@ define([
         initialize: function(options) {
             var userModel = new api.models.User({id: 'CURRENT'});
             this.collection = options.collection;
-            // HighlightReelListView requires a sortable collection
+            // ChatReelListView requires a sortable collection
             this.collection.comparator = function(model) {
                 return model.get_rank();
             };
@@ -460,10 +400,10 @@ define([
         },
 
         initChildViews: function() {
-            this.addReelView = new AddReelButtonView({
+            this.addReelView = new AddChatButtonView({
                 collection: this.collection
             });
-            this.reelView = new HighlightReelListView({
+            this.reelView = new ChatReelListView({
                 collection: this.collection
             });
         },
@@ -479,11 +419,11 @@ define([
     });
 
     return {
-        AddReelButtonView: AddReelButtonView,
-        AddReelModalView: AddReelModalView,
+        AddChatButtonView: AddChatButtonView,
+        AddChatModalView: AddChatModalView,
         ChatSelectView: ChatSelectView,
-        HighlightReelItemView: HighlightReelItemView,
-        HighlightReelListView: HighlightReelListView,
-        HighlightReelView: HighlightReelView
+        ChatReelItemView: ChatReelItemView,
+        ChatReelListView: ChatReelListView,
+        ChatReelView: ChatReelView
     };
 });

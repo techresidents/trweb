@@ -11,20 +11,20 @@ define([
     core,
     api,
     ui,
-    highlight_reel_views) {
+    chat_reel_views) {
 
     /**
-     * HighlightReel Mediator
+     * ChatReel Mediator
      * @constructor
      */
-    var HighlightReelMediator = core.mediator.Mediator.extend({
+    var ChatReelMediator = core.mediator.Mediator.extend({
 
         name: function() {
-            return HighlightReelMediator.NAME;
+            return ChatReelMediator.NAME;
         },
 
         isViewType: function(type) {
-            return _.contains(HighlightReelMediator.VIEW_TYPE, type);
+            return _.contains(ChatReelMediator.VIEW_TYPE, type);
         },
 
         /**
@@ -44,14 +44,14 @@ define([
 
                 switch(notification.type) {
 
-                    case HighlightReelMediator.VIEW_TYPE.HIGHLIGHT_REEL:
+                    case ChatReelMediator.VIEW_TYPE.CHAT_REEL:
                         var reelCollection = new api.models.ChatReelCollection();
-                        this.view = new highlight_reel_views.HighlightReelView({
+                        this.view = new chat_reel_views.ChatReelView({
                             collection: reelCollection
                         });
                         break;
 
-                    case HighlightReelMediator.VIEW_TYPE.CHAT_REEL_SELECTOR:
+                    case ChatReelMediator.VIEW_TYPE.CHAT_REEL_SELECTOR:
                         this.view = this.createChatReelSelectorView(notification.options);
                         break;
                 }
@@ -81,7 +81,7 @@ define([
         createChatReelSelectorView: function(options) {
             var modalOptions = {
                 title: 'Add To Your Highlight Reel',
-                viewOrFactory: new highlight_reel_views.AddReelModalView({
+                viewOrFactory: new chat_reel_views.AddChatModalView({
                     chatReelCollection: options.chatReelCollection
                 })
             };
@@ -90,15 +90,15 @@ define([
         }
     }, {
 
-        NAME: 'HighlightReelMediator',
+        NAME: 'ChatReelMediator',
 
         VIEW_TYPE: {
-            HIGHLIGHT_REEL: 'HighlightReel',
+            CHAT_REEL: 'ChatReel',
             CHAT_REEL_SELECTOR: 'ChatReelSelector'
         }
     });
 
     return {
-        HighlightReelMediator: HighlightReelMediator
+        ChatReelMediator: ChatReelMediator
     };
 });

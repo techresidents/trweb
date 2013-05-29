@@ -54,7 +54,7 @@ define([
         reel: function() {
             require(['chat'], _.bind(function(chat) {
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: chat.mediators.reel.HighlightReelMediator.VIEW_TYPE.HIGHLIGHT_REEL,
+                    type: chat.mediators.reel.ChatReelMediator.VIEW_TYPE.CHAT_REEL,
                     options: {
                     }
                 });
