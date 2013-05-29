@@ -3,12 +3,14 @@ define([
     'notifications',
     'core',
     'api',
+    'ui',
     './views'
 ], function(
     _,
     notifications,
     core,
     api,
+    ui,
     highlight_reel_views) {
 
     /**
@@ -16,12 +18,13 @@ define([
      * @constructor
      */
     var HighlightReelMediator = core.mediator.Mediator.extend({
+
         name: function() {
             return HighlightReelMediator.NAME;
         },
 
-        viewType: function() {
-            return HighlightReelMediator.VIEW_TYPE;
+        isViewType: function(type) {
+            return _.contains(HighlightReelMediator.VIEW_TYPE, type);
         },
 
         /**
@@ -37,15 +40,24 @@ define([
         },
 
         onCreateView: function(notification) {
-            if (notification.type === this.viewType()) {
+            if (this.isViewType(notification.type)) {
 
-                var reelCollection = new api.models.ChatReelCollection();
-                this.view = new highlight_reel_views.HighlightReelView({
-                    collection: reelCollection
-                });
+                switch(notification.type) {
+
+                    case HighlightReelMediator.VIEW_TYPE.HIGHLIGHT_REEL:
+                        var reelCollection = new api.models.ChatReelCollection();
+                        this.view = new highlight_reel_views.HighlightReelView({
+                            collection: reelCollection
+                        });
+                        break;
+
+                    case HighlightReelMediator.VIEW_TYPE.CHAT_REEL_SELECTOR:
+                        this.view = this.createChatReelSelectorView(notification.options);
+                        break;
+                }
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
-                    type: this.viewType(),
+                    type: notification.type,
                     view: this.view,
                     options: notification.options
                 });
@@ -53,24 +65,37 @@ define([
         },
 
         onDestroyView: function(notification) {
-            if (notification.type === this.viewType()) {
+            if (this.isViewType(notification.type)) {
                 notification.view.destroy();
 
                 this.facade.trigger(notifications.VIEW_DESTROYED, {
-                    type: this.viewType(),
+                    type: notification.type,
                     view: notification.view
                 });
                 if (this.view === notification.view) {
                     this.view = null;
                 }
             }
-        }
+        },
 
+        createChatReelSelectorView: function(options) {
+            var modalOptions = {
+                title: 'Add To Your Highlight Reel',
+                viewOrFactory: new highlight_reel_views.AddReelModalView({
+                    chatReelCollection: options.chatReelCollection
+                })
+            };
+            var modalView = new ui.modal.views.ModalView(modalOptions);
+            return modalView;
+        }
     }, {
 
         NAME: 'HighlightReelMediator',
 
-        VIEW_TYPE: 'HighlightReelView'
+        VIEW_TYPE: {
+            HIGHLIGHT_REEL: 'HighlightReel',
+            CHAT_REEL_SELECTOR: 'ChatReelSelector'
+        }
     });
 
     return {
