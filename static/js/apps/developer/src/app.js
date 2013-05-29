@@ -194,8 +194,6 @@ define([
         notifications.CREATE_CHAT;
     EventNotificationMap[events.UPDATE_TALKING_POINTS] =
         notifications.UPDATE_TALKING_POINTS;
-    EventNotificationMap[events.CREATE_CHAT_REEL] =
-        notifications.CREATE_CHAT_REEL;
     EventNotificationMap[events.UPDATE_CHAT_REEL] =
         notifications.UPDATE_CHAT_REEL;
     EventNotificationMap[events.SHOW_CHAT_REEL_SELECTOR] =
@@ -334,8 +332,6 @@ define([
                 ctrl.commands.chat.ParticipateInChat);
             this.registerCommand(notifications.UPDATE_TALKING_POINTS,
                 ctrl.commands.chat.UpdateTalkingPoints);
-            this.registerCommand(notifications.CREATE_CHAT_REEL,
-                ctrl.commands.chat.CreateChatReel);
             this.registerCommand(notifications.UPDATE_CHAT_REEL,
                 ctrl.commands.chat.UpdateChatReel);
             this.registerCommand(notifications.SHOW_CHAT_REEL_SELECTOR,

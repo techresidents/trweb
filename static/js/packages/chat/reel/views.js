@@ -291,15 +291,11 @@ define([
                     chat_id: chatSelectionModel.id,
                     rank: rank
                 });
+                this.chatReelCollection.add(chatReel);
                 var eventBody = {
-                    model: chatReel,
-                    onSuccess: function() {
-                        that.chatReelCollection.add(chatReel);
-                    }
+                    collection: this.chatReelCollection
                 };
-                console.log('modal: createChatReel');
-                console.log(chatReel.toJSON());
-                this.triggerEvent(events.CREATE_CHAT_REEL, eventBody);
+                this.triggerEvent(events.UPDATE_CHAT_REEL, eventBody);
             }
         }
     });

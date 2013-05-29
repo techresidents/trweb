@@ -188,57 +188,6 @@ define([
     });
 
     /**
-     * CreateChatReel constructor
-     * @constructor
-     * @classdesc
-     * Create a chat reel
-     */
-    var CreateChatReel = core.command.AsyncCommand.extend({
-
-        /**
-         * OnSuccess and onError argument names
-         */
-        asyncCallbackArgs: ['model', 'response'],
-
-        /**
-         * Execute command
-         * @param {object} options Options object
-         * @param {object} [options.model] ChatReel model to create.
-         * This is not required if model attributes below are provided.
-         * @param {string} [options.chat_id] ChatReel model chat_id.
-         * This is not required if model is provided with attribute.
-         * @param {number} [options.rank] ChatReel model rank value.
-         * This is not required if model is provided with attribute.
-         * @param {function} [options.onSuccess] Success callback
-         * @param {function} [options.onError] Error callback
-         */
-        execute: function(options) {
-            var model = options.model || new api.models.ChatReel();
-
-            // Get current user
-            var currentProxy = this.facade.getProxy(
-                current_proxies.CurrentProxy.NAME
-            );
-            var currentUser = currentProxy.currentUser();
-
-            // Set model attributes
-            var attributes = _.defaults({
-                user_id: currentUser.id,
-                chat_id: options.chat_id,
-                rank: options.rank
-            }, model.attributes);
-
-            model.save(attributes, {
-                wait: true,
-                success: _.bind(this.onSuccess, this),
-                error: _.bind(this.onError, this)
-            });
-
-            return true;
-        }
-    });
-
-    /**
      * UpdateChatReel constructor
      * @constructor
      * @classdesc
@@ -301,7 +250,6 @@ define([
         ParticipateInChat: ParticipateInChat,
         CreateChat: CreateChat,
         UpdateTalkingPoints: UpdateTalkingPoints,
-        CreateChatReel: CreateChatReel,
         UpdateChatReel: UpdateChatReel,
         ShowChatReelSelector: ShowChatReelSelector
     };
