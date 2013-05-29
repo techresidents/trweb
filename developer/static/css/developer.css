@@ -733,21 +733,21 @@
     margin-left: 0px;
 }
 
-.highlight-reel-container li {
+.chat-reel-container li {
     margin-top: 10px;
     border-top: 2px;
     border-top-style: solid;
     border-top-color: #EA8F00;
 }
-.highlight-reel-item-arrows-container {
+.chat-reel-item-arrows-container {
     margin-right: 10px;
 }
-.highlight-reel-item-text-container {
+.chat-reel-item-text-container {
     display: block;
 }
-.highlight-reel-item-text-container h4 {
+.chat-reel-item-text-container h4 {
     margin-bottom: 5px;
 }
-.highlight-reel-item-close {
+.chat-reel-item-close {
     line-height: 45px;
 }
