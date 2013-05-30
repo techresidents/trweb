@@ -751,3 +751,30 @@
 .chat-reel-item-close {
     line-height: 45px;
 }
+
+
+.developer-home-container .steps-container > div {
+
+}
+
+.developer-home-container .steps-container h4 {
+    border-bottom-color: black;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding-bottom: 10px;
+}
+
+.developer-home-container .steps-container h4.blue {
+    color: #00b4f0;
+    border-bottom-color: #00b4f0;
+}
+
+.developer-home-container .steps-container h4.orange {
+    color: #EA8F00;
+    border-bottom-color: #EA8F00;
+}
+
+.developer-home-container .steps-container h4.green {
+    color: #31b531;
+    border-bottom-color: #31b531;
+}
