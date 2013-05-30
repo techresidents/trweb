@@ -21,7 +21,7 @@
     background-color: transparent;
     margin-bottom: 15px;
     padding-bottom: 5px;
-    padding-top: 30px;
+    padding-top: 50px;
 }
 
 .landing-headline .hero-unit > * {
@@ -33,6 +33,10 @@
     font-size: 60px;
 }
 
+.landing-headline .hero-unit p.landing-slogan {
+    font-weight: 400;
+}
+
 .landing-gray-stripe {
     background-color: #F5F5F5;
     background-repeat: repeat-x;
@@ -40,8 +44,15 @@
 
 .landing-slogan {
     margin-top: 20px;
-    margin-left: 240px;
-    margin-right: 240px;
+    margin-left: 125px;
+    margin-right: 125px;
+}
+
+@media (max-width: 979px) {
+    .landing-slogan {
+        margin-left: 0;
+        margin-right: 0;
+    }
 }
 
 .landing-list {
