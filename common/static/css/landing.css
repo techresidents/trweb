@@ -19,6 +19,9 @@
 
 .landing-headline .hero-unit {
     background-color: transparent;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    padding-top: 30px;
 }
 
 .landing-headline .hero-unit > * {
@@ -37,8 +40,8 @@
 
 .landing-slogan {
     margin-top: 20px;
-    margin-left: 140px;
-    margin-right: 140px;
+    margin-left: 240px;
+    margin-right: 240px;
 }
 
 .landing-list {
@@ -54,24 +57,34 @@
     border-top-color: #EA8F00;
 }
 
-.landing-social-links {
-    margin-top: 10px;
-    margin-left: 0px;
+.landing-social-media {
     list-style: none;
+    width: 50px;
+    margin: auto;
 }
 
-.landing-social-links > li {
+.landing-social-media-logo {
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
     display: inline-block;
-    vertical-align: top;
-    margin-right: 15px;
+    vertical-align: text-bottom;
+    width: 48px;
+    height: 48px;
 }
 
-.landing-social-links > li > a > img {
-    margin-right: 5px;
-    margin-bottom: 4px;
+.landing-twitter-logo {
+    background-image: url("../img/if_twitter_64x64.png");
 }
 
-.landing-social-text {
-    font-size: 12px;
-    font-weight: bold;
+.landing-facebook-logo {
+    background-image: url("../img/if_facebook_64x64.png");
+}
+
+.landing-linkedin-logo {
+    background-image: url("../img/if_linkedin_48x48.png");
+}
+
+.landing-gplus-logo {
+    background-image: url("../img/if_google_plus_48x48.png");
 }

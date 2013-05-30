@@ -12,7 +12,7 @@
 
 {% block extrahead %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link href="{% static "css/3ps/bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet">
     <link href="{% static "css/landing.css" %}" rel="stylesheet">
 {% endblock %}
 
@@ -22,6 +22,13 @@
         <div class="landing-container container">
             <div class="row">
                 <div class="span12">
+                    <div class="pull-left">
+                        <ul class="landing-social-media">
+                            <li><a href="https://twitter.com/techresidents" class="landing-social-media-logo landing-twitter-logo"></a></li>
+                            <li><a href="https://www.facebook.com/techresidents" class="landing-social-media-logo landing-facebook-logo"></a></li>
+                            <li><a href="http://www.linkedin.com/company/tech-residents" class="landing-social-media-logo landing-linkedin-logo"></a></li>
+                        </ul>
+                    </div>
                     <div class="landing-headline">
                         <div class="hero-unit">
                             <h1>Talk Tech. Get Hired.</h1>
@@ -42,15 +49,6 @@
             <div class="row">
                 <div id="embedded-video-container" class="span4 pull-right">
                     <iframe width="335" height="200" src="http://www.youtube.com/embed/3vbuF02CkA0?rel=0&color=white" frameborder="1" allowfullscreen></iframe>
-                    <ul class="landing-social-links">
-                        <li>
-                            <a href="https://twitter.com/techresidents" class="twitter-follow-button" data-show-count="false">Follow @techresidents</a>
-                            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-                        </li>
-                        <li>
-                            <iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Ftechresidents&amp;send=false&amp;layout=button_count&amp;width=80&amp;show_faces=false&amp;font&amp;colorscheme=light&amp;action=like&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:21px;" allowTransparency="true"></iframe>
-                        </li>
-                    </ul>
                 </div>
                 <div class="span7">
                     <h1>Developers <small>Find your next opportunity</small></h1>
