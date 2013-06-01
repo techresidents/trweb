@@ -26,6 +26,7 @@ require.config({
         { name: 'chat', location: 'packages/chat' },
         { name: 'core', location: 'packages/core' },
         { name: 'ctrl', location: 'packages/ctrl' },
+        { name: 'home', location: 'packages/home'},
         { name: 'events', location: 'packages/events' },
         { name: 'notifications', location: 'packages/notifications' },
         { name: 'ui', location: 'packages/ui' },
@@ -40,7 +41,7 @@ require.config({
 
         'jquery.bootstrap': ['jquery'],
 
-        'jquery.flowplayer': ['jquery'],
+        'jquery.color': ['jquery'],
 
         'underscore': {
             deps: ['jquery'],
