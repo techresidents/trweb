@@ -299,6 +299,7 @@ define([
     var AutoMultiSelectView = core.view.View.extend({
 
         defaultTemplate: auto_multi_select_template,
+        defaultListTemplate: auto_multi_select_list_template,
 
         events: {
             'change .selection': 'onSelectionChange',
@@ -309,6 +310,7 @@ define([
         initialize: function(options) {
             options = _.extend({
                 template: this.defaultTemplate,
+                listTemplate: this.defaultListTemplate,
                 maxResults: 8,
                 inputPlaceholder: 'search',
                 throttle: 250,
@@ -316,6 +318,7 @@ define([
             }, options);
 
             this.template = _.template(options.template);
+            this.listTemplate = options.listTemplate;
             this.collection = options.collection;
             this.matcher = options.matcher;
             this.maxResults = options.maxResults;
@@ -352,7 +355,7 @@ define([
 
             this.listView = new template_views.TemplateView({
                 collection: this.collection,
-                template: auto_multi_select_list_template,
+                template: this.listTemplate,
                 context: context
             });
         },

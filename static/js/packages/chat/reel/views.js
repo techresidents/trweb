@@ -7,6 +7,7 @@ define([
     'events',
     'ui',
     'text!./templates/chat_select.html',
+    'text!./templates/chat_select_list.html',
     'text!./templates/add_chat_button.html',
     'text!./templates/add_chat_modal.html',
     'text!./templates/chat_reel_item.html',
@@ -20,6 +21,7 @@ define([
     events,
     ui,
     chat_select_template,
+    chat_select_list_template,
     add_chat_button_template,
     add_chat_modal_template,
     chat_reel_item_template,
@@ -84,7 +86,7 @@ define([
                 var chatCollection = that.userModel.get_chats();
                 return chatCollection.withRelated('topic').filterBy({
                     'topic__title__istartswith': options.search
-                });
+                }).orderBy('start');
             };
 
             /* A matcher is used to compare the results of the query with
@@ -106,10 +108,10 @@ define([
                 if (!that.chatReelCollection.where({chat_id: model.id}).length) {
                     var title = model.get_topic().get_title();
                     var date = that.fmt.date(model.get_start(), 'MM/dd/yy hh:mm tt');
-                    var searchResultText = title + ' (' + date + ')';
                     ret = {
                         id: model.id,
-                        value: searchResultText
+                        title: title,
+                        date: date
                     };
                 }
                 return ret;
@@ -130,6 +132,7 @@ define([
 
         initChildViews: function() {
             this.autoSelectView = new ui.select.views.AutoMultiSelectView({
+                listTemplate: chat_select_list_template,
                 inputPlaceholder: 'Search chat titles',
                 collection: this.chatSelectionCollection,
                 matcher: this.chatMatcher,
@@ -322,14 +325,17 @@ define([
             this.listenTo(this.collection, 'change:rank', this.change);
             // Calling save on the collection after 'remove' event will
             // destroy the removed model.
-            this.listenTo(this.collection, 'remove', this.save);
+            this.listenTo(this.collection, 'remove', this.remove);
 
             // invoke super
             ui.collection.views.OrderedListView.prototype.initialize.call(this, options);
         },
 
+        remove: function() {
+            this.save();
+        },
+
         change: function() {
-            console.log('ListView onChange');
             this.save();
         },
 
@@ -337,9 +343,6 @@ define([
             var eventBody = {
                 collection: this.collection
             };
-            this.collection.each(function(model){
-                console.log(model.toJSON());
-            });
             this.triggerEvent(events.UPDATE_CHAT_REEL, eventBody);
         },
 
@@ -409,7 +412,6 @@ define([
             this.chatReelListView = new ChatReelListView({
                 collection: this.collection
             });
-            console.log(this.chatReelListView);
         },
 
         loaded: function(collection) {
