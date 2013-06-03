@@ -192,14 +192,12 @@ define([
             // Only listening on 'loaded:read' so that render is called
             // after we invoke fetch(), and not whenever the collection
             // is saved.
-            this.listenTo(this.collection, 'loaded:read', this.read);
+            this.listenTo(this.collection, 'loaded:read', this.loaded);
 
             // load data
             // this.collection has all tlkpts for this topic. Now
             // we need to filter it down to just this user's tlkpts.
-            this.collection.filterBy({user_id: userModel.id}).fetch({
-                success: _.bind(this.initialLoad, this)
-            });
+            this.collection.filterBy({user_id: userModel.id}).fetch({});
 
             //child views
             this.topicView = null;
@@ -208,15 +206,10 @@ define([
             this.initChildViews();
         },
 
-        initialLoad: function() {
-            console.log('TopicTlkPt fetch success triggering render');
-            this.render();
-        },
-
-        read: function() {
-            console.log('TopicTlkPt loaded:read');
-            //this.render();
-            // TODO verify this is OK.
+        loaded: function(collection) {
+            if (collection === this.collection) {
+                this.render();
+            }
         },
 
         initChildViews: function() {
@@ -243,7 +236,7 @@ define([
 
         render: function() {
             if (this.collection.isLoaded()) {
-                console.log('TopicTalkingPoint Item render');
+                console.log('TopicTalkingPoint render');
                 var context = {
                     topic_level: this.model.get_level()
                 };
