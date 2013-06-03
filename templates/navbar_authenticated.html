@@ -3,6 +3,8 @@
 
 {% block navbarcontent %}
 {% if USER.is_developer %}
+    <a class="brand" href="{% url 'developer.views.developer' %}home">Tech Residents</a>
+    <a class="brand-beta" href="{% url 'developer.views.developer' %}home">beta</a>
     <ul class="nav">
         <li>
             <a href="{% url 'accounts.views.profile_account' %}">Profile</a>
@@ -21,6 +23,8 @@
     </ul>
 {% endif %}
 {% if USER.is_employer %}
+    <a class="brand" href="{% url 'common.views.landing' %}">Tech Residents</a>
+    <a class="brand-beta" href="{% url 'common.views.landing' %}">beta</a>
     <ul class="nav">
         <li>
             <a href="{% url 'employer.views.employer' %}search">Talent Search</a>

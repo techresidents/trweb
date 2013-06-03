@@ -2,6 +2,8 @@
 {% load url from future %}
 
 {% block navbarcontent %}
+    <a class="brand" href="{% url 'common.views.landing' %}">Tech Residents</a>
+    <a class="brand-beta" href="{% url 'common.views.landing' %}">beta</a>
     <ul class="nav pull-right">
         <li>
             <a href="{% url 'common.views.developer_learn_more'%}">Developers</a>
