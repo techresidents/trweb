@@ -186,7 +186,7 @@ define([
 
             // populate initial list of chats
             this.chatSelectView.autoSelectView.refresh();
-            this.$('input').focus(); // TODO not working
+            this.$('input:text:first').focus(); // TODO not working
 
             return this;
         },
@@ -383,15 +383,18 @@ define([
         initialize: function(options) {
             var userModel = new api.models.User({id: 'CURRENT'});
             this.collection = options.collection;
+
+            // data bindings
+            this.listenTo(this.collection, 'loaded:read', this.loaded);
+
             // ChatReelListView requires a sortable collection
             this.collection.comparator = function(model) {
                 return model.get_rank();
             };
             this.template =  _.template(chat_reel_template);
 
-            this.collection.filterBy({user_id: userModel.id}).orderBy('rank').fetch({
-                success: _.bind(this.render, this) // TODO test
-            });
+            // fetch data
+            this.collection.filterBy({user_id: userModel.id}).orderBy('rank').fetch({});
 
             //child views
             this.addChatButtonView = null;
@@ -406,6 +409,13 @@ define([
             this.chatReelListView = new ChatReelListView({
                 collection: this.collection
             });
+            console.log(this.chatReelListView);
+        },
+
+        loaded: function(collection) {
+            if (collection === this.collection) {
+                this.render();
+            }
         },
 
         render: function() {
