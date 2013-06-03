@@ -69,7 +69,7 @@ define([
                 // We want the dirty flag to be set before other listeners
                 // process the event so that saves work properly.
                 this.bind('all', function(eventName, model, value) {
-                    if(eventName.indexOf('change') !== -1) {
+                    if(eventName.indexOf('change') === 0) {
                         if(!this._loading) {
                             this._isDirty = true;
                         }
@@ -644,7 +644,9 @@ define([
                 var model = this.model({
                     id: response.results[i].id
                 });
+                model._loading = this._loading;
                 model.set(model.parse(response.results[i], options), options);
+                model._loading = false;
                 result.push(model);
             }
             
