@@ -983,9 +983,8 @@ define([
             this.requisitionSelectionCollection = new ui.select.models.SelectionCollection();
             this.template = _.template(requisition_select_template);
 
-            // Create objects required to support Requisition autocomplete
-            // This query is used to seed the results which will then be parsed
-            // by the search string.
+            /* This query factory is used to seed autocomplete results. These
+               initial results will then be parsed using the user's search string.*/
             this.requisitionsQueryFactory = function(options) {
                 return new api.models.RequisitionCollection().filterBy({
                     'tenant_id__eq': that.employeeModel.get_tenant_id(),
@@ -994,31 +993,39 @@ define([
                 });
             };
 
+            /* A matcher is used to compare the results of the query with
+               the search string specified by the user. This function
+               is used to convert the req models returned by the query factory
+               into a searchable string (so that the matching can happen against
+               the user specified string).*/
+            this.stringify = function(model) {
+                return model.get_title();
+            };
+
+            /* Convert *matched* req models into a simplified object to display
+               in the list of results. Must specify 'id' and 'value' attributes. */
+            this.resultsMap = function(model) {
+                var ret = null;
+                // To prevent using a crazy query, filter the
+                // results here again to only return requisitions
+                // that are not already included in the applications
+                // collection.
+                if (!that.applicationsCollection.where({requisition_id: model.id}).length) {
+                    ret = {
+                        id: model.id,
+                        value: model.get_title()
+                    };
+                }
+                return ret;
+            };
+
             // This matcher is used to compare the results of the query with
             // the match criteria specified by the user.
-            // The matcher methods do the following:
-            //      stringify: convert model into searchable text string
-            //      map: convert *matched* results
             this.requisitionsMatcher = new ui.ac.matcher.QueryMatcher({
                 queryFactory: new core.factory.FunctionFactory(
                                   this.requisitionsQueryFactory),
-                stringify: function(model) {
-                    return model.get_title();
-                },
-                map: function(model) {
-                    var ret = null;
-                    // To prevent using a crazy query, filter the
-                    // results here again to only return requisitions
-                    // that are not already included in the applications
-                    // collection.
-                    if (!that.applicationsCollection.where({requisition_id: model.id}).length) {
-                        ret = {
-                            id: model.id,
-                            value: model.get_title()
-                        };
-                    }
-                    return ret;
-                }
+                stringify: this.stringify,
+                map: this.resultsMap,
             });
 
             // init child views
