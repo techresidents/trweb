@@ -50,9 +50,14 @@ define([
         },
 
         onAdd: function() {
-            this.triggerEvent(events.SHOW_CHAT_REEL_SELECTOR, {
-                chatReelCollection: this.collection
-            });
+             var modalOptions = {
+                title: 'Add To Your Highlight Reel',
+                viewOrFactory: new AddChatModalView({
+                    chatReelCollection: this.collection
+                })
+            };
+            var modalView = new ui.modal.views.ModalView(modalOptions);
+            this.append(modalView);
         }
     });
 
@@ -193,6 +198,7 @@ define([
             this.chatSelectView.autoSelectView.refresh();
 
             // TODO not working
+            //this.chatSelectView.autoSelectView.inputHandlerView.something
             this.$('input:text:first').focus();
 
             return this;
