@@ -50,7 +50,10 @@ define([
         },
 
         onAdd: function() {
-             var modalOptions = {
+            // Since we are showing a modal view, we don't have to
+            // treat like a typical child view.  The modal view will destroy
+            // itself when it loses focus.
+            var modalOptions = {
                 title: 'Add To Your Highlight Reel',
                 viewOrFactory: new AddChatModalView({
                     chatReelCollection: this.collection
@@ -152,6 +155,10 @@ define([
             this.$el.html(this.template(context));
             this.append(this.autoSelectView, this.autoSelectViewSelector);
             return this;
+        },
+
+        focus: function() {
+            this.autoSelectView.input().focus();
         }
     });
 
@@ -197,9 +204,9 @@ define([
             // populate initial list of chats
             this.chatSelectView.autoSelectView.refresh();
 
-            // TODO not working
-            //this.chatSelectView.autoSelectView.inputHandlerView.something
-            this.$('input:text:first').focus();
+            // Have to delay the focus event since this view's parent
+            // hasn't been appended to the DOM.
+            this.delayFocus();
 
             return this;
         },
@@ -219,6 +226,13 @@ define([
         onClose: function() {
             this.chatSelectView.chatSelectionCollection.reset();
             return true;
+        },
+
+        delayFocus: function() {
+            var that = this;
+            setTimeout(function() {
+                that.chatSelectView.focus();
+            }, 500);
         },
 
         /**
