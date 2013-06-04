@@ -191,7 +191,9 @@ define([
 
             // populate initial list of chats
             this.chatSelectView.autoSelectView.refresh();
-            this.$('input:text:first').focus(); // TODO not working
+
+            // TODO not working
+            this.$('input:text:first').focus();
 
             return this;
         },
@@ -263,45 +265,22 @@ define([
             this.topicModel = this.model.get_chat().get_topic();
             this.template =  _.template(chat_reel_item_template);
 
-            // set data bindings
-            //this.listenTo(this.model, 'change', this.onChange);
-            this.listenTo(this.chatModel, 'change:start', this.onChatChange);
-            this.listenTo(this.topicModel, 'change:title', this.onTopicChange);
-
             //load root topic and all sub-topic data
             this.loader = new api.loader.ApiLoader([
                 { instance: this.model, withRelated: this.modelWithRelated }
             ]);
             this.listenTo(this.loader, 'loaded', this.render);
-            this.loader.load(); // invokes 'change' event on this.model when loaded
-        },
-
-        onChange: function() {
-            console.log('onChange');
-            this.render();
-        },
-
-        onChatChange: function() {
-            console.log('onChatChange');
-            this.render();
-        },
-
-        onTopicChange: function() {
-            console.log('onTopicChange');
-            this.render();
+            this.loader.load();
         },
 
         render: function() {
             if (this.chatModel.isLoaded() && this.topicModel.isLoaded()) {
-                console.log('reel item view render');
                 var context = {
                     chat: this.chatModel,
                     topic: this.topicModel,
                     fmt: this.fmt
                 };
                 this.$el.html(this.template(context));
-            } else {
-                console.log('data not ready');
             }
             return this;
         }
