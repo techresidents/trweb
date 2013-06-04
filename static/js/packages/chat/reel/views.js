@@ -129,9 +129,9 @@ define([
             // This matcher is used to compare the results of the query with
             // the search string specified by the user.
             this.chatMatcher = new ui.ac.matcher.QueryMatcher({
-                sortByStringify: false,
                 queryFactory: new core.factory.FunctionFactory(this.queryFactory),
                 stringify: this.stringify,
+                sort: null,
                 map: this.resultsMap
             });
 
