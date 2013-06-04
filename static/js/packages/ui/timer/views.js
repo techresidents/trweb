@@ -122,7 +122,7 @@ define([
 
         destroy: function() {
             this.stop();
-            DurationTimer.__super__.destroy.call(this);
+            DurationTimerView.__super__.destroy.call(this);
         }
     });
 

@@ -60,8 +60,11 @@ define([
                 this.triggerEvent(events.ADD_CHAT_TO_REEL, {
                     chat: this.model.chat()
                 });
-            } else {
             }
+
+            this.triggerEvent(events.VIEW_NAVIGATE, {
+                type: 'DeveloperHomeView'
+            });
             return true;
         }
     });

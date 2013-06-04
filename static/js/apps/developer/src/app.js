@@ -114,6 +114,10 @@ define([
                     uri = 'chat/' + options.id;
                     router.navigate(uri, {trigger: options.trigger});
                     break;
+                case 'DeveloperHomeView':
+                    uri = 'home';
+                    router.navigate(uri, {trigger: options.trigger});
+                    break;
                 case 'TalkingPointView':
                     uri = 'topic/' + options.id + '/talkingpoints';
                     router.navigate(uri, {trigger: options.trigger});
