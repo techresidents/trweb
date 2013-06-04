@@ -116,6 +116,11 @@ define([
             return this;
         },
 
+        destroy: function() {
+            this.hide();
+            ModalView.__super__.destroy.call(this);
+        },
+
         isModal: function() {
             return true;
         },

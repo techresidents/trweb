@@ -366,6 +366,7 @@ define([
             this.connectionView = null;
             this.participantsView = null;
             this.timerView = null;
+            this.endView = null;
             this.initChildViews();
 
             //message
@@ -420,7 +421,8 @@ define([
                 this.messageHandlerView,
                 this.connectionView,
                 this.participantsView,
-                this.timerView
+                this.timerView,
+                this.endView
             ];
         },
         
@@ -464,14 +466,15 @@ define([
             this.running = false;
             this.messagePump.stop();
 
-            this.append(new ui.modal.views.ModalView({
+            this.endView = new ui.modal.views.ModalView({
                 title: 'Your Chat Has Ended',
                 viewOrFactory: new ChatEndView({
                     model: this.chatState
                 }),
                 exitOnEscape: false,
                 exitOnBackdropClick: false
-            }));
+            });
+            this.append(this.endView);
         },
 
         onMessage: function(message) {
