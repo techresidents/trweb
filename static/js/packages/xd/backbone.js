@@ -13,11 +13,11 @@ define([
     };
 
     var getUrl = function(object) {
+        var result = null;
         if(object && object.url) {
-            return _.isFunction(object.url) ? object.url() : object.url;
-        } else {
-            return null;
-        }
+            result =  _.isFunction(object.url) ? object.url() : object.url;
+        } 
+        return result;
     };
 
     var sync = function(method, model, options) {

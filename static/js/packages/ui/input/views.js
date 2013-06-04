@@ -186,6 +186,7 @@ define(/** @exports ui/input/views */[
 
         onFocus: function(e) {
             this._startTimer();
+            this._fadeTextOut();
         },
 
         onBlur: function(e) {
@@ -194,7 +195,7 @@ define(/** @exports ui/input/views */[
         },
 
         onKeyDown: function(e) {
-            console.log('InputHandler keydown event');
+            this._fadeTextOut();
             switch(e.keyCode) {
                 case kc.ENTER:
                     this._update();
@@ -249,6 +250,22 @@ define(/** @exports ui/input/views */[
         _restartTimer: function() {
             this._stopTimer();
             this._startTimer();
+        },
+
+        _fadeTextOut: function() {
+            var flag = true;
+            if (flag) {
+                //console.log('fadeTextOut');
+                //$(this.inputSelector).animate({color: '#999999'}, 250);
+            }
+        },
+
+        _fadeTextIn: function() {
+            var flag = true;
+            if (flag) {
+                //console.log('fadeTextIn');
+                //$(this.inputSelector).animate({color: '#000000'}, 1500);
+            }
         }
     });
 

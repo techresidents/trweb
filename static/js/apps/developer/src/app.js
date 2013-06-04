@@ -197,10 +197,15 @@ define([
         notifications.SHOW_MAKE_INTERVIEW_OFFER;
     EventNotificationMap[events.SHOW_RESCIND_INTERVIEW_OFFER] =
         notifications.SHOW_RESCIND_INTERVIEW_OFFER;
-    /* DEVELOPER NOTE EVENTS*/
-    EventNotificationMap[events.TAKE_NOTE] =
-        notifications.TAKE_NOTE;
     /* CHAT EVENTS */
+    EventNotificationMap[events.PARTICIPATE_IN_CHAT] =
+        notifications.PARTICIPATE_IN_CHAT;
+    EventNotificationMap[events.UPDATE_CHAT_STATUS] =
+        notifications.UPDATE_CHAT_STATUS;
+    EventNotificationMap[events.UPDATE_CHAT_USER_STATUS] =
+        notifications.UPDATE_CHAT_USER_STATUS;
+    EventNotificationMap[events.ADD_CHAT_TO_REEL] =
+        notifications.ADD_CHAT_TO_REEL;
     EventNotificationMap[events.CREATE_CHAT] =
         notifications.CREATE_CHAT;
     EventNotificationMap[events.UPDATE_TALKING_POINTS] =
@@ -209,6 +214,10 @@ define([
         notifications.UPDATE_CHAT_REEL;
     EventNotificationMap[events.SHOW_CHAT_REEL_SELECTOR] =
         notifications.SHOW_CHAT_REEL_SELECTOR;
+    /* DEVELOPER NOTE EVENTS*/
+    EventNotificationMap[events.TAKE_NOTE] =
+        notifications.TAKE_NOTE;
+
 
     /**
      * App Mediator
@@ -341,10 +350,16 @@ define([
                 ctrl.commands.chat.CreateChat);
             this.registerCommand(notifications.PARTICIPATE_IN_CHAT,
                 ctrl.commands.chat.ParticipateInChat);
+            this.registerCommand(notifications.UPDATE_CHAT_STATUS,
+                ctrl.commands.chat.UpdateChatStatus);
+            this.registerCommand(notifications.UPDATE_CHAT_USER_STATUS,
+                ctrl.commands.chat.UpdateChatUserStatus);
             this.registerCommand(notifications.UPDATE_TALKING_POINTS,
                 ctrl.commands.chat.UpdateTalkingPoints);
             this.registerCommand(notifications.UPDATE_CHAT_REEL,
                 ctrl.commands.chat.UpdateChatReel);
+            this.registerCommand(notifications.ADD_CHAT_TO_REEL,
+                ctrl.commands.chat.AddChatToReel);
             this.registerCommand(notifications.SHOW_CHAT_REEL_SELECTOR,
                 ctrl.commands.chat.ShowChatReelSelector);
             /* INTERVIEW OFFER COMMANDS */

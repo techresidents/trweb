@@ -1,0 +1,9 @@
+<% if(status === 'UNAVAILABLE') { %>
+    <span class="name"><i class="icon-remove"></i> <%= firstName %></span>
+<% } else if(status === 'DISCONNECTED') { %>
+    <span class="name"><i class="icon-ok"></i> <%= firstName %></span>
+<% } else if(status === 'CONNECTED') { %>
+    <span class="name"><i class="icon-comment"></i> <%= firstName %></span>
+<% } else { %>
+    <span class="name"><%= firstName %></span>
+<% } %>

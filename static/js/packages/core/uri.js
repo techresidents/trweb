@@ -33,7 +33,7 @@ define(/** @exports core/uri */[
      * @returns {string} Encode URI path segment
      */
     var encodeURIPathSegment = function(pathSegment) {
-        return pathSegment.replace(encodeURIPathRegex, function(match) {
+        return String(pathSegment).replace(encodeURIPathRegex, function(match) {
             return encodingMap[match];
         });
     };

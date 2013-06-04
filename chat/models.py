@@ -71,6 +71,7 @@ class Chat(models.Model):
         topic: Topic object
         start: start datetime object
         end: end datetime object
+        max_duration: Max chat duration in seconds
         max_participants: Maximum number of participants
         no_participants: Number of users participating in the chat.
             Note that this a slight denormalization since this information
@@ -84,6 +85,7 @@ class Chat(models.Model):
     topic = models.ForeignKey(Topic, related_name="chats")
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
+    max_duration = models.IntegerField()
     max_participants = models.IntegerField(default=1)
     no_participants = models.IntegerField(default=0)
     record = models.BooleanField(default=False)

@@ -12,6 +12,45 @@ define([
     current_proxies) {
 
     /**
+     * CreateChat constructor
+     * @constructor
+     * @classdesc
+     * Create a chat
+     */
+    var CreateChat = core.command.AsyncCommand.extend({
+
+        /**
+         * Execute Command
+         * @param {object} [options.model] Chat model to create.
+         * This is not required if model attributes below are provided.
+         * @param {string} [options.topic_id] Chat model topic_id.
+         * This is not required if model is provided with attribute.
+         * @param {string} [options.max_participants] Chat model max_participants value.
+         * This is not required if model is provided with attribute.
+         * @param {function} [options.onSuccess] Success callback
+         * @param {function} [options.onError] Error callback
+         */
+        execute: function(options) {
+            var model = options.model || new api.models.Chat();
+
+            // Set model attributes
+            var attributes = _.defaults({
+                topic_id: options.topic_id,
+                max_participants: options.max_participants
+            }, model.attributes);
+
+            model.save(attributes, {
+                wait: true,
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+
+            return true;
+        }
+    });
+
+
+    /**
      * ParticipateInChat constructor
      * @constructor
      * @classdesc
@@ -112,49 +151,6 @@ define([
         }
     });
 
-      /**
-     * CreateChat constructor
-     * @constructor
-     * @classdesc
-     * Create a chat
-     */
-    var CreateChat = core.command.AsyncCommand.extend({
-
-        /**
-         * OnSuccess and onError argument names
-         */
-        asyncCallbackArgs: ['model', 'response'],
-
-        /**
-         * Execute command
-         * @param {object} options Options object
-         * @param {object} [options.model] Chat model to create.
-         * This is not required if model attributes below are provided.
-         * @param {string} [options.topic_id] Chat model topic_id.
-         * This is not required if model is provided with attribute.
-         * @param {string} [options.max_participants] Chat model max_participants value.
-         * This is not required if model is provided with attribute.
-         * @param {function} [options.onSuccess] Success callback
-         * @param {function} [options.onError] Error callback
-         */
-        execute: function(options) {
-            var model = options.model || new api.models.Chat();
-
-            // Set model attributes
-            var attributes = _.defaults({
-                topic_id: options.topic_id,
-                max_participants: options.max_participants
-            }, model.attributes);
-
-            model.save(attributes, {
-                wait: true,
-                success: _.bind(this.onSuccess, this),
-                error: _.bind(this.onError, this)
-            });
-
-            return true;
-        }
-    });
 
     /**
      * UpdateTalkingPoints constructor
@@ -170,8 +166,7 @@ define([
         asyncCallbackArgs: ['collection'],
 
         /**
-         * Execute command
-         * @param {object} options Options object
+         * Execute Command
          * @param {object} [options.collection] TalkingPointCollection
          * @param {function} [options.onSuccess] Success callback
          * @param {function} [options.onError] Error callback
@@ -184,6 +179,178 @@ define([
             });
 
             return true;
+        }
+    });
+
+
+    /**
+     * UpdateChatStatus constructor
+     * @constructor
+     * @classdesc
+     * Update chat status.
+     */
+    var UpdateChatStatus = core.command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['model', 'response'],
+
+        /**
+         * Execute command
+         * @param {object} options Options object
+         * @param {string} options.chat Chat model which must
+         *   contain credential model.
+         * @param {string} options.status New chat status.
+         * @param {function} [options.onSuccess] Success callback 
+         * @param {function} [options.onError] Error callback 
+         */
+        execute: function(options) {
+            var currentProxy = this.facade.getProxy(
+                current_proxies.CurrentProxy.NAME);
+            var currentUser = currentProxy.currentUser();
+            var chat = options.chat;
+            var credential = chat.get_chat_credentials().first();
+            var timestamp = (new Date()).getTime() / 1000;
+
+            if(!credential) {
+                this.onError();
+            }
+
+            var message = new api.models.ChatMessage({
+                header: {
+                    type: 'CHAT_STATUS',
+                    chat_token: credential.get_token(),
+                    user_id: currentUser.id,
+                    timestamp: timestamp
+                },
+                chat_status_message: {
+                    user_id: currentUser.id,
+                    status: options.status
+                }
+            });
+            
+            message.save(null, {
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+        }
+    });
+            
+
+    /**
+     * UpdateChatUserStatus constructor
+     * @constructor
+     * @classdesc
+     * Update chat user's status.
+     */
+    var UpdateChatUserStatus = core.command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['model', 'response'],
+
+
+        /**
+         * Execute command
+         * @param {object} options Options object
+         * @param {string} options.chat Chat model which must
+         *   contain chat credential and participant models.
+         * @param {string} options.status New user status.
+         * @param {function} [options.onSuccess] Success callback 
+         * @param {function} [options.onError] Error callback 
+         */
+        execute: function(options) {
+            var currentProxy = this.facade.getProxy(
+                current_proxies.CurrentProxy.NAME);
+            var currentUser = currentProxy.currentUser();
+            var chat = options.chat;
+            var credential = chat.get_chat_credentials().first();
+            var participant = _.first(chat.get_chat_participants().where({
+                user_id: currentUser.id
+            }));
+            var timestamp = (new Date()).getTime() / 1000;
+
+            var message = new api.models.ChatMessage({
+                header: {
+                    type: 'USER_STATUS',
+                    chat_token: credential.get_token(),
+                    user_id: currentUser.id,
+                    timestamp: timestamp
+                },
+                user_status_message: {
+                    user_id: currentUser.id,
+                    status: options.status,
+                    first_name: currentUser.get_first_name(),
+                    participant: participant.get_participant()
+                }
+            });
+
+            message.save(null, {
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+            
+        }
+    });
+
+    /**
+     * AddChatToReel constructor
+     * @constructor
+     * @classdesc
+     * Add chat to user's highlight reel
+     */
+    var AddChatToReel = core.command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['model', 'response'],
+
+
+        /**
+         * Execute command
+         * @param {object} options Options object
+         * @param {string} options.chat Chat model to add to reel.
+         * @param {function} [options.onSuccess] Success callback 
+         * @param {function} [options.onError] Error callback 
+         */
+        execute: function(options) {
+            this.currentProxy = this.facade.getProxy(
+                current_proxies.CurrentProxy.NAME);
+            this.currentUser = this.currentProxy.currentUser();
+            this.chat = options.chat;
+            this.reels = this.currentUser.get_chat_reels();
+
+            this.loadReels();
+
+            return true;
+        },
+
+        loadReels: function() {
+            this.reels.orderBy('rank__desc').fetch({
+                success: _.bind(this.onReelsLoaded, this),
+                error: _.bind(this.onError, this)
+            });
+        },
+
+        onReelsLoaded: function() {
+            var rank = 0;
+            if(this.reels.length) {
+                rank = this.reels.first().get_rank() + 1;
+            }
+
+            var reel = new api.models.ChatReel({
+                chat_id: this.chat.id,
+                user_id: this.currentUser.id,
+                rank: rank
+            });
+
+            reel.save(null, {
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
         }
     });
 
@@ -246,10 +413,14 @@ define([
         }
     });
 
+
     return {
-        ParticipateInChat: ParticipateInChat,
         CreateChat: CreateChat,
+        ParticipateInChat: ParticipateInChat,
         UpdateTalkingPoints: UpdateTalkingPoints,
+        UpdateChatStatus: UpdateChatStatus,
+        UpdateChatUserStatus: UpdateChatUserStatus,
+        AddChatToReel: AddChatToReel,
         UpdateChatReel: UpdateChatReel,
         ShowChatReelSelector: ShowChatReelSelector
     };

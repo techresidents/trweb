@@ -49,8 +49,11 @@ define([
         /* CHAT ACTIONS */
         CREATE_CHAT: 'notification:CreateChat',
         PARTICIPATE_IN_CHAT: 'notification:ParticipateInChat',
+        UPDATE_CHAT_STATUS: 'notification:UpdateChatStatus',
+        UPDATE_CHAT_USER_STATUS: 'notification:UpdateChatUserStatus',
         UPDATE_TALKING_POINTS: 'notification:UpdateTalkingPoints',
         UPDATE_CHAT_REEL: 'notification:UpdateChatReel',
+        ADD_CHAT_TO_REEL: 'notification:AddChatToReel',
         SHOW_CHAT_REEL_SELECTOR: 'notification:ShowChatReelSelector'
     };
 });

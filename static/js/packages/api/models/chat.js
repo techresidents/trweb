@@ -34,6 +34,7 @@ define([
             topic_id: new fields.StringField(),
             start: new fields.DateTimeField({nullable: true}),
             end: new fields.DateTimeField({nullable: true}),
+            max_duration: new fields.IntegerField(),
             max_participants: new fields.IntegerField(),
             no_participants: new fields.IntegerField({nullable: true})
         },

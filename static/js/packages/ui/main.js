@@ -19,6 +19,7 @@ define(/** @exports core */[
     './select/models',
     './select/views',
     './spinner/views',
+    './timer/views',
     './template/views'
 ], function(
     ac_inputhandler,
@@ -41,6 +42,7 @@ define(/** @exports core */[
     select_models,
     select_views,
     spinner_views,
+    timer_views,
     template_views) {
     
     return {
@@ -95,6 +97,9 @@ define(/** @exports core */[
         },
         spinner: {
             views: spinner_views
+        },
+        timer: {
+            views: timer_views
         },
         template: {
             views: template_views
