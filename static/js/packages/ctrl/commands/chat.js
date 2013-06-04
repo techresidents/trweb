@@ -27,6 +27,8 @@ define([
          * This is not required if model is provided with attribute.
          * @param {string} [options.max_participants] Chat model max_participants value.
          * This is not required if model is provided with attribute.
+         * @param {string} [options.max_duration] Chat model max_duration value.
+         * This is not required if model is provided with attribute.
          * @param {function} [options.onSuccess] Success callback
          * @param {function} [options.onError] Error callback
          */
@@ -36,7 +38,8 @@ define([
             // Set model attributes
             var attributes = _.defaults({
                 topic_id: options.topic_id,
-                max_participants: options.max_participants
+                max_participants: options.max_participants,
+                max_duration: options.max_duration
             }, model.attributes);
 
             model.save(attributes, {

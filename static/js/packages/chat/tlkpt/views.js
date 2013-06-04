@@ -321,7 +321,8 @@ define([
             }
             chatModel = new api.models.Chat({
                 topic_id: this.model.id,
-                max_participants: maxParticipants
+                max_participants: maxParticipants,
+                max_duration: this.model.get_duration()
             });
             eventBody = {
                 model: chatModel,
