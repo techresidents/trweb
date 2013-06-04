@@ -315,7 +315,7 @@ define([
             _.extend(options, {
                 viewFactory: new core.factory.Factory(ChatReelItemView, {}),
                 modelRankAttribute: 'rank',
-                sort: this.viewSort
+                sort: this._viewSort
             });
             this.collection = options.collection;
 
@@ -351,7 +351,7 @@ define([
          * @param view
          * @returns {number}
          */
-        viewSort: function(view) {
+        _viewSort: function(view) {
             var ret = 0;
             if (view && view.model) {
                 ret = view.model.get_rank();
@@ -395,7 +395,11 @@ define([
             this.template =  _.template(chat_reel_template);
 
             // fetch data
-            this.collection.filterBy({user_id: userModel.id}).orderBy('rank').fetch({});
+            this.collection.
+                filterBy({user_id: userModel.id}).
+                withRelated(['chat__topic']).
+                orderBy('rank').
+                fetch({});
 
             //child views
             this.addChatButtonView = null;
