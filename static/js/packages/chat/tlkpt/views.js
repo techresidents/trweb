@@ -141,14 +141,12 @@ define([
 
         delegateEvents: function() {
             // TODO
-            //console.log('itemview delegate events');
             core.view.View.prototype.delegateEvents.apply(this, arguments);
             this.inputHandlerView.delegateEvents();
         },
 
         undelegateEvents: function() {
             // TODO
-            //console.log('itemview undelegate events');
             this.inputHandlerView.undelegateEvents();
             core.view.View.prototype.undelegateEvents.apply(this, arguments);
         }
@@ -234,7 +232,6 @@ define([
 
         render: function() {
             if (this.collection.isLoaded()) {
-                console.log('TopicTalkingPoint render');
                 var context = {
                     topic_level: this.model.get_level()
                 };
@@ -242,8 +239,6 @@ define([
                 this.append(this.topicView, this.tlkptCompositeSelector);
                 this.append(this.talkingPointsListView, this.tlkptCompositeSelector);
                 this.append(this.addTalkingPointView, this.tlkptCompositeSelector);
-            } else {
-                console.log('TopicTalkingPt data not ready');
             }
             return this;
         },
