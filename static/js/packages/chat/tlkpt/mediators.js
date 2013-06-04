@@ -43,7 +43,7 @@ define([
                     id: notification.options.id
                 });
 
-                this.view = new talking_point_views.TalkingPointsSummaryView({
+                this.view = new talking_point_views.TalkingPointsPageView({
                     model: topic
                 });
 
