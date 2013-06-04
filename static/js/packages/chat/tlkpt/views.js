@@ -154,7 +154,6 @@ define([
         }
     });
 
-
     /**
      * TopicTalkingPointsEditView View
      * A TopicTalkingPointsEditView consists of one topic (no sub-topics) and
@@ -183,10 +182,12 @@ define([
             this.model = options.model;
             this.modelWithRelated = ['talking_points'];
             this.collection = this.model.get_talking_points();
+            this.template =  _.template(topic_tlkpt_composite_template);
+
+            // TalkingPointCollectionEditView requires a sortable collection
             this.collection.comparator = function(model) {
                 return model.get_rank();
             };
-            this.template =  _.template(topic_tlkpt_composite_template);
 
             // bind events
             // Only listening on 'loaded:read' so that render is called
@@ -197,7 +198,10 @@ define([
             // load data
             // this.collection has all tlkpts for this topic. Now
             // we need to filter it down to just this user's tlkpts.
-            this.collection.filterBy({user_id: userModel.id}).fetch({});
+            this.collection.
+                filterBy({user_id: userModel.id}).
+                orderBy('rank').
+                fetch({});
 
             //child views
             this.topicView = null;
@@ -223,13 +227,7 @@ define([
             this.talkingPointsListView = new TalkingPointCollectionEditView({
                 collection: this.collection,
                 modelRankAttribute: 'rank',
-                sort: function (view) {
-                    var ret = 0;
-                    if (view && view.model) {
-                        ret = view.model.get_rank();
-                    }
-                    return ret;
-                },
+                sort: this._viewSort,
                 viewFactory: new core.factory.Factory(TalkingPointEditView, {})
             });
         },
@@ -248,6 +246,22 @@ define([
                 console.log('TopicTalkingPt data not ready');
             }
             return this;
+        },
+
+        /**
+         * viewSort
+         * TalkingPointCollectionEditView requires a sort function to be
+         * defined that the underlying CollectionView will use to sort the
+         * views in the collection.
+         * @param view
+         * @returns {number}
+         */
+        _viewSort: function(view) {
+            var ret = 0;
+            if (view && view.model) {
+                ret = view.model.get_rank();
+            }
+            return ret;
         }
     });
 
