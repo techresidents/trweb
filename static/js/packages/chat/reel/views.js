@@ -151,9 +151,9 @@ define([
         },
 
         render: function() {
-            var context = {};
-            this.$el.html(this.template(context));
+            this.$el.html(this.template());
             this.append(this.autoSelectView, this.autoSelectViewSelector);
+            this.autoSelectView.refresh();
             return this;
         },
 
@@ -200,9 +200,6 @@ define([
         render: function() {
             this.$el.html(this.template());
             this.append(this.chatSelectView);
-
-            // populate initial list of chats
-            this.chatSelectView.autoSelectView.refresh();
 
             // Have to delay the focus event since this view's parent
             // hasn't been appended to the DOM.
