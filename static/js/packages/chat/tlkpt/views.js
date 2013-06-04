@@ -69,13 +69,13 @@ define([
     });
 
     /**
-     * TalkingPointListView View
+     * TalkingPointCollectionEditView View
      * @constructor
      * @param {Object} options
      *   collection: {TalkingPointCollection} object (required)
      *   modelRankAttribute: {String} name of rank attribute
      */
-    var TalkingPointListView = ui.collection.views.OrderedListView.extend({
+    var TalkingPointCollectionEditView = ui.collection.views.OrderedListView.extend({
 
         initialize: function(options) {
             this.collection = options.collection;
@@ -95,12 +95,12 @@ define([
     });
 
     /**
-     * TalkingPointListItemView View
+     * TalkingPointEditView View
      * @constructor
      * @param {Object} options
      *   model: {TalkingPoint} object (required)
      */
-    var TalkingPointListItemView = core.view.View.extend({
+    var TalkingPointEditView = core.view.View.extend({
 
         inputSelector: '.talking-point-input',
         inputHookSelector: '.talking-point-input-hook',
@@ -156,14 +156,14 @@ define([
 
 
     /**
-     * TopicTalkingPointsCompositeView View
-     * A TopicTalkingPointsCompositeView consists of one topic (no sub-topics) and
+     * TopicTalkingPointsEditView View
+     * A TopicTalkingPointsEditView consists of one topic (no sub-topics) and
      * any associated talking points.
      * @constructor
      * @param {Object} options
      *   model: {Topic} object must have ID (required)
      */
-    var TopicTalkingPointsCompositeView = core.view.View.extend({
+    var TopicTalkingPointsEditView = core.view.View.extend({
 
         tlkptCompositeSelector: '.talking-point-composite-container',
 
@@ -220,7 +220,7 @@ define([
                 topic: this.model,
                 collection: this.collection
             });
-            this.talkingPointsListView = new TalkingPointListView({
+            this.talkingPointsListView = new TalkingPointCollectionEditView({
                 collection: this.collection,
                 modelRankAttribute: 'rank',
                 sort: function (view) {
@@ -230,7 +230,7 @@ define([
                     }
                     return ret;
                 },
-                viewFactory: new core.factory.Factory(TalkingPointListItemView, {})
+                viewFactory: new core.factory.Factory(TalkingPointEditView, {})
             });
         },
 
@@ -252,12 +252,12 @@ define([
     });
 
     /**
-     * TalkingPointsSummaryView View
+     * TalkingPointsPageView View
      * @constructor
      * @param {Object} options
      *   model: {Topic} Root topic model (required)
      */
-    var TalkingPointsSummaryView = core.view.View.extend({
+    var TalkingPointsPageView = core.view.View.extend({
 
         chatWithFriendSelector: '#chat-with-friend-radio-btn',
         talkingPointsSelector: '.talking-points-view-hook',
@@ -297,7 +297,7 @@ define([
             });
             this.talkingPointsView = new ui.collection.views.CollectionView({
                 collection: this.model.get_tree(),
-                viewFactory: new core.factory.Factory(TopicTalkingPointsCompositeView, {})
+                viewFactory: new core.factory.Factory(TopicTalkingPointsEditView, {})
             });
         },
 
@@ -340,9 +340,9 @@ define([
 
     return {
         AddTalkingPointView: AddTalkingPointView,
-        TalkingPointListView: TalkingPointListView,
-        TalkingPointListItemView: TalkingPointListItemView,
-        TopicTalkingPointsCompositeView: TopicTalkingPointsCompositeView,
-        TalkingPointsSummaryView: TalkingPointsSummaryView
+        TalkingPointCollectionEditView: TalkingPointCollectionEditView,
+        TalkingPointEditView: TalkingPointEditView,
+        TopicTalkingPointsEditView: TopicTalkingPointsEditView,
+        TalkingPointsPageView: TalkingPointsPageView
     };
 });
