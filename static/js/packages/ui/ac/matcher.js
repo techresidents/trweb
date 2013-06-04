@@ -15,11 +15,18 @@ define(/** @exports ui/ac/matcher */[
          * @constructor
          * @augments module:core/base~Base
          * @param {object} options Options object
+         *  stringify: {Function} Function used to convert models
+               into a searchable string (so that the matching can happen against
+               the specified search string)
+         *  sortByStringify: {Boolean} flag to sort results by the value
+         *      that the 'stringify' function returns. Defaults to true.
          */
         initialize: function(options) {
             options = _.extend({
+                sortByStringify: true,
                 stringify: core.string.stringify
             }, options);
+            this.sortByStringify = options.sortByStringify;
             this.setStringify(options.stringify);
         },
 
@@ -48,9 +55,11 @@ define(/** @exports ui/ac/matcher */[
                 }
             }, this);
 
-            results = _.sortBy(results, function(item) {
-                return this.stringify(item);
-            }, this);
+            if (this.sortByStringify) {
+                results = _.sortBy(results, function(item) {
+                    return this.stringify(item);
+                }, this);
+            }
 
             return results;
         }

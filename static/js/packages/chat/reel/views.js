@@ -86,7 +86,7 @@ define([
                 var chatCollection = that.userModel.get_chats();
                 return chatCollection.withRelated('topic').filterBy({
                     'topic__title__istartswith': options.search
-                }).orderBy('start');
+                }).orderBy('start__desc');
             };
 
             /* A matcher is used to compare the results of the query with
@@ -99,7 +99,7 @@ define([
             };
 
             /* Convert *matched* chat models into a simplified object to display
-               in the list of results. */
+               in the list of results. Must specify 'id' and 'value' attributes. */
             this.resultsMap = function(model) {
                 var ret = null;
                 // To prevent using a crazy query factory, filter the results
@@ -110,6 +110,7 @@ define([
                     var date = that.fmt.date(model.get_start(), 'MM/dd/yy hh:mm tt');
                     ret = {
                         id: model.id,
+                        value: title + ' ' + date,
                         title: title,
                         date: date
                     };
@@ -120,6 +121,7 @@ define([
             // This matcher is used to compare the results of the query with
             // the search string specified by the user.
             this.chatMatcher = new ui.ac.matcher.QueryMatcher({
+                sortByStringify: false,
                 queryFactory: new core.factory.FunctionFactory(this.queryFactory),
                 stringify: this.stringify,
                 map: this.resultsMap

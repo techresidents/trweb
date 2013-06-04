@@ -294,7 +294,18 @@ define([
      * Auto Multi Select View.
      * @constructor
      * @param {Object} options
-     *   collection: {Collection} collection (required)
+     *   collection: {SelectionCollection} collection used to track user selections (required)
+     *   matcher: {Matcher} object (required)
+     *   template: AutoMultiSelect view template (optional)
+     *   listTemplate: {String} name of the view template for the list
+     *      portion of this view (optional)
+     *   maxResults: {Number} Max number of results to show (optional)
+     *   inputPlaceholder: {String} Input placeholder value (optional)
+     *   throttle: {Number} Number of millisecs the input handler waits before
+     *      setting the input value (optional)
+     *   updateDuringTyping: {Boolean} If True, the input handler will not wait
+     *      for the user to stop typing before setting the input value (optional)
+     *
      */
     var AutoMultiSelectView = core.view.View.extend({
 
@@ -325,6 +336,8 @@ define([
             this.inputPlaceholder = options.inputPlaceholder;
             this.throttle = options.throttle;
             this.updateDuringTyping = options.updateDuringTyping;
+            // matchCollection is an internal collection used to
+            // keep of track of the results returned by the matcher
             this.matchCollection = new this.collection.constructor();
 
             //child views
@@ -396,6 +409,8 @@ define([
             var models = this.collection.where({selected: true});
             var workingCollection = new this.collection.constructor(models);
 
+            // Add each matched model to the selection collection as long as
+            // it's not already selected
             this.matchCollection.each(function(model) {
                 if(!workingCollection.where({value: model.get('value')}).length) {
                     models.push(model);
