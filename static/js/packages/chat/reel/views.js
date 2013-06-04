@@ -50,9 +50,17 @@ define([
         },
 
         onAdd: function() {
-            this.triggerEvent(events.SHOW_CHAT_REEL_SELECTOR, {
-                chatReelCollection: this.collection
-            });
+            // Since we are showing a modal view, we don't have to
+            // treat like a typical child view.  The modal view will destroy
+            // itself when it loses focus.
+            var modalOptions = {
+                title: 'Add To Your Highlight Reel',
+                viewOrFactory: new AddChatModalView({
+                    chatReelCollection: this.collection
+                })
+            };
+            var modalView = new ui.modal.views.ModalView(modalOptions);
+            this.append(modalView);
         }
     });
 
@@ -143,10 +151,14 @@ define([
         },
 
         render: function() {
-            var context = {};
-            this.$el.html(this.template(context));
+            this.$el.html(this.template());
             this.append(this.autoSelectView, this.autoSelectViewSelector);
+            this.autoSelectView.refresh();
             return this;
+        },
+
+        focus: function() {
+            this.autoSelectView.input().focus();
         }
     });
 
@@ -189,11 +201,9 @@ define([
             this.$el.html(this.template());
             this.append(this.chatSelectView);
 
-            // populate initial list of chats
-            this.chatSelectView.autoSelectView.refresh();
-
-            // TODO not working
-            this.$('input:text:first').focus();
+            // Have to delay the focus event since this view's parent
+            // hasn't been appended to the DOM.
+            this.delayFocus();
 
             return this;
         },
@@ -213,6 +223,13 @@ define([
         onClose: function() {
             this.chatSelectView.chatSelectionCollection.reset();
             return true;
+        },
+
+        delayFocus: function() {
+            var that = this;
+            setTimeout(function() {
+                that.chatSelectView.focus();
+            }, 500);
         },
 
         /**

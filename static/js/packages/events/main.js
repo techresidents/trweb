@@ -30,7 +30,6 @@ define(/** @exports events */[
         UPDATE_CHAT_USER_STATUS: 'update_chat_user_status',
         UPDATE_TALKING_POINTS: 'update_talking_points',
         UPDATE_CHAT_REEL: 'update_chat_reel',
-        ADD_CHAT_TO_REEL: 'add_chat_to_reel',
-        SHOW_CHAT_REEL_SELECTOR: 'show_chat_reel_selector'
+        ADD_CHAT_TO_REEL: 'add_chat_to_reel'
     };
 });

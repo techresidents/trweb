@@ -53,7 +53,6 @@ define([
         UPDATE_CHAT_USER_STATUS: 'notification:UpdateChatUserStatus',
         UPDATE_TALKING_POINTS: 'notification:UpdateTalkingPoints',
         UPDATE_CHAT_REEL: 'notification:UpdateChatReel',
-        ADD_CHAT_TO_REEL: 'notification:AddChatToReel',
-        SHOW_CHAT_REEL_SELECTOR: 'notification:ShowChatReelSelector'
+        ADD_CHAT_TO_REEL: 'notification:AddChatToReel'
     };
 });

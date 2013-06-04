@@ -65,7 +65,7 @@ define([
         reel: function() {
             require(['chat'], _.bind(function(chat) {
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: chat.mediators.reel.ChatReelMediator.VIEW_TYPE.CHAT_REEL,
+                    type: chat.mediators.reel.ChatReelMediator.VIEW_TYPE,
                     options: {
                     }
                 });
@@ -216,8 +216,6 @@ define([
         notifications.UPDATE_TALKING_POINTS;
     EventNotificationMap[events.UPDATE_CHAT_REEL] =
         notifications.UPDATE_CHAT_REEL;
-    EventNotificationMap[events.SHOW_CHAT_REEL_SELECTOR] =
-        notifications.SHOW_CHAT_REEL_SELECTOR;
     /* DEVELOPER NOTE EVENTS*/
     EventNotificationMap[events.TAKE_NOTE] =
         notifications.TAKE_NOTE;
@@ -364,8 +362,6 @@ define([
                 ctrl.commands.chat.UpdateChatReel);
             this.registerCommand(notifications.ADD_CHAT_TO_REEL,
                 ctrl.commands.chat.AddChatToReel);
-            this.registerCommand(notifications.SHOW_CHAT_REEL_SELECTOR,
-                ctrl.commands.chat.ShowChatReelSelector);
             /* INTERVIEW OFFER COMMANDS */
             this.registerCommand(notifications.MAKE_INTERVIEW_OFFER,
                 ctrl.commands.applicant.MakeInterviewOffer);
