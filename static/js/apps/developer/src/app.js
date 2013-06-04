@@ -178,6 +178,8 @@ define([
         notifications.UPDATE_CHAT_STATUS;
     EventNotificationMap[events.UPDATE_CHAT_USER_STATUS] =
         notifications.UPDATE_CHAT_USER_STATUS;
+    EventNotificationMap[events.ADD_CHAT_TO_REEL] =
+        notifications.ADD_CHAT_TO_REEL;
     /* DEVELOPER NOTE EVENTS*/
     EventNotificationMap[events.TAKE_NOTE] =
         notifications.TAKE_NOTE;
@@ -324,6 +326,8 @@ define([
                 ctrl.commands.chat.UpdateChatUserStatus);
             this.registerCommand(notifications.UPDATE_TALKING_POINTS,
                 ctrl.commands.chat.UpdateTalkingPoints);
+            this.registerCommand(notifications.ADD_CHAT_TO_REEL,
+                ctrl.commands.chat.AddChatToReel);
             /* INTERVIEW OFFER COMMANDS */
             this.registerCommand(notifications.MAKE_INTERVIEW_OFFER,
                 ctrl.commands.applicant.MakeInterviewOffer);

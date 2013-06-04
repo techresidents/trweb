@@ -127,7 +127,16 @@ define([
         },
 
         handle: function(message) {
-            switch(message.get_header().type) {
+            var header = message.get_header();
+
+            //update clock skew if not set
+            if(header.user_id === this.currentUser.id) {
+                if(this.model.skew() === 0) {
+                    this.model.setSkew(header.skew);
+                }
+            }
+
+            switch(header.type) {
                 case 'CHAT_STATUS':
                     return this.handleChatStatus(message);
                 case 'USER_STATUS':
@@ -136,8 +145,25 @@ define([
         },
 
         handleChatStatus: function(message) {
+            var header = message.get_header();
             var msg = message.get_chat_status_message();
-            this.model.setStatus(msg.status);
+            var attr = {
+                status: msg.status
+            };
+            var timestamp;
+
+            switch(msg.status) {
+                case this.model.STATUS.STARTED:
+                    timestamp = header.timestamp + this.model.skew();
+                    attr.startTime = new Date(timestamp * 1000);
+                    break;
+                case this.model.STATUS.ENDED:
+                    timestamp = header.timestamp + this.model.skew();
+                    attr.startTime = new Date(timestamp * 1000);
+                    attr.endTime = new Date(header.timestamp * 1000);
+                    break;
+            }
+            this.model.set(attr);
             return true;
         },
 

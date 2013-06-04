@@ -211,6 +211,7 @@ define([
             var currentUser = currentProxy.currentUser();
             var chat = options.chat;
             var credential = chat.get_chat_credentials().first();
+            var timestamp = (new Date()).getTime() / 1000;
 
             if(!credential) {
                 this.onError();
@@ -220,7 +221,8 @@ define([
                 header: {
                     type: 'CHAT_STATUS',
                     chat_token: credential.get_token(),
-                    user_id: currentUser.id
+                    user_id: currentUser.id,
+                    timestamp: timestamp
                 },
                 chat_status_message: {
                     user_id: currentUser.id,
@@ -268,12 +270,14 @@ define([
             var participant = _.first(chat.get_chat_participants().where({
                 user_id: currentUser.id
             }));
+            var timestamp = (new Date()).getTime() / 1000;
 
             var message = new api.models.ChatMessage({
                 header: {
                     type: 'USER_STATUS',
                     chat_token: credential.get_token(),
-                    user_id: currentUser.id
+                    user_id: currentUser.id,
+                    timestamp: timestamp
                 },
                 user_status_message: {
                     user_id: currentUser.id,
@@ -290,12 +294,72 @@ define([
             
         }
     });
+
+    /**
+     * AddChatToReel constructor
+     * @constructor
+     * @classdesc
+     * Add chat to user's highlight reel
+     */
+    var AddChatToReel = core.command.AsyncCommand.extend({
+
+        /**
+         * OnSuccess and onError argument names
+         */
+        asyncCallbackArgs: ['model', 'response'],
+
+
+        /**
+         * Execute command
+         * @param {object} options Options object
+         * @param {string} options.chat Chat model to add to reel.
+         * @param {function} [options.onSuccess] Success callback 
+         * @param {function} [options.onError] Error callback 
+         */
+        execute: function(options) {
+            this.currentProxy = this.facade.getProxy(
+                current_proxies.CurrentProxy.NAME);
+            this.currentUser = this.currentProxy.currentUser();
+            this.chat = options.chat;
+            this.reels = this.currentUser.get_chat_reels();
+
+            this.loadReels();
+
+            return true;
+        },
+
+        loadReels: function() {
+            this.reels.orderBy('rank__desc').fetch({
+                success: _.bind(this.onReelsLoaded, this),
+                error: _.bind(this.onError, this)
+            });
+        },
+
+        onReelsLoaded: function() {
+            var rank = 0;
+            if(this.reels.length) {
+                rank = this.reels.first().get_rank() + 1;
+            }
+
+            var reel = new api.models.ChatReel({
+                chat_id: this.chat.id,
+                user_id: this.currentUser.id,
+                rank: rank
+            });
+
+            reel.save(null, {
+                success: _.bind(this.onSuccess, this),
+                error: _.bind(this.onError, this)
+            });
+        }
+    });
     
     return {
         CreateChat: CreateChat,
         ParticipateInChat: ParticipateInChat,
         UpdateChatStatus: UpdateChatStatus,
         UpdateChatUserStatus: UpdateChatUserStatus,
-        UpdateTalkingPoints: UpdateTalkingPoints
+        UpdateTalkingPoints: UpdateTalkingPoints,
+        AddChatToReel: AddChatToReel
     };
 });

@@ -11,7 +11,10 @@ define([
     './models',
     'text!./templates/chat.html',
     'text!./templates/connection.html',
-    'text!./templates/participant.html'
+    'text!./templates/end.html',
+    'text!./templates/participant.html',
+    'text!./templates/participants.html',
+    'text!./templates/timer.html'
 ], function(
     $,
     _,
@@ -25,7 +28,102 @@ define([
     models,
     chat_template,
     connection_template,
-    participant_template) {
+    end_template,
+    participant_template,
+    participants_template,
+    timer_template) {
+
+    /**
+     * Chat End View
+     * @constructor
+     * @param {Object} options
+     */
+    var ChatEndView = core.view.View.extend({
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template = _.template(end_template);
+            this.action = 'Exit Chat';
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            return this;
+        },
+
+        onAction: function() {
+            var addToReel = this.$('.reel-checkbox').is(':checked');
+            if(addToReel) {
+                this.triggerEvent(events.ADD_CHAT_TO_REEL, {
+                    chat: this.model.chat()
+                });
+            } else {
+            }
+            return true;
+        }
+    });
+
+    
+
+    /**
+     * Chat Timer View
+     * @constructor
+     * @param {Object} options
+     */
+    var ChatTimerView = core.view.View.extend({
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template = _.template(timer_template);
+
+            //bind events
+            this.listenTo(this.model, 'change:status', this.onStatusChange);
+
+            //child views
+            this.timerView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            var duration = this.model.chat().get_max_duration() * 1000;
+            this.timerView = new ui.timer.views.DurationTimerView({
+                duration: duration
+            });
+        },
+
+        childViews: function() {
+            return [this.timerView];
+        },
+
+        classes: function() {
+            return ['chat-timer'];
+        },
+
+        render: function() {
+            var context = this.model.toJSON();
+            this.$el.html(this.template(context));
+            this.$el.attr('class', this.classes().join(' '));
+            this.append(this.timerView);
+            return this;
+        },
+
+        onStatusChange: function() {
+            switch(this.model.status()) {
+                case this.model.STATUS.STARTED:
+                    this.timerView.start(this.model.startTime());
+                    break;
+                case this.model.STATUS.ENDED:
+                    this.timerView.stop();
+                    break;
+            }
+        }
+    });
 
     /**
      * Chat Participant View
@@ -56,6 +154,48 @@ define([
             var context = this.model.toJSON();
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
+            return this;
+        }
+    });
+
+    /**
+     * Chat Participants View
+     * @constructor
+     * @param {Object} options
+     */
+    var ChatParticipantsView = core.view.View.extend({
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template = _.template(participants_template);
+
+            //child views
+            this.listView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.listView = new ui.collection.views.ListView({
+                viewFactory: new core.factory.Factory(ChatParticipantView, {}),
+                collection: this.model.users()
+            });
+        },
+
+        childViews: function() {
+            return [this.listView];
+        },
+
+        classes: function() {
+            return ['chat-participants'];
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.$el.attr('class', this.classes().join(' '));
+            this.append(this.listView);
             return this;
         }
     });
@@ -222,6 +362,7 @@ define([
             this.messageHandlerView = null;
             this.connectionView = null;
             this.participantsView = null;
+            this.timerView = null;
             this.initChildViews();
 
             //message
@@ -262,9 +403,12 @@ define([
                 model: this.chatState
             });
 
-            this.participantsView = new ui.collection.views.ListView({
-                viewFactory: new core.factory.Factory(ChatParticipantView, {}),
-                collection: this.chatState.users()
+            this.participantsView = new ChatParticipantsView({
+                model: this.chatState
+            });
+
+            this.timerView = new ChatTimerView({
+                model: this.chatState
             });
         },
 
@@ -272,7 +416,8 @@ define([
             return [
                 this.messageHandlerView,
                 this.connectionView,
-                this.participantsView
+                this.participantsView,
+                this.timerView
             ];
         },
         
@@ -281,6 +426,7 @@ define([
             this.append(this.messageHandlerView);
             this.append(this.connectionView, '.connection-container');
             this.append(this.participantsView, '.participants-container');
+            this.append(this.timerView, '.timer-container');
             return this;
         },
 
@@ -314,6 +460,15 @@ define([
 
             this.running = false;
             this.messagePump.stop();
+
+            this.append(new ui.modal.views.ModalView({
+                title: 'Your Chat Has Ended',
+                viewOrFactory: new ChatEndView({
+                    model: this.chatState
+                }),
+                exitOnEscape: false,
+                exitOnBackdropClick: false
+            }));
         },
 
         onMessage: function(message) {

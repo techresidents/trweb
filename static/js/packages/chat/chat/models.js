@@ -93,7 +93,10 @@ define([
             return {
                 chat: null,
                 users: new UserStateCollection(),
-                status: this.STATUS.PENDING
+                status: this.STATUS.PENDING,
+                startTimestamp: null,
+                endTimestamp: null,
+                skew: 0
             };
         },
 
@@ -127,6 +130,33 @@ define([
 
         setStatus: function(status) {
             this.set('status', status);
+            return this;
+        },
+
+        startTime: function() {
+            return this.get('startTime');
+        },
+
+        setStartTime: function(time) {
+            this.set('startTime', time);
+            return this;
+        },
+
+        endTime: function() {
+            return this.get('endTime');
+        },
+
+        setEndTime: function(time) {
+            this.set('endTime', time);
+            return this;
+        },
+
+        skew: function() {
+            return this.get('skew');
+        },
+
+        setSkew: function(skew) {
+            this.set('skew', skew);
             return this;
         },
         

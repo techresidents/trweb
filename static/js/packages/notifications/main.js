@@ -51,6 +51,7 @@ define([
         PARTICIPATE_IN_CHAT: 'notification:ParticipateInChat',
         UPDATE_CHAT_STATUS: 'notification:UpdateChatStatus',
         UPDATE_CHAT_USER_STATUS: 'notification:UpdateChatUserStatus',
-        UPDATE_TALKING_POINTS: 'notification:UpdateTalkingPoints'
+        UPDATE_TALKING_POINTS: 'notification:UpdateTalkingPoints',
+        ADD_CHAT_TO_REEL: 'notification:AddChatToReel'
     };
 });
