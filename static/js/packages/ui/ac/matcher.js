@@ -15,19 +15,22 @@ define(/** @exports ui/ac/matcher */[
          * @constructor
          * @augments module:core/base~Base
          * @param {object} options Options object
-         *  stringify: {Function} Function used to convert models
-               into a searchable string (so that the matching can happen against
-               the specified search string)
-         *  sortByStringify: {Boolean} flag to sort results by the value
-         *      that the 'stringify' function returns. Defaults to true.
+         * @param {function} [options.stringify] Function used to convert
+         *   models into a searchable string (so that the matching can
+         *   happen against the specified search string)
+         * @param {function} [options.sort=stringify] Function used to sort
+         *   matcher result. If not provided, defaults to the stringify method.
+         *   Setting this option to null will prevent sorting altogether.
          */
         initialize: function(options) {
             options = _.extend({
                 sortByStringify: true,
-                stringify: core.string.stringify
+                stringify: core.string.stringify,
+                sort: options.stringify || core.string.stringify
             }, options);
-            this.sortByStringify = options.sortByStringify;
+
             this.setStringify(options.stringify);
+            this.setSort(options.sort);
         },
 
         getStringify: function() {
@@ -36,6 +39,14 @@ define(/** @exports ui/ac/matcher */[
 
         setStringify: function(value) {
             this.stringify = value;
+        },
+
+        getSort: function() {
+            return this.sort;
+        },
+
+        setSort: function(value) {
+            this.sort = value;
         },
         
         match: function(search, maxResults, matchHandler) {
@@ -55,9 +66,9 @@ define(/** @exports ui/ac/matcher */[
                 }
             }, this);
 
-            if (this.sortByStringify) {
+            if (this.sort) {
                 results = _.sortBy(results, function(item) {
-                    return this.stringify(item);
+                    return this.sort(item);
                 }, this);
             }
 
