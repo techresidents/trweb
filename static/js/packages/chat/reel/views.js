@@ -265,12 +265,12 @@ define([
     });
 
     /**
-     * ChatReelItemView View
+     * ChatReelView View
      * @constructor
      * @param {Object} options
      *   model: {ChatReel} object (required)
      */
-    var ChatReelItemView = core.view.View.extend({
+    var ChatReelView = core.view.View.extend({
 
         events: {
         },
@@ -304,16 +304,16 @@ define([
     });
 
     /**
-     * ChatReelListView View
+     * ChatReelCollectionView View
      * @constructor
      * @param {Object} options
      *   collection: {ChatReelCollection} a sortable collection (required)
      */
-    var ChatReelListView = ui.collection.views.OrderedListView.extend({
+    var ChatReelCollectionView = ui.collection.views.OrderedListView.extend({
 
         initialize: function(options) {
             _.extend(options, {
-                viewFactory: new core.factory.Factory(ChatReelItemView, {}),
+                viewFactory: new core.factory.Factory(ChatReelView, {}),
                 modelRankAttribute: 'rank',
                 sort: this._viewSort
             });
@@ -346,7 +346,7 @@ define([
 
         /**
          * viewSort
-         * ChatReelListView requires a sort function to be defined that the
+         * ChatReelCollectionView requires a sort function to be defined that the
          * underlying CollectionView will use to sort the views in the collection.
          * @param view
          * @returns {number}
@@ -361,14 +361,14 @@ define([
     });
 
     /**
-     * ChatReelView View
+     * ChatReelPageView View
      * @constructor
      * @param {Object} options
      *   collection: {ChatReelCollection} object (required)
      */
-    var ChatReelView = core.view.View.extend({
+    var ChatReelPageView = core.view.View.extend({
 
-        chatReelListSelector: '.chat-reel-list-hook',
+        chatReelSelector: '.chat-reel-list-hook',
         addChatButtonSelector: '.add-chat-btn-hook',
 
         events: {
@@ -377,7 +377,7 @@ define([
         childViews: function() {
             return [
                 this.addChatButtonView,
-                this.chatReelListView
+                this.ChatReelCollectionView
             ];
         },
 
@@ -388,7 +388,7 @@ define([
             // data bindings
             this.listenTo(this.collection, 'loaded:read', this.loaded);
 
-            // ChatReelListView requires a sortable collection
+            // ChatReelCollectionView requires a sortable collection
             this.collection.comparator = function(model) {
                 return model.get_rank();
             };
@@ -403,7 +403,7 @@ define([
 
             //child views
             this.addChatButtonView = null;
-            this.chatReelListView = null;
+            this.ChatReelCollectionView = null;
             this.initChildViews();
         },
 
@@ -411,7 +411,7 @@ define([
             this.addChatButtonView = new AddChatButtonView({
                 collection: this.collection
             });
-            this.chatReelListView = new ChatReelListView({
+            this.ChatReelCollectionView = new ChatReelCollectionView({
                 collection: this.collection
             });
         },
@@ -425,7 +425,7 @@ define([
         render: function() {
             this.$el.html(this.template());
             if (this.collection.isLoaded()) {
-                this.append(this.chatReelListView, this.chatReelListSelector);
+                this.append(this.ChatReelCollectionView, this.chatReelSelector);
                 this.append(this.addChatButtonView, this.addChatButtonSelector);
             }
             return this;
@@ -436,8 +436,8 @@ define([
         AddChatButtonView: AddChatButtonView,
         AddChatModalView: AddChatModalView,
         ChatSelectView: ChatSelectView,
-        ChatReelItemView: ChatReelItemView,
-        ChatReelListView: ChatReelListView,
-        ChatReelView: ChatReelView
+        ChatReelView: ChatReelView,
+        ChatReelCollectionView: ChatReelCollectionView,
+        ChatReelPageView: ChatReelPageView
     };
 });

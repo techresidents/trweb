@@ -40,7 +40,7 @@ define([
             if (notification.type === this.viewType()) {
 
                 var reelCollection = new api.models.ChatReelCollection();
-                this.view = new chat_reel_views.ChatReelView({
+                this.view = new chat_reel_views.ChatReelPageView({
                     collection: reelCollection
                 });
 
