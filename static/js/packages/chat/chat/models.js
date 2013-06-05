@@ -96,7 +96,8 @@ define([
                 status: this.STATUS.PENDING,
                 startTimestamp: null,
                 endTimestamp: null,
-                skew: 0
+                skew: 0,
+                simulation: false
             };
         },
 
@@ -157,6 +158,15 @@ define([
 
         setSkew: function(skew) {
             this.set('skew', skew);
+            return this;
+        },
+
+        simulation: function() {
+            return this.get('simulation');
+        },
+
+        setSimulation: function(simulation) {
+            this.set('simulation', simulation);
             return this;
         },
         

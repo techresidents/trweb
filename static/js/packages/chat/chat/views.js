@@ -283,6 +283,10 @@ define([
             this.setup();
         },
 
+        isSimulation: function() {
+            return this.model.simulation();
+        },
+
         render: function() {
             var context = this.model.toJSON();
             context.canStartChat = this._canStartChat();
@@ -308,7 +312,11 @@ define([
         },
 
         connect: function() {
-            /*
+            if(this.isSimulation()) {
+                this.onTwilioConnect();
+                return;
+            }
+
             if(!this.twilioConnection ||
                this.twilioConnection.status() === 'closed') {
                 this.twilioConnection = Twilio.Device.connect({
@@ -316,14 +324,14 @@ define([
                     chat_token: this.credential.get_token()
                 });
             }
-            */
-
-            this.onTwilioConnect();
         },
 
         disconnect: function() {
-            //Twilio.Device.disconnectAll();
-            this.onTwilioDisconnect();
+            if(this.isSimulation()) {
+                this.onTwilioDisconnect();
+                return;
+            }
+            Twilio.Device.disconnectAll();
             
         },
 
@@ -419,7 +427,6 @@ define([
         render: function() {
             var context = this.model.toJSON();
             context.availableUsers = this.model.availableUsers();
-            console.log(context);
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             return this;
@@ -439,6 +446,7 @@ define([
         initialize: function(options) {
             this.template = _.template(chat_template);
             this.model = options.model;
+            this.simulation = options.simulation;
 
             //models
             this.currentUser = null;
@@ -487,7 +495,8 @@ define([
                 id: 'CURRENT'
             });
             this.chatState = new models.ChatState({
-                chat: this.model
+                chat: this.model,
+                simulation: this.simulation
             });
             this.credential = this.chatState.credential();
             this.participant = this.chatState.currentParticipant();

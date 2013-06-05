@@ -44,6 +44,7 @@ define([
                 });
                 this.facade.trigger(notifications.PARTICIPATE_IN_CHAT, {
                     model: this.model,
+                    simulation: notification.options.simulation,
                     onSuccess: _.bind(this.onParticipateSuccess, this)
                 });
             }
@@ -65,7 +66,8 @@ define([
 
         onParticipateSuccess: function(options, result) {
             this.view = new chat_views.ChatView({
-                model: this.model
+                model: this.model,
+                simulation: options.simulation
             });
 
             this.facade.trigger(notifications.VIEW_CREATED, {
