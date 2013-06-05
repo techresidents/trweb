@@ -8,6 +8,14 @@ define([
     core) {
 
     /**
+     * CollectionView Events
+     */
+    var EventType = {
+        ADD_VIEW: 'addView',
+        REMOVE_VIEW: 'removeView'
+    };
+
+    /**
      * Collection View.
      * @constructor
      * @param {Object} options
@@ -138,6 +146,7 @@ define([
             } else {
                 this.appendChildView(view);
             }
+            this.triggerEvent(EventType.ADD_VIEW, {view: view});
         },
 
         onRemove: function(model) {
@@ -146,6 +155,7 @@ define([
                 this.removeChildView(view);
                 delete this.modelViewMap[model.cid];
                 delete this.viewModelMap[view.cid];
+                this.triggerEvent(EventType.REMOVE_VIEW, {view: view});
             }
         }
 
@@ -294,6 +304,7 @@ define([
     });
 
     return {
+        EventType: EventType,
         CollectionView: CollectionView,
         ListView: ListView,
         OrderedListView: OrderedListView

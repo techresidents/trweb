@@ -149,6 +149,10 @@ define([
             // TODO
             this.inputHandlerView.undelegateEvents();
             core.view.View.prototype.undelegateEvents.apply(this, arguments);
+        },
+
+        focus: function() {
+            this.inputHandlerView.getInput().focus();
         }
     });
 
@@ -165,6 +169,7 @@ define([
         tlkptCompositeSelector: '.talking-point-composite-container',
 
         events: {
+            'addView .talking-point-composite-container': 'onAddView'
         },
 
         childViews: function() {
@@ -241,6 +246,12 @@ define([
                 this.append(this.addTalkingPointView, this.tlkptCompositeSelector);
             }
             return this;
+        },
+
+        onAddView: function(e, eventBody) {
+            // When a tlkpt is added, set the focus to it
+            var itemView = eventBody.view.childView;
+            itemView.focus();
         },
 
         /**
