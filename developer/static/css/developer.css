@@ -778,3 +778,70 @@
     color: #31b531;
     border-bottom-color: #31b531;
 }
+
+.chat {
+    margin-top: 10px;
+}
+.chat .chat-connection-container {
+    display: inline-block;
+}
+.chat .chat-timer-container {
+    display: inline-block;
+    margin-left: 10px;
+    vertical-align: middle;
+    font-size: 36px;
+}
+.chat .chat-participants-container {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px solid #dddddd;
+}
+.chat .chat-participants-title {
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+.chat .chat-participants ul {
+    list-style: none;
+}
+.chat .chat-participant { 
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+.chat .chat-participant:hover { 
+    background-color: #EEEEEE;
+    cursor: pointer;
+}
+.chat .chat-participant.unavailable {
+    color: #B94A48;
+    font-weight: bold;
+}
+.chat .chat-participant.disconnected {
+}
+.chat .chat-participant.connected {
+    color: #468847;
+    font-weight: bold;
+}
+.chat .chat-topic-points ul {
+    list-style: none;
+}
+.chat .talking-point-strike label {
+    color: #3A87AD;
+    font-weight: bold;
+}
+
+.topic-point.level1 {
+    margin-left: 0px;
+}
+.topic-point.level2 {
+    margin-left: 20px;
+}
+.topic-point.level3 {
+    margin-left: 40px;
+}
+.topic-point.level4 {
+    margin-left: 60px;
+}
+.topic-point.level5 {
+    margin-left: 80px;
+}

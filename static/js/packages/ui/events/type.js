@@ -6,7 +6,7 @@ define([
         SHOW: 'show',
 
         /** Dispatched before component is hidden */
-        HIDE: 'show',
+        HIDE: 'hide',
 
         /** Dispatched before component is enabled */
         ENABLE: 'enable',

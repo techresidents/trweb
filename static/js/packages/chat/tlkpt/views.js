@@ -7,9 +7,11 @@ define([
     'events',
     'ui',
     '../topic/views',
+    'text!./templates/talking_point.html',
+    'text!./templates/talking_point_strike.html',
     'text!./templates/tlkpts_summary.html',
     'text!./templates/add_tlkpt.html',
-    'text!./templates/talking_point.html',
+    'text!./templates/talking_point_edit.html',
     'text!./templates/topic_tlkpt_composite.html'
 ], function(
     $,
@@ -20,11 +22,101 @@ define([
     events,
     ui,
     topic_views,
+    talking_point_template,
+    talking_point_strike_template,
     tlkpts_summary_template,
     add_tlkpt_template,
-    talking_point_template,
+    talking_point_edit_template,
     topic_tlkpt_composite_template) {
 
+
+    /**
+     * Talking Point View
+     * @constructor
+     * @param {Object} options
+     * @params {TalkingPoint} options.model Talking point model
+     */
+    var TalkingPointView = core.view.View.extend({
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template = _.template(talking_point_template);
+        },
+
+        classes: function() {
+            return ['talking-point'];
+        },
+
+        render: function() {
+            var context = this.model.toJSON();
+            this.$el.html(this.template(context));
+            this.$el.attr('class', this.classes().join(' '));
+            return this;
+        }
+    });
+
+    /**
+     * Talking Point Collection View
+     * @constructor
+     * @param {Object} options
+     * @params {TalkingPointCollection} options.collection
+     *   Talking point collection
+     */
+    var TalkingPointCollectionView = ui.collection.views.ListView.extend({
+        initialize: function(options) {
+            options.viewFactory = new core.factory.Factory(
+                TalkingPointView, {});
+            TalkingPointCollectionView.__super__.initialize.call(this, options);
+        }
+    });
+
+    /**
+     * Talking Point Strike View
+     * @constructor
+     * @param {Object} options
+     * @params {TalkingPoint} options.model Talking point model
+     */
+    var TalkingPointStrikeView = core.view.View.extend({
+
+        events: {
+            'click input': 'render'
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template = _.template(talking_point_strike_template);
+        },
+
+        classes: function() {
+            return ['talking-point-strike'];
+        },
+
+        render: function() {
+            var context = this.model.toJSON();
+            context.checked = this.$('input').is(':checked');
+            this.$el.html(this.template(context));
+            this.$el.attr('class', this.classes().join(' '));
+            return this;
+        }
+    });
+
+    /**
+     * Talking Point Strike Collection View
+     * @constructor
+     * @param {Object} options
+     * @params {TalkingPointCollection} options.collection
+     *   Talking point collection
+     */
+    var TalkingPointStrikeCollectionView = ui.collection.views.ListView.extend({
+        initialize: function(options) {
+            options.viewFactory = new core.factory.Factory(
+                TalkingPointStrikeView, {});
+            TalkingPointCollectionView.__super__.initialize.call(this, options);
+        }
+    });
 
     /**
      * AddTalkingPointView View
@@ -113,7 +205,7 @@ define([
         },
 
         initialize: function(options) {
-            this.template =  _.template(talking_point_template);
+            this.template =  _.template(talking_point_edit_template);
 
             // child views
             this.inputHandlerView = null;
@@ -359,6 +451,10 @@ define([
     });
 
     return {
+        TalkingPointView: TalkingPointView,
+        TalkingPointCollectionView: TalkingPointCollectionView,    
+        TalkingPointStrikeView: TalkingPointStrikeView,
+        TalkingPointStrikeCollectionView: TalkingPointStrikeCollectionView,
         AddTalkingPointView: AddTalkingPointView,
         TalkingPointCollectionEditView: TalkingPointCollectionEditView,
         TalkingPointEditView: TalkingPointEditView,

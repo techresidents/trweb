@@ -213,8 +213,7 @@ define([
      *   load all mising data.
      *
      * Tests if all models/collections in the specified
-     * relation path are loaded. Note that in the case of ApiCollection's,
-     * only the first model is tested as an optimization.
+     * relation path are loaded.
      *
      */
     var isLoadedWith = function() {
@@ -245,6 +244,12 @@ define([
                         if(!queryMap.hasOwnProperty(key)) {
                             queryMap[key] = query;
                         }
+
+                        //stop bfs traversal at this point since we added
+                        //a query to handle current and its relations.
+                        //if we don't do this we'll end up making multiple
+                        //queries for the same data.
+                        return true;
                     }
                 }, this);
             }, this);

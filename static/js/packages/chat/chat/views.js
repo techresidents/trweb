@@ -9,9 +9,12 @@ define([
     'ui',
     './message',
     './models',
+    '../tlkpt/views',
+    '../topicpt/views',
     'text!./templates/chat.html',
     'text!./templates/connection.html',
     'text!./templates/end.html',
+    'text!./templates/instructions.html',
     'text!./templates/participant.html',
     'text!./templates/participants.html',
     'text!./templates/timer.html'
@@ -26,9 +29,12 @@ define([
     ui,
     message,
     models,
+    tlkpt_views,
+    topicpt_views,
     chat_template,
     connection_template,
     end_template,
+    instructions_template,
     participant_template,
     participants_template,
     timer_template) {
@@ -69,7 +75,53 @@ define([
         }
     });
 
-    
+    /**
+     * Chat Topic Points View
+     * @constructor
+     * @param {Object} options
+     */
+    var ChatTopicPointsView = core.view.View.extend({
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.topicTree = this.model.chat().get_topic().get_tree();
+
+            //child views
+            this.topicPointsView = null;
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            var talkingPointsViewFactory = new core.factory.Factory(
+                tlkpt_views.TalkingPointStrikeCollectionView, {});
+
+            this.topicPointsView = new ui.collection.views.ListView({
+                collection: this.topicTree,
+                viewFactory: new core.factory.Factory(
+                    topicpt_views.TopicPointView, {
+                        talkingPointsViewFactory: talkingPointsViewFactory
+                    })
+            });
+        },
+
+        childViews: function() {
+            return [this.topicPointsView];
+        },
+
+        classes: function() {
+            return ['chat-topic-points'];
+        },
+
+        render: function() {
+            this.$el.html();
+            this.$el.attr('class', this.classes().join(' '));
+            this.append(this.topicPointsView);
+            return this;
+        }
+    });
 
     /**
      * Chat Timer View
@@ -226,11 +278,15 @@ define([
 
             //bind events
             this.listenTo(this.model, 'change:status', this.onStatusChange);
+            this.listenTo(this.model.users(), 'add remove change:status', this.onUserChange);
+
             this.setup();
         },
 
         render: function() {
             var context = this.model.toJSON();
+            context.canStartChat = this._canStartChat();
+
             this.$el.html(this.template(context));
             return this;
         },
@@ -284,6 +340,10 @@ define([
             this.render();
         },
 
+        onUserChange: function() {
+            this.render();
+        },
+
         onStartClick: function() {
             this.connect();
         },
@@ -321,6 +381,48 @@ define([
 
         onTwilioError: function() {
             console.log('twilio error');
+        },
+
+        _canStartChat: function() {
+            var result = true;
+            if(this.model.chat().get_max_participants() > 1 &&
+               this.model.availableUsers().length <= 1) {
+                   result = false;
+            }
+            return result;
+        }
+    });
+
+    /**
+     * Chat Instructions View
+     * @constructor
+     * @param {Object} options
+     */
+    var ChatInstructionsView = core.view.View.extend({
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template = _.template(instructions_template);
+
+            //bind events
+            this.listenTo(this.model, 'change:status', this.render);
+            this.listenTo(this.model.users(), 'add remove change:status', this.render);
+        },
+
+        classes: function() {
+            return ['chat-instructions'];
+        },
+
+        render: function() {
+            var context = this.model.toJSON();
+            context.availableUsers = this.model.availableUsers();
+            console.log(context);
+            this.$el.html(this.template(context));
+            this.$el.attr('class', this.classes().join(' '));
+            return this;
         }
     });
     
@@ -367,6 +469,8 @@ define([
             this.participantsView = null;
             this.timerView = null;
             this.endView = null;
+            this.instructionsView = null;
+            this.topicPointsView = null;
             this.initChildViews();
 
             //message
@@ -401,17 +505,20 @@ define([
         initChildViews: function() {
             this.messageHandlerView = new message.ChatMessageHandlerView({
                 model: this.chatState
-
             });
             this.connectionView = new ChatConnectionView({
                 model: this.chatState
             });
-
             this.participantsView = new ChatParticipantsView({
                 model: this.chatState
             });
-
             this.timerView = new ChatTimerView({
+                model: this.chatState
+            });
+            this.topicPointsView = new ChatTopicPointsView({
+                model: this.chatState
+            });
+            this.instructionsView = new ChatInstructionsView({
                 model: this.chatState
             });
         },
@@ -425,13 +532,20 @@ define([
                 this.endView
             ];
         },
+
+        classes: function() {
+            return ['chat'];
+        },
         
         render: function() {
             this.$el.html(this.template());
+            this.$el.attr('class', this.classes().join(' '));
             this.append(this.messageHandlerView);
-            this.append(this.connectionView, '.connection-container');
-            this.append(this.participantsView, '.participants-container');
-            this.append(this.timerView, '.timer-container');
+            this.append(this.connectionView, '.chat-connection-container');
+            this.append(this.timerView, '.chat-timer-container');
+            this.append(this.participantsView, '.chat-participants-container');
+            this.append(this.instructionsView, '.chat-instructions-container');
+            this.append(this.topicPointsView, '.chat-topic-points-container');
             return this;
         },
 

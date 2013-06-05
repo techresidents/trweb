@@ -184,6 +184,19 @@ define([
             return _.first(this.users().where({
                 userId: this.currentUser.id
             }));
+        },
+
+        availableUsers: function() {
+            return this.users().filter(function(user) {
+                return user.status() !== "UNAVAILABLE";
+            });
+        },
+
+        toJSON: function() {
+            var result = ChatState.__super__.toJSON.call(this);
+            result.chat = result.chat.toJSON();
+            result.users = result.users.toJSON();
+            return result;
         }
     });
 
