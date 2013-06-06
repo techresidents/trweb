@@ -827,6 +827,10 @@
     color: #3A87AD;
     font-weight: bold;
 }
+.chat-error .alert {
+    margin-top: 10px;
+    min-height: 40px;
+}
 
 .topic-point.level1 {
     margin-left: 0px;

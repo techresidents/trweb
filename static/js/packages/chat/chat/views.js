@@ -14,6 +14,7 @@ define([
     'text!./templates/chat.html',
     'text!./templates/connection.html',
     'text!./templates/end.html',
+    'text!./templates/error.html',
     'text!./templates/instructions.html',
     'text!./templates/participant.html',
     'text!./templates/participants.html',
@@ -34,6 +35,7 @@ define([
     chat_template,
     connection_template,
     end_template,
+    error_template,
     instructions_template,
     participant_template,
     participants_template,
@@ -43,6 +45,9 @@ define([
      * Chat End View
      * @constructor
      * @param {Object} options
+     * @param {ChatState} options.model ChatState model
+     * @classdesc
+     * End of chat modal view.
      */
     var ChatEndView = core.view.View.extend({
 
@@ -79,6 +84,7 @@ define([
      * Chat Topic Points View
      * @constructor
      * @param {Object} options
+     * @param {ChatState} options.model ChatState model
      */
     var ChatTopicPointsView = core.view.View.extend({
 
@@ -127,6 +133,7 @@ define([
      * Chat Timer View
      * @constructor
      * @param {Object} options
+     * @param {ChatState} options.model ChatState model
      */
     var ChatTimerView = core.view.View.extend({
 
@@ -184,6 +191,9 @@ define([
      * Chat Participant View
      * @constructor
      * @param {Object} options
+     * @param {ChatState} options.model ChatState model
+     * @classdesc
+     * View of an individual chat participant and their status.
      */
     var ChatParticipantView = core.view.View.extend({
 
@@ -217,6 +227,9 @@ define([
      * Chat Participants View
      * @constructor
      * @param {Object} options
+     * @param {ChatState} options.model ChatState model
+     * @classdesc
+     * View of all participants in the chat.
      */
     var ChatParticipantsView = core.view.View.extend({
 
@@ -259,6 +272,12 @@ define([
      * Chat Connection View
      * @constructor
      * @param {Object} options
+     * @param {ChatState} options.model ChatState model
+     * @classdesc
+     * Chat connection view is repsonible for starting and stopping
+     * the chat and establishing the necessary Twilio connection.
+     * Note that in the case of a simulated chat a connection
+     * to Twilio will NOT be established.
      */
     var ChatConnectionView = core.view.View.extend({
 
@@ -290,16 +309,18 @@ define([
         render: function() {
             var context = this.model.toJSON();
             context.canStartChat = this._canStartChat();
-
             this.$el.html(this.template(context));
             return this;
         },
 
         setup: function() {
+
+            //Setup Twilio device singleton
             Twilio.Device.setup(this.credential.get_twilio_capability(), {
                 debug: true
             });
-
+            
+            //bind Twilio device events
             Twilio.Device.cancel(_.bind(this.onTwilioCancel, this));
             Twilio.Device.connect(_.bind(this.onTwilioConnect, this));
             Twilio.Device.connect(_.bind(this.onTwilioDisconnect, this));
@@ -312,6 +333,7 @@ define([
         },
 
         connect: function() {
+            // if it's a simulation bypass connection
             if(this.isSimulation()) {
                 this.onTwilioConnect();
                 return;
@@ -327,10 +349,12 @@ define([
         },
 
         disconnect: function() {
+            // if it's a simulation bypass disconnect
             if(this.isSimulation()) {
                 this.onTwilioDisconnect();
                 return;
             }
+
             Twilio.Device.disconnectAll();
             
         },
@@ -364,16 +388,24 @@ define([
         },
         
         onTwilioCancel: function() {
+            //TODO
             console.log('twilio cancel');
         },
 
         onTwilioConnect: function() {
+            //We wait until we're connected to Twilio before we
+            //start the chat and the timer. This is important since
+            //the connection process for Twilio can take some time
+            //since the user needs to grant flash access to their
+            //micropohone.
             if(this.model.status() === this.model.STATUS.PENDING) {
                 this.triggerEvent(events.UPDATE_CHAT_STATUS, {
                     chat: this.model.chat(),
                     status: this.model.STATUS.STARTED
                 });
             }
+
+            //Update user's status
             this.triggerEvent(events.UPDATE_CHAT_USER_STATUS, {
                 chat: this.model.chat(),
                 status: 'CONNECTED'
@@ -388,11 +420,15 @@ define([
         },
 
         onTwilioError: function() {
+            //TODO
             console.log('twilio error');
         },
 
         _canStartChat: function() {
             var result = true;
+
+            //Don't allow multiple participant chats to be started
+            //until at least two particpants have arrived.
             if(this.model.chat().get_max_participants() > 1 &&
                this.model.availableUsers().length <= 1) {
                    result = false;
@@ -405,6 +441,10 @@ define([
      * Chat Instructions View
      * @constructor
      * @param {Object} options
+     * @param {ChatState} options.model ChatState model
+     * @classdesc
+     * The chat instructions view displays instructions to the user
+     * prior to the start of the chat.
      */
     var ChatInstructionsView = core.view.View.extend({
 
@@ -437,6 +477,13 @@ define([
      * Chat View
      * @constructor
      * @param {Object} options
+     * @param {Chat} options.model Chat model which must be loaded
+     *   along with the ChatParticipant and ChatCredential
+     *   for the current user.
+     * @param {boolean} options.simulation Boolean indicating if the
+     *   chat is a simulation or not. If it's a simulation we won't
+     *   really connect to Twilio and incur charges. This is useful
+     *   for development purposes.
      */
     var ChatView = core.view.View.extend({
 
@@ -481,12 +528,16 @@ define([
             this.topicPointsView = null;
             this.initChildViews();
 
-            //message
+            //Message pump which will long poll for new chat messages
+            //and add them to the message collection as they arrive.
+            //When new messages arrive in the collection we'll pass
+            //them to message handler view for proper processing.
             this.messagePump = new message.ChatMessagePump({
                 model: this.model,
                 collection: this.messages
             });
 
+            //start the chat
             this.start();
         },
 
@@ -494,18 +545,35 @@ define([
             this.currentUser = new api.models.User({
                 id: 'CURRENT'
             });
+
+            //create ChatState model which will be passed to
+            //all child views. ChatState model will be updated
+            //to reflect the current state of the chat as new
+            //messages are received.
             this.chatState = new models.ChatState({
                 chat: this.model,
                 simulation: this.simulation
             });
+
+            //credential containing the tokens required to participate
+            //in the chat
             this.credential = this.chatState.credential();
+
+            //ChatParticipant model for the current user
             this.participant = this.chatState.currentParticipant();
+
+            //Add a UserState model for the current user to the
+            //ChatState model. Other users will be added as
+            //the arrive to the chat.
             this.chatState.users().add({
                     userId: this.currentUser.id,
                     status: 'DISCONNECTED',
                     firstName: this.currentUser.get_first_name(),
                     participant: this.participant.get_participant()
             });
+
+            //Chat message collection which the message pump will 
+            //append new messages to.
             this.messages = new api.models.ChatMessageCollection(null, {
                 noSession: true
             });
@@ -538,6 +606,8 @@ define([
                 this.connectionView,
                 this.participantsView,
                 this.timerView,
+                this.topicPointsView,
+                this.instructionsView,
                 this.endView
             ];
         },
@@ -601,6 +671,10 @@ define([
         },
 
         onMessage: function(message) {
+            //pass new messages to the message handler for processing.
+            //The message handler may send additional chat messages
+            //and update the ChatState model which child views
+            //are listening to.
             this.messageHandlerView.handle(message);
         },
 
@@ -614,7 +688,46 @@ define([
 
     });
 
+    /**
+     * Chat Error View
+     * @constructor
+     * @param {Object} options
+     * @param {Chat} options.model Chat model
+     * @param {string} options.fault Fault message
+     *   indicating why user cannot participate in
+     *   chat.
+     * @classdesc
+     * Chat error view is displayed when a user attempts to
+     * join a chat which does not exist or is no longer
+     * available.
+     */
+    var ChatErrorView = core.view.View.extend({
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.fault = options.fault;
+            this.template = _.template(error_template);
+        },
+
+        classes: function() {
+            return ['chat-error'];
+        },
+
+        render: function() {
+            var context = {
+                fault: this.fault
+            };
+            this.$el.html(this.template(context));
+            this.$el.attr('class', this.classes().join(' '));
+            return this;
+        }
+    });
+
     return {
-        ChatView: ChatView
+        ChatView: ChatView,
+        ChatErrorView: ChatErrorView
     };
 });

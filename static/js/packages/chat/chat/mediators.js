@@ -45,7 +45,8 @@ define([
                 this.facade.trigger(notifications.PARTICIPATE_IN_CHAT, {
                     model: this.model,
                     simulation: notification.options.simulation,
-                    onSuccess: _.bind(this.onParticipateSuccess, this)
+                    onSuccess: _.bind(this.onParticipateSuccess, this),
+                    onError: _.bind(this.onParticipateError, this)
                 });
             }
         },
@@ -68,6 +69,19 @@ define([
             this.view = new chat_views.ChatView({
                 model: this.model,
                 simulation: options.simulation
+            });
+
+            this.facade.trigger(notifications.VIEW_CREATED, {
+                type: this.viewType(),
+                view: this.view
+            });
+        },
+
+        onParticipateError: function(options, result) {
+            console.log(arguments);
+            this.view = new chat_views.ChatErrorView({
+                model: this.model,
+                fault: result.result.fault
             });
 
             this.facade.trigger(notifications.VIEW_CREATED, {

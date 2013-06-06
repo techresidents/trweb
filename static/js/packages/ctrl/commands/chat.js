@@ -116,7 +116,7 @@ define([
             var current_participants = this.model.get_no_participants();
             var max_participants = this.model.get_max_participants();
             if(current_participants >= max_participants) {
-                this.onError("max participants exceeded");
+                this.onError("maximum number of participants exceeded");
                 return;
             }
 
@@ -126,7 +126,7 @@ define([
             });
             this.participant.save(null, {
                 success: _.bind(this.createCredential, this),
-                error: _.bind(this.onError, this, "max pariticpants exceeded")
+                error: _.bind(this.onError, this, "maximum number of pariticpants exceeded")
             });
         },
 
@@ -136,7 +136,7 @@ define([
             });
             this.credential.save(null, {
                 success: _.bind(this.onSuccess, this),
-                error: _.bind(this.onError, this, "chat unavailable")
+                error: _.bind(this.onError, this, "chat is no longer available")
             });
         },
 
