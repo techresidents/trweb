@@ -11,6 +11,7 @@ define(/** @exports core */[
     './mediator',
     './notifications',
     './proxy',
+    './scheduler',
     './string',
     './uri',
     './view'
@@ -27,6 +28,7 @@ define(/** @exports core */[
     mediator,
     notifications,
     proxy,
+    scheduler,
     string,
     uri,
     view) {
@@ -44,6 +46,7 @@ define(/** @exports core */[
         mediator: mediator,
         notifications: notifications,
         proxy: proxy,
+        scheduler: scheduler,
         string: string,
         uri: uri,
         view: view

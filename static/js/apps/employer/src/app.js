@@ -237,7 +237,13 @@ define([
      * Event to Notification map
      */
     var EventNotificationMap = {};
-    /* APPLICATION EVENTS*/
+    /* VIEW EVENTS */
+    EventNotificationMap[events.VIEW_NAVIGATE] =
+        notifications.VIEW_NAVIGATE;
+    /* ALERT EVENTS */
+    EventNotificationMap[events.ALERT] =
+        notifications.ALERT;
+    /* APPLICATION EVENTS */
     EventNotificationMap[events.CREATE_APPLICATION] =
         notifications.CREATE_APPLICATION;
     EventNotificationMap[events.UPDATE_APPLICATION_STATUS] =
@@ -246,10 +252,10 @@ define([
         notifications.SCORE_APPLICANT;
     EventNotificationMap[events.CAST_APPLICANT_VOTE] =
         notifications.CAST_APPLICANT_VOTE;
-    /* APPLICATION LOG EVENTS*/
+    /* APPLICATION LOG EVENTS */
     EventNotificationMap[events.CREATE_APPLICATION_LOG] =
         notifications.CREATE_APPLICATION_LOG;
-    /* INTERVIEW OFFER EVENTS*/
+    /* INTERVIEW OFFER EVENTS */
     EventNotificationMap[events.MAKE_INTERVIEW_OFFER] =
         notifications.MAKE_INTERVIEW_OFFER;
     EventNotificationMap[events.RESCIND_INTERVIEW_OFFER] =
@@ -258,7 +264,7 @@ define([
         notifications.SHOW_MAKE_INTERVIEW_OFFER;
     EventNotificationMap[events.SHOW_RESCIND_INTERVIEW_OFFER] =
         notifications.SHOW_RESCIND_INTERVIEW_OFFER;
-    /* DEVELOPER NOTE EVENTS*/
+    /* DEVELOPER NOTE EVENTS */
     EventNotificationMap[events.TAKE_NOTE] =
         notifications.TAKE_NOTE;
 

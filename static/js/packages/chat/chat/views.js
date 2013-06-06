@@ -134,6 +134,10 @@ define([
      * @constructor
      * @param {Object} options
      * @param {ChatState} options.model ChatState model
+     * @classdesc
+     * Timer view displays the timer and issues alerts
+     * when the timer expires. Ultimately, it will also
+     * end the chat if the user does not comply to warnings.
      */
     var ChatTimerView = core.view.View.extend({
 
@@ -143,6 +147,8 @@ define([
         initialize: function(options) {
             this.model = options.model;
             this.template = _.template(timer_template);
+            this.duration = this.model.chat().get_max_duration() * 1000;
+            this.warningTimeoutId = null;
 
             //bind events
             this.listenTo(this.model, 'change:status', this.onStatusChange);
@@ -150,12 +156,14 @@ define([
             //child views
             this.timerView = null;
             this.initChildViews();
+
+            //scheduler
+            this.scheduler = new core.scheduler.Scheduler();
         },
 
         initChildViews: function() {
-            var duration = this.model.chat().get_max_duration() * 1000;
             this.timerView = new ui.timer.views.DurationTimerView({
-                duration: duration
+                duration: this.duration
             });
         },
 
@@ -165,6 +173,12 @@ define([
 
         classes: function() {
             return ['chat-timer'];
+        },
+
+        destroy: function() {
+            this.scheduler.stop();
+            this.timerView.stop();
+            ChatTimerView.__super__.destroy.call(this);
         },
 
         render: function() {
@@ -179,11 +193,52 @@ define([
             switch(this.model.status()) {
                 case this.model.STATUS.STARTED:
                     this.timerView.start(this.model.startTime());
+                    this._scheduleEvents();
                     break;
                 case this.model.STATUS.ENDED:
+                    this.scheduler.stop();
                     this.timerView.stop();
                     break;
             }
+        },
+
+        onWarning: function() {
+            var msg = 'No need to worry about the time. ' +
+                      'Take an extra 5 minutes if you need it.';
+            this.triggerEvent(events.ALERT, {
+                severity: 'info',
+                message: msg
+            });
+        },
+
+        onFinalWarning: function() {
+            var msg = 'Your chat will end in one minute.';
+            this.triggerEvent(events.ALERT, {
+                severity: 'error',
+                message: msg
+            });
+        },
+
+        onTerminate: function() {
+            this.triggerEvent(events.UPDATE_CHAT_STATUS, {
+                chat: this.model.chat(),
+                status: this.model.STATUS.ENDED
+            });
+        },
+
+        _scheduleEvents: function() {
+            var now = new Date();
+            var startTime = this.model.startTime();
+            var elapsed = now.getTime() -  startTime.getTime();
+
+            this.scheduler.add(this.duration - 10000,
+                    _.bind(this.onWarning, this));
+            this.scheduler.add(this.duration + 240000,
+                    _.bind(this.onFinalWarning, this));
+            this.scheduler.add(this.duration + 300000,
+                    _.bind(this.onTerminate, this));
+
+            this.scheduler.start(elapsed);
         }
     });
 

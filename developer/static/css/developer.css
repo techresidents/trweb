@@ -789,6 +789,9 @@
     vertical-align: middle;
     font-size: 36px;
 }
+.chat .chat-timer .expired {
+    color: #B94A48;
+}
 .chat .chat-participants-container {
     margin-top: 15px;
     padding-top: 15px;

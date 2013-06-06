@@ -2,6 +2,9 @@ define(/** @exports events */[
 ], function() {
 
     return {
+        /* ALERT EVENTS */
+        ALERT: 'alert',
+
         /* VIEW EVENTS */
         VIEW_NAVIGATE: 'view_navigate',
 

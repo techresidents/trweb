@@ -190,30 +190,12 @@ define([
      * Event to Notification map
      */
     var EventNotificationMap = {};
-    /* VIEW EVENTS*/
+    /* VIEW EVENTS */
     EventNotificationMap[events.VIEW_NAVIGATE] =
         notifications.VIEW_NAVIGATE;
-    /* APPLICATION EVENTS*/
-    EventNotificationMap[events.CREATE_APPLICATION] =
-        notifications.CREATE_APPLICATION;
-    EventNotificationMap[events.UPDATE_APPLICATION_STATUS] =
-        notifications.UPDATE_APPLICATION_STATUS;
-    EventNotificationMap[events.SCORE_APPLICANT] =
-        notifications.SCORE_APPLICANT;
-    EventNotificationMap[events.CAST_APPLICANT_VOTE] =
-        notifications.CAST_APPLICANT_VOTE;
-    /* APPLICATION LOG EVENTS*/
-    EventNotificationMap[events.CREATE_APPLICATION_LOG] =
-        notifications.CREATE_APPLICATION_LOG;
-    /* INTERVIEW OFFER EVENTS*/
-    EventNotificationMap[events.MAKE_INTERVIEW_OFFER] =
-        notifications.MAKE_INTERVIEW_OFFER;
-    EventNotificationMap[events.RESCIND_INTERVIEW_OFFER] =
-        notifications.RESCIND_INTERVIEW_OFFER;
-    EventNotificationMap[events.SHOW_MAKE_INTERVIEW_OFFER] =
-        notifications.SHOW_MAKE_INTERVIEW_OFFER;
-    EventNotificationMap[events.SHOW_RESCIND_INTERVIEW_OFFER] =
-        notifications.SHOW_RESCIND_INTERVIEW_OFFER;
+    /* ALERT EVENTS */
+    EventNotificationMap[events.ALERT] =
+        notifications.ALERT;
     /* CHAT EVENTS */
     EventNotificationMap[events.PARTICIPATE_IN_CHAT] =
         notifications.PARTICIPATE_IN_CHAT;
@@ -229,10 +211,6 @@ define([
         notifications.UPDATE_TALKING_POINTS;
     EventNotificationMap[events.UPDATE_CHAT_REEL] =
         notifications.UPDATE_CHAT_REEL;
-    /* DEVELOPER NOTE EVENTS*/
-    EventNotificationMap[events.TAKE_NOTE] =
-        notifications.TAKE_NOTE;
-
 
     /**
      * App Mediator
