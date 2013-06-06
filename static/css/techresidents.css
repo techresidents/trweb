@@ -680,3 +680,9 @@ button.drop-button .caret {
     display: none;
 }
 
+.scroller {
+    overflow: hidden;
+}
+.scroller:hover {
+    overflow: auto;
+}

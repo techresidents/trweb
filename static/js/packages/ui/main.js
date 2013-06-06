@@ -16,6 +16,7 @@ define(/** @exports core */[
     './modal/views',
     './paginator/views',
     './rating/stars/views',
+    './scroll/views',
     './select/models',
     './select/views',
     './spinner/views',
@@ -39,6 +40,7 @@ define(/** @exports core */[
     modal_views,
     paginator_views,
     rating_stars_views,
+    scroll_views,
     select_models,
     select_views,
     spinner_views,
@@ -90,6 +92,9 @@ define(/** @exports core */[
             stars: {
                 views: rating_stars_views
             }
+        },
+        scroll: {
+            views: scroll_views
         },
         select: {
             models: select_models,
