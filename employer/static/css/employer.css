@@ -96,6 +96,7 @@
     margin-top: 42px;
     font-size: 14pt;
     color: #cccccc;
+    min-width: 55px;
 }
 
 .player-play {
@@ -473,11 +474,11 @@
     display: inline;
 }
 
-#chat-sessions > div {
+.chats-container > div {
     margin-bottom: 5px;
 }
 
-#chat-sessions .player-btn {
+.chats-container .player-btn {
     width: 20px;
     height: 20px;
     vertical-align: middle;

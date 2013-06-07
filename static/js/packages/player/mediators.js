@@ -72,7 +72,7 @@ define([
         },
 
         onPlay: function(notification) {
-            this.view.play(notification.chatSession, notification.chatMinute);
+            this.view.play(notification.chat);
         },
 
         onPause: function(notification) {

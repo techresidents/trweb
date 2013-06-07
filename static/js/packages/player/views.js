@@ -4,7 +4,6 @@ define([
     'underscore',
     'soundmanager',
     'core',
-    './scheduler',
     './models',
     'text!./templates/button.html',
     'text!./templates/player.html',
@@ -19,7 +18,6 @@ define([
     _,
     soundManager,
     core,
-    scheduler,
     player_models,
     button_template,
     player_template,
@@ -83,7 +81,7 @@ define([
             this.progress = 0;
             
             //bind events
-            this.listenTo(this.model, 'change:chatSession', this.render);
+            this.listenTo(this.model, 'change:chat', this.render);
             this.listenTo(this.model, 'change:offset', this.offsetChanged);
             this.listenTo(this.model, 'change:buffered', this.bufferedChanged);
         },
@@ -259,20 +257,13 @@ define([
             var rootMinute, activeMinute;
             var context = {
                 title: '',
-                chatSession: null,
+                chat: null,
                 hasArchive: false
             };
 
             if(!this.model.isEmpty()) {
-                rootMinute = this.model.chatSession().get_chat_minutes().first();
-                activeMinute = this.model.chatMinute();
-                if(rootMinute.id !== activeMinute.id) {
-                    context.title = rootMinute.get_topic().get_title()
-                        + ' - ' +  activeMinute.get_topic().get_title();
-                } else {
-                    context.title = activeMinute.get_topic().get_title();
-                }
-                context.chatSession = this.model.chatSession().toJSON();
+                context.title = this.model.chat().get_topic().get_title();
+                context.chat = this.model.chat().toJSON();
                 context.hasArchive = this.model.hasArchive();
             } else {
                 context.title = 'Select a chat for playback';
@@ -687,7 +678,6 @@ define([
             this.scrubberView = null;
             this.timerView = null;
             this.usersView = null;
-            this.scheduler = null;
             this.progressTimerId = null;
 
             //child views
@@ -720,24 +710,17 @@ define([
             }
         },
 
-        load: function(callback, chatSession, chatMinute, offset) {
+        load: function(callback, chat, offset) {
             var state, result=true;
             
-            if(!chatSession.isLoading()) {
-                state = chatSession.isLoadedWith('users', 'chat_minutes__topic', 'speaking_markers', 'archives');
+            if(!chat.isLoading()) {
+                state = chat.isLoadedWith('users', 'topic', 'archives');
                 if(!state.loaded) {
                     result = false;
                     state.fetcher.fetch({
-                        success: _.bind(callback, this, chatSession, chatMinute, offset)
+                        success: _.bind(callback, this, chat, offset)
                     });
                 }
-            }
-            
-            if(chatMinute && !chatMinute.isLoading() && !chatMinute.isLoaded()) {
-                result = false;
-                chatMinute.fetch({
-                    success: _.bind(this.play, this, chatSession, chatMinute)
-                });
             }
             
             return result;
@@ -756,111 +739,44 @@ define([
             return this;
         },
 
-        getArchive: function(chatSession) {
+        getArchive: function(chat) {
             var result = null;
-            var archives = chatSession.get_archives();
+            var archives = chat.get_archives();
             if(archives.length) {
                 result = archives.first();
             }
             return result;
         },
 
-        computeOffset: function(chatSession, timestamp) {
-            var archive = this.getArchive(chatSession);
-            var offset = timestamp - chatSession.get_publish() - archive.get_offset();
-            if(offset < 0) {
-                offset = 0;
-            } else if(offset > archive.get_length()) {
-                offset = archive.get_length() - 500;
-            }
-            return offset;
-        },
-        
-        scheduleEvents: function(chatSession, scheduler) {
-            var that = this;
-            var archive = this.getArchive(chatSession);
+        loadPlayer: function(chat, offset) {
+            var duration = 0;
+            var archive = this.getArchive(chat);
 
-            //schedule chat minute change events
-            chatSession.get_chat_minutes().each(function(minute) {
-                var offset = that.computeOffset(chatSession, minute.get_start());
-                that.scheduler.add(offset, function() {
-                    that.model.set({
-                        chatMinute: minute
-                    });
-                });
-
-            });
-            
-            //schedule speaking marker events
-            chatSession.get_speaking_markers().each(function(marker) {
-                var start = that.computeOffset(chatSession, marker.get_start());
-                var end = that.computeOffset(chatSession, marker.get_end());
-                that.scheduler.add(start, function() {
-                    var user = that.model.users().find(function(u) {
-                        return u.user().id === marker.get_user_id();
-
-                    });
-                    user.set({isSpeaking: true});
-                });
-                that.scheduler.add(end, function() {
-                    var user = that.model.users().find(function(u) {
-                        return u.user().id === marker.get_user_id();
-
-                    });
-                    user.set({isSpeaking: false});
-                });
-            });
-        },
-        
-        loadPlayer: function(chatSession, chatMinute, offset) {
-            var archive, duration = 0;
-            var loaded = this.load(this.loadPlayer, chatSession, chatMinute, offset);
-            if(!loaded) {
-                return;
-            }
-
-            if(!chatMinute) {
-                chatMinute = chatSession.get_chat_minutes().first();
-            }
-
-            archive = this.getArchive(chatSession);
             if(archive) {
                 if(!_.isNumber(offset)) {
-                    offset = this.computeOffset(chatSession, chatMinute.get_start());
-                    offset /= 1000.0;
-                    if(offset < 0) {
-                        offset = 0;
-                    }
+                    offset = 0;
                 }
-
                 duration = archive.get_length() / 1000.0;
             }
 
-            //stop scheduler if it exists
-            if(this.scheduler) {
-                this.scheduler.stop();
-            }
-            
             //stop progress timer
             this.stopProgressTimer();
             
             if(archive) {
-                this.playerView.load(chatSession.get_archives(), offset);
+                this.playerView.load(chat.get_archives(), offset);
             } else if(this.model.isPlaying()) {
                 this.playerView.stop();
             }
 
             var users = this.model.users();
-            users.reset(chatSession.get_users().map(function(user) {
+            users.reset(chat.get_users().map(function(user) {
                 return new player_models.PlayerUser({
-                    user: user,
-                    isSpeaking: false
+                    user: user
                     });
             }));
 
             this.model.set({
-                chatSession: chatSession,
-                chatMinute: chatMinute,
+                chat: chat,
                 archive: archive,
                 offset: offset,
                 duration: duration,
@@ -869,13 +785,13 @@ define([
             });
         },
 
-        play: function(chatSession, chatMinute, offset) {
-            var loaded = this.load(this.play, chatSession, chatMinute, offset);
+        play: function(chat, offset) {
+            var loaded = this.load(this.play, chat, offset);
             if(!loaded) {
                 return;
             }
             
-            this.loadPlayer(chatSession, chatMinute, offset);
+            this.loadPlayer(chat, offset);
 
             if(!this.model.hasArchive()) {
                 return;
@@ -885,14 +801,6 @@ define([
                 state: this.model.STATE.PLAYING
             });
 
-            this.scheduler = new scheduler.Scheduler({
-                clock: new scheduler.PlayerClock({
-                    player: this.playerView
-                })
-            });
-            this.scheduleEvents(chatSession, scheduler);
-            this.scheduler.start(offset * 1000.0);
-
             this.startProgressTimer();
             this.playerView.play();
         },
@@ -900,7 +808,6 @@ define([
         pause: function() {
             if(this.model.isPlaying()) {
                 this.stopProgressTimer();
-                this.scheduler.pause();
                 this.playerView.pause();
                 this.model.set({
                     state: this.model.STATE.PAUSED
@@ -911,7 +818,6 @@ define([
         resume: function() {
             if(this.model.isPaused()) {
                 this.startProgressTimer();
-                this.scheduler.resume();
                 this.playerView.resume();
                 this.model.set({
                     state: this.model.STATE.PLAYING
@@ -920,44 +826,24 @@ define([
         },
 
         seek: function(offset) {
-            var activeMinutes, activeMinute;
-            var minutes = this.model.chatSession().get_chat_minutes();
-
             this.playerView.seek(offset);
 
             if(this.model.isPlaying()) {
                 this.stopProgressTimer();
-                this.scheduler.stop();
             }
 
-            activeMinutes = minutes.filter(function(minute) {
-                var start = this.computeOffset(this.model.chatSession(), minute.get_start());
-                var end = this.computeOffset(this.model.chatSession(), minute.get_end());
-                var time = offset * 1000;
-                return time >= start && time <= end;
-            }, this);
-
-            if(activeMinutes.length) {
-                activeMinute = _.last(activeMinutes);
-            } else {
-                activeMinute = minutes.first();
-            }
-            
             this.model.set({
-                chatMinute: activeMinute,
                 offset: offset
             });
 
             if(this.model.isPlaying()) {
                 this.startProgressTimer();
-                this.scheduler.start(offset * 1000);
             }
         },
 
         stop: function() {
             if(this.model.isPlaying()) {
                 this.stopProgressTimer();
-                this.scheduler.stop();
                 this.playerView.stop();
                 this.model.set({
                     state: this.model.STATE.STOPPED
@@ -975,7 +861,7 @@ define([
                 } else {
                     offset = this.model.offset();
                 }
-                this.play(this.model.chatSession(), null, offset);
+                this.play(this.model.chat(), offset);
             }
         },
 
@@ -989,11 +875,8 @@ define([
         },
 
         onFinished: function(e) {
-            var minutes = this.model.chatSession().get_chat_minutes();
             this.stopProgressTimer();
-            this.scheduler.stop();
             this.model.set({
-                chatMinute: minutes.first(),
                 state: this.model.STATE.STOPPED,
                 offset: this.playerView.duration()
             });

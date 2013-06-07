@@ -42,7 +42,6 @@ define([
                 ctrl.proxies.current.CurrentProxy.NAME);
             this.playerStateProxy = this.facade.getProxy(
                 ctrl.proxies.player.PlayerStateProxy.NAME);
-            this.session = new api.session.ApiSession.get();
         },
 
         onCreateView: function(notification) {
@@ -85,8 +84,7 @@ define([
 
         onPlay: function(e, eventBody) {
             var notificationBody = {
-                chatSession: eventBody.chatSession,
-                chatMinute: eventBody.chatMinute
+                chat: eventBody.chat
             };
             this.facade.trigger(notifications.PLAYER_PLAY, notificationBody);
         }
