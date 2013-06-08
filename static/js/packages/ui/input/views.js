@@ -26,6 +26,9 @@ define(/** @exports ui/input/views */[
          * @constructor
          * @augments module:core/view~View
          * @param {object} options Options object
+         *  inputView: {View} options.inputView view to bind events
+         *  inputSelector: {String} options.inputSelector String to select
+         *      the input element
          */
         initialize: function(options) {
             options = _.extend({

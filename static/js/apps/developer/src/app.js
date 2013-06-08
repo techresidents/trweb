@@ -34,6 +34,7 @@ define([
             'reel': 'reel',
             'topic/:id': 'topic',
             'topic/:id/talkingpoints': 'topicTalkingPoints',
+            'topics': 'topicSearch',
             '*actions': 'placeholder'
         },
         
@@ -91,6 +92,16 @@ define([
                     type: chat.mediators.topic.TopicMediator.VIEW_TYPE,
                     options: {
                         id: id
+                    }
+                });
+            }, this));
+        },
+
+        topicSearch: function() {
+            require(['chat'], _.bind(function(chat) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: chat.mediators.topicsearch.TopicSearchMediator.VIEW_TYPE,
+                    options: {
                     }
                 });
             }, this));

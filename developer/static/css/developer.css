@@ -850,3 +850,19 @@
 .topic-point.level5 {
     margin-left: 80px;
 }
+
+.topicsearch-results-container .search-topic:first-child {
+    border-top-color: #EA8F00;
+    border-top-width: 2px;
+    border-top-style: solid;
+}
+.topicsearch-results-container .search-topic {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom-color: #EA8F00;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+}
+.topicsearch-results-container .search-topic .description {
+    margin-left: 30px;
+}
