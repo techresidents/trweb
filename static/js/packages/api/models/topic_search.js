@@ -30,11 +30,12 @@ define([
         fields: {
             id: new fields.StringField({primaryKey: true}),
             topic_id: new fields.StringField(),
-            q: new fields.StringField({nullable: true}),
-            name: new fields.StringField(),
-            description: new fields.StringField(),
             type: new fields.StringField(),
-            duration: new fields.IntegerField()
+            title: new fields.StringField(),
+            description: new fields.StringField(),
+            tree: new fields.ListField(),
+            duration: new fields.IntegerField(),
+            q: new fields.StringField({nullable: true})
         },
 
         relatedFields: {
