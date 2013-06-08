@@ -43,8 +43,7 @@ define([
 
         onCreateView: function(notification) {
             if (notification.type === this.viewType()) {
-                var uri = notification.options.query ||
-                    this.defaultQuery.toUri();
+                var uri = notification.options.query || this.defaultQuery.toUri();
 
                 this.collection = this.defaultCollection.clone();
                 this.collection.on('reset', this.onReset, this);
@@ -97,7 +96,7 @@ define([
 
         NAME: 'TopicSearchMediator',
 
-        VIEW_TYPE: 'SearchView'
+        VIEW_TYPE: 'TopicSearchView'
     });
 
     return {

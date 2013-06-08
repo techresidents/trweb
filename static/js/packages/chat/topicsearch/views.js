@@ -96,7 +96,7 @@ define([
         searchViewInputSelector: '.search-input',
 
         events: {
-            'enterkey .topicsearch-bar': 'onEnterKey',
+            'enterkey .search-bar': 'onEnterKey',
             'click .topicsearch-button': 'onClick'
         },
 
