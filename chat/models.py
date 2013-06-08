@@ -117,12 +117,25 @@ class ChatParticipant(models.Model):
     participant = models.IntegerField()
 
 
+class ChatArchiveType(models.Model):
+    """Chat archive type data model.
+    
+    Fields:
+        name: chat archive type name
+        description: chat archive type description
+    """
+    class Meta:
+        db_table = "chat_archive_type"
+    name = models.CharField(max_length=100, unique=True)
+    description = models.CharField(max_length=1024)
+
 class ChatArchive(models.Model):
     """Chat archive data model.
 
     Represents a media archive file of a past chat.
 
     Fields:
+        type: ChatArchiveType object
         chat: Chat data model object.
         mime_type: MimeType data model object.
         path: relative media archive file path
@@ -140,6 +153,7 @@ class ChatArchive(models.Model):
     class Meta:
         db_table = "chat_archive"
 
+    type = models.ForeignKey(ChatArchiveType, related_name="+")
     chat = models.ForeignKey(Chat, related_name="chat_archives")
     mime_type = models.ForeignKey(MimeType, related_name="+")
     path = models.FileField(upload_to="archives", max_length=1024)
@@ -176,38 +190,12 @@ class ChatArchiveJob(models.Model):
     chat = models.ForeignKey(Chat, related_name="+")
     created = models.DateTimeField(auto_now_add=True)
     not_before = models.DateTimeField(auto_now_add=True)
+    data = models.TextField(max_length=4096)
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
     owner = models.CharField(null=True, max_length=1024)
     successful = models.NullBooleanField(null=True)
     retries_remaining = models.IntegerField()
-
-
-class ChatPersistJob(models.Model):
-    """Chat persist job data model.
-    
-    Represents a job for persistsvc.
-
-    Fields:
-        chat: Chat data model object
-        created: datetime object containing the time
-            the job was created.
-        start: datetime object containing the time
-            the job started.
-        end: datetime object containing the time
-            the job ended.
-        successful: boolean indicating that the job
-            was successfully completed.
-    """
-    class Meta:
-        db_table = "chat_persist_job"
-
-    chat = models.ForeignKey(Chat, related_name="+", unique=True)
-    created = models.DateTimeField(auto_now_add=True)
-    start = models.DateTimeField(null=True)
-    end = models.DateTimeField(null=True)
-    owner = models.CharField(null=True, max_length=1024)
-    successful = models.NullBooleanField(null=True)
 
 class ChatReel(models.Model):
     """Chat reel.

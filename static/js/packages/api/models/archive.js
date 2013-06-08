@@ -29,6 +29,7 @@ define([
         
         fields: {
             id: new fields.StringField({primaryKey: true}),
+            type: new fields.StringField(),
             chat_id: new fields.StringField(),
             path: new fields.StringField(),
             mime_type: new fields.StringField(),

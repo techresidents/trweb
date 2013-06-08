@@ -209,10 +209,10 @@ define([
      * Talent user chat view.
      * @constructor
      * @param {Object} options
-     *   model: ChatSession model (required)
+     *   model: Chat model (required)
      *   playerState: PlayerState model (required)
      */
-    var UserChatSessionView = core.view.View.extend({
+    var UserChatView = core.view.View.extend({
 
         events: {
             'click .play': 'play'
@@ -221,7 +221,7 @@ define([
         initialize: function(options) {
             this.playerState = options.playerState;
             this.template = _.template(chat_template);
-            this.modelWithRelated = ['chat__topic'];
+            this.modelWithRelated = ['topic'];
             
             //bind events
             this.listenTo(this.model, 'change', this.render);
@@ -253,8 +253,8 @@ define([
          */
         isPlaying: function() {
             var result = false;
-            var chatSession = this.playerState.chatSession();
-            if(chatSession && chatSession.id === this.model.id) {
+            var chat = this.playerState.chat();
+            if(chat && chat.id === this.model.id) {
                 result = this.playerState.state() === this.playerState.STATE.PLAYING;
             }
             return result;
@@ -266,31 +266,30 @@ define([
          */
         play: function(e) {
             var eventBody = {
-                chatSession: this.model,
-                chatMinute: null // this implies start playing chat from beginning
+                chat: this.model
             };
             this.triggerEvent(EVENTS.PLAY_CHAT, eventBody);
         }
     });
 
     /**
-     * Talent user chat sessions view.
+     * Talent user chat reels view.
      * @constructor
      * @param {Object} options
-     *   collection: {HighlightSessionCollection} (required)
+     *   collection: {ChatReelCollection} (required)
      *   playerState: PlayerState model (required)
      */
-    var UserHighlightSessionsView = core.view.View.extend({
+    var UserChatReelsView = core.view.View.extend({
 
         events: {
         },
 
-        chatSessionsSelector: '#chat-sessions',
+        chatsSelector: '.chats-container',
 
         initialize: function(options) {
             this.playerState = options.playerState;
             this.template =  _.template(chats_template);
-            this.collectionWithRelated = ['chat_session__chat__topic'];
+            this.collectionWithRelated = ['chat__topic'];
             
             //bind events
             this.listenTo(this.collection, 'reset', this.onReset);
@@ -322,15 +321,15 @@ define([
             this.$el.html(this.template(context));
 
             _.each(this.childViews, function(view) {
-                this.append(view, this.chatSessionsSelector);
+                this.append(view, this.chatsSelector);
             }, this);
             
             return this;
         },
 
         createChildView: function(model) {
-            var view = new UserChatSessionView({
-                model: model.get_chat_session(),
+            var view = new UserChatView({
+                model: model.get_chat(),
                 playerState: this.playerState
             });
             this.childViews.push(view);
@@ -345,7 +344,7 @@ define([
 
         onAdd: function(model) {
             var view = this.createChildView(model);
-            this.append(view, this.chatSessionsSelector);
+            this.append(view, this.chatsSelector);
         }
     });
 
@@ -878,7 +877,7 @@ define([
             var requisitionTitle = this.model.get_requisition().get_title();
             var context = {
                 model: this.model.toJSON(),
-                req_name: requisitionTitle ? requisitionTitle : this.model.get_requisition_id()
+                req_name: requisitionTitle || this.model.get_requisition_id()
             };
             this.$el.html(this.template(context));
 
@@ -1025,7 +1024,7 @@ define([
                 queryFactory: new core.factory.FunctionFactory(
                                   this.requisitionsQueryFactory),
                 stringify: this.stringify,
-                map: this.resultsMap,
+                map: this.resultsMap
             });
 
             // init child views
@@ -1243,7 +1242,7 @@ define([
      *   employeeModel: {User} Represents the employee (required)
      *   playerState: PlayerState model (required)
      */
-    var UserView =core.view.View.extend({
+    var UserView = core.view.View.extend({
 
         jobPrefsSelector: '#user-job-prefs',
         skillsSelector: '#user-skills',
@@ -1265,7 +1264,7 @@ define([
             this.playerState = options.playerState;
             this.template =  _.template(user_template);
             this.modelWithRelated = [
-                'highlight_sessions__chat_session__chat__topic',
+                'chat_reels__chat__topic',
                 'skills__technology',
                 'position_prefs',
                 'technology_prefs',
@@ -1298,8 +1297,8 @@ define([
                 collection: this.candidateModel.get_skills()
             });
             
-            this.chatsView = new UserHighlightSessionsView({
-                collection: this.candidateModel.get_highlight_sessions(),
+            this.chatsView = new UserChatReelsView({
+                collection: this.candidateModel.get_chat_reels(),
                 playerState: this.playerState
             });
 

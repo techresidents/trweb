@@ -13,8 +13,7 @@ define([
     var PlayerUser = Backbone.Model.extend({
         defaults: function() {
             return {
-                user: null,
-                isSpeaking: false
+                user: null
             };
         },
 
@@ -22,14 +21,9 @@ define([
             return this.get('user');
         },
 
-        isSpeaking: function() {
-            return this.get('isSpeaking');
-        },
-        
         toJSON: function(options) {
             return {
-                user: this.user().toJSON(options),
-                isSpeaking: this.isSpeaking()
+                user: this.user().toJSON(options)
             };
         }
     });
@@ -61,8 +55,7 @@ define([
             
         defaults: function() {
             return {
-                chatSession: null,
-                chatMinute: null,
+                chat: null,
                 archive: null,
                 duration: 0,
                 offset: 0,
@@ -72,12 +65,8 @@ define([
             };
         },
         
-        chatSession: function() {
-            return this.get('chatSession');
-        },
-
-        chatMinute: function() {
-            return this.get('chatMinute');
+        chat: function() {
+            return this.get('chat');
         },
 
         archive: function() {
