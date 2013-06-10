@@ -4,6 +4,7 @@ define([
     'backbone',
     'core',
     'api',
+    'ui',
     '../topic/views',
     '../tlkpt/views',
     'text!./templates/topic_point.html'
@@ -13,6 +14,7 @@ define([
     Backbone,
     core,
     api,
+    ui,
     topic_views,
     tlkpt_views,
     topic_point_template) {
@@ -27,9 +29,10 @@ define([
      * Topic Point View
      * @constructor
      * @param {object} options
+     * @param {Topic} options.model Topic model
      * @param {factory} options.topicViewFactory
      * @param {factory} options.talkingPointsViewFactory
-     * @param {array} options.userIds
+     * @param {UserCollection} options.users User collection
      */
     var TopicPointView = core.view.View.extend({
 
@@ -46,19 +49,15 @@ define([
             this.template = _.template(options.template);
             this.topicViewFactory = options.topicViewFactory;
             this.talkingPointsViewFactory = options.talkingPointsViewFactory;
-            this.userIds = options.userIds;
+            this.users = options.users;
             this.model = options.model;
             this.collection = this.model.get_talking_points();
             this.currentUser = new api.models.User({ id: 'CURRENT' });
 
-            if(!this.userIds) {
-                this.userIds = [this.currentUser.id];
+            if(!this.users) {
+                this.users = new api.models.UserCollection(
+                        [this.currentUser]);
             }
-            
-            //load data
-            this.collection.filterBy({
-                'user_id__in': this.userIds.join(',')
-            }).fetch();
             
             //child views
             this.topicView = null;
@@ -70,9 +69,27 @@ define([
             this.topicView = this.topicViewFactory.create({
                 model: this.model
             });
+            
+            //for each user create a talking points view
+            //using this.talkingPointsViewFactory.
+            this.talkingPointsView = new ui.collection.views.CollectionView({
+                collection: this.users,
+                viewFactory: new core.factory.FunctionFactory(
+                    _.bind(function(options) {
+                        var user = options.model;
 
-            this.talkingPointsView = this.talkingPointsViewFactory.create({
-                collection: this.collection
+                        //talking points collection for user
+                        var collection = this.model.get_talking_points();
+                        collection.filterBy({
+                            'user_id': user.id
+                        }).fetch();
+                        
+                        //talking points view
+                        return this.talkingPointsViewFactory.create({
+                            collection: collection,
+                            model: user
+                        });
+                    }, this))
             });
         },
 

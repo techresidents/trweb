@@ -250,7 +250,7 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(title_template);
-            this.listenTo(this.model, 'change:chatMinute', this.render);
+            this.listenTo(this.model, 'change:chat', this.render);
         },
 
         render: function() {

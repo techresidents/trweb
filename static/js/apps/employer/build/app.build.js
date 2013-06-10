@@ -36,6 +36,7 @@
         { name: 'alert', location: 'packages/alert' },
         { name: 'api', location: 'packages/api' },
         { name: 'applicant', location: 'packages/applicant' },
+        { name: 'chat', location: 'packages/chat' },
         { name: 'core', location: 'packages/core' },
         { name: 'ctrl', location: 'packages/ctrl' },
         { name: 'events', location: 'packages/events' },

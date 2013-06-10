@@ -111,10 +111,8 @@ define([
         onSaved: function(e, eventBody) {
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
                 type: this.viewType(),
-                options: {
-                    id: eventBody.id,
-                    action: 'read'
-                }
+                id: eventBody.id,
+                action: 'read'
             });
 
             // create alert status for successful creation
@@ -161,15 +159,12 @@ define([
             if (eventBody.id) {
                 this.facade.trigger(notifications.VIEW_NAVIGATE, {
                     type: this.viewType(),
-                    options: {
-                        id: eventBody.id,
-                        action: 'read'
-                    }
+                    id: eventBody.id,
+                    action: 'read'
                 });
             } else {
                 this.facade.trigger(notifications.VIEW_NAVIGATE, {
-                    type: this._getRequisitionListMediatorViewType(),
-                    options: {}
+                    type: this._getRequisitionListMediatorViewType()
                 });
             }
         }

@@ -59,9 +59,9 @@ define([
         },
 
         playback: function(id) {
-            require(['playback'], _.bind(function(playback) {
+            require(['chat'], _.bind(function(chat) {
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: playback.mediators.PlaybackMediator.VIEW_TYPE,
+                    type: chat.mediators.playback.PlaybackMediator.VIEW_TYPE,
                     options: {
                         id: id
                     }
@@ -160,6 +160,7 @@ define([
             }, options);
             router = this.facade.router;
             
+            console.log(options);
             switch(options.type) {
                 case 'SearchView':
                     uri = 'search';
@@ -174,6 +175,28 @@ define([
                         uri += '/' + options.query;
                     }
                     router.navigate(uri, {trigger: options.trigger});
+                    break;
+                case 'RequisitionView':
+                    uri = 'requisition/';
+                    if (options.action === "create") {
+                        uri += 'create';
+                        router.navigate(uri, { trigger: options.trigger});
+                    }
+                    else if (options.action === 'read') {
+                        uri += 'view/' + options.id;
+                        router.navigate(uri, { trigger: options.trigger});
+                    }
+                    else if (options.action === 'edit') {
+                        uri += 'edit/' + options.id;
+                        router.navigate(uri, { trigger: options.trigger});
+                    }
+                    break;
+                case 'RequisitionListView':
+                    uri = 'requisition/list';
+                    if (options.query) {
+                        uri += '/' + options.query;
+                    }
+                    router.navigate(uri, { trigger: options.trigger});
                     break;
             }
         }
@@ -267,6 +290,11 @@ define([
     /* DEVELOPER NOTE EVENTS */
     EventNotificationMap[events.TAKE_NOTE] =
         notifications.TAKE_NOTE;
+    /* PLAYER EVENTS */
+    EventNotificationMap[events.PLAYER_PLAY] =
+        notifications.PLAYER_PLAY;
+    EventNotificationMap[events.PLAYER_PAUSE] =
+        notifications.PLAYER_PAUSE;
 
     /**
      * App Mediator

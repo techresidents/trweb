@@ -6,6 +6,7 @@ define([
     'api',
     'events',
     'text!./templates/topic.html',
+    'text!./templates/playable_topic.html',
     'text!./templates/topic_tree.html',
     'text!./templates/registration.html'
 ], function(
@@ -16,6 +17,7 @@ define([
     api,
     events,
     topic_template,
+    playable_topic_template,
     topic_tree_template,
     registration_template) {
 
@@ -44,6 +46,10 @@ define([
             this.loader.load();
         },
 
+        classes: function() {
+            return ['topic'];
+        },
+
         render: function() {
             var context = {
                 topic: this.model.toJSON(),
@@ -51,8 +57,77 @@ define([
             };
             if (this.loader.isLoaded()) {
                 this.$el.html(this.template(context));
+                this.$el.attr('class', this.classes().join(' '));
             }
             return this;
+        }
+    });
+
+    /**
+     * Playable Topic View
+     * Displays a single topic with play button
+     * @constructor
+     * @param {Object} options
+     * @param {Topic} options.model {Topic} model
+     * @param {Chat} options.chat {Chat} model
+     * @param {PlayerState} options.playerState Player state model
+     */
+    var PlayableTopicView = core.view.View.extend({
+
+        events: {
+            'click .play': 'onPlayClick'
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.chat = options.chat;
+            this.playerState = options.playerState;
+            this.template =  _.template(playable_topic_template);
+            
+            //bind events
+            this.listenTo(this.playerState, 'change:state', this.render);
+
+            //load data
+            this.loader = new api.loader.ApiLoader([
+                { instance: this.model }
+            ]);
+            this.listenTo(this.loader, 'loaded', this.render);
+            this.loader.load();
+        },
+
+        classes: function() {
+            return ['playable-topic'];
+        },
+
+        render: function() {
+            var context = {
+                topic: this.model.toJSON(),
+                playing: this.isPlaying(),
+                fmt: this.fmt // date formatting
+            };
+            if (this.loader.isLoaded()) {
+                this.$el.html(this.template(context));
+                this.$el.attr('class', this.classes().join(' '));
+            }
+            return this;
+        },
+
+        isPlaying: function() {
+            var result = false;
+            var chat = this.playerState.chat();
+            var state = this.playerState.state();
+            if(chat && chat.id === this.chat.id) {
+                if(state === this.playerState.STATE.PLAYING) {
+                    result = true;
+                }
+            }
+            return result;
+        },
+
+        onPlayClick: function(e) {
+            this.triggerEvent(events.PLAYER_PLAY, {
+                chat: this.chat
+            });
         }
     });
 
@@ -80,6 +155,10 @@ define([
             this.listenTo(this.loader, 'loaded', this.render);
             this.loader.load();
         },
+
+        classes: function() {
+            return ['topic-tree'];
+        },
         
         render: function() {
             var context = {
@@ -88,6 +167,7 @@ define([
             };
             if (this.loader.isLoaded()) {
                 this.$el.html(this.template(context));
+                this.$el.attr('class', this.classes().join(' '));
             }
             return this;
         }
@@ -144,6 +224,7 @@ define([
 
     return {
         TopicView: TopicView,
+        PlayableTopicView: PlayableTopicView,
         TopicTreeView: TopicTreeView,
         TopicRegistrationView: TopicRegistrationView
     };
