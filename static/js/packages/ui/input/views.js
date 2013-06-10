@@ -31,7 +31,7 @@ define(/** @exports ui/input/views */[
          *      the input element of options.inputView
          * @param {number} [options.throttle=150]
          * @param {object} [options.model] model to update after change event
-         * @param {object} [options.modelAttribute] model attribute to update
+         * @param {string} [options.modelAttribute] model attribute to update
          *  after change event.
          * @param {boolean} [options.trim=true] If true, will trim whitespace
          * @param {boolean} [options.updateDuringTyping=false] if true, will
