@@ -143,7 +143,8 @@ define([
             this.topicsCollectionView = new ui.collection.views.CollectionView({
                 collection: this.collection,
                 query: this.query,
-                viewFactory: new core.factory.Factory(TopicSearchResultView, {})
+                viewFactory: new core.factory.Factory(TopicSearchResultView, {}),
+                sort: this._viewSort
             });
 
 
@@ -154,12 +155,18 @@ define([
             });
         },
 
+        classes: function() {
+            return ['topicsearch'];
+        },
+
         render: function() {
             this.$el.html(this.template());
+            this.$el.attr('class', this.classes().join(' '));
             this.append(this.facetsView, this.facetsSelector);
             this.append(this.inputHandlerView, this.searchBarSelector);
             this.append(this.topicsCollectionView, this.searchResultsSelector);
             this.append(this.paginatorView, this.searchResultsSelector);
+            this._applySearchPlaceholderText(); // TODO discuss passing this option to InputViewHandler
             return this;
         },
 
@@ -169,9 +176,10 @@ define([
             if(slice) {
                 pageSize = slice.end() - slice.start();
             }
-            this.query.filterBy({
-                q: q
-            }).slice(0, pageSize).fetch();
+            this.query
+                .filterBy({q: q})
+                .slice(0, pageSize)
+                .fetch();
         },
 
         onReset: function() {
@@ -186,8 +194,26 @@ define([
         onClick: function(e) {
             var q = this.inputHandlerView.getInputValue();
             this.search(q);
-        }
+        },
 
+        /**
+         * viewSort
+         * this.topicsCollectionView requires a sort function to be defined that the
+         * underlying CollectionView will use to sort the views in the collection.
+         * @param view
+         * @returns {number}
+         */
+        _viewSort: function(view) {
+            var ret = 0;
+            if (view && view.model) {
+                ret = view.model.get_title();
+            }
+            return ret;
+        },
+
+        _applySearchPlaceholderText: function() {
+            this.$(this.searchViewInputSelector).attr('placeholder', 'Search chat topics');
+        }
     });
 
     return {

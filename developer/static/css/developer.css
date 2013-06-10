@@ -15,6 +15,7 @@
 
 .main-content {
     min-height: 500px;
+    padding-bottom: 20px;
 }
 
 .arrow {
@@ -851,18 +852,22 @@
     margin-left: 80px;
 }
 
-.topicsearch-results-container .search-topic:first-child {
+.topicsearch .search-input {
+    width: 370px;
+}
+.topicsearch .topicsearch-results-container .search-topic:first-child {
     border-top-color: #EA8F00;
     border-top-width: 2px;
     border-top-style: solid;
 }
-.topicsearch-results-container .search-topic {
+.topicsearch .topicsearch-results-container .search-topic {
+    min-height: 90px;
     padding-top: 5px;
     padding-bottom: 5px;
     border-bottom-color: #EA8F00;
     border-bottom-width: 2px;
     border-bottom-style: solid;
 }
-.topicsearch-results-container .search-topic .description {
+.topicsearch .topicsearch-results-container .search-topic .description {
     margin-left: 30px;
 }
