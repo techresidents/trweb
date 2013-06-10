@@ -80,15 +80,27 @@ define([
             }
         },
 
+        /**
+         * Method to listen for reset events on the collection
+         * and update the URL to include any query parameters.
+         */
         onReset: function() {
             var uri = this.query.toUri();
             if (uri === this.defaultQuery.toUri()) {
                 uri = null;
             }
+            /* Fix bug related to the browser's back btn.
+               This code block will prevent an infinite loop
+               where the back button takes the user to
+               /topics which then redirects to /topics?<defaultQuery>.
+               One consequence of this is that the default query will
+               not show up in the URL.
+             */
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
-                type: TopicSearchMediator.VIEW_TYPE,
+                type: this.viewType(),
                 query: uri,
-                trigger: false
+                trigger: false,
+                replace: false
             });
         }
 
