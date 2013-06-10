@@ -26,7 +26,8 @@ define([
     './models/job_event',
     './models/user_search',
     './models/technology_search',
-    './models/talking_point'
+    './models/talking_point',
+    './models/topic_search'
 ], function(
     $,
     _,
@@ -55,7 +56,8 @@ define([
     job_event_models,
     user_search_models,
     technology_search_models,
-    talking_point_models) {
+    talking_point_models,
+    topic_search_models) {
 
 
     return {
@@ -108,6 +110,8 @@ define([
         TechnologySearch: technology_search_models.TechnologySearch,
         TechnologySearchCollection: technology_search_models.TechnologySearchCollection,
         TalkingPoint: talking_point_models.TalkingPoint,
-        TalkingPointCollection: talking_point_models.TalkingPointCollection
+        TalkingPointCollection: talking_point_models.TalkingPointCollection,
+        TopicSearch: topic_search_models.TopicSearch,
+        TopicSearchCollection: topic_search_models.TopicSearchCollection
     };
 });

@@ -34,6 +34,7 @@ define([
             'reel': 'reel',
             'topic/:id': 'topic',
             'topic/:id/talkingpoints': 'topicTalkingPoints',
+            'topics(/:query)': 'topicSearch',
             '*actions': 'placeholder'
         },
         
@@ -96,6 +97,17 @@ define([
             }, this));
         },
 
+        topicSearch: function(query) {
+            require(['chat'], _.bind(function(chat) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: chat.mediators.topicsearch.TopicSearchMediator.VIEW_TYPE,
+                    options: {
+                        query: query
+                    }
+                });
+            }, this));
+        },
+
         topicTalkingPoints: function(id) {
             require(['chat'], _.bind(function(chat) {
                 this.facade.trigger(notifications.VIEW_CREATE, {
@@ -133,6 +145,13 @@ define([
                     break;
                 case 'TalkingPointView':
                     uri = 'topic/' + options.id + '/talkingpoints';
+                    router.navigate(uri, {trigger: options.trigger});
+                    break;
+                case 'TopicSearchView':
+                    uri = 'topics';
+                    if(options.query) {
+                        uri += '/' + options.query;
+                    }
                     router.navigate(uri, {trigger: options.trigger});
                     break;
             }
