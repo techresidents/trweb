@@ -853,7 +853,7 @@
 }
 
 .topicsearch .search-input {
-    width: 370px;
+    width: 450px;
 }
 .topicsearch .topicsearch-results-container .search-topic:first-child {
     border-top-color: #EA8F00;
@@ -870,4 +870,5 @@
 }
 .topicsearch .topicsearch-results-container .search-topic .description {
     margin-left: 30px;
+    margin-bottom: 25px;
 }
