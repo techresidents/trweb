@@ -143,8 +143,7 @@ define([
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
                 type: this.viewType(),
                 query: uri,
-                trigger: false,
-                replace: false
+                trigger: false
             });
         },
 
@@ -158,10 +157,8 @@ define([
             if (eventBody.model) {
                 this.facade.trigger(notifications.VIEW_NAVIGATE, {
                     type: this._getRequisitionMediatorViewType(),
-                    options: {
-                        id: eventBody.model.id,
-                        action: 'read'
-                    }
+                    id: eventBody.model.id,
+                    action: 'read'
                 });
             }
         },
@@ -176,10 +173,8 @@ define([
             if (eventBody.model) {
                 this.facade.trigger(notifications.VIEW_NAVIGATE, {
                     type: this._getRequisitionMediatorViewType(),
-                    options: {
-                        id: eventBody.model.id,
-                        action: 'edit'
-                    }
+                    id: eventBody.model.id,
+                    action: 'edit'
                 });
             }
         },

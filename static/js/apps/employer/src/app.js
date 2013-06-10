@@ -160,6 +160,7 @@ define([
             }, options);
             router = this.facade.router;
             
+            console.log(options);
             switch(options.type) {
                 case 'SearchView':
                     uri = 'search';
@@ -174,6 +175,28 @@ define([
                         uri += '/' + options.query;
                     }
                     router.navigate(uri, {trigger: options.trigger});
+                    break;
+                case 'RequisitionView':
+                    uri = 'requisition/';
+                    if (options.action === "create") {
+                        uri += 'create';
+                        router.navigate(uri, { trigger: options.trigger});
+                    }
+                    else if (options.action === 'read') {
+                        uri += 'view/' + options.id;
+                        router.navigate(uri, { trigger: options.trigger});
+                    }
+                    else if (options.action === 'edit') {
+                        uri += 'edit/' + options.id;
+                        router.navigate(uri, { trigger: options.trigger});
+                    }
+                    break;
+                case 'RequisitionListView':
+                    uri = 'requisition/list';
+                    if (options.query) {
+                        uri += '/' + options.query;
+                    }
+                    router.navigate(uri, { trigger: options.trigger});
                     break;
             }
         }
