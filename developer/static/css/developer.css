@@ -197,6 +197,9 @@
     margin-top: 10px;
     min-height: 40px;
 }
+.chat .chat-topic-points ul {
+    list-style: none;
+}
 
 .talking-point {
     color: #3A87AD;

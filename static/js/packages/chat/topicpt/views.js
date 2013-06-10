@@ -99,7 +99,9 @@ define([
 
         classes: function() {
             var result = ['topic-point'];
-            result.push('level' + this.model.get_level());
+            if(this.model.get_level()) {
+                result.push('level' + this.model.get_level());
+            }
             return result;
         },
 
