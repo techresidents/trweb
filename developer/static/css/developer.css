@@ -227,6 +227,13 @@
     margin-left: 80px;
 }
 
+.topicsearch .search-bar {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.topicsearch .search-bar .search-input {
+    margin-bottom: 0px;
+}
 .topicsearch .search-input {
     width: 450px;
 }
