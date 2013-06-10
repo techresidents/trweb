@@ -198,13 +198,14 @@ define([
 
         /**
          * viewSort
+         * @param {View} view to sort
+         * @classdesc
          * this.topicsCollectionView requires a sort function to be defined that the
          * underlying CollectionView will use to sort the views in the collection.
-         * @param view
-         * @returns {number}
+         * @returns {string} topic title
          */
         _viewSort: function(view) {
-            var ret = 0;
+            var ret = '';
             if (view && view.model) {
                 ret = view.model.get_title();
             }
