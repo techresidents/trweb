@@ -1,5 +1,12 @@
 <% if(topic.rank === 0) { %>
     <h2 class="level<%-topic.level%>">
+
+        <% if(playing) { %>
+            <a><i class="player-btn player-speaker"></i></a>
+        <% } else { %>
+            <a class="play"><i class="player-btn player-play"></i></a>
+        <% } %>
+
         <%= topic.title %>
         <% if(topic.duration < 60) { %>
             <small> (<%= topic.duration %> sec)</small>
@@ -7,7 +14,7 @@
             <small> (<%= fmt.format(topic.duration / 60, 'n0') %> min)</small>
         <% } %>
     </h2>
-    <% } else { %>
+<% } else { %>
     <h3 class="level<%-topic.level%>">
         <%= topic.title %>
         <% if(topic.duration < 60) { %>

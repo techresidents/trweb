@@ -1,0 +1,17 @@
+<% if(length) { %>
+    <% if(expanded) { %>
+        <div class="playback-talking-points-control minus">
+            <span><i class="icon-minus"></i></span>
+            <span class="playback-talking-point-user">{<%= user.id %>}</span>
+            <span> Talking Points </span>
+        </div>
+        <div class="playback-talking-points-container"></div>
+    <% } else { %>
+        <div class="playback-talking-points-control plus">
+            <span><i class="icon-plus"></i></span>
+            <span class="playback-talking-point-user">{<%= user.id %>}</span>
+            <span> Talking Points </span>
+        </div>
+    <% } %>
+<% } %>
+

@@ -211,89 +211,6 @@
 .player-component {
 }
 
-.playback-users {
-    margin-bottom: 30px;
-}
-
-.playback-user p {
-    text-align: center;
-}
-
-.playback-user.participant1 { 
-    border: 3px solid #00AEEF;
-    margin-bottom: 10px;
-}
-
-.playback-user.participant2 { 
-    border: 3px solid #00A651;
-    margin-bottom: 10px;
-}
-
-.playback-user .user-logo {
-    margin: 0px auto;
-    margin-top: 5px;
-    width: 120px;
-    height: 90px;
-}
-
-.playback-user p {
-    margin-bottom: 0px;
-}
-
-.playback-tag {
-    float: left;
-    margin-right: 5px;
-}
-
-.playback-tag.participant1 {
-    color: #00AEEF;
-}
-
-.playback-tag.participant2 {
-    color: #00A651;
-}
-
-.playback-tag {
-    float: left;
-    margin-right: 5px;
-    color: #00AEEF;
-}
-
-.playback-minute .player-btn {
-    height: 30px;
-    width: 30px;
-    vertical-align: middle;
-}
-
-.playback-minute.description {
-    font-size: 14px;
-    line-height: 18px;
-}
-
-.playback-minute.level1 {
-  margin-left: 0px;
-}
-
-
-.playback-minute.level2 {
-  margin-left: 30px;
-}
-
-
-.playback-minute.level3 {
-  margin-left: 60px;
-}
-
-
-.playback-minute.level4 {
-  margin-left: 90px;
-}
-
-.playback-minute.level5 {
-  margin-left: 120px;
-}
-
-
 .user-logo {
     background-image: url("../img/person.png");
     background-repeat: no-repeat;
@@ -741,4 +658,60 @@
     margin-right: 1px;
     font-size: 12px;
     line-height: 24px;
+}
+
+.talking-point {
+}
+.topic-point ul {
+    list-style: decimal;
+}
+
+.topic-point.level1 {
+    margin-left: 0px;
+}
+.topic-point.level2 {
+    margin-left: 20px;
+}
+.topic-point.level3 {
+    margin-left: 40px;
+}
+.topic-point.level4 {
+    margin-left: 60px;
+}
+.topic-point.level5 {
+    margin-left: 80px;
+}
+
+.playback .player-btn{
+    vertical-align: middle;
+    margin-bottom: 5px;
+}
+.playback-main {
+    margin-top: 10px;
+    border-right: 2px solid #eeeeee;
+}
+.playback-talking-points-control {
+    color: #3A87AD;
+    cursor: pointer;
+}
+.playback-talking-point-user {
+    font-weight: bold;
+}
+.playback-talking-points-container {
+    margin-top: 5px;
+    margin-left: 12px;
+}
+.playback-participants-container {
+    margin-top: 15px;
+    padding-top: 15px;
+}
+
+.playback-participants-container ul {
+    list-style: none;
+}
+
+.playback-participants-title {
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 5px;
 }

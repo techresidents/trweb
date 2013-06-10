@@ -42,17 +42,14 @@ define([
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-                var chatSession = new api.models.ChatSession({
+                var chat = new api.models.Chat({
                     id: notification.options.id
                 });
 
                 this.view = new playback_views.PlaybackView({
-                    model: chatSession,
+                    model: chat,
                     playerState: this.playerStateProxy.model
                 });
-
-                this.view.addEventListener(this.cid, playback_views.EVENTS.PLAY, this.onPlay, this);
-                this.view.addEventListener(this.cid, playback_views.EVENTS.PAUSE, this.onPause, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
@@ -74,18 +71,6 @@ define([
                     this.view = null;
                 }
             }
-        },
-
-        onPlay: function(e, eventBody) {
-            var notificationBody = {
-                chatSession: eventBody.chatSession,
-                chatMinute: eventBody.chatMinute
-            };
-            this.facade.trigger(notifications.PLAYER_PLAY, notificationBody);
-        },
-
-        onPause: function(e, eventBody) {
-            this.facade.trigger(notifications.PLAYER_PAUSE);
         }
 
     }, {

@@ -1,352 +1,200 @@
 define([
     'jquery',
-    'jquery.bootstrap',
     'underscore',
     'core',
     'api',
-    'text!./templates/minute.html',
-    'text!./templates/minutes.html',
+    'ui',
+    '../tlkpt/views',
+    '../topic/views',
+    '../topicpt/views',
     'text!./templates/playback.html',
-    'text!./templates/tag.html',
-    'text!./templates/tags.html',
-    'text!./templates/user.html',
-    'text!./templates/users.html'
+    'text!./templates/talking_points.html',
+    'text!./templates/participants.html',
+    'text!./templates/participant.html'
 ], function(
     $,
-    none,
     _,
     core,
     api,
-    minute_template,
-    minutes_template,
+    ui,
+    tlkpt_views,
+    topic_views,
+    topicpt_views,
     playback_template,
-    tag_template,
-    tags_template,
-    user_template,
-    users_template) {
-
-    var EVENTS = {
-        PLAY: 'playback:Play',
-        PAUSE: 'playback:Pause'
-    };
+    talking_points_template,
+    participants_template,
+    participant_template) {
 
     /**
-     * Playback tag view.
+     * Playback Participant View
      * @constructor
      * @param {Object} options
-     *   model: {ChatTag} model (required)
-     *   participant: {Number} (required)
+     * @param {User} options.model User model
      */
-    var PlaybackTagView = core.view.View.extend({
+    var PlaybackParticipantView = core.view.View.extend({
+
+        events: {
+        },
 
         initialize: function(options) {
-            this.template = _.template(tag_template);
-            this.participant = options.participant;
-
-            //bind events
-            this.listenTo(this.model, 'change', this.render);
+            this.model = options.model;
+            this.template = _.template(participant_template);
         },
 
-        render: function() {
-            var context = this.model.toJSON({
-                withRelated: ['chat_minute__topic']
-            });
-            this.$el.html(this.template(context));
-            this.$el.addClass('playback-tag');
-            this.$el.addClass('participant' + this.participant);
-            this.$('[rel=tooltip]').tooltip();
-            return this;
-        }
-    });
-
-    /**
-     * Playback tags view.
-     * @constructor
-     * @param {Object} options
-     *   collection: {ChatTagCollection} collection (required)
-     *   users: {UserCollection} collection (required)
-     */
-    var PlaybackTagsView = core.view.View.extend({
-        initialize: function(options) {
-            this.template =  _.template(tags_template);
-            this.users = options.users;
-
-            // bind events
-            this.listenTo(this.collection, 'reset', this.onReset);
-            this.listenTo(this.collection, 'add', this.onAdd);
-
-            //child views
-            this.childViews = [];
-            this.initChildViews();
-        },
-
-        initChildViews: function() {
-            this.destroyChildViews();
-            this.childViews = [];
-            this.collection.each(this.createChildView, this);
-        },
-
-        createChildView: function(model) {
-            var user = this.users.get(model.get_user_id());
-            var view = new PlaybackTagView({
-                model: model,
-                participant: this.users.indexOf(user) + 1
-            }).render();
-            this.childViews.push(view);
-            return view;
-        },
-
-        render: function() {
-            var context = {
-                collection: this.collection.toJSON()
-            };
-            this.$el.html(this.template(context));
-
-            _.each(this.childViews, function(view) {
-                this.append(view);
-            }, this);
-            return this;
-        },
-
-        onReset: function() {
-            this.initChildViews();
-            this.render();
-        },
-
-        onAdd: function(model) {
-            var view = this.createChildView(model);
-            this.append(view);
-        }
-    });
-
-    /**
-     * Playback user view.
-     * @constructor
-     * @param {Object} options
-     *   model: User model (required)
-     *   participant: {Number} (required)
-     */
-    var PlaybackUserView = core.view.View.extend({
-
-        initialize: function(options) {
-            this.template = _.template(user_template);
-            this.participant = options.participant;
-
-            //bind events
-            this.listenTo(this.model, 'change', this.render);
+        classes: function() {
+            var result = ['playback-participant'];
+            return result;
         },
 
         render: function() {
             var context = this.model.toJSON();
             this.$el.html(this.template(context));
-            this.$el.addClass('playback-user');
-            this.$el.addClass('participant' + this.participant);
+            this.$el.attr('class', this.classes().join(' '));
             return this;
         }
     });
 
     /**
-     * Playback users view.
+     * Playback Participants View
      * @constructor
      * @param {Object} options
-     *   collection: {UserCollection} collection (required)
+     * @param {UserCollection} options.collection User collection
      */
-    var PlaybackUsersView = core.view.View.extend({
-        initialize: function(options) {
-            this.template =  _.template(users_template);
+    var PlaybackParticipantsView = core.view.View.extend({
 
-            //bind events
-            this.listenTo(this.collection, 'reset', this.onReset);
-            this.listenTo(this.collection, 'add', this.onAdd);
+        events: {
+        },
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template = _.template(participants_template);
 
             //child views
-            this.childViews = [];
+            this.listView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
-            this.destroyChildViews();
-            this.childViews = [];
-            this.collection.each(this.createChildView, this);
+            this.listView = new ui.collection.views.ListView({
+                viewFactory: new core.factory.Factory(
+                    PlaybackParticipantView, {}),
+                collection: this.collection
+            });
         },
 
-        createChildView: function(model) {
-            var view = new PlaybackUserView({
-                model: model,
-                participant: this.collection.indexOf(model) + 1
-            }).render();
-            this.childViews.push(view);
-            return view;
+        childViews: function() {
+            return [this.listView];
+        },
+
+        classes: function() {
+            return ['playback-participants'];
         },
 
         render: function() {
             this.$el.html(this.template());
-            _.each(this.childViews, function(view) {
-                this.append(view);
-            }, this);
+            this.$el.attr('class', this.classes().join(' '));
+            this.append(this.listView);
             return this;
-        },
-
-        onReset: function() {
-            this.initChildViews();
-            this.render();
-        },
-
-        onAdd: function(model) {
-            var view = this.createChildView(model);
-            this.append(view);
         }
-
     });
 
     /**
-     * Playback minute view.
+     * Playback Talking Points view.
      * @constructor
      * @param {Object} options
-     *   model: {ChatMinute} model (required)
-     *   playerState: {PlayerState} model (required)
+     * @param {TalkingPointCollection} options.collection
+     *   Talking point collection
+     * @param {User} options.model User model
      */
-    var PlaybackMinuteView = core.view.View.extend({
-
+    var PlaybackTalkingPointsView = core.view.View.extend({
+            
         events: {
-            'click .play': 'play',
-            'click .pause': 'pause'
+            'click .minus': 'onMinusClick',
+            'click .plus': 'onPlusClick'
         },
 
         initialize: function(options) {
-            this.template = _.template(minute_template);
-            this.playerState = options.playerState;
-
+            this.template =  _.template(talking_points_template);
+            this.collection = options.collection;
+            this.model = options.model;
+            this.expanded = true;
+            
             //bind events
-            this.listenTo(this.model, 'change', this.render);
-            this.listenTo(this.playerState, 'change:chatMinute', this.render);
-            this.listenTo(this.playerState, 'change:state', this.render);
+            this.listenTo(this.collection, 'reset', this.render);
+
+            //child views
+            this.talkingPointsView = null;
+            this.initChildViews();
+
         },
 
-        isPlaying: function() {
-            var result = false;
-            var minute = this.playerState.chatMinute();
-            if(minute && minute.id === this.model.id) {
-                result = this.playerState.isPlaying();
-            }
-            return result;
+        childViews: function() {
+            return [this.talkingPointsView];
+        },
+
+        initChildViews: function() {
+            this.talkingPointsView = new tlkpt_views.TalkingPointCollectionView({
+                collection: this.collection
+            });
+        },
+        
+        classes: function() {
+            return ['playback-talking-points'];
         },
 
         render: function() {
             var context = {
-                minute: this.model.toJSON({
-                    withRelated: ['topic']
-                }),
-                playing: this.isPlaying(),
-                fmt: this.fmt
+                expanded: this.expanded,
+                user: this.model.toJSON(),
+                length: this.collection.length
             };
-            context.minute.duration = (this.model.get_end() - this.model.get_start()) / 1000;
-
             this.$el.html(this.template(context));
-            this.$el.addClass('playback-minute');
-            this.$el.addClass('level' + this.model.get_topic().get_level());
+            this.$el.attr('class', this.classes().join(' '));
+            this.append(this.talkingPointsView, '.playback-talking-points-container');
             return this;
         },
 
-        play: function(e) {
-            var eventBody = {
-                chatSession: this.model.get_chat_session(),
-                chatMinute: this.model
-            };
-            this.triggerEvent(EVENTS.PLAY, eventBody);
+        collapse: function() {
+            if(this.expanded) {
+                this.expanded = false;
+                this.render();
+            }
         },
 
-        pause: function(e) {
-            this.triggerEvent(EVENTS.PAUSE);
-        }
-
-    });
-
-    /**
-     * Playback minutes view.
-     * @constructor
-     * @param {Object} options
-     *   model: {UserCollection} collection (required)
-     *   playerState: {PlayerState} model (required)
-     */
-    var PlaybackMinutesView = core.view.View.extend({
-        initialize: function(options) {
-            this.template =  _.template(minutes_template);
-            this.playerState = options.playerState;
-
-            //bind events
-            this.listenTo(this.collection, 'reset', this.onReset);
-            this.listenTo(this.collection, 'add', this.onAdd);
-
-            //child views
-            this.childViews = [];
-            this.initChildViews();
+        expand: function() {
+            if(!this.expanded) {
+                this.expanded = true;
+                this.render();
+            }
         },
 
-        initChildViews: function() {
-            this.destroyChildViews();
-            this.childViews = [];
-            this.collection.each(this.createChildView, this);
+        onMinusClick: function(e) {
+            this.collapse();
         },
 
-        createChildView: function(model) {
-            var view = new PlaybackMinuteView({
-                model: model,
-                playerState: this.playerState
-            }).render();
-            this.childViews.push(view);
-            return view;
-        },
-
-        render: function() {
-            this.$el.html(this.template());
-            _.each(this.childViews, function(view) {
-                this.append(view);
-            }, this);
-            return this;
-        },
-
-        onReset: function() {
-            this.initChildViews();
-            this.render();
-        },
-
-        onAdd: function(model) {
-            var view = this.createChildView(model);
-            this.append(view);
+        onPlusClick: function(e) {
+            this.expand();
         }
     });
-
 
     /**
      * Playback view.
      * @constructor
      * @param {Object} options
-     *   model: {ChaSession} model (required)
-     *   playerState: {PlayerState} model (required)
+     * @param options.model Chat model
      */
     var PlaybackView = core.view.View.extend({
             
         events: {
-            'playback:Play': 'play'
-        },
-
-        childViews: function() {
-            return [this.minutesView, this.usersView, this.tagsView];
         },
 
         initialize: function(options) {
             this.template =  _.template(playback_template);
             this.playerState = options.playerState;
             this.modelWithRelated = [
-                'chat__topic__tree',
-                'chat_minutes',
-                'users',
-                'chat_tags'
+                'topic__tree',
+                'users'
             ];
-            
-            //bind events
-            this.listenTo(this.model, 'change', this.render);
             
             //load data
             this.loader = new api.loader.ApiLoader([
@@ -355,46 +203,55 @@ define([
             this.loader.load();
             
             //child views
-            this.minutesView = null;
-            this.usersView = null;
-            this.tagsView = null;
+            this.topicPointsView = null;
+            this.participantsView = null;
             this.initChildViews();
-
         },
 
+        childViews: function() {
+            return [this.topicPointsView, this.participantsView];
+        },
+
+
         initChildViews: function() {
-            this.minutesView = new PlaybackMinutesView({
-                collection: this.model.get_chat_minutes(),
-                playerState: this.playerState
+            var topicViewFactory = new core.factory.Factory(
+                    topic_views.PlayableTopicView, {
+                        chat: this.model,
+                        playerState: this.playerState
+                    });
+            var talkingPointsViewFactory = new core.factory.Factory(
+                    PlaybackTalkingPointsView, {});
+
+            this.topicPointsView = new ui.collection.views.CollectionView({
+                collection: this.model.get_topic().get_tree(),
+                viewFactory: new core.factory.Factory(
+                    topicpt_views.TopicPointView, {
+                        users: this.model.get_users(),
+                        topicViewFactory: topicViewFactory,
+                        talkingPointsViewFactory: talkingPointsViewFactory
+                    })
             });
 
-            this.usersView = new PlaybackUsersView({
+            this.participantsView = new PlaybackParticipantsView({
                 collection: this.model.get_users()
-            });
-
-            this.tagsView = new PlaybackTagsView({
-                collection: this.model.get_chat_tags(),
-                users: this.model.get_users()
             });
         },
         
+        classes: function() {
+            return ['playback'];
+        },
+
         render: function() {
             var context = this.model.toJSON();
             this.$el.html(this.template(context));
-            this.assign(this.minutesView, '.playback-minutes');
-            this.assign(this.usersView, '.playback-users');
-            this.assign(this.tagsView, '.playback-tags');
+            this.$el.attr('class', this.classes().join(' '));
+            this.append(this.topicPointsView, '.playback-topic-points-container');
+            this.append(this.participantsView, '.playback-participants-container');
             return this;
-        },
-
-        play: function(e, eventBody) {
-            //fill in chatSession model and let event propagate.
-            eventBody.chatSession = this.model;
         }
     });
 
     return {
-        EVENTS: EVENTS,
         PlaybackView: PlaybackView
     };
 });

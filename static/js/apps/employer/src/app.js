@@ -59,9 +59,9 @@ define([
         },
 
         playback: function(id) {
-            require(['playback'], _.bind(function(playback) {
+            require(['chat'], _.bind(function(chat) {
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: playback.mediators.PlaybackMediator.VIEW_TYPE,
+                    type: chat.mediators.playback.PlaybackMediator.VIEW_TYPE,
                     options: {
                         id: id
                     }
@@ -290,6 +290,11 @@ define([
     /* DEVELOPER NOTE EVENTS */
     EventNotificationMap[events.TAKE_NOTE] =
         notifications.TAKE_NOTE;
+    /* PLAYER EVENTS */
+    EventNotificationMap[events.PLAYER_PLAY] =
+        notifications.PLAYER_PLAY;
+    EventNotificationMap[events.PLAYER_PAUSE] =
+        notifications.PLAYER_PAUSE;
 
     /**
      * App Mediator
