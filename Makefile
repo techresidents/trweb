@@ -20,7 +20,6 @@ profile:
 	r.js -o static/js/apps/profile/build/app.build.js skipDirOptimize=true
 	@mkdir -p build/static/js/dist/apps/profile/apps/profile/src
 	@cp static/js/apps/profile/build/dist/apps/profile/src/main.js build/static/js/dist/apps/profile/apps/profile/src/main.js
-	@cp -r static/js/apps/profile/build/dist/packages build/static/js/dist/apps/profile
 
 static: developer employer profile
 	@cp -r static static.old

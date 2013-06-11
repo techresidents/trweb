@@ -154,11 +154,19 @@
         </script>
     {% endautoescape %}
 
+
     <script>
-        var require = {
-            baseUrl: '/static/js',
-            urlArgs: '{{VERSION}}'
-        };
+        {% if TR_DIST %}
+            var require = {
+                baseUrl: '/static/js/apps/profile',
+                urlArgs: '{{VERSION}}'
+            };
+        {% else %}
+            var require = {
+                baseUrl: '/static/js',
+                urlArgs: '{{VERSION}}'
+            };
+        {% endif %}
     </script>
 
     <script data-main="apps/profile/src/main" src="{% static "js/3ps/require/require-min.js" %}"></script>
