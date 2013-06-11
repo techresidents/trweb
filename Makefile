@@ -1,10 +1,7 @@
-clean:
-	rm -rf build
-	rm -rf static_collected
-	rm -rf static/js/apps/developer/build/dist
-	rm -rf static/js/apps/employer/build/dist
-	rm -rf static/js/apps/profile/build/dist
-	test ! -d static_orig || (rm -rf static; mv static_orig static)
+
+all: web
+
+web: static
 
 developer:
 	@echo "Building developer app..."
@@ -35,7 +32,12 @@ static: developer employer profile
 	@cp -r build/static/js/dist static/js
 	python manage.py collectstatic --noinput
 
-web: static
-
+clean:
+	rm -rf build
+	rm -rf static_collected
+	test ! -d static_orig || (rm -rf static && mv static_orig static)
+	rm -rf static/js/apps/developer/build/dist
+	rm -rf static/js/apps/employer/build/dist
+	rm -rf static/js/apps/profile/build/dist
 
 .PHONY: clean developer employer profile static web
