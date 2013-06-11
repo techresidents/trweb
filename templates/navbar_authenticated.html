@@ -26,8 +26,8 @@
     </ul>
 {% endif %}
 {% if USER.is_employer %}
-    <a class="brand" href="{% url 'common.views.landing' %}">Tech Residents</a>
-    <a class="brand-beta" href="{% url 'common.views.landing' %}">beta</a>
+    <a class="brand" href="{% url 'employer.views.employer' %}home">Tech Residents</a>
+    <a class="brand-beta" href="{% url 'employer.views.employer' %}home">beta</a>
     <ul class="nav">
         <li>
             <a href="{% url 'employer.views.employer' %}search">Talent Search</a>

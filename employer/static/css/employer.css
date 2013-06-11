@@ -715,3 +715,30 @@
     font-weight: bold;
     padding-bottom: 5px;
 }
+
+
+.employer-home-container .steps-container p {
+    text-align: justify;
+}
+
+.employer-home-container .steps-container h4 {
+    border-bottom-color: black;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding-bottom: 10px;
+}
+
+.employer-home-container .steps-container h4.blue {
+    color: #00b4f0;
+    border-bottom-color: #00b4f0;
+}
+
+.employer-home-container .steps-container h4.orange {
+    color: #EA8F00;
+    border-bottom-color: #EA8F00;
+}
+
+.employer-home-container .steps-container h4.green {
+    color: #31b531;
+    border-bottom-color: #31b531;
+}

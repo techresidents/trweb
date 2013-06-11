@@ -51,6 +51,7 @@
         { name: 'core', location: 'packages/core' },
         { name: 'ctrl', location: 'packages/ctrl' },
         { name: 'events', location: 'packages/events' },
+        { name: 'home', location: 'packages/home'},
         { name: 'lookup', location: 'packages/lookup' },
         { name: 'notifications', location: 'packages/notifications' },
         { name: 'player', location: 'packages/player' },

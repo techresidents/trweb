@@ -30,6 +30,7 @@ define([
      */
     var AppRouter = Backbone.Router.extend({
         routes: {
+            'home': 'home',
             'application/:id': 'application',
             'playback/:id': 'playback',
             'tracker(/:query)': 'tracker',
@@ -45,6 +46,16 @@ define([
         initialize: function(options) {
             this.facade = options.facade;
 
+        },
+
+        home: function() {
+            require(['home'], _.bind(function(home) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: home.mediators.employer.EmployerHomeMediator.VIEW_TYPE,
+                    options: {
+                    }
+                });
+            }, this));
         },
         
         application: function(id) {
