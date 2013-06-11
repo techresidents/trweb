@@ -63,6 +63,7 @@ REGISTRATION_REQUIRES_CODE = False
 TR_LOGIN_USING_HTTPS = True
 TR_XD_REMOTE = 'http://api.techresidents.com/static/js/easyXDM/cors/index.html'
 TR_API_ENDPOINT = 'http://api.techresidents.com/api/v1'
+TR_DIST = True
 
 #Google Analytics
 GA_ID = 'UA-36319157-1'

@@ -3,7 +3,7 @@ require.config({
     urlArgs: window.location.hostname === 'localhost' ? 'bust' + new Date().getTime() : null, 
     
     paths: {
-        main: 'apps/employer/src/main',
+        main: 'apps/profile/src/main',
         globalize: '3ps/globalize/globalize',
         jquery: '3ps/jquery/jquery',
         'jquery.bootstrap': '3ps/bootstrap/bootstrap',

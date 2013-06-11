@@ -19,20 +19,27 @@ require.config({
         soundmanager2: '3ps/soundmanager/script/soundmanager2',
         twilio: 'http://static.twilio.com/libs/twiliojs/1.1/twilio.min'
     },
-    
+
     packages: [
         { name: 'alert', location: 'packages/alert' },
         { name: 'api', location: 'packages/api' },
+        { name: 'applicant', location: 'packages/applicant' },
         { name: 'chat', location: 'packages/chat' },
         { name: 'core', location: 'packages/core' },
         { name: 'ctrl', location: 'packages/ctrl' },
-        { name: 'home', location: 'packages/home'},
         { name: 'events', location: 'packages/events' },
+        { name: 'home', location: 'packages/home'},
+        { name: 'lookup', location: 'packages/lookup' },
         { name: 'notifications', location: 'packages/notifications' },
+        { name: 'player', location: 'packages/player' },
+        { name: 'requisition', location: 'packages/requisition' },
+        { name: 'search', location: 'packages/search' },
+        { name: 'soundmanager', location: 'packages/soundmanager' },
         { name: 'ui', location: 'packages/ui' },
+        { name: 'user', location: 'packages/user' },
         { name: 'xd', location: 'packages/xd' }
     ],
-
+    
     shim: {
 
         'globalize' : {
@@ -41,7 +48,9 @@ require.config({
 
         'jquery.bootstrap': ['jquery'],
 
-        'jquery.color': ['jquery'],
+        'jquery.flowplayer': ['jquery'],
+
+        'jquery.validate': ['jquery'],
 
         'underscore': {
             deps: ['jquery'],

@@ -51,6 +51,7 @@ REGISTRATION_REQUIRES_CODE = False
 TR_LOGIN_USING_HTTPS = True
 TR_XD_REMOTE = 'http://localdev:6767/static/js/easyXDM/cors/index.html'
 TR_API_ENDPOINT = 'http://localdev:6767/api/v1'
+TR_DIST = True
 
 
 #Logging settings

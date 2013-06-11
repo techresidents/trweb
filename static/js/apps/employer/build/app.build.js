@@ -6,12 +6,22 @@
 
     modules: [
         { name: "main", excludeShallow: [] },
-        { name: "ui", exclude: ["main"] },
-        { name: "applicant", exclude: ["main"] },
-        { name: "playback", exclude: ["main"] },
-        { name: "requisition", exclude: ["main"] },
-        { name: "search", exclude: ["main"] },
-        { name: "user", exclude: ["main"] }
+        { name: 'alert', exclude: ["main"] },
+        { name: 'api', exclude: ["main"] },
+        { name: 'applicant', exclude: ["main"] },
+        { name: 'chat', exclude: ["main"] },
+        { name: 'core', exclude: ["main"] },
+        { name: 'ctrl', exclude: ["main"] },
+        { name: 'events', exclude: ["main"] },
+        { name: 'lookup', exclude: ["main"] },
+        { name: 'notifications', exclude: ["main"] },
+        { name: 'player', exclude: ["main"] },
+        { name: 'requisition', exclude: ["main"] },
+        { name: 'search', exclude: ["main"] },
+        { name: 'soundmanager', exclude: ["main"] },
+        { name: 'ui', exclude: ["main"] },
+        { name: 'user', exclude: ["main"] },
+        { name: 'xd', exclude: ["main"] }
     ],
 
     paths: {
@@ -29,7 +39,8 @@
         spin: '3ps/spin/spin',
         highcharts: '3ps/highcharts/js/highcharts.src',
         soundmanager2: '3ps/soundmanager/script/soundmanager2',
-        twilio: 'http://static.twilio.com/libs/twiliojs/1.1/twilio.min'
+        //twilio: 'http://static.twilio.com/libs/twiliojs/1.1/twilio.min'
+        twilio: 'empty:'
     },
 
     packages: [
@@ -42,7 +53,6 @@
         { name: 'events', location: 'packages/events' },
         { name: 'lookup', location: 'packages/lookup' },
         { name: 'notifications', location: 'packages/notifications' },
-        { name: 'playback', location: 'packages/playback' },
         { name: 'player', location: 'packages/player' },
         { name: 'requisition', location: 'packages/requisition' },
         { name: 'search', location: 'packages/search' },
@@ -61,6 +71,8 @@
         'jquery.bootstrap': ['jquery'],
 
         'jquery.flowplayer': ['jquery'],
+
+        'jquery.validate': ['jquery'],
 
         'underscore': {
             deps: ['jquery'],

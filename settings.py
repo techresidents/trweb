@@ -293,6 +293,7 @@ TR_XD_REMOTE = 'http://localhost:6767/static/js/easyXDM/cors/index.html'
 #TR_XD_REMOTE = 'http://iville.local:6767/static/js/easyXDM/cors/index.html'
 #TR_XD_REMOTE = 'http://einstein.local:6767/static/js/easyXDM/cors/index.html'
 TR_API_ENDPOINT = 'http://localhost:6767/api/v1'
+TR_DIST = False
 
 
 #Google Analytics
