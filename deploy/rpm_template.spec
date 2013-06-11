@@ -27,34 +27,18 @@ techresidents.com Django Web Application
 mkdir -p $RPM_BUILD_ROOT/%{__prefix}
 tar -C $RPM_BUILD_ROOT/%{__prefix} -xzf %{SOURCE0} 
 
-%build
-#virtualenv does do well with being create in long paths
-#so we'll create it in RPM_BUILD_ROOT and relocate it 
+#prepare virtualenv in RPM_BUILD_ROOT sine it doesn't
+#handle long path names well. We'll relocate it
 #in the install section.
 virtualenv --no-site-packages $RPM_BUILD_ROOT/env
-
-%install
 source $RPM_BUILD_ROOT/env/bin/activate
 python %{app_buildroot}/bootstrap.py --requirements %{app_buildroot}/requirements/requirements.txt
 
-#optimize and minify js files 
-#optimized files will be output to static_minified
-cp -r %{app_buildroot}/static %{app_buildroot}/static_minified
-find %{app_buildroot}/static -name app.build.js -exec r.js -o {} \; 
+%build
+source $RPM_BUILD_ROOT/env/bin/activate
+cd $RPM_BUILD_ROOT/%{app_installroot}; make all
 
-#move original static files for safe keeping
-mv %{app_buildroot}/static %{app_buildroot}/static.old
-
-#move static_minified to static in preparation for collectstatic
-mv %{app_buildroot}/static_minified %{app_buildroot}/static
-
-#collect static
-python %{app_buildroot}/manage.py collectstatic --noinput
-
-#restore static and static_minified
-mv %{app_buildroot}/static %{app_buildroot}/static_minified
-mv %{app_buildroot}/static.old %{app_buildroot}/static
-
+%install
 # fix the #! line in installed python files
 find "$RPM_BUILD_ROOT" -type f -print0 |
       xargs -0 egrep -l "/usr/local/bin/python|$RPM_BUILD_ROOT/.*/bin/python" | while read file
