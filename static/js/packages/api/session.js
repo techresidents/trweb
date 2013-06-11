@@ -94,6 +94,9 @@ define([
 
         putModel: function(model, key, expire) {
             key = key || model.key();
+            if(model.isDirty()) {
+                throw new Error('cannot cache dirty model');
+            }
 
             this.cache.byKey[key] = {
                 model: model.clone(),

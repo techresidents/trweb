@@ -229,12 +229,11 @@ define([
 
             result.url = this.url;
             result._loaded = this._loaded;
-            result._isDirty = this._isDirty;
             if(!result._parentRelation) {
                 result._parentRelation = _.clone(this._parentRelation);
             }
             result.set(options.attributes);
-
+            result._isDirty = this._isDirty;
 
             return result;
         },
@@ -280,6 +279,9 @@ define([
                                 relation.meta = response[fieldName].meta;
                             } else {
                                 relation.set_meta(response[fieldName].meta);
+                                //prevent non-loaded relations from being
+                                //marked dirty
+                                relation._isDirty = false;
                             }
                         }
                     }

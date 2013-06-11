@@ -330,6 +330,9 @@ define([
         },
 
         remove: function() {
+            //TODO figure out why some remove event is being fired
+            //when navigating away from reel to another in-app
+            //page like Topics.
             this.save();
         },
 
@@ -399,7 +402,7 @@ define([
                 filterBy({user_id: userModel.id}).
                 withRelated(['chat__topic']).
                 orderBy('rank').
-                fetch({});
+                fetch();
 
             //child views
             this.addChatButtonView = null;
