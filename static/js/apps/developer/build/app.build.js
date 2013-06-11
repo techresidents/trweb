@@ -5,8 +5,23 @@
     dir: "./dist",
 
     modules: [
-        { name: "main", excludeShallow: ["core/array"] },
-        { name: "ui", exclude: ["main"] }
+        { name: "main", excludeShallow: [] },
+        { name: 'alert', exclude: ["main"] },
+        { name: 'api', exclude: ["main"] },
+        { name: 'applicant', exclude: ["main"] },
+        { name: 'chat', exclude: ["main"] },
+        { name: 'core', exclude: ["main"] },
+        { name: 'ctrl', exclude: ["main"] },
+        { name: 'events', exclude: ["main"] },
+        { name: 'lookup', exclude: ["main"] },
+        { name: 'notifications', exclude: ["main"] },
+        { name: 'player', exclude: ["main"] },
+        { name: 'requisition', exclude: ["main"] },
+        { name: 'search', exclude: ["main"] },
+        { name: 'soundmanager', exclude: ["main"] },
+        { name: 'ui', exclude: ["main"] },
+        { name: 'user', exclude: ["main"] },
+        { name: 'xd', exclude: ["main"] }
     ],
 
     paths: {
@@ -26,19 +41,27 @@
         //twilio: 'http://static.twilio.com/libs/twiliojs/1.1/twilio.min'
         twilio: 'empty:'
     },
-    
+
     packages: [
         { name: 'alert', location: 'packages/alert' },
         { name: 'api', location: 'packages/api' },
+        { name: 'applicant', location: 'packages/applicant' },
         { name: 'chat', location: 'packages/chat' },
         { name: 'core', location: 'packages/core' },
         { name: 'ctrl', location: 'packages/ctrl' },
         { name: 'events', location: 'packages/events' },
+        { name: 'home', location: 'packages/home'},
+        { name: 'lookup', location: 'packages/lookup' },
         { name: 'notifications', location: 'packages/notifications' },
+        { name: 'player', location: 'packages/player' },
+        { name: 'requisition', location: 'packages/requisition' },
+        { name: 'search', location: 'packages/search' },
+        { name: 'soundmanager', location: 'packages/soundmanager' },
         { name: 'ui', location: 'packages/ui' },
+        { name: 'user', location: 'packages/user' },
         { name: 'xd', location: 'packages/xd' }
     ],
-
+    
     shim: {
 
         'globalize' : {
