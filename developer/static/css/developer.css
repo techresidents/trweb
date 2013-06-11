@@ -121,8 +121,8 @@
 }
 
 
-.developer-home-container .steps-container > div {
-
+.developer-home-container .steps-container p {
+    text-align: justify;
 }
 
 .developer-home-container .steps-container h4 {
