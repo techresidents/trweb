@@ -13,6 +13,7 @@
         { name: 'core', exclude: ["main"] },
         { name: 'ctrl', exclude: ["main"] },
         { name: 'events', exclude: ["main"] },
+        { name: 'home', exclude: ["main"] },
         { name: 'lookup', exclude: ["main"] },
         { name: 'notifications', exclude: ["main"] },
         { name: 'player', exclude: ["main"] },
