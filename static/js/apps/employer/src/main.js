@@ -49,7 +49,7 @@ require.config({
 
         'jquery.flowplayer': ['jquery'],
 
-        'jquery.validate': ['validate'],
+        'jquery.validate': ['jquery'],
 
         'underscore': {
             deps: ['jquery'],
