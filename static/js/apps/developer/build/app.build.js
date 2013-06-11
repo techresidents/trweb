@@ -23,7 +23,8 @@
         spin: '3ps/spin/spin',
         highcharts: '3ps/highcharts/js/highcharts.src',
         soundmanager2: '3ps/soundmanager/script/soundmanager2',
-        twilio: 'http://static.twilio.com/libs/twiliojs/1.1/twilio.min'
+        //twilio: 'http://static.twilio.com/libs/twiliojs/1.1/twilio.min'
+        twilio: 'empty:'
     },
     
     packages: [

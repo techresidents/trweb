@@ -30,7 +30,6 @@ require.config({
         { name: 'events', location: 'packages/events' },
         { name: 'lookup', location: 'packages/lookup' },
         { name: 'notifications', location: 'packages/notifications' },
-        { name: 'playback', location: 'packages/playback' },
         { name: 'player', location: 'packages/player' },
         { name: 'requisition', location: 'packages/requisition' },
         { name: 'search', location: 'packages/search' },
