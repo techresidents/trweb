@@ -1,5 +1,10 @@
 clean:
-	rm -r build
+	rm -rf build
+	rm -rf static_collected
+	rm -rf static/js/apps/developer/build/dist
+	rm -rf static/js/apps/employer/build/dist
+	rm -rf static/js/apps/profile/build/dist
+	test ! -d static_orig || (rm -rf static; mv static_orig static)
 
 developer:
 	@echo "Building developer app..."
@@ -22,7 +27,7 @@ profile:
 	@cp static/js/apps/profile/build/dist/apps/profile/src/main.js build/static/js/dist/apps/profile/apps/profile/src/main.js
 
 static: developer employer profile
-	@cp -r static static.old
+	@cp -r static static_orig
 	@mkdir -p build/static/js/dist/3ps
 	@cp -r static/js/3ps build/static/js/dist
 	@cp static/js/text.js build/static/js/dist
