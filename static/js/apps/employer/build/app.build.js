@@ -72,6 +72,8 @@
 
         'jquery.flowplayer': ['jquery'],
 
+        'jquery.validate': ['jquery'],
+
         'underscore': {
             deps: ['jquery'],
             exports: '_'

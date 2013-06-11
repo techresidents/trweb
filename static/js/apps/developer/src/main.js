@@ -48,7 +48,9 @@ require.config({
 
         'jquery.bootstrap': ['jquery'],
 
-        'jquery.color': ['jquery'],
+        'jquery.flowplayer': ['jquery'],
+
+        'jquery.validate': ['jquery'],
 
         'underscore': {
             deps: ['jquery'],
