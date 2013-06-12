@@ -1,0 +1,22 @@
+<% if (status === 'PENDING') { %>
+<div class="alert alert-info">
+    <span><strong>Welcome!</strong></span>
+        <% if (chat.max_participants > 1) { %>
+            <% if (availableUsers.length === 1) { %>
+                <ul>
+                    <li>You're currently the only participant in this chat.</li>
+                    <li>To invite other participants send them this link.</li>
+                    <li>As soon as another participant arrives you can start the chat.</li>
+                </ul>
+            <% } else { %>        
+                <ul>
+                    <li>Press the Start button to begin your chat.</li>
+                </ul>
+            <% } %>
+        <% } else { %>        
+            <ul>
+                <li>Press the Start button to begin your chat.</li>
+            </ul>
+        <% } %>
+</div>
+<% } %>

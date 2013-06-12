@@ -15,7 +15,6 @@ urlpatterns = patterns('',
 
     url(r'^home/', include('home.urls')),
     url(r'^accounts/', include('accounts.urls')),
-    url(r'^chat/', include('chat.urls')),
     url(r'^compat/', include('compat.urls')),
     url(r'^feedback/', include('feedback.urls')),
     url(r'^topic/', include('topic.urls')),
@@ -25,9 +24,8 @@ urlpatterns = patterns('',
     url(r'^contact/$', 'common.views.contact'),
     url(r'^version/$', 'common.views.version'),
     url(r'^document/', include('document.urls')),
-    url(r'^whiteboard/', include('whiteboard.urls')),
-    url(r'^talent/.*', include('talent.urls')),
-    url(r'^requisition/.*', include('requisition.urls')),
+    url(r'^d/.*', include('developer.urls')),
+    url(r'^e/.*', include('employer.urls')),
 )
 
 #Error handlers

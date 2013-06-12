@@ -1,0 +1,20 @@
+<div>
+    <% if(model.topic && model.topic.title) { %>
+
+        <% if(playing) { %>
+        <a><i class="player-btn player-speaker"></i></a>
+        <% } else { %>
+        <a class="play"><i class="player-btn player-play"></i></a>
+        <% } %>
+
+        <a class="chat-title" href="/e/playback/<%=model.id%>"><%= model.topic.title %></a>
+
+        <% if(duration < 60) { %>
+            <span class="chat-title-small">(1 min </span>
+        <% } else { %>
+            <span class="chat-title-small">(<%= fmt.format(duration / 60, 'n0') %> min </span>
+        <% } %>
+        <span class="chat-title-small"> on <%= fmt.date(model.start, 'MM/dd/yy')%>)</span>
+
+    <% } %>
+</div>

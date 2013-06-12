@@ -2492,7 +2492,7 @@ easyXDM.stack.RpcBehavior = function(proxy, config){
             }
             else {
                 // A method response from the other end
-                var callback = _callbacks[data.id];
+                var callback = _callbacks[data.id] || {};
                 if (data.error) {
                     if (callback.error) {
                         callback.error(data.error);

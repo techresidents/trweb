@@ -16,15 +16,19 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <div class="page-header">
-                <h1>
-                    Join the conversation
-                    <small>It's free</small>
-                    <a class="btn btn-large btn-success" href="{% url 'accounts.views.register' %}">Sign Up</a>
-                </h1>
+            <div class="span12">
+                <div class="page-header">
+                    <h1>
+                        Join the conversation
+                        <small>It's free</small>
+                        <a class="btn btn-large btn-success" href="{% url 'accounts.views.register' %}">Sign Up</a>
+                    </h1>
+                </div>
             </div>
-
-            <div class="learn_more_content span7">
+        </div>
+        <div class="row">
+            <div class="span7">
+                <div class="learn_more_content">
                 <h4>What is Tech Residents?</h4>
                 <p>Tech Residents is a free platform for software developers like you to talk tech and showcase your talent to hiring companies. We believe that the hiring process in its current form is extremely inefficient and ineffective. Our goal is to give you a stronger voice in the hiring process, and ensure that you earn what you're worth.</p>
                 <h4>Why should I join the Tech Residents community?</h4>
@@ -34,17 +38,15 @@
                 <h4>Who do I chat with?</h4>
                 <p>You can chat alone or with a friend on a wide variety of real-world software topics.</p>
                 <h4>How exactly does it work?</h4>
-                <p>Simply complete your developer profile and participate in one of our chats and you'll be qualified for upcoming hiring events. Employers will review your anonymous profile and listen to the anonymized audio from your chats to determine if you're a fit for their organization. At the end of the event, you will receive provisional offers from interested companies. You're free to explore any and all offers by moving forward with the company's hiring process.</p>
-                <h4>How long does the process take?</h4>
-                <p>Hiring events take place roughly every 4-6 weeks, and last for 10 days. Prior to each event we select the most promising developers for participation. We recommend that you participate in about 30 minutes worth of chats to maximize your chance of finding a new opportunity. </p>
+                <p>Simply complete your developer profile and participate in one of our chats and you'll be made available to employers. Employers will review your anonymous profile and listen to the anonymized audio from your chats to determine if you're a fit for their organization. You're free to explore any and all provisional offers by moving forward with the company's hiring process.</p>
                 <h4>Is it true that I can get paid to find a new job?</h4>
                 <p>Yes, if you accept a job offer through our platform we will pay you 20% of our recruitment fee as soon as we get paid. For a $100K job this means you will get a $3,000 bonus.</p>
-                <h4>Why video chat?</h4>
-                <p>In our hiring experience, we've found that the best way to determine if a developer is a good fit is through conversation. While it's impractical for you to speak directly will all of our employers, we believe that our video chats are the next best thing. By providing employers with the anonymized audio from your chats, we can better give them an idea of how you may fit within their organization.</p>
+                <h4>Why chats?</h4>
+                <p>In our hiring experience, we've found that the best way to determine if a developer is a good fit is through conversation. While it's impractical for you to speak directly will all of our employers, we believe that our chats are the next best thing. By providing employers with the anonymized audio from your chats, we can better give them an idea of how you may fit within their organization.</p>
                 <h4>What about privacy?</h4>
                 <p>Employers are only given access to your anonymous developer profile, and the anonymized audio from your chats. This means that there is no risk of your current employer finding out, or hurting your future chances with other employers. The only time an employer will learn your identity is if you decide to move forward with a provisional offer.</p>
                 <h4>Should I treat chats like an interview?</h4>
-                <p>Absolutely not. The rigidity and formality of an interview all too often only gets in the way. We recommend that you chat like you're speaking with a familiar colleague -- conversational, yet professional, and never rehearsed.  And since we only make the anonymized audio from your chats available to employers, there's also no need to worry about what to wear.</p>
+                <p>Absolutely not. The rigidity and formality of an interview all too often only gets in the way. We recommend that you chat like you're speaking with a familiar colleague -- conversational, yet professional, and never rehearsed.</p>
                 <h4>Is it better to chat alone or with a friend?</h4>
                 <p>Either way can be extremely effective. Our chats give you the unique opportunity to take control of your first impression. It's best to be as natural as possible in your chats, and some developers find it easier to do this through a real conversation. In general we recommend completing the shorter chats by yourself, and for the longer chats feel free to go it alone or with a friend.</p>
                 <h4>Do I have to accept an employment offer?</h4>
@@ -56,5 +58,4 @@
             </div>
         </div>
     </div>
-    
 {% endblock %}

@@ -18,6 +18,7 @@ def tr_processors(request):
     """
     return {
         'GA_ID': settings.GA_ID,
+        'TR_DIST': settings.TR_DIST,
         'TR_XD_REMOTE': settings.TR_XD_REMOTE,
         'VERSION': version.VERSION,
         'USER': getattr(request, 'user', None)

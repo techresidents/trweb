@@ -1,0 +1,34 @@
+<div class="user-search-result-container user-search-result">
+    <div class="user-search-result-logo user-logo"></div>
+    <a class="user-search-result-title" href='/e/user/<%= id %>'>{<%= id %>}</a>
+    <div class="skills">
+        <i class="icon-briefcase"></i>
+        <span><strong>Skills</strong></span>
+        <% _.each(skills, function(skill) { %>
+        <div class="user-skills-container user-skills-<%= skill.expertise_type.toLowerCase() %>">
+            <div><%= skill.name %></div>
+        </div>
+        <% }); %>
+    </div>
+    <div class="position-prefs">
+        <i class="icon-screenshot"></i>
+        <span><strong>Seeking</strong></span>
+        <% _.each(position_prefs, function(position) { %>
+        <span><%= position.type %>,</span>
+        <% }); %>
+    </div>
+    <div class="location-prefs">
+        <i class="icon-globe"></i>
+        <span><strong>Locations</strong></span>
+        <% _.each(location_prefs, function(location) { %>
+        <span><%= location.name %>,</span>
+        <% }); %>
+    </div>
+    <div class="technology-prefs">
+        <i class="icon-thumbs-up"></i>
+        <span><strong>Tech Prefs</strong></span>
+        <% _.each(technology_prefs, function(technology) { %>
+        <span><%= technology.name %>,</span>
+        <% }); %>
+    </div>
+</div>

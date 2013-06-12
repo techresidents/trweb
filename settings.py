@@ -159,7 +159,6 @@ INSTALLED_APPS = (
     'techresidents_web.accounts',
     'techresidents_web.common',
     'techresidents_web.chat',
-    'techresidents_web.codeboard',
     'techresidents_web.compat',
     'techresidents_web.document',
     'techresidents_web.feedback',
@@ -167,11 +166,10 @@ INSTALLED_APPS = (
     'techresidents_web.index',
     'techresidents_web.job',
     'techresidents_web.topic',
-    'techresidents_web.whiteboard',
-    'techresidents_web.talent',
+    'techresidents_web.developer',
+    'techresidents_web.employer',
     'techresidents_web.cloudfiles_storage',
     'techresidents_web.notification',
-    'techresidents_web.requisition',
 )
 
 
@@ -292,35 +290,18 @@ TR_LOGIN_USING_HTTPS = False
 
 #Set the location of the cross domain (XD) server for use with easyXDM.
 TR_XD_REMOTE = 'http://localhost:6767/static/js/easyXDM/cors/index.html'
+#TR_XD_REMOTE = 'http://iville.local:6767/static/js/easyXDM/cors/index.html'
 #TR_XD_REMOTE = 'http://einstein.local:6767/static/js/easyXDM/cors/index.html'
 TR_API_ENDPOINT = 'http://localhost:6767/api/v1'
+TR_DIST = False
 
 
 #Google Analytics
 GA_ID = 'UA-36319157-2'
 
-#Tokbox settings
-TOKBOX_API_KEY = '15889991'
-TOKBOX_API_SECRET = '19a6fb225790a2cf3e048c58ef2fdcc425e7b599'
-TOKBOX_JS_URL = 'http://static.opentok.com/v1.1/js/TB.min.js'
-
 #Django message settings
 #MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
-
-#Anonymous Usernames
-ANONYMOUS_USERNAMES = [
-    'anonymous1@techresidents.com',
-    'anonymous2@techresidents.com',
-    'anonymous3@techresidents.com',
-    'anonymous4@techresidents.com',
-    'anonymous5@techresidents.com',
-    'anonymous6@techresidents.com',
-    'anonymous7@techresidents.com',
-    'anonymous8@techresidents.com',
-    'anonymous9@techresidents.com',
-    'anonymous10@techresidents.com',
-]
 
 #Demo middleware settings
 DEMO_USERS = {
