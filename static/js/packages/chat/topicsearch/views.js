@@ -166,7 +166,6 @@ define([
             this.append(this.inputHandlerView, this.searchBarSelector);
             this.append(this.topicsCollectionView, this.searchResultsSelector);
             this.append(this.paginatorView, this.searchResultsSelector);
-            this._applySearchPlaceholderText(); // TODO discuss passing this option to InputViewHandler
             return this;
         },
 
@@ -210,10 +209,6 @@ define([
                 ret = view.model.get_title();
             }
             return ret;
-        },
-
-        _applySearchPlaceholderText: function() {
-            this.$(this.searchViewInputSelector).attr('placeholder', 'Search chat topics');
         }
     });
 
