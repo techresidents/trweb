@@ -443,8 +443,12 @@ define([
         },
         
         onTwilioCancel: function() {
-            //TODO
-            console.log('twilio cancel');
+            var message = 'Microphone access denied. Please refresh the ' +
+                          'to try again.';  
+            this.triggerEvent(events.ALERT, {
+                message: message,
+                severity: 'error'
+            });
         },
 
         onTwilioConnect: function() {
@@ -475,8 +479,12 @@ define([
         },
 
         onTwilioError: function() {
-            //TODO
-            console.log('twilio error');
+            var message = 'Microphone access denied. Please refresh the ' +
+                          'to try again.';  
+            this.triggerEvent(events.ALERT, {
+                message: message,
+                severity: 'error'
+            });
         },
 
         _canStartChat: function() {
