@@ -460,7 +460,7 @@ define([
         }
 
         // Check flash compatibility
-        var isFlashCompatible = browser.isFlashCompatible(10, 0);
+        var isFlashCompatible = browser.isFlashCompatible(10, 1);
         if (!isFlashCompatible) {
             appFacade.trigger(notifications.ALERT, {
                     severity: 'warning',
