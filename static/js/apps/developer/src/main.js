@@ -17,6 +17,7 @@ require.config({
         spin: '3ps/spin/spin',
         highcharts: '3ps/highcharts/js/highcharts.src',
         soundmanager2: '3ps/soundmanager/script/soundmanager2',
+        swfobject: '3ps/swfobject/swfobject',
         twilio: 'http://static.twilio.com/libs/twiliojs/1.1/twilio.min'
     },
 
@@ -24,6 +25,7 @@ require.config({
         { name: 'alert', location: 'packages/alert' },
         { name: 'api', location: 'packages/api' },
         { name: 'applicant', location: 'packages/applicant' },
+        { name: 'browser', location: 'packages/browser'},
         { name: 'chat', location: 'packages/chat' },
         { name: 'core', location: 'packages/core' },
         { name: 'ctrl', location: 'packages/ctrl' },
@@ -86,6 +88,10 @@ require.config({
 
         'soundmanager2': {
             exports: 'soundManager'
+        },
+
+        'swfobject': {
+            exports: 'swfobject'
         },
 
         'twilio': {

@@ -10,6 +10,7 @@ define([
     'ctrl',
     'alert',
     'player',
+    'browser',
     'text!apps/employer/src/app.html'
 ], function(
     $,
@@ -23,6 +24,7 @@ define([
     ctrl,
     alert,
     player,
+    browser,
     app_template) {
     
     /**
@@ -498,6 +500,32 @@ define([
         }
     });
 
+    /**
+     * Check to see if the browser/version is supported.
+     */
+    var checkBrowserCompatibility = function() {
+
+        // Check browser/version compatibility
+        var browserCompatibility = browser.isBrowserCompatible({
+            'chrome': 11,
+            'firefox': 3.6,
+            'msie': 9,
+            'opera': 11,
+            'safari': 5
+        });
+        if (!browserCompatibility.isBrowserSupported) {
+            appFacade.trigger(notifications.ALERT, {
+                    severity: 'warning',
+                    message: 'Warning: This browser is not supported. Please use the latest version of Chrome, Firefox, Safari, Opera, or Internet Explorer.'
+            });
+        } else if (!browserCompatibility.isBrowserVersionSupported) {
+            appFacade.trigger(notifications.ALERT, {
+                    severity: 'warning',
+                    message: 'Warning: This browser version is not supported. Please upgrade to the latest version.'
+            });
+        }
+    };
+
     //one and only concrete facade
     var appFacade = new AppFacade();
 
@@ -508,5 +536,6 @@ define([
     $(document).ready(function() {
         appFacade.initializeRouter();
         appFacade.trigger(notifications.DOM_READY);
+        checkBrowserCompatibility();
     });
 });

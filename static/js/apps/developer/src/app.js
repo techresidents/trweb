@@ -9,6 +9,7 @@ define([
     'notifications',
     'ctrl',
     'alert',
+    'browser',
     'text!apps/developer/src/app.html'
 ], function(
     $,
@@ -21,6 +22,7 @@ define([
     notifications,
     ctrl,
     alert,
+    browser,
     app_template) {
     
     /**
@@ -413,6 +415,8 @@ define([
                 }
             });
         },
+
+
         
         /**
          * Start the application.
@@ -429,6 +433,42 @@ define([
         }
     });
 
+    /**
+     * Check to see if the browser/version is supported, and
+     * check to see if the user's version of Flash is supported.
+     */
+    var checkBrowserCompatibility = function() {
+
+        // Check browser/version compatibility
+        var browserCompatibility = browser.isBrowserCompatible({
+            'chrome': 11,
+            'firefox': 3.6,
+            'msie': 9,
+            'opera': 11,
+            'safari': 5
+        });
+        if (!browserCompatibility.isBrowserSupported) {
+            appFacade.trigger(notifications.ALERT, {
+                    severity: 'warning',
+                    message: 'Warning: This browser is not supported. Please use the latest version of Chrome, Firefox, Safari, Opera, or Internet Explorer.'
+            });
+        } else if (!browserCompatibility.isBrowserVersionSupported) {
+            appFacade.trigger(notifications.ALERT, {
+                    severity: 'warning',
+                    message: 'Warning: This browser version is not supported. Please upgrade to the latest version.'
+            });
+        }
+
+        // Check flash compatibility
+        var isFlashCompatible = browser.isFlashCompatible(10, 0);
+        if (!isFlashCompatible) {
+            appFacade.trigger(notifications.ALERT, {
+                    severity: 'warning',
+                    message: 'Warning: This version of Flash is not supported. Please upgrade to the latest version.'
+            });
+        }
+    };
+
     //one and only concrete facade
     var appFacade = new AppFacade();
 
@@ -439,5 +479,6 @@ define([
     $(document).ready(function() {
         appFacade.initializeRouter();
         appFacade.trigger(notifications.DOM_READY);
+        checkBrowserCompatibility();
     });
 });
