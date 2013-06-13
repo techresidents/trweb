@@ -23,9 +23,9 @@ define([
     /**
      * Detects the current browser and compares it against the supported
      * browsers and versions, which are passed in as an input.
-     * @param {object} minVersions Browser and min versions
-     * @param {String} minVersions.name Browser name
-     * @param {String} minVersions.version Browser version
+     * @param {object} minVersions Browsers and min versions
+     * @param {String} minVersions.attribute Browser name
+     * @param {String} minVersions.value Browser version
      * @returns {object} result
      * @returns {boolean} result.isBrowserSupported
      * @returns {boolean} result.isBrowserVersionSupported
