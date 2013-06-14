@@ -28,20 +28,21 @@ define(/** @exports ui/input/views */[
          * @param {object} options Options object
          * @param {View} options.inputView view with an input field
          * @param {string} options.inputSelector String to select
-         *      the input element of options.inputView
-         * @param {number} [options.throttle=150]
+         *    the input element of options.inputView
+         * @param {number} [options.throttle=150] number of millisecs to throttle
+         *    before events are triggered
          * @param {object} [options.model] model to update after change event
          * @param {string} [options.modelAttribute] model attribute to update
-         *  after change event.
+         *    after change event.
          * @param {boolean} [options.trim=true] If true, will trim whitespace
          * @param {boolean} [options.updateDuringTyping=false] if true, will
-         *  will not wait for user to stop typing before triggering a change
-         *  event.
+         *    will not wait for user to stop typing before triggering a change
+         *    event.
          * @param {boolean} [options.preventDefaultOnEnter=true] If true, will
-         *  prevent the enter key push event from propagating
+         *    prevent the enter key push event from propagating
          * @param {boolean} [options.blurOnEnter=true] If true, will trigger
-         *  a blur event when enter key is pushed. Requires
-         *  options.preventDefaultOnEnter to be true.
+         *    a blur event when enter key is pushed. Requires
+         *    options.preventDefaultOnEnter to be true.
          * @classdesc
          * Handler for a view with an input field. This view has no associated
          * template or UI.

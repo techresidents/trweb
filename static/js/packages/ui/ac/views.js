@@ -56,6 +56,19 @@ define(/** @exports ui/ac/ac */[
          * @constructor
          * @augments module:core/view~View
          * @param {object} options Options object
+         * @param {View} options.dropTargetView the view where the autocomplete
+         *    results (a DropView) will attach
+         * @param {string} options.dropTargetSelector selector for the input
+         *    options.dropTargetView
+         * @param {Matcher} options.matcher Matcher object
+         * @param {boolean} [options.forceSelection=true] If true, user must
+         *    select one of the autocomplete results
+         * @param {number} [options.maxResults=8] Maximum number of autocomplete
+         *    results to display
+         * @param {number} [options.throttle=250] Number of millisecs to throttle
+         *    autocomplete lookups
+         * @param {boolean} [options.preventDefaultOnEnter=true] If true, will
+         *    prevent the enter key push event from propagating
          */
         initialize: function(options) {
             options = _.extend({
@@ -391,6 +404,23 @@ define(/** @exports ui/ac/ac */[
             'blur .input-container input': 'onInputBlur'
         },
 
+        /**
+         * MultiAutoCompleteView constructor
+         * @constructor
+         * @augments module:core/view~View
+         * @param {object} options Options object
+         * @param {Collection} options.collection
+         * @param {Matcher} options.matcher Matcher object
+         * @param {string} [options.template] name of template to use for this view.
+         *    This string value will be passed to _.template() to be compiled for
+         *    rendering.
+         * @param {string} [options.placeholder] Placeholder string
+         * @param {object} [options.viewFactory] view factory to generate search
+         *    result item views
+         * @classdesc
+         * MultiAutoCompleteView is a view that wraps the AutoCompleteView with
+         * a customized list of search results.
+         */
         initialize: function(options) {
             options = _.extend({
                 template: this.defaultTemplate,
