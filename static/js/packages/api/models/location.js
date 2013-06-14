@@ -28,9 +28,9 @@ define([
             region: new fields.StringField(),
             country: new fields.StringField(),
             state: new fields.StringField(),
-            city: new fields.StringField({nullable: true}),
-            county: new fields.StringField({nullable: true}),
-            zip: new fields.StringField({nullable: true})
+            city: new fields.StringField(),
+            county: new fields.StringField(),
+            zip: new fields.StringField()
         }
     });
 

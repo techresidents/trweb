@@ -121,10 +121,10 @@ class Location(models.Model):
 
     region = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
-    zip = models.CharField(max_length=50, null=True)
-    city = models.CharField(max_length=100, null=True)
+    zip = models.CharField(max_length=50)
+    city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
-    county = models.CharField(max_length=100, null=True)
+    county = models.CharField(max_length=100)
     latitude = models.FloatField()
     longitude = models.FloatField()
 
