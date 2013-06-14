@@ -45,7 +45,11 @@
     <div class="control-group">
         <label class="control-label" for="inputLocation">Location</label>
         <div class="controls">
-            <input id="inputLocation" maxlength="100" type="text" name="location" autocomplete="off" required>
+            <select id="inputLocation">
+                <%_.each(locationFormOptions, function(item) { %>
+                <option value="<%= item.value %>"><%= item.option %></option>
+                <% }); %>
+            </select>
         </div>
     </div>
     <div class="control-group">

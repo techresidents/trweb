@@ -187,13 +187,8 @@ define([
             return {
                 column: 'Location',
                 cellView: new ui.grid.views.GridCellView.Factory(function(options) {
-                    var value = null;
-                    var location = options.model.get_location();
-                    if (location) {
-                        value = location.get_region();
-                    }
                     return {
-                        value: value
+                        value: options.model.get_location()
                     };
                 })
             };
@@ -247,7 +242,7 @@ define([
 
         initialize: function(options) {
             this.collection = options.collection;
-            this.query = options.query.withRelated('location');
+            this.query = options.query;
             this.template =  _.template(list_template);
 
             this.query.fetch();
