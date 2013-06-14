@@ -172,7 +172,7 @@ define([
             return {
                 column: 'Title',
                 headerCellView: new ui.grid.views.GridHeaderCellView.Factory({
-                    sort: 'title' 
+                    sort: 'title'
                 }),
                 cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
                     return {
@@ -189,10 +189,8 @@ define([
                 cellView: new ui.grid.views.GridCellView.Factory(function(options) {
                     var value = null;
                     var location = options.model.get_location();
-                    if (location.get_city()) {
-                        value = location.get_city() + ', ' + location.get_state();
-                    } else {
-                        value = location.get_state();
+                    if (location) {
+                        value = location.get_region();
                     }
                     return {
                         value: value

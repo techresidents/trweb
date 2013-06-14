@@ -25,6 +25,7 @@ define([
 
         fields: {
             id: new fields.IntegerField({primaryKey: true}),
+            region: new fields.StringField(),
             country: new fields.StringField(),
             state: new fields.StringField(),
             city: new fields.StringField({nullable: true}),

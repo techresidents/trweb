@@ -119,6 +119,7 @@ class Location(models.Model):
     class Meta:
         db_table = "location"
 
+    region = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
     zip = models.CharField(max_length=50, null=True)
     city = models.CharField(max_length=100, null=True)

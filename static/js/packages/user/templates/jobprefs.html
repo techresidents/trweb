@@ -33,11 +33,7 @@
                 <% } else { %>
 
                 <% _.each(model.location_prefs, function(location) { %>
-                <% if(location.city) { %>
-                <li><%= location.city %>, <%= location.state %></li>
-                <% } else { %>
-                <li><%= location.state %></li>
-                <% } %>
+                <li><%= location.region %></li>
                 <% }); %>
 
                 <% if (model.location_prefs.length > 3) { %>

@@ -535,7 +535,6 @@ define([
          */
         _populateForm: function() {
             // set input field values
-            var locationValue = null;
             var jsonModel = this.model.toJSON({
                 withRelated: this.modelWithRelated
             });
@@ -548,15 +547,10 @@ define([
             this.$(this.employerReqIdSelector).val(jsonModel.employer_requisition_identifier);
             this.$(this.telecommuteSelector).prop('checked', jsonModel.telecommute);
             this.$(this.relocationSelector).prop('checked', jsonModel.relocation);
-            if (jsonModel.location.city) {
-                locationValue = jsonModel.location.city + ", " + jsonModel.location.state;
-            } else if (jsonModel.location.state) {
-                locationValue = jsonModel.location.state;
-            }
-            this.$(this.locationSelector).val(locationValue);
+            this.$(this.locationSelector).val(jsonModel.location.region);
 
             // set internal location
-            this._updateLocationData(locationValue, jsonModel.location);
+            this._updateLocationData(jsonModel.location.region, jsonModel.location);
         },
 
         /**
@@ -566,8 +560,11 @@ define([
          * @param data  the LookupResult.matches object which is scope/category specific
          */
         _updateLocationData: function(value, data) {
+            console.log('_updateLocationData');
+            console.log(data);
             this.location = new api.models.Location({
                 id: data.id,
+                region: data.region,
                 city: data.city,
                 state: data.state,
                 zip: data.zip,
@@ -739,7 +736,7 @@ define([
             this.lookupView = new lookup.views.LookupView({
                 el: this.$(this.locationSelector),
                 scope: 'location',
-                property: 'name',
+                property: 'region',
                 forceSelection: true,
                 onenter: this._updateLocationData,
                 onselect: this._updateLocationData,
@@ -934,6 +931,7 @@ define([
                     withRelated: this.modelWithRelated
                 })
             };
+            console.log(context);
             this.$el.html(this.template(context));
 
             _.each(this.childViews, function(view) {
