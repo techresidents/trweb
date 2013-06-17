@@ -163,12 +163,11 @@ define(/** @exports core/view */[
          * view.  Additionally this method will re-render and re-delegate
          * view events.
          * @param {module:core/view~View} view View object
-         * @param {string} [selector] Selector for dom element to set. If
-         *  html inside of. If not provided this.$el will be used.
+         * @param {string} selector Selector for dom element to set.
          * @returns {module:core/view~View} this
          */
         html: function(view, selector) {
-            var target = selector ? this.$(selector) : this.$el;
+            var target = this.$(selector);
             target.html(view.render().el);
             view.delegateEvents();
             return this;

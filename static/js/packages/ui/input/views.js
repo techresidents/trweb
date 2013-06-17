@@ -46,6 +46,9 @@ define(/** @exports ui/input/views */[
          * Handler for a view with an input field. This view has no associated
          * template or UI.
          */
+        events: {
+        },
+
         initialize: function(options) {
             options = _.extend({
                 throttle: 150,
@@ -71,8 +74,6 @@ define(/** @exports ui/input/views */[
 
         delegateInputEvents: function() {
             if(this.inputView) {
-                // TODO
-                //console.log('%s delegateInputEvents', this.cid);
                 this.undelegateInputEvents();
                 this.inputView.addEventListener(this.cid, 'focus', this.onFocus, this, this.inputSelector);
                 this.inputView.addEventListener(this.cid, 'blur', this.onBlur, this, this.inputSelector);
@@ -82,8 +83,6 @@ define(/** @exports ui/input/views */[
 
         undelegateInputEvents: function() {
             if(this.inputView) {
-                // TODO
-                //console.log('%s undelegateInputEvents', this.cid);
                 this.inputView.removeEventListeners(this.cid);
             }
         },
