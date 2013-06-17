@@ -231,18 +231,6 @@ define([
             return this;
         },
 
-        delegateEvents: function() {
-            // TODO
-            core.view.View.prototype.delegateEvents.apply(this, arguments);
-            this.inputHandlerView.delegateEvents();
-        },
-
-        undelegateEvents: function() {
-            // TODO
-            this.inputHandlerView.undelegateEvents();
-            core.view.View.prototype.undelegateEvents.apply(this, arguments);
-        },
-
         focus: function() {
             this.inputHandlerView.getInput().focus();
         }

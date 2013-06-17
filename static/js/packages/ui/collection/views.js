@@ -92,6 +92,7 @@ define([
             if (model) {
                 view.$el.data('id', model.id || model.cid);
             }
+
             this.append(view, this.selector);
         },
 
@@ -126,7 +127,7 @@ define([
             var context = _.extend({
                 collection: this.collection.toJSON()
             }, core.base.getValue(this, 'context', this));
-
+            
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             
@@ -176,7 +177,8 @@ define([
         },
 
         render: function() {
-            this.html(this.childView);
+            this.$el.html();
+            this.append(this.childView);
             return this;
         }
     });
