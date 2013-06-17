@@ -384,6 +384,11 @@ define([
             /* DEVELOPER NOTE COMMANDS */
             this.registerCommand(notifications.TAKE_NOTE,
                 ctrl.commands.user.TakeNote);
+            /* BROWSER COMPATIBILITY COMMANDS */
+            this.registerCommand(notifications.CHECK_BROWSER_COMPATIBILITY,
+                ctrl.commands.browser.CheckBrowserCompatibility);
+            this.registerCommand(notifications.CHECK_FLASH_COMPATIBILITY,
+                ctrl.commands.browser.CheckFlashCompatibility);
         },
         
         /**
@@ -439,5 +444,17 @@ define([
     $(document).ready(function() {
         appFacade.initializeRouter();
         appFacade.trigger(notifications.DOM_READY);
+        appFacade.trigger(notifications.CHECK_FLASH_COMPATIBILITY, {
+            majorVersion: 10,
+            minorVersion: 1
+        });
+        // Browser warning (via an alert) trumps flash version warning
+        appFacade.trigger(notifications.CHECK_BROWSER_COMPATIBILITY, {
+            'chrome': 11,
+            'firefox': 3.6,
+            'msie': 9,
+            'opera': 11,
+            'safari': 5
+        });
     });
 });

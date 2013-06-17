@@ -42,6 +42,13 @@ define([
         initialize: function(options) {
             this.collection = options.collection;
             this.template =  _.template(add_chat_button_template);
+
+            // child views
+            this.addChatModalView = null;
+        },
+
+        childViews: function() {
+            return [this.addChatModalView];
         },
 
         render: function() {
@@ -59,8 +66,8 @@ define([
                     chatReelCollection: this.collection
                 })
             };
-            var modalView = new ui.modal.views.ModalView(modalOptions);
-            this.append(modalView);
+            this.addChatModalView = new ui.modal.views.ModalView(modalOptions);
+            this.append(this.addChatModalView);
         }
     });
 
