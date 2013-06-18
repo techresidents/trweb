@@ -650,14 +650,14 @@ define([
             // Location options
             this.locationFormOptions = [
                 { option: 'Austin, Texas Area', value: 'Austin, Texas Area'},
-                { option: 'Greater Boston Area', value: 'Greater Boston Area'},
                 { option: 'Burlington, Vermont Area', value: 'Burlington, Vermont Area'},
                 { option: 'Houston, Texas Area', value: 'Houston, Texas Area'},
+                { option: 'Greater Boston Area', value: 'Greater Boston Area'},
                 { option: 'Greater Los Angeles Area', value: 'Greater Los Angeles Area'},
                 { option: 'Greater New York City Area', value: 'Greater New York City Area'},
+                { option: 'Greater Seattle Area', value: 'Greater Seattle Area'},
                 { option: 'Providence, Rhode Island Area', value: 'Providence, Rhode Island Area'},
                 { option: 'San Francisco Bay Area', value: 'San Francisco Bay Area'},
-                { option: 'Greater Seattle Area', value: 'Greater Seattle Area'},
                 { option: 'Washington, DC Area', value: 'Washington, DC Area'}
             ];
             
