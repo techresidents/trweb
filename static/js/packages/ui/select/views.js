@@ -238,9 +238,16 @@ define([
     /**
      * Multi Select View.
      * @constructor
+     * @augments module:BaseSelectView
      * @param {Object} options
-     *   collection: {Collection} containing models implememting {Selection} 
-     *   model interface ('value', and 'selected' attributes).
+     * @param {Collection} options.collection Collection used to track
+     *    user selections. Must implement {Selection} interface ('value' and
+     *    'selected' attributes).
+     * @param {String} [options.template='multi_select_template'] Name of
+     *    template to use for this view. This string value will be passed to
+     *    _.template() to be compiled for rendering.
+     * @classdesc
+     * View to display a selectable collection of models
      */
     var MultiSelectView = BaseSelectView.extend({
 
@@ -293,19 +300,26 @@ define([
     /**
      * Auto Multi Select View.
      * @constructor
+     * @augments module:BaseSelectView
      * @param {Object} options
-     *   collection: {SelectionCollection} collection used to track user selections (required)
-     *   matcher: {Matcher} object (required)
-     *   template: AutoMultiSelect view template (optional)
-     *   listTemplate: {String} name of the view template for the list
-     *      portion of this view (optional)
-     *   maxResults: {Number} Max number of results to show (optional)
-     *   inputPlaceholder: {String} Input placeholder value (optional)
-     *   throttle: {Number} Number of millisecs the input handler waits before
-     *      setting the input value (optional)
-     *   updateDuringTyping: {Boolean} If True, the input handler will not wait
-     *      for the user to stop typing before setting the input value (optional)
-     *
+     * @param {SelectionCollection} options.collection Collection used to track
+     *    user selections
+     * @param {Matcher} options.matcher Matcher object
+     * @param {String} [options.template='auto_multi_select_template'] Name of
+     *    template to use for this view. This string value will be passed to
+     *    _.template() to be compiled for rendering.
+     * @param {String} [options.listTemplate='auto_multi_select_list_template']
+     *    Name of template to use for this view.  This string value will be
+     *    passed to _.template() to be compiled for rendering.
+     * @param {Number} [options.maxResults=8] Max number of results to show
+     * @param {String} [options.inputPlaceholder] Input placeholder value
+     * @param {Number} [options.throttle=250] Number of millisecs the input
+     *    handler waits before setting the input value
+     * @param {Boolean} [options.updateDuringTyping=False] If True, the input
+     *    handler will not wait for the user to stop typing before setting
+     *    the input value
+     * @classdesc
+     * View to display an autocomplete input and selectable list of results
      */
     var AutoMultiSelectView = core.view.View.extend({
 
