@@ -30,8 +30,19 @@ define([
      * Base Select View.
      * @constructor
      * @param {Object} options
-     *   collection: {Collection} containing models implememting {Selection} 
-     *   model interface ('value', and 'selected' attributes).
+     * @param {Collection} options.collection Collection must contain models
+     *    implementing the {Selection} interface:
+     *    ({String} model.value Value to display
+     *     {Boolean} model.selected If True, model is marked as selected)
+     * @param {String} options.template  Name of template to use for this view.
+     *    This string value will be passed to  _.template() to be compiled for
+     *    rendering.
+     * @param {Boolean} [options.multiSelect=false] It True, multiple items can be
+     *    selected at the same time
+     * @param {String} [options.selectedClass='selected'] CSS style to apply when
+     *    an item is selected
+     * @param {String} [options.highlightedClass='highlighted'] CSS style to
+     *    apply when an item is highlighted
      */
     var BaseSelectView = core.view.View.extend({
 
@@ -75,7 +86,7 @@ define([
         },
 
         modelSelector: function(model) {
-            return '.selection[data-id=' + model.cid + ']'; 
+            return '.selection[data-id=' + model.cid + ']';
         },
 
         getCollection: function() {
@@ -193,8 +204,16 @@ define([
      * Select View.
      * @constructor
      * @param {Object} options
-     *   collection: {Collection} containing models implememting {Selection} 
-     *   model interface ('value', and 'selected' attributes).
+     * @param {Collection} options.collection Collection must contain models
+     *    implementing the {Selection} interface:
+     *    ({String} model.value Value to display
+     *     {Boolean} model.selected If True, model is marked as selected)
+     * @param {String} [options.template='select_template'] Name of
+     *    template to use for this view. This string value will be passed to
+     *    _.template() to be compiled for rendering.
+     * @classdesc
+     * View to display a selectable list of items. Only 1 item can be selected
+     * at a time.
      */
     var SelectView = BaseSelectView.extend({
 
@@ -240,14 +259,16 @@ define([
      * @constructor
      * @augments module:BaseSelectView
      * @param {Object} options
-     * @param {Collection} options.collection Collection used to track
-     *    user selections. Must implement {Selection} interface ('value' and
-     *    'selected' attributes).
+     * @param {Collection} options.collection Collection must contain models
+     *    implementing the {Selection} interface:
+     *    ({String} model.value Value to display
+     *     {Boolean} model.selected If True, model is marked as selected)
      * @param {String} [options.template='multi_select_template'] Name of
      *    template to use for this view. This string value will be passed to
      *    _.template() to be compiled for rendering.
      * @classdesc
-     * View to display a selectable collection of models
+     * View to display a selectable list of items. Supports selecting
+     * multiple items at once.
      */
     var MultiSelectView = BaseSelectView.extend({
 
