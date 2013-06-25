@@ -29,6 +29,7 @@ define([
     /**
      * Base Select View.
      * @constructor
+     * @augments module:core/view~View
      * @param {Object} options
      * @param {Collection} options.collection Collection must contain models
      *    implementing the {Selection} interface:
@@ -43,6 +44,8 @@ define([
      *    an item is selected
      * @param {String} [options.highlightedClass='highlighted'] CSS style to
      *    apply when an item is highlighted
+     * @classdesc
+     * Base class view for views where the user can select items.
      */
     var BaseSelectView = core.view.View.extend({
 
@@ -203,6 +206,7 @@ define([
     /**
      * Select View.
      * @constructor
+     * @augments BaseSelectView
      * @param {Object} options
      * @param {Collection} options.collection Collection must contain models
      *    implementing the {Selection} interface:
@@ -257,7 +261,7 @@ define([
     /**
      * Multi Select View.
      * @constructor
-     * @augments module:BaseSelectView
+     * @augments BaseSelectView
      * @param {Object} options
      * @param {Collection} options.collection Collection must contain models
      *    implementing the {Selection} interface:
@@ -321,7 +325,7 @@ define([
     /**
      * Auto Multi Select View.
      * @constructor
-     * @augments module:BaseSelectView
+     * @augments BaseSelectView
      * @param {Object} options
      * @param {SelectionCollection} options.collection Collection used to track
      *    user selections

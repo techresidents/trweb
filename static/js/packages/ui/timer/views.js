@@ -13,6 +13,7 @@ define([
     /**
      * Duration Timer View.
      * @constructor
+     * @augments module:core/view~View
      * @param {Object} options
      * @param options.duration timer duration in ms
      * @param [options.interval=500] update interval in ms
@@ -20,6 +21,8 @@ define([
      *   timer is running
      * @param [options.expiredClass='expired'] style to add when
      *   timer exceeds duration
+     * @classdesc
+     * Timer view
      */
     var DurationTimerView = core.view.View.extend({
 

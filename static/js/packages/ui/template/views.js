@@ -12,6 +12,7 @@ define([
     /**
      * Template View.
      * @constructor
+     * @augments module:core/view~View
      * @param {Object} options
      * @param {String} options.template name of template to use for this view.
      *    This string value will be passed to _.template() to be compiled for

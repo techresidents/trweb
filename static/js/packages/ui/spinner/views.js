@@ -14,6 +14,7 @@ define([
         /**
          * SpinnerView constructor
          * @constructs
+         * @augments module:core/view~View
          * @param {object} options Options object
          * @param {number} [options.lines=11] Number of spinner lines
          * @param {number} [options.length=5] Length of spinner lines
