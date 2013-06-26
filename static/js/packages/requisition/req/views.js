@@ -501,7 +501,6 @@ define([
                     title: { required: true, minlength: 1, maxlength: 100 },
                     salary_start: { required: true, number: true, maxlength: 10 },
                     salary_end: { required: true, number: true, maxlength: 10 },
-                    location: { required: true, minlength: 2, maxlength: 100 },
                     description: { required: true, minlength: 1, maxlength: 2048 }
                 },
                 messages: {
@@ -535,7 +534,6 @@ define([
          */
         _populateForm: function() {
             // set input field values
-            var locationValue = null;
             var jsonModel = this.model.toJSON({
                 withRelated: this.modelWithRelated
             });
@@ -544,35 +542,11 @@ define([
             this.$(this.positionTypeSelector).val(jsonModel.position_type);
             this.$(this.salaryStartSelector).val(jsonModel.salary_start);
             this.$(this.salaryEndSelector).val(jsonModel.salary_end);
+            this.$(this.locationSelector).val(jsonModel.location);
             this.$(this.descriptionSelector).val(jsonModel.description);
             this.$(this.employerReqIdSelector).val(jsonModel.employer_requisition_identifier);
             this.$(this.telecommuteSelector).prop('checked', jsonModel.telecommute);
             this.$(this.relocationSelector).prop('checked', jsonModel.relocation);
-            if (jsonModel.location.city) {
-                locationValue = jsonModel.location.city + ", " + jsonModel.location.state;
-            } else if (jsonModel.location.state) {
-                locationValue = jsonModel.location.state;
-            }
-            this.$(this.locationSelector).val(locationValue);
-
-            // set internal location
-            this._updateLocationData(locationValue, jsonModel.location);
-        },
-
-        /**
-         * Callback to be invoked when when user selects a location
-         * from the typeahead view
-         * @param value  the string in the LookupView input
-         * @param data  the LookupResult.matches object which is scope/category specific
-         */
-        _updateLocationData: function(value, data) {
-            this.location = new api.models.Location({
-                id: data.id,
-                city: data.city,
-                state: data.state,
-                zip: data.zip,
-                country: data.country
-            });
         },
 
         /**
@@ -598,7 +572,7 @@ define([
                     position_type: this.$(this.positionTypeSelector).val(),
                     salary_start: this.$(this.salaryStartSelector).val().replace(/\,/g, ''), // commas are valid in the form, but should be removed before sending to server
                     salary_end: this.$(this.salaryEndSelector).val().replace(/\,/g, ''), // remove commas
-                    location_id: this.getLocationId(),
+                    location: this.$(this.locationSelector).val(),
                     description: this.$(this.descriptionSelector).val(),
                     employer_requisition_identifier: this.$(this.employerReqIdSelector).val(),
                     telecommute: this.$(this.telecommuteSelector).is(":checked"),
@@ -652,16 +626,14 @@ define([
             this.model = options.model;
             this.userModel = options.userModel;
             this.workingCollection = this.model.get_requisition_technologies().clone();
-            this.modelWithRelated = ['location', 'requisition_technologies__technology'];
+            this.modelWithRelated = ['requisition_technologies__technology'];
             this.location = null;
             this.validator = null;
+            this.template = _.template(requisition_form_template);
 
             // bindings
             this.listenTo(this.model, 'change', this.onChange);
-            this.listenTo(this.model.get_location(), 'change', this.onChange);
 
-            this.template = _.template(requisition_form_template);
-            
             // Requisition status options
             this.statusFormOptions = [
                 { option: 'Open', value: 'OPEN' },
@@ -673,6 +645,20 @@ define([
                 { option: 'Junior Developer', value: 'Junior Developer' },
                 { option: 'Senior Developer', value: 'Senior Developer' },
                 { option: 'Team Lead', value: 'Team Lead' }
+            ];
+
+            // Location options
+            this.locationFormOptions = [
+                { option: 'Austin, Texas Area', value: 'Austin, Texas Area'},
+                { option: 'Burlington, Vermont Area', value: 'Burlington, Vermont Area'},
+                { option: 'Houston, Texas Area', value: 'Houston, Texas Area'},
+                { option: 'Greater Boston Area', value: 'Greater Boston Area'},
+                { option: 'Greater Los Angeles Area', value: 'Greater Los Angeles Area'},
+                { option: 'Greater New York City Area', value: 'Greater New York City Area'},
+                { option: 'Greater Seattle Area', value: 'Greater Seattle Area'},
+                { option: 'Providence, Rhode Island Area', value: 'Providence, Rhode Island Area'},
+                { option: 'San Francisco Bay Area', value: 'San Francisco Bay Area'},
+                { option: 'Washington, DC Area', value: 'Washington, DC Area'}
             ];
             
             this.loader = new api.loader.ApiLoader([
@@ -695,14 +681,12 @@ define([
             }
 
             // child views
-            this.lookupView = null;
             this.wishlistView = null;
             this.initChildViews();
         },
 
         childViews: function() {
             return [
-                this.lookupView,
                 this.wishlistView
             ];
         },
@@ -721,30 +705,13 @@ define([
                     withRelated: this.modelWithRelated
                 }),
                 statusFormOptions: this.statusFormOptions,
-                positionTypeFormOptions: this.positionTypeFormOptions
+                positionTypeFormOptions: this.positionTypeFormOptions,
+                locationFormOptions: this.locationFormOptions
             };
             this.$el.html(this.template(context));
 
             // setup wishlist view
             this.append(this.wishlistView, this.wishlistSelector);
-
-            // The lookupView is created within render() because it's
-            // required to pass 'el' to the c'tor. Consequently, we need
-            // to destroy this view if it already exists.
-            if (this.lookupView) {
-                // Destroy Backbone view
-                this.lookupView.remove();
-                this.lookupView.undelegateEvents();
-            }
-            this.lookupView = new lookup.views.LookupView({
-                el: this.$(this.locationSelector),
-                scope: 'location',
-                property: 'name',
-                forceSelection: true,
-                onenter: this._updateLocationData,
-                onselect: this._updateLocationData,
-                context: this
-            });
 
             // setup form validator
             this._setupValidator();
@@ -756,15 +723,6 @@ define([
             this._populateForm();
 
             return this;
-        },
-
-        /**
-         * Method to retrieve location data ID
-         * @return Returns LocationPreference object ID or null
-         * if no object is available
-         */
-        getLocationId: function() {
-            return this.location.id;
         },
 
         onChange: function() {
@@ -878,7 +836,7 @@ define([
 
         initialize: function(options) {
             this.model = options.model;
-            this.modelWithRelated = ['location', 'requisition_technologies__technology'];
+            this.modelWithRelated = ['requisition_technologies__technology'];
             this.wishlistCollection = this.model.get_requisition_technologies();
             this.template = _.template(read_requisition_template);
 
@@ -934,6 +892,7 @@ define([
                     withRelated: this.modelWithRelated
                 })
             };
+            console.log(context);
             this.$el.html(this.template(context));
 
             _.each(this.childViews, function(view) {
