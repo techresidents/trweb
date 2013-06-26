@@ -8,6 +8,14 @@ define(/** @exports core */[
     './facet/views',
     './filter/models',
     './filter/views',
+    './form/actions',
+    './form/comparators',
+    './form/fields',
+    './form/formatters',
+    './form/models',
+    './form/stores',
+    './form/validators',
+    './form/views',
     './grid/views',
     './input/views',
     './load/views',
@@ -32,6 +40,14 @@ define(/** @exports core */[
     facet_views,
     filter_models,
     filter_views,
+    form_actions,
+    form_comparators,
+    form_fields,
+    form_formatters,
+    form_models,
+    form_stores,
+    form_validators,
+    form_views,
     grid_views,
     input_views,
     load_views,
@@ -68,6 +84,16 @@ define(/** @exports core */[
         filter: {
             model: filter_models,
             views: filter_views
+        },
+        form: {
+            actions: form_actions,
+            comparators: form_comparators,
+            fields: form_fields,
+            formatters: form_formatters,
+            models: form_models,
+            stores: form_stores,
+            validators: form_validators,
+            views: form_views
         },
         grid: {
             views: grid_views

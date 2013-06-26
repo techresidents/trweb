@@ -35,7 +35,8 @@ define([
         
         initialize: function(options) {
             options = _.extend({
-                template: this.defaultTemplate
+                template: this.defaultTemplate,
+                classes: []
             }, options);
 
             this.template = _.template(options.template);
@@ -44,6 +45,7 @@ define([
             this.viewFactory = options.viewFactory;
             this.selector = options.selector;
             this.sort = options.sort;
+            this.extraClasses = options.classes;
             this.modelViewMap = {};
             this.viewModelMap = {};
             
@@ -108,7 +110,8 @@ define([
         },
 
         classes: function() {
-            return ['collection'];
+            var result = ['collection'].concat(this.extraClasses);
+            return result;
         },
 
         childClasses: function() {

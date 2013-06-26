@@ -181,6 +181,54 @@ define(/** @exports ui/input/views */[
             }
         },
 
+        getCursorPosition: function() {
+            var result;
+            var input = this.getInput().get(0);
+            if(input.selectionStart !== undefined) {
+                result = input.selectionStart;
+            } else if(document.selection) {
+                this.focus();
+                var selection = document.selection.createRange();
+                selection.moveStart('character', -input.value.length);
+                result = selection.text.length;
+            }
+            return result;
+        },
+
+        setCursorPosition: function(pos) {
+            var input = this.getInput().get(0);
+            if(input.setSelectionRange) {
+                input.setSelectionRange(pos, pos);
+            } else if(input.createTextRange) {
+                var range = input.createTextRange();
+                range.collapse(true);
+                range.moveEnd('character', pos);
+                range.moveStart('character', pos);
+                range.select();
+            }
+        },
+
+        setCursorStart: function() {
+            this.setCursorPosition(0);
+        },
+
+        setCursorEnd: function() {
+            var value = this.getInput().val();
+            this.setCursorPosition(value.length);
+        },
+
+        hasFocus: function() {
+            return this.getInput().is(':focus');
+        },
+
+        focus: function() {
+            this.getInput().focus();
+        },
+
+        blur: function() {
+            this.getInput().blur();
+        },
+
         classes: function() {
             return ['input-handler'];
         },
