@@ -46,7 +46,6 @@
         <style type="text/css" media="screen">
 
             body {
-                -webkit-font-smoothing: antialiased;
                 font-size: 15px;
                 font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
                 line-height: 24px;
@@ -109,7 +108,7 @@
             #blog_info h1 a {
                 color: #333333;
             }
-                            
+
             #blog_info h1 a:hover {
                 color: #000;
             }
@@ -141,7 +140,7 @@
                 {block:IfShowImageShadows}
                     -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, .21);
                     box-shadow: 0px 1px 3px rgba(0, 0, 0, .21);
-                {/block:IfShowImageShadows}  
+                {/block:IfShowImageShadows}
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -221,7 +220,7 @@
                 -webkit-font-smoothing: subpixel-antialiased;
             }
 {/block:IfDisqusShortname}
-            
+
 
             .top.audio * {
                 width: 700px;
@@ -269,8 +268,8 @@
             }
 
             .link .arrow {
-                width: 0; 
-                height: 0; 
+                width: 0;
+                height: 0;
                 border-top: 8px solid transparent;
                 border-bottom: 8px solid transparent;
                 border-left: 12px solid {Color:Accent};
@@ -348,7 +347,7 @@
                 color: {Color:Accent};
                 background: transparent;
             }
-                                
+
             .caption blockquote {
                 border-left: 2px solid #E6E6E6;
                 padding: 1px 0 1px 20px;
@@ -550,7 +549,7 @@
             .post_info .notecount:active {
                 background: rgba(0,0,0,.1);
             }
-            
+
             /* Post controls */
 
             .post_controls {
@@ -560,7 +559,7 @@
                 list-style: none;
                 margin: -10px 15px 15px 0;
             }
-    
+
             /* requires high specificity */
             .post .post_info .post_controls li,
             .post .post_info.floating .post_controls li {
@@ -579,7 +578,7 @@
                 margin: 0;
                 padding: 0;
             }
-            
+
 
             /* Baselines */
 
@@ -735,8 +734,8 @@
             }
 
             .bubble .arrow {
-                width: 0; 
-                height: 0; 
+                width: 0;
+                height: 0;
                 position: absolute;
                 display: block;
             }
@@ -887,7 +886,7 @@
                 background-position: 0 15px;
                 margin: -7px auto auto 20px;
             }
-                
+
             .disabled .left .arrow {
                 background-position: 0 0;
             }
@@ -1085,19 +1084,10 @@
             #header {
                 display: none;
             }
-            .navbar .tr-brand {
-                font-weight: 500;
-            }
-            .tr-brand-blog {
-                font-weight: 500;
-            }
             .tr-brand-logo {
                 height: 25px;
                 width: 26px;
                 background-image: url('{image:TRBrand}');
-            }
-            .tr-nav > li > a {
-                font-weight: 500;
             }
             .tr-social-media-btn {
                    margin-top: 5px;
@@ -1118,8 +1108,8 @@
                                 <div class="tr-brand-logo"></div>
                             </div>
                             <a class="brand tr-brand" href="http://techresidents.com">Tech Residents</a>
-                            <span class="brand-beta tr-brand-blog">blog</span>
-                            <ul class="nav tr-nav">
+                            <span class="brand-beta">blog</span>
+                            <ul class="nav">
                                 <li><a href="http://techresidents.com/developer/learn_more">Developers</a></li>
                                 <li><a href="http://techresidents.com/employer/learn_more">Employers</a></li>
                                 <li><a href="http://blog.techresidents.com">Blog</a></li>
