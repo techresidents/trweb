@@ -18,6 +18,7 @@ require.config({
         highcharts: '3ps/highcharts/js/highcharts.src',
         soundmanager2: '3ps/soundmanager/script/soundmanager2',
         swfobject: '3ps/swfobject/swfobject',
+        q: '3ps/q/q',
         twilio: 'http://static.twilio.com/libs/twiliojs/1.1/twilio.min'
     },
     
