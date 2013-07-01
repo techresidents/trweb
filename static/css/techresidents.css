@@ -564,8 +564,9 @@ button.drop-button .caret {
 }
 
 .multi-autocomplete-item .close {
+    float: none;
+    vertical-align: text-bottom;
     margin-left: 3px;
-    margin-top: 2px;
 }
 
 .loader {
