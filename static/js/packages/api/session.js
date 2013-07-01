@@ -218,33 +218,25 @@ define([
             };
 
             var syncHandler = function(instance, response, options) {
-                var entry;
-                var syncKey = this.expandFetchKey(instance.key(), options.query);
-                if(syncKey === key) {
-                    entry = this.cache.byKey[key];
-                    if(entry) {
-                        _.each(entry.fetch.success, function(callback) {
-                            callback(instance, response, options);
-                        }, this);
-                    delete this.cache.byKey[key];
-                    instance.off('sync', syncHandler);
-                    }
+                var entry = this.cache.byKey[key];
+                if(entry) {
+                    _.each(entry.fetch.success, function(callback) {
+                        callback(instance, response, options);
+                    }, this);
+                delete this.cache.byKey[key];
+                instance.off('sync', syncHandler);
                 }
             };
 
             var errorHandler = function(instance, response, options) {
-                var entry;
-                var syncKey = this.expandFetchKey(instance.key(), options.query);
-                if(syncKey === key) {
-                    entry = this.cache.byKey[key];
-                    if(entry) {
-                        _.each(entry.fetch.error, function(callback) {
-                            callback(instance, response, options);
-                        }, this);
-                    }
-                    delete this.cache.byKey[key];
-                    instance.off('error', errorHandler);
+                var entry = this.cache.byKey[key];
+                if(entry) {
+                    _.each(entry.fetch.error, function(callback) {
+                        callback(instance, response, options);
+                    }, this);
                 }
+                delete this.cache.byKey[key];
+                instance.off('error', errorHandler);
             };
 
             instance.on('sync', syncHandler, this);

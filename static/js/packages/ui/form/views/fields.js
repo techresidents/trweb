@@ -537,6 +537,8 @@ define(/** @exports ui/form/views/fields */[
     /** @lends module:ui/form/views~AutoCompleteFieldView.prototype */ {
         
         events: _.extend({
+            'blur input': 'onBlur',
+            'focus input': 'onFocus',
             'select .autocomplete': 'onSelect'
         }, FieldView.prototype.events),
         
@@ -581,6 +583,7 @@ define(/** @exports ui/form/views/fields */[
             this.placeholder = options.placeholder;
             this.maxLength = options.maxLength;
             this.throttle = options.throttle;
+            this.defaultSearch = options.defaultSearch;
             this.preventDefaultOnEnter = options.preventDefaultOnEnter;
             this.inputClasses = options.classes;
 
@@ -604,6 +607,7 @@ define(/** @exports ui/form/views/fields */[
                 maxResults: this.maxResults,
                 throttle: this.throttle,
                 trim:  this.trim,
+                defaultSearch: this.defaultSearch,
                 preventDefaultOnEnter: this.preventDefaultOnEnter,
                 forceSelection: true,
                 inputView: this,
@@ -635,6 +639,22 @@ define(/** @exports ui/form/views/fields */[
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.acView);
             return this;
+        },
+
+        onBlur: function(e) {
+            this.validate();
+        },
+
+        onFocus: function(e) {
+            if(_.isString(this.defaultSearch) &&
+               !this.acView.getInputValue()) {
+                // give time for input to actually get focus
+                // and for click event to propagate past drop view
+                setTimeout(_.bind(function() {
+                    this.acView.clearCloseOnDelay();
+                    this.acView.match(this.defaultSearch);
+                }, this), 200);
+            }
         },
 
         onSelect: function(e, eventBody) {
@@ -685,7 +705,8 @@ define(/** @exports ui/form/views/fields */[
                 template: multi_autocomplete_field_template,
                 maxResults: 8,
                 stringify: options.matcher.stringify,
-                placeholder: null
+                placeholder: null,
+                viewFactory: null
             }, options);
 
             MultiAutoCompleteFieldView.__super__.initialize.call(
@@ -696,12 +717,13 @@ define(/** @exports ui/form/views/fields */[
             this.defaultSearch = options.defaultSearch;
             this.maxResults = options.maxResults;
             this.placeholder = options.placeholder;
+            this.viewFactory = options.viewFactory;
             this.collection = this.state.rawValue();
 
             //bind events
             this.listenTo(this.state, 'change:error', this.render);
             this.listenTo(this.state, 'change:showError', this.render);
-            this.listenTo(this.collection, 'add remove reset',
+            this.listenTo(this.collection, 'add remove reset change',
                     this.onCollectionChange);
 
             //child views
@@ -720,6 +742,7 @@ define(/** @exports ui/form/views/fields */[
                 stringify: this.stringify,
                 maxResults: this.maxResults,
                 placeholder: this.placeholder,
+                viewFactory: this.viewFactory,
                 defaultSearch: this.defaultSearch
             });
         },

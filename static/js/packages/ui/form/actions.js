@@ -45,7 +45,18 @@ define(/** @exports ui/form/actions */[
                 primary: options.primary
             });
 
+            this.formState = null;
+
             this.view = null;
+        },
+
+        setFormState: function(state) {
+            this.stopListening();
+            this.formState = state;
+            this.listenTo(this.formState,
+                    'change:valid change:dirty change:executing',
+                    this.onFormStateChange);
+            this.update(this.formState);
         },
 
         createView: function(options) {
@@ -56,25 +67,61 @@ define(/** @exports ui/form/actions */[
             return this.view;
         },
 
-        enabled: function(state) {
-            var result = true;
-            if(this.primary) {
-                result = state.dirty() && state.valid();
+        update: function(state) {
+            var enabled = !state.executing();
+            if(this.primary && enabled) {
+                enabled = state.valid() && state.dirty();
             }
-            return result;
+            this.state.set({
+                enabled: enabled
+            });
         },
 
-        handle: function(state) {
+        handle: function(options) {
+            //wrap success/error callback with our own methods
+            //so we can manage action execution state
+            var success = options.success;
+            var error = options.error;
+
+            options.success = _.bind(function() {
+                this.state.setExecuting(false);
+                if(_.isFunction(success)) {
+                    success.apply(this, arguments);
+                }
+            }, this);
+
+            options.error = _.bind(function() {
+                this.state.setExecuting(false);
+                if(_.isFunction(error)) {
+                    error.apply(this, arguments);
+                }
+            }, this);
+
+            
+            this.state.setExecuting(true);
+
             if(_.isFunction(this.handler)) {
-                this.handler(state);
+                this.handler(options);
             } else if(_.isObject(this.handler)) {
-                this.handler.handle(state);
+                this.handler.handle(options);
             }
+        },
+
+        destroy: function() {
+            this.stopListening();
+        },
+
+        onFormStateChange: function() {
+            this.update(this.formState);
         }
     });
 
+    //add support for events to actions
+    _.extend(Action.prototype, Backbone.Events);
+
+    
     var ButtonAction = Action.extend(
-    /** @lends module:ui/form/actions~SaveAction.prototype */ {
+    /** @lends module:ui/form/actions~ButtonAction.prototype */ {
 
         /**
          * Save Action constructor
@@ -94,8 +141,12 @@ define(/** @exports ui/form/actions */[
          */
         initialize: function(options) {
             options = _.extend({
-                viewFactory: new views.ButtonActionView.Factory()
             }, options);
+            
+            if(!options.viewFactory) {
+                options.viewFactory =  new views.ButtonActionView.Factory();
+            }
+
             ButtonAction.__super__.initialize.call(this, options);
         }
     });

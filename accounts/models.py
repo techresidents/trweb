@@ -122,6 +122,7 @@ class DeveloperProfile(models.Model):
         db_table = "accounts_developer_profile"
 
     user = models.OneToOneField(User)
+    location = models.CharField(max_length=100, null=True)
     developer_since = models.DateField(null=True)
     email_upcoming_chats = models.BooleanField(default=False)
     email_new_chat_topics = models.BooleanField(default=False)

@@ -97,7 +97,7 @@ define([
 
         target: function() {
             var result;
-            if(this.targetView && this.targetSeelector) {
+            if(this.targetView && this.targetSelector) {
                 result = this.targetView.$(this.targetSelector);
             } else if(this.targetView) {
                 result = this.targetView.$el;

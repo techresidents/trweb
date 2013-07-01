@@ -68,6 +68,7 @@ define(/** @exports ui/input/views */[
             this.blurOnEnter = options.blurOnEnter;
             this._lastInputValue = '';
             this._timer = null;
+            this._hasFocusPerEvent = false;
 
             this.setModel(options.model, options.modelAttribute);
             this.setInput(options.inputView, options.inputSelector);
@@ -218,8 +219,17 @@ define(/** @exports ui/input/views */[
             this.setCursorPosition(value.length);
         },
 
-        hasFocus: function() {
-            return this.getInput().is(':focus');
+        hasFocus: function(options) {
+            options = _.extend({
+                perEvent: false
+            }, options);
+
+            var result = this._hasFocusPerEvent;
+            
+            if(!options.perEvent) {
+                result = this.getInput().is(':focus');
+            }
+            return result;
         },
 
         focus: function() {
@@ -252,10 +262,12 @@ define(/** @exports ui/input/views */[
         },
 
         onFocus: function(e) {
+            this._hasFocusPerEvent = true;
             this._startTimer();
         },
 
         onBlur: function(e) {
+            this._hasFocusPerEvent = false;
             this._stopTimer();
             this._update();
         },

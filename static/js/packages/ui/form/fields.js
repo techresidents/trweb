@@ -65,7 +65,8 @@ define(/** @exports ui/form/fields */[
             options = _.extend({
                 enabled: true,
                 required: true,
-                viewOptions: {}
+                viewOptions: {},
+                storeOptions: {}
             }, options);
 
             if(!options.validator) {
@@ -87,7 +88,8 @@ define(/** @exports ui/form/fields */[
             if(!options.store && options.model) {
                 options.store = stores.factory.create({
                     model: options.model,
-                    path: options.name
+                    path: options.name,
+                    storeOptions: options.storeOptions
                 });
             }
 
@@ -107,13 +109,19 @@ define(/** @exports ui/form/fields */[
                 valid: true
             });
 
-            this.format();
-            this.validate();
+            this.formState = null;
+
 
             this.view = null;
 
             //bind events
             this.listenTo(this.store, 'change', this.onStoreChange);
+        },
+
+        setFormState: function(state) {
+            this.formState = state;
+            this.format();
+            this.validate();
         },
         
         createView: function(options) {
@@ -194,15 +202,7 @@ define(/** @exports ui/form/fields */[
             return result;
         },
 
-        read: function(options) {
-            return this.store.read(options);
-        },
-
-        write: function(value, options) {
-            this.store.write(value, options);
-        },
-
-        onStoreChange: function() {
+        revert: function() {
             //In the case where the underlying store changes we null out
             //value and rawValue with the silent flag. This will not
             //immediately cause a change event to fire due to the silent
@@ -221,6 +221,24 @@ define(/** @exports ui/form/fields */[
 
             this.format();
             this.validate();
+
+            return true;
+        },
+
+        read: function(options) {
+            return this.store.read(options);
+        },
+
+        write: function(value, options) {
+            this.store.write(value, options);
+        },
+
+        destroy: function() {
+            this.stopListening();
+        },
+
+        onStoreChange: function() {
+            this.revert();
         }
     });
 
@@ -259,12 +277,14 @@ define(/** @exports ui/form/fields */[
                 maxLength: 100,
                 placeholder: null
             }, options);
+
+            options.viewOptions = _.extend({
+                maxLength: options.maxLength,
+                placeholder: options.placeholder
+            }, options.viewOptions);
             
             if(!options.viewFactory) {
-                options.viewFactory = new views.InputFieldView.Factory({
-                    maxLength: options.maxLength,
-                    placeholder: options.placeholder
-                });
+                options.viewFactory = new views.InputFieldView.Factory();
             }
 
             if(!options.validator) {
@@ -403,18 +423,18 @@ define(/** @exports ui/form/fields */[
                 formats: ['MM/dd/YYYY']
             }, options);
 
+            options.viewOptions = _.extend({
+                formats: options.format,
+                maxLength: options.maxLength,
+                placeholder: options.placeholder
+            }, options.viewOptions);
+
             if(!options.validator) {
-                options.validator = new validators.DateValidator({
-                    required: options.required,
-                    formats: options.formats
-                });
+                options.validator = new validators.DateValidator();
             }
             
             if(!options.viewFactory) {
                 options.viewFactory = new views.DateFieldView.Factory({
-                    formats: options.format,
-                    maxLength: options.maxLength,
-                    placeholder: options.placeholder
                 });
             }
             
@@ -486,10 +506,13 @@ define(/** @exports ui/form/fields */[
          *   to use to validate input values and convert them if neccessary.
          */
         initialize: function(options) {
+
+            options.viewOptions = _.extend({
+                choices: options.choices
+            }, options.viewOptions);
+
             if(!options.viewFactory) {
-                options.viewFactory = new views.DropdownFieldView.Factory({
-                    choices: options.choices
-                });
+                options.viewFactory = new views.DropdownFieldView.Factory();
             }
 
             this.choices = options.choices;
@@ -544,14 +567,16 @@ define(/** @exports ui/form/fields */[
             options = _.extend({
                 maxResults: 8
             }, options);
+
+            options.viewOptions = _.extend({
+                maxLength: options.maxLength,
+                placeholder: options.placeholder,
+                maxResults: options.maxResults,
+                matcher: options.matcher
+            }, options.viewOptions);
             
             if(!options.viewFactory) {
-                options.viewFactory = new views.AutoCompleteFieldView.Factory({
-                    maxLength: options.maxLength,
-                    placeholder: options.placeholder,
-                    maxResults: options.maxResults,
-                    matcher: options.matcher
-                });
+                options.viewFactory = new views.AutoCompleteFieldView.Factory();
             }
 
             AutoCompleteField.__super__.initialize.call(this, options);
@@ -589,13 +614,15 @@ define(/** @exports ui/form/fields */[
             options = _.extend({
                 maxResults: 8
             }, options);
+
+            options.viewOptions = _.extend({
+                placeholder: options.placeholder,
+                maxResults: options.maxResults,
+                matcher: options.matcher
+            }, options.viewOptions);
             
             if(!options.viewFactory) {
-                options.viewFactory = new views.MultiAutoCompleteFieldView.Factory({
-                    placeholder: options.placeholder,
-                    maxResults: options.maxResults,
-                    matcher: options.matcher
-                });
+                options.viewFactory = new views.MultiAutoCompleteFieldView.Factory();
             }
 
             MultiAutoCompleteField.__super__.initialize.call(this, options);

@@ -565,6 +565,7 @@ button.drop-button .caret {
 
 .multi-autocomplete-item .close {
     margin-left: 3px;
+    margin-top: 2px;
 }
 
 .loader {
@@ -674,4 +675,8 @@ button.drop-button .caret {
 }
 .scroller:hover {
     overflow: auto;
+}
+
+.form button.disabled {
+    cursor: not-allowed;
 }

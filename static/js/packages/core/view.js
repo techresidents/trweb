@@ -146,6 +146,20 @@ define(/** @exports core/view */[
             return this;
         },
 
+        after: function(view, selector) {
+            var target = this.$(selector);
+            target.after(view.render().el);
+            view.delegateEvents();
+            return this;
+        },
+
+        before: function(view, selector) {
+            var target = this.$(selector);
+            target.before(view.render().el);
+            view.delegateEvents();
+            return this;
+        },
+
         /**
          * Assign view to dom at the element specified in selector.
          * This will result in a view.setElement() and view.render().

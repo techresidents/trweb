@@ -3,6 +3,7 @@ define(/** @exports ui/form/views/forms */[
     'underscore',
     'backbone',
     'core',
+    '../../events/keycodes',
     '../models',
     '../validators',
     './actions',
@@ -13,6 +14,7 @@ define(/** @exports ui/form/views/forms */[
     _,
     Backbone,
     core,
+    events_kc,
     models,
     validators,
     actions_views,
@@ -72,6 +74,8 @@ define(/** @exports ui/form/views/forms */[
     /** @lends module:ui/form/views~FormView.prototype */ {
 
         events: {
+            'submit': 'onSubmit',
+            'keypress': 'onKeyPress',
             'form-change-event': 'onFormChange',
             'form-action-event': 'onFormAction'
         },
@@ -95,8 +99,12 @@ define(/** @exports ui/form/views/forms */[
                 template: form_template,
                 fields: [],
                 actions: [],
-                validator: new validators.FormValidator()
+                horizontal: true
             }, options);
+
+            if(!options.validator) {
+                options.validator = new validators.FormValidator();
+            }
 
             if(!options.actionsViewFactory) {
                 options.actionsViewFactory =
@@ -111,6 +119,7 @@ define(/** @exports ui/form/views/forms */[
             this.template = _.template(options.template);
             this.model = options.model;
             this.legend = options.legend;
+            this.horizontal = options.horizontal;
             this.validator = options.validator;
             this.actionsViewFactory = options.actionsViewFactory;
             this.errorViewFactory = options.errorViewFactory;
@@ -118,19 +127,23 @@ define(/** @exports ui/form/views/forms */[
                 model: this.model
             });
 
-            //add field models to state model.
+            //add field models to state model and inject form
+            //state into fields
             this.state.fields().reset(_.map(options.fields, function(field) {
+                field.setFormState(this.state);
                 return {
                     field: field
                 };
-            }));
+            }, this));
 
-            //add action models to state model.
+            //add action models to state model and inject form
+            //state into actions
             this.state.actions().reset(_.map(options.actions, function(action) {
+                action.setFormState(this.state);
                 return {
                     action: action
                 };
-            }));
+            }, this));
 
             //event bindings
             this.listenTo(this.state.fields(), 'reset', this.onResetFields);
@@ -165,6 +178,18 @@ define(/** @exports ui/form/views/forms */[
             this.errorView = this.errorViewFactory.create({
                 state: this.state
             });
+        },
+
+        destroy: function() {
+            FormView.__super__.destroy.apply(this, arguments);
+
+            this.state.fields().each(function(fieldModel) {
+                fieldModel.field().destroy();
+            }, this);
+
+            this.state.actions().each(function(actionModel) {
+                actionModel.action().destroy();
+            }, this);
         },
 
         addField: function(field) {
@@ -214,7 +239,8 @@ define(/** @exports ui/form/views/forms */[
         context: function() {
             return {
                 state: this.state.toJSON(),
-                legend: this.legend
+                legend: this.legend,
+                horizontal: this.horizontal
             };
         },
 
@@ -233,7 +259,6 @@ define(/** @exports ui/form/views/forms */[
 
             //error view
             this.append(this.errorView, '.form-error-container');
-
 
             return this;
         },
@@ -274,6 +299,17 @@ define(/** @exports ui/form/views/forms */[
             return result;
         },
 
+        revert: function() {
+            var result = true;
+            this.state.fields().each(function(fieldModel) {
+                var field = fieldModel.field();
+                if(!field.revert()) {
+                    result = false;
+                }
+            });
+            return result;
+        },
+
         onAddField: function(fieldModel) {
             this._addField(fieldModel.field());
         },
@@ -284,32 +320,61 @@ define(/** @exports ui/form/views/forms */[
 
         onResetFields: function() {
             _.each(this.fieldViews, function(view) {
-                this.view.destroy();
+                view.destroy();
             }, this);
 
-            this.fieldsViews = [];
+            this.fieldViews = [];
             this.state.fields().each(function(fieldModel) {
                 this._addField(fieldModel.field());
             }, this);
         },
 
+        onSubmit: function(e) {
+            e.preventDefault();
+        },
+
+        onKeyPress: function(e) {
+            if(e.keyCode === events_kc.ENTER) {
+                e.preventDefault();
+            }
+        },
+
         onFormChange: function(e, eventBody) {
-            this._updateDirtyFlag();
+            this._updateDirtyState();
             this.validate();
         },
 
         onFormAction: function(e, eventBody) {
             var action = eventBody.action;
+            var allowed = true;
+
+            //primary actions allowed on valid/committed data
             if(action.primary) {
-                if(this.validate() && this.commit()) {
-                    action.handle(this.state);
-                }
-            } else {
-                action.handle(this.state);
+                allowed = this.validate() && this.commit();
+            }
+
+            if(allowed) {
+                this.state.setExecuting(true);
+
+                action.handle({
+                    state: this.state,
+                    success: _.bind(this.onFormActionSuccess, this, action),
+                    error: _.bind(this.onFormActionError, this, action)
+                });
             }
         },
 
-        _updateDirtyFlag: function() {
+        onFormActionSuccess: function(action) {
+            this._updateExecutingState();
+            this.state.setError(null);
+        },
+
+        onFormActionError: function(action) {
+            this._updateExecutingState();
+            this.state.setError('Oops - an error has occured.');
+        },
+
+        _updateDirtyState: function() {
             var dirty = false;
             this.state.fields().each(function(fieldModel) {
                 var field = fieldModel.field();
@@ -320,11 +385,27 @@ define(/** @exports ui/form/views/forms */[
             this.state.set({dirty: dirty});
         },
 
+        _updateExecutingState: function() {
+            var executing = false;
+            this.state.actions().each(function(actionModel) {
+                var action = actionModel.action();
+                if(action.state.executing()) {
+                    executing = true;
+                }
+            }, this);
+            this.state.set({executing: executing});
+        },
+
         _addField: function(field) {
             var view = field.createView();
             this.fieldViews.push(view);
             this.fieldMap[field.name] = field;
             this.fieldViewMap[field.name] = view;
+            
+            //inject form state if needed
+            if(!field.formState) {
+                field.setFormState(this.state);
+            }
         },
 
         _removeField: function(field) {
@@ -334,7 +415,6 @@ define(/** @exports ui/form/views/forms */[
                 delete this.fieldMap[field.name];
                 delete this.fieldViewMap[field.name];
             }
-            //this.stopListening(field.state);
         }
     });
 

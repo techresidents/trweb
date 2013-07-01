@@ -23,6 +23,7 @@ define([
      * following a successful read.
      */
     var sync = function(method, model, options) {
+        options.method = method;
         var success = options.success;
         var error = options.error;
         var withRelated = null;

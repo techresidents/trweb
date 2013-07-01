@@ -171,7 +171,6 @@ define([
             }, options);
             router = this.facade.router;
             
-            console.log(options);
             switch(options.type) {
                 case 'SearchView':
                     uri = 'search';

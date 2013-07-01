@@ -86,7 +86,12 @@ define(/** @exports ui/form/comparators */[
             if(a.length === b.length) {
                 result = 0;
                 a.each(function(model) {
-                    if(!b.get(model.id)) {
+                    var other = b.get(model.id);
+                    if(!other) {
+                        result = undefined;
+
+                    } else if(_.isFunction(model.isDirty) &&
+                              model.isDirty() !== other.isDirty()) {
                         result = undefined;
                     }
                 });

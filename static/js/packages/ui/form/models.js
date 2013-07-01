@@ -15,7 +15,8 @@ define([
         defaults: {
             label: null,
             primary: true,
-            enabled: true
+            enabled: true,
+            executing: false 
         },
 
         label: function() {
@@ -42,6 +43,15 @@ define([
 
         setEnabled: function(enabled) {
             this.set('enabled', enabled);
+            return this;
+        },
+
+        executing: function() {
+            return this.get('executing');
+        },
+
+        setExecuting: function(executing) {
+            this.set('executing', executing);
             return this;
         }
     });
@@ -229,7 +239,8 @@ define([
                 actions: new ActionCollection(),
                 dirty: false,
                 valid: false,
-                error: null
+                error: null,
+                executing: false
             };
         },
 
@@ -277,6 +288,15 @@ define([
             return this;
         },
 
+        executing: function() {
+            return this.get('executing');
+        },
+
+        setExecuting: function(executing) {
+            this.set('executing', executing);
+            return this;
+        },
+
         toJSON: function() {
             var result = FormState.__super__.toJSON.call(this);
             result.fields = this.fields().map(function(fieldModel) {
@@ -288,9 +308,7 @@ define([
             result.actions = this.actions().map(function(actionModel) {
                 var action = actionModel.action();
                 return {
-                    name: action.name,
-                    primary: action.primary,
-                    enabled: action.enabled(this)
+                    state: action.state.toJSON()
                 };
             }, this);
             return result;

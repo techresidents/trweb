@@ -39,9 +39,6 @@ define(/** @exports ui/form/views/actions */[
             this.template = _.template(options.template);
             this.state = options.state;
 
-            //bind events
-            this.listenTo(this.state, 'change:valid change:dirty', this.onStateChange);
-
             //child views
             this.actionsView = null;
             this.initChildViews();
@@ -63,7 +60,6 @@ define(/** @exports ui/form/views/actions */[
 
         createActionView: function(options) {
             var action = options.model.action();
-            action.state.setEnabled(action.enabled(this.state));
             return action.createView({
                 action: action
             });
@@ -79,13 +75,6 @@ define(/** @exports ui/form/views/actions */[
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.actionsView, '.controls');
             return this;
-        },
-
-        onStateChange: function() {
-            this.state.actions().each(function(actionModel) {
-                var action = actionModel.action();
-                action.state.setEnabled(action.enabled(this.state));
-            }, this);
         }
     });
 
@@ -173,6 +162,7 @@ define(/** @exports ui/form/views/actions */[
             //bind events
             this.listenTo(this.state, 'change', this.render);
         },
+
 
         classes: function() {
             var result = ButtonActionView.__super__.classes.call(this);

@@ -22,22 +22,7 @@ define([
             this.session = new api.session.ApiSession.get();
 
             if(options.user) {
-                if(options.user instanceof api.models.User) {
-                    this.user = options.user;
-                } else {
-                    this.user = new api.models.User({id: options.user.id});
-                    this.user.bootstrap(options.user);
-                }
-
-                //add current user to global session cache which 
-                //doesn't expire for 100 days.
-                //To get the current user simply
-                //execute 'new api.models.User{id: 'CURRENT})'
-                var cacheUser = new api.models.User();
-                if(this.user) {
-                    this.user.clone({to: cacheUser});
-                }
-                cacheUser.session.putModel(cacheUser, api.models.User.key('CURRENT'), 8640000000);
+                this.updateCurrentUser(options.user);
             }
         },
         
@@ -51,6 +36,25 @@ define([
                 result = this.user.clone();
             }
             return result;
+        },
+
+        updateCurrentUser: function(user) {
+            if(user instanceof api.models.User) {
+                this.user = user;
+            } else {
+                this.user = new api.models.User({id: user.id});
+                this.user.bootstrap(user);
+            }
+
+            //add current user to global session cache which 
+            //doesn't expire for 100 days.
+            //To get the current user simply
+            //execute 'new api.models.User{id: 'CURRENT})'
+            var cacheUser = new api.models.User();
+            if(this.user) {
+                this.user.clone({to: cacheUser});
+            }
+            cacheUser.session.putModel(cacheUser, api.models.User.key('CURRENT'), 8640000000);
         }
 
     }, {

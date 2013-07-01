@@ -28,15 +28,15 @@
         <p>In these locations</p>
         <div class="well">
             <ul class="location-prefs unstyled">
-                <% if (!model.location_prefs.length) { %>
+                <% if (!model.locations.length) { %>
                 <span><em>No locations provided</em></span>
                 <% } else { %>
 
-                <% _.each(model.location_prefs, function(location) { %>
+                <% _.each(model.locations, function(location) { %>
                 <li><%= location.region %></li>
                 <% }); %>
 
-                <% if (model.location_prefs.length > 3) { %>
+                <% if (model.locations.length > 3) { %>
                 <a class="slide-toggle">more</a>
                 <% } %>
 

@@ -35,7 +35,8 @@ define([
             tenant_id: new fields.StringField(),
             first_name: new fields.StringField(),
             last_name: new fields.StringField(),
-            email: new fields.StringField()
+            email: new fields.StringField(),
+            timezone: new fields.StringField()
         },
 
         relatedFields: {
@@ -43,11 +44,11 @@ define([
                 relation: tenant_models.Tenant
             }),
 
-            location_prefs: new fields.ManyToMany({
+            locations: new fields.ManyToMany({
                 relation: location_models.Location
             }),
 
-            technology_prefs: new fields.ManyToMany({
+            technologies: new fields.ManyToMany({
                 relation: technology_models.Technology,
                 backref: "users"
             })

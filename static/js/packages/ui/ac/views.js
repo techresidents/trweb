@@ -329,7 +329,9 @@ define(/** @exports ui/ac/ac */[
         onMatches: function(search, matches) {
             this.lastMatches = matches;
             var input = this.getInputValue();
-            var hasFocus = this.inputHandlerView.hasFocus();
+            var hasFocus = this.inputHandlerView.hasFocus({
+                perEvent: true
+            });
 
             var models = _.map(matches, function(match) {
                 return {
@@ -491,14 +493,11 @@ define(/** @exports ui/ac/ac */[
          * a customized list of search results.
          */
         initialize: function(options) {
-            console.log('con');
-            console.log(_.clone(options));
             options = _.extend({
                 template: this.defaultTemplate,
                 stringify: options.matcher.stringify,
                 selector: ':last-child'
             }, options);
-            console.log(options);
 
             if(!options.viewFactory) {
                 options.viewFactory = new MultiAutoCompleteItemView.Factory({
@@ -509,6 +508,7 @@ define(/** @exports ui/ac/ac */[
             this.matcher = options.matcher;
             this.stringify = options.stringify;
             this.placeholder = options.placeholder;
+            this.maxResults = options.maxResults;
             this.defaultSearch = options.defaultSearch;
 
             MultiAutoCompleteView.__super__.initialize.call(this, options);
@@ -530,6 +530,7 @@ define(/** @exports ui/ac/ac */[
                 dropTargetSelector: null,
                 matcher: this.matcher,
                 stringify: this.stringify,
+                maxResults: this.maxResults,
                 defaultSearch: this.defaultSearch,
                 forceSelection: true
             });
@@ -586,17 +587,26 @@ define(/** @exports ui/ac/ac */[
                 model = _.find(this.collection.toDestroy, function(model) {
                     return this.stringify(match) === this.stringify(model);
                 }, this);
-
-                if(model) {
-                    this.collection.add(model);
-                } else {
-                    this.collection.add(match);
+                
+                if(!model) {
+                    model = match;
                 }
+                this.collection.add(model);
             }
+
+            this.autocompleteView.clear();
+            this.autocompleteView.clearLastMatch();
+            this.autocompleteView.focus();
+
+            return model;
         },
 
         focus: function() {
             this.autocompleteView.focus();
+        },
+
+        blur: function() {
+            this.autocompleteView.blur();
         },
 
         onCollectionChange: function() {
@@ -606,17 +616,14 @@ define(/** @exports ui/ac/ac */[
         onOuterClick: function(e) {
             this.autocompleteView.focus();
 
-            //prevent click from closing drop view 
-            e.stopImmediatePropagation();
+            //prevent click from closing autocomplete dropdown
             e.preventDefault();
+            e.stopPropagation();
         },
 
         onSelect: function(e, eventBody) {
             var match = eventBody.match;
             this.addMatch(match);
-            this.autocompleteView.clear();
-            this.autocompleteView.clearLastMatch();
-            this.autocompleteView.focus();
         },
 
         onInputKeypress: function(e) {
@@ -625,6 +632,12 @@ define(/** @exports ui/ac/ac */[
                     if(!this.$(this.inputSelector).val() &&
                        this.collection.length) {
                         this.collection.pop();
+
+                        //prevent backspace from navigating back in browser
+                        e.preventDefault();
+
+                        //reapply focus
+                        this.focus();
                     }
                     break;
             }
@@ -643,10 +656,11 @@ define(/** @exports ui/ac/ac */[
             this.$el.addClass('focus');
             if(_.isString(this.defaultSearch) && !this.collection.length) {
                 // give time for input to actually get focus
+                // and for click event to propagate past drop view
                 setTimeout(_.bind(function() {
                     this.autocompleteView.clearCloseOnDelay();
-                    this.autocompleteView.match('');
-                }, this), 50);
+                    this.autocompleteView.match(this.defaultSearch);
+                }, this), 200);
             }
         },
 

@@ -83,7 +83,12 @@ define(/** @exports ui/form/stores */[
          */
         initialize: function(options) {
             this.model = options.model;
-            this.modelClone = this.model.clone();
+            this.withRelated = options.withRelated;
+
+            this.modelClone = this.model.clone({
+                withRelated: this.withRelated
+            });
+
             this.listenTo(this.model, 'change', this.onChange);
         },
 
@@ -102,13 +107,15 @@ define(/** @exports ui/form/stores */[
         write: function(value, options) {
             value = value || this.modelClone;
             value.clone({
-                to: this.model
+                to: this.model,
+                withRelated: this.withRelated
             });
         },
 
         onChange: function() {
             this.model.clone({
-                to: this.modelClone
+                to: this.modelClone,
+                withRelated: this.withRelated
             });
             ModelStore.__super__.onChange.call(this);
         }
@@ -127,8 +134,10 @@ define(/** @exports ui/form/stores */[
          */
         initialize: function(options) {
             this.collection = options.collection;
+            this.withRelated = options.withRelated;
+
             this.collectionClone = this.collection.clone({
-                withRelated: ['technology']
+                withRelated: options.withRelated
             });
             this.listenTo(this.collection, 'add remove change reset', this.onChange);
         },
@@ -149,15 +158,22 @@ define(/** @exports ui/form/stores */[
             value = value || this.collectionClone;
             value.clone({
                 to: this.collection,
-                withRelated: ['technology']
+                withRelated: this.withRelated
             });
         },
 
         onChange: function() {
             this.collection.clone({
                 to: this.collectionClone,
-                withRelated: ['technology']
+                withRelated: this.withRelated
             });
+
+            //we won't get an explicit event when models
+            //in the collection are destroyed on server
+            //so for now we assume success and clear
+            //out the toDestroy list on the collection
+            //clone to prevent duplicate deletes.
+            this.collectionClone.toDestroy = [];
             CollectionStore.__super__.onChange.call(this);
         }
         
@@ -181,20 +197,20 @@ define(/** @exports ui/form/stores */[
         }, this);
 
         if(current instanceof Backbone.Collection) {
-            result = new CollectionStore({
+            result = new CollectionStore(_.extend({
                 collection: current
-            });
+            }, options.storeOptions));
         } else if(current instanceof Backbone.Model) {
             if(attribute) {
-                result = new ModelAttributeStore({
+                result = new ModelAttributeStore(_.extend({
                     model: current,
                     modelAttribute: attribute
-                });
+                }, options.storeOptions));
             } else {
-                result = new ModelStore({
+                result = new ModelStore(_.extend({
                     model: current,
                     modelAttribute: attribute
-                });
+                }, options.storeOptions));
             }
         }
 

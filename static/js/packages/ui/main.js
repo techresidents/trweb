@@ -5,6 +5,8 @@ define(/** @exports core */[
     './collection/views',
     './date/views',
     './drop/views',
+    './events/keycodes',
+    './events/type',
     './facet/views',
     './filter/models',
     './filter/views',
@@ -37,6 +39,8 @@ define(/** @exports core */[
     collection_views,
     date_views,
     drop_views,
+    events_keycodes,
+    events_type,
     facet_views,
     filter_models,
     filter_views,
@@ -77,6 +81,10 @@ define(/** @exports core */[
         },
         drop: {
             views: drop_views
+        },
+        events: {
+            kc: events_keycodes,
+            type: events_type
         },
         facet: {
             views: facet_views
