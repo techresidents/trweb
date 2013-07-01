@@ -310,7 +310,7 @@
     vertical-align: middle;
 }
 
-.form-skill .close {
+.form-skill-close-container .close {
     float: none;
 }
 
@@ -367,8 +367,4 @@
     border-bottom: 2px solid #cccccc;
     padding-bottom: 5px;
     margin-bottom: 15px;
-}
-
-.developer-profile-nav {
-    margin-top: 10px;
 }

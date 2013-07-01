@@ -154,12 +154,25 @@ html {
     margin-left: 190px;
 }
 
-.section-header h1,
-.section-header h2,
-.section-header h3,
-.section-header h4,
-.section-header h5 {
-    border-bottom: 2px solid #AAAAAA;
+.section-header {
+    margin-bottom: 20px;
+}
+
+.section-header > span {
+    display: block;
+    font-size: 24px;
+    line-height: 40px;
+    margin: 10px 0;
+    font-weight: bold;
+    text-rendering: optimizelegibility;
+    border-bottom: 1px solid #AAAAAA;
+}
+
+.section-header > span small {
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1;
+    color: #999999;
 }
 
 [class^="tr-icon-"] {
