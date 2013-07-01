@@ -34,6 +34,7 @@ require.config({
         { name: 'lookup', location: 'packages/lookup' },
         { name: 'notifications', location: 'packages/notifications' },
         { name: 'player', location: 'packages/player' },
+        { name: 'profile', location: 'packages/profile' },
         { name: 'requisition', location: 'packages/requisition' },
         { name: 'search', location: 'packages/search' },
         { name: 'soundmanager', location: 'packages/soundmanager' },

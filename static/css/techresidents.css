@@ -522,44 +522,33 @@ button.drop-button .caret {
 
 .multi-autocomplete {
     overflow: hidden;
-}
-
-.multi-autocomplete .outer-container {
     border: 1px solid #CCCCCC;
     border-radius: 3px 3px 3px 3px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
     transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
     line-height: 25px;
+    cursor: text;
+    min-height: 48px;
 }
 
-.multi-autocomplete.focus .outer-container {
+.multi-autocomplete > div {
+    display: inline-block;
+    cursor: default;
+    margin: 5px;
+}
+
+.multi-autocomplete > .autocomplete {
+    display: block;
+}
+
+.multi-autocomplete.focus {
     border-color: rgba(82, 168, 236, 0.8);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
     outline: 0 none;
 }
 
-.multi-autocomplete .list-container {
-    display: inline-block;
-}
-
-.multi-autocomplete .list-container ul {
-    cursor: text;
-    display: inline-block;
-    list-style: none;
-    margin: 0px;
-}
-
-.multi-autocomplete .list-container ul li {
-    cursor: default;
-    display: inline-block;
-    margin: 5px;
-}
-
-.multi-autocomplete .input-container {
-    display: inline-block;
-}
-
-.multi-autocomplete .input-container > input {
+.multi-autocomplete .multi-autocomplete-input,
+.multi-autocomplete .multi-autocomplete-input:focus {
     border: 0px;
     margin: 0 0 0 4px;
     padding: 0px;
@@ -576,6 +565,7 @@ button.drop-button .caret {
 
 .multi-autocomplete-item .close {
     margin-left: 3px;
+    margin-top: 2px;
 }
 
 .loader {
@@ -685,4 +675,8 @@ button.drop-button .caret {
 }
 .scroller:hover {
     overflow: auto;
+}
+
+.form button.disabled {
+    cursor: not-allowed;
 }

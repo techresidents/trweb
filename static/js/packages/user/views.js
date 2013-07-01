@@ -72,8 +72,8 @@ define([
             this.template =  _.template(jobprefs_template);
             this.modelWithRelated = [
                 'position_prefs',
-                'technology_prefs',
-                'location_prefs'
+                'technologies',
+                'locations'
             ];
 
             //bind events
@@ -190,7 +190,7 @@ define([
          * @private
          */
         _getSortedJobTechnologyPrefs: function() {
-            var unsortedTechPrefsCollection = this.model.get_technology_prefs();
+            var unsortedTechPrefsCollection = this.model.get_technologies();
             var sortedTechPrefsCollection = new Backbone.Collection();
             sortedTechPrefsCollection.comparator = function(technology) {
                 // sort by Technology.name
@@ -1267,8 +1267,8 @@ define([
                 'chat_reels__chat__topic',
                 'skills__technology',
                 'position_prefs',
-                'technology_prefs',
-                'location_prefs'
+                'technologies',
+                'locations'
             ];
 
             //bind events

@@ -4,7 +4,12 @@ define(/** @exports core/command */[
     './base',
     './facade',
     './notifications'
-], function($, _, base, facade, notifications) { 
+], function(
+    $,
+    _,
+    base,
+    facade,
+    notifications) { 
 
     /**
      * Command base class.
@@ -232,7 +237,6 @@ define(/** @exports core/command */[
             this.executeSubCommands.apply(this, arguments);
         }
     });
-
 
     return {
         Command: Command,

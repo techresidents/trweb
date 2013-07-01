@@ -68,6 +68,7 @@ define(/** @exports ui/input/views */[
             this.blurOnEnter = options.blurOnEnter;
             this._lastInputValue = '';
             this._timer = null;
+            this._hasFocusPerEvent = false;
 
             this.setModel(options.model, options.modelAttribute);
             this.setInput(options.inputView, options.inputSelector);
@@ -182,6 +183,63 @@ define(/** @exports ui/input/views */[
             }
         },
 
+        getCursorPosition: function() {
+            var result;
+            var input = this.getInput().get(0);
+            if(input.selectionStart !== undefined) {
+                result = input.selectionStart;
+            } else if(document.selection) {
+                this.focus();
+                var selection = document.selection.createRange();
+                selection.moveStart('character', -input.value.length);
+                result = selection.text.length;
+            }
+            return result;
+        },
+
+        setCursorPosition: function(pos) {
+            var input = this.getInput().get(0);
+            if(input.setSelectionRange) {
+                input.setSelectionRange(pos, pos);
+            } else if(input.createTextRange) {
+                var range = input.createTextRange();
+                range.collapse(true);
+                range.moveEnd('character', pos);
+                range.moveStart('character', pos);
+                range.select();
+            }
+        },
+
+        setCursorStart: function() {
+            this.setCursorPosition(0);
+        },
+
+        setCursorEnd: function() {
+            var value = this.getInput().val();
+            this.setCursorPosition(value.length);
+        },
+
+        hasFocus: function(options) {
+            options = _.extend({
+                perEvent: false
+            }, options);
+
+            var result = this._hasFocusPerEvent;
+            
+            if(!options.perEvent) {
+                result = this.getInput().is(':focus');
+            }
+            return result;
+        },
+
+        focus: function() {
+            this.getInput().focus();
+        },
+
+        blur: function() {
+            this.getInput().blur();
+        },
+
         classes: function() {
             return ['input-handler'];
         },
@@ -204,10 +262,12 @@ define(/** @exports ui/input/views */[
         },
 
         onFocus: function(e) {
+            this._hasFocusPerEvent = true;
             this._startTimer();
         },
 
         onBlur: function(e) {
+            this._hasFocusPerEvent = false;
             this._stopTimer();
             this._update();
         },

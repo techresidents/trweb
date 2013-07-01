@@ -892,7 +892,7 @@ define([
                     withRelated: this.modelWithRelated
                 })
             };
-            console.log(context);
+
             this.$el.html(this.template(context));
 
             _.each(this.childViews, function(view) {
