@@ -89,7 +89,7 @@ define(/** @exports ui/form/stores */[
                 withRelated: this.withRelated
             });
 
-            this.listenTo(this.model, 'change', this.onChange);
+            this._addListeners();
         },
 
         read: function(options) {
@@ -118,6 +118,19 @@ define(/** @exports ui/form/stores */[
                 withRelated: this.withRelated
             });
             ModelStore.__super__.onChange.call(this);
+        },
+
+        _addListeners: function() {
+            this.listenTo(this.model, 'change', this.onChange);
+
+            this.collection.eachRelated(this.withRelated, function(relation) {
+                var instance = relation.instance;
+                if(instance instanceof Backbone.Collection) {
+                    this.listenTo(instance, 'add remove reset', this.onChange);
+                } else {
+                    this.listenTo(instance, 'change', this.onChange);
+                }
+            }, this);
         }
         
     });
@@ -139,7 +152,8 @@ define(/** @exports ui/form/stores */[
             this.collectionClone = this.collection.clone({
                 withRelated: options.withRelated
             });
-            this.listenTo(this.collection, 'add remove change reset', this.onChange);
+
+            this._addListeners();
         },
 
         read: function(options) {
@@ -175,6 +189,20 @@ define(/** @exports ui/form/stores */[
             //clone to prevent duplicate deletes.
             this.collectionClone.toDestroy = [];
             CollectionStore.__super__.onChange.call(this);
+        },
+
+        _addListeners: function() {
+            this.listenTo(this.collection, 'add remove change reset',
+                    this.onChange);
+
+            this.collection.eachRelated(this.withRelated, function(relation) {
+                var instance = relation.instance;
+                if(instance instanceof Backbone.Collection) {
+                    this.listenTo(instance, 'add remove reset', this.onChange);
+                } else {
+                    this.listenTo(instance, 'change', this.onChange);
+                }
+            }, this);
         }
         
     });
