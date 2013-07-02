@@ -223,7 +223,7 @@ define([
                 name: 'position_prefs',
                 model: model,
                 label: label,
-                placeholder: 'Junior Developer, Senior Developer, Team Lead',
+                placeholder: 'Developer, Team Lead',
                 matcher: matcher,
                 viewOptions: { defaultSearch: '' }
             });
