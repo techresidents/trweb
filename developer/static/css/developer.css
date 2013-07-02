@@ -372,3 +372,7 @@
 .developer-profile-nav {
     margin-top: 10px;
 }
+
+.developer-profile-pref-form .controls {
+    margin-bottom: 25px;
+}
