@@ -470,7 +470,7 @@ define(/** @exports ui/ac/ac */[
             'click': 'onOuterClick',
             'select .autocomplete': 'onSelect',
             'click .close': 'onClose',
-            'keypress .multi-autocomplete-input': 'onInputKeypress',
+            'keydown .multi-autocomplete-input': 'onInputKeyDown',
             'focus .multi-autocomplete-input': 'onInputFocus',
             'blur .multi-autocomplete-input': 'onInputBlur'
         },
@@ -626,7 +626,7 @@ define(/** @exports ui/ac/ac */[
             this.addMatch(match);
         },
 
-        onInputKeypress: function(e) {
+        onInputKeyDown: function(e) {
             switch(e.keyCode) {
                 case kc.BACKSPACE:
                     if(!this.$(this.inputSelector).val() &&
