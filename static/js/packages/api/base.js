@@ -749,8 +749,9 @@ define([
             var openRequests = 0;
             var errors = 0;
             var that = this;
-            var test = this;
-            options = options || {};
+            options = _.extend({
+                wait: false
+            }, options);
 
             var syncSuccess = function(model, response, opts) {
                 openRequests--;
@@ -799,6 +800,7 @@ define([
                 if(!this.get(model.id)) {
                     openRequests++;
                     model.destroy({
+                        wait: options.wait,
                         success: syncSuccess,
                         error: syncError
                     });
@@ -814,6 +816,7 @@ define([
                 if(model.isNew() || model.isDirty()) {
                     openRequests++;
                     model.save(null, {
+                        wait: options.wait,
                         success: syncSuccess,
                         error: syncError
                     });
