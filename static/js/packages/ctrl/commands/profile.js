@@ -88,14 +88,14 @@ define([
                 });
             }, this);
 
-            collection.save(null, {
-                wait: true,
+            collection.save({
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this)
             });
 
             return true;
         }
+
     });
 
     /**
@@ -132,7 +132,7 @@ define([
                 });
             }, this);
 
-            collection.save(null, {
+            collection.save({
                 wait: true,
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this)
@@ -176,7 +176,7 @@ define([
                 });
             }, this);
 
-            collection.save(null, {
+            collection.save({
                 wait: true,
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this)
@@ -220,7 +220,7 @@ define([
                 });
             }, this);
 
-            collection.save(null, {
+            collection.save({
                 wait: true,
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this)
@@ -335,6 +335,11 @@ define([
             var locationPrefs = Q.defer();
             var positionPrefs = Q.defer();
             var technologyPrefs = Q.defer();
+            var promises = [
+                locationPrefs.promise,
+                positionPrefs.promise,
+                technologyPrefs.promise
+            ];
 
             this.facade.trigger(notifications.UPDATE_LOCATION_PREFS, {
                 collection: model.get_location_prefs(),
@@ -353,8 +358,8 @@ define([
                 onSuccess: technologyPrefs.resolve,
                 onError: technologyPrefs.reject
             });
-
-            Q.all([locationPrefs, positionPrefs, technologyPrefs])
+            
+            Q.all(promises)
             .spread(_.bind(this.promiseSuccess, this),
                     _.bind(this.promiseError, this))
             .done();
