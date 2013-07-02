@@ -27,11 +27,15 @@ define([
     var AccountFormView = ui.form.views.FormView.extend({
 
         initialize: function(options) {
+
+            /*
+            Hiding the legend. Leaving code snippet as reference for future.
             options = _.extend({
                 legend: '<strong>Account </strong>' +
                         '<small class="muted">' +
                         'update your basic account info</small>'
             }, options);
+            */
 
             options.fields = [
                 this.firstNameField(options.model),
@@ -179,9 +183,6 @@ define([
 
         initialize: function(options) {
             options = _.extend({
-                legend: '<strong>Preferences </strong>' +
-                        '<small class="muted">' +
-                        'update your job preferences</small>',
                 horizontal: false
             }, options);
 
@@ -699,9 +700,6 @@ define([
 
         initialize: function(options) {
             options = _.extend({
-                legend: '<strong>Skills </strong>' +
-                        '<small class="muted">' +
-                        'update your skills</small>',
                 horizontal: false
             }, options);
 

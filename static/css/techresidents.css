@@ -571,9 +571,9 @@ button.drop-button .caret {
 
 .multi-autocomplete-item {
     padding: 3px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid rgb(250, 159, 44);
     border-radius: 6px 6px 6px 6px;
-    background-color: #eeeeee;
+    background-color: rgb(252, 226, 182);
 }
 
 .multi-autocomplete-item .close {

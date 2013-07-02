@@ -372,3 +372,12 @@
 .developer-profile-pref-form .controls {
     margin-bottom: 25px;
 }
+
+.developer-profile-account-form .control-label {
+    width: 80px;
+}
+
+.developer-profile-account-form .controls {
+    margin-left: 100px;
+}
+
