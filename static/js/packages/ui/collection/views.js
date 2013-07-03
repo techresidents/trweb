@@ -35,7 +35,8 @@ define([
         
         initialize: function(options) {
             options = _.extend({
-                template: this.defaultTemplate
+                template: this.defaultTemplate,
+                classes: []
             }, options);
 
             this.template = _.template(options.template);
@@ -44,6 +45,7 @@ define([
             this.viewFactory = options.viewFactory;
             this.selector = options.selector;
             this.sort = options.sort;
+            this.extraClasses = options.classes;
             this.modelViewMap = {};
             this.viewModelMap = {};
             
@@ -92,6 +94,7 @@ define([
             if (model) {
                 view.$el.data('id', model.id || model.cid);
             }
+
             this.append(view, this.selector);
         },
 
@@ -107,7 +110,8 @@ define([
         },
 
         classes: function() {
-            return ['collection'];
+            var result = ['collection'].concat(this.extraClasses);
+            return result;
         },
 
         childClasses: function() {
@@ -126,7 +130,7 @@ define([
             var context = _.extend({
                 collection: this.collection.toJSON()
             }, core.base.getValue(this, 'context', this));
-
+            
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             
@@ -176,7 +180,8 @@ define([
         },
 
         render: function() {
-            this.html(this.childView);
+            this.$el.html();
+            this.append(this.childView);
             return this;
         }
     });

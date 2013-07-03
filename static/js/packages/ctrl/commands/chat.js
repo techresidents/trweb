@@ -388,35 +388,6 @@ define([
         }
     });
 
-    /**
-     * ShowChatReelSelector constructor
-     * @constructor
-     * @classdesc
-     * Show view for user to select chats for their chat reel
-     */
-    var ShowChatReelSelector = core.command.Command.extend({
-
-        /**
-         * Execute Command
-         * @param {object} options Options object
-         * @param {object} options.chatReelCollection {ChatReelCollection}
-         * @param {function} [options.onSuccess] Success callback
-         * @param {function} [options.onError] Error callback
-         *
-         * @return {boolean} true on success, false otherwise.
-         */
-        execute: function(options) {
-            this.facade.trigger(notifications.VIEW_CREATE, {
-                type: 'ChatReelSelector',
-                options: {
-                    chatReelCollection: options.chatReelCollection
-                }
-            });
-            return true;
-        }
-    });
-
-
     return {
         CreateChat: CreateChat,
         ParticipateInChat: ParticipateInChat,
@@ -424,7 +395,6 @@ define([
         UpdateChatStatus: UpdateChatStatus,
         UpdateChatUserStatus: UpdateChatUserStatus,
         AddChatToReel: AddChatToReel,
-        UpdateChatReel: UpdateChatReel,
-        ShowChatReelSelector: ShowChatReelSelector
+        UpdateChatReel: UpdateChatReel
     };
 });

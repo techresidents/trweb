@@ -9,6 +9,7 @@
         { name: 'alert', exclude: ["main"] },
         { name: 'api', exclude: ["main"] },
         { name: 'applicant', exclude: ["main"] },
+        { name: 'browser', exlude: ["main"] },
         { name: 'chat', exclude: ["main"] },
         { name: 'core', exclude: ["main"] },
         { name: 'ctrl', exclude: ["main"] },
@@ -17,6 +18,7 @@
         { name: 'lookup', exclude: ["main"] },
         { name: 'notifications', exclude: ["main"] },
         { name: 'player', exclude: ["main"] },
+        { name: 'profile', exclude: ["main"] },
         { name: 'requisition', exclude: ["main"] },
         { name: 'search', exclude: ["main"] },
         { name: 'soundmanager', exclude: ["main"] },
@@ -40,6 +42,8 @@
         spin: '3ps/spin/spin',
         highcharts: '3ps/highcharts/js/highcharts.src',
         soundmanager2: '3ps/soundmanager/script/soundmanager2',
+        swfobject: '3ps/swfobject/swfobject',
+        q: '3ps/q/q',
         //twilio: 'http://static.twilio.com/libs/twiliojs/1.1/twilio.min'
         twilio: 'empty:'
     },
@@ -48,6 +52,7 @@
         { name: 'alert', location: 'packages/alert' },
         { name: 'api', location: 'packages/api' },
         { name: 'applicant', location: 'packages/applicant' },
+        { name: 'browser', location: 'packages/browser'},
         { name: 'chat', location: 'packages/chat' },
         { name: 'core', location: 'packages/core' },
         { name: 'ctrl', location: 'packages/ctrl' },
@@ -56,6 +61,7 @@
         { name: 'lookup', location: 'packages/lookup' },
         { name: 'notifications', location: 'packages/notifications' },
         { name: 'player', location: 'packages/player' },
+        { name: 'profile', location: 'packages/profile' },
         { name: 'requisition', location: 'packages/requisition' },
         { name: 'search', location: 'packages/search' },
         { name: 'soundmanager', location: 'packages/soundmanager' },
@@ -110,6 +116,10 @@
 
         'soundmanager2': {
             exports: 'soundManager'
+        },
+
+        'swfobject': {
+            exports: 'swfobject'
         },
 
         'twilio': {

@@ -45,7 +45,9 @@ define([
             this.model = options.model;
             this.attribute = options.attribute;
             this.daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Tu', 'Fr', 'Sa'];
-            this.months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            this.months = [
+                'January', 'February', 'March', 'April', 'May', 'June', 'July',
+                'August', 'September', 'October', 'November', 'December'];
         
             if(!this.model) {
                 this.model = new Backbone.Model({date: null});
@@ -338,6 +340,10 @@ define([
             return this;
         },
 
+        isOpen: function() {
+            return this.dropView.isOpen();
+        },
+
         onDateChanged: function(model) {
             this.updateInput();
         },
@@ -363,7 +369,6 @@ define([
                 }
             } else {
                 newDate = null;
-                update = true;
             }
 
             if((newDate && currentDate && !currentDate.equals(newDate)) ||

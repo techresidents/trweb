@@ -31,6 +31,9 @@ define([
             'chat/:id': 'chat',
             'chatsim/:id': 'chatSimulation',
             'home': 'home',
+            'profile/account': 'profileAccount',
+            'profile/preferences': 'profilePreferences',
+            'profile/skills': 'profileSkills',
             'reel': 'reel',
             'topic/:id': 'topic',
             'topic/:id/talkingpoints': 'topicTalkingPoints',
@@ -70,6 +73,39 @@ define([
             require(['home'], _.bind(function(home) {
                 this.facade.trigger(notifications.VIEW_CREATE, {
                     type: home.mediators.developer.DeveloperHomeMediator.VIEW_TYPE,
+                    options: {
+                    }
+                });
+            }, this));
+        },
+
+        profileAccount: function() {
+            require(['profile'], _.bind(function(profile) {
+                var Mediator = profile.mediators.developer.DeveloperProfileMediator;
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: Mediator.VIEW_TYPE.ACCOUNT,
+                    options: {
+                    }
+                });
+            }, this));
+        },
+
+        profilePreferences: function() {
+            require(['profile'], _.bind(function(profile) {
+                var Mediator = profile.mediators.developer.DeveloperProfileMediator;
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: Mediator.VIEW_TYPE.PREFERENCES,
+                    options: {
+                    }
+                });
+            }, this));
+        },
+
+        profileSkills: function() {
+            require(['profile'], _.bind(function(profile) {
+                var Mediator = profile.mediators.developer.DeveloperProfileMediator;
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: Mediator.VIEW_TYPE.SKILLS,
                     options: {
                     }
                 });
@@ -230,6 +266,15 @@ define([
         notifications.UPDATE_TALKING_POINTS;
     EventNotificationMap[events.UPDATE_CHAT_REEL] =
         notifications.UPDATE_CHAT_REEL;
+    /* PROFILE EVENTS */
+    EventNotificationMap[events.UPDATE_USER] =
+        notifications.UPDATE_USER;
+    EventNotificationMap[events.UPDATE_SKILLS] =
+        notifications.UPDATE_SKILLS;
+    EventNotificationMap[events.UPDATE_DEVELOPER_ACCOUNT] =
+        notifications.UPDATE_DEVELOPER_ACCOUNT;
+    EventNotificationMap[events.UPDATE_DEVELOPER_PREFERENCES] =
+        notifications.UPDATE_DEVELOPER_PREFERENCES;
 
     /**
      * App Mediator
@@ -384,6 +429,28 @@ define([
             /* DEVELOPER NOTE COMMANDS */
             this.registerCommand(notifications.TAKE_NOTE,
                 ctrl.commands.user.TakeNote);
+            /* BROWSER COMPATIBILITY COMMANDS */
+            this.registerCommand(notifications.CHECK_BROWSER_COMPATIBILITY,
+                ctrl.commands.browser.CheckBrowserCompatibility);
+            this.registerCommand(notifications.CHECK_FLASH_COMPATIBILITY,
+                ctrl.commands.browser.CheckFlashCompatibility);
+            /* PROFILE COMMANDS */
+            this.registerCommand(notifications.UPDATE_USER,
+                ctrl.commands.profile.UpdateUser);
+            this.registerCommand(notifications.UPDATE_SKILLS,
+                ctrl.commands.profile.UpdateSkills);
+            this.registerCommand(notifications.UPDATE_LOCATION_PREFS,
+                ctrl.commands.profile.UpdateLocationPrefs);
+            this.registerCommand(notifications.UPDATE_POSITION_PREFS,
+                ctrl.commands.profile.UpdatePositionPrefs);
+            this.registerCommand(notifications.UPDATE_TECHNOLOGY_PREFS,
+                ctrl.commands.profile.UpdateTechnologyPrefs);
+            this.registerCommand(notifications.UPDATE_DEVELOPER_PROFILE,
+                ctrl.commands.profile.UpdateDeveloperProfile);
+            this.registerCommand(notifications.UPDATE_DEVELOPER_ACCOUNT,
+                ctrl.commands.profile.UpdateDeveloperAccount);
+            this.registerCommand(notifications.UPDATE_DEVELOPER_PREFERENCES,
+                ctrl.commands.profile.UpdateDeveloperPreferences);
         },
         
         /**
@@ -439,5 +506,17 @@ define([
     $(document).ready(function() {
         appFacade.initializeRouter();
         appFacade.trigger(notifications.DOM_READY);
+        appFacade.trigger(notifications.CHECK_FLASH_COMPATIBILITY, {
+            majorVersion: 10,
+            minorVersion: 1
+        });
+        // Browser warning (via an alert) trumps flash version warning
+        appFacade.trigger(notifications.CHECK_BROWSER_COMPATIBILITY, {
+            'chrome': 11,
+            'firefox': 3.6,
+            'msie': 9,
+            'opera': 11,
+            'safari': 5
+        });
     });
 });

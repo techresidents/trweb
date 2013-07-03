@@ -115,12 +115,12 @@ define([
                 result = null;
             }
             else if(_.isString(value)) {
-                result = new core.date.Date(new Date(value));
+                result = new core.date.DateTime(new Date(value));
             } else if(_.isDate(value)) {
-                result = new core.date.Date(value);
-            } else if(value instanceof core.date.DateTime) {
-                result = new core.date.Date(value.date);
+                result = new core.date.DateTime(value);
             } else if(value instanceof core.date.Date) {
+                result = new core.date.DateTime(value.date);
+            } else if(value instanceof core.date.DateTime) {
                 result = value;
             } else {
                 throw new Error(this.name + ": invalid date");
@@ -130,10 +130,13 @@ define([
 
         toJSON: function(value) {
             var result;
-            if(_.isDate(value) ||
+            if(_.isNull(value) || _.isUndefined(value)) {
+                result = null;
+            }
+            else if(_.isDate(value) ||
                value instanceof core.date.Date || 
                value instanceof core.date.DateTime) {
-                result = value.toISOString().substring(0,10);
+                result = value.toISOString();
             } else {
                 throw new Error(this.name + ": invalid date");
             }
@@ -432,6 +435,28 @@ define([
         }
     });
 
+    var OneToOne = RelatedField.extend({
+        initialize: function(attributes) {
+            attributes.many = false;
+            RelatedField.prototype.initialize.call(this, attributes);
+            this.backref = attributes.backref;
+        },
+
+        contribute: function(constructor, fieldName) {
+            RelatedField.prototype.contribute.call(this, constructor, fieldName);
+            if(this.backref) {
+                var backrefRelation = constructor;
+
+                var field = new OneToOne({
+                    relation: backrefRelation
+                });
+
+                this.relationConstructor.prototype.relatedFields[this.backref] = field;
+                field.contribute(this.relationConstructor, this.backref);
+            }
+        }
+    });
+
     var ManyToMany = RelatedField.extend({
         initialize: function(attributes) {
             attributes.many = true;
@@ -471,6 +496,7 @@ define([
         RelatedField: RelatedField,
         ForeignKey: ForeignKey,
         ReverseForeignKey: ReverseForeignKey,
+        OneToOne: OneToOne,
         ManyToMany: ManyToMany
     };
 });

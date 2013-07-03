@@ -53,6 +53,20 @@ define([
         UPDATE_CHAT_USER_STATUS: 'notification:UpdateChatUserStatus',
         UPDATE_TALKING_POINTS: 'notification:UpdateTalkingPoints',
         UPDATE_CHAT_REEL: 'notification:UpdateChatReel',
-        ADD_CHAT_TO_REEL: 'notification:AddChatToReel'
+        ADD_CHAT_TO_REEL: 'notification:AddChatToReel',
+
+        /* BROWSER ACTIONS */
+        CHECK_BROWSER_COMPATIBILITY: 'notification:CheckBrowserCompatibility',
+        CHECK_FLASH_COMPATIBILITY: 'notification:CheckFlashCompatibility',
+
+        /* PROFILE ACTIONS */
+        UPDATE_USER: 'notification:UpdateUser',
+        UPDATE_SKILLS: 'notification:UpdateSkills',
+        UPDATE_LOCATION_PREFS: 'notification:UpdateLocationPrefs',
+        UPDATE_POSITION_PREFS: 'notification:UpdatePositionPrefs',
+        UPDATE_TECHNOLOGY_PREFS: 'notification:UpdateTechnologyPrefs',
+        UPDATE_DEVELOPER_PROFILE: 'notification:UpdateDeveloperProfile',
+        UPDATE_DEVELOPER_ACCOUNT: 'notification:UpdateDeveloperAccount',
+        UPDATE_DEVELOPER_PREFERENCES: 'notification:UpdateDeveloperPreferences'
     };
 });

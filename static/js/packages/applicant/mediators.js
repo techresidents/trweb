@@ -250,7 +250,7 @@ define([
             if(this.isViewType(notification.type)) {
                 notification.view.destroy();
                 this.facade.trigger(notifications.VIEW_DESTROYED, {
-                    type: this.viewType(), // TODO BUG?
+                    type: notification.type,
                     view: notification.view
                 });
             }

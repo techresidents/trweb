@@ -1,14 +1,18 @@
 define(/** @exports ctrl */[
     'core',
     './commands/applicant',
+    './commands/browser',
     './commands/chat',
+    './commands/profile',
     './commands/user',
     './proxies/current',
     './proxies/player'
 ], function(
     core,
     applicant_commands,
+    browser_commands,
     chat_commands,
+    profile_commands,
     user_commands,
     current_proxies,
     player_proxies) {
@@ -16,7 +20,9 @@ define(/** @exports ctrl */[
     return {
         commands: {
             applicant: applicant_commands,
+            browser: browser_commands,
             chat: chat_commands,
+            profile: profile_commands,
             user: user_commands
         },
         proxies: {

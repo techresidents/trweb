@@ -1,0 +1,11 @@
+<div class="control-group<%= state.showError && state.error ? ' error' : ''%>">
+    <div class="controls">
+        <label class="checkbox">
+            <input type="checkbox" <%= state.rawValue ? 'checked="checked"' : '' %> <%= state.enabled ? '' : 'readonly' %>>
+            <%= state.label %>
+        </label>
+        <% if(state.showError && state.error) { %>
+            <span class="help-inline"><%= state.error %></span>
+        <% } %>
+    </div>
+</div>

@@ -9,10 +9,30 @@ define([
     core,
     api) {
 
-
     /**
-     * Template View class.
+     * Template View.
      * @constructor
+     * @augments module:core/view~View
+     * @param {Object} options
+     * @param {String} options.template name of template to use for this view.
+     *    This string value will be passed to _.template() to be compiled for
+     *    rendering.
+     * @param {Object} [options.context] context to pass to template for rendering
+     * @param {Object} [options.model] model
+     * @param {Object} [options.modelEvents='change'] model events to listen on
+     * @param {Array}  [options.modelWithRelated] Array of data to load with model
+     * @param {Object} [options.collection] collection
+     * @param {Object} [options.collectionEvents='reset add remove'] collection
+     *    events to listen on
+     * @param {Array} [options.collectionWithRelated] Array of data to load with
+     *    collection
+     * @param {Boolean} [options.load=false] If true, will invoke the 'load' method
+     *    on an instance of apiLoader.  Will load options.model, options.modelWithRelated,
+     *    options.collection, and options.collectionWithRelated
+     * @param {Array} [options.classes=[]] style to add to rendered element
+     * @classdesc
+     * A generic view that has no specialized functionality.  Best suited
+     * for read-only views.
      */
     var TemplateView = core.view.View.extend({
 
@@ -41,7 +61,7 @@ define([
                 this.listenTo(this.model, this.modelEvents, this.render);
                 loaderArgs.push({
                     instance: this.model,
-                    withRelated: this.modelWithRealted
+                    withRelated: this.modelWithRelated
                 });
             }
 
@@ -49,7 +69,7 @@ define([
                 this.listenTo(this.collection, this.collectionEvents, this.render);
                 loaderArgs.push({
                     instance: this.collection,
-                    withRelated: this.collectionWithRealted
+                    withRelated: this.collectionWithRelated
                 });
             }
 

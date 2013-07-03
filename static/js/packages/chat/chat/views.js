@@ -372,7 +372,7 @@ define([
 
             //Setup Twilio device singleton
             Twilio.Device.setup(this.credential.get_twilio_capability(), {
-                debug: true
+                debug: false
             });
             
             //bind Twilio device events

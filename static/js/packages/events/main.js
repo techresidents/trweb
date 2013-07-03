@@ -37,6 +37,12 @@ define(/** @exports events */[
 
         /* PLAYER EVENTS */
         PLAYER_PLAY: 'player_play',
-        PLAYER_PAUSE: 'player_pause'
+        PLAYER_PAUSE: 'player_pause',
+
+        /* PROFILE EVENTS */
+        UPDATE_USER: 'update_user',
+        UPDATE_SKILLS: 'update_skills',
+        UPDATE_DEVELOPER_ACCOUNT: 'update_developer_account',
+        UPDATE_DEVELOPER_PREFERENCES: 'update_developer_preferences'
     };
 });

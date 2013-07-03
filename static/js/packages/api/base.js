@@ -242,6 +242,7 @@ define([
             var result = {};
             var field, fieldName, relation, cache;
             var relationOptions = _.extend({}, options, {parse: false});
+            var isDirty;
 
             for(fieldName in this.fields) {
                 if(this.fields.hasOwnProperty(fieldName)) {
@@ -273,15 +274,17 @@ define([
                                         relation.parse(response[fieldName], relationOptions),
                                         relationOptions);
                             }
-
-                        } else {
+                        
+                        //update meta info for related fields if method
+                        //is not and update (PUT)
+                        } else if(options.method !== 'update'){
                             if(field.many) {
                                 relation.meta = response[fieldName].meta;
                             } else {
+                                //preserve dirty flag
+                                isDirty = relation._isDirty;
                                 relation.set_meta(response[fieldName].meta);
-                                //prevent non-loaded relations from being
-                                //marked dirty
-                                relation._isDirty = false;
+                                relation._isDirty = isDirty;
                             }
                         }
                     }
@@ -626,6 +629,7 @@ define([
             });
 
             result.meta = _.clone(this.meta);
+            result.toDestroy = _.clone(this.toDestroy);
             result.url = this.url;
             result._loaded = this._loaded;
             if(!result.parentRelation) {
@@ -745,11 +749,17 @@ define([
             var openRequests = 0;
             var errors = 0;
             var that = this;
-            var test = this;
-            options = options || {};
+            options = _.extend({
+                wait: false
+            }, options);
 
-            var syncSuccess = function() {
+            var syncSuccess = function(model, response, opts) {
                 openRequests--;
+                if(opts.method === 'delete') {
+                    that.toDestroy = _.filter(that.toDestroy, function(m) {
+                        return m.id !== model.id;
+                    });
+                }
                 if(openRequests === 0) {
                     if(that.session && !options.noSession) {
                         that.session.putCollection(
@@ -790,6 +800,7 @@ define([
                 if(!this.get(model.id)) {
                     openRequests++;
                     model.destroy({
+                        wait: options.wait,
                         success: syncSuccess,
                         error: syncError
                     });
@@ -805,13 +816,12 @@ define([
                 if(model.isNew() || model.isDirty()) {
                     openRequests++;
                     model.save(null, {
+                        wait: options.wait,
                         success: syncSuccess,
                         error: syncError
                     });
                 }
             });
-            this.toDestroy = [];
-            
 
             //if no saving is needed still trigger success callback
             if(openRequests === 0 && options.success) {
@@ -821,7 +831,10 @@ define([
 
         onRemove: function(model) {
             if(model.id) {
-                this.toDestroy.push(model);
+                var models = _.where(this.toDestroy, {id: model.id});
+                if(models.length === 0) {
+                    this.toDestroy.push(model);
+                }
             }
         }
 

@@ -23,6 +23,7 @@ define([
      * following a successful read.
      */
     var sync = function(method, model, options) {
+        options.method = method;
         var success = options.success;
         var error = options.error;
         var withRelated = null;
@@ -152,7 +153,7 @@ define([
             includeRoot: false,
             depth: 0
         }, options);
-        
+
         relations = relations || [];
         if(_.isString(relations)) {
             relations = relations.split('__');
@@ -241,15 +242,16 @@ define([
                             query = current.instance.withRelated(
                                 current.relations.join('__'));
                         }
-                        if(!queryMap.hasOwnProperty(key)) {
+                        
+                        //query is only needed if no parent or the parent
+                        //is already loaded. If the parent is not loaded
+                        //the child will be included in parent query.
+                        var needed = !current.parent ||
+                                     current.parent.instance.isLoaded();
+
+                        if(needed && !queryMap.hasOwnProperty(key)) {
                             queryMap[key] = query;
                         }
-
-                        //stop bfs traversal at this point since we added
-                        //a query to handle current and its relations.
-                        //if we don't do this we'll end up making multiple
-                        //queries for the same data.
-                        return true;
                     }
                 }, this);
             }, this);

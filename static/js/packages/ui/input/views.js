@@ -28,24 +28,28 @@ define(/** @exports ui/input/views */[
          * @param {object} options Options object
          * @param {View} options.inputView view with an input field
          * @param {string} options.inputSelector String to select
-         *      the input element of options.inputView
-         * @param {number} [options.throttle=150]
+         *    the input element of options.inputView
+         * @param {number} [options.throttle=150] number of millisecs to throttle
+         *    before events are triggered
          * @param {object} [options.model] model to update after change event
          * @param {string} [options.modelAttribute] model attribute to update
-         *  after change event.
+         *    after change event.
          * @param {boolean} [options.trim=true] If true, will trim whitespace
          * @param {boolean} [options.updateDuringTyping=false] if true, will
-         *  will not wait for user to stop typing before triggering a change
-         *  event.
+         *    will not wait for user to stop typing before triggering a change
+         *    event.
          * @param {boolean} [options.preventDefaultOnEnter=true] If true, will
-         *  prevent the enter key push event from propagating
+         *    prevent the enter key push event from propagating
          * @param {boolean} [options.blurOnEnter=true] If true, will trigger
-         *  a blur event when enter key is pushed. Requires
-         *  options.preventDefaultOnEnter to be true.
+         *    a blur event when enter key is pushed. Requires
+         *    options.preventDefaultOnEnter to be true.
          * @classdesc
          * Handler for a view with an input field. This view has no associated
          * template or UI.
          */
+        events: {
+        },
+
         initialize: function(options) {
             options = _.extend({
                 throttle: 150,
@@ -64,6 +68,7 @@ define(/** @exports ui/input/views */[
             this.blurOnEnter = options.blurOnEnter;
             this._lastInputValue = '';
             this._timer = null;
+            this._hasFocusPerEvent = false;
 
             this.setModel(options.model, options.modelAttribute);
             this.setInput(options.inputView, options.inputSelector);
@@ -71,8 +76,6 @@ define(/** @exports ui/input/views */[
 
         delegateInputEvents: function() {
             if(this.inputView) {
-                // TODO
-                //console.log('%s delegateInputEvents', this.cid);
                 this.undelegateInputEvents();
                 this.inputView.addEventListener(this.cid, 'focus', this.onFocus, this, this.inputSelector);
                 this.inputView.addEventListener(this.cid, 'blur', this.onBlur, this, this.inputSelector);
@@ -82,8 +85,6 @@ define(/** @exports ui/input/views */[
 
         undelegateInputEvents: function() {
             if(this.inputView) {
-                // TODO
-                //console.log('%s undelegateInputEvents', this.cid);
                 this.inputView.removeEventListeners(this.cid);
             }
         },
@@ -182,6 +183,63 @@ define(/** @exports ui/input/views */[
             }
         },
 
+        getCursorPosition: function() {
+            var result;
+            var input = this.getInput().get(0);
+            if(input.selectionStart !== undefined) {
+                result = input.selectionStart;
+            } else if(document.selection) {
+                this.focus();
+                var selection = document.selection.createRange();
+                selection.moveStart('character', -input.value.length);
+                result = selection.text.length;
+            }
+            return result;
+        },
+
+        setCursorPosition: function(pos) {
+            var input = this.getInput().get(0);
+            if(input.setSelectionRange) {
+                input.setSelectionRange(pos, pos);
+            } else if(input.createTextRange) {
+                var range = input.createTextRange();
+                range.collapse(true);
+                range.moveEnd('character', pos);
+                range.moveStart('character', pos);
+                range.select();
+            }
+        },
+
+        setCursorStart: function() {
+            this.setCursorPosition(0);
+        },
+
+        setCursorEnd: function() {
+            var value = this.getInput().val();
+            this.setCursorPosition(value.length);
+        },
+
+        hasFocus: function(options) {
+            options = _.extend({
+                perEvent: false
+            }, options);
+
+            var result = this._hasFocusPerEvent;
+            
+            if(!options.perEvent) {
+                result = this.getInput().is(':focus');
+            }
+            return result;
+        },
+
+        focus: function() {
+            this.getInput().focus();
+        },
+
+        blur: function() {
+            this.getInput().blur();
+        },
+
         classes: function() {
             return ['input-handler'];
         },
@@ -204,10 +262,12 @@ define(/** @exports ui/input/views */[
         },
 
         onFocus: function(e) {
+            this._hasFocusPerEvent = true;
             this._startTimer();
         },
 
         onBlur: function(e) {
+            this._hasFocusPerEvent = false;
             this._stopTimer();
             this._update();
         },

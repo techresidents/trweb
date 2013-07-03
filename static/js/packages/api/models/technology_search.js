@@ -29,7 +29,7 @@ define([
 
         fields: {
             id: new fields.IntegerField({primaryKey: true}),
-            technology_id: new fields.StringField(),
+            technology_id: new fields.IntegerField(),
             q: new fields.StringField({nullable: true}),
             ac: new fields.StringField({nullable: true}),
             name: new fields.StringField(),

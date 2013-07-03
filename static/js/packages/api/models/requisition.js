@@ -3,7 +3,6 @@ define([
     'underscore',
     '../base',
     '../fields',
-    './location',
     './technology',
     './tenant',
     './user'
@@ -12,7 +11,6 @@ define([
     _,
     api,
     fields,
-    location_models,
     technology_models,
     tenant_models,
     user_models) {
@@ -35,7 +33,7 @@ define([
             id: new fields.StringField({primaryKey: true}),
             tenant_id: new fields.StringField(),
             user_id: new fields.StringField(),
-            location_id: new fields.IntegerField(),
+            location: new fields.StringField(),
             created: new fields.DateTimeField({nullable: true}),
             status: new fields.StringField(),
             position_type: new fields.StringField(),
@@ -57,10 +55,6 @@ define([
             user: new fields.ForeignKey({
                 relation: user_models.User,
                 backref: "requisitions"
-            }),
-
-            location: new fields.ForeignKey({
-                relation: location_models.Location
             }),
 
             technologies: new fields.ManyToMany({

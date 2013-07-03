@@ -1,5 +1,4 @@
 import base64
-import json
 import os
 
 from django.core.urlresolvers import reverse
@@ -14,10 +13,7 @@ from django.template.loader import get_template
 from django.views.decorators.cache import never_cache
 
 from techresidents_web.accounts import forms
-from techresidents_web.common.decorators import developer_required
 from techresidents_web.accounts.models import OneTimePassword
-from techresidents_web.job.models import JobPositionType, JobPositionTypePref, JobTechnologyPref, JobLocationPref
-from techresidents_web.common.models import Skill, Technology, TechnologyType, ExpertiseType
 
 
 
@@ -304,232 +300,18 @@ def logout(request):
     redirect_to = request.REQUEST.get("next", settings.LOGIN_URL)
     return HttpResponseRedirect(redirect_to)
 
-@developer_required
-def profile_account(request):
-    if request.method == 'POST':
-        form = forms.ProfileAccountForm(request, data=request.POST)
-        if form.is_valid():
-            form.save(commit=True)
-            messages.success(request, "Save successful")
-
-            #update timezone in session so user sees changes
-            #without having to re-login.
-            request.session['timezone'] = form.cleaned_data['timezone']
-
-            return HttpResponseRedirect(reverse('accounts.views.profile_account'))
-    else:
-        user = request.user
-        user_profile = request.user.get_profile()
-        form_data = {
-            'first_name':user.first_name,
-            'last_name':user.last_name,
-            'email_address':user.email,
-            'timezone': user.timezone or settings.TIME_ZONE,
-        }
-        if user_profile.developer_since is not None:
-            form_data['developer_since'] = user_profile.developer_since.year
-        form = forms.ProfileAccountForm(request, data=form_data)
-
-    context = {
-        'form': form,
-    }
-
-    return render_to_response('accounts/profile_account.html', context,  context_instance=RequestContext(request))
-
-@developer_required
-def profile_password(request):
+@login_required
+def password(request):
     if request.method == 'POST':
         form = forms.ProfilePasswordForm(request, data=request.POST)
         if form.is_valid():
             form.save(commit=True)
             messages.success(request, "Password successfully changed")
-            return HttpResponseRedirect(reverse('accounts.views.profile_password'))
+            return HttpResponseRedirect(reverse('accounts.views.password'))
     else:
         form = forms.ProfilePasswordForm(request)
 
     context = {
         'form': form
     }
-    return render_to_response('accounts/profile_password.html', context, context_instance=RequestContext(request))
-
-@developer_required
-def profile_chats(request):
-    if request.method == 'POST':
-        form = forms.ProfileChatsForm(request, data=request.POST)
-        if form.is_valid():
-            form.save(commit=True)
-            messages.success(request, "Save successful")
-            return HttpResponseRedirect(reverse('accounts.views.profile_chats'))
-    else:
-        user_profile = request.user.get_profile()
-        form_data = {
-            'email_upcoming_chats':user_profile.email_upcoming_chats,
-            'email_new_chat_topics':user_profile.email_new_chat_topics
-        }
-        form = forms.ProfileChatsForm(request, data=form_data)
-
-    context = {
-        'form': form
-    }
-
-    return render_to_response('accounts/profile_chats.html', context, context_instance=RequestContext(request))
-
-@developer_required
-def profile_jobs(request):
-    if request.method == 'POST':
-        form = forms.ProfileJobsForm(request, data=request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Save successful")
-            return HttpResponseRedirect(reverse('accounts.views.profile_jobs'))
-    else:
-        form = forms.ProfileJobsForm(request)
-
-    # Create minimum salary values to populate the UI with
-    # These values purposefully do not use the same values
-    # that the form uses to validate min salary inputs.
-    min_salary_options = range(
-        50000,
-        260000,
-        10000)
-
-    # Create data to populate the Positions field
-    position_types = JobPositionType.objects.all()
-    position_names = [p.name for p in position_types]
-    json_position_types = [ {
-        'id': p.id,
-        'name': p.name,
-        'description': p.description} for p in position_types]
-
-    # Retrieve list of user's position preferences and create json data to populate UI
-    position_prefs = JobPositionTypePref.objects.filter(user=request.user).select_related('position_type')
-    json_position_prefs = [ {
-        'id': pos.id,
-        'positionTypeId': pos.position_type.id,
-        'min_salary': pos.salary_start} for pos in position_prefs]
-
-    # Retrieve list of user's future job technology preferences and create json data to populate UI
-    technology_prefs = JobTechnologyPref.objects.filter(user=request.user).select_related('technology').order_by('technology__name')
-    json_technology_prefs = [{
-        'id': t.id,
-        'technologyId': t.technology.id,
-        'name': t.technology.name,
-        'description': t.technology.description} for t in technology_prefs]
-
-    # Retrieve list of user's future job location preferences and create json data to populate UI
-    location_prefs = JobLocationPref.objects.filter(user=request.user).select_related('location').order_by('location__city')
-    json_location_prefs = [{
-        'id': l.id,
-        'locationId': l.location.id,
-        'city': l.location.city,
-        'state': l.location.state,
-        'zip': l.location.zip,
-        'country': l.location.country} for l in location_prefs]
-
-    # Retrieve list of user's notification preferences and create json data to populate UI
-    json_notification_prefs = {'emailNewJobOpps': request.user.get_profile().email_new_job_opps}
-
-    context = {
-        'form': form,
-        'json_notification_prefs': json.dumps(json_notification_prefs),
-        'json_location_prefs' : json.dumps(json_location_prefs),
-        'json_technology_prefs': json.dumps(json_technology_prefs),
-        'json_user_positions': json.dumps(json_position_prefs),
-        'json_position_types': json.dumps(json_position_types),
-        'position_names': position_names,
-        'min_salary_options': min_salary_options,
-        'support_email': settings.DEFAULT_SUPPORT_EMAIL
-    }
-
-    return render_to_response('accounts/profile_jobs.html', context, context_instance=RequestContext(request))
-
-@developer_required
-def profile_skills_languages(request):
-    technology_type = 'Language'
-    if request.method == 'POST':
-        form = forms.ProfileSkillsForm(request, technology_type, data=request.POST)
-        if form.is_valid():
-            form.save(commit=True)
-            messages.success(request, "Save successful")
-            return HttpResponseRedirect(reverse('accounts.views.profile_skills_languages'))
-        else:
-            context = profile_skills_common(request, technology_type)
-            context['form'] = form
-    else:
-        context = profile_skills_common(request, technology_type)
-        context['form'] = forms.ProfileSkillsForm(request,technology_type)
-
-    return render_to_response('accounts/profile_skills_languages.html', context, context_instance=RequestContext(request))
-
-@developer_required
-def profile_skills_frameworks(request):
-    technology_type = 'Framework'
-    if request.method == 'POST':
-        form = forms.ProfileSkillsForm(request, technology_type, data=request.POST)
-        if form.is_valid():
-            form.save(commit=True)
-            messages.success(request, "Save successful")
-            return HttpResponseRedirect(reverse('accounts.views.profile_skills_frameworks'))
-        else:
-            context = profile_skills_common(request, technology_type)
-            context['form'] = form
-    else:
-        context = profile_skills_common(request, technology_type)
-        context['form'] = forms.ProfileSkillsForm(request,technology_type)
-
-    return render_to_response('accounts/profile_skills_frameworks.html', context, context_instance=RequestContext(request))
-
-@developer_required
-def profile_skills_persistence(request):
-    technology_type = 'Persistence'
-    if request.method == 'POST':
-        form = forms.ProfileSkillsForm(request, technology_type, data=request.POST)
-        if form.is_valid():
-            form.save(commit=True)
-            messages.success(request, "Save successful")
-            return HttpResponseRedirect(reverse('accounts.views.profile_skills_persistence'))
-        else:
-            context = profile_skills_common(request, technology_type)
-            context['form'] = form
-    else:
-        context = profile_skills_common(request, technology_type)
-        context['form'] = forms.ProfileSkillsForm(request,technology_type)
-
-    return render_to_response('accounts/profile_skills_persistence.html', context, context_instance=RequestContext(request))
-
-@developer_required
-def profile_skills_common(request, technology_type_name):
-    """ Pulled out the code that was common between the language_skills
-        and framework_skill views.
-    """
-
-    # Populate list of supported skills for autocomplete widget
-    skill_technology_type = TechnologyType.objects.get(name=technology_type_name)
-    skill_technologies = Technology.objects.filter(type=skill_technology_type)
-    json_autocomplete_skills = [s.name for s in skill_technologies]
-
-    # Create expertise values to populate the UI with
-    expertise_types = ExpertiseType.objects.all()
-    expertise_options = [e.name for e in expertise_types]
-
-    # Create years experience values to populate the UI with
-    yrs_experience_options = range(0,21)
-
-    # Retrieve list of user's language skills from db and create json data to populate UI
-    user_skills = Skill.objects.filter(user=request.user, technology__type=skill_technology_type).select_related('technology').select_related('expertise_type')
-    user_skills_list = [ {'name': skill.technology.name,
-                          'expertise': skill.expertise_type.name,
-                          'yrs_experience': skill.yrs_experience} for skill in user_skills]
-    json_skills = []
-    if user_skills_list:
-        json_skills = user_skills_list
-
-    context = {
-        'expertise_options': expertise_options,
-        'yrs_experience_options': yrs_experience_options,
-        'json_autocomplete_skills': json.dumps(json_autocomplete_skills),
-        'json_skills': json.dumps(json_skills),
-        'support_email': settings.DEFAULT_SUPPORT_EMAIL
-    }
-
-    return context
+    return render_to_response('accounts/password.html', context, context_instance=RequestContext(request))
