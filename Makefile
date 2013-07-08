@@ -1,3 +1,9 @@
+UNAME := $(shell uname)
+ifeq ($(UNAME),Darwin)
+	MD5 = /sbin/md5
+else
+	MD5 = /usr/bin/md5sum
+endif
 
 all: web
 
@@ -30,13 +36,13 @@ static: static_collected
 	@for app in "developer" "employer"; do \
 		application=static_collected/js/apps/$$app/apps/$$app; \
 		for package in static_collected/js/apps/$$app/packages/* ; do \
-			echo $$package; \
 			p=$$(basename $$package); \
 			sum=$$(echo $$package/main.*.js | sed 's|.*main\.\(.*\)\.js|\1|'); \
-			sed -i "" "s|\(\"packages/$$p\"\)|\1,main:\"main.$$sum\"|g" $$application/src/main*.js; \
+			sed -i.tmp -e "s|\(\"packages/$$p\"\)|\1,main:\"main.$$sum\"|g" $$application/src/main*.js; \
 			done; \
-		newsum=$$(md5 $$application/src/main.js | sed 's|.*= \(.\{12\}\).*|\1|'); \
+		newsum=$$($(MD5) $$application/src/main.js | sed 's|.*\([0-9a-f]\{12\}\)[0-9a-f]\{20\}.*|\1|'); \
 		mv $$application/src/main.*.js $$application/src/main.$$newsum.js; \
+		rm $$application/src/main*.tmp; \
 	done
 
 clean:
