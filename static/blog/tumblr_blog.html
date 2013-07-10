@@ -928,76 +928,9 @@
         </style>
 
         {block:PermalinkPage}
-            <!-- Simplified permalink pages (Hides right column) -->
             <style type="text/css" media="screen">
-                #container {
-                    width: 700px;
-                }
-
-                #header {
-                    width: 700px;
-                }
-
-                #blog_info {
-                    width: 513px;
-                    margin: 0;
-                }
-
-                #blog_avatar {
-                    width: 48px;
-                    height: 48px;
-                    backround-color: red;
-                }
-
-                #blog_avatar a {
-                    position: absolute;
-                    left: auto;
-                    right: 0;
-                }
-
-                #blog_avatar:hover a {
-                    left: auto;
-                    right: -8px;
-                }
-
                 #sidebar {
                     display: none;
-                }
-
-                #blog_info {
-                    {block:IfNotShowBlogTitle}
-                        width: 632px;
-                        margin-top: -7px;
-                        float: right;
-                    {/block:IfNotShowBlogTitle}
-                }
-
-                #blog_info .description {
-                    margin-bottom: 60px;
-                }
-
-                .post .post_info,
-                .post .post_info.floating,
-                .post .caption {
-                    width: auto !important;
-                    float: none;
-                }
-
-                .post .post_info {
-                    margin-top: 45px;
-                }
-
-                .post .post_info li,
-                .post .post_info.floating li {
-                    line-height: 14px;
-                    margin-bottom: 10px;
-                    float: left;
-                }
-
-                .post .post_info li a,
-                .post .post_info.floating li a {
-                    margin: 0 10px 0 0;
-                    padding: 0 2px 0 5px;
                 }
             </style>
         {block:PermalinkPage}
@@ -1088,6 +1021,15 @@
             .navbar {
                 -webkit-font-smoothing: subpixel-antialiased;
             }
+            .tr-blog-post-author + div {
+                clear: both;
+            }
+            .tr-blog-post-author > div {
+                padding-left: 60px;
+            }
+            .tr-blog-post-author .tr-avatar {
+                float: left;
+            }
             .tr-brand-logo {
                 height: 25px;
                 width: 26px;
@@ -1135,7 +1077,7 @@
 
                 {block:IfShowProfilePhoto}
                     <section id="blog_avatar">
-                        <a href="/" class="avatar"><img src="{PortraitURL-64}"></a>
+                        <a href="/" class="avatar"><img src="{PostAuthorPortraitURL-64}"></a>
                     </section>
                 {/block:IfShowProfilePhoto}
             </header>
@@ -1229,7 +1171,13 @@
                            
                                 <section class="caption group">
                                     {block:Title}<h2><a href="{Permalink}">{Title}</a></h2>{/block:Title}
-                                    <div class="cont group">{Body}</div>
+                                    <div class="tr-blog-post-author">
+                                        <a href="/" class="tr-avatar"><img src="{PostAuthorPortraitURL-48}"></a>
+                                        <div>{block:Date}{Month} {DayOfMonth}, {Year}{/block:Date}</div>
+                                        <div>Written by {PostAuthorName}</div>
+                                    </div>
+                                    <div class="cont group">{Body}
+                                    </div>
                                     {block:ContentSource}
                                         <div class="cont content_source">
                                             <a href="{SourceURL}">
@@ -1475,7 +1423,7 @@
                                     {block:Chat}chat{block:Title} with_title{/block:Title}{/block:Chat}
                                     {block:Audio}{block:Caption}has_caption{/block:Caption}{/block:Audio}
                                     {block:Video}{block:Caption}has_caption{/block:Caption}{/block:Video}
-                                ">{block:IndexPage}{TimeAgo}{/block:IndexPage}{block:PermalinkPage}{block:Date}{Month} {DayOfMonth}, {Year} ({12Hour}:{Minutes} {AmPm}){/block:Date}{/block:PermalinkPage}</a></li>{block:PermalinkPage}{block:HasTags}{/block:HasTags}{/block:PermalinkPage}
+                                ">{block:IndexPage}{TimeAgo}{/block:IndexPage}{block:PermalinkPage}{TimeAgo}{/block:PermalinkPage}</a></li>{block:PermalinkPage}{block:HasTags}{/block:HasTags}{/block:PermalinkPage}
                                 
                                 
                                 
@@ -1504,7 +1452,7 @@
                     </li>
                     
                     <li class="tr-social-media-btn">
-                        <iframe src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Ftechresidents&amp;send=false&amp;layout=button_count&amp;width=550&amp;show_faces=false&amp;font&amp;colorscheme=light&amp;action=like&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe>
+                        <iframe src="//www.facebook.com/plugins/like.php?href={Permalink}&amp;send=false&amp;layout=button_count&amp;width=550&amp;show_faces=false&amp;font&amp;colorscheme=light&amp;action=like&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe>
                     <li>
 
      
