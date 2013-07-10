@@ -59,7 +59,6 @@ define([
         technologyPrefsSelector: '.technology-prefs',
         expandableItemsSelector: '.expandable-list-items',
         slideToggleSelector: '.slide-toggle',
-        tooltipSelector: '[rel=tooltip]',
 
         events: {
             'click .position-prefs .slide-toggle' : 'togglePositionPrefs',
@@ -88,13 +87,6 @@ define([
             });
         },
 
-        destroy: function() {
-            // Need to hide any tooltips since this view could be removed
-            // from the DOM before a mouseleave() event fires
-            this.$(this.tooltipSelector).tooltip('hide');
-            core.view.View.prototype.destroy.apply(this, arguments);
-        },
-
         render: function() {
             var sortedTechPrefsCollection = this._getSortedJobTechnologyPrefs();
             var context = {
@@ -102,6 +94,7 @@ define([
                 sortedTechPrefs: sortedTechPrefsCollection.toJSON(),
                 fmt: this.fmt // date formatting
             };
+            console.log(context);
             this.$el.html(this.template(context));
 
             // Add CSS styles to make preference lists expandable
@@ -110,8 +103,6 @@ define([
                 this.locationPrefsSelector,
                 this.technologyPrefsSelector];
             _.each(expandableSections, this.addExpandableStyle, this);
-
-            this.$(this.tooltipSelector).tooltip(); // Activate tooltips
 
             return this;
         },
@@ -460,10 +451,16 @@ define([
             }, this);
 
             // Activate tooltips
-            // TODO remove on destroy. Apply tooltip to child view instead?
             this.$('[rel=tooltip]').tooltip();
 
             return this;
+        },
+
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$('[rel=tooltip]').tooltip('hide');
+            core.view.View.prototype.destroy.apply(this, arguments);
         },
 
         createSkillView: function(model) {
@@ -801,7 +798,6 @@ define([
         ratingTechnicalSelector: '.rating-technical-container',
         ratingCultureSelector: '.rating-culture-container',
         voteButtonsSelector: '.vote-buttons-container',
-        tooltipSelector: '[rel=tooltip]',
 
         events: {
             'change .rating-culture-container': 'onCulturalFitScoreChange',
@@ -866,12 +862,6 @@ define([
             });
         },
 
-        destroy: function() {
-            // Need to hide any tooltips since this view could be removed
-            // from the DOM before a mouseleave() event fires
-            this.$(this.tooltipSelector).tooltip('hide');
-            core.view.View.prototype.destroy.apply(this, arguments);
-        },
 
         render: function() {
             var requisitionTitle = this.model.get_requisition().get_title();
@@ -898,8 +888,6 @@ define([
             this.append(this.ratingCommunicationView, this.ratingCommunicationSelector);
             this.append(this.ratingTechnicalView, this.ratingTechnicalSelector);
             this.append(this.ratingCultureView, this.ratingCultureSelector);
-
-            this.$(this.tooltipSelector).tooltip(); // Activate tooltips
 
             return this;
         },

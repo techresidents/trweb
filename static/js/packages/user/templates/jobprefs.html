@@ -1,69 +1,36 @@
 <div class="span7">
-    <h3 class="user-section-border-bottom">User Profile <span rel="tooltip" title="Anonymous user ID" class="orange-text normal-font">{<%= model.id %>}</span></h3>
+    <h3 class="user-section-border-bottom">User Profile <span class="orange-text normal-font">{<%= model.id %>}</span></h3>
 </div>
 <div class="span8 user-position-prefs-container">
 
-    <div class="span2-5">
-        <p>Seeking position types</p>
-        <div class="well">
-            <ul class="position-prefs unstyled">
-                <% if (!model.position_prefs.length) { %>
-                <span><em>No jobs provided</em></span>
-                <% } else { %>
-
-                <% _.each(model.position_prefs, function(position) { %>
-                <li><%= position.type %> <em><%= position.salary_start ? fmt.num(position.salary_start/1000, 'cn0')+'k' : '' %></em></li>
-                <% }); %>
-
-                <% if (model.position_prefs.length > 3) { %>
-                <a class="slide-toggle">more</a>
-                <% } %>
-
-                <% } %>
-            </ul>
-        </div>
+    <div class="position-prefs">
+        <label class="user-job-pref-label">
+            <i class="icon-screenshot"></i>
+            Seeking
+        </label>
+        <% _.each(model.position_prefs, function(position, index) { %>
+            <div class="user-job-pref"><%= position.type %></div>
+        <% }); %>
     </div>
 
-    <div class="span2-5">
-        <p>In these locations</p>
-        <div class="well">
-            <ul class="location-prefs unstyled">
-                <% if (!model.locations.length) { %>
-                <span><em>No locations provided</em></span>
-                <% } else { %>
-
-                <% _.each(model.locations, function(location) { %>
-                <li><%= location.region %></li>
-                <% }); %>
-
-                <% if (model.locations.length > 3) { %>
-                <a class="slide-toggle">more</a>
-                <% } %>
-
-                <% } %>
-            </ul>
-        </div>
+    <div class="location-prefs">
+        <label class="user-job-pref-label">
+            <i class="icon-globe"></i>
+            Locations
+        </label>
+        <% _.each(model.locations, function(location, index) { %>
+            <div class="user-job-pref"><%= location.region %></div>
+        <% }); %>
     </div>
 
-    <div class="span2-5">
-        <p>With these technologies</p>
-        <div class="well">
-            <ul class="technology-prefs unstyled">
-                <% if (!sortedTechPrefs.length) { %>
-                <span><em>No technologies provided</em></span>
-                <% } else { %>
-
-                <% _.each(sortedTechPrefs, function(technology) { %>
-                <li><%= technology.name %></li>
-                <% }); %>
-
-                <% if (sortedTechPrefs.length > 3) { %>
-                <a class="slide-toggle">more</a>
-                <% } %>
-
-                <% } %>
-            </ul>
-        </div>
+    <div class="technology-prefs">
+        <label class="user-job-pref-label">
+            <i class="icon-thumbs-up"></i>
+            Tech Prefs
+        </label>
+        <% _.each(sortedTechPrefs, function(technology, index) { %>
+            <div class="user-job-pref"><%= technology.name %></div>
+        <% }); %>
     </div>
 
 </div>
