@@ -90,7 +90,7 @@ define([
                 choices: [
                     { label: '(GMT-10:00) Hawaii Time', value: 'US/Hawaii' },
                     { label: '(GMT-09:00) Alaska Time', value: 'US/Alaska' },
-                    { label: '(GMT-08:00) Pacafic Time', value: 'US/Pacafic' },
+                    { label: '(GMT-08:00) Pacific Time', value: 'US/Pacific' },
                     { label: '(GMT-07:00) Mountain Time', value: 'US/Mountain' },
                     { label: '(GMT-07:00) Mountain Time - Arizona', value: 'US/Arizona' },
                     { label: '(GMT-06:00) Central Time', value: 'US/Central' },
