@@ -278,6 +278,7 @@ define(/** @exports ui/form/views/forms */[
                     this.state.set({valid: false, error: null });
                 }
             } catch(e) {
+                valid = false;
                 if(options.showError) {
                     this.state.set({ valid: false, error: e.message });
                 } else {
@@ -365,11 +366,13 @@ define(/** @exports ui/form/views/forms */[
         },
 
         onFormActionSuccess: function(action) {
+            this._updateDirtyState();
             this._updateExecutingState();
             this.state.setError(null);
         },
 
         onFormActionError: function(action) {
+            this._updateDirtyState();
             this._updateExecutingState();
             this.state.setError('Oops - an error has occured.');
         },

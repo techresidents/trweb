@@ -43,7 +43,8 @@ define([
                 this.emailField(options.model),
                 this.timezoneField(options.model),
                 //this.developerSinceField(options.model),
-                this.locationField(options.model)
+                this.locationField(options.model),
+                this.activelySeekingField(options.model)
             ];
 
             options.actions = [
@@ -162,6 +163,14 @@ define([
                 maxResults: 20,
                 required: false,
                 viewOptions: { defaultSearch: '' }
+            });
+        },
+
+        activelySeekingField: function(model) {
+            return new ui.form.fields.CheckboxField({
+                name: 'developer_profile__actively_seeking',
+                model: model,
+                label: 'I am actively seeking a job'
             });
         },
 
