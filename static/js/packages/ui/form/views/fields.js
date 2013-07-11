@@ -389,6 +389,7 @@ define(/** @exports ui/form/views/fields */[
             CheckboxFieldView.__super__.initialize.call(this, options);
             
             //bind events
+            this.listenTo(this.state, 'change:rawValue', this.onRawValueChange);
             this.listenTo(this.state, 'change:error', this.render);
             this.listenTo(this.state, 'change:showError', this.render);
         },
@@ -408,6 +409,16 @@ define(/** @exports ui/form/views/fields */[
 
         focus: function() {
             this.$('input').focus();
+        },
+
+        onRawValueChange: function() {
+            this.validate();
+            
+            var value  = this.state.rawValue();
+            var checked = this.$('input').is(':checked');
+            if(value !== checked) {
+                this.render();
+            }
         },
 
         onClick: function(e) {
