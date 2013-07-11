@@ -659,6 +659,7 @@
 
 .user-search-result .skills {
     margin-top: 4px;
+    margin-bottom: 2px;
 }
 
 .user-search-result .skills .user-skills-container {
@@ -669,7 +670,7 @@
     margin-bottom: 2px;
     margin-right: 1px;
     font-size: 12px;
-    line-height: 24px;
+    padding: 2px;
 }
 
 .talking-point {
