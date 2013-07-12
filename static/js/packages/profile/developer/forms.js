@@ -43,7 +43,8 @@ define([
                 this.emailField(options.model),
                 this.timezoneField(options.model),
                 //this.developerSinceField(options.model),
-                this.locationField(options.model)
+                this.locationField(options.model),
+                this.activelySeekingField(options.model)
             ];
 
             options.actions = [
@@ -90,7 +91,7 @@ define([
                 choices: [
                     { label: '(GMT-10:00) Hawaii Time', value: 'US/Hawaii' },
                     { label: '(GMT-09:00) Alaska Time', value: 'US/Alaska' },
-                    { label: '(GMT-08:00) Pacafic Time', value: 'US/Pacafic' },
+                    { label: '(GMT-08:00) Pacific Time', value: 'US/Pacific' },
                     { label: '(GMT-07:00) Mountain Time', value: 'US/Mountain' },
                     { label: '(GMT-07:00) Mountain Time - Arizona', value: 'US/Arizona' },
                     { label: '(GMT-06:00) Central Time', value: 'US/Central' },
@@ -162,6 +163,14 @@ define([
                 maxResults: 20,
                 required: false,
                 viewOptions: { defaultSearch: '' }
+            });
+        },
+
+        activelySeekingField: function(model) {
+            return new ui.form.fields.CheckboxField({
+                name: 'developer_profile__actively_seeking',
+                model: model,
+                label: 'I am actively seeking a job'
             });
         },
 

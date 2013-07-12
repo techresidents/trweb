@@ -127,6 +127,7 @@ class DeveloperProfile(models.Model):
     email_upcoming_chats = models.BooleanField(default=False)
     email_new_chat_topics = models.BooleanField(default=False)
     email_new_job_opps = models.BooleanField(default=True)
+    actively_seeking = models.BooleanField(default=False)
 
 def create_developer_profile(sender, instance, created, **kwargs):
     if created and instance.is_developer:

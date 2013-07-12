@@ -29,7 +29,8 @@ define([
             id: new fields.StringField({primaryKey: true}),
             user_id: new fields.StringField(),
             location: new fields.StringField({nullable: true }),
-            developer_since: new fields.DateField({nullable: true})
+            developer_since: new fields.DateField({nullable: true}),
+            actively_seeking: new fields.BooleanField()
         },
 
         relatedFields: {

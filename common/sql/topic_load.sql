@@ -1,11 +1,11 @@
--- Bio
-INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 120, NULL, 'Bio', 1, True, True, 1, 1, 'Developer bio. Recommended for all developers.');
-INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (1, 20, currval('topic_id_seq')-1, 'Languages', 1, True, True, 1, 1, 'What are your programming languages of choice?'); 
-INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (2, 20, currval('topic_id_seq')-2, 'Tools', 1, True, True, 1, 1, 'What tools could you not live without?'); 
-INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (3, 20, currval('topic_id_seq')-3, 'Must read', 1, True, True, 1, 1, 'What books should be on every developer''s reading list?'); 
-INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (4, 20, currval('topic_id_seq')-4, 'Excitement', 1, True, True, 1, 1, 'What are you most excited about at the moment?'); 
-INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (5, 20, currval('topic_id_seq')-5, 'Advice', 1, True, True, 1, 1, 'What advice, technical or otherwise, would you like to pass along to fellow developers?'); 
-INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (6, 20, currval('topic_id_seq')-6, 'Most Recently', 1, True, True, 1, 1, 'What have you been working on recently?'); 
+-- Bio (deprecated)
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 120, NULL, 'Bio', 1, True, False, 1, 1, 'Developer bio. Recommended for all developers.');
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (1, 20, currval('topic_id_seq')-1, 'Languages', 1, True, False, 1, 1, 'What are your programming languages of choice?'); 
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (2, 20, currval('topic_id_seq')-2, 'Tools', 1, True, False, 1, 1, 'What tools could you not live without?'); 
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (3, 20, currval('topic_id_seq')-3, 'Must read', 1, True, False, 1, 1, 'What books should be on every developer''s reading list?'); 
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (4, 20, currval('topic_id_seq')-4, 'Excitement', 1, True, False, 1, 1, 'What are you most excited about at the moment?'); 
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (5, 20, currval('topic_id_seq')-5, 'Advice', 1, True, False, 1, 1, 'What advice, technical or otherwise, would you like to pass along to fellow developers?'); 
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (6, 20, currval('topic_id_seq')-6, 'Most Recently', 1, True, False, 1, 1, 'What have you been working on recently?'); 
 
 --War Story: Bug
 INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 120, NULL, 'War Story: Bug', 1, True, True, 1, 1, 'Tell us your favorite war story about a memorable triumph over a trying bug.');
@@ -33,3 +33,18 @@ INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, p
 
 --Save the Music
 INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 420, NULL, 'Save the Music', 2, True, True, 1, 1, 'You''ve been hired by a large online streaming music service to save their catalog of music from illegal downloads. Discuss the measures you would take to save the music.');
+
+-- Bio
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 120, NULL, 'Bio', 1, True, True, 1, 1, 'It''s your bio. Talk about whatever you want: a recent project, your ideal stack, dream job, whatever... just don''t introduce yourself by name. We can''t maintain your privacy if you drop your own name.');
+
+-- Can't Live Without: Tool 
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 120, NULL, 'Can''t Live Without: Tools', 1, True, True, 1, 1, 'What tools could you absolutely not live without?');
+
+-- Help a Developer Out
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 120, NULL, 'Help a Developer Out', 1, True, True, 1, 1, 'What advice, technical or otherwise, would you like to pass along to fellow developers?');
+
+-- Must Read
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 120, NULL, 'Must Read', 1, True, True, 1, 1, 'What books should be on every developer''s reading list?');
+
+-- Most Recently
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 120, NULL, 'Most Recently', 1, True, True, 1, 1, 'What have you been working on recently?');
