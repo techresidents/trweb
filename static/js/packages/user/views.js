@@ -1259,12 +1259,15 @@ define([
                 'locations'
             ];
 
-            //bind events
-            this.listenTo(this.candidateModel, 'change', this.render);
-
             this.loader = new api.loader.ApiLoader([
                 { instance: this.candidateModel, withRelated: this.modelWithRelated }
             ]);
+
+            //bind events
+            this.listenTo(this.candidateModel, 'change', this.render);
+            this.listenTo(this.loader, 'loaded', this.render);
+
+            //load data
             this.loader.load();
 
             //child views
@@ -1300,12 +1303,15 @@ define([
                 model: this.candidateModel.toJSON(),
                 fmt: this.fmt // date formatting
             };
-            this.$el.html(this.template(context));
 
-            this.assign(this.jobPrefsView, this.jobPrefsSelector);
-            this.assign(this.skillsView, this.skillsSelector);
-            this.assign(this.chatsView, this.chatsSelector);
-            this.assign(this.actionsView, this.actionsSelector);
+            if(this.loader.isLoaded()) {
+                this.$el.html(this.template(context));
+
+                this.assign(this.jobPrefsView, this.jobPrefsSelector);
+                this.assign(this.skillsView, this.skillsSelector);
+                this.assign(this.chatsView, this.chatsSelector);
+                this.assign(this.actionsView, this.actionsSelector);
+            }
             return this;
         }
 
