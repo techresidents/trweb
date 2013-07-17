@@ -4,7 +4,7 @@
 }
 
 #landing-banner {
-    height: 700px;
+    height: 400px;
 }
 
 .landing-background-photo {
@@ -16,9 +16,8 @@
     text-align: center;
 }
 
-.landing-container {
-    padding-bottom: 20px;
-    height: 400px;
+.landing-employer-benefits h3 {
+    text-align: center;
 }
 
 .landing-headline-container {
