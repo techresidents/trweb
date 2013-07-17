@@ -85,9 +85,11 @@ define([
                 fmt: core.format
             };
 
-            this.$el.html(this.template(context));
-            this.$el.attr('class', this.classes().join(' '));
-            this.append(this.menuView);
+            if(this.loader.isLoaded()) {
+                this.$el.html(this.template(context));
+                this.$el.attr('class', this.classes().join(' '));
+                this.append(this.menuView);
+            }
 
             return this;
         },
