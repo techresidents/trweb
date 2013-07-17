@@ -8,13 +8,21 @@
 }
 
 .landing-background-photo {
-    background: url("../img/landing-office.jpeg") fixed no-repeat;
-    background-size: 100% auto;
+    background: url("../img/landing-wet7.jpg") no-repeat;
+    background-size: 100% 375px;
+}
+
+.landing-developer-benefits h3 {
+    text-align: center;
 }
 
 .landing-container {
-    padding-top: 45px;
     padding-bottom: 20px;
+    height: 400px;
+}
+
+.landing-headline-container {
+    height: 400px;
 }
 
 .landing-headline .hero-unit {
@@ -35,6 +43,7 @@
 
 .landing-headline .hero-unit p.landing-slogan {
     font-weight: 400;
+    font-size: 30px;
 }
 
 .landing-gray-stripe {
@@ -46,6 +55,7 @@
     margin-top: 20px;
     margin-left: 125px;
     margin-right: 125px;
+    margin-bottom: 30px;
 }
 
 @media (max-width: 979px) {
@@ -53,34 +63,4 @@
         margin-left: 0;
         margin-right: 0;
     }
-}
-
-.landing-list {
-    margin-top: 15px;
-}
-
-.landing-list li {
-    list-style: none outside none;
-    padding-top:5px;
-    padding-bottom:5px;
-    border-top: 2px;
-    border-top-style: solid;
-    border-top-color: #EA8F00;
-}
-
-.landing-social-links {
-    margin-top: 10px;
-    margin-left: 0px;
-    list-style: none;
-}
-
-.landing-social-links > li {
-    display: inline-block;
-    vertical-align: top;
-    margin-right: 15px;
-}
-
-.landing-social-links > li > a > img {
-    margin-right: 5px;
-    margin-bottom: 4px;
 }
