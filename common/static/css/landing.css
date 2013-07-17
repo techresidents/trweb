@@ -8,7 +8,7 @@
 }
 
 .landing-background-photo {
-    background: url("../img/landing-wet7.jpg") no-repeat;
+    background: url("../img/landing-wet2-gradient.jpg") no-repeat;
     background-size: 100% 375px;
 }
 
@@ -17,6 +17,10 @@
 }
 
 .landing-employer-benefits h3 {
+    text-align: center;
+}
+
+.landing-developer-how-it-works h3 {
     text-align: center;
 }
 
