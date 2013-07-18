@@ -2,6 +2,12 @@ html {
     overflow-y: scroll;
 }
 
+/* fix scroll position for anchor points */
+a[name] {
+    padding-top: 45px;
+    margin-top: -45px;
+    display: inline-block;
+}
 .content {
     padding-top: 10px;
 }
@@ -106,6 +112,11 @@ html {
 
 .menu-content {
     padding-top: 45px;
+}
+
+/* webkit navbar re-render fix */
+.affix,.navbar-fixed-top{
+    -webkit-transform: scale3d(1,1,1);
 }
 
 .navbar .brand {
