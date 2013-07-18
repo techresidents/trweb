@@ -3,6 +3,20 @@
     background-size: 100% 375px;
 }
 
+.landing-developers-arrow-container {
+    position: relative;
+}
+
+.landing-developers-arrow {
+    background: url("../img/landing-developers-arrow.png") no-repeat;
+    width: 199px;
+    height: 38px;
+    position: absolute;
+    top: -30px;
+    left: 235px;
+}
+
+
 .landing-developer-benefits {
     min-height: 260px;
     padding-top: 40px;
@@ -34,6 +48,19 @@
 
 .landing-developer-how-it-works .row {
     margin-top: 25px;
+}
+
+.landing-employers-arrow-container {
+    position: relative;
+}
+
+.landing-employers-arrow {
+    background: url("../img/landing-employers-arrow.png") no-repeat;
+    width: 192px;
+    height: 43px;
+    position: absolute;
+    top: -25px;
+    right: 240px;
 }
 
 .landing-employer-benefits {
