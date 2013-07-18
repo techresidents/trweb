@@ -16,30 +16,26 @@
 
 {% block content %}
 
-    <div id="landing-banner" class="landing-background-photo">
-    <div class="brian">
+    <div class="landing-light-gray-stripe landing-headline-container">
         <div class="container">
             <div class="row">
                 <div class="span12">
-                    <div class="landing-headline-container">
-                        <div class="landing-headline">
-                            <div class="hero-unit">
-                                <h1>Talk Tech. Get Hired.</h1>
-                                <p class="landing-slogan">A DRY approach to job hunting</p>
-                                <p>
-                                    <a id="developers-scroll-btn" class="btn btn-inverse btn-large" href="{% url 'accounts.views.register'%}">Developer Sign Up</a>
-                                    <a id="employers-scroll-btn" class="btn btn-inverse btn-large" href="{% url 'accounts.views.register_employer'%}">Employer Sign Up</a>
-                                </p>
-                            </div>
+                    <div class="landing-headline">
+                        <div class="hero-unit">
+                            <h1>Talk Tech. Get Hired.</h1>
+                            <p class="landing-slogan">A DRY approach to job hunting</p>
+                            <p class="text-center">
+                                <a class="btn btn-primary btn-large" href="{% url 'accounts.views.register'%}">Developer Sign Up</a>
+                                <a class="btn btn-success btn-large" href="{% url 'accounts.views.register_employer'%}">Employer Sign Up</a>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
 
-    <div class="landing-developer-benefits">
+    <div class="landing-medium-gray-stripe landing-developer-benefits">
         <div class="container">
             <div class="row">
                 <div class="span4">
@@ -47,27 +43,27 @@
                     <h3>Don't Repeat Yourself</h3>
                     <p class="text-center">Record chats on topics of your choice and avoid
                         answering baseless interview questions over and over.</p>
-                    <p class="text-center"><a class="btn btn-inverse btn-small">How it Works</a></p>
+                    <p class="text-center"><a class="btn btn-inverse btn-small" href="#developers">How it Works</a></p>
                 </div>
                 <div class="span4">
                     <p class="text-center"><i class="icon-bullhorn icon-4x"></i></p>
                     <h3>Maximize Exposure</h3>
                     <p class="text-center">Your voice will reach our entire network
                         of employers and if they like what they hear you'll be invited for an in-house interview.</p>
-                    <p class="text-center"><a class="btn btn-inverse btn-small">How it Works</a></p>
+                    <p class="text-center"><a class="btn btn-inverse btn-small" href="#developers">How it Works</a></p>
                 </div>
                 <div class="span4">
                     <p class="text-center"><i class="icon-dollar icon-4x"></i></p>
                     <h3>Get Paid</h3>
                     <p class="text-center">Collect your signing bonus after landing your next great
                     job, typically $2,400 - $6,000.</p>
-                    <p class="text-center"><a class="btn btn-inverse btn-small">How it Works</a></p>
+                    <p class="text-center"><a class="btn btn-inverse btn-small" href="#developers">How it Works</a></p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="landing-gray-stripe landing-employer-benefits">
+    <div class="landing-dark-gray-stripe landing-employer-benefits">
         <div class="container">
             <div class="row">
                 <div class="span4">
@@ -75,7 +71,7 @@
                     <h3>Find Talent</h3>
                     <p class="text-center">Our commitment to low-barrier job hunting attracts
                     talented developers and puts them within your grasp.</p>
-                    <p class="text-center"><a class="btn btn-inverse btn-small">How it Works</a></p>
+                    <p class="text-center"><a class="btn btn-inverse btn-small" href="#employers">How it Works</a></p>
                 </div>
                 <div class="span4">
                     <p class="text-center"><i class="icon-time icon-4x"></i></p>
@@ -83,19 +79,19 @@
                     <p class="text-center">Eliminate phone screens
                     and listen on demand to developers discuss topics
                     that showcase their technical and cultural fit.</p>
-                    <p class="text-center"><a class="btn btn-inverse btn-small">How it Works</a></p>
+                    <p class="text-center"><a class="btn btn-inverse btn-small" href="#employers">How it Works</a></p>
                 </div>
                 <div class="span4">
                     <p class="text-center"><i class="icon-dollar icon-4x"></i></p>
                     <h3>Save Money</h3>
                     <p class="text-center">In addition to saving you time, save 30-50% on traditional recruitment fees.</p>
-                    <p class="text-center"><a class="btn btn-inverse btn-small">How it Works</a></p>
+                    <p class="text-center"><a class="btn btn-inverse btn-small" href="#employers">How it Works</a></p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="landing-developer-how-it-works">
+    <div id="developers" class="landing-light-gray-stripe landing-developer-how-it-works">
         <div class="container">
             <div class="row">
                 <div class="span12">
@@ -154,7 +150,7 @@
         </div>
     </div>
 
-    <div class="landing-gray-stripe landing-employer-how-it-works">
+    <div id="employers" class="landing-dark-gray-stripe landing-employer-how-it-works">
         <div class="container">
             <div class="row">
                 <div class="span12">
@@ -212,28 +208,6 @@
             </div>
         </div>
     </div>
-
-
-    <script src="{% static "js/3ps/jquery/jquery-min.js" %}"></script>
-    <script>
-        $(document).ready(function(){
-
-            $("#developers-scroll-btn").click(function() {
-                $('html, body').animate({
-                    scrollTop: $("#js-developer-info").offset().top
-                }, 1100);
-                return false;
-            });
-
-            $("#employers-scroll-btn").click(function() {
-                $('html, body').animate({
-                    scrollTop: $("#js-employer-info").offset().top
-                }, 1100);
-                return false;
-            });
-
-        });
-    </script>
 
 {% endblock %}
 

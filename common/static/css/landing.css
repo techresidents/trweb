@@ -3,12 +3,8 @@
     margin-top: 20px;
 }
 
-#landing-banner {
-    height: 400px;
-}
-
 .landing-background-photo {
-    background: url("../img/landing-sand3.jpg") no-repeat;
+    background: url("../img/landing-sunset.jpg") no-repeat;
     background-size: 100% 375px;
 }
 
@@ -53,8 +49,9 @@
     margin-top: 25px;
 }
 
-.landing-headline-container {
-    height: 400px;
+.landing-headline .btn {
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 .landing-headline .hero-unit {
@@ -74,12 +71,27 @@
 }
 
 .landing-headline .hero-unit p.landing-slogan {
-    font-weight: 400;
+    font-weight: 700;
     font-size: 30px;
 }
 
-.landing-gray-stripe {
+.landing-headline-container {
+    height: 400px;
+}
+
+.landing-light-gray-stripe {
     background-color: #F5F5F5;
+    background-repeat: repeat-x;
+}
+
+.landing-medium-gray-stripe {
+    background-color: #E5E5E5;
+    background-repeat: repeat-x;
+}
+
+.landing-dark-gray-stripe {
+    color: #eeeeee;
+    background-color: rgb(73,69,68);
     background-repeat: repeat-x;
 }
 
