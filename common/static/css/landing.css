@@ -1,8 +1,3 @@
-#embedded-video-container {
-    margin-right: 45px;
-    margin-top: 20px;
-}
-
 .landing-background-photo {
     background: url("../img/landing-sunset.jpg") no-repeat;
     background-size: 100% 375px;
@@ -10,19 +5,23 @@
 
 .landing-developer-benefits {
     min-height: 260px;
+    padding-top: 40px;
 }
 
 .landing-developer-benefits h3 {
     text-align: center;
 }
 
-.landing-employer-benefits {
-    min-height: 260px;
-    padding-top: 40px;
+.landing-developer-benefits .icon-umbrella {
+    color: #BB3400;
 }
 
-.landing-employer-benefits h3 {
-    text-align: center;
+.landing-developer-benefits .icon-bullhorn {
+    color: #DD7E26;
+}
+
+.landing-developer-benefits .icon-dollar {
+    color: #51a351;
 }
 
 .landing-developer-how-it-works {
@@ -35,6 +34,15 @@
 
 .landing-developer-how-it-works .row {
     margin-top: 25px;
+}
+
+.landing-employer-benefits {
+    min-height: 260px;
+    padding-top: 40px;
+}
+
+.landing-employer-benefits h3 {
+    text-align: center;
 }
 
 .landing-employer-how-it-works {
@@ -50,6 +58,7 @@
 }
 
 .landing-headline .btn {
+    font-size: 20px;
     padding-top: 15px;
     padding-bottom: 15px;
 }
@@ -71,12 +80,12 @@
 }
 
 .landing-headline .hero-unit p.landing-slogan {
-    font-weight: 700;
+    color: #CE4510;
     font-size: 30px;
 }
 
 .landing-headline-container {
-    height: 400px;
+    height: 350px;
 }
 
 .landing-light-gray-stripe {
