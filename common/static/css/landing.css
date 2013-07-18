@@ -12,20 +12,45 @@
     background-size: 100% 375px;
 }
 
+.landing-developer-benefits {
+    min-height: 260px;
+}
+
 .landing-developer-benefits h3 {
     text-align: center;
+}
+
+.landing-employer-benefits {
+    min-height: 260px;
+    padding-top: 40px;
 }
 
 .landing-employer-benefits h3 {
     text-align: center;
 }
 
+.landing-developer-how-it-works {
+    min-height: 655px;
+}
+
 .landing-developer-how-it-works h3 {
     text-align: center;
 }
 
+.landing-developer-how-it-works .row {
+    margin-top: 25px;
+}
+
+.landing-employer-how-it-works {
+    min-height: 655px;
+}
+
 .landing-employer-how-it-works h3 {
     text-align: center;
+}
+
+.landing-employer-how-it-works .row {
+    margin-top: 25px;
 }
 
 .landing-headline-container {
