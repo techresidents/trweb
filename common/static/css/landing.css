@@ -21,33 +21,39 @@
     min-height: 260px;
     padding-top: 40px;
 }
-
 .landing-developer-benefits h3 {
     text-align: center;
 }
-
 .landing-developer-benefits .icon-umbrella {
     color: #BB3400;
 }
-
 .landing-developer-benefits .icon-bullhorn {
     color: #DD7E26;
 }
-
 .landing-developer-benefits .icon-dollar {
-    color: #51a351;
+    color: green;
 }
 
 .landing-developer-how-it-works {
     min-height: 655px;
 }
-
 .landing-developer-how-it-works h3 {
     text-align: center;
 }
-
 .landing-developer-how-it-works .row {
     margin-top: 25px;
+}
+.landing-developer-how-it-works .icon-user {
+    color: #EA8F00;
+}
+.landing-developer-how-it-works .icon-food {
+    color: rgb(158, 60, 60);
+}
+.landing-developer-how-it-works .icon-check {
+    color: rgb(18, 52, 187);
+}
+.landing-developer-how-it-works .icon-dollar {
+    color: green;
 }
 
 .landing-employers-callout-container {
@@ -67,21 +73,36 @@
     min-height: 260px;
     padding-top: 40px;
 }
-
 .landing-employer-benefits h3 {
     text-align: center;
+}
+.landing-employer-benefits .icon-search {
+    color: #00A860;
+}
+.landing-employer-benefits .icon-time {
+    color: #4CB5C3;
+}
+.landing-employer-benefits .icon-dollar {
+    color: rgb(223, 189, 10)
 }
 
 .landing-employer-how-it-works {
     min-height: 655px;
 }
-
 .landing-employer-how-it-works h3 {
     text-align: center;
 }
-
 .landing-employer-how-it-works .row {
     margin-top: 25px;
+}
+.landing-employer-how-it-works .icon-edit {
+    color: #FFB300;
+}
+.landing-employer-how-it-works .icon-volume-up {
+    color: #407FCC
+}
+.landing-employer-how-it-works .icon-comments {
+    color: #307E30;
 }
 
 .landing-headline .btn {
