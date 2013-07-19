@@ -77,7 +77,7 @@
     text-align: center;
 }
 .landing-employer-benefits .icon-search {
-    color: #00A860;
+    color: #DD7E26;
 }
 .landing-employer-benefits .icon-time {
     color: #4CB5C3;
@@ -98,11 +98,20 @@
 .landing-employer-how-it-works .icon-edit {
     color: #FFB300;
 }
+.landing-employer-how-it-works .icon-search {
+    color: #4F97F0;
+}
 .landing-employer-how-it-works .icon-volume-up {
-    color: #407FCC
+    color: #F17725;
+}
+.landing-employer-how-it-works .icon-thumbs-up {
+    color: #B79AEB;
 }
 .landing-employer-how-it-works .icon-comments {
-    color: #307E30;
+    color: #62c462;
+}
+.landing-employer-how-it-works .icon-flag-checkered {
+    color: #E6E649;
 }
 
 .landing-headline .btn {
@@ -113,22 +122,14 @@
 
 .landing-headline .hero-unit {
     background-color: transparent;
-    margin-bottom: 15px;
-    padding-bottom: 5px;
-    padding-top: 50px;
 }
 
 .landing-headline .hero-unit > * {
     text-align: center;
 }
 
-.landing-headline .hero-unit h1 {
-    color: black;
-    font-size: 60px;
-}
-
 .landing-headline .hero-unit p.landing-slogan {
-    color: #CE4510;
+    color: #EA7000;
     font-size: 30px;
 }
 
@@ -156,7 +157,7 @@
     margin-top: 20px;
     margin-left: 125px;
     margin-right: 125px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 @media (max-width: 979px) {
