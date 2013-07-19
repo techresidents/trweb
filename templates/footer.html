@@ -1,14 +1,32 @@
 {% load url from future %}
 
-<div class="container">
-    <div class="footer">
-        <a href="{% url 'common.views.about' %}">About</a>
-        .
-        <a href="{% url 'common.views.contact' %}">Contact</a>
-        <!--
-        .
-        <a href="#">Terms of Service</a>
-        -->
-        <p>Tech Residents, Inc. &copy; 2013</p>
+<div class="footer">
+    <div class="container">
+        <ul class="footer-icons">
+            <li><a target="_blank" href="https://twitter.com/techresidents"><i class="icon-twitter"></i></a></li>
+            <li><a target="_blank" href="https://www.facebook.com/techresidents"><i class="icon-facebook"></i></a></li>
+            <li><a target="_blank" href="http://www.linkedin.com/company/tech-residents"><i class="icon-linkedin"></i></a></li>
+        </ul>
+        <div class="footer-inner">
+            <div class="row">
+                <div class="span4">
+                    <div class="footer-brand">
+                    <h2><span class="logo-small"></span> Tech Residents</h2>
+                    </div>
+                    <p>A DRY approach to job hunting</p>
+                </div>
+                <div class="span4">
+                    <ul class="footer-links">
+                        <li><a href="http://blog.techresidents.com">Blog</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="/developer/faq">Developer FAQ</a></li>
+                        <li><a href="/employer/faq">Employer FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Tech Residents, Inc. &copy; 2013</p>
+        </div>
     </div>
 </div>
