@@ -1,51 +1,159 @@
-#embedded-video-container {
-    margin-right: 45px;
-    margin-top: 20px;
+.landing-developers-callout-container {
+    position: relative;
 }
 
-#landing-banner {
-    height: 700px;
+.landing-developers-callout {
+    background: url("../img/landing-developers-callout.png") no-repeat;
+    width: 199px;
+    height: 38px;
+    position: absolute;
+    top: -30px;
+    left: 235px;
 }
 
-.landing-background-photo {
-    background: url("../img/landing-office.jpeg") fixed no-repeat;
-    background-size: 100% auto;
+
+.landing-developer-benefits {
+    min-height: 260px;
+    padding-top: 40px;
+}
+.landing-developer-benefits h3 {
+    text-align: center;
+}
+.landing-developer-benefits .icon-umbrella {
+    color: #BB3400;
+}
+.landing-developer-benefits .icon-bullhorn {
+    color: #DD7E26;
+}
+.landing-developer-benefits .icon-dollar {
+    color: green;
 }
 
-.landing-container {
-    padding-top: 45px;
-    padding-bottom: 20px;
+.landing-developer-how-it-works {
+    min-height: 655px;
+}
+.landing-developer-how-it-works h3 {
+    text-align: center;
+}
+.landing-developer-how-it-works .row {
+    margin-top: 25px;
+}
+.landing-developer-how-it-works .icon-user {
+    color: #EA8F00;
+}
+.landing-developer-how-it-works .icon-food {
+    color: #BB3400;
+}
+.landing-developer-how-it-works .icon-check {
+    color: rgb(18, 52, 187);
+}
+.landing-developer-how-it-works .icon-dollar {
+    color: green;
+}
+
+.landing-employers-callout-container {
+    position: relative;
+}
+
+.landing-employers-callout {
+    background: url("../img/landing-employers-callout.png") no-repeat;
+    width: 192px;
+    height: 43px;
+    position: absolute;
+    top: -25px;
+    right: 240px;
+}
+
+.landing-employer-benefits {
+    min-height: 260px;
+    padding-top: 40px;
+}
+.landing-employer-benefits h3 {
+    text-align: center;
+}
+.landing-employer-benefits .icon-search {
+    color: #4F97F0;
+}
+.landing-employer-benefits .icon-time {
+    color: #4CB5C3;
+}
+.landing-employer-benefits .icon-dollar {
+    color: rgb(223, 189, 10)
+}
+
+.landing-employer-how-it-works {
+    min-height: 655px;
+}
+.landing-employer-how-it-works h3 {
+    text-align: center;
+}
+.landing-employer-how-it-works .row {
+    margin-top: 25px;
+}
+.landing-employer-how-it-works .icon-edit {
+    color: #4F97F0;
+}
+.landing-employer-how-it-works .icon-search {
+    color: inherit;
+}
+.landing-employer-how-it-works .icon-volume-up {
+    color: #DD7E26;
+}
+.landing-employer-how-it-works .icon-thumbs-up {
+    color: inherit;
+}
+.landing-employer-how-it-works .icon-comments {
+    color: #62c462;
+}
+.landing-employer-how-it-works .icon-flag-checkered {
+    color: inherit;
+}
+
+.landing-headline .btn {
+    font-size: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 .landing-headline .hero-unit {
     background-color: transparent;
-    margin-bottom: 15px;
-    padding-bottom: 5px;
-    padding-top: 50px;
 }
 
 .landing-headline .hero-unit > * {
     text-align: center;
 }
 
-.landing-headline .hero-unit h1 {
-    color: black;
-    font-size: 60px;
-}
-
 .landing-headline .hero-unit p.landing-slogan {
-    font-weight: 400;
+    color: #EA7000;
+    font-size: 30px;
 }
 
-.landing-gray-stripe {
-    background-color: #F5F5F5;
-    background-repeat: repeat-x;
+.landing-headline-container {
+    height: 350px;
 }
 
 .landing-slogan {
     margin-top: 20px;
     margin-left: 125px;
     margin-right: 125px;
+    margin-bottom: 20px;
+}
+
+.landing-stripe {
+    min-width: 980px;
+}
+
+.landing-light-gray-stripe {
+    background-color: #F5F5F5;
+}
+
+.landing-medium-gray-stripe {
+    background-color: #E5E5E5;
+}
+
+.landing-dark-gray-stripe {
+    color: #ededed;
+    background-color: rgb(73,69,68);
 }
 
 @media (max-width: 979px) {
@@ -53,34 +161,4 @@
         margin-left: 0;
         margin-right: 0;
     }
-}
-
-.landing-list {
-    margin-top: 15px;
-}
-
-.landing-list li {
-    list-style: none outside none;
-    padding-top:5px;
-    padding-bottom:5px;
-    border-top: 2px;
-    border-top-style: solid;
-    border-top-color: #EA8F00;
-}
-
-.landing-social-links {
-    margin-top: 10px;
-    margin-left: 0px;
-    list-style: none;
-}
-
-.landing-social-links > li {
-    display: inline-block;
-    vertical-align: top;
-    margin-right: 15px;
-}
-
-.landing-social-links > li > a > img {
-    margin-right: 5px;
-    margin-bottom: 4px;
 }

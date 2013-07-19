@@ -385,3 +385,5 @@ INSERT INTO tag (id, name, concept_id) VALUES (384, 'Dirty Read', 320);
 INSERT INTO tag (id, name, concept_id) VALUES (385, 'Non-repeatable Read', 321);
 INSERT INTO tag (id, name, concept_id) VALUES (386, 'Phantom Read', 322);
 INSERT INTO tag (id, name, concept_id) VALUES (387, 'Durability', 129);
+
+SELECT setval('tag_id_seq', (SELECT max(id) FROM tag));

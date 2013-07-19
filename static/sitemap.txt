@@ -5,5 +5,5 @@ http://techresidents.com/accounts/forgot_password
 http://techresidents.com/accounts/login
 http://techresidents.com/accounts/register
 http://techresidents.com/accounts/e/register
-http://techresidents.com/developers/learn_more
-http://techresidents.com/employers/learn_more
+http://techresidents.com/developers/faq
+http://techresidents.com/employers/faq

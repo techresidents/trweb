@@ -365,3 +365,5 @@ INSERT INTO concept (id, parent_id, name, description) VALUES (364, 356, 'RC5', 
 INSERT INTO concept (id, parent_id, name, description) VALUES (365, 356, 'Advanced Encryption Standard', '');
 INSERT INTO concept (id, parent_id, name, description) VALUES (366, 356, 'Blowfish', '');
 INSERT INTO concept (id, parent_id, name, description) VALUES (367, 357, 'RC4', '');
+
+SELECT setval('concept_id_seq', (SELECT max(id) FROM concept));

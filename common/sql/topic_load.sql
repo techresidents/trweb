@@ -35,7 +35,7 @@ INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, p
 INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 420, NULL, 'Save the Music', 2, True, True, 1, 1, 'You''ve been hired by a large online streaming music service to save their catalog of music from illegal downloads. Discuss the measures you would take to save the music.');
 
 -- Bio
-INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 120, NULL, 'Bio', 1, True, True, 1, 1, 'It''s your bio. Talk about whatever you want: a recent project, your ideal stack, dream job, whatever... just don''t introduce yourself by name. We can''t maintain your privacy if you drop your own name.');
+INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 120, NULL, 'Bio', 1, True, True, 1, 1, 'It''s your bio. Talk about whatever you want: a recent project, your ideal stack, dream job, whatever... just don''t introduce yourself by name. We can''t maintain your privacy if you go around dropping your own name.');
 
 -- Can't Live Without: Tool 
 INSERT INTO topic (rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (0, 120, NULL, 'Can''t Live Without: Tools', 1, True, True, 1, 1, 'What tools could you absolutely not live without?');
