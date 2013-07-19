@@ -47,7 +47,7 @@
     color: #EA8F00;
 }
 .landing-developer-how-it-works .icon-food {
-    color: rgb(158, 60, 60);
+    color: #BB3400;
 }
 .landing-developer-how-it-works .icon-check {
     color: rgb(18, 52, 187);
@@ -77,7 +77,7 @@
     text-align: center;
 }
 .landing-employer-benefits .icon-search {
-    color: #DD7E26;
+    color: #4F97F0;
 }
 .landing-employer-benefits .icon-time {
     color: #4CB5C3;
@@ -96,22 +96,22 @@
     margin-top: 25px;
 }
 .landing-employer-how-it-works .icon-edit {
-    color: #FFB300;
-}
-.landing-employer-how-it-works .icon-search {
     color: #4F97F0;
 }
+.landing-employer-how-it-works .icon-search {
+    color: inherit;
+}
 .landing-employer-how-it-works .icon-volume-up {
-    color: #F17725;
+    color: #DD7E26;
 }
 .landing-employer-how-it-works .icon-thumbs-up {
-    color: #B79AEB;
+    color: inherit;
 }
 .landing-employer-how-it-works .icon-comments {
     color: #62c462;
 }
 .landing-employer-how-it-works .icon-flag-checkered {
-    color: #E6E649;
+    color: inherit;
 }
 
 .landing-headline .btn {
@@ -137,27 +137,28 @@
     height: 350px;
 }
 
-.landing-light-gray-stripe {
-    background-color: #F5F5F5;
-    background-repeat: repeat-x;
-}
-
-.landing-medium-gray-stripe {
-    background-color: #E5E5E5;
-    background-repeat: repeat-x;
-}
-
-.landing-dark-gray-stripe {
-    color: #ededed;
-    background-color: rgb(73,69,68);
-    background-repeat: repeat-x;
-}
-
 .landing-slogan {
     margin-top: 20px;
     margin-left: 125px;
     margin-right: 125px;
     margin-bottom: 20px;
+}
+
+.landing-stripe {
+    min-width: 980px;
+}
+
+.landing-light-gray-stripe {
+    background-color: #F5F5F5;
+}
+
+.landing-medium-gray-stripe {
+    background-color: #E5E5E5;
+}
+
+.landing-dark-gray-stripe {
+    color: #ededed;
+    background-color: rgb(73,69,68);
 }
 
 @media (max-width: 979px) {
