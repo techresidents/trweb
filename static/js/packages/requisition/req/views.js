@@ -642,6 +642,7 @@ define([
 
             // Requisition position type options
             this.positionTypeFormOptions = [
+                { option: 'Intern', value: 'Intern'},
                 { option: 'Junior Developer', value: 'Junior Developer' },
                 { option: 'Senior Developer', value: 'Senior Developer' },
                 { option: 'Team Lead', value: 'Team Lead' }
