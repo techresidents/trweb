@@ -5,3 +5,7 @@
 .faq-content p {
     margin-bottom: 20px;
 }
+
+.faq-content h4 {
+    margin-top: 0;
+}
