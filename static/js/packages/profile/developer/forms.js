@@ -216,7 +216,8 @@ define([
             var data = [
                 new api.models.PositionPref({type: 'Junior Developer' }),
                 new api.models.PositionPref({type: 'Senior Developer' }),
-                new api.models.PositionPref({type: 'Team Lead' })
+                new api.models.PositionPref({type: 'Team Lead' }),
+                new api.models.PositionPref({type: 'Intern' })
             ];
 
             var matcher = new ui.ac.matcher.ArrayMatcher({
@@ -233,7 +234,7 @@ define([
                 name: 'position_prefs',
                 model: model,
                 label: label,
-                placeholder: 'Developer, Team Lead',
+                placeholder: 'Intern, Developer, Team Lead',
                 matcher: matcher,
                 viewOptions: { defaultSearch: '' }
             });
