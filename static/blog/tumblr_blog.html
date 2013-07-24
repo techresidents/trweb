@@ -2,6 +2,8 @@
 <html>
     <head>
         <title>{Title}{block:SearchPage} ({lang:Search results for SearchQuery}){/block:SearchPage}{block:PermalinkPage}{block:PostSummary} — {PostSummary}{/block:PostSummary}{/block:PermalinkPage}</title>
+        <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?skin=sunburst"></script> 
+        <script type="text/javascript" src="http://assets.tumblr.com/javascript/jquery-1.7.2.min.js"></script>
 
         <meta charset="utf-8">
         <meta name="description" content="{block:IndexPage}{block:Description}{MetaDescription}{/block:Description}{/block:IndexPage}{block:PermalinkPage}{block:PostSummary}{PostSummary}{/block:PostSummary}{/block:PermalinkPage}" />
@@ -354,7 +356,7 @@
                 padding: 1px 0 1px 20px;
             }
 
-            .caption pre {
+            .caption pre:not(.prettyprint) {
                 background: #eee;
                 font-family: Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Anonymous Pro", "Courier New", monospace, serif;
                 overflow: scroll;
@@ -367,7 +369,7 @@
             .caption p,
             .caption ol,
             .caption ul,
-            .caption pre,
+            .caption pre:not(.prettyprint),
             .caption h1,
             .caption h2,
             .post h3,
@@ -1174,7 +1176,7 @@
                                     <div class="tr-blog-post-author">
                                         <a href="/" class="tr-avatar"><img src="{PostAuthorPortraitURL-48}"></a>
                                         <div>{block:Date}{Month} {DayOfMonth}, {Year}{/block:Date}</div>
-                                        <div>Written by {PostAuthorName}</div>
+                                        <div>Written by <span class="author-name">{PostAuthorName}</span></div>
                                     </div>
                                     <div class="cont group">{Body}
                                     </div>
@@ -1714,6 +1716,31 @@
             });
         </script>
         {/block:IfUseEndlessScrolling}
+
+        <script>
+            $(document).ready(function() {
+                    var authors = {
+                        jechmu: {
+                            name: "Jeffrey Mullins",
+                            twitter: "_jmullins_"
+                        },
+                        briancmullins: {
+                            name: "Brian Mullins",
+                            twitter: "briancmullins"
+                        }
+                    };
+
+                    $("span.author-name").each(function() {
+                        console.log('yes');
+                        console.log($(this).text());
+                        var author = authors[$(this).text()];
+                        if(author) {
+                            html = '<a href="https://twitter.com/' + author.twitter + '">' + author.name + '</a>';
+                            $(this).html(html);
+                        }
+                    });
+            });
+        </script>
 
         {block:Twitter}
             <script type="text/javascript" src="/tweets.js"></script>
