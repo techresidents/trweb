@@ -129,7 +129,7 @@ INSERT INTO technology (name, type_id, description) VALUES ('Waterfall', 6, 'A s
 
 
 INSERT INTO technology (name, type_id, description) VALUES ('Penetration Testing', 7, 'A method of evaluating computer and network security by simulating an attack on a computer system or network from external and internal threats');
-INSERT INTO technology (name, type_id, description) VALUES ('Computer Security', 7, 'Covers all the processes and mechanisms by which equipment, information, and services are protected from unintended or unauthorized access, change, or destruction');
+INSERT INTO technology (name, type_id, description) VALUES ('Security', 7, 'Covers all the processes and mechanisms by which equipment, information, and services are protected from unintended or unauthorized access, change, or destruction');
 INSERT INTO technology (name, type_id, description) VALUES ('Cryptography', 7, 'The study and application of techniques for secure communication');
 INSERT INTO technology (name, type_id, description) VALUES ('Network Security', 7, 'Consists of the provisions and policies adopted to prevent and monitor unauthorized access, misuse, modification, or denial of a computer network and network-accessible resources');
 INSERT INTO technology (name, type_id, description) VALUES ('PKI', 7, 'Public Key Infrastructure: A set of hardware, software, people, policies, and procedures needed to create, manage, distribute, use, store, and revoke digital certificates');
@@ -154,12 +154,12 @@ INSERT INTO technology (name, type_id, description) VALUES ('Distributed Systems
 INSERT INTO technology (name, type_id, description) VALUES ('Entrepreneurship', 9, 'Here''s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They''re not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can''t do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do');
 INSERT INTO technology (name, type_id, description) VALUES ('Front-end Development', 9, 'The design and development of client-side applications');
 INSERT INTO technology (name, type_id, description) VALUES ('Growth Hacking', 9, 'A process for acquiring users combining traditional marketing and analytical skills with product development skills');
-INSERT INTO technology (name, type_id, description) VALUES ('Human Computer Interaction', 9, 'The study, planning, and design of the interaction between users and computers');
+INSERT INTO technology (name, type_id, description) VALUES ('HCI', 9, 'Human Computer Interaction: the study, planning, and design of the interaction between users and computers');
 INSERT INTO technology (name, type_id, description) VALUES ('Information Architecture', 9, 'The art and science of organizing and labeling data');
 INSERT INTO technology (name, type_id, description) VALUES ('Mobile Development', 9, 'The design and development of applications for mobile devices');
 INSERT INTO technology (name, type_id, description) VALUES ('Multithreading', 9, 'A widespread programming and execution model that allows multiple threads to exist within the context of a single process');
 INSERT INTO technology (name, type_id, description) VALUES ('Network Architecture', 9, 'The design of a communications network');
-INSERT INTO technology (name, type_id, description) VALUES ('Object Oriented Design', 9, 'A programming paradigm that represents concepts as objects that have data fields and associated methods');
+INSERT INTO technology (name, type_id, description) VALUES ('OO Design', 9, 'Object oriented programming paradigm that represents concepts as objects that have data fields and associated methods');
 INSERT INTO technology (name, type_id, description) VALUES ('REST', 9, 'The design and development of a RESTful architecture for distributed systems');
 INSERT INTO technology (name, type_id, description) VALUES ('Scrum Master', 9, 'In Scrum, the team member who is accountable for removing impediments so the team can deliver the sprint goals and deliverables');
 INSERT INTO technology (name, type_id, description) VALUES ('System Architecture', 9, 'The design of the conceptual models that define the structure, behavior, and views of a system');
