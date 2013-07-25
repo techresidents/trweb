@@ -120,36 +120,36 @@ INSERT INTO technology (name, type_id, description) VALUES ('SQLite', 5, 'Cross-
 INSERT INTO technology (name, type_id, description) VALUES ('VoltDB', 5, 'Wicked fast OLTP database');
 
 
-INSERT INTO technology (name, type_id, description) VALUES ('Agile', 6, 'Software development methods based on iterative and incremental development, where requirements and solutions evolve through collaboration between self-organizing, cross-functional teams');
+INSERT INTO technology (name, type_id, description) VALUES ('Agile', 6, 'Software development methodology based upon iterative and incremental development, where requirements and solutions evolve through collaboration between self-organizing, cross-functional teams');
 INSERT INTO technology (name, type_id, description) VALUES ('Extreme Programming', 6, 'An agile software development methodology intended to improve software quality and responsiveness to changing customer requirements');
 INSERT INTO technology (name, type_id, description) VALUES ('Lean Startup', 6, 'A methodology for developing businesses and products utilizing an iterative build-measure-learn feedback loop');
-INSERT INTO technology (name, type_id, description) VALUES ('Scrum', 6, 'An iterative and incremental agile software development framework for managing software projects and product or application development');
+INSERT INTO technology (name, type_id, description) VALUES ('Scrum', 6, 'An iterative and incremental agile software development methodology for managing software projects and product or application development');
 INSERT INTO technology (name, type_id, description) VALUES ('Test Driven Development', 6, 'A software development process whereby tests are written before writing the code that enables the test to pass');
 INSERT INTO technology (name, type_id, description) VALUES ('Waterfall', 6, 'A sequential development process in which progress is seen as flowing steadily downwards through the phases of development like a waterfall');
 
 
-INSERT INTO technology (name, type_id, description) VALUES ('Attack & Penetration Testing', 7, 'A method of evaluating computer and network security by simulating an attack on a computer system or network from external and internal threats');
-INSERT INTO technology (name, type_id, description) VALUES ('Computer Security', 7, 'Information security as applied to computers and networks');
+INSERT INTO technology (name, type_id, description) VALUES ('Penetration Testing', 7, 'A method of evaluating computer and network security by simulating an attack on a computer system or network from external and internal threats');
+INSERT INTO technology (name, type_id, description) VALUES ('Computer Security', 7, 'Covers all the processes and mechanisms by which equipment, information, and services are protected from unintended or unauthorized access, change, or destruction');
 INSERT INTO technology (name, type_id, description) VALUES ('Cryptography', 7, 'The study and application of techniques for secure communication');
-INSERT INTO technology (name, type_id, description) VALUES ('Network Security', 7, 'Information security as applied to networks');
-INSERT INTO technology (name, type_id, description) VALUES ('PKI', 7, 'A set of hardware, software, people, policies, and procedures needed to create, manage, distribute, use, store, and revoke digital certificates');
+INSERT INTO technology (name, type_id, description) VALUES ('Network Security', 7, 'Consists of the provisions and policies adopted to prevent and monitor unauthorized access, misuse, modification, or denial of a computer network and network-accessible resources');
+INSERT INTO technology (name, type_id, description) VALUES ('PKI', 7, 'Public Key Infrastructure: A set of hardware, software, people, policies, and procedures needed to create, manage, distribute, use, store, and revoke digital certificates');
 INSERT INTO technology (name, type_id, description) VALUES ('Reverse Engineering', 7, 'The process of discovering the technological principles of a device, object, or system through analysis of its structure, function, and operation');
 INSERT INTO technology (name, type_id, description) VALUES ('Threat Modeling', 7, 'Modeling a set of security aspects for a piece of software or system');
 
 
-INSERT INTO technology (name, type_id, description) VALUES ('Amazon EC2', 8, 'A cloud computing platform that allows users to leverage virtual computers to run applications');
+INSERT INTO technology (name, type_id, description) VALUES ('Amazon EC2', 8, 'A cloud computing platform offered by Amazon that allows users to leverage virtual instances to run applications');
 INSERT INTO technology (name, type_id, description) VALUES ('Amazon S3', 8, ' An online file storage web service offered by Amazon Web Services');
-INSERT INTO technology (name, type_id, description) VALUES ('Heroku', 8, 'A cloud platform as a service (PaaS)');
-INSERT INTO technology (name, type_id, description) VALUES ('OpenStack', 8, 'An open source cloud computing project to provide an infrastructure as a service (IaaS)');
-INSERT INTO technology (name, type_id, description) VALUES ('Rackspace', 8, 'A set of cloud-related products and services');
+INSERT INTO technology (name, type_id, description) VALUES ('Heroku', 8, 'A cloud platform as a service (PaaS) offered by Heroku');
+INSERT INTO technology (name, type_id, description) VALUES ('OpenStack', 8, 'An open source cloud computing project that provides an infrastructure as a service (IaaS)');
+INSERT INTO technology (name, type_id, description) VALUES ('Rackspace', 8, 'A set of cloud-related products and services offered by Rackspace');
 
 
 INSERT INTO technology (name, type_id, description) VALUES ('API Development', 9, 'The design and development of APIs');
 INSERT INTO technology (name, type_id, description) VALUES ('Back-end Development', 9, 'The design and development of server-side systems and services');
-INSERT INTO technology (name, type_id, description) VALUES ('Big Data', 9, 'Wrangler of big data sets.');
+INSERT INTO technology (name, type_id, description) VALUES ('Big Data', 9, 'The handling of data sets so large and complex that it becomes difficult to process using typical database management tools or traditional data processing applications');
 INSERT INTO technology (name, type_id, description) VALUES ('Data Analysis', 9, 'The process of inspecting, cleaning, transforming, and modeling data with the goal of highlighting useful information, suggesting conclusions, and supporting decision making');
 INSERT INTO technology (name, type_id, description) VALUES ('Data Modeling', 9, 'The process of creating a data model for an information system by applying formal data modeling techniques');
-INSERT INTO technology (name, type_id, description) VALUES ('Dev Ops', 9, 'A role that integrates the work of software developers and IT professionals');
+INSERT INTO technology (name, type_id, description) VALUES ('Dev Ops', 9, 'The integration of the work of software developers and IT professionals');
 INSERT INTO technology (name, type_id, description) VALUES ('Distributed Systems', 9, 'The design and development of software systems which contain components located on networked computers and coordinate their actions by passing messages');
 INSERT INTO technology (name, type_id, description) VALUES ('Entrepreneurship', 9, 'Here''s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They''re not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can''t do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do');
 INSERT INTO technology (name, type_id, description) VALUES ('Front-end Development', 9, 'The design and development of client-side applications');
@@ -165,8 +165,8 @@ INSERT INTO technology (name, type_id, description) VALUES ('Scrum Master', 9, '
 INSERT INTO technology (name, type_id, description) VALUES ('System Architecture', 9, 'The design of the conceptual models that define the structure, behavior, and views of a system');
 INSERT INTO technology (name, type_id, description) VALUES ('Web Development', 9, 'The design and development of products and services for the web');
 INSERT INTO technology (name, type_id, description) VALUES ('Web Services', 9, 'The design and development of server-side web services');
-INSERT INTO technology (name, type_id, description) VALUES ('UI Design', 9, 'The design and development of user interfaces');
-INSERT INTO technology (name, type_id, description) VALUES ('UX Design', 9, 'The design and development of the overall user experience of a product or service');
+INSERT INTO technology (name, type_id, description) VALUES ('UI Development', 9, 'The development of user interfaces');
+INSERT INTO technology (name, type_id, description) VALUES ('UX Design', 9, 'The design of the overall user experience of a product or service');
 
 
 
