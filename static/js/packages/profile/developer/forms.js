@@ -772,7 +772,7 @@ define([
                 model: model,
                 label: '<strong>Skills</strong>',
                 matcher: matcher,
-                placeholder: 'Python, Ruby, C++',
+                placeholder: 'Python, Agile, Web, Mobile',
                 viewFactory: new FormSkillsFieldView.Factory(),
                 viewOptions: { stringify: stringify },
                 storeOptions: {withRelated: ['technology'] }
