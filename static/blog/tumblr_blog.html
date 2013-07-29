@@ -321,16 +321,16 @@
                 vertical-align: middle;
             }
 
-            .caption a, .description a {
+            .caption a {
                 color: {Color:Accent};
                 padding: 0 1px;
             }
 
-            .caption a:hover, .description a:hover {
+            .caption a:hover {
                 background: rgba({RGBcolor:Accent}, 0.13);
             }
 
-            .caption a:active, .description a:active {
+            .caption a:active {
                 background: rgba({RGBcolor:Accent}, 0.2);
             }
 
@@ -1023,6 +1023,12 @@
             .navbar {
                 -webkit-font-smoothing: subpixel-antialiased;
             }
+            #sidebar .description {
+                padding-bottom: 5px;
+            }
+            #sidebar .description a {
+                margin-top: 5px;
+            }
             .tr-blog-post-author + div {
                 clear: both;
             }
@@ -1086,6 +1092,9 @@
 
             <aside id="sidebar">
                 {block:IfShowBlogDescription}{block:Description}<div class="cont description group">{Description}</div>{/block:Description}{/block:IfShowBlogDescription}
+                <div class="cont description group">Join Tech Residents, take a DRY approach to job hunting.
+                    <p class="text-center"><a href="http://techresidents.com" class="btn btn-primary">Learn More</a></p>
+                </div>
 
                 {block:HasPages}
                     <ul class="links">
@@ -1103,27 +1112,7 @@
                 <ul class="links">
                     <li><a href="{RSS}" class="rss"><span class="icon"></span>rss</a></li>
                     <li><a href="/archive" class="archive"><span class="icon"></span>archive</a></li>
-                   
                 </ul>
-
-                {block:Twitter}
-                
-                    <aside id="twitter_container" style="display:none"></aside>
-
-                    <script type="text/javascript">
-                        function recent_tweets(data) {
-                            document.getElementById("twitter_container").innerHTML =
-                            document.getElementById("twitter_container").innerHTML +
-                            '<a class="bubble" href="http://twitter.com/{TwitterUsername}/status/' +
-                            (data[0].id_str ? data[0].id_str : data[0].id) +
-                            '">' + data[0].text +
-                            '<span class="arrow border"></span><span class="arrow fill"></span></a>' +
-                            '<a href="http://twitter.com/{TwitterUsername}" class="twitter_username">@{TwitterUsername}</a>';
-
-                            document.getElementById("twitter_container").style.display = 'block';
-                        }
-                    </script>
-                {/block:Twitter}
             </aside>
 
             <ul id="posts">
@@ -1741,10 +1730,6 @@
                     });
             });
         </script>
-
-        {block:Twitter}
-            <script type="text/javascript" src="/tweets.js"></script>
-        {/block:Twitter}
 
         {block:IfGoogleAnalyticsID}
             <script type="text/javascript">
