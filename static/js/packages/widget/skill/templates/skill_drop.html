@@ -1,0 +1,21 @@
+<div class="w-skill-drop-header">
+    <span class="w-skill-drop-technology"><%= technology.name %></span>
+    <span class="close">x</span>
+</div>
+
+<div class="w-skill-drop-container">
+    <label>Expertise</label>
+    <div class="btn-group" data-toggle="buttons-radio">
+        <button type="button" class="btn <%= expertise === 'Novice' ? 'active' : '' %>" value="Novice">Novice</button>
+        <button type="button" class="btn <%= expertise === 'Proficient' ? 'active' : '' %>" value="Proficient">Proficient</button>
+        <button type="button" class="btn <%= expertise === 'Expert' ? 'active' : '' %>" value="Expert">Expert</button>
+    </div>
+</div>
+<div class="w-skill-drop-container">
+    <label>Years Exeperience</label>
+    <select>
+        <% _.each(_.range(1, 20), function(i) { %>
+        <option value="<%= i %>" <%= i === yrs_experience ? 'selected="selected"' : '' %>><%= i %></option>
+        <% }); %>
+    </select>
+</div>
