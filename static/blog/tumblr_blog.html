@@ -321,16 +321,16 @@
                 vertical-align: middle;
             }
 
-            .caption a {
+            .caption a, .description a {
                 color: {Color:Accent};
                 padding: 0 1px;
             }
 
-            .caption a:hover {
+            .caption a:hover, .description a:hover {
                 background: rgba({RGBcolor:Accent}, 0.13);
             }
 
-            .caption a:active {
+            .caption a:active, .description a:active {
                 background: rgba({RGBcolor:Accent}, 0.2);
             }
 
@@ -1023,12 +1023,6 @@
             .navbar {
                 -webkit-font-smoothing: subpixel-antialiased;
             }
-            #sidebar .description {
-                padding-bottom: 5px;
-            }
-            #sidebar .description a {
-                margin-top: 5px;
-            }
             .tr-blog-post-author + div {
                 clear: both;
             }
@@ -1092,8 +1086,19 @@
 
             <aside id="sidebar">
                 {block:IfShowBlogDescription}{block:Description}<div class="cont description group">{Description}</div>{/block:Description}{/block:IfShowBlogDescription}
-                <div class="cont description group">Join Tech Residents, take a DRY approach to job hunting.
-                    <p class="text-center"><a href="http://techresidents.com" class="btn btn-primary">Learn More</a></p>
+                <div class="cont description group">
+                    <h5>About Tech Residents</h5>
+                    <p class="muted">Tech Residents is out to prove that landing your next great development job
+                        doesn't have to be painful.  We enable developers to take a DRY approach to job hunting,
+                        which saves you time and maximizes your exposure to employers. Looking for your
+                        next opportunity?
+                    </p>
+                    <p><a href="http://techresidents.com">Sign up today</a></p>
+                </div>
+                <div class="cont description group">
+                    <h5>Follow Us</h5>
+                    <a href="https://twitter.com/TechResidents" class="twitter-follow-button" data-show-count="false">Follow @TechResidents</a>
+                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
                 </div>
 
                 {block:HasPages}
@@ -1720,8 +1725,6 @@
                     };
 
                     $("span.author-name").each(function() {
-                        console.log('yes');
-                        console.log($(this).text());
                         var author = authors[$(this).text()];
                         if(author) {
                             html = '<a href="https://twitter.com/' + author.twitter + '">' + author.name + '</a>';
