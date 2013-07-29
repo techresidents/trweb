@@ -480,7 +480,7 @@ define([
 
         onTwilioError: function() {
             var message = 'Microphone access denied. Please refresh the ' +
-                          'to try again.';  
+                          'page to try again.';  
             this.triggerEvent(events.ALERT, {
                 message: message,
                 severity: 'error'
