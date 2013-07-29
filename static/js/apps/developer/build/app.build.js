@@ -24,6 +24,7 @@
         { name: 'soundmanager', exclude: ["main"] },
         { name: 'ui', exclude: ["main"] },
         { name: 'user', exclude: ["main"] },
+        { name: 'widget', exclude: ["main"] },
         { name: 'xd', exclude: ["main"] }
     ],
 
@@ -67,6 +68,7 @@
         { name: 'soundmanager', location: 'packages/soundmanager' },
         { name: 'ui', location: 'packages/ui' },
         { name: 'user', location: 'packages/user' },
+        { name: 'widget', location: 'packages/widget' },
         { name: 'xd', location: 'packages/xd' }
     ],
     

@@ -41,6 +41,7 @@ require.config({
         { name: 'soundmanager', location: 'packages/soundmanager' },
         { name: 'ui', location: 'packages/ui' },
         { name: 'user', location: 'packages/user' },
+        { name: 'widget', location: 'packages/widget' },
         { name: 'xd', location: 'packages/xd' }
     ],
 
