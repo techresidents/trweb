@@ -15,7 +15,7 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container" itemscope itemtype="http://schema.org/AboutPage">
     <div class="row">
         <div class="span12">
             <div class="page-header">
@@ -25,32 +25,10 @@
     </div>
     <div class="row">
         <div class="span6">
-            <h4>What is Tech Residents?</h4>
-            <p>Tech Residents is a free platform for software developers to talk tech and showcase their talent to hiring companies. We believe that the hiring process in its current form is extremely inefficient and ineffective. Our goal is to bring innovation to the hiring process, making it a better experience for both developers and employers.</p>
-
-            <h4>Where are you located?</h4>
-            <p>Launched in 2012, Tech Residents is headquartered in Boston, Massachusetts.</p>
-        </div>
-
-        <div class="span4 offset1">
-            <div class="well">
-                <ul class="nav nav-list">
-                    <li class="nav-header">Follow us</li>
-                    <li>
-                        <a href="http://twitter.com/TechResidents"><img class="social-icon" src="{% static 'img/twitter-bird-white-on-blue.png' %}"/>Follow @techresidents</a>
-                    </li>
-                    <li>
-                        <a href="http://www.facebook.com/techresidents"><img class="social-icon" src="{% static 'img/facebook_logo.png' %}"/>Like us on Facebook</a>
-                    </li>
-                    <li>
-                        <a href="http://www.linkedin.com/company/tech-residents"><img class="social-icon linked-in-icon" src="{% static 'img/LinkedIn_Logo30px.png' %}"/>Follow us on LinkedIn</a>
-                    </li>
-                    <li class="nav-header">General</li>
-                    <li>
-                        <a href="{% url 'common.views.contact' %}">Contact us</a>
-                    </li>
-                </ul>
-            </div>
+            <p><span itemprop="name">Tech Residents</span> is headquartered in Boston, Massachusetts.</p>
+            <p class="text-justify" itemprop="description">We believe that technical hiring in its current form is
+                extremely inefficient and painful for both <span itemprop="audience">software developers</span> and employers,
+                and it's our mission to fix it.</p>
         </div>
     </div>
 </div>
