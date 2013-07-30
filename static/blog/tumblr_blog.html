@@ -1407,53 +1407,25 @@
                                     {block:Video}{block:ContentSource} floating{/block:ContentSource}{/block:Video}
                                 {/block:IfPlaceTimestampInLeftColumn}
                             ">
-                                {block:Date} 
-                                <li>
-                                    <ul class="post_controls group">
-                                        <li>{ReblogButton size="21"}</li>
-                                        <li>{LikeButton size="21"}</li>
-                                    </ul>
-                                </li>
-                                {/block:Date} 
-                                <li><a href="{Permalink}" class="
-                                    timestamp
-                                    {block:Text}has_caption{block:Title} with_title{/block:Title}{/block:Text}
-                                    {block:Photo}{block:Caption}has_caption{/block:Caption}{/block:Photo}
-                                    {block:Photoset}{block:Caption}has_caption{/block:Caption}{/block:Photoset}
-                                    
-                                    {block:Quote}
-                                        {block:Source}
-                                            {Length}_quote
-                                        {/block:Source}
-                                    {/block:Quote}
-                                    
-                                    {block:Link}{block:Description}has_caption{/block:Description}{/block:Link}
-                                    {block:Chat}chat{block:Title} with_title{/block:Title}{/block:Chat}
-                                    {block:Audio}{block:Caption}has_caption{/block:Caption}{/block:Audio}
-                                    {block:Video}{block:Caption}has_caption{/block:Caption}{/block:Video}
-                                ">{block:IndexPage}{TimeAgo}{/block:IndexPage}{block:PermalinkPage}{TimeAgo}{/block:PermalinkPage}</a></li>{block:PermalinkPage}{block:HasTags}{/block:HasTags}{/block:PermalinkPage}
-                                
-                                
-                                
-  
+
+                            {block:PermalinkPage}{block:HasTags}{/block:HasTags}{/block:PermalinkPage}
+
                     <li class="tr-social-media-btn">
                         <a href="https://twitter.com/share" class="twitter-share-button" data-url="{Permalink}" data-via="TechResidents" data-count="none">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
                     </li>
-                    
                     
                      <li class="tr-social-media-btn">
                         <div class="g-plus" data-action="share" data-annotation="none" data-href="{Permalink}"></div>
                         <script type="text/javascript">
-  (function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-  })();
+                          (function() {
+                            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                            po.src = 'https://apis.google.com/js/plusone.js';
+                            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                          })();
                         </script>
                     </li>
-                    
-                    
+
                     <li class="tr-social-media-btn">
                         <script src="//platform.linkedin.com/in.js" type    ="text/javascript">lang: en_US</script>
                         <script type="IN/Share" data-url="{Permalink}"></script>
@@ -1462,42 +1434,38 @@
                     <li class="tr-social-media-btn">
                         <iframe src="//www.facebook.com/plugins/like.php?href={Permalink}&amp;send=false&amp;layout=button_count&amp;width=550&amp;show_faces=false&amp;font&amp;colorscheme=light&amp;action=like&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe>
                     <li>
+                        {block:IfShowPostNotes}
+                            {block:NoteCount}
+                               <li><a class="notecount" href="{Permalink}#notes">{NoteCount} notes</a></li>
+                           {/block:NoteCount}
+                        {/block:IfShowPostNotes}
 
-     
-                    
+                        {block:IfShowTags}
+                            {block:Tags}
+                                <li><a class="tag" href="{TagURL}"><span>#</span>{Tag}</a></li>
+                            {/block:Tags}
+                        {/block:IfShowTags}
+                        </ul>
+                        {block:PostNotes}
+                            <section class="post_notes">
+                                <a name="notes">
+                                    {PostNotes}
+                                </a>
+                            </section>
+                        {/block:PostNotes}
 
-                                {block:IfShowPostNotes}
-                                    {block:NoteCount}
-                                       <li><a class="notecount" href="{Permalink}#notes">{NoteCount} notes</a></li>
-                                   {/block:NoteCount}
-                                {/block:IfShowPostNotes}
+                        {block:IfDisqusShortname}{block:IndexPage}
+                           <section class="caption group">
+                                <a class="disquscomments" href="{Permalink}#disqus_thread">{NoteCount} Comments</a>
+                            </section>
+                        {/block:IndexPage}{/block:IfDisqusShortname}
+                        {block:IfDisqusShortname}{block:Permalink}
+                            <div id="disqus_thread"></div>
+                            <script type="text/javascript" src="http://disqus.com/forums/{text:Disqus Shortname}/embed.js"></script>
+                            <noscript><a href="http://{text:Disqus Shortname}.disqus.com/?url=ref">View the discussion thread.</a></noscript>
+                        {/block:Permalink}{/block:IfDisqusShortname}
 
-                                {block:IfShowTags}
-                                    {block:Tags}
-                                        <li><a class="tag" href="{TagURL}"><span>#</span>{Tag}</a></li>
-                                    {/block:Tags}
-                                {/block:IfShowTags}
-                                </ul>
-                                {block:PostNotes}
-                                    <section class="post_notes">
-                                        <a name="notes">
-                                            {PostNotes}
-                                        </a>
-                                    </section>
-                                {/block:PostNotes}
-
-                                {block:IfDisqusShortname}{block:IndexPage}
-                                   <section class="caption group">
-                                        <a class="disquscomments" href="{Permalink}#disqus_thread">{NoteCount} Comments</a>
-                                    </section>
-                                {/block:IndexPage}{/block:IfDisqusShortname}
-                                {block:IfDisqusShortname}{block:Permalink}
-                                    <div id="disqus_thread"></div>
-                                    <script type="text/javascript" src="http://disqus.com/forums/{text:Disqus Shortname}/embed.js"></script>
-                                    <noscript><a href="http://{text:Disqus Shortname}.disqus.com/?url=ref">View the discussion thread.</a></noscript>
-                                {/block:Permalink}{/block:IfDisqusShortname}
-
-                                </section>
+                        </section>
                     </li>
 
                 {/block:Posts}
