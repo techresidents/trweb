@@ -234,22 +234,6 @@ define([
         },
 
         onSave: function(options) {
-            this.triggerEvent(events.SAVE_REQUISITION, {
-                model: this.model,
-                onSuccess: options.success,
-                onError: options.error
-            });
-        }
-    });
-
-    /**
-     * Create Requisition Form View
-     * @constructor
-     * @param {Object} options
-     */
-    var CreateRequisitionFormView = RequisitionFormView.extend({
-
-        onSave: function(options) {
             var success = function() {
                 options.success.apply(this, arguments);
                 this.triggerEvent(events.VIEW_NAVIGATE, {
@@ -267,7 +251,6 @@ define([
     });
 
     return {
-        RequisitionFormView: RequisitionFormView,
-        CreateRequisitionFormView: CreateRequisitionFormView
+        RequisitionFormView: RequisitionFormView
     };
 });
