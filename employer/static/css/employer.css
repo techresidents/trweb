@@ -754,3 +754,46 @@
     color: #31b531;
     border-bottom-color: #31b531;
 }
+
+.form-requisition .form-field-requisition_technologies .multi-autocomplete {
+    width: 545px;
+}
+.form-requisition .form-field-location .autocomplete li  {
+    padding: 3px 5px;
+}
+
+
+.requisition-section {
+    margin-bottom: 25px;
+}
+.requisition-section-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #dddddd;
+}
+.requisition-label {
+    display: inline-block;
+    color: #777777;
+    width: 90px;
+}
+
+.requisition-expertise {
+    font-size: 14px;
+    font-weight: normal;
+    color: #686868;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    padding: 3px 7px;
+    margin-right: 5px;
+}
+.requisition-novice {
+    background-color: #F2DEDE;
+}
+.requisition-proficient {
+    background-color: #D9EDF7;
+}
+.requisition-expert {
+    background-color: #DFF0D8;
+}

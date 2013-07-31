@@ -24,11 +24,18 @@ define([
                 });
             }
         },
-
+        
         createApplicationLog: function(note) {
             this.view.triggerEvent(events.CREATE_APPLICATION_LOG, {
                 application: this.model,
                 note: note
+            });
+        },
+
+        viewApplication: function() {
+            this.view.triggerEvent(events.VIEW_NAVIGATE, {
+                type: 'ApplicationView',
+                id: this.model.id
             });
         },
 
@@ -50,6 +57,11 @@ define([
                  this.isValidAction(ApplicantHandler.RESCIND_INTERVIEW_OFFER));
 
             return [
+                { key: 'view-application', label: 'View Application',
+                  handler: _.bind(this.viewApplication, this),
+                  visible: true
+                },
+                { key: 'divider', visible: true},
                 { key: 'review', label: 'Review',
                   handler: _.bind(this.updateApplicationStatus, this, 'REVIEW'),
                   visible: this.isValidStatusChange('REVIEW')

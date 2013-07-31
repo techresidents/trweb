@@ -241,7 +241,6 @@ define([
         onClick: function(e) {
             var id = $(e.currentTarget).data('id');
             var model = this.collection.get(id);
-
             this.select(model, true);
         },
 

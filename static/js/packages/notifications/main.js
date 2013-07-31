@@ -67,6 +67,11 @@ define([
         UPDATE_TECHNOLOGY_PREFS: 'notification:UpdateTechnologyPrefs',
         UPDATE_DEVELOPER_PROFILE: 'notification:UpdateDeveloperProfile',
         UPDATE_DEVELOPER_ACCOUNT: 'notification:UpdateDeveloperAccount',
-        UPDATE_DEVELOPER_PREFERENCES: 'notification:UpdateDeveloperPreferences'
+        UPDATE_DEVELOPER_PREFERENCES: 'notification:UpdateDeveloperPreferences',
+        
+        /* REQUISITION ACTIONS */
+        UPDATE_REQUISITION: 'notification:UpdateRequisition',
+        UPDATE_REQUISITION_TECHNOLOGIES: 'notification:UpdateRequisitionTechnologies',
+        SAVE_REQUISITION: 'notification:SaveRequisition'
     };
 });

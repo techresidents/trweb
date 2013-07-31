@@ -1,11 +1,7 @@
 <div class="control-group<%= state.showError && state.error ? ' error' : ''%>">
     <label class="control-label"><%= state.label %></label>
     <div class="controls">
-        <select <%= state.enabled ? '' : 'readonly' %>>
-            <% _.each(choices, function(choice, index) { %>
-                <option value="<%= choice.index %>" <%= index === selectedIndex ? 'selected="selected"' : '' %> ><%= choice.label %></option>
-            <% }); %>
-        </select>
+        <textarea class="<%= inputClasses %>" rows="<%= rows %>" value="<%= state.value %>" maxlength="<%= maxLength %>" placeholder="<%= placeholder %>" <%= state.enabled ? '' : 'readonly' %>></textarea>
         <% if(state.showError && state.error) { %>
             <span class="help-inline"><%= state.error %></span>
         <% } %>

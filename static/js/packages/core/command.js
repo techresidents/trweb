@@ -103,12 +103,13 @@ define(/** @exports core/command */[
      * the user specified callbacks.
      * <br><br>
      * Note that the options.onSuccess and options.onError will be invoked
-     * with the following two arguments:
+     * with a result object containing the following properties:
      * <br>
-     * 1) {Object} options (same options passed into execute method())
+     * 1) 'options' object (same options passed into execute method())
      * <br>
-     * 2) {Object} response object containing boolean status and
-     *             arguments named in the callback args arrays.
+     * 2) 'status' boolean status indicating success or error
+     * <br>
+     * 3) 'result' object containing command specific results
      */
     var AsyncCommand = Command.extend(
     /** @lends module:core/command~AsyncCommand.prototype */{
@@ -152,12 +153,12 @@ define(/** @exports core/command */[
 
                 var result = {
                     status: true,
+                    options: this.options,
                     result: this._argsToObject(argNames, arguments)
                 };
 
                 this.options.onSuccess.call(
                     this.options.context || this,
-                    this.options,
                     result);
             }
         },
@@ -174,12 +175,12 @@ define(/** @exports core/command */[
 
                 var result = {
                     status: false,
+                    options: this.options,
                     result: this._argsToObject(argNames, arguments)
                 };
 
                 this.options.onError.call(
                     this.options.context || this,
-                    this.options,
                     result);
             } else {
                 this.facade.trigger(notifications.ALERT, {

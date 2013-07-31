@@ -13,7 +13,8 @@ define(/** @exports ui/form/views/fields */[
     'text!../templates/date_field.html',
     'text!../templates/dropdown_field.html',
     'text!../templates/input_field.html',
-    'text!../templates/multi_autocomplete_field.html'
+    'text!../templates/multi_autocomplete_field.html',
+    'text!../templates/text_field.html'
 ], function(
     $,
     _,
@@ -29,7 +30,8 @@ define(/** @exports ui/form/views/fields */[
     date_field_template,
     dropdown_field_template,
     input_field_template,
-    multi_autocomplete_field_template) {
+    multi_autocomplete_field_template,
+    text_field_template) {
 
 
     var FieldView = core.view.View.extend(
@@ -91,9 +93,11 @@ define(/** @exports ui/form/views/fields */[
     var InputFieldView = FieldView.extend(
     /** @lends module:ui/form/views~InputFieldView.prototype */ {
         
-        events: _.extend({
-            'blur input': 'onBlur'
-        }, FieldView.prototype.events),
+        events: function() {
+            var events = {};
+            events['blur ' + this.inputSelector] = 'onBlur';
+            return _.extend(events, FieldView.prototype.events);
+        },
         
         /**
          * InputFieldView constructor
@@ -131,11 +135,13 @@ define(/** @exports ui/form/views/fields */[
          *   must also be true.
          * @param {string} [options.classes] additional classes to apply
          *   to the <input> element.
+         * @param {string} [options.inputSelector='input'] Input selector
          * @param {string} [options.template] View template
          */
         initialize: function(options) {
             options = _.extend({
                 template: input_field_template,
+                inputSelector: 'input',
                 placeholder: null,
                 maxLength: 100,
                 throttle: 250,
@@ -150,6 +156,7 @@ define(/** @exports ui/form/views/fields */[
 
             InputFieldView.__super__.initialize.call(this, options);
             
+            this.inputSelector = options.inputSelector;
             this.placeholder = options.placeholder;
             this.maxLength = options.maxLength;
             this.throttle = options.throttle;
@@ -181,7 +188,7 @@ define(/** @exports ui/form/views/fields */[
                 model: this.state,
                 modelAttribute: 'rawValue',
                 inputView: this,
-                inputSelector: 'input',
+                inputSelector: this.inputSelector,
                 throttle: this.throttle,
                 trim: this.trim,
                 updateDuringTyping: this.updateDuringType,
@@ -232,7 +239,7 @@ define(/** @exports ui/form/views/fields */[
         },
 
         onBlur: function(e) {
-            if(!this.validateDuringType) {
+            if(!this.validateDuringTyping) {
                 this.validate();
             }
             if(!this.formatDuringTyping) {
@@ -262,6 +269,81 @@ define(/** @exports ui/form/views/fields */[
      * {@link module:core/factory~Factory|Factory} class for convenience.
      */
     InputFieldView.Factory = core.factory.buildFactory(InputFieldView);
+
+    
+    var TextFieldView = InputFieldView.extend(
+    /** @lends module:ui/form/views~TextFieldView.prototype */ {
+        
+        /**
+         * TextFieldView constructor
+         * @constructor
+         * @augments module:ui/form/views~InputFieldView
+         * @param {object} options Options object
+         * @param {Field} options.field Field object
+         * @param {FieldState} options.state Field state model
+         * @param {string} [options.placeholder] Placeholder text
+         * @param {number} [options.rows=3] Number of text rows
+         * @param {number} [options.maxLength=4096] Maximum length
+         * @param {boolean} [options.trim=true] Boolean indicating that
+         *   whitespace should be trimmed from the input.
+         * @param {number} [options.throttle=250] Number of milliseconds
+         *   following an input change to wait before updating state
+         *   model values.
+         * @param {boolean} [options.updateDuringType=true] Boolean
+         *   indicating that the throttle timer will be started as soon
+         *   as the user starts typing (leading edge). If false
+         *   the throttle timer will not be started until the user
+         *   stops typing.
+         * @param {boolean} [options.formatDuringTyping=false] Boolean
+         *   indicating that the input should be formatted while
+         *   the user is still typing. If false, the field will not
+         *   be formatted until the input loses focus.
+         * @param {boolean} [options.validateDuringTyping=true] Boolean
+         *   indicating that the input should be validated while
+         *   the user is still typing. If false, the field will not
+         *   be validated until the input loses focus.
+         * @param {boolean} [options.preventDefaultOnEnter=true] Boolean 
+         *   indicating that default behavior should be prevented
+         *   when the enter key is pressed.
+         * @param {boolean} [options.blurOnEnter=true] Boolean 
+         *   indicating that the input should give up focus
+         *   when the enter key is pressed. Note that preventDefaultOnEnter
+         *   must also be true.
+         * @param {string} [options.classes] additional classes to apply
+         *   to the <textarea> element.
+         * @param {string} [options.inputSelector='textarea'] Input selector
+         * @param {string} [options.template] View template
+         */
+        initialize: function(options) {
+            options = _.extend({
+                template: text_field_template,
+                inputSelector: 'textarea',
+                maxLength: 4096,
+                rows: 3 
+            }, options);
+
+            TextFieldView.__super__.initialize.call(this, options);
+
+            this.rows = options.rows;
+        },
+
+        classes: function() {
+            var result = TextFieldView.__super__.classes.call(this);
+            result.push('text-form-field');
+            return result;
+        },
+
+        context: function() {
+            var result = TextFieldView.__super__.context.call(this);
+            result.rows = this.rows;
+            return result;
+        }
+    });
+
+    /**
+     * {@link module:core/factory~Factory|Factory} class for convenience.
+     */
+    TextFieldView.Factory = core.factory.buildFactory(TextFieldView);
 
     
     var DateFieldView = FieldView.extend(
@@ -438,7 +520,8 @@ define(/** @exports ui/form/views/fields */[
     /** @lends module:ui/form/views~DropdownFieldView.prototype */ {
         
         events: _.extend({
-            'change': 'onSelectChange'
+            'change': 'onSelectChange',
+            'blur select': 'onSelectBlur'
         }, FieldView.prototype.events),
         
         /**
@@ -517,6 +600,10 @@ define(/** @exports ui/form/views/fields */[
             var choice = this.choices[index];
             this.selectedIndex = index;
             this.state.setRawValue(choice.value);
+        },
+
+        onSelectBlur: function(e) {
+            this.validate();
         },
         
         onRawValueChange: function() {
@@ -600,8 +687,8 @@ define(/** @exports ui/form/views/fields */[
 
             //bind events
             this.listenTo(this.state, 'change:rawValue', this.onRawValueChange);
-            this.listenTo(this.state, 'change:error', this.render);
-            this.listenTo(this.state, 'change:showError', this.render);
+            this.listenTo(this.state, 'change:error', this.delayRender);
+            this.listenTo(this.state, 'change:showError', this.delayRender);
 
             //child views
             this.acView = null;
@@ -645,15 +732,35 @@ define(/** @exports ui/form/views/fields */[
         },
 
         render: function() {
+            var hasFocus = this.acView.hasFocus();
             var context = this.context();
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.acView);
+
+            if(hasFocus) {
+                this.acView.focus();
+                this.acView.inputHandlerView.setCursorEnd();
+            }
             return this;
         },
 
+        delayRender: function() {
+            //in the case where user clicks the dropdown menu
+            //we will get a select event containing null
+            //before we get the select event with the clicked
+            //value. If we render immediately, we'll miss
+            //the second event containing the clicked value,
+            //so we delay render just long enough to ensure
+            //we get the second select event.
+            setTimeout(_.bind(this.render, this), 300);
+        },
+
         onBlur: function(e) {
-            this.validate();
+            //delay validation to cover the case where the
+            //input loses focus when the user clicks on 
+            //the dropdown menu to select a valid choice.
+            setTimeout(_.bind(this.validate, this), 300);
         },
 
         onFocus: function(e) {
@@ -793,6 +900,7 @@ define(/** @exports ui/form/views/fields */[
     return {
         FieldView: FieldView,
         InputFieldView: InputFieldView,
+        TextFieldView: TextFieldView,
         DateFieldView: DateFieldView,
         CheckboxFieldView: CheckboxFieldView,
         DropdownFieldView: DropdownFieldView,
