@@ -1,4 +1,4 @@
-<p><span><img alt="image" src="http://media.tumblr.com/32d33958b37b3dae80c0c19fc96e2f90/tumblr_inline_mqt6d9p34Y1qz4rgp.jpg" /></span></p>
+<p><figure><span><img alt="image" src="http://media.tumblr.com/32d33958b37b3dae80c0c19fc96e2f90/tumblr_inline_mqt6d9p34Y1qz4rgp.jpg" /></span></figure></p>
 <p><span>When tasked with describing Tech Residents in 10 words or less we stumbled upon the phrase, 'The Charlie Rose show, but for software developers'. &nbsp;Here's why we think the description works.</span></p>
 <p><span>[[MORE]]</span></p>
 <p>In case you're not familiar with the Charlie Rose show, it's a talk show hosted by none-other-than Charlie Rose. The format of the show is simple: a round table discussion between Charlie and his guests. &nbsp;Guests of the show range from famous actors and politicians, to businessmen and scientists.</p>
