@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 from techresidents_web.accounts.models import Tenant
-from techresidents_web.common.models import Location, Organization, Technology
+from techresidents_web.common.models import ExpertiseType, Location, Organization, Technology
 
 
 class JobPositionType(models.Model):
@@ -34,11 +34,11 @@ class JobRequisition(models.Model):
     technologies = models.ManyToManyField(Technology, through="JobRequisitionTechnology")
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=4096)
-    salary_start = models.IntegerField()
-    salary_end   = models.IntegerField()
+    salary = models.CharField(max_length=100)
     created = models.DateTimeField(auto_now_add=True)
     telecommute = models.BooleanField()
     relocation = models.BooleanField()
+    equity = models.CharField(max_length=100, null=True)
     employer_requisition_identifier = models.CharField(max_length=100, null=True)
     deleted = models.BooleanField(default=False)
 
@@ -50,6 +50,7 @@ class JobRequisitionTechnology(models.Model):
 
     requisition = models.ForeignKey(JobRequisition, related_name="requisition_technologies")
     technology = models.ForeignKey(Technology, related_name="+")
+    expertise_type = models.ForeignKey(ExpertiseType)
     yrs_experience = models.IntegerField()
 
 class JobLocationPref(models.Model):

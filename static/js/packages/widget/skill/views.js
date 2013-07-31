@@ -6,7 +6,9 @@ define([
     'api',
     'ui',
     'text!./templates/skill.html',
-    'text!./templates/skill_drop.html'
+    'text!./templates/skills.html',
+    'text!./templates/edit_skill.html',
+    'text!./templates/edit_skill_drop.html'
 ], function(
     $,
     _,
@@ -15,37 +17,217 @@ define([
     api,
     ui,
     skill_template,
-    skill_drop_template) {
-    
+    skills_template,
+    edit_skill_template,
+    edit_skill_drop_template) {
+
     /**
-     * Skills View
+     * Skill view.
      * @constructor
      * @param {Object} options
+     * @param {Skill} options.model Skill model
      */
-    var SkillsView = ui.ac.views.MultiAutoCompleteView.extend({
+    var SkillView = core.view.View.extend({
 
-        events: function() {
-            return _.extend({
-                'close .w-skill': 'onSkillClose'
-            }, SkillsView.__super__.events);
+        initialize: function(options) {
+            this.template = _.template(skill_template);
+            this.modelWithRelated = ['technology'];
+            
+            //bind events
+            this.listenTo(this.model, 'change', this.render);
+
+            this.loader = new api.loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated }
+            ]);
+
+            this.loader.load();
+        },
+
+        classes: function() {
+            var result = ['w-skill'];
+            if(this.model.isLoaded()) {
+                result.push('w-skill-' + this.model.get_expertise().toLowerCase());
+            }
+            return result;
+
+        },
+
+        render: function() {
+            var context = {
+                model: this.model.toJSON({
+                    withRelated: ['technology']
+                })
+            };
+            this.$el.html(this.template(context));
+            this.$el.attr('class', this.classes().join(' '));
+            return this;
+        }
+    });
+
+    /**
+     * Skills view.
+     * @constructor
+     * @param {Object} options
+     * @param {SkillCollection} options.collection Skill collection
+     */
+    var SkillsView = core.view.View.extend({
+
+        events: {
+        },
+
+        noviceSkillsSelector: '.w-skills-novice',
+
+        proficientSkillsSelector: '.w-skills-proficient',
+
+        expertSkillsSelector: '.w-skills-expert',
+
+        childViews: function() {
+            var result = this.noviceViews
+                .concat(this.proficientViews)
+                .concat(this.expertViews);
+            return result;
         },
 
         initialize: function(options) {
-            options.viewFactory = new SkillView.Factory();
+            this.template =  _.template(skills_template);
+            this.collectionWithRelated = ['technology'];
+            
+            //bind events
+            this.listenTo(this.collection, 'reset', this.onReset);
+            this.listenTo(this.collection, 'add', this.onAdd);
+
+            this.loader = new api.loader.ApiLoader([
+                { instance: this.collection, withRelated: this.collectionWithRelated }
+            ]);
+
+            this.loader.load();
+
+            //child views
+            this.noviceViews = [];
+            this.proficientViews = [];
+            this.expertViews = [];
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.destroyChildViews();
+            this.noviceViews = [];
+            this.proficientViews = [];
+            this.expertViews = [];
+
+            this.collection.each(this.createSkillView, this);
+        },
+
+        classes: function() {
+            return ['w-skills'];
+        },
+
+        render: function() {
+            // Count the number of items in each expertise group
+            var expertiseCounts = _.countBy(this.collection.models, function(skill) {
+                return skill.get_expertise();
+            });
+
+            var context = {
+                collection: this.collection.toJSON(),
+                expertCount: expertiseCounts.Expert,
+                proficientCount: expertiseCounts.Proficient,
+                noviceCount: expertiseCounts.Novice
+            };
+            this.$el.html(this.template(context));
+            this.$el.attr('class', this.classes().join(' '));
+
+            _.each(this.noviceViews, function(view) {
+                this.append(view, this.noviceSkillsSelector);
+            }, this);
+
+            _.each(this.proficientViews, function(view) {
+                this.append(view, this.proficientSkillsSelector);
+            }, this);
+
+            _.each(this.expertViews, function(view) {
+                this.append(view, this.expertSkillsSelector);
+            }, this);
+
+            // Activate tooltips
+            this.$('[rel=tooltip]').tooltip();
+
+            return this;
+        },
+
+        destroy: function() {
+            // Need to hide any tooltips since this view could be removed
+            // from the DOM before a mouseleave() event fires
+            this.$('[rel=tooltip]').tooltip('hide');
+            core.view.View.prototype.destroy.apply(this, arguments);
+        },
+
+        createSkillView: function(model) {
+            var view = new SkillView({
+                model: model
+            });
+
+            var compare = function(view1, view2) {
+                return core.array.defaultCompare(
+                        -view1.model.get_yrs_experience(),
+                        -view2.model.get_yrs_experience());
+            };
+
+            switch(model.get_expertise()) {
+                case 'Novice':
+                    core.array.binaryInsert(this.noviceViews, view, compare);
+                    break;
+                case 'Proficient':
+                    core.array.binaryInsert(this.proficientViews, view, compare);
+                    break;
+                case 'Expert':
+                    core.array.binaryInsert(this.expertViews, view, compare);
+                    break;
+            }
+
+            return view;
+        },
+
+        onReset: function() {
+            this.initChildViews();
+            this.render();
+        },
+
+        onAdd: function(model) {
+            var view = this.createSkillView(model);
+            this.render();
+        }
+    });
+    
+    /**
+     * Edit Skills View
+     * @constructor
+     * @param {Object} options
+     */
+    var EditSkillsView = ui.ac.views.MultiAutoCompleteView.extend({
+
+        events: function() {
+            return _.extend({
+                'close .w-edit-skill': 'onSkillClose'
+            }, EditSkillsView.__super__.events);
+        },
+
+        initialize: function(options) {
+            options.viewFactory = new EditSkillView.Factory();
 
             this.listenTo(this.collection, 'change', this.onChange);
 
-            SkillsView.__super__.initialize.call(this, options);
+            EditSkillsView.__super__.initialize.call(this, options);
         },
 
         initChildViews: function() {
             this.sort = _.bind(this.sortSkill, this);
-            SkillsView.__super__.initChildViews.call(this);
+            EditSkillsView.__super__.initChildViews.call(this);
             this.sort = null;
         },
 
         addMatch: function(match) {
-            var model = SkillsView.__super__.addMatch.call(this, match);
+            var model = EditSkillsView.__super__.addMatch.call(this, match);
             var view = this.modelViewMap[model.cid];
 
             //delay opeing skill drop view so we don't lose
@@ -73,7 +255,7 @@ define([
 
         onInputFocus: function(e) {
             this._closeSkillViews();
-            SkillsView.__super__.onInputFocus.call(this, e);
+            EditSkillsView.__super__.onInputFocus.call(this, e);
         },
 
         onChange: function() {
@@ -105,17 +287,17 @@ define([
     });
     
     /**
-     * Skill View
+     * Edit Skill View
      * @constructor
      * @param {Object} options
      */
-    var SkillView = core.view.View.extend({
+    var EditSkillView = core.view.View.extend({
 
         events: {
-            'click .w-skill-container': 'onContainerClick',
-            'click .w-skill-drop': 'onDropClick',
-            'click .w-skill-drop .close': 'onDropCloseClick',
-            'keydown .w-skill-drop': 'onDropKeyDown',
+            'click .w-edit-skill-container': 'onContainerClick',
+            'click .w-edit-skill-drop': 'onDropClick',
+            'click .w-edit-skill-drop .close': 'onDropCloseClick',
+            'keydown .w-edit-skill-drop': 'onDropKeyDown',
             'open .drop': 'onOpen',
             'close .drop': 'onClose'
         },
@@ -123,7 +305,7 @@ define([
         initialize: function(options) {
 
             this.model = options.model;
-            this.template = _.template(skill_template);
+            this.template = _.template(edit_skill_template);
 
             //bind events
             this.listenTo(this.model, 'change', this.onChange);
@@ -135,7 +317,7 @@ define([
         },
 
         initChildViews: function() {
-            this.skillDropView = new SkillDropView({
+            this.skillDropView = new EditSkillDropView({
                 model: this.model
             });
 
@@ -156,10 +338,10 @@ define([
         },
 
         classes: function() {
-            var result = ['w-skill'];
+            var result = ['w-edit-skill'];
             var expertise = this.model.get_expertise();
             if(expertise) {
-                result.push('w-skill-' + expertise.toLowerCase());
+                result.push('w-edit-skill-' + expertise.toLowerCase());
             }
             if(this.dropView.isOpen()) {
                 result.push('open');
@@ -240,18 +422,18 @@ define([
 
         onChange: function() {
             var experience = this.model.get_yrs_experience();
-            this.$('.w-skill-experience').text('(' + experience + ')');
+            this.$('.w-edit-skill-experience').text('(' + experience + ')');
             this.applyClasses();
         }
     });
 
     
     /**
-     * Skill Drop View
+     * Edit Skill Drop View
      * @constructor
      * @param {Object} options
      */
-    var SkillDropView = core.view.View.extend({
+    var EditSkillDropView = core.view.View.extend({
 
         events: {
             'change select': 'onSelectChange',
@@ -262,7 +444,7 @@ define([
         initialize: function(options) {
 
             this.model = options.model;
-            this.template = _.template(skill_drop_template);
+            this.template = _.template(edit_skill_drop_template);
         },
 
         context: function() {
@@ -272,7 +454,7 @@ define([
         },
 
         classes: function() {
-            return ['w-skill-drop'];
+            return ['w-edit-skill-drop'];
         },
 
         render: function() {
@@ -318,7 +500,7 @@ define([
     /**
      * {@link module:core/factory~Factory|Factory} class for convenience.
      */
-    SkillView.Factory = core.factory.buildFactory(SkillView);
+    EditSkillView.Factory = core.factory.buildFactory(EditSkillView);
 
 
     /**
@@ -341,7 +523,7 @@ define([
         },
 
         initChildViews: function() {
-            this.acView = new SkillsView({
+            this.acView = new EditSkillsView({
                 collection: this.state.rawValue(),
                 matcher: this.matcher,
                 stringify: this.stringify,
@@ -362,6 +544,8 @@ define([
     return {
         SkillView: SkillView,
         SkillsView: SkillsView,
+        EditSkillView: EditSkillView,
+        EditSkillsView: EditSkillsView,
         SkillsFieldView: SkillsFieldView
     };
 });

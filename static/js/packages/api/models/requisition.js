@@ -39,10 +39,10 @@ define([
             position_type: new fields.StringField(),
             title: new fields.StringField(),
             description: new fields.StringField(),
-            salary_start: new fields.IntegerField(),
-            salary_end: new fields.IntegerField(),
+            salary: new fields.StringField(),
             telecommute: new fields.BooleanField(),
             relocation: new fields.BooleanField(),
+            equity: new fields.StringField({nullable: true}),
             employer_requisition_identifier: new fields.StringField({nullable: true})
         },
 

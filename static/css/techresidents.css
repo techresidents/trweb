@@ -227,32 +227,6 @@ a[name] {
     text-align: justify;
 }
 
-.read-horizontal-form .read-form-group {
-    margin-bottom: 10px;
-}
-
-.read-form-horizontal .read-form-group:before,
-.read-horizontal-form .read-form-group:after {
-    display: table;
-    line-height: 0;
-    content: "";
-}
-
-.read-horizontal-form .read-form-group:after {
-    clear: both;
-}
-
-.read-horizontal-form .read-form-label {
-    float: left;
-    width: 170px;
-    text-align: right;
-    font-weight: bold;
-}
-
-.read-horizontal-form .read-form-values {
-    margin-left: 190px;
-}
-
 .section-header {
     margin-bottom: 20px;
 }
@@ -794,8 +768,37 @@ button.drop-button .caret {
     cursor: not-allowed;
 }
 
-
 .w-skill {
+    display: inline-block;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+}
+.w-skill.w-skill-novice {
+    background-color: #F2DEDE;
+    border-color: #CA7C7A;
+}
+.w-skill.w-skill-proficient {
+    background-color: #D9EDF7;
+    border-color: #1C4D83;
+}
+.w-skill.w-skill-expert {
+    background-color: #DFF0D8;
+    border-color: #297339;
+}
+.w-skills-container {
+    display: inline;
+}
+.w-skills-container > .w-skill {
+    margin-right: 5px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.w-skill-years-experience {
+    font-size: 12px;
+}
+
+.w-edit-skill {
     border-radius: 4px;
     border: 1px solid #E3E3E3;
     margin-bottom: 2px;
@@ -804,20 +807,20 @@ button.drop-button .caret {
     line-height: 24px;
 }
 
-.w-skill:hover {
+.w-edit-skill:hover {
     cursor: pointer;
 }
 
-.w-skill-technology {
+.w-edit-skill-technology {
     font-size: 14px;
     margin-left: 5px;
 }
 
-.w-skill-experience {
+.w-edit-skill-experience {
     margin-right: 5px;
 }
 
-.w-skill.open .arrow {
+.w-edit-skill.open .arrow {
     float: left;
     border-top: 0px;
     border-bottom: 5px solid #000000;
@@ -826,7 +829,7 @@ button.drop-button .caret {
     margin-top: 10px;
 }
 
-.w-skill .arrow {
+.w-edit-skill .arrow {
     float: left;
     border-top: 5px solid #000000;
     border-bottom: 0px;
@@ -835,7 +838,7 @@ button.drop-button .caret {
     margin-top: 10px;
 }
 
-.w-skill-container {
+.w-edit-skill-container {
     padding-left: 4px;
     padding-top: 4px;
     padding-bottom: 4px;
@@ -843,7 +846,7 @@ button.drop-button .caret {
     vertical-align: middle;
 }
 
-.w-skill-close-container {
+.w-edit-skill-close-container {
     padding-top: 4px;
     padding-bottom: 4px;
     padding-right: 4px;
@@ -851,58 +854,58 @@ button.drop-button .caret {
     vertical-align: middle;
 }
 
-.w-skill-close-container .close {
+.w-edit-skill-close-container .close {
     float: none;
 }
 
-.w-skill-novice {
+.w-edit-skill-novice {
     background-color: #F2DEDE;
     border-color: #CA7C7A;
 }
 
-.w-skill-proficient {
+.w-edit-skill-proficient {
     background-color: #D9EDF7;
     border-color: #1C4D83;
 }
 
-.w-skill-expert {
+.w-edit-skill-expert {
     background-color: #DFF0D8;
     border-color: #297339;
 }
 
-.w-skill-drop-container {
+.w-edit-skill-drop-container {
     width: 400px;
     margin-bottom: 20px;
 }
-.w-skill-drop-container > label {
+.w-edit-skill-drop-container > label {
     display: inline-block;
     text-align: right;
     width: 120px;
     margin-right: 20px;
 }
-.w-skill-drop-container > div {
+.w-edit-skill-drop-container > div {
     display: inline-block;
 }
-.w-skill-drop-container > select {
+.w-edit-skill-drop-container > select {
     display: inline-block;
 }
 
-.w-skill-drop-container button.active[value=Novice] {
+.w-edit-skill-drop-container button.active[value=Novice] {
     background-image: none;
     background-color: #F2DEDE;
 }
 
-.w-skill-drop-container button.active[value=Proficient] {
+.w-edit-skill-drop-container button.active[value=Proficient] {
     background-image: none;
     background-color: #D9EDF7;
 }
 
-.w-skill-drop-container button.active[value=Expert] {
+.w-edit-skill-drop-container button.active[value=Expert] {
     background-image: none;
     background-color: #DFF0D8;
 }
 
-.w-skill-drop-header {
+.w-edit-skill-drop-header {
     font-size: 14px;
     font-weight: bold;
     border-bottom: 2px solid #cccccc;

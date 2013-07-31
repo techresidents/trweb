@@ -115,43 +115,39 @@ define([
 
         createRequisition: function() {
             require(['requisition'], _.bind(function(requisition) {
+                var Mediator = requisition.mediators.req.RequisitionMediator;
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: requisition.mediators.req.RequisitionMediator.VIEW_TYPE,
-                    options: {
-                        action: 'create'
-                    }
+                    type: Mediator.VIEW_TYPE.CREATE,
+                    options: {}
                 });
             }, this));
         },
 
         editRequisition: function(id) {
             require(['requisition'], _.bind(function(requisition) {
+                var Mediator = requisition.mediators.req.RequisitionMediator;
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: requisition.mediators.req.RequisitionMediator.VIEW_TYPE,
-                    options: {
-                        action: 'edit',
-                        id: id
-                    }
+                    type: Mediator.VIEW_TYPE.EDIT,
+                    options: {id: id}
                 });
             }, this));
         },
 
         readRequisition: function(id) {
             require(['requisition'], _.bind(function(requisition) {
+                var Mediator = requisition.mediators.req.RequisitionMediator;
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: requisition.mediators.req.RequisitionMediator.VIEW_TYPE,
-                    options: {
-                        action: 'read',
-                        id: id
-                    }
+                    type: Mediator.VIEW_TYPE.READ,
+                    options: {id: id}
                 });
             }, this));
         },
 
         listRequisition: function(query) {
             require(['requisition'], _.bind(function(requisition) {
+                var Mediator = requisition.mediators.list.RequisitionListMediator;
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: requisition.mediators.list.RequisitionListMediator.VIEW_TYPE,
+                    type: Mediator.VIEW_TYPE,
                     options: {
                         query: query
                     }
@@ -186,20 +182,21 @@ define([
                     }
                     router.navigate(uri, {trigger: options.trigger});
                     break;
-                case 'RequisitionView':
-                    uri = 'requisition/';
-                    if (options.action === "create") {
-                        uri += 'create';
-                        router.navigate(uri, { trigger: options.trigger});
-                    }
-                    else if (options.action === 'read') {
-                        uri += 'view/' + options.id;
-                        router.navigate(uri, { trigger: options.trigger});
-                    }
-                    else if (options.action === 'edit') {
-                        uri += 'edit/' + options.id;
-                        router.navigate(uri, { trigger: options.trigger});
-                    }
+                case 'ApplicationView':
+                    uri = 'application/' + options.id;
+                    router.navigate(uri, {trigger: options.trigger});
+                    break;
+                case 'RequisitionReadView':
+                    uri = 'requisition/view/' + options.id;
+                    router.navigate(uri, { trigger: options.trigger});
+                    break;
+                case 'RequisitionEditView':
+                    uri = 'requisition/edit/' + options.id;
+                    router.navigate(uri, { trigger: options.trigger});
+                    break;
+                case 'RequisitionCreateView':
+                    uri = 'requisition/create';
+                    router.navigate(uri, { trigger: options.trigger});
                     break;
                 case 'RequisitionListView':
                     uri = 'requisition/list';
@@ -305,6 +302,9 @@ define([
         notifications.PLAYER_PLAY;
     EventNotificationMap[events.PLAYER_PAUSE] =
         notifications.PLAYER_PAUSE;
+    /* REQUISITION EVENTS */
+    EventNotificationMap[events.SAVE_REQUISITION] =
+        notifications.SAVE_REQUISITION;
 
     /**
      * App Mediator
@@ -457,6 +457,13 @@ define([
                 ctrl.commands.browser.CheckBrowserCompatibility);
             this.registerCommand(notifications.CHECK_FLASH_COMPATIBILITY,
                 ctrl.commands.browser.CheckFlashCompatibility);
+            /* REQUISITION COMMANDS */
+            this.registerCommand(notifications.UPDATE_REQUISITION,
+                ctrl.commands.requisition.UpdateRequisition);
+            this.registerCommand(notifications.UPDATE_REQUISITION_TECHNOLOGIES,
+                ctrl.commands.requisition.UpdateRequisitionTechnologies);
+            this.registerCommand(notifications.SAVE_REQUISITION,
+                ctrl.commands.requisition.SaveRequisition);
         },
         
         /**
@@ -478,9 +485,9 @@ define([
                 var href = $(this).attr('href');
                 var protocol = this.protocol + '//';
 
-                if(href
-                    && href.slice(0, protocol.length) !== protocol
-                    && href.slice(0, root.length) === root) {
+                if(href &&
+                   href.slice(0, protocol.length) !== protocol &&
+                   href.slice(0, root.length) === root) {
                         e.preventDefault();
                         that.router.navigate(href.slice(root.length, href.length), true);
                 }

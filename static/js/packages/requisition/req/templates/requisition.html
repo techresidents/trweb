@@ -1,0 +1,84 @@
+<div class ="row">
+    <div class="span8">
+        <div class="section-header">
+            <span><%= model.title %>
+                <a class="btn btn-small btn-success" href="/e/requisition/edit/<%= model.id %>">Edit</a>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span8">
+        <div class="requisition-section requisition-overview">
+            <div class="requisition-section-header">Overview</div>
+            <div class="row">
+                <div class="span4">
+                    <label class="requisition-label">Position</label>
+                    <span><%= model.position_type %></span>
+                </div>
+                <div class="span4">
+                    <label class="requisition-label">Relocation</label>
+                    <span><%= model.relocation ? 'Yes' : 'No' %></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span4">
+                    <label class="requisition-label">Location</label>
+                    <span><%= model.location %></span>
+                </div>
+                <div class="span4">
+                    <label class="requisition-label">Telecommute</label>
+                    <span><%= model.telecommute ? 'Yes' : 'No' %></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span4">
+                    <label class="requisition-label">Salary</label>
+                    <span><%= model.salary %></span>
+                </div>
+                <div class="span4">
+                    <label class="requisition-label">Status</label>
+                    <span><%= model.status %></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span4">
+                    <label class="requisition-label">Equity</label>
+                    <% if(model.equity) { %>
+                        <span><%= model.equity %></span>
+                    <% } else { %>
+                        <span>No</span>
+                    <% } %>
+                </div>
+                <div class="span4">
+                    <label class="requisition-label">Created</label>
+                    <span><%= fmt.date(model.created, 'MM/dd/yyyy') %></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span8">
+        <div class="requisition-section requisition-wishlist">
+            <div class="requisition-section-header">
+                <span>Wishlist </span>
+                <span class="requisition-expertise requisition-expert">Expert</span>
+                <span class="requisition-expertise requisition-proficient">Proficient</span>
+                <span class="requisition-expertise requisition-novice">Novice</span>
+            </div>
+            <div class="requisition-wishlist-container"></div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span8">
+        <div class="requisition-section requisition-description">
+            <div class="requisition-section-header">Description</div>
+            <p><%= model.description %></p>
+        </div>
+    </div>
+</div>
