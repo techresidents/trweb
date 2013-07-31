@@ -426,10 +426,10 @@ define([
             });
             eventBody = {
                 model: chatModel,
-                onSuccess: function(options, response) {
+                onSuccess: function(result) {
                     var navigateEvtBody = {
                         type: 'ChatView',
-                        id: options.model.id
+                        id: chatModel.id
                     };
                     that.triggerEvent(events.VIEW_NAVIGATE, navigateEvtBody);
                 }

@@ -30,22 +30,28 @@ define([
      */
     var AppRouter = Backbone.Router.extend({
         routes: {
-            'home': 'home',
-            'application/:id': 'application',
-            'playback/:id': 'playback',
-            'tracker(/:query)': 'tracker',
-            'user/:id': 'user',
-            'search(/:query)': 'search',
-            'requisition/create': 'createRequisition',
-            'requisition/view/:id': 'readRequisition',
-            'requisition/edit/:id': 'editRequisition',
-            'requisition/list(/:query)': 'listRequisition',
+            'home(/)': 'home',
+            'application/:id(/)': 'application',
+            'playback/:id(/)': 'playback',
+            'tracker(/:query)(/)': 'tracker',
+            'user/:id(/)': 'user',
+            'search(/:query)(/)': 'search',
+            'requisition/create(/)': 'createRequisition',
+            'requisition/view/:id(/)': 'readRequisition',
+            'requisition/edit/:id(/)': 'editRequisition',
+            'requisition/list(/:query)(/)': 'listRequisition',
             '*actions': 'search'
         },
         
         initialize: function(options) {
             this.facade = options.facade;
+        },
 
+        navigate: function(uri, options) {
+            if(uri && uri[uri.length - 1] !== '/') {
+                uri += '/';
+            }
+            AppRouter.__super__.navigate.call(this, uri, options);
         },
 
         home: function() {

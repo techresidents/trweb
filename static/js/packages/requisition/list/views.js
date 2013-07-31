@@ -179,7 +179,7 @@ define([
                 }),
                 cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
                     return {
-                        href: '/e/requisition/view/' + options.model.get_id(),
+                        href: '/e/requisition/view/' + options.model.get_id() + '/',
                         value: options.model.get_title()
                     };
                 })
