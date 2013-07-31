@@ -42,7 +42,7 @@ define([
         },
 
         initChildViews: function() {
-            this.formView = new forms.CreateRequisitionFormView({
+            this.formView = new forms.RequisitionFormView({
                 model: this.model
             });
         },
