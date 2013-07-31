@@ -65,10 +65,10 @@ define([
             }
         },
 
-        onParticipateSuccess: function(options, result) {
+        onParticipateSuccess: function(result) {
             this.view = new chat_views.ChatView({
                 model: this.model,
-                simulation: options.simulation
+                simulation: result.options.simulation
             });
 
             this.facade.trigger(notifications.VIEW_CREATED, {
@@ -77,8 +77,7 @@ define([
             });
         },
 
-        onParticipateError: function(options, result) {
-            console.log(arguments);
+        onParticipateError: function(result) {
             this.view = new chat_views.ChatErrorView({
                 model: this.model,
                 fault: result.result.fault
