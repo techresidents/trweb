@@ -1,4 +1,5 @@
 User-agent: *
-Disallow: /version
+Disallow: /version/
+Disallow: /static/
 
 Sitemap: http://techresidents.com/sitemap.txt
