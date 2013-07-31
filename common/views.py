@@ -10,17 +10,23 @@ from accounts.forms import LoginForm
 @never_cache
 def http403(request):
     context = {}
-    return render_to_response('common/403.html', context,  context_instance=RequestContext(request))
+    response = render_to_response('common/403.html', context,  context_instance=RequestContext(request))
+    response.status_code = 403
+    return response
 
 @never_cache
 def http404(request):
     context = {}
-    return render_to_response('common/404.html', context,  context_instance=RequestContext(request))
+    response = render_to_response('common/404.html', context,  context_instance=RequestContext(request))
+    response.status_code = 404
+    return response
 
 @never_cache
 def http500(request):
     context = {}
-    return render_to_response('common/500.html', context,  context_instance=RequestContext(request))
+    response = render_to_response('common/500.html', context,  context_instance=RequestContext(request))
+    response.status_code = 500
+    return response
 
 @never_cache
 def version(request):
