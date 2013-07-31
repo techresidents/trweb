@@ -28,22 +28,29 @@ define([
      */
     var AppRouter = Backbone.Router.extend({
         routes: {
-            'chat/:id': 'chat',
-            'chatsim/:id': 'chatSimulation',
-            'home': 'home',
-            'profile/account': 'profileAccount',
-            'profile/preferences': 'profilePreferences',
-            'profile/skills': 'profileSkills',
-            'reel': 'reel',
-            'topic/:id': 'topic',
-            'topic/:id/talkingpoints': 'topicTalkingPoints',
-            'topics(/:query)': 'topicSearch',
+            'chat/:id(/)': 'chat',
+            'chatsim/:id(/)': 'chatSimulation',
+            'home(/)': 'home',
+            'profile/account(/)': 'profileAccount',
+            'profile/preferences(/)': 'profilePreferences',
+            'profile/skills(/)': 'profileSkills',
+            'reel(/)': 'reel',
+            'topic/:id(/)': 'topic',
+            'topic/:id/talkingpoints(/)': 'topicTalkingPoints',
+            'topics(/:query)(/)': 'topicSearch',
             '*actions': 'placeholder'
         },
         
         initialize: function(options) {
             this.facade = options.facade;
 
+        },
+
+        navigate: function(uri, options) {
+            if(uri && uri[uri.length - 1] !== '/') {
+                uri += '/';
+            }
+            AppRouter.__super__.navigate.call(this, uri, options);
         },
 
         chat: function(id) {
@@ -471,10 +478,10 @@ define([
                 var root = '/' + that.root;
                 var href = $(this).attr('href');
                 var protocol = this.protocol + '//';
-
-                if(href
-                    && href.slice(0, protocol.length) !== protocol
-                    && href.slice(0, root.length) === root) {
+                
+                if(href &&
+                   href.slice(0, protocol.length) !== protocol &&
+                   href.slice(0, root.length) === root) {
                         e.preventDefault();
                         that.router.navigate(href.slice(root.length, href.length), true);
                 }

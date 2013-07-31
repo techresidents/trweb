@@ -16,12 +16,12 @@ def home(request):
 def home_developer(request):
     """Developer home"""
     relative_link = reverse("developer.views.developer")
-    absolute_link = request.build_absolute_uri(relative_link+"home")
+    absolute_link = request.build_absolute_uri(relative_link+"home/")
     return HttpResponseRedirect(absolute_link)
 
 @employer_required
 def home_employer(request):
     """Employer home"""
     relative_link = reverse("employer.views.employer")
-    absolute_link = request.build_absolute_uri(relative_link+"home")
+    absolute_link = request.build_absolute_uri(relative_link+"home/")
     return HttpResponseRedirect(absolute_link)

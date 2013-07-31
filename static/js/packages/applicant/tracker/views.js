@@ -52,7 +52,7 @@ define([
                 column: 'Application',
                 cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
                     return {
-                        href: '/e/application/' + options.model.id,
+                        href: '/e/application/' + options.model.id + '/',
                         value: '<i class="icon-list-alt"></i>'
                     };
                 })
@@ -80,7 +80,7 @@ define([
                 cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
                     var requisition = options.model.get_requisition();
                     return {
-                        href: '/e/requisition/view/' + requisition.id,
+                        href: '/e/requisition/view/' + requisition.id + '/',
                         value: requisition.get_title()
                     };
                 })
@@ -92,7 +92,7 @@ define([
                 column: 'Applicant',
                 cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
                     return {
-                        href: '/e/user/' + options.model.get_user_id(),
+                        href: '/e/user/' + options.model.get_user_id() + '/',
                         value:'{' + options.model.get_user_id() + '}'
                     };
                 })
