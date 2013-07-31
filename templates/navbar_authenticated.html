@@ -3,17 +3,17 @@
 
 {% block navbarcontent %}
 {% if USER.is_developer %}
-    <a class="brand" href="{% url 'developer.views.developer' %}home">Tech Residents</a>
-    <a class="brand-beta" href="{% url 'developer.views.developer' %}home">beta</a>
+    <a class="brand" href="{% url 'developer.views.developer' %}home/">Tech Residents</a>
+    <a class="brand-beta" href="{% url 'developer.views.developer' %}home/">beta</a>
     <ul class="nav">
         <li>
-            <a href="{% url 'developer.views.developer' %}topics">Topics</a>
+            <a href="{% url 'developer.views.developer' %}topics/">Topics</a>
         </li>
         <li>
-            <a href="{% url 'developer.views.developer' %}reel">Reel</a>
+            <a href="{% url 'developer.views.developer' %}reel/">Reel</a>
         </li>
         <li>
-            <a href="{% url 'developer.views.developer' %}profile/account">Profile</a>
+            <a href="{% url 'developer.views.developer' %}profile/account/">Profile</a>
         </li>
         <li>
             <a href="{% url 'feedback.views.feedback' %}" target="_blank">Feedback</a>
@@ -26,17 +26,17 @@
     </ul>
 {% endif %}
 {% if USER.is_employer %}
-    <a class="brand" href="{% url 'employer.views.employer' %}home">Tech Residents</a>
-    <a class="brand-beta" href="{% url 'employer.views.employer' %}home">beta</a>
+    <a class="brand" href="{% url 'employer.views.employer' %}home/">Tech Residents</a>
+    <a class="brand-beta" href="{% url 'employer.views.employer' %}home/">beta</a>
     <ul class="nav">
         <li>
-            <a href="{% url 'employer.views.employer' %}search">Talent Search</a>
+            <a href="{% url 'employer.views.employer' %}search/">Talent Search</a>
         </li>
         <li>
-            <a href="{% url 'employer.views.employer' %}tracker">Applicant Tracker</a>
+            <a href="{% url 'employer.views.employer' %}tracker/">Applicant Tracker</a>
         </li>
         <li>
-            <a href="{% url 'employer.views.employer' %}requisition/list">Requisitions</a>
+            <a href="{% url 'employer.views.employer' %}requisition/list/">Requisitions</a>
         </li>
         <li>
             <a href="{% url 'feedback.views.feedback' %}" target="_blank">Feedback</a>

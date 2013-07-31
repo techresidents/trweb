@@ -1,4 +1,4 @@
-define(/** @exports core */[
+define(/** @exports ui */[
     './ac/inputhandler',
     './ac/matcher',
     './ac/views',

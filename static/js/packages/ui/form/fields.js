@@ -153,9 +153,11 @@ define(/** @exports ui/form/fields */[
 
         format: function() {
             var valid = this.state.valid();
-            var value = this.state.value();
-            var rawValue = this.formatValue(value);
-            this.state.setRawValue(rawValue);
+            if(valid) {
+                var value = this.state.value();
+                var rawValue = this.formatValue(value);
+                this.state.setRawValue(rawValue);
+            }
         },
 
         validate: function() {
@@ -179,7 +181,7 @@ define(/** @exports ui/form/fields */[
                     error: e.message
                 });
             }
-
+            
             return this.state.valid();
         },
 
@@ -294,6 +296,50 @@ define(/** @exports ui/form/fields */[
             }
 
             InputField.__super__.initialize.call(this, options);
+        }
+    });
+
+    var TextField = InputField.extend(
+    /** @lends module:ui/form/fields~TextField.prototype */ {
+
+        /**
+         * Text Field constructor
+         * @constructor
+         * @augments module:ui/form/fields~InputField
+         * @param {object} options Options object
+         * @param {number} [options.rows=3] Number of rows
+         * @param {string} options.name Field name which can be used
+         *   as a model path (i.e. topic__tree__title)
+         * @param {Factory} options.viewFactory Field view factory
+         *   to use to create the field view.
+         * @param {object} [options.viewOptions] Additional view options
+         *   to pass to the viewFactory create function.
+         * @param {boolean} [options.enabled=true] Boolean indicating
+         *   that the field is enabled
+         * @param {boolean} [options.required=true] Boolean indicating
+         *   that the field is required.
+         * @param {Formatter|function} [options.formatter] Field formatter
+         *   to use to format the field value for display.
+         * @param {FieldValidator|function} [options.validator] Field validator
+         *   to use to validate input values and convert them if neccessary.
+         * @param {number} [options.maxLength=100] Maximum length
+         * @param {placeholder} [options.placeholder] Input placeholder text.
+         */
+        initialize: function(options) {
+            options = _.extend({
+                maxLength: 4096,
+                rows: 3
+            }, options);
+
+            options.viewOptions = _.extend({
+                rows: options.rows
+            }, options.viewOptions);
+
+            if(!options.viewFactory) {
+                options.viewFactory = new views.TextFieldView.Factory();
+            }
+
+            TextField.__super__.initialize.call(this, options);
         }
     });
 
@@ -632,6 +678,7 @@ define(/** @exports ui/form/fields */[
     return {
         Field: Field,
         InputField: InputField,
+        TextField: TextField,
         IntegerField: IntegerField,
         FloatField: FloatField,
         DateField: DateField,

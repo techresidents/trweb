@@ -24,20 +24,6 @@ define([
      */
     var RequisitionListMediator = core.mediator.Mediator.extend({
 
-        /**
-         * Method to retrieve the RequisitionMediators view type.
-         * This view type is used when we need to navigate to views controlled
-         * by the RequisitionMediator.
-         * @private
-         */
-        _getRequisitionMediatorViewType: function() {
-            // The RequisitionMediator name is hard coded here to prevent a
-            // circular dependency which would arise if we were to import
-            // the mediator.
-            var requisitionMediator = this.facade.getMediator('RequisitionMediator');
-            return requisitionMediator.viewType();
-        },
-
         name: function() {
             return RequisitionListMediator.NAME;
         },
@@ -85,13 +71,6 @@ define([
                     collection: this.collection,
                     query: this.query
                 });
-
-                // Add event listeners
-                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.VIEW_REQ, this.onViewReq, this);
-                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.EDIT_REQ, this.onEditReq, this);
-                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.OPEN_REQ, this.onOpenReq, this);
-                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.CLOSE_REQ, this.onCloseReq, this);
-                this.view.addEventListener(this.cid, requisition_list_views.EVENTS.DELETE_REQ, this.onDeleteReq, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
@@ -144,143 +123,6 @@ define([
                 type: this.viewType(),
                 query: uri,
                 trigger: false
-            });
-        },
-
-        /**
-         * Method to bring the user to the req details view
-         * @param e Event
-         * @param eventBody Event body. Expecting:
-         *      model: {Requisition} (required)
-         */
-        onViewReq: function(e, eventBody) {
-            if (eventBody.model) {
-                this.facade.trigger(notifications.VIEW_NAVIGATE, {
-                    type: this._getRequisitionMediatorViewType(),
-                    id: eventBody.model.id,
-                    action: 'read'
-                });
-            }
-        },
-
-        /**
-         * Method to bring the user to the edit req view
-         * @param e Event
-         * @param eventBody Event body
-         *      model: {Requisition} (required)
-         */
-        onEditReq: function(e, eventBody) {
-            if (eventBody.model) {
-                this.facade.trigger(notifications.VIEW_NAVIGATE, {
-                    type: this._getRequisitionMediatorViewType(),
-                    id: eventBody.model.id,
-                    action: 'edit'
-                });
-            }
-        },
-
-        /**
-         * Method to open a requisition
-         * @param e Event
-         * @param eventBody Event body
-         *      model: {Requisition} (required)
-         */
-        onOpenReq: function(e, eventBody) {
-            if (eventBody.model) {
-                var reqModel = eventBody.model;
-                if (reqModel.get_status() !== 'OPEN') {
-                    reqModel.save({
-                        status: 'OPEN'
-                    }, {
-                        wait: true,
-                        error: function(model) {
-                            this.onSaveFailed();
-                        }
-                    });
-                }
-            }
-        },
-
-        /**
-         * Method to close a requisition
-         * @param e Event
-         * @param eventBody Event body
-         *      model: {Requisition} (required)
-         */
-        onCloseReq: function(e, eventBody) {
-            if (eventBody.model) {
-                var reqModel = eventBody.model;
-                if (reqModel.get_status() !== 'CLOSED') {
-                    reqModel.save({
-                        status: 'CLOSED'
-                    }, {
-                        wait: true,
-                        error: function(model) {
-                            this.onSaveFailed();
-                        }
-                    });
-                }
-            }
-        },
-
-        /**
-         * Listens for 'delete' button and
-         * asks the user to confirm delete.
-         * @param e Event
-         * @param eventBody Event body. Expecting:
-         *      model: {Requisition} (required)
-         */
-        onDeleteReq: function(e, eventBody) {
-            var model = eventBody.model;
-            if (model) {
-                // TODO create this modal once in init. The problem was
-                // that this ModalView calls remove() which removes events.
-                // Call detach instead?
-                var modalView = new ui.modal.views.ModalView({
-                    title: 'Confirm Delete',
-                    exitOnBackdropClick: true,
-                    exitOnEscapeKey: true,
-                    view: new requisition_list_views.ConfirmDeleteModalView({
-                        model: model
-                    })
-                });
-                modalView.addEventListener(this.cid, requisition_list_views.EVENTS.DELETE_REQ_CONFIRMED, this.onDeleteReqConfirmed, this);
-                modalView.render();
-            }
-        },
-
-        /**
-         * Method to delete the specified Requisition
-         * @param e Event
-         * @param eventBody Event body. Expecting:
-         *      model: {Requisition} (required)
-         */
-        onDeleteReqConfirmed: function(e, eventBody) {
-            var model = eventBody.model;
-            if (model) {
-                console.log('destroying req');
-                // TODO setup apisvc for mark-as-delete behavior
-                //model.destroy();
-                // TODO show alert on error
-            }
-        },
-
-        /**
-         * onSaveFailed
-         * Method to generate an error alert if saving fails.
-         */
-        onSaveFailed: function() {
-
-            // Set error message
-            var errorMessage = 'There was an error updating your data. ' +
-                'Please try again.';
-
-            // create alert status for error
-            this.facade.trigger(notifications.VIEW_CREATE, {
-                type: alert.mediators.AlertMediator.VIEW_TYPE,
-                severity: alert.models.SEVERITY.ERROR,
-                style: alert.models.STYLE.NORMAL,
-                message: errorMessage
             });
         }
 

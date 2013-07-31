@@ -3,6 +3,7 @@ define([
     'underscore',
     'core',
     'ui',
+    'events',
     'text!./templates/list.html',
     'text!./templates/confirm_delete_modal.html'
 ], function(
@@ -10,20 +11,9 @@ define([
     _,
     core,
     ui,
+    events,
     list_template,
     confirm_delete_modal_template) {
-
-    /**
-     * Requisition List View Events
-     */
-    var EVENTS = {
-        VIEW_REQ: 'requisitionList:ViewReq',
-        EDIT_REQ: 'requisitionList:EditReq',
-        OPEN_REQ: 'requisitionList:OpenReq',
-        CLOSE_REQ: 'requisitionList:CloseReq',
-        DELETE_REQ: 'requisitionList:DeleteReq',
-        DELETE_REQ_CONFIRMED: 'requisitionList:DeleteReqConfirmed'
-    };
 
     /**
      * Confirm Requisition Delete Modal View.
@@ -45,7 +35,7 @@ define([
 
         onOk: function() {
             var eventBody = {model: this.model};
-            this.triggerEvent(EVENTS.DELETE_REQ_CONFIRMED, eventBody);
+            //this.triggerEvent(EVENTS.DELETE_REQ_CONFIRMED, eventBody);
             return true;
         },
 
@@ -106,24 +96,37 @@ define([
          */
         onGridAction: function(e, eventBody) {
             var menuItem = eventBody.menuItem;
+            var model = eventBody.model;
 
             if (menuItem) {
                 var listEventBody = {model: eventBody.model};
                 switch (menuItem.key()) {
                     case 'view':
-                        this.triggerEvent(EVENTS.VIEW_REQ, listEventBody);
+                        this.triggerEvent(events.VIEW_NAVIGATE, {
+                            type: 'RequisitionReadView',
+                            id: model.id
+                        });
                         break;
                     case 'edit':
-                        this.triggerEvent(EVENTS.EDIT_REQ, listEventBody);
-                        break;
-                    case 'delete':
-                        this.triggerEvent(EVENTS.DELETE_REQ, listEventBody);
+                        this.triggerEvent(events.VIEW_NAVIGATE, {
+                            type: 'RequisitionEditView',
+                            id: model.id
+                        });
                         break;
                     case 'open':
-                        this.triggerEvent(EVENTS.OPEN_REQ, listEventBody);
+                        model.set_status('OPEN');
+                        this.triggerEvent(events.SAVE_REQUISITION, {
+                            model: model
+                        });
                         break;
                     case 'close':
-                        this.triggerEvent(EVENTS.CLOSE_REQ, listEventBody);
+                        model.set_status('CLOSED');
+                        this.triggerEvent(events.SAVE_REQUISITION, {
+                            model: model
+                        });
+                        break;
+                    case 'delete':
+                        //TODO
                         break;
                 }
             }
@@ -135,7 +138,7 @@ define([
                     RequisitionGridView.titleColumn(),
                     RequisitionGridView.locationColumn(),
                     RequisitionGridView.statusColumn(),
-                    RequisitionGridView.internalIdColumn(),
+                    //RequisitionGridView.internalIdColumn(),
                     RequisitionGridView.createdColumn(),
                     RequisitionGridView.actionColumn()
                 ]
@@ -176,7 +179,7 @@ define([
                 }),
                 cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
                     return {
-                        href: '/e/requisition/view/' + options.model.get_id(),
+                        href: '/e/requisition/view/' + options.model.get_id() + '/',
                         value: options.model.get_title()
                     };
                 })
@@ -282,7 +285,6 @@ define([
     });
 
     return {
-        EVENTS: EVENTS,
         RequisitionsSummaryView: RequisitionsSummaryView,
         ConfirmDeleteModalView: ConfirmDeleteModalView
     };

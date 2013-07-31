@@ -14,8 +14,6 @@
 }
 
 .main-content {
-    min-height: 500px;
-    padding-bottom: 20px;
 }
 
 .arrow {
@@ -259,120 +257,6 @@
     margin-bottom: 25px;
 }
 
-.form-skill {
-    border-radius: 4px;
-    border: 1px solid #E3E3E3;
-    margin-bottom: 2px;
-    margin-right: 1px;
-    font-size: 12px;
-    line-height: 24px;
-}
-
-.form-skill:hover {
-    cursor: pointer;
-}
-
-.form-skill-technology {
-    font-size: 14px;
-    margin-left: 5px;
-}
-
-.form-skill-experience {
-    margin-right: 5px;
-}
-
-.form-skill.open .arrow {
-    float: left;
-    border-top: 0px;
-    border-bottom: 5px solid #000000;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    margin-top: 10px;
-}
-
-.form-skill .arrow {
-    float: left;
-    border-top: 5px solid #000000;
-    border-bottom: 0px;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    margin-top: 10px;
-}
-
-.form-skill-container {
-    padding-left: 4px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.form-skill-close-container {
-    padding-top: 4px;
-    padding-bottom: 4px;
-    padding-right: 4px;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.form-skill-close-container .close {
-    float: none;
-}
-
-.form-skill-novice {
-    background-color: #F2DEDE;
-    border-color: #CA7C7A;
-}
-
-.form-skill-proficient {
-    background-color: #D9EDF7;
-    border-color: #1C4D83;
-}
-
-.form-skill-expert {
-    background-color: #DFF0D8;
-    border-color: #297339;
-}
-
-.form-skill-drop-container {
-    width: 400px;
-    margin-bottom: 20px;
-}
-.form-skill-drop-container > label {
-    display: inline-block;
-    text-align: right;
-    width: 120px;
-    margin-right: 20px;
-}
-.form-skill-drop-container > div {
-    display: inline-block;
-}
-.form-skill-drop-container > select {
-    display: inline-block;
-}
-
-.form-skill-drop-container button.active[value=Novice] {
-    background-image: none;
-    background-color: #F2DEDE;
-}
-
-.form-skill-drop-container button.active[value=Proficient] {
-    background-image: none;
-    background-color: #D9EDF7;
-}
-
-.form-skill-drop-container button.active[value=Expert] {
-    background-image: none;
-    background-color: #DFF0D8;
-}
-
-.form-skill-drop-header {
-    font-size: 14px;
-    font-weight: bold;
-    border-bottom: 2px solid #cccccc;
-    padding-bottom: 5px;
-    margin-bottom: 15px;
-}
 
 .developer-profile-pref-form .controls {
     margin-bottom: 25px;
@@ -385,4 +269,3 @@
 .developer-profile-account-form .controls {
     margin-left: 100px;
 }
-

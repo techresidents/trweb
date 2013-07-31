@@ -3,8 +3,7 @@
 
 {% block title %}Login | Tech Residents{% endblock %}
 
-{% block meta-description %}content="Log into your Tech Residents
-    account."
+{% block meta-description %}content="Log into your Tech Residents account."
 {% endblock %}
 
 {% block content %}
@@ -12,12 +11,11 @@
 <div class="container">
     <div class="row">
         <div class="span12 page-header">
-            <h1>
-                Join the conversation
-                <small>Sign up now</small>
+            <h2>
+                Sign up now
                 <a class="btn btn-success" href="{% url 'accounts.views.register' %}">Developers</a>
                 <a class="btn btn-success" href="{% url 'accounts.views.register_employer' %}">Employers</a>
-            </h1>
+            </h2>
         </div>
     </div>
     <div class="row">

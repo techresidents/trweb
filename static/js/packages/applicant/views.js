@@ -138,9 +138,11 @@ define([
             this.evalView = new applicant_eval.TeamEvalView({
                 model: this.model
             });
+            /*
             this.logsView = new applicant_log.ApplicationLogsView({
                 model: this.model
             });
+            */
         },
 
         classes: function() {
@@ -156,7 +158,7 @@ define([
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.summaryView, '.summary-container');
             this.append(this.evalView, '.eval-container');
-            this.append(this.logsView, '.log-container');
+            //this.append(this.logsView, '.log-container');
 
             return this;
         }

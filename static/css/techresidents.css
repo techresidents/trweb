@@ -202,9 +202,13 @@ a[name] {
     padding-right: 10px;
 }
 
-.main-content {
+.page-content {
     padding-top: 45px;
     min-height: 100%;
+    /*min-height: calc(100% - 45px);*/
+}
+
+.main-content {
 }
 
 .normal-font {
@@ -221,32 +225,6 @@ a[name] {
 
 .text-justify {
     text-align: justify;
-}
-
-.read-horizontal-form .read-form-group {
-    margin-bottom: 10px;
-}
-
-.read-form-horizontal .read-form-group:before,
-.read-horizontal-form .read-form-group:after {
-    display: table;
-    line-height: 0;
-    content: "";
-}
-
-.read-horizontal-form .read-form-group:after {
-    clear: both;
-}
-
-.read-horizontal-form .read-form-label {
-    float: left;
-    width: 170px;
-    text-align: right;
-    font-weight: bold;
-}
-
-.read-horizontal-form .read-form-values {
-    margin-left: 190px;
 }
 
 .section-header {
@@ -788,4 +766,149 @@ button.drop-button .caret {
 
 .form button.disabled {
     cursor: not-allowed;
+}
+
+.w-skill {
+    display: inline-block;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+}
+.w-skill.w-skill-novice {
+    background-color: #F2DEDE;
+    border-color: #CA7C7A;
+}
+.w-skill.w-skill-proficient {
+    background-color: #D9EDF7;
+    border-color: #1C4D83;
+}
+.w-skill.w-skill-expert {
+    background-color: #DFF0D8;
+    border-color: #297339;
+}
+.w-skills-container {
+    display: inline;
+}
+.w-skills-container > .w-skill {
+    margin-right: 5px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.w-skill-years-experience {
+    font-size: 12px;
+}
+
+.w-edit-skill {
+    border-radius: 4px;
+    border: 1px solid #E3E3E3;
+    margin-bottom: 2px;
+    margin-right: 1px;
+    font-size: 12px;
+    line-height: 24px;
+}
+
+.w-edit-skill:hover {
+    cursor: pointer;
+}
+
+.w-edit-skill-technology {
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.w-edit-skill-experience {
+    margin-right: 5px;
+}
+
+.w-edit-skill.open .arrow {
+    float: left;
+    border-top: 0px;
+    border-bottom: 5px solid #000000;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    margin-top: 10px;
+}
+
+.w-edit-skill .arrow {
+    float: left;
+    border-top: 5px solid #000000;
+    border-bottom: 0px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    margin-top: 10px;
+}
+
+.w-edit-skill-container {
+    padding-left: 4px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.w-edit-skill-close-container {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-right: 4px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.w-edit-skill-close-container .close {
+    float: none;
+}
+
+.w-edit-skill-novice {
+    background-color: #F2DEDE;
+    border-color: #CA7C7A;
+}
+
+.w-edit-skill-proficient {
+    background-color: #D9EDF7;
+    border-color: #1C4D83;
+}
+
+.w-edit-skill-expert {
+    background-color: #DFF0D8;
+    border-color: #297339;
+}
+
+.w-edit-skill-drop-container {
+    width: 400px;
+    margin-bottom: 20px;
+}
+.w-edit-skill-drop-container > label {
+    display: inline-block;
+    text-align: right;
+    width: 120px;
+    margin-right: 20px;
+}
+.w-edit-skill-drop-container > div {
+    display: inline-block;
+}
+.w-edit-skill-drop-container > select {
+    display: inline-block;
+}
+
+.w-edit-skill-drop-container button.active[value=Novice] {
+    background-image: none;
+    background-color: #F2DEDE;
+}
+
+.w-edit-skill-drop-container button.active[value=Proficient] {
+    background-image: none;
+    background-color: #D9EDF7;
+}
+
+.w-edit-skill-drop-container button.active[value=Expert] {
+    background-image: none;
+    background-color: #DFF0D8;
+}
+
+.w-edit-skill-drop-header {
+    font-size: 14px;
+    font-weight: bold;
+    border-bottom: 2px solid #cccccc;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
 }

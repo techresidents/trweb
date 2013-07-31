@@ -8,3 +8,4 @@ INSERT INTO location ( region, country, zip, city, state, county, latitude, long
 INSERT INTO location ( region, country, zip, city, state, county, latitude, longitude) VALUES ('San Francisco Bay Area', 'USA', '94102', 'San Francisco', 'CA', 'San Francisco', 37.7793920000000014, -122.417738);
 INSERT INTO location ( region, country, zip, city, state, county, latitude, longitude) VALUES ('Greater Seattle Area', 'USA', '98134', 'Seattle', 'WA', 'King', 47.5712469999999996, -122.337751999999995);
 INSERT INTO location ( region, country, zip, city, state, county, latitude, longitude) VALUES ('Washington DC Area', 'USA', '20001', 'Washington', 'DC', 'District Of Columbia', 38.9107169999999982, -77.0166600000000017);
+INSERT INTO location ( region, country, zip, city, state, county, latitude, longitude) VALUES ('Greater Chicago Area', 'USA', '60601', 'Chicago', 'IL', 'Cook', 41.8850199999999973, -87.6223870000000034);

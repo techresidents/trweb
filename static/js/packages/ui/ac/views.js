@@ -165,6 +165,10 @@ define(/** @exports ui/ac/ac */[
             this.selectionCollection.reset();
         },
 
+        hasFocus: function() {
+            return this.inputHandlerView.hasFocus();
+        },
+
         focus: function() {
             this.inputHandlerView.getInput().focus();
         },
@@ -227,6 +231,13 @@ define(/** @exports ui/ac/ac */[
                 if(this.forceSelection) {
                     this.clear();
                 }
+
+                //this isn't ideal in the case where the user clicks
+                //the dropdown menu which causes the input to blur
+                //and selectInput() which causes a select event
+                //with null before the select event with the
+                //clicked value. Is it possible to detect this
+                //case and not clear the last match?
                 this.setLastSelectedMatch(null, true);
             }
 

@@ -4,6 +4,7 @@ define(/** @exports ctrl */[
     './commands/browser',
     './commands/chat',
     './commands/profile',
+    './commands/requisition',
     './commands/user',
     './proxies/current',
     './proxies/player'
@@ -13,6 +14,7 @@ define(/** @exports ctrl */[
     browser_commands,
     chat_commands,
     profile_commands,
+    requisition_commands,
     user_commands,
     current_proxies,
     player_proxies) {
@@ -23,6 +25,7 @@ define(/** @exports ctrl */[
             browser: browser_commands,
             chat: chat_commands,
             profile: profile_commands,
+            requisition: requisition_commands,
             user: user_commands
         },
         proxies: {
