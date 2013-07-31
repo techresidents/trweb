@@ -711,6 +711,8 @@ define(/** @exports ui/form/views/fields */[
                 inputView: this,
                 inputSelector: 'input'
             });
+
+            this._updateAutoComplete();
         },
 
         classes: function() {
@@ -781,7 +783,10 @@ define(/** @exports ui/form/views/fields */[
 
         onRawValueChange: function(e) {
             this.validate();
-            
+            this._updateAutoComplete();
+        },
+
+        _updateAutoComplete: function() {
             var rawValue = this.state.rawValue();
 
             //if ac match does not match rawValue, update the ac match
