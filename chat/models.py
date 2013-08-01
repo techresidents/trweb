@@ -89,7 +89,7 @@ class Chat(models.Model):
     max_participants = models.IntegerField(default=1)
     no_participants = models.IntegerField(default=0)
     record = models.BooleanField(default=False)
-    users = models.ManyToManyField(User, through="ChatParticipant")
+    users = models.ManyToManyField(User, related_name="chats", through="ChatParticipant")
 
     objects = ChatManager()
     

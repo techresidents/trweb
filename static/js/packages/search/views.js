@@ -98,6 +98,7 @@ define([
                         facetView: new ui.facet.views.AutoFacetView.Factory({
                             matcher: matcher })
                     },
+                    { name: 'f_chats', open: false},
                     { name: 'f_location_prefs', open: false},
                     { name: 'f_yrs_experience', open: false},
                     {
