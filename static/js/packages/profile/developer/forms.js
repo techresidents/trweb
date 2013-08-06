@@ -16,7 +16,57 @@ define([
     ui,
     widget,
     events) {
-    
+
+    /**
+     * General Form View
+     * @constructor
+     * @param {Object} options
+     */
+    var GeneralFormView = ui.form.views.FormView.extend({
+
+        initialize: function(options) {
+
+            /*
+            Hiding the legend. Leaving code snippet as reference for future.
+            options = _.extend({
+                legend: '<strong>Account </strong>' +
+                        '<small class="muted">' +
+                        'update your basic account info</small>'
+            }, options);
+            */
+
+            options.fields = [
+                this.activelySeekingField(options.model)
+            ];
+
+            options.actions = [
+                new ui.form.actions.ButtonAction({
+                    label: 'Save',
+                    primary: true,
+                    handler: _.bind(this.onSave, this)
+                })
+            ];
+
+            GeneralFormView.__super__.initialize.call(this, options);
+        },
+
+        activelySeekingField: function(model) {
+            return new ui.form.fields.CheckboxField({
+                name: 'developer_profile__actively_seeking',
+                model: model,
+                label: 'I\'m actively job hunting'
+            });
+        },
+
+        onSave: function(options) {
+            this.triggerEvent(events.UPDATE_DEVELOPER_ACCOUNT, {
+                model: this.model,
+                onSuccess: options.success,
+                onError: options.error
+            });
+        }
+    });
+
     /**
      * Account Form View
      * @constructor
@@ -48,11 +98,11 @@ define([
             options.actions = [
                 new ui.form.actions.ButtonAction({
                     label: 'Save',
-                    primary: true,                        
+                    primary: true,
                     handler: _.bind(this.onSave, this)
                 })
             ];
-            
+
             AccountFormView.__super__.initialize.call(this, options);
         },
 
@@ -134,7 +184,7 @@ define([
             var map = function(locationSearchModel) {
                 return locationSearchModel.get_region();
             };
-            
+
             //convert string or model to string
             var stringify = function(stringOrModel) {
                 var result = stringOrModel;
@@ -143,7 +193,7 @@ define([
                 }
                 return result;
             };
-            
+
             //match which will return location string to ac view
             var matcher = new ui.ac.matcher.QueryMatcher({
                 queryFactory: queryFactory,
@@ -151,7 +201,7 @@ define([
                 stringify: stringify
             });
 
-            
+
             return new ui.form.fields.AutoCompleteField({
                 name: 'developer_profile__location',
                 model: model,
@@ -449,6 +499,7 @@ define([
     });
 
     return {
+        GeneralFormView: GeneralFormView,
         AccountFormView: AccountFormView,
         PreferencesFormView: PreferencesFormView,
         SkillsFormView: SkillsFormView

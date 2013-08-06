@@ -7,6 +7,7 @@ define([
     'ui',
     './forms',
     'text!./templates/account.html',
+    'text!./templates/general.html',
     'text!./templates/nav.html',
     'text!./templates/preferences.html',
     'text!./templates/skills.html'
@@ -19,6 +20,7 @@ define([
     ui,
     forms,
     account_template,
+    general_template,
     nav_template,
     preferences_template,
     skills_template) {
@@ -37,6 +39,65 @@ define([
                classes:  ['developer-profile-nav']
             }, options);
             DeveloperProfileNavView.__super__.initialize.call(this, options);
+        }
+    });
+
+    /**
+     * Developer Profile General View
+     * @constructor
+     * @param {Object} options
+     */
+    var DeveloperProfileGeneralView = core.view.View.extend({
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.template = _.template(general_template);
+            this.model = options.model;
+            this.modelWithRelated = ['developer_profile'];
+
+            //loader
+            this.loader = new api.loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated}
+            ]);
+
+            //bind events
+            this.listenTo(this.loader, 'loaded', this.render);
+
+            //load data
+            this.loader.load();
+
+            //child views
+            this.navView = null;
+            this.formView = null;
+            this.initChildViews();
+        },
+
+        childViews: function() {
+            return [this.navView, this.formView];
+        },
+
+        initChildViews: function() {
+            this.navView = new DeveloperProfileNavView();
+
+            this.formView = new forms.GeneralFormView({
+                model: this.model
+            });
+        },
+
+        classes: function() {
+            return ['developer-profile-general'];
+        },
+
+        render: function() {
+            this.$el.html(this.template());
+            this.$el.attr('class', this.classes().join(' '));
+            if(this.loader.isLoaded()) {
+                this.append(this.navView, '.developer-profile-general-nav');
+                this.append(this.formView, '.developer-profile-general-form');
+            }
+            return this;
         }
     });
     
@@ -220,6 +281,7 @@ define([
     });
 
     return {
+        DeveloperProfileGeneralView: DeveloperProfileGeneralView,
         DeveloperProfileAccountView: DeveloperProfileAccountView,
         DeveloperProfilePreferencesView: DeveloperProfilePreferencesView,
         DeveloperProfileSkillsView: DeveloperProfileSkillsView
