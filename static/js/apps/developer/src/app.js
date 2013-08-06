@@ -31,7 +31,6 @@ define([
             'chat/:id(/)': 'chat',
             'chatsim/:id(/)': 'chatSimulation',
             'home(/)': 'home',
-            'profile/account(/)': 'profileAccount',
             'profile/general(/)': 'profileGeneral',
             'profile/preferences(/)': 'profilePreferences',
             'profile/skills(/)': 'profileSkills',
@@ -82,17 +81,6 @@ define([
             require(['home'], _.bind(function(home) {
                 this.facade.trigger(notifications.VIEW_CREATE, {
                     type: home.mediators.developer.DeveloperHomeMediator.VIEW_TYPE,
-                    options: {
-                    }
-                });
-            }, this));
-        },
-
-        profileAccount: function() {
-            require(['profile'], _.bind(function(profile) {
-                var Mediator = profile.mediators.developer.DeveloperProfileMediator;
-                this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: Mediator.VIEW_TYPE.ACCOUNT,
                     options: {
                     }
                 });

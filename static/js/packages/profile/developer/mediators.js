@@ -35,13 +35,6 @@ define([
         initialize: function(options) {
         },
 
-        createAccountView: function() {
-            var view = new profile_views.DeveloperProfileAccountView({
-                model: new api.models.User({ id: 'CURRENT' })
-            });
-            return view;
-        },
-
         createGeneralView: function() {
             var view = new profile_views.DeveloperProfileGeneralView({
                 model: new api.models.User({ id: 'CURRENT' })
@@ -67,9 +60,6 @@ define([
             if(this.isViewType(notification.type)) {
                 var view;
                 switch(notification.type) {
-                    case DeveloperProfileMediator.VIEW_TYPE.ACCOUNT:
-                        view = this.createAccountView();
-                        break;
                     case DeveloperProfileMediator.VIEW_TYPE.GENERAL:
                         view = this.createGeneralView();
                         break;
@@ -107,7 +97,6 @@ define([
         NAME: 'DeveloperProfileMediator',
         
         VIEW_TYPE: {
-            ACCOUNT: 'DeveloperProfileAccountView',
             GENERAL: 'DeveloperProfileGeneralView',
             PREFERENCES: 'DeveloperProfilePreferencesView',
             SKILLS: 'DeveloperProfileSkillsView'

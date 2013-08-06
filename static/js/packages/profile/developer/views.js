@@ -6,7 +6,6 @@ define([
     'api',
     'ui',
     './forms',
-    'text!./templates/account.html',
     'text!./templates/general.html',
     'text!./templates/nav.html',
     'text!./templates/preferences.html',
@@ -19,7 +18,6 @@ define([
     api,
     ui,
     forms,
-    account_template,
     general_template,
     nav_template,
     preferences_template,
@@ -96,65 +94,6 @@ define([
             if(this.loader.isLoaded()) {
                 this.append(this.navView, '.developer-profile-general-nav');
                 this.append(this.formView, '.developer-profile-general-form');
-            }
-            return this;
-        }
-    });
-    
-    /**
-     * Developer Profile Account View
-     * @constructor
-     * @param {Object} options
-     */
-    var DeveloperProfileAccountView = core.view.View.extend({
-
-        events: {
-        },
-
-        initialize: function(options) {
-            this.template = _.template(account_template);
-            this.model = options.model;
-            this.modelWithRelated = ['developer_profile'];
-
-            //loader
-            this.loader = new api.loader.ApiLoader([
-                { instance: this.model, withRelated: this.modelWithRelated}
-            ]);
-            
-            //bind events
-            this.listenTo(this.loader, 'loaded', this.render);
-
-            //load data
-            this.loader.load();
-            
-            //child views
-            this.navView = null;
-            this.formView = null;
-            this.initChildViews();
-        },
-        
-        childViews: function() {
-            return [this.navView, this.formView];
-        },
-
-        initChildViews: function() {
-            this.navView = new DeveloperProfileNavView();
-
-            this.formView = new forms.AccountFormView({
-                model: this.model
-            });
-        },
-
-        classes: function() {
-            return ['developer-profile-account'];
-        },
-        
-        render: function() {
-            this.$el.html(this.template());
-            this.$el.attr('class', this.classes().join(' '));
-            if(this.loader.isLoaded()) {
-                this.append(this.navView, '.developer-profile-account-nav');
-                this.append(this.formView, '.developer-profile-account-form');
             }
             return this;
         }
@@ -282,7 +221,6 @@ define([
 
     return {
         DeveloperProfileGeneralView: DeveloperProfileGeneralView,
-        DeveloperProfileAccountView: DeveloperProfileAccountView,
         DeveloperProfilePreferencesView: DeveloperProfilePreferencesView,
         DeveloperProfileSkillsView: DeveloperProfileSkillsView
     };
