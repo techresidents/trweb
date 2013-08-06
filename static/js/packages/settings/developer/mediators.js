@@ -67,7 +67,7 @@ define([
 
         NAME: 'DeveloperSettingsMediator',
 
-        VIEW_TYPE: 'DeveloperHomeView'
+        VIEW_TYPE: 'DeveloperSettingsView'
     });
 
     return {
