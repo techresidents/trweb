@@ -97,48 +97,11 @@ define([
         },
 
         locationField: function(model) {
-            //build query factory
-            var queryFactory = function(options) {
-                var collection = new api.models.LocationSearchCollection();
-                var query = collection.filterBy({
-                    ac: options.search
-                }).slice(0, options.maxResults);
-                return query;
-            };
-            queryFactory = new core.factory.FunctionFactory(queryFactory);
-
-            //matcher map function to convert location search
-            //model to a string
-            var map = function(locationSearchModel) {
-                return locationSearchModel.get_region();
-            };
-
-            //convert string or model to string
-            var stringify = function(stringOrModel) {
-                var result = stringOrModel;
-                if(stringOrModel instanceof api.models.LocationSearch) {
-                    result = stringOrModel.get_region();
-                }
-                return result;
-            };
-
-            //match which will return location string to ac view
-            var matcher = new ui.ac.matcher.QueryMatcher({
-                queryFactory: queryFactory,
-                map: map,
-                stringify: stringify
-            });
-
-
-            return new ui.form.fields.AutoCompleteField({
+            return new ui.form.fields.InputField({
                 name: 'developer_profile__location',
                 model: model,
                 label: 'Location',
-                matcher: matcher,
-                placeholder: 'Boston, New York',
-                maxResults: 20,
-                required: false,
-                viewOptions: { defaultSearch: '' }
+                placeholder: 'Boston, MA'
             });
         },
 
