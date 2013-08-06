@@ -33,8 +33,8 @@ define([
             'home(/)': 'home',
             'profile/general(/)': 'profileGeneral',
             'profile/preferences(/)': 'profilePreferences',
+            'profile/reel(/)': 'profileReel',
             'profile/skills(/)': 'profileSkills',
-            'reel(/)': 'reel',
             'settings/account(/)': 'settingsAccount',
             'topic/:id(/)': 'topic',
             'topic/:id/talkingpoints(/)': 'topicTalkingPoints',
@@ -120,7 +120,7 @@ define([
             }, this));
         },
 
-        reel: function() {
+        profileReel: function() {
             require(['chat'], _.bind(function(chat) {
                 this.facade.trigger(notifications.VIEW_CREATE, {
                     type: chat.mediators.reel.ChatReelMediator.VIEW_TYPE,
