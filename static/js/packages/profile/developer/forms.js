@@ -35,6 +35,10 @@ define([
             }, options);
             */
 
+            options = _.extend({
+                horizontal: false
+            }, options);
+
             options.fields = [
                 this.activelySeekingField(options.model)
             ];
@@ -54,7 +58,7 @@ define([
             return new ui.form.fields.CheckboxField({
                 name: 'developer_profile__actively_seeking',
                 model: model,
-                label: 'I\'m actively job hunting'
+                label: 'I am actively job hunting'
             });
         },
 
