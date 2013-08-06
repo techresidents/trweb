@@ -39,7 +39,9 @@ define([
         onCreateView: function(notification) {
             if (notification.type === this.viewType()) {
 
-                this.view = new developer_settings_views.DeveloperSettingsView({});
+                this.view = new developer_settings_views.DeveloperSettingsAccountView({
+                    model: new api.models.User({ id: 'CURRENT' })
+                });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
