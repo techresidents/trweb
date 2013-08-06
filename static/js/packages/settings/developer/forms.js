@@ -40,9 +40,7 @@ define([
                 this.lastNameField(options.model),
                 this.emailField(options.model),
                 this.timezoneField(options.model),
-                //this.developerSinceField(options.model),
-                this.locationField(options.model),
-                this.activelySeekingField(options.model)
+                this.locationField(options.model)
             ];
 
             options.actions = [
@@ -98,26 +96,6 @@ define([
             });
         },
 
-        developerSinceField: function(model) {
-            var currentYear = (new Date()).getFullYear();
-            var  choices = _.map(_.range(0, 50), function(i) {
-                var year = currentYear - i;
-                var date = new Date(Date.UTC(year, 0, 1));
-                date = new core.date.DateTime(date);
-                return {label: year, value: date};
-            });
-
-            choices = [{label: '', value: null}].concat(choices);
-
-            return new ui.form.fields.DropdownField({
-                name: 'developer_profile__developer_since',
-                model: model,
-                label: 'Proud developer since',
-                required: false,
-                choices: choices
-            });
-        },
-
         locationField: function(model) {
             //build query factory
             var queryFactory = function(options) {
@@ -161,14 +139,6 @@ define([
                 maxResults: 20,
                 required: false,
                 viewOptions: { defaultSearch: '' }
-            });
-        },
-
-        activelySeekingField: function(model) {
-            return new ui.form.fields.CheckboxField({
-                name: 'developer_profile__actively_seeking',
-                model: model,
-                label: 'I am actively seeking a job'
             });
         },
 
