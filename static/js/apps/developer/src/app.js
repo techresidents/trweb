@@ -35,6 +35,7 @@ define([
             'profile/preferences(/)': 'profilePreferences',
             'profile/skills(/)': 'profileSkills',
             'reel(/)': 'reel',
+            'settings/account(/)': 'settingsAccount',
             'topic/:id(/)': 'topic',
             'topic/:id/talkingpoints(/)': 'topicTalkingPoints',
             'topics(/:query)(/)': 'topicSearch',
@@ -123,6 +124,16 @@ define([
             require(['chat'], _.bind(function(chat) {
                 this.facade.trigger(notifications.VIEW_CREATE, {
                     type: chat.mediators.reel.ChatReelMediator.VIEW_TYPE,
+                    options: {
+                    }
+                });
+            }, this));
+        },
+
+        settingsAccount: function() {
+            require(['settings'], _.bind(function(settings) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: settings.mediators.developer.DeveloperSettingsMediator.VIEW_TYPE,
                     options: {
                     }
                 });
