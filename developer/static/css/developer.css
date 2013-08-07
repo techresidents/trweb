@@ -273,3 +273,7 @@
 .developer-profile-reel-actions > div {
     display: inline-block;
 }
+
+.developer-profile-reel-save.disabled {
+    cursor: not-allowed;
+}

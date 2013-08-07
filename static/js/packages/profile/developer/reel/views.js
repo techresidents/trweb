@@ -389,6 +389,11 @@ define([
                 orderBy('rank').
                 fetch();
 
+            // listen on changes to collection to enable the save btn
+            this.listenTo(this.collection, 'add', this.enableSaveBtn);
+            this.listenTo(this.collection, 'change:rank', this.enableSaveBtn);
+            this.listenTo(this.collection, 'remove', this.enableSaveBtn);
+
             //child views
             this.addChatButtonView = null;
             this.ChatReelCollectionView = null;
@@ -431,9 +436,18 @@ define([
             // Triggering this event after a 'remove' event will
             // destroy the removed model.
             var eventBody = {
-                collection: this.collection
+                collection: this.collection,
+                onSuccess: this.disableSaveBtn()
             };
             this.triggerEvent(events.UPDATE_CHAT_REEL, eventBody);
+        },
+
+        enableSaveBtn: function() {
+            this.$(this.saveBtnSelector).removeClass('disabled');
+        },
+
+        disableSaveBtn: function() {
+            this.$(this.saveBtnSelector).addClass('disabled');
         }
     });
 
