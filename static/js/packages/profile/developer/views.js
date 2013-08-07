@@ -232,7 +232,14 @@ define([
         initialize: function(options) {
             this.model = options.model;
             this.template = _.template(profile_template);
-            this.modelWithRelated = [];
+            this.modelWithRelated = [
+                'developer_profile',
+                'chat_reels__chat__topic',
+                'skills__technology',
+                'position_prefs',
+                'technologies',
+                'locations'
+            ];
             this.loader = new api.loader.ApiLoader([
                 {instance: this.model, withRelated: this.modelWithRelated}
             ]);
@@ -256,6 +263,7 @@ define([
                 })
             };
             if (this.loader.isLoaded()) {
+                console.log(context);
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
             }

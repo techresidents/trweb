@@ -277,3 +277,7 @@
 .developer-profile-reel-save.disabled {
     cursor: not-allowed;
 }
+
+.developer-profile-section-border-bottom {
+    border-bottom: 1px solid #E3E3E3;
+}

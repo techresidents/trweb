@@ -3,19 +3,111 @@
         <div class="section-header">
             <span>Profile</span>
         </div>
+        <div>
+            <dl class="dl-horizontal">
+                <dt>Job Hunt Status</dt>
+                <% if(model.developer_profile.actively_seeking) { %>
+                    <dd>Active</dd>
+                <% } else { %>
+                    <dd>Inactive</dd>
+                <% } %>
+            </dl>
+        </div>
         <div class="row">
             <div class="span8">
-                <h3>Seeking</h3>
+                <h3 class="developer-profile-section-border-bottom">Seeking <a class="btn btn-small btn-success" href="/d/profile/preferences/">Edit</a></h3>
             </div>
         </div>
         <div class="row">
             <div class="span8">
-                <h3>Skills</h3>
+                <% if(model.position_prefs.length) { %>
+                    <div class="position-prefs">
+                        <label class="user-search-result-label">
+                            <i class="icon-screenshot"></i>
+                            Seeking
+                        </label>
+                        <% _.each(model.position_prefs, function(position, index) { %>
+                            <div class="user-search-result-pref"><%= position.type %></div>
+                        <% }); %>
+                    </div>
+                <% } %>
             </div>
         </div>
         <div class="row">
             <div class="span8">
-                <h3>Highlight Reel</h3>
+                <% if(model.locations.length) { %>
+                    <div class="location-prefs">
+                        <label class="user-search-result-label">
+                            <i class="icon-globe"></i>
+                            Locations
+                        </label>
+                        <% _.each(model.locations, function(location, index) { %>
+                            <div class="user-search-result-pref"><%= location.region %></div>
+                        <% }); %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span8">
+                <% if(model.technologies.length) { %>
+                    <div class="technology-prefs">
+                        <label class="user-search-result-label">
+                            <i class="icon-thumbs-up"></i>
+                            Tech Prefs
+                        </label>
+                        <% _.each(model.technologies, function(technology, index) { %>
+                            <div class="user-search-result-pref"><%= technology.name %></div>
+                        <% }); %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span8">
+                <h3 class="developer-profile-section-border-bottom">Skills <a class="btn btn-small btn-success" href="/d/profile/skills/">Edit</a></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span8">
+                <% if(model.skills.length) { %>
+                    <div class="skills">
+                        <% _.each(model.skills, function(skill) { %>
+                        <div class="developer-profile-skills-container developer-profile-skills-<%= skill.expertise.toLowerCase() %>">
+                            <div><%= skill.technology.name %> (<%= skill.yrs_experience %>)</div>
+                        </div>
+                        <% }); %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span8">
+                <h3 class="developer-profile-section-border-bottom">Highlight Reel <a class="btn btn-small btn-success" href="/d/profile/reel/">Edit</a></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span8">
+                <% if(model.chat_reels.length) { %>
+                    <div class="reels">
+                        <% _.each(model.chat_reels, function(chat) { %>
+                            <span>Chat Model</span>
+                            <% if(chat.topic && chat.topic.title) { %>
+                                <span>Topic Model not loaded</span>
+                                <div class="developer-profile-reel-container">
+                                    <a class="developer-profile-chat-title" href="/d/topic/<%=chat.topic.id%>/talkingpoints/"><%= chat.topic.title %></a>
+                                    <% var duration = (chat.end - chat.start)/1000;
+                                       if (duration < 60) { %>
+                                        <span class="chat-title-small">(1 min </span>
+                                    <% } else { %>
+                                        <span class="chat-title-small">(<%= fmt.format( duration/ 60, 'n0') %> mins </span>
+                                    <% } %>
+                                    <span class="chat-title-small"> on <%= fmt.date(chat.start, 'MM/dd/yy')%>)</span>
+                                </div>
+                            <% } %>
+                        <% }); %>
+                    </div>
+                <% } %>
             </div>
         </div>
     </div>
