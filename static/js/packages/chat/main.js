@@ -16,8 +16,6 @@ define(/** @exports alert */[
     chat_views,
     playback_mediators,
     playback_views,
-    reel_mediators,
-    reel_views,
     tlkpt_mediators,
     tlkpt_views,
     topic_mediators,
