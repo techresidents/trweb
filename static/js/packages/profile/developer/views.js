@@ -220,6 +220,7 @@ define([
     });
 
     return {
+        DeveloperProfileNavView: DeveloperProfileNavView,
         DeveloperProfileGeneralView: DeveloperProfileGeneralView,
         DeveloperProfilePreferencesView: DeveloperProfilePreferencesView,
         DeveloperProfileSkillsView: DeveloperProfileSkillsView

@@ -109,21 +109,22 @@ define([
             }, this));
         },
 
-        profileSkills: function() {
+        profileReel: function() {
             require(['profile'], _.bind(function(profile) {
                 var Mediator = profile.mediators.developer.DeveloperProfileMediator;
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: Mediator.VIEW_TYPE.SKILLS,
+                    type: Mediator.VIEW_TYPE.REEL,
                     options: {
                     }
                 });
             }, this));
         },
 
-        profileReel: function() {
-            require(['chat'], _.bind(function(chat) {
+        profileSkills: function() {
+            require(['profile'], _.bind(function(profile) {
+                var Mediator = profile.mediators.developer.DeveloperProfileMediator;
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: chat.mediators.reel.ChatReelMediator.VIEW_TYPE,
+                    type: Mediator.VIEW_TYPE.SKILLS,
                     options: {
                     }
                 });

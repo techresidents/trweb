@@ -3,13 +3,15 @@ define([
     'notifications',
     'core',
     'api',
-    './views'
+    './views',
+    './reel/views'
 ], function(
     _,
     notifications,
     core,
     api,
-    profile_views) {
+    profile_views,
+    reel_views) {
 
     /**
      * Developer Profile Mediator
@@ -49,6 +51,13 @@ define([
             return view;
         },
 
+        createReelView: function() {
+            var view = new reel_views.ChatReelPageView({
+                collection: new api.models.ChatReelCollection()
+            });
+            return view;
+        },
+
         createSkillsView: function() {
             var view = new profile_views.DeveloperProfileSkillsView({
                 model: new api.models.User({ id: 'CURRENT' })
@@ -65,6 +74,9 @@ define([
                         break;
                     case DeveloperProfileMediator.VIEW_TYPE.PREFERENCES:
                         view = this.createPreferencesView();
+                        break;
+                    case DeveloperProfileMediator.VIEW_TYPE.REEL:
+                        view = this.createReelView();
                         break;
                     case DeveloperProfileMediator.VIEW_TYPE.SKILLS:
                         view = this.createSkillsView();
@@ -99,6 +111,7 @@ define([
         VIEW_TYPE: {
             GENERAL: 'DeveloperProfileGeneralView',
             PREFERENCES: 'DeveloperProfilePreferencesView',
+            REEL: 'DeveloperProfileReelView',
             SKILLS: 'DeveloperProfileSkillsView'
         }
     });

@@ -6,6 +6,7 @@ define([
     'api',
     'events',
     'ui',
+    '../views',
     'text!./templates/chat_select.html',
     'text!./templates/chat_select_list.html',
     'text!./templates/add_chat_button.html',
@@ -20,6 +21,7 @@ define([
     api,
     events,
     ui,
+    profile_views,
     chat_select_template,
     chat_select_list_template,
     add_chat_button_template,
@@ -380,6 +382,7 @@ define([
 
         chatReelSelector: '.chat-reel-list-hook',
         addChatButtonSelector: '.add-chat-btn-hook',
+        navSelector: '.developer-profile-reel-nav',
 
         events: {
         },
@@ -387,7 +390,8 @@ define([
         childViews: function() {
             return [
                 this.addChatButtonView,
-                this.ChatReelCollectionView
+                this.ChatReelCollectionView,
+                this.navView
             ];
         },
 
@@ -414,10 +418,13 @@ define([
             //child views
             this.addChatButtonView = null;
             this.ChatReelCollectionView = null;
+            this.navView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
+            this. navView = new profile_views.DeveloperProfileNavView();
+
             this.addChatButtonView = new AddChatButtonView({
                 collection: this.collection
             });
@@ -435,6 +442,7 @@ define([
         render: function() {
             this.$el.html(this.template());
             if (this.collection.isLoaded()) {
+                this.append(this.navView, this.navSelector);
                 this.append(this.ChatReelCollectionView, this.chatReelSelector);
                 this.append(this.addChatButtonView, this.addChatButtonSelector);
             }
@@ -443,11 +451,6 @@ define([
     });
 
     return {
-        AddChatButtonView: AddChatButtonView,
-        AddChatModalView: AddChatModalView,
-        ChatSelectView: ChatSelectView,
-        ChatReelView: ChatReelView,
-        ChatReelCollectionView: ChatReelCollectionView,
         ChatReelPageView: ChatReelPageView
     };
 });
