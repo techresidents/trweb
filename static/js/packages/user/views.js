@@ -94,7 +94,6 @@ define([
                 sortedTechPrefs: sortedTechPrefsCollection.toJSON(),
                 fmt: this.fmt // date formatting
             };
-            console.log(context);
             this.$el.html(this.template(context));
 
             // Add CSS styles to make preference lists expandable

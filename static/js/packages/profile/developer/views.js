@@ -9,7 +9,8 @@ define([
     'text!./templates/general.html',
     'text!./templates/nav.html',
     'text!./templates/preferences.html',
-    'text!./templates/skills.html'
+    'text!./templates/skills.html',
+    'text!./templates/profile.html'
 ], function(
     $,
     _,
@@ -21,7 +22,8 @@ define([
     general_template,
     nav_template,
     preferences_template,
-    skills_template) {
+    skills_template,
+    profile_template) {
 
 
     /**
@@ -219,10 +221,53 @@ define([
         }
     });
 
+    /**
+     * Developer Profile View.
+     * @constructor
+     * @param {Object} options
+     *   model: Requisition model (required)
+     */
+    var DeveloperProfileView = core.view.View.extend({
+
+        initialize: function(options) {
+            this.model = options.model;
+            this.template = _.template(profile_template);
+            this.modelWithRelated = [];
+            this.loader = new api.loader.ApiLoader([
+                {instance: this.model, withRelated: this.modelWithRelated}
+            ]);
+
+            // bindings
+            this.listenTo(this.loader, 'loaded', this.render);
+
+            // load data
+            this.loader.load();
+        },
+
+        classes: function() {
+            return ['developer-profile'];
+        },
+
+        render: function() {
+            var context = {
+                fmt: this.fmt,
+                model: this.model.toJSON({
+                    withRelated: this.modelWithRelated
+                })
+            };
+            if (this.loader.isLoaded()) {
+                this.$el.html(this.template(context));
+                this.$el.attr('class', this.classes().join(' '));
+            }
+            return this;
+        }
+    });
+
     return {
         DeveloperProfileNavView: DeveloperProfileNavView,
         DeveloperProfileGeneralView: DeveloperProfileGeneralView,
         DeveloperProfilePreferencesView: DeveloperProfilePreferencesView,
-        DeveloperProfileSkillsView: DeveloperProfileSkillsView
+        DeveloperProfileSkillsView: DeveloperProfileSkillsView,
+        DeveloperProfileView: DeveloperProfileView
     };
 });

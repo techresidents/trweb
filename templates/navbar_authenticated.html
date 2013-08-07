@@ -4,7 +4,7 @@
 {% block navbarcontent %}
 {% if USER.is_developer %}
     <a class="brand" href="{% url 'developer.views.developer' %}home/">Tech Residents</a>
-    <a class="brand-beta" href="{% url 'developer.views.developer' %}home/">beta</a>
+    <a class="brand-beta" href="{% url 'developer.views.developer' %}profile/">beta</a>
     <ul class="nav">
         <li>
             <a href="{% url 'developer.views.developer' %}profile/general/">Profile</a>
