@@ -193,7 +193,7 @@ define([
         initialize: function(options) {
             this.chatReelCollection = options.chatReelCollection;
             this.userModel = new api.models.User({id: 'CURRENT'});
-            this.template =  _.template(add_chat_modal_template); // TODO remove
+            this.template =  _.template(add_chat_modal_template);
 
             // child views
             this.chatSelectView = null;
