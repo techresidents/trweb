@@ -269,3 +269,7 @@
 .developer-profile-account-form .controls {
     margin-left: 100px;
 }
+
+.developer-profile-reel-actions > div {
+    display: inline-block;
+}

@@ -193,7 +193,7 @@ define([
         initialize: function(options) {
             this.chatReelCollection = options.chatReelCollection;
             this.userModel = new api.models.User({id: 'CURRENT'});
-            this.template =  _.template(add_chat_modal_template);
+            this.template =  _.template(add_chat_modal_template); // TODO remove
 
             // child views
             this.chatSelectView = null;
@@ -265,10 +265,6 @@ define([
                     rank: rank
                 });
                 this.chatReelCollection.add(chatReel);
-                var eventBody = {
-                    collection: this.chatReelCollection
-                };
-                this.triggerEvent(events.UPDATE_CHAT_REEL, eventBody);
             }
         }
     });
@@ -328,32 +324,8 @@ define([
             });
             this.collection = options.collection;
 
-            // setup data bindings
-            this.listenTo(this.collection, 'change:rank', this.change);
-            // Calling save on the collection after 'remove' event will
-            // destroy the removed model.
-            this.listenTo(this.collection, 'remove', this.remove);
-
             // invoke super
             ui.collection.views.OrderedListView.prototype.initialize.call(this, options);
-        },
-
-        remove: function() {
-            //TODO figure out why some remove event is being fired
-            //when navigating away from reel to another in-app
-            //page like Topics.
-            this.save();
-        },
-
-        change: function() {
-            this.save();
-        },
-
-        save: function() {
-            var eventBody = {
-                collection: this.collection
-            };
-            this.triggerEvent(events.UPDATE_CHAT_REEL, eventBody);
         },
 
         /**
@@ -380,11 +352,13 @@ define([
      */
     var ChatReelPageView = core.view.View.extend({
 
-        chatReelSelector: '.chat-reel-list-hook',
-        addChatButtonSelector: '.add-chat-btn-hook',
+        chatReelSelector: '.developer-profile-reel-list-hook',
+        addChatButtonSelector: '.developer-profile-reel-add-hook',
         navSelector: '.developer-profile-reel-nav',
+        saveBtnSelector: '.developer-profile-reel-save',
 
         events: {
+            'click .developer-profile-reel-save': 'onSave'
         },
 
         childViews: function() {
@@ -447,6 +421,19 @@ define([
                 this.append(this.addChatButtonView, this.addChatButtonSelector);
             }
             return this;
+        },
+
+        onSave: function() {
+            //TODO figure out why a remove event is being fired
+            //when navigating away from reel to another in-app
+            //page like Topics.
+
+            // Triggering this event after a 'remove' event will
+            // destroy the removed model.
+            var eventBody = {
+                collection: this.collection
+            };
+            this.triggerEvent(events.UPDATE_CHAT_REEL, eventBody);
         }
     });
 
