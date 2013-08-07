@@ -86,7 +86,7 @@
                     <div class="skills">
                         <% _.each(model.skills, function(skill) { %>
                         <div class="developer-profile-skills-container developer-profile-skills-<%= skill.expertise.toLowerCase() %>">
-                            <div><%= skill.technology.name %> (<%= skill.yrs_experience %>)</div>
+                            <div><%= skill.technology.name %> <span class="developer-profile-skill-years-text">(<%= skill.yrs_experience %>)</span></div>
                         </div>
                         <% }); %>
                     </div>

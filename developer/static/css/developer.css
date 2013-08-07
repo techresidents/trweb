@@ -298,6 +298,41 @@
     border: 1px solid #DF9646;
     border-radius: 4px;
     padding: 2px 4px 2px 4px;
-    margin-right: 2px;
-    margin-bottom: 5px;
+    margin-right: 3px;
+    margin-bottom: 8px;
+}
+
+.developer-profile .skills .developer-profile-skills-container {
+    display: inline-block;
+}
+
+.developer-profile .skills .developer-profile-skills-container > div {
+    margin-bottom: 8px;
+    margin-right: 3px;
+    padding: 5px;
+}
+
+.developer-profile-skill-years-text {
+    font-size: 12px;
+}
+
+.developer-profile-skills-container > div {
+    display: inline-block;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+}
+
+.developer-profile-skills-novice > div {
+    background-color: #F2DEDE;
+    border-color: #CA7C7A;
+}
+
+.developer-profile-skills-proficient > div {
+    background-color: #D9EDF7;
+    border-color: #1C4D83;
+}
+
+.developer-profile-skills-expert > div {
+    background-color: #DFF0D8;
+    border-color: #297339;
 }
