@@ -233,12 +233,12 @@ define([
             this.model = options.model;
             this.template = _.template(profile_template);
             this.modelWithRelated = [
-                'developer_profile',
                 'chat_reels__chat__topic',
                 'skills__technology',
                 'position_prefs',
                 'technologies',
-                'locations'
+                'locations',
+                'developer_profile'
             ];
             this.loader = new api.loader.ApiLoader([
                 {instance: this.model, withRelated: this.modelWithRelated}

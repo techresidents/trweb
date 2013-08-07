@@ -281,3 +281,23 @@
 .developer-profile-section-border-bottom {
     border-bottom: 1px solid #E3E3E3;
 }
+
+.developer-profile-prefs-label {
+    display: inline-block;
+    color: #555555;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.developer-profile-prefs-label-container {
+    width: 90px;
+    float: left;
+}
+.developer-profile-pref {
+    display: inline-block;
+    background-color: #FFF2E0;
+    border: 1px solid #DF9646;
+    border-radius: 4px;
+    padding: 2px 4px 2px 4px;
+    margin-right: 2px;
+    margin-bottom: 5px;
+}
