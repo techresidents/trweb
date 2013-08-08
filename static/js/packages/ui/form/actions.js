@@ -38,6 +38,9 @@ define(/** @exports ui/form/actions */[
             this.label = options.label;
             this.handler = options.handler;
             this.primary = options.primary;
+            this.dirtyRequired = options.dirtyRequired === undefined ?
+                this.primary : options.dirtyRequired;
+
             this.viewFactory = options.viewFactory;
 
             this.state = new models.ActionState({
@@ -70,7 +73,8 @@ define(/** @exports ui/form/actions */[
         update: function(state) {
             var enabled = !state.executing();
             if(this.primary && enabled) {
-                enabled = state.valid() && state.dirty();
+                enabled = state.valid() &&
+                          (!this.dirtyRequired || state.dirty());
             }
             this.state.set({
                 enabled: enabled
