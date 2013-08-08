@@ -302,6 +302,10 @@
     margin-bottom: 8px;
 }
 
+.developer-profile h3 > .btn {
+    margin-bottom: 3px;
+}
+
 .developer-profile .skills .developer-profile-skills-container {
     display: inline-block;
 }
