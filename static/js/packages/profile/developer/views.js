@@ -256,18 +256,41 @@ define([
         },
 
         render: function() {
-            var context = {
-                fmt: this.fmt,
-                model: this.model.toJSON({
-                    withRelated: this.modelWithRelated
-                })
-            };
             if (this.loader.isLoaded()) {
+                this.sortSkills();
+                var context = {
+                    fmt: this.fmt,
+                    model: this.model.toJSON({
+                        withRelated: this.modelWithRelated
+                    }),
+                    sortedSkills: this.sortSkills()
+                };
                 console.log(context);
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
             }
             return this;
+        },
+
+        sortSkills: function() {
+            var skills = this.model.get_skills();
+            if (skills.length) {
+                 // copied the algorithm from search/views.js
+                var sortedSkills = skills.sortBy(function(skill) {
+                    var expertise = 1;
+                    var yrs_experience = skill.get_yrs_experience() || 1;
+                    switch(skill.get_expertise()) {
+                        case 'Proficient':
+                            expertise = 2;
+                            break;
+                        case 'Expert':
+                            expertise = 3;
+                            break;
+                    }
+                    return -1 * (expertise*100 + yrs_experience);
+                });
+                return sortedSkills;
+            }
         }
     });
 
