@@ -365,3 +365,7 @@
     font-weight: normal;
     color: #999;
 }
+
+.developer-profile-progress-container .progress-striped .bar {
+    background-color: #EA8F00;
+ }
