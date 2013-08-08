@@ -361,6 +361,10 @@ define([
             'click .developer-profile-reel-save': 'onSave'
         },
 
+        classes: function() {
+            return ['developer-profile-reel-edit'];
+        },
+
         childViews: function() {
             return [
                 this.addChatButtonView,
@@ -420,6 +424,7 @@ define([
 
         render: function() {
             this.$el.html(this.template());
+            this.$el.attr('class', this.classes().join(' '));
             if (this.collection.isLoaded()) {
                 this.append(this.navView, this.navSelector);
                 this.append(this.ChatReelCollectionView, this.chatReelSelector);

@@ -1,32 +1,34 @@
 <div class ="row">
     <div class="span8">
-        <h3 class="developer-profile-section-border-bottom">Profile <a class="btn btn-small" href="/d/profile/general/">Edit</a></h3>
-        <div>
-            <div class="developer-profile-prefs-label-container">
-                <label class="developer-profile-prefs-label">
-                    Job Hunt Status
-                </label>
-            </div>
-            <div class="span6">
-                <div class="developer-profile-general-prefs">
-                    <% if(model.developer_profile.actively_seeking) { %>
-                        <div class="developer-profile-pref">Actively Looking</div>
-                    <% } else { %>
-                        <div class="developer-profile-pref">Not Actively Looking</div>
-                    <% } %>
+        <div class="row">
+            <div class="span8">
+                <h3 class="developer-profile-heading section-border-bottom">Profile <a class="btn btn-small" href="/d/profile/general/">Edit</a></h3>
+                <div class="developer-profile-label-container">
+                    <label class="developer-profile-label">
+                        Job Hunt Status
+                    </label>
+                </div>
+                <div class="span6">
+                    <div class="developer-profile-general-prefs">
+                        <% if(model.developer_profile.actively_seeking) { %>
+                            <div class="developer-profile-pref">Actively Looking</div>
+                        <% } else { %>
+                            <div class="developer-profile-pref">Not Actively Looking</div>
+                        <% } %>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="span8">
-                <h3 class="developer-profile-section-border-bottom"><i class="icon-screenshot"></i> Seeking <a class="btn btn-small" href="/d/profile/preferences/">Edit</a></h3>
+                <h3 class="developer-profile-heading section-border-bottom"><i class="icon-screenshot"></i> Seeking <a class="btn btn-small" href="/d/profile/preferences/">Edit</a></h3>
             </div>
         </div>
         <div class="row">
             <div class="span8">
                 <% if(model.position_prefs.length) { %>
-                    <div class="developer-profile-prefs-label-container">
-                        <label class="developer-profile-prefs-label">
+                    <div class="developer-profile-label-container">
+                        <label class="developer-profile-label">
                             Positions
                         </label>
                     </div>
@@ -43,8 +45,8 @@
         <div class="row">
             <div class="span8">
             <% if(model.locations.length) { %>
-                <div class="developer-profile-prefs-label-container">
-                    <label class="developer-profile-prefs-label">
+                <div class="developer-profile-label-container">
+                    <label class="developer-profile-label">
                         Locations
                     </label>
                 </div>
@@ -61,8 +63,8 @@
         <div class="row">
             <div class="span8">
                 <% if(model.technologies.length) { %>
-                    <div class="developer-profile-prefs-label-container">
-                        <label class="developer-profile-prefs-label">
+                    <div class="developer-profile-label-container">
+                        <label class="developer-profile-label">
                             Tech Prefs
                         </label>
                     </div>
@@ -78,7 +80,7 @@
         </div>
         <div class="row">
             <div class="span8">
-                <h3 class="developer-profile-section-border-bottom"><i class="icon-check"></i> Skills <a class="btn btn-small" href="/d/profile/skills/">Edit</a></h3>
+                <h3 class="developer-profile-heading section-border-bottom"><i class="icon-check"></i> Skills <a class="btn btn-small" href="/d/profile/skills/">Edit</a></h3>
             </div>
         </div>
         <div class="row">
@@ -96,7 +98,7 @@
         </div>
         <div class="row">
             <div class="span8">
-                <h3 class="developer-profile-section-border-bottom"><i class="icon-film"></i> Highlight Reel <a class="btn btn-small" href="/d/profile/reel/">Edit</a></h3>
+                <h3 class="developer-profile-heading section-border-bottom"><i class="icon-film"></i> Highlight Reel <a class="btn btn-small" href="/d/profile/reel/">Edit</a></h3>
             </div>
         </div>
         <div class="row">

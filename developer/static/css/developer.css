@@ -270,32 +270,29 @@
     margin-left: 100px;
 }
 
-.developer-profile-reel-actions > div {
+
+.developer-profile-reel-edit .developer-profile-reel-actions > div {
     display: inline-block;
 }
-
-.developer-profile-reel-save.disabled {
+.developer-profile-reel-edit .developer-profile-reel-save.disabled {
     cursor: not-allowed;
 }
 
-.developer-profile-section-border-bottom {
-    border-bottom: 1px solid #E3E3E3;
-}
-.developer-profile-section-border-left {
-    border-left: 1px solid #E3E3E3;
-}
 
-.developer-profile-prefs-label {
+.developer-profile .developer-profile-heading .btn {
+    margin-bottom: 3px;
+}
+.developer-profile .developer-profile-label-container {
+    width: 72px;
+    float: left;
+}
+.developer-profile .developer-profile-prefs-label {
     display: inline-block;
     color: #555555;
     font-weight: bold;
     margin-bottom: 10px;
 }
-.developer-profile-prefs-label-container {
-    width: 72px;
-    float: left;
-}
-.developer-profile-pref {
+.developer-profile .developer-profile-pref {
     display: inline-block;
     background-color: #FFF2E0;
     border: 1px solid #DF9646;
@@ -304,68 +301,51 @@
     margin-right: 3px;
     margin-bottom: 8px;
 }
-
-.developer-profile h3 > .btn {
-    margin-bottom: 3px;
+.developer-profile .developer-profile-skill-years-text {
+    font-size: 12px;
 }
-
 .developer-profile .skills .developer-profile-skills-container {
     display: inline-block;
 }
-
 .developer-profile .skills .developer-profile-skills-container > div {
     margin-bottom: 8px;
     margin-right: 3px;
     padding: 5px;
 }
-
-.developer-profile-skill-years-text {
-    font-size: 12px;
-}
-
-.developer-profile-skills-container > div {
+.developer-profile .developer-profile-skills-container > div {
     display: inline-block;
     border: 1px solid #E3E3E3;
     border-radius: 4px 4px 4px 4px;
 }
-
-.developer-profile-skills-novice > div {
+.developer-profile .developer-profile-skills-novice > div {
     background-color: #F2DEDE;
     border-color: #CA7C7A;
 }
-
-.developer-profile-skills-proficient > div {
+.developer-profile .developer-profile-skills-proficient > div {
     background-color: #D9EDF7;
     border-color: #1C4D83;
 }
-
-.developer-profile-skills-expert > div {
+.developer-profile .developer-profile-skills-expert > div {
     background-color: #DFF0D8;
     border-color: #297339;
 }
-
-.developer-profile-progress-container {
-    margin-top: 50px;
-}
-
-
-.developer-profile-reel-container {
+.developer-profile .developer-profile-reel-container {
     margin-bottom: 8px;
 }
-
-.developer-profile-chat-title {
+.developer-profile .developer-profile-reel-container .developer-profile-chat-title {
     font-size: 14pt;
     line-height: 20px;
     font-weight: bold;
     margin-right: 5px;
 }
-
-.developer-profile-chat-title-small {
+.developer-profile .developer-profile-reel-container .developer-profile-chat-title-small {
     font-size: 14px;
     font-weight: normal;
     color: #999;
 }
-
-.developer-profile-progress-container .progress-striped .bar {
+.developer-profile .developer-profile-progress-container {
+    margin-top: 50px;
+}
+.developer-profile .developer-profile-progress-container .progress-striped .bar {
     background-color: #EA8F00;
  }
