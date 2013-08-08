@@ -21,14 +21,14 @@ define([
     edit_skill_template,
     edit_skill_drop_template) {
 
-    /**
-     * Skill view.
-     * @constructor
-     * @param {Object} options
-     * @param {Skill} options.model Skill model
-     */
     var SkillView = core.view.View.extend({
 
+        /**
+         * Skill view.
+         * @constructor
+         * @param {Object} options
+         * @param {Skill} options.model Skill model
+         */
         initialize: function(options) {
             this.template = _.template(skill_template);
             this.modelWithRelated = ['technology'];
@@ -64,30 +64,17 @@ define([
         }
     });
 
-    /**
-     * Skills view.
-     * @constructor
-     * @param {Object} options
-     * @param {SkillCollection} options.collection Skill collection
-     */
     var SkillsView = core.view.View.extend({
 
         events: {
         },
 
-        noviceSkillsSelector: '.w-skills-novice',
-
-        proficientSkillsSelector: '.w-skills-proficient',
-
-        expertSkillsSelector: '.w-skills-expert',
-
-        childViews: function() {
-            var result = this.noviceViews
-                .concat(this.proficientViews)
-                .concat(this.expertViews);
-            return result;
-        },
-
+        /**
+         * Skills view.
+         * @constructor
+         * @param {Object} options
+         * @param {SkillCollection} options.collection Skill collection
+         */
         initialize: function(options) {
             this.template =  _.template(skills_template);
             this.collectionWithRelated = ['technology'];
@@ -107,6 +94,19 @@ define([
             this.proficientViews = [];
             this.expertViews = [];
             this.initChildViews();
+        },
+
+        noviceSkillsSelector: '.w-skills-novice',
+
+        proficientSkillsSelector: '.w-skills-proficient',
+
+        expertSkillsSelector: '.w-skills-expert',
+
+        childViews: function() {
+            var result = this.noviceViews
+                .concat(this.proficientViews)
+                .concat(this.expertViews);
+            return result;
         },
 
         initChildViews: function() {
@@ -199,11 +199,6 @@ define([
         }
     });
     
-    /**
-     * Edit Skills View
-     * @constructor
-     * @param {Object} options
-     */
     var EditSkillsView = ui.ac.views.MultiAutoCompleteView.extend({
 
         events: function() {
@@ -212,6 +207,11 @@ define([
             }, EditSkillsView.__super__.events);
         },
 
+        /**
+         * Edit Skills View
+         * @constructor
+         * @param {Object} options
+         */
         initialize: function(options) {
             options.viewFactory = new EditSkillView.Factory();
 
@@ -286,11 +286,6 @@ define([
         }
     });
     
-    /**
-     * Edit Skill View
-     * @constructor
-     * @param {Object} options
-     */
     var EditSkillView = core.view.View.extend({
 
         events: {
@@ -302,6 +297,11 @@ define([
             'close .drop': 'onClose'
         },
 
+        /**
+         * Edit Skill View
+         * @constructor
+         * @param {Object} options
+         */
         initialize: function(options) {
 
             this.model = options.model;
@@ -428,11 +428,6 @@ define([
     });
 
     
-    /**
-     * Edit Skill Drop View
-     * @constructor
-     * @param {Object} options
-     */
     var EditSkillDropView = core.view.View.extend({
 
         events: {
@@ -441,6 +436,11 @@ define([
 
         },
 
+        /**
+         * Edit Skill Drop View
+         * @constructor
+         * @param {Object} options
+         */
         initialize: function(options) {
 
             this.model = options.model;
