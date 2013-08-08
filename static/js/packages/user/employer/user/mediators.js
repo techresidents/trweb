@@ -5,6 +5,7 @@ define([
     'api',
     'ctrl',
     'player',
+    '../events',
     './views'
 ], function(
     _,
@@ -13,19 +14,20 @@ define([
     api,
     ctrl,
     player,
+    user_events,
     user_views) {
 
     /**
-     * User Mediator
+     * Employer User Mediator
      * @constructor
      */
-    var UserMediator = core.mediator.Mediator.extend({
+    var EmployerUserMediator = core.mediator.Mediator.extend({
         name: function() {
-            return UserMediator.NAME;
+            return EmployerUserMediator.NAME;
         },
 
         viewType: function() {
-            return UserMediator.VIEW_TYPE;
+            return EmployerUserMediator.VIEW_TYPE;
         },
 
         /**
@@ -46,19 +48,16 @@ define([
 
         onCreateView: function(notification) {
             if(notification.type === this.viewType()) {
-                var candidate, employee;
-                employee = this.currentProxy.currentUser();
-                candidate = new api.models.User({
+                var user = new api.models.User({
                     id: notification.options.id
                 });
 
                 this.view = new user_views.UserView({
-                    candidateModel: candidate,
-                    employeeModel: employee,
+                    model: user,
                     playerState: this.playerStateProxy.model
                 });
 
-                this.view.addEventListener(this.cid, user_views.EVENTS.PLAY_CHAT, this.onPlay, this);
+                this.view.addEventListener(this.cid, user_events.PLAY_CHAT, this.onPlay, this);
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
                     type: this.viewType(),
@@ -91,12 +90,12 @@ define([
 
     }, {
 
-        NAME: 'UserMediator',
+        NAME: 'EmployerUserMediator',
         
         VIEW_TYPE: 'UserView'
     });
 
     return {
-        UserMediator: UserMediator
+        EmployerUserMediator: EmployerUserMediator
     };
 });

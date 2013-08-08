@@ -4,7 +4,7 @@ define([
     'core',
     'api',
     'ui',
-    '../handler',
+    'widget',
     'text!./templates/summary.html'
 ], function(
     $,
@@ -12,7 +12,7 @@ define([
     core,
     api,
     ui,
-    handler,
+    widget,
     summary_template) {
 
     /**
@@ -30,11 +30,14 @@ define([
                 template: this.defaultTemplate
             }, options);
 
+            var Handler = widget.application.handlers.ApplicationHandler;
+
             this.model = options.model;
             this.template = _.template(options.template);
-            this.handler = new handler.ApplicantHandler({
+            this.handler = new Handler({
                 model: this.model,
-                view: this
+                view: this,
+                excludedActions: [Handler.VIEW_APPLICATION]
             });
             this.menuCollection = new ui.menu.models.MenuItemCollection();
             this.menuCollection.reset(this.handler.menuItems());

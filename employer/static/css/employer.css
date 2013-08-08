@@ -224,57 +224,6 @@
     margin-left: 0px;
 }
 
-.application-create-container {
-    margin-bottom: 10px;
-}
-
-.app-brief-container {
-    margin-bottom: 10px;
-}
-
-.app-brief-container.well {
-    padding: 10px;
-}
-
-.app-brief-container > div {
-    display: inline-block;
-}
-
-.app-brief-container a {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.ratings-decision-container {
-    vertical-align: top;
-    margin-left: 2px;
-}
-
-.ratings-decision-container > div {
-    display: inline-block;
-}
-
-.ratings-decision-container .rating-bracket {
-    line-height: 50px;
-    font-size: 60px;
-    font-weight: lighter;
-}
-
-.ratings-decision-container .vote-buttons-container {
-    margin-left: 3px;
-}
-
-.ratings-decision-container .vote-buttons-container .vote-decision-text {
-    font-weight: bold;
-    margin-top: 5px;
-    margin-bottom: 3px;
-}
-
-.user-actions-container > * {
-    margin-left: 20px;
-}
-
 .user-note-save-status {
     color: #999999;
 }
@@ -800,4 +749,27 @@
 }
 .requisition-expert {
     background-color: #DFF0D8;
+}
+
+#user-actions {
+    margin-top: 12px;
+}
+#user-actions .accordion-item-header {
+    background-color: #eeeeee;
+}
+#user-actions .accordion-item-header:hover {
+    background-color: #dddddd;
+}
+#user-actions .accordion-item-child {
+    margin: 10px 10px 0px 10px;
+}
+#user-actions .icon-info-sign {
+    color: #EA8F00;
+    font-size: 20px;
+}
+button.user-applicant-tracker-add {
+    margin-bottom: 10px;
+}
+button.user-offers-make-offer {
+    margin-bottom: 10px;
 }

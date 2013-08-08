@@ -9,7 +9,6 @@ define(/** @exports applicant */[
     
     var register = function(facade) {
         facade.registerMediator(new mediators.ApplicationMediator());
-        facade.registerMediator(new mediators.OfferMediator());
         facade.registerMediator(new mediators.TrackerMediator());
     };
 

@@ -1,21 +1,19 @@
 define(/** @exports user */[
     'core',
-    './mediators',
-    './views'
+    './employer/mediators'
 ], function(
     core,
-    mediators,
-    views) {
+    employer_mediators) {
     
     var register = function(facade) {
-        var mediator = new mediators.UserMediator();
-        facade.registerMediator(mediator);
+        facade.registerMediator(new employer_mediators.user.EmployerUserMediator());
     };
 
     core.facade.register(register);
 
     return {
-        mediators: mediators,
-        views: views
+        mediators: {
+            employer: employer_mediators
+        }
     };
 });

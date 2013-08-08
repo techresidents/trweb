@@ -31,6 +31,8 @@ define([
          * This is not required if model attributes below  are provided.
          * @param {string} [options.user_id] Application model user_id.
          * This is not required if model is provided with attribute.
+         * @param {string} [options.tenant_id] Application model tenant_id.
+         * This is not required if model is provided with attribute.
          * @param {string} [options.requisition_id] Application model
          * requisition_id.  This is not required if model is provided
          * with attribute.
@@ -402,62 +404,6 @@ define([
         }
     });
     
-    /**
-     * ShowMakeInterviewOffer constructor
-     * @constructor
-     * @classdesc
-     * Create and show interview offer view
-     */
-    var ShowMakeInterviewOffer = core.command.Command.extend({
-
-        /**
-         * Execute Command
-         * @param {object} options Options object
-         * @param {object} options.model Application model
-         * @param {function} [options.onSuccess] Success callback 
-         * @param {function} [options.onError] Error callback 
-         *
-         * @return {boolean} true on success, false otherwise.
-         */
-        execute: function(options) {
-            this.facade.trigger(notifications.VIEW_CREATE, {
-                type: 'MakeInterviewOffer',
-                options: {
-                    model: options.model
-                }
-            });
-            return true;
-        }
-    });
-
-    /**
-     * ShowRescindInterviewOffer constructor
-     * @constructor
-     * @classdesc
-     * Rescind interview offer view
-     */
-    var ShowRescindInterviewOffer = core.command.Command.extend({
-
-        /**
-         * Execute Command
-         * @param {object} options Options object
-         * @param {object} options.model Application model
-         * @param {function} [options.onSuccess] Success callback 
-         * @param {function} [options.onError] Error callback 
-         *
-         * @return {boolean} true on success, false otherwise.
-         */
-        execute: function(options) {
-            this.facade.trigger(notifications.VIEW_CREATE, {
-                type: 'RescindInterviewOffer',
-                options: {
-                    model: options.model
-                }
-            });
-            return true;
-        }
-    });
-
     return {
         CreateApplication: CreateApplication,
         UpdateApplicationStatus: UpdateApplicationStatus,
@@ -465,8 +411,6 @@ define([
         CastApplicantVote: CastApplicantVote,
         CreateApplicationLog: CreateApplicationLog,
         MakeInterviewOffer: MakeInterviewOffer,
-        RescindInterviewOffer: RescindInterviewOffer,
-        ShowMakeInterviewOffer: ShowMakeInterviewOffer,
-        ShowRescindInterviewOffer: ShowRescindInterviewOffer
+        RescindInterviewOffer: RescindInterviewOffer
     };
 });
