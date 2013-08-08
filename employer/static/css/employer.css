@@ -450,6 +450,10 @@
     margin-bottom: 30px;
 }
 
+.application .eval-container .rating-stars {
+    cursor: default;
+}
+
 .application-summary > .container span {
     margin-right: 10px;
 }
