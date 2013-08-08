@@ -10,7 +10,9 @@
     <% } %>
     <% }); %>
 
+    <% if(_.where(collection, {selected: true}).length) { %>
     <li class="divider"></li>
+    <% } %>
 
     <% _.each(collection, function(model) { %>
     <% if(!model.selected) { %>
