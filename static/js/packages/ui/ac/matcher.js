@@ -60,7 +60,7 @@ define(/** @exports ui/ac/matcher */[
             _.each(items, function(item) {
                 if(results.length < maxResults) {
                     var string = this.stringify(item);
-                    if(string.match(regex)) {
+                    if(!token || string.match(regex)) {
                         results.push(item);
                     }
                 }
