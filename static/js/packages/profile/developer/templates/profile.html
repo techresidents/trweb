@@ -26,56 +26,62 @@
         </div>
         <div class="row">
             <div class="span8">
+                <div class="developer-profile-label-container">
+                    <label class="developer-profile-label">
+                        Positions
+                    </label>
+                </div>
+                <div class="span6">
                 <% if(model.position_prefs.length) { %>
-                    <div class="developer-profile-label-container">
-                        <label class="developer-profile-label">
-                            Positions
-                        </label>
+                    <div class="developer-profile-position-prefs">
+                    <% _.each(model.position_prefs, function(position, index) { %>
+                        <div class="developer-profile-pref"><%= position.type %></div>
+                    <% }); %>
                     </div>
-                    <div class="span6">
-                        <div class="developer-profile-position-prefs">
-                        <% _.each(model.position_prefs, function(position, index) { %>
-                            <div class="developer-profile-pref"><%= position.type %></div>
-                        <% }); %>
-                        </div>
-                    </div>
+                <% } else { %>
+                    <p></p>
                 <% } %>
+                </div>
             </div>
         </div>
         <div class="row">
             <div class="span8">
-            <% if(model.locations.length) { %>
                 <div class="developer-profile-label-container">
                     <label class="developer-profile-label">
                         Locations
                     </label>
                 </div>
                 <div class="span6">
-                    <div class="developer-profile-location-prefs">
-                        <% _.each(model.locations, function(location, index) { %>
-                            <div class="developer-profile-pref"><%= location.region %></div>
-                        <% }); %>
-                    </div>
+                    <% if(model.location_prefs.length) { %>
+                        <div class="developer-profile-location-prefs">
+                            <% _.each(model.location_prefs, function(locationPref, index) { %>
+                                <div class="developer-profile-pref"><%= locationPref.location.region %></div>
+                            <% }); %>
+                        </div>
+                    <% } else { %>
+                        <p></p>
+                    <% } %>
                 </div>
-            <% } %>
             </div>
         </div>
         <div class="row">
             <div class="span8">
-                <% if(model.technologies.length) { %>
-                    <div class="developer-profile-label-container">
-                        <label class="developer-profile-label">
-                            Tech Prefs
-                        </label>
-                    </div>
-                    <div class="span6">
+                <div class="developer-profile-label-container">
+                    <label class="developer-profile-label">
+                        Tech Prefs
+                    </label>
+                </div>
+                <div class="span6">
+                    <% if(model.technology_prefs.length) { %>
                         <div class="developer-profile-technology-prefs">
-                        <% _.each(model.technologies, function(technology, index) { %>
-                            <div class="developer-profile-pref"><%= technology.name %></div>
+                        <% _.each(model.technology_prefs, function(technologyPref, index) { %>
+                            <div class="developer-profile-pref"><%= technologyPref.technology.name %></div>
                         <% }); %>
                         </div>
-                    </div>
-                <% } %>
+                    <% } else { %>
+                        <p></p>
+                    <% } %>
+                </div>
             </div>
         </div>
         <div class="row">

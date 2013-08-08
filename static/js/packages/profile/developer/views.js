@@ -236,8 +236,8 @@ define([
                 'chat_reels__chat__topic',
                 'skills__technology',
                 'position_prefs',
-                'technologies',
-                'locations',
+                'technology_prefs__technology',
+                'location_prefs__location',
                 'developer_profile'
             ];
             this.loader = new api.loader.ApiLoader([

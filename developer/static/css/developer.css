@@ -286,7 +286,7 @@
     width: 72px;
     float: left;
 }
-.developer-profile .developer-profile-prefs-label {
+.developer-profile .developer-profile-label-container .developer-profile-label {
     display: inline-block;
     color: #555555;
     font-weight: bold;

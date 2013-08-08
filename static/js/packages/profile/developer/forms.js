@@ -85,8 +85,8 @@ define([
 
             options.fields = [
                 this.positionPrefsField(options.model),
-                this.technologyPrefsField(options.model),
-                this.locationPrefsField(options.model)
+                this.locationPrefsField(options.model),
+                this.technologyPrefsField(options.model)
             ];
 
             options.actions = [
