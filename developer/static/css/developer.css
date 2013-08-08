@@ -346,6 +346,10 @@
 .developer-profile .developer-profile-progress-container {
     margin-top: 50px;
 }
+.developer-profile-progress-container.well {
+    padding-bottom: 0;
+    padding-top: 10px;
+}
 .developer-profile .developer-profile-progress-container .progress-striped .bar {
     background-color: #EA8F00;
  }
