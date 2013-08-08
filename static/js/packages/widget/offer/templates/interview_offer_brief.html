@@ -1,5 +1,15 @@
 <div class="well">
     <div class="w-interview-offer-brief-title">
+        <span>Interview Offer</span>
+        <% if(model.status === 'PENDING') { %>
+            <span class="w-interview-offer-brief-status text-info"><%= model.status %></span>
+        <% } else if(model.status === 'ACCEPTED') { %>
+            <span class="w-interview-offer-brief-status text-success"><%= model.status %></span>
+        <% } else { %>
+            <span class="w-interview-offer-brief-status text-error"><%= model.status %></span>
+        <% } %>
+    </div>
+    <div>
         <a href="/e/application/<%= model.application.id %>/"><%= model.application.requisition.title %></a>
     </div>
     <div class="w-interview-offer-brief-fields">
@@ -14,16 +24,12 @@
             <% } %>
         </div>
         <div class="w-interview-offer-brief-field">
-            <label>By</label>
+            <label>From</label>
             <span><%=model.employee.first_name%> <%= model.employee.last_name %></span>
         </div>
         <div class="w-interview-offer-brief-field">
             <label>Expires</label>
             <span><%= fmt.date(model.expires, 'MM/dd/yyyy') %></span>
-        </div>
-        <div class="w-interview-offer-brief-field">
-            <label>Status</label>
-            <span><%=model.status%></span>
         </div>
     </div>
 </div>

@@ -1,4 +1,10 @@
 <div class="well">
+    <div class="w-application-brief-title">
+        <span>Applicant Eval</span>
+        <% if(model.status === 'REJECTED') { %>
+            <span class="w-application-brief-status text-error">REJECTED</span>
+        <% } %>
+    </div>
     <div>
         <a href="/e/application/<%= model.id %>/"><%= req_name %></a>
     </div>
