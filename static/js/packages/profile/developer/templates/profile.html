@@ -85,8 +85,8 @@
                 <% if(sortedSkills.length) { %>
                     <div class="skills">
                         <% _.each(sortedSkills, function(skill) { %>
-                        <div class="developer-profile-skills-container developer-profile-skills-<%= skill.get_expertise().toLowerCase() %>">
-                            <div><%= skill.get_technology().get_name() %> <span class="developer-profile-skill-years-text">(<%= skill.get_yrs_experience() %>)</span></div>
+                        <div class="developer-profile-skills-container developer-profile-skills-<%= skill.expertise.toLowerCase() %>">
+                            <div><%= skill.technology.name %> <span class="developer-profile-skill-years-text">(<%= skill.yrs_experience %>)</span></div>
                         </div>
                         <% }); %>
                     </div>
