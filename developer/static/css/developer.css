@@ -344,6 +344,11 @@
     border-color: #297339;
 }
 
+.developer-profile-progress-container {
+    margin-top: 50px;
+}
+
+
 .developer-profile-reel-container {
     margin-bottom: 8px;
 }
