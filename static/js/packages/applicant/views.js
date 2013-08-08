@@ -10,8 +10,6 @@ define([
     './summary/views',
     './tracker/views',
     'text!./templates/application.html',
-    'text!./templates/make_interview_offer.html',
-    'text!./templates/rescind_interview_offer.html',
     'text!./templates/tracker.html'
 ], function(
     $,
@@ -25,8 +23,6 @@ define([
     applicant_summary,
     applicant_tracker,
     application_template,
-    make_interview_offer_template,
-    rescind_interview_offer_template,
     tracker_template) {
 
     /**
