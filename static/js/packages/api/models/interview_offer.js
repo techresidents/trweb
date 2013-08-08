@@ -43,7 +43,8 @@ define([
 
         relatedFields: {
             tenant: new fields.ForeignKey({
-                relation: tenant_models.Tenant
+                relation: tenant_models.Tenant,
+                backref: "interview_offers"
             }),
 
             candidate: new fields.ForeignKey({
