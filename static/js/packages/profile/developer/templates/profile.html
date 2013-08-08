@@ -4,14 +4,20 @@
             <span>Profile</span>
         </div>
         <div>
-            <dl class="dl-horizontal">
-                <dt>Job Hunt Status</dt>
-                <% if(model.developer_profile.actively_seeking) { %>
-                    <dd>Active</dd>
-                <% } else { %>
-                    <dd>Inactive</dd>
-                <% } %>
-            </dl>
+            <div class="developer-profile-prefs-label-container">
+                <label class="developer-profile-prefs-label">
+                    Job Hunt Status
+                </label>
+            </div>
+            <div class="span6">
+                <div class="developer-profile-general-prefs">
+                    <% if(model.developer_profile.actively_seeking) { %>
+                        <div class="developer-profile-pref">Actively Looking</div>
+                    <% } else { %>
+                        <div class="developer-profile-pref">Not Actively Looking</div>
+                    <% } %>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="span8">
@@ -23,7 +29,6 @@
                 <% if(model.position_prefs.length) { %>
                     <div class="developer-profile-prefs-label-container">
                         <label class="developer-profile-prefs-label">
-                            <i class="icon-user"></i>
                             Positions
                         </label>
                     </div>
@@ -42,7 +47,6 @@
             <% if(model.locations.length) { %>
                 <div class="developer-profile-prefs-label-container">
                     <label class="developer-profile-prefs-label">
-                        <i class="icon-globe"></i>
                         Locations
                     </label>
                 </div>
@@ -61,7 +65,6 @@
                 <% if(model.technologies.length) { %>
                     <div class="developer-profile-prefs-label-container">
                         <label class="developer-profile-prefs-label">
-                            <i class="icon-thumbs-up"></i>
                             Tech Prefs
                         </label>
                     </div>
