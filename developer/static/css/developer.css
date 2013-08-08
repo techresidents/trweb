@@ -343,3 +343,20 @@
     background-color: #DFF0D8;
     border-color: #297339;
 }
+
+.developer-profile-reel-container {
+    margin-bottom: 8px;
+}
+
+.developer-profile-chat-title {
+    font-size: 14pt;
+    line-height: 20px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.developer-profile-chat-title-small {
+    font-size: 14px;
+    font-weight: normal;
+    color: #999;
+}
