@@ -273,10 +273,11 @@ define([
         },
 
         sortSkills: function() {
+            var sortedSkills = [];
             var skills = this.model.get_skills().toJSON({withRelated: ['technology']});
             if (skills.length) {
-                 // copied the algorithm from search/views.js
-                var sortedSkills = _.sortBy(skills, function(skill) {
+                // copied the algorithm from search/views.js
+                sortedSkills = _.sortBy(skills, function(skill) {
                     var expertise = 1;
                     var yrs_experience = skill.yrs_experience || 1;
                     switch(skill.expertise) {
@@ -289,8 +290,8 @@ define([
                     }
                     return -1 * (expertise*100 + yrs_experience);
                 });
-                return sortedSkills;
             }
+            return sortedSkills;
         }
     });
 

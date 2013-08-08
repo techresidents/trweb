@@ -24,6 +24,16 @@
                 <h3 class="developer-profile-heading section-border-bottom"><i class="icon-screenshot"></i> Seeking <a class="btn btn-small" href="/d/profile/preferences/">Edit</a></h3>
             </div>
         </div>
+        <% if(!model.position_prefs.length && !model.location_prefs.length && !model.technology_prefs.length) { %>
+        <div class="row">
+            <div class="span8">
+                <div class="developer-profile-empty-view-container">
+                    <i class="icon-info-sign icon-2x orange-text"></i>
+                    <span class="developer-profile-empty-view-text">Tell employers what you're looking for in your next job.</span>
+                </div>
+            </div>
+        </div>
+        <% } else { %>
         <div class="row">
             <div class="span8">
                 <div class="developer-profile-label-container">
@@ -84,6 +94,7 @@
                 </div>
             </div>
         </div>
+        <% } %>
         <div class="row">
             <div class="span8">
                 <h3 class="developer-profile-heading section-border-bottom"><i class="icon-check"></i> Skills <a class="btn btn-small" href="/d/profile/skills/">Edit</a></h3>
@@ -98,6 +109,11 @@
                             <div><%= skill.technology.name %> <span class="developer-profile-skill-years-text">(<%= skill.yrs_experience %>)</span></div>
                         </div>
                         <% }); %>
+                    </div>
+                <% } else { %>
+                    <div class="developer-profile-empty-view-container">
+                        <i class="icon-info-sign icon-2x orange-text"></i>
+                        <span class="developer-profile-empty-view-text">Specify the skills you bring to the table.</span>
                     </div>
                 <% } %>
             </div>
@@ -126,6 +142,11 @@
                                 </div>
                             <% } %>
                         <% }); %>
+                    </div>
+                <% } else { %>
+                    <div class="developer-profile-empty-view-container">
+                        <i class="icon-info-sign icon-2x orange-text"></i>
+                        <span class="developer-profile-empty-view-text">Show employers what you got.</span>
                     </div>
                 <% } %>
             </div>
