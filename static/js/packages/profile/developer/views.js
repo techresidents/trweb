@@ -14,6 +14,7 @@ define([
     'text!./templates/general.html',
     'text!./templates/preferences.html',
     'text!./templates/reels.html',
+    'text!./templates/progress.html',
     'text!./templates/profile.html'
 ], function(
     $,
@@ -31,6 +32,7 @@ define([
     general_template,
     preferences_template,
     reels_template,
+    progress_template,
     profile_template) {
 
     var DeveloperProfileNavView = ui.template.views.TemplateView.extend({
@@ -125,6 +127,83 @@ define([
             DeveloperProfileReelsView.__super__.initialize.call(this, options);
         }
     });
+
+    var DeveloperProfileProgressView = core.view.View.extend({
+
+        /**
+         * Developer Profile Progress View
+         * @constructor
+         * @param {Object} options
+         * @param {User} options.model User model
+         * @classdesc
+         * View to compute and display profile completion
+         */
+        initialize: function(options) {
+            this.template = _.template(progress_template);
+            this.model = options.model;
+            this.modelWithRelated = [
+                'chat_reels__chat__topic',
+                'skills__technology',
+                'position_prefs',
+                'technology_prefs__technology',
+                'location_prefs__location',
+                'developer_profile'
+            ];
+
+            //loader
+            this.loader = new api.loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated}
+            ]);
+
+            //bind events
+            this.listenTo(this.loader, 'loaded', this.render);
+
+            //load data
+            this.loader.load();
+        },
+
+        classes: function() {
+            return ['developer-profile-progress'];
+        },
+
+        render: function() {
+            if (this.loader.isLoaded()) {
+                var context = {
+                    progress: this.computeProfileCompletion()
+                };
+                this.$el.html(this.template(context));
+                this.$el.attr('class', this.classes().join(' '));
+            }
+            return this;
+        },
+
+        computeProfileCompletion: function() {
+            // 10% minimum
+            var progress = 10;
+            // Position prefs
+            if (this.model.get_position_prefs().length) {
+                progress += 10;
+            }
+            // Location prefs
+            if (this.model.get_location_prefs().length) {
+                progress += 10;
+            }
+            // Technology prefs
+            if (this.model.get_technology_prefs().length) {
+                progress += 10;
+            }
+            // Skills
+            if (this.model.get_skills().length) {
+                progress += 25;
+            }
+            // Chats
+            if (this.model.get_chat_reels().length) {
+                progress += 35;
+            }
+            return progress;
+        }
+    });
+
 
     var DeveloperProfileGeneralEditView = core.view.View.extend({
 
@@ -311,6 +390,7 @@ define([
         preferencesViewSelector: '.developer-profile-prefs-hook',
         skillsViewSelector: '.developer-profile-skills-hook',
         reelViewSelector: '.developer-profile-reel-hook',
+        progressViewSelector: '.developer-profile-progress-hook',
 
         /**
         * Developer Profile View.
@@ -344,6 +424,7 @@ define([
             this.preferencesView = null;
             this.skillsView = null;
             this.reelsView = null;
+            this.progressView = null;
             this.initChildViews();
         },
 
@@ -352,7 +433,8 @@ define([
                 this.generalView,
                 this.preferencesView,
                 this.skillsView,
-                this.reelsView
+                this.reelsView,
+                this.progressView
             ];
         },
 
@@ -367,6 +449,9 @@ define([
                 collection: this.model.get_skills()
             });
             this.reelsView = new DeveloperProfileReelsView({
+                model: this.model
+            });
+            this.progressView = new DeveloperProfileProgressView({
                 model: this.model
             });
         },
@@ -389,6 +474,7 @@ define([
                 this.append(this.preferencesView, this.preferencesViewSelector);
                 this.append(this.skillsView, this.skillsViewSelector);
                 this.append(this.reelsView, this.reelViewSelector);
+                this.append(this.progressView, this.progressViewSelector);
             }
             return this;
         }
