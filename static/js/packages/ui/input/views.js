@@ -246,7 +246,7 @@ define(/** @exports ui/input/views */[
 
         render: function() {
             var modelValue = this.getInputValue();
-            this.$el.html();
+            this.$el.empty();
             this.$el.attr('class', this.classes().join(' '));
             this.getInput().val(modelValue);
             return this;

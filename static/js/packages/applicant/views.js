@@ -220,7 +220,7 @@ define([
                 this.$el.html(this.template(context));
                 this.append(this.dateView);
             } else {
-                this.$el.html();
+                this.$el.empty();
             }
             return this;
         },
@@ -315,7 +315,7 @@ define([
                 var context = this.context();
                 this.$el.html(this.template(context));
             } else {
-                this.$el.html();
+                this.$el.empty();
             }
             return this;
         },

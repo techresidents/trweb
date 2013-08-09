@@ -148,7 +148,7 @@ define(/** @exports ui/ac/ac */[
         },
 
         render: function() {
-            this.$el.html();
+            this.$el.empty();
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.inputHandlerView);
             this.append(this.dropView);

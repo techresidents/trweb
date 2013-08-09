@@ -19,7 +19,7 @@ define([
      *
      * @example
      * function render() {
-     *   this.$el.html();
+     *   this.$el.html(...);
      *   this.append(this.scrollerView);
      *
      *   //append scrollable views
@@ -70,7 +70,7 @@ define([
         },
 
         render: function() {
-            this.$el.html();
+            this.$el.empty();
             this.$el.attr('class', this.classes().join(' '));
             this.resize();
 
