@@ -301,6 +301,10 @@
     margin-right: 3px;
     margin-bottom: 8px;
 }
+.developer-profile .developer-profile-general .developer-profile-label {
+    font-size: 16px;
+    margin-top: 3px;
+}
 .developer-profile .developer-profile-reel-container {
     margin-bottom: 8px;
 }
