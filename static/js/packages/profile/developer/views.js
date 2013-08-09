@@ -12,6 +12,7 @@ define([
     'text!./templates/general.html',
     'text!./templates/preferences.html',
     'text!./templates/skills.html',
+    'text!./templates/reels.html',
     'text!./templates/profile.html'
 ], function(
     $,
@@ -27,6 +28,7 @@ define([
     general_template,
     preferences_template,
     skills_template,
+    reels_template,
     profile_template) {
 
 
@@ -95,6 +97,31 @@ define([
                 ]
             }, options);
             DeveloperProfilePreferencesView.__super__.initialize.call(this, options);
+        }
+    });
+
+    var DeveloperProfileReelView = ui.template.views.TemplateView.extend({
+
+        /**
+         * Developer Profile Reel View
+         * @constructor
+         * @param {Object} options
+         * @param {User} options.model User model
+         * This view is dumb and expects the model to be loaded with
+         * chat_reels__chat__topic.
+         * @classdesc
+         * View to display user's highlight reel chats.
+         */
+        initialize: function(options) {
+            options = _.extend({
+                template:  reels_template,
+                classes:  ['developer-profile-reel'],
+                model: this.model,
+                // Specify the withRelated data that has been loaded so that
+                // it'll be converted to JSON and accessible within the template
+                modelWithRelated: ['chat_reels__chat__topic']
+            }, options);
+            DeveloperProfileReelView.__super__.initialize.call(this, options);
         }
     });
 
@@ -284,6 +311,7 @@ define([
 
         generalViewSelector: '.developer-profile-general-hook',
         preferencesViewSelector: '.developer-profile-prefs-hook',
+        reelViewSelector: '.developer-profile-reel-hook',
 
         /**
         * Developer Profile View.
@@ -336,6 +364,9 @@ define([
             this.preferencesView = new DeveloperProfilePreferencesView({
                 model: this.model
             });
+            this.reelView = new DeveloperProfileReelView({
+                model: this.model
+            });
         },
 
         classes: function() {
@@ -356,6 +387,7 @@ define([
                 this.$el.attr('class', this.classes().join(' '));
                 this.append(this.generalView, this.generalViewSelector);
                 this.append(this.preferencesView, this.preferencesViewSelector);
+                this.append(this.reelView, this.reelViewSelector);
             }
             return this;
         },
