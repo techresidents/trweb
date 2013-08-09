@@ -87,18 +87,17 @@ define([
 
         render: function() {
             var modelContext = this.model ?
-                this.model.toJSON(this.modelWithRelated) :
-                null;
+                this.model.toJSON({withRelated: this.modelWithRelated}) : null;
 
             var collectionContext = this.collection ?
-                this.collection.toJSON(this.collectionWithRelated) :
-                null;
+                this.collection.toJSON({withRelated: this.collectionWithRelated}) : null;
 
             var context = _.extend({
                 model: modelContext,
                 collection: collectionContext
             }, core.base.getValue(this, 'context', this));
 
+            console.log(context);
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             return this;

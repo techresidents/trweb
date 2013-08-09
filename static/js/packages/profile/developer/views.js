@@ -8,6 +8,7 @@ define([
     './forms',
     'text!./templates/nav.html',
     'text!./templates/edit_general.html',
+    'text!./templates/edit_preferences.html',
     'text!./templates/general.html',
     'text!./templates/preferences.html',
     'text!./templates/skills.html',
@@ -22,6 +23,7 @@ define([
     forms,
     nav_template,
     edit_general_template,
+    edit_preferences_template,
     general_template,
     preferences_template,
     skills_template,
@@ -67,16 +69,45 @@ define([
         }
     });
 
-    /**
-     * Developer Profile General Edit View
-     * @constructor
-     * @param {Object} options
-     */
+    var DeveloperProfilePreferencesView = ui.template.views.TemplateView.extend({
+
+        /**
+         * Developer Profile Preferences View
+         * @constructor
+         * @param {Object} options
+         * @param {User} options.model User model
+         * This view is dumb and expects the model to be loaded with
+         * position_prefs, location_prefs, and technology_prefs.
+         * @classdesc
+         * View to display user's job preferences.
+         */
+        initialize: function(options) {
+            options = _.extend({
+                template:  preferences_template,
+                classes:  ['developer-profile-preferences'],
+                model: this.model,
+                // Specify the withRelated data that has been loaded so that
+                // it'll be converted to JSON and accessible within the template
+                modelWithRelated: [
+                    'position_prefs',
+                    'technology_prefs__technology',
+                    'location_prefs__location'
+                ]
+            }, options);
+            DeveloperProfilePreferencesView.__super__.initialize.call(this, options);
+        }
+    });
+
     var DeveloperProfileGeneralEditView = core.view.View.extend({
 
         events: {
         },
 
+        /**
+        * Developer Profile General Edit View
+        * @constructor
+        * @param {Object} options
+        */
         initialize: function(options) {
             this.template = _.template(edit_general_template);
             this.model = options.model;
@@ -126,18 +157,19 @@ define([
         }
     });
 
-    /**
-     * Developer Profile Preferences Edit View
-     * @constructor
-     * @param {Object} options
-     */
+
     var DeveloperProfilePreferencesEditView = core.view.View.extend({
 
         events: {
         },
 
+        /**
+        * Developer Profile Preferences Edit View
+        * @constructor
+        * @param {Object} options
+        */
         initialize: function(options) {
-            this.template = _.template(preferences_template);
+            this.template = _.template(edit_preferences_template);
             this.model = options.model;
             this.modelWithRelated = [
                 'position_prefs',
@@ -188,16 +220,17 @@ define([
         }
     });
 
-    /**
-     * Developer Profile Skills View
-     * @constructor
-     * @param {Object} options
-     */
+
     var DeveloperProfileSkillsEditView = core.view.View.extend({
 
         events: {
         },
 
+        /**
+        * Developer Profile Skills View
+        * @constructor
+        * @param {Object} options
+        */
         initialize: function(options) {
             this.template = _.template(skills_template);
             this.model = options.model;
@@ -246,16 +279,18 @@ define([
         }
     });
 
-    /**
-     * Developer Profile View.
-     * @constructor
-     * @param {Object} options
-     *   model: Requisition model (required)
-     */
+
     var DeveloperProfileView = core.view.View.extend({
 
         generalViewSelector: '.developer-profile-general-hook',
+        preferencesViewSelector: '.developer-profile-prefs-hook',
 
+        /**
+        * Developer Profile View.
+        * @constructor
+        * @param {Object} options
+        *   model: User model (required)
+        */
         initialize: function(options) {
             this.model = options.model;
             this.template = _.template(profile_template);
@@ -279,7 +314,7 @@ define([
 
             //child views
             this.generalView = null;
-            this.seekingView = null;
+            this.preferencesView = null;
             this.skillsView = null;
             this.reelView = null;
             this.initChildViews();
@@ -288,7 +323,7 @@ define([
         childViews: function() {
             return [
                 this.generalView,
-                this.seekingView,
+                this.preferencesView,
                 this.skillsView,
                 this.reelView
             ];
@@ -297,6 +332,9 @@ define([
         initChildViews: function() {
             this.generalView = new DeveloperProfileGeneralView({
                 model: this.model.get_developer_profile()
+            });
+            this.preferencesView = new DeveloperProfilePreferencesView({
+                model: this.model
             });
         },
 
@@ -317,6 +355,7 @@ define([
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
                 this.append(this.generalView, this.generalViewSelector);
+                this.append(this.preferencesView, this.preferencesViewSelector);
             }
             return this;
         },

@@ -11,77 +11,7 @@
                 <h3 class="developer-profile-heading section-border-bottom"><i class="icon-screenshot"></i> Seeking <a class="btn btn-small" href="/d/profile/preferences/">Edit</a></h3>
             </div>
         </div>
-        <% if(!model.position_prefs.length && !model.location_prefs.length && !model.technology_prefs.length) { %>
-        <div class="row">
-            <div class="span8">
-                <div class="developer-profile-empty-view-container">
-                    <i class="icon-info-sign icon-2x orange-text"></i>
-                    <span class="developer-profile-empty-view-text">What are you <a href="/d/profile/preferences/">looking</a> for in your next job?</span>
-                </div>
-            </div>
-        </div>
-        <% } else { %>
-        <div class="row">
-            <div class="span8">
-                <div class="developer-profile-label-container">
-                    <label class="developer-profile-label">
-                        Positions
-                    </label>
-                </div>
-                <div class="span6">
-                <% if(model.position_prefs.length) { %>
-                    <div class="developer-profile-position-prefs">
-                    <% _.each(model.position_prefs, function(position, index) { %>
-                        <div class="developer-profile-pref"><%= position.type %></div>
-                    <% }); %>
-                    </div>
-                <% } else { %>
-                    <p></p>
-                <% } %>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="span8">
-                <div class="developer-profile-label-container">
-                    <label class="developer-profile-label">
-                        Locations
-                    </label>
-                </div>
-                <div class="span6">
-                    <% if(model.location_prefs.length) { %>
-                        <div class="developer-profile-location-prefs">
-                            <% _.each(model.location_prefs, function(locationPref, index) { %>
-                                <div class="developer-profile-pref"><%= locationPref.location.region %></div>
-                            <% }); %>
-                        </div>
-                    <% } else { %>
-                        <p></p>
-                    <% } %>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="span8">
-                <div class="developer-profile-label-container">
-                    <label class="developer-profile-label">
-                        Tech Prefs
-                    </label>
-                </div>
-                <div class="span6">
-                    <% if(model.technology_prefs.length) { %>
-                        <div class="developer-profile-technology-prefs">
-                        <% _.each(model.technology_prefs, function(technologyPref, index) { %>
-                            <div class="developer-profile-pref"><%= technologyPref.technology.name %></div>
-                        <% }); %>
-                        </div>
-                    <% } else { %>
-                        <p></p>
-                    <% } %>
-                </div>
-            </div>
-        </div>
-        <% } %>
+        <div class="developer-profile-prefs-hook"></div>
         <div class="row">
             <div class="span8">
                 <h3 class="developer-profile-heading section-border-bottom"><i class="icon-check"></i> Skills <a class="btn btn-small" href="/d/profile/skills/">Edit</a></h3>
