@@ -44,30 +44,30 @@ define([
             return view;
         },
 
-        createGeneralView: function() {
-            var view = new profile_views.DeveloperProfileGeneralView({
+        createGeneralEditView: function() {
+            var view = new profile_views.DeveloperProfileGeneralEditView({
                 model: new api.models.User({ id: 'CURRENT' })
             });
             return view;
         },
 
-        createPreferencesView: function() {
-            var view = new profile_views.DeveloperProfilePreferencesView({
+        createPreferencesEditView: function() {
+            var view = new profile_views.DeveloperProfilePreferencesEditView({
                 model: new api.models.User({ id: 'CURRENT' })
             });
             return view;
         },
 
-        createReelView: function() {
+        createSkillsEditView: function() {
+            var view = new profile_views.DeveloperProfileSkillsEditView({
+                model: new api.models.User({ id: 'CURRENT' })
+            });
+            return view;
+        },
+
+        createReelEditView: function() {
             var view = new reel_views.ChatReelPageView({
                 collection: new api.models.ChatReelCollection()
-            });
-            return view;
-        },
-
-        createSkillsView: function() {
-            var view = new profile_views.DeveloperProfileSkillsView({
-                model: new api.models.User({ id: 'CURRENT' })
             });
             return view;
         },
@@ -80,16 +80,16 @@ define([
                         view = this.createSummaryView();
                         break;
                     case DeveloperProfileMediator.VIEW_TYPE.GENERAL:
-                        view = this.createGeneralView();
+                        view = this.createGeneralEditView();
                         break;
                     case DeveloperProfileMediator.VIEW_TYPE.PREFERENCES:
-                        view = this.createPreferencesView();
-                        break;
-                    case DeveloperProfileMediator.VIEW_TYPE.REEL:
-                        view = this.createReelView();
+                        view = this.createPreferencesEditView();
                         break;
                     case DeveloperProfileMediator.VIEW_TYPE.SKILLS:
-                        view = this.createSkillsView();
+                        view = this.createSkillsEditView();
+                        break;
+                    case DeveloperProfileMediator.VIEW_TYPE.REEL:
+                        view = this.createReelEditView();
                         break;
                 }
 
@@ -120,10 +120,10 @@ define([
         
         VIEW_TYPE: {
             SUMMARY: 'DeveloperProfileSummaryView',
-            GENERAL: 'DeveloperProfileGeneralView',
-            PREFERENCES: 'DeveloperProfilePreferencesView',
-            REEL: 'DeveloperProfileReelView',
-            SKILLS: 'DeveloperProfileSkillsView'
+            GENERAL: 'DeveloperProfileGeneralEditView',
+            PREFERENCES: 'DeveloperProfilePreferencesEditView',
+            REEL: 'DeveloperProfileReelEditView',
+            SKILLS: 'DeveloperProfileSkillsEditView'
         }
     });
 

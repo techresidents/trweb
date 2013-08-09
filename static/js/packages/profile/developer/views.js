@@ -43,11 +43,11 @@ define([
     });
 
     /**
-     * Developer Profile General View
+     * Developer Profile General Edit View
      * @constructor
      * @param {Object} options
      */
-    var DeveloperProfileGeneralView = core.view.View.extend({
+    var DeveloperProfileGeneralEditView = core.view.View.extend({
 
         events: {
         },
@@ -102,11 +102,11 @@ define([
     });
 
     /**
-     * Developer Profile Preferences View
+     * Developer Profile Preferences Edit View
      * @constructor
      * @param {Object} options
      */
-    var DeveloperProfilePreferencesView = core.view.View.extend({
+    var DeveloperProfilePreferencesEditView = core.view.View.extend({
 
         events: {
         },
@@ -168,7 +168,7 @@ define([
      * @constructor
      * @param {Object} options
      */
-    var DeveloperProfileSkillsView = core.view.View.extend({
+    var DeveloperProfileSkillsEditView = core.view.View.extend({
 
         events: {
         },
@@ -297,9 +297,9 @@ define([
 
     return {
         DeveloperProfileNavView: DeveloperProfileNavView,
-        DeveloperProfileGeneralView: DeveloperProfileGeneralView,
-        DeveloperProfilePreferencesView: DeveloperProfilePreferencesView,
-        DeveloperProfileSkillsView: DeveloperProfileSkillsView,
+        DeveloperProfileGeneralEditView: DeveloperProfileGeneralEditView,
+        DeveloperProfilePreferencesEditView: DeveloperProfilePreferencesEditView,
+        DeveloperProfileSkillsEditView: DeveloperProfileSkillsEditView,
         DeveloperProfileView: DeveloperProfileView
     };
 });
