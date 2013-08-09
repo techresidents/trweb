@@ -276,7 +276,7 @@ define([
         },
 
         classes: function() {
-            return ['developer-profile-general'];
+            return ['developer-profile-edit-general'];
         },
 
         render: function() {
@@ -338,7 +338,7 @@ define([
         },
 
         classes: function() {
-            return ['developer-profile-pref'];
+            return ['developer-profile-edit-pref'];
         },
         
         render: function() {
@@ -396,7 +396,7 @@ define([
         },
 
         classes: function() {
-            return ['developer-profile-skills'];
+            return ['developer-profile-edit-skills'];
         },
         
         render: function() {
