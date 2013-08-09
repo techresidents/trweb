@@ -5,13 +5,14 @@ define([
     'core',
     'api',
     'ui',
+    'widget',
     './forms',
     'text!./templates/nav.html',
     'text!./templates/edit_general.html',
     'text!./templates/edit_preferences.html',
+    'text!./templates/edit_skills.html',
     'text!./templates/general.html',
     'text!./templates/preferences.html',
-    'text!./templates/skills.html',
     'text!./templates/reels.html',
     'text!./templates/profile.html'
 ], function(
@@ -21,16 +22,16 @@ define([
     core,
     api,
     ui,
+    widget,
     forms,
     nav_template,
     edit_general_template,
     edit_preferences_template,
+    edit_skills_template,
     general_template,
     preferences_template,
-    skills_template,
     reels_template,
     profile_template) {
-
 
     var DeveloperProfileNavView = ui.template.views.TemplateView.extend({
 
@@ -100,10 +101,10 @@ define([
         }
     });
 
-    var DeveloperProfileReelView = ui.template.views.TemplateView.extend({
+    var DeveloperProfileReelsView = ui.template.views.TemplateView.extend({
 
         /**
-         * Developer Profile Reel View
+         * Developer Profile Reels View
          * @constructor
          * @param {Object} options
          * @param {User} options.model User model
@@ -121,7 +122,7 @@ define([
                 // it'll be converted to JSON and accessible within the template
                 modelWithRelated: ['chat_reels__chat__topic']
             }, options);
-            DeveloperProfileReelView.__super__.initialize.call(this, options);
+            DeveloperProfileReelsView.__super__.initialize.call(this, options);
         }
     });
 
@@ -183,7 +184,6 @@ define([
             return this;
         }
     });
-
 
     var DeveloperProfilePreferencesEditView = core.view.View.extend({
 
@@ -247,7 +247,6 @@ define([
         }
     });
 
-
     var DeveloperProfileSkillsEditView = core.view.View.extend({
 
         events: {
@@ -259,7 +258,7 @@ define([
         * @param {Object} options
         */
         initialize: function(options) {
-            this.template = _.template(skills_template);
+            this.template = _.template(edit_skills_template);
             this.model = options.model;
             this.modelWithRelated = ['skills__technology'];
 
@@ -306,11 +305,11 @@ define([
         }
     });
 
-
     var DeveloperProfileView = core.view.View.extend({
 
         generalViewSelector: '.developer-profile-general-hook',
         preferencesViewSelector: '.developer-profile-prefs-hook',
+        skillsViewSelector: '.developer-profile-skills-hook',
         reelViewSelector: '.developer-profile-reel-hook',
 
         /**
@@ -344,7 +343,7 @@ define([
             this.generalView = null;
             this.preferencesView = null;
             this.skillsView = null;
-            this.reelView = null;
+            this.reelsView = null;
             this.initChildViews();
         },
 
@@ -353,7 +352,7 @@ define([
                 this.generalView,
                 this.preferencesView,
                 this.skillsView,
-                this.reelView
+                this.reelsView
             ];
         },
 
@@ -364,7 +363,10 @@ define([
             this.preferencesView = new DeveloperProfilePreferencesView({
                 model: this.model
             });
-            this.reelView = new DeveloperProfileReelView({
+            this.skillsView = new widget.skill.views.SkillsView({
+                collection: this.model.get_skills()
+            });
+            this.reelsView = new DeveloperProfileReelsView({
                 model: this.model
             });
         },
@@ -375,43 +377,20 @@ define([
 
         render: function() {
             if (this.loader.isLoaded()) {
-                this.sortSkills();
                 var context = {
                     fmt: this.fmt,
                     model: this.model.toJSON({
                         withRelated: this.modelWithRelated
-                    }),
-                    sortedSkills: this.sortSkills()
+                    })
                 };
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
                 this.append(this.generalView, this.generalViewSelector);
                 this.append(this.preferencesView, this.preferencesViewSelector);
-                this.append(this.reelView, this.reelViewSelector);
+                this.append(this.skillsView, this.skillsViewSelector);
+                this.append(this.reelsView, this.reelViewSelector);
             }
             return this;
-        },
-
-        sortSkills: function() {
-            var sortedSkills = [];
-            var skills = this.model.get_skills().toJSON({withRelated: ['technology']});
-            if (skills.length) {
-                // copied the algorithm from search/views.js
-                sortedSkills = _.sortBy(skills, function(skill) {
-                    var expertise = 1;
-                    var yrs_experience = skill.yrs_experience || 1;
-                    switch(skill.expertise) {
-                        case 'Proficient':
-                            expertise = 2;
-                            break;
-                        case 'Expert':
-                            expertise = 3;
-                            break;
-                    }
-                    return -1 * (expertise*100 + yrs_experience);
-                });
-            }
-            return sortedSkills;
         }
     });
 

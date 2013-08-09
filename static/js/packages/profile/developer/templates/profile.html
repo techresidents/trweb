@@ -1,17 +1,20 @@
 <div class ="row">
     <div class="span8">
+
         <div class="row">
             <div class="span8">
                 <h3 class="developer-profile-heading section-border-bottom">Profile <a class="btn btn-small" href="/d/profile/general/">Edit</a></h3>
-                <div class="developer-profile-general-hook"></div>
             </div>
         </div>
+        <div class="developer-profile-general-hook"></div>
+
         <div class="row">
             <div class="span8">
                 <h3 class="developer-profile-heading section-border-bottom"><i class="icon-screenshot"></i> Seeking <a class="btn btn-small" href="/d/profile/preferences/">Edit</a></h3>
             </div>
         </div>
         <div class="developer-profile-prefs-hook"></div>
+
         <div class="row">
             <div class="span8">
                 <h3 class="developer-profile-heading section-border-bottom"><i class="icon-check"></i> Skills <a class="btn btn-small" href="/d/profile/skills/">Edit</a></h3>
@@ -19,14 +22,8 @@
         </div>
         <div class="row">
             <div class="span8">
-                <% if(sortedSkills.length) { %>
-                    <div class="skills">
-                        <% _.each(sortedSkills, function(skill) { %>
-                        <div class="developer-profile-skills-container developer-profile-skills-<%= skill.expertise.toLowerCase() %>">
-                            <div><%= skill.technology.name %> <span class="developer-profile-skill-years-text">(<%= skill.yrs_experience %>)</span></div>
-                        </div>
-                        <% }); %>
-                    </div>
+                <% if(model.skills.length) { %>
+                    <div class="developer-profile-skills-hook"></div>
                 <% } else { %>
                     <div class="developer-profile-empty-view-container">
                         <i class="icon-info-sign icon-2x orange-text"></i>
@@ -35,6 +32,7 @@
                 <% } %>
             </div>
         </div>
+
         <div class="row">
             <div class="span8">
                 <h3 class="developer-profile-heading section-border-bottom"><i class="icon-film"></i> Highlight Reel <a class="btn btn-small" href="/d/profile/reel/">Edit</a></h3>
@@ -42,6 +40,7 @@
         </div>
         <div class="developer-profile-reel-hook"></div>
     </div>
+
 
     <div class="span4">
         <div class="row">

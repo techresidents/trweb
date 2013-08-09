@@ -93,11 +93,11 @@ define([
                 this.collection.toJSON({withRelated: this.collectionWithRelated}) : null;
 
             var context = _.extend({
+                fmt: this.fmt,
                 model: modelContext,
                 collection: collectionContext
             }, core.base.getValue(this, 'context', this));
 
-            console.log(context);
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             return this;
