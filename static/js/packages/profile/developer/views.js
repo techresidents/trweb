@@ -4,6 +4,7 @@ define([
     'backbone',
     'core',
     'api',
+    'events',
     'ui',
     'widget',
     './forms',
@@ -22,6 +23,7 @@ define([
     Backbone,
     core,
     api,
+    events,
     ui,
     widget,
     forms,
@@ -55,6 +57,13 @@ define([
 
     var DeveloperProfileGeneralView = ui.template.views.TemplateView.extend({
 
+        buttonGroupSelector: '.btn-group button',
+
+        events: {
+            'click .active-job-hunt':   'onClickActiveJobHunt',
+            'click .inactive-job-hunt': 'onClickInactiveJobHunt'
+        },
+
         /**
          * Developer Profile General View
          * @constructor
@@ -71,6 +80,24 @@ define([
                 model: this.model
             }, options);
             DeveloperProfileGeneralView.__super__.initialize.call(this, options);
+        },
+
+        onClickActiveJobHunt: function() {
+            if (!this.model.get_actively_seeking()) {
+                this.model.set('actively_seeking', true);
+                this.triggerEvent(events.UPDATE_DEVELOPER_PROFILE, {
+                    model: this.model
+                });
+            }
+        },
+
+        onClickInactiveJobHunt: function() {
+            if (this.model.get_actively_seeking()) {
+                this.model.set('actively_seeking', false);
+                this.triggerEvent(events.UPDATE_DEVELOPER_PROFILE, {
+                    model: this.model
+                });
+            }
         }
     });
 
@@ -203,7 +230,6 @@ define([
             return progress;
         }
     });
-
 
     var DeveloperProfileGeneralEditView = core.view.View.extend({
 

@@ -325,6 +325,9 @@
 .developer-profile .developer-profile-progress-container .progress-striped .bar {
     background-color: #EA8F00;
  }
+.developer-profile .developer-profile-general-container {
+    margin-bottom: 50px;
+}
 .developer-profile .developer-profile-empty-view-container {
     margin-bottom: 50px;
 }

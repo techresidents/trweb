@@ -43,6 +43,7 @@ define(/** @exports events */[
         UPDATE_USER: 'update_user',
         UPDATE_SKILLS: 'update_skills',
         UPDATE_DEVELOPER_ACCOUNT: 'update_developer_account',
+        UPDATE_DEVELOPER_PROFILE: 'update_developer_profile',
         UPDATE_DEVELOPER_PREFERENCES: 'update_developer_preferences',
         
         /* REQUISTION EVENTS */

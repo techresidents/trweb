@@ -304,6 +304,8 @@ define([
         notifications.UPDATE_SKILLS;
     EventNotificationMap[events.UPDATE_DEVELOPER_ACCOUNT] =
         notifications.UPDATE_DEVELOPER_ACCOUNT;
+    EventNotificationMap[events.UPDATE_DEVELOPER_PROFILE] =
+        notifications.UPDATE_DEVELOPER_PROFILE;
     EventNotificationMap[events.UPDATE_DEVELOPER_PREFERENCES] =
         notifications.UPDATE_DEVELOPER_PREFERENCES;
 
