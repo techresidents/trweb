@@ -6,8 +6,9 @@ define([
     'api',
     'ui',
     './forms',
-    'text!./templates/general.html',
     'text!./templates/nav.html',
+    'text!./templates/edit_general.html',
+    'text!./templates/general.html',
     'text!./templates/preferences.html',
     'text!./templates/skills.html',
     'text!./templates/profile.html'
@@ -19,26 +20,50 @@ define([
     api,
     ui,
     forms,
-    general_template,
     nav_template,
+    edit_general_template,
+    general_template,
     preferences_template,
     skills_template,
     profile_template) {
 
 
-    /**
-     * Developer Profile Nav View
-     * @constructor
-     * @param {Object} options
-     */
     var DeveloperProfileNavView = ui.template.views.TemplateView.extend({
 
+       /**
+        * Developer Profile Nav View
+        * @constructor
+        * @param {Object} options
+        * @classdesc
+        * View to display nav panel to various parts of the user's profile
+        */
         initialize: function(options) {
             options = _.extend({
                 template:  nav_template,
                classes:  ['developer-profile-nav']
             }, options);
             DeveloperProfileNavView.__super__.initialize.call(this, options);
+        }
+    });
+
+    var DeveloperProfileGeneralView = ui.template.views.TemplateView.extend({
+
+        /**
+         * Developer Profile General View
+         * @constructor
+         * @param {Object} options
+         * @param {DeveloperProfile} options.model DeveloperProfile model
+         * This view is dumb and expects the model to be loaded.
+         * @classdesc
+         * View to display user's general prefs.
+         */
+        initialize: function(options) {
+            options = _.extend({
+                template:  general_template,
+                classes:  ['developer-profile-general'],
+                model: this.model
+            }, options);
+            DeveloperProfileGeneralView.__super__.initialize.call(this, options);
         }
     });
 
@@ -53,7 +78,7 @@ define([
         },
 
         initialize: function(options) {
-            this.template = _.template(general_template);
+            this.template = _.template(edit_general_template);
             this.model = options.model;
             this.modelWithRelated = ['developer_profile'];
 
@@ -229,6 +254,8 @@ define([
      */
     var DeveloperProfileView = core.view.View.extend({
 
+        generalViewSelector: '.developer-profile-general-hook',
+
         initialize: function(options) {
             this.model = options.model;
             this.template = _.template(profile_template);
@@ -249,6 +276,28 @@ define([
 
             // load data
             this.loader.load();
+
+            //child views
+            this.generalView = null;
+            this.seekingView = null;
+            this.skillsView = null;
+            this.reelView = null;
+            this.initChildViews();
+        },
+
+        childViews: function() {
+            return [
+                this.generalView,
+                this.seekingView,
+                this.skillsView,
+                this.reelView
+            ];
+        },
+
+        initChildViews: function() {
+            this.generalView = new DeveloperProfileGeneralView({
+                model: this.model.get_developer_profile()
+            });
         },
 
         classes: function() {
@@ -265,9 +314,9 @@ define([
                     }),
                     sortedSkills: this.sortSkills()
                 };
-                console.log(context);
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
+                this.append(this.generalView, this.generalViewSelector);
             }
             return this;
         },

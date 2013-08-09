@@ -3,20 +3,7 @@
         <div class="row">
             <div class="span8">
                 <h3 class="developer-profile-heading section-border-bottom">Profile <a class="btn btn-small" href="/d/profile/general/">Edit</a></h3>
-                <div class="developer-profile-label-container">
-                    <label class="developer-profile-label">
-                        Job Hunt
-                    </label>
-                </div>
-                <div class="span6">
-                    <div class="developer-profile-general-prefs">
-                        <% if(model.developer_profile.actively_seeking) { %>
-                            <div class="developer-profile-pref">Actively Looking</div>
-                        <% } else { %>
-                            <div class="developer-profile-pref">Not Actively Looking</div>
-                        <% } %>
-                    </div>
-                </div>
+                <div class="developer-profile-general-hook"></div>
             </div>
         </div>
         <div class="row">
