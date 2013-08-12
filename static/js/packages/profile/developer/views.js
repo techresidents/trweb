@@ -237,9 +237,12 @@ define([
         },
 
         /**
-        * Developer Profile General Edit View
-        * @constructor
-        * @param {Object} options
+         * Developer Profile General Edit View
+         * @constructor
+         * @param {Object} options
+         * @param {User} options.model User model
+         * @classdesc
+         * View to edit general preferences
         */
         initialize: function(options) {
             this.template = _.template(edit_general_template);
@@ -296,9 +299,12 @@ define([
         },
 
         /**
-        * Developer Profile Preferences Edit View
-        * @constructor
-        * @param {Object} options
+         * Developer Profile Preferences Edit View
+         * @constructor
+         * @param {Object} options
+         * @param {User} options.model User model
+         * @classdesc
+         * View to edit position, location, and technology preferences
         */
         initialize: function(options) {
             this.template = _.template(edit_preferences_template);
@@ -358,9 +364,12 @@ define([
         },
 
         /**
-        * Developer Profile Skills View
-        * @constructor
-        * @param {Object} options
+         * Developer Profile Skills Edit View
+         * @constructor
+         * @param {Object} options
+         * @param {User} options.model User model
+         * @classdesc
+         * View to edit skills
         */
         initialize: function(options) {
             this.template = _.template(edit_skills_template);
@@ -419,10 +428,12 @@ define([
         progressViewSelector: '.developer-profile-progress-hook',
 
         /**
-        * Developer Profile View.
-        * @constructor
-        * @param {Object} options
-        *   model: User model (required)
+         * Developer Profile View.
+         * @constructor
+         * @param {Object} options
+         * @param {User} options.model User model
+         * @classdesc
+         * View to display user's profile
         */
         initialize: function(options) {
             this.model = options.model;
