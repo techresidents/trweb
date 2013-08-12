@@ -180,7 +180,7 @@ define([
         },
 
         render: function() {
-            this.$el.html();
+            this.$el.empty();
             this.append(this.childView);
             return this;
         }

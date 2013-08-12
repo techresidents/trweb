@@ -1,0 +1,14 @@
+<% if(requisitions.length) { %>
+    <button class="user-offers-make-offer btn btn-small btn-primary"><i class="icon-check"></i>  Make Interview Offer</button>
+    <% if(offers.length === 0) { %>
+        <p><i class="icon-info-sign"></i>
+            No interview offers for open requisitions.
+        </p>
+    <% } %>
+<% } else { %>
+    <p><i class="icon-info-sign"></i>
+        Interview offers are made for specific requisitions.
+        To make an offer, you'll need to
+        <a href="/e/requisition/create/">Create a Requisition</a>
+    </p>
+<% } %>

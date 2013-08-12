@@ -4,14 +4,14 @@ define([
     'api',
     'core',
     'ui',
-    '../handler'
+    'widget'
 ], function(
     $,
     _,
     api,
     core,
     ui,
-    applicant_handler) {
+    widget) {
 
     /**
      * Tracker Grid view.
@@ -114,7 +114,7 @@ define([
 
         actionColumn: function(view) {
             var map = function(model) {
-                handler = new applicant_handler.ApplicantHandler({
+                var handler = new widget.application.handlers.ApplicationHandler({
                     model: model,
                     view: view
                 });
@@ -179,10 +179,12 @@ define([
         requisitionFilter: function() {
             var createQuery = function(options) {
                 var currentUser = new api.models.User({id: 'CURRENT'});
-                return new api.models.RequisitionCollection().filterBy({
-                    'tenant_id': currentUser.get_tenant_id(),
-                    'title__istartswith': options.search
-                });
+                return new api.models.RequisitionCollection()
+                    .filterBy({
+                        'tenant_id': currentUser.get_tenant_id()
+                    })
+                    .orderBy('created__DESC')
+                    .slice(0, 40);
             };
 
             var matcher = new ui.ac.matcher.QueryMatcher({
@@ -194,7 +196,8 @@ define([
                     return {
                         value: model.get_title()
                     };
-                }
+                },
+                sort: null
             });
         
             return {

@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="span8">
+        <% if(model.chat_reels.length) { %>
+            <div class="reels">
+                <% _.each(model.chat_reels, function(chatReel) { %>
+                    <% if(chatReel.chat.topic && chatReel.chat.topic.title) { %>
+                        <div class="developer-profile-reel-container">
+                            <i class="icon-play-sign"></i>
+                            <a class="developer-profile-chat-title" href="/d/topic/<%=chatReel.chat.topic.id%>/talkingpoints/"><%= chatReel.chat.topic.title %></a>
+                            <% var duration = (chatReel.chat.end - chatReel.chat.start)/1000;
+                               if (duration < 60) { %>
+                                <span class="developer-profile-chat-title-small">(1 min </span>
+                            <% } else { %>
+                                <span class="developer-profile-chat-title-small">(<%= fmt.format(duration/60, 'n0') %> mins </span>
+                            <% } %>
+                            <span class="developer-profile-chat-title-small"> on <%= fmt.date(chatReel.chat.start, 'MM/dd/yy')%>)</span>
+                        </div>
+                    <% } %>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="developer-profile-empty-view-container">
+                <i class="icon-info-sign icon-2x orange-text"></i>
+                <span class="developer-profile-empty-view-text">Pick a <a href="/d/topics/">topic</a> and show employers what you got.</span>
+            </div>
+        <% } %>
+    </div>
+</div>

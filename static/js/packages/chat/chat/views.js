@@ -74,7 +74,7 @@ define([
             }
 
             this.triggerEvent(events.VIEW_NAVIGATE, {
-                type: 'DeveloperHomeView'
+                type: 'DeveloperProfileView'
             });
             return true;
         }
@@ -122,7 +122,7 @@ define([
         },
 
         render: function() {
-            this.$el.html();
+            this.$el.empty();
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.topicPointsView);
             return this;

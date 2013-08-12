@@ -20,8 +20,6 @@ define(/** @exports events */[
         /* INTERVIEW OFFER EVENTS */
         MAKE_INTERVIEW_OFFER: 'make_interview_offer',
         RESCIND_INTERVIEW_OFFER: 'rescind_interview_offer',
-        SHOW_MAKE_INTERVIEW_OFFER: 'show_interview_offer',
-        SHOW_RESCIND_INTERVIEW_OFFER: 'show_rescind_interview_offer',
 
         /* DEVELOPER NOTE EVENTS*/
         TAKE_NOTE: 'take_note',
@@ -43,6 +41,7 @@ define(/** @exports events */[
         UPDATE_USER: 'update_user',
         UPDATE_SKILLS: 'update_skills',
         UPDATE_DEVELOPER_ACCOUNT: 'update_developer_account',
+        UPDATE_DEVELOPER_PROFILE: 'update_developer_profile',
         UPDATE_DEVELOPER_PREFERENCES: 'update_developer_preferences',
         
         /* REQUISTION EVENTS */

@@ -33,8 +33,6 @@ define([
         /* INTERVIEW OFFER ACTIONS */
         MAKE_INTERVIEW_OFFER: 'notification:MakeInterviewOffer',
         RESCIND_INTERVIEW_OFFER: 'notification:RescindInterviewOffer',
-        SHOW_MAKE_INTERVIEW_OFFER: 'notification:ShowMakeInterviewOffer',
-        SHOW_RESCIND_INTERVIEW_OFFER: 'notification:ShowRescindInterviewOffer',
 
         /* PLAYER ACTIONS */
         PLAYER_PLAY: 'notification:PlayerPlay',

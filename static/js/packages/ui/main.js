@@ -2,6 +2,7 @@ define(/** @exports ui */[
     './ac/inputhandler',
     './ac/matcher',
     './ac/views',
+    './accordion/views',
     './collection/views',
     './date/views',
     './drop/views',
@@ -36,6 +37,7 @@ define(/** @exports ui */[
     ac_inputhandler,
     ac_matcher,
     ac_views,
+    accordion_views,
     collection_views,
     date_views,
     drop_views,
@@ -72,6 +74,9 @@ define(/** @exports ui */[
             inputhandler: ac_inputhandler,
             matcher: ac_matcher,
             views: ac_views
+        },
+        accordion: {
+            views: accordion_views
         },
         collection:  {
             views: collection_views

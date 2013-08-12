@@ -3,7 +3,7 @@ define([
     'underscore',
     'core',
     'ui',
-    '../handler',
+    'widget',
     'text!./templates/application_logs.html',
     'text!./templates/application_log_add.html'
 ], function(
@@ -11,7 +11,7 @@ define([
     _,
     core,
     ui,
-    handler,
+    widget,
     application_logs_template,
     application_log_add_template) {
 
@@ -93,9 +93,10 @@ define([
          * @param {options.Application} model Application model
          */
         initialize: function(options) {
+            var Handler = widget.application.handlers.ApplicationHandler;
             this.model = options.model;
             this.template = _.template(application_log_add_template);
-            this.handler = new handler.ApplicantHandler({
+            this.handler = new Handler({
                 model: this.model,
                 view: this
             });

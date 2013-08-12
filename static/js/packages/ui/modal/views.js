@@ -3,13 +3,17 @@ define([
     'jquery.bootstrap',
     'underscore',
     'core',
-    'text!./templates/modal.html'
+    '../form/views/forms',
+    'text!./templates/modal.html',
+    'text!./templates/modal_form.html'
 ], function(
     $,
     none,
     _,
     core,
-    modal_template) {
+    form_views,
+    modal_template,
+    modal_form_template) {
 
     var EventType = {
         CLOSE: 'close',
@@ -19,7 +23,8 @@ define([
         CANCEL: 'cancel'
     };
 
-    var ModalView = core.view.View.extend({
+    var ModalView = core.view.View.extend(
+    /** @lends module:ui/modal/views~FormView.prototype */ {
 
         events: {
             'click .close': 'onClose',
@@ -32,6 +37,7 @@ define([
         /**
          * Modal view.
          * @constructs
+         * @augments module:core/view~View
          * @param {object} options Options object
          * @param {module:core/view~View|module:core/factory~Factory}
          * options.viewOrFactory View or View factory object.
@@ -115,7 +121,7 @@ define([
 
             return this;
         },
-
+        
         destroy: function() {
             this.hide();
             ModalView.__super__.destroy.call(this);
@@ -199,9 +205,102 @@ define([
         }
 
     });
-    
+
+    var ModalFormView = form_views.FormView.extend(
+    /** @lends module:ui/modal/views~ModalFormView.prototype */ {
+
+        /**
+         * ModalFormView constructor
+         * @constructs
+         * @augments module:core/view~View
+         * @param {object} options Options object
+         * @param {array} options.fields Array of Field objects
+         * @param {array} options.actions Array of Action objects
+         * @param {object} options.model Model to commit form
+         *   values to.
+         * @param {FormValidator|function} [options.validator] Form validator
+         * @param {Factory} [options.actionsViewFactory] Actions view factory.
+         * @param {Factory} [options.errorViewFactory] Error view factory.
+         * @param {string} [options.template] Form template
+         */
+        initialize: function(options) {
+            options = _.extend({
+                template: modal_form_template,
+                autoDestroy: true,
+                exitOnBackdropClick: true,
+                exitOnEscapeKey: true
+            }, options);
+
+            this.title = options.title;
+            this.autoDestroy = options.autoDestroy;
+            this.exitOnBackdropClick = options.exitOnBackdropClick;
+            this.exitOnEscapeKey = options.exitOnEscapeKey;
+
+            ModalFormView.__super__.initialize.call(this, options);
+        },
+        
+        events: function() {
+            return _.extend({
+                'click .close': 'onClose'
+            }, ModalFormView.__super__.events);
+        },
+
+        actionSelector: '.modal-footer',
+
+        destroy: function() {
+            this.hide();
+
+            //the following is need to work around a bootstrap bug where
+            //the background is not always removed if an ajax event is fired.
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+
+            ModalFormView.__super__.destroy.call(this);
+        },
+
+        isModal: function() {
+            return true;
+        },
+
+        show: function() {
+            this.$el.modal('show');
+        },
+
+        hide: function() {
+            this.$el.modal('hide');
+        },
+
+        context: function() {
+            var result = _.extend({
+                title: this.title,
+                showClose: true
+            }, ModalFormView.__super__.context.call(this));
+            return result;
+        },
+
+        render: function() {
+            ModalFormView.__super__.render.call(this);
+            this.$el.modal({
+                backdrop: this.exitOnBackdropClick ? true : 'static',
+                keyboard: this.exitOnEscapeKey ? true : false,
+                show: true
+            });
+
+            return this;
+        },
+
+        onClose: function(e) {
+            this.destroy();
+        },
+
+        onCancel: function(options) {
+            this.destroy();
+        }
+    });
+
     return {
         EventType: EventType,
-        ModalView: ModalView
+        ModalView: ModalView,
+        ModalFormView: ModalFormView
     };
 });

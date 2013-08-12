@@ -9,6 +9,7 @@ define(/** @exports ui/form/views/forms */[
     './actions',
     'text!../templates/form.html',
     'text!../templates/form_error.html'
+
 ], function(
     $,
     _,
@@ -160,6 +161,12 @@ define(/** @exports ui/form/views/forms */[
             this.errorView = null;
             this.initChildViews();
         },
+        
+        fieldSelector: 'fieldset',
+
+        actionSelector: 'fieldset',
+
+        errorSelector: '.form-error-container',
 
         childViews: function() {
             return this.fieldViews.concat([this.controlsView]);
@@ -251,14 +258,14 @@ define(/** @exports ui/form/views/forms */[
             
             //field views
             _.each(this.fieldViews, function(view) {
-                this.append(view, 'fieldset');
+                this.append(view, this.fieldSelector);
             }, this);
 
             //actions view
-            this.append(this.actionsView, 'fieldset');
+            this.append(this.actionsView, this.actionSelector);
 
             //error view
-            this.append(this.errorView, '.form-error-container');
+            this.append(this.errorView, this.errorSelector);
 
             return this;
         },

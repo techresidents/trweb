@@ -248,6 +248,10 @@ a[name] {
     color: #999999;
 }
 
+.section-border-bottom {
+    border-bottom: 1px solid #E3E3E3;
+}
+
 [class^="tr-icon-"] {
     display: inline-block;
     width: 14px;
@@ -768,6 +772,45 @@ button.drop-button .caret {
     cursor: not-allowed;
 }
 
+.accordion {
+    list-style: none;
+    margin: 0px;
+}
+.accordion-item {
+    border-bottom: 1px solid #dddddd;
+}
+.accordion-item-header {
+    cursor: pointer;
+    padding: 10px 10px 10px 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+.accordion-item-header:hover {
+    background-color: #EEEEEE;
+}
+.accordion-item-child {
+    display: none;
+}
+.accordion-item.accordion-item-open .accordion-item-child {
+    display: block;
+}
+.accordion-item.accordion-item-open .accordion-item-arrow {
+    float: right;
+    border-top: 0px;
+    border-bottom: 5px solid #000000;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    margin-top: 6px;
+}
+.accordion-item-arrow {
+    float: right;
+    border-top: 5px solid #000000;
+    border-bottom: 0px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    margin-top: 6px;
+}
+
 .w-skill {
     display: inline-block;
     border: 1px solid #E3E3E3;
@@ -911,4 +954,79 @@ button.drop-button .caret {
     border-bottom: 2px solid #cccccc;
     padding-bottom: 5px;
     margin-bottom: 15px;
+}
+
+.w-application-brief {
+    margin-bottom: 10px;
+}
+.w-application-brief .well {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+.w-application-brief-title {
+    color: #777777;
+    font-weight: bold;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #dddddd;
+}
+.w-application-brief-status {
+    margin-left: 3px;
+    font-size: 12px;
+}
+.w-application-brief-ratings,
+.w-application-brief-decision {
+    display: inline-block;
+}
+.w-application-brief a {
+    display: block;
+    margin-bottom: 5px;
+}
+.w-application-brief-decision {
+    vertical-align: top;
+    margin-left: 2px;
+}
+.w-application-brief-decision > div {
+    display: inline-block;
+}
+.w-application-brief-decision-bracket {
+    line-height: 50px;
+    font-size: 60px;
+    font-weight: lighter;
+    color: #EA8F00;
+}
+.w-application-brief-vote-buttons-container {
+    margin-left: 3px;
+}
+.w-application-brief-decision-text {
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 3px;
+}
+
+.w-interview-offer-brief .well {
+    padding: 5px 10px 0px 10px;
+    margin-bottom: 10px;
+}
+.w-interview-offer-brief-title {
+    color: #777777;
+    font-weight: bold;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #dddddd;
+}
+.w-interview-offer-brief > a {
+    display: block;
+    margin-bottom: 5px;
+}
+.w-interview-offer-brief-status {
+    margin-left: 3px;
+    font-size: 12px;
+}
+.w-interview-offer-brief-field {
+}
+.w-interview-offer-brief-field > label {
+    display: inline-block;
+    width: 60px;
+    text-align: right;
+    margin: 0px 10px 0px 0px;
+    color: #777777;
 }

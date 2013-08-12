@@ -10,8 +10,6 @@ define([
     './summary/views',
     './tracker/views',
     'text!./templates/application.html',
-    'text!./templates/make_interview_offer.html',
-    'text!./templates/rescind_interview_offer.html',
     'text!./templates/tracker.html'
 ], function(
     $,
@@ -25,8 +23,6 @@ define([
     applicant_summary,
     applicant_tracker,
     application_template,
-    make_interview_offer_template,
-    rescind_interview_offer_template,
     tracker_template) {
 
     /**
@@ -224,7 +220,7 @@ define([
                 this.$el.html(this.template(context));
                 this.append(this.dateView);
             } else {
-                this.$el.html();
+                this.$el.empty();
             }
             return this;
         },
@@ -319,7 +315,7 @@ define([
                 var context = this.context();
                 this.$el.html(this.template(context));
             } else {
-                this.$el.html();
+                this.$el.empty();
             }
             return this;
         },

@@ -1,0 +1,22 @@
+<div class="well">
+    <div class="w-application-brief-title">
+        <span>Applicant Eval</span>
+        <% if(model.status === 'REJECTED') { %>
+            <span class="w-application-brief-status text-error">REJECTED</span>
+        <% } %>
+    </div>
+    <div>
+        <a href="/e/application/<%= model.id %>/"><%= req_name %></a>
+    </div>
+    <div class="w-application-brief-ratings">
+        <div class="w-application-brief-culture"></div>
+        <div class="w-application-brief-technical"></div>
+        <div class="w-application-brief-communication"></div>
+    </div>
+    <div class="w-application-brief-decision">
+        <div class="w-application-brief-decision-bracket">}</div>
+        <div class="w-application-brief-vote-buttons-container">
+            <div class="w-application-brief-decision-text">Vote</div>
+        </div>
+    </div>
+</div>

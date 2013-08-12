@@ -1,0 +1,14 @@
+<% if(requisitions.length) { %>
+    <button class="user-applicant-tracker-add btn btn-small btn-primary"><i class="icon-plus"></i>  Add to tracker</button>
+    <% if(applications.length === 0) { %>
+        <p><i class="icon-info-sign"></i>
+            Not being tracked for open requisitions.
+        </p>
+    <% } %>
+<% } else { %>
+    <p><i class="icon-info-sign"></i>
+        Applicants are tracked against requisitions.
+        To track a user you'll need to
+        <a href="/e/requisition/create/">Create a Requisition</a>
+    </p>
+<% } %>

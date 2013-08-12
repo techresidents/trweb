@@ -76,7 +76,7 @@ define([
         },
 
         render: function() {
-            this.$el.html();
+            this.$el.empty();
             return this;
         }
 

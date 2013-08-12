@@ -8,7 +8,7 @@ define(/** @exports core/date */[
     base,
     iter) {
 
-    WEEKDAY = {
+    var WEEKDAY = {
         MON: 0,
         TUE: 1,
         WED: 2,
@@ -18,7 +18,7 @@ define(/** @exports core/date */[
         SUN: 6
     };
 
-    MONTH = {
+    var MONTH = {
         JAN: 0,
         FEB: 1,
         MAR: 2,

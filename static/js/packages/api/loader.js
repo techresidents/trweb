@@ -127,9 +127,11 @@ define([
                     });
                 } else {
                     this.loaded = true;
-                    if(options.triggerAlways && options.success) {
+                    if(options.triggerAlways) {
                         this.trigger('loaded');
-                        options.success();
+                        if(options.success) {
+                            options.success();
+                        }
                     }
 
                 }

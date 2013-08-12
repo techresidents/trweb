@@ -110,8 +110,9 @@ define([
 
         user: function(id) {
             require(['user'], _.bind(function(user) {
+                var Mediator = user.mediators.employer.user.EmployerUserMediator;
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: user.mediators.UserMediator.VIEW_TYPE,
+                    type: Mediator.VIEW_TYPE,
                     options: {
                         id: id
                     }
@@ -296,10 +297,6 @@ define([
         notifications.MAKE_INTERVIEW_OFFER;
     EventNotificationMap[events.RESCIND_INTERVIEW_OFFER] =
         notifications.RESCIND_INTERVIEW_OFFER;
-    EventNotificationMap[events.SHOW_MAKE_INTERVIEW_OFFER] =
-        notifications.SHOW_MAKE_INTERVIEW_OFFER;
-    EventNotificationMap[events.SHOW_RESCIND_INTERVIEW_OFFER] =
-        notifications.SHOW_RESCIND_INTERVIEW_OFFER;
     /* DEVELOPER NOTE EVENTS */
     EventNotificationMap[events.TAKE_NOTE] =
         notifications.TAKE_NOTE;
@@ -451,10 +448,6 @@ define([
                 ctrl.commands.applicant.MakeInterviewOffer);
             this.registerCommand(notifications.RESCIND_INTERVIEW_OFFER,
                 ctrl.commands.applicant.RescindInterviewOffer);
-            this.registerCommand(notifications.SHOW_MAKE_INTERVIEW_OFFER,
-                ctrl.commands.applicant.ShowMakeInterviewOffer);
-            this.registerCommand(notifications.SHOW_RESCIND_INTERVIEW_OFFER,
-                ctrl.commands.applicant.ShowRescindInterviewOffer);
             /* DEVELOPER NOTE COMMANDS */
             this.registerCommand(notifications.TAKE_NOTE,
                 ctrl.commands.user.TakeNote);

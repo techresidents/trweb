@@ -1,7 +1,7 @@
 <div class="control-group<%= state.showError && state.error ? ' error' : ''%>">
     <label class="control-label"><%= state.label %></label>
     <div class="controls">
-        <select <%= state.enabled ? '' : 'readonly' %>>
+        <select <%= state.enabled ? '' : 'disabled' %>>
             <% _.each(choices, function(choice, index) { %>
                 <option value="<%= choice.index %>" <%= index === selectedIndex ? 'selected="selected"' : '' %> ><%= choice.label %></option>
             <% }); %>

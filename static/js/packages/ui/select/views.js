@@ -430,9 +430,9 @@ define([
             return this;
         },
 
-        refresh: function() {
+        refresh: function(value) {
             var that = this;
-            var value = this.input().val();
+            value = value || this.input().val();
             this.matcher.match(value, this.maxResults, function(search, results) {
                 that.matchCollection.reset(results);
                 that.updateCollection();
@@ -454,7 +454,7 @@ define([
                     models.push(model);
                 }
             }, this);
-            
+
             this.collection.reset(models);
         },
 
