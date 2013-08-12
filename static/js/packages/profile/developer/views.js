@@ -274,7 +274,7 @@ define([
             this.navView = new DeveloperProfileNavView();
 
             this.formView = new forms.GeneralFormView({
-                model: this.model
+                model: this.model.get_developer_profile()
             });
         },
 

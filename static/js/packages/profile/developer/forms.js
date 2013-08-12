@@ -21,6 +21,9 @@ define([
      * General Form View
      * @constructor
      * @param {Object} options
+     * @param {DeveloperProfile} DeveloperProfile model
+     * @classdesc
+     * Form view to edit general preferences
      */
     var GeneralFormView = ui.form.views.FormView.extend({
 
@@ -56,14 +59,14 @@ define([
 
         activelySeekingField: function(model) {
             return new ui.form.fields.CheckboxField({
-                name: 'developer_profile__actively_seeking',
+                name: 'actively_seeking',
                 model: model,
                 label: 'I am actively job hunting'
             });
         },
 
         onSave: function(options) {
-            this.triggerEvent(events.UPDATE_DEVELOPER_ACCOUNT, {
+            this.triggerEvent(events.UPDATE_DEVELOPER_PROFILE, {
                 model: this.model,
                 onSuccess: options.success,
                 onError: options.error
