@@ -74,7 +74,7 @@ define([
             }
 
             this.triggerEvent(events.VIEW_NAVIGATE, {
-                type: 'DeveloperHomeView'
+                type: 'DeveloperProfileView'
             });
             return true;
         }

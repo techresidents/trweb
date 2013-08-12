@@ -207,7 +207,11 @@ define([
                     router.navigate(uri, {trigger: options.trigger});
                     break;
                 case 'DeveloperHomeView':
-                    uri = 'home';
+                    uri = 'home/';
+                    router.navigate(uri, {trigger: options.trigger});
+                    break;
+                case 'DeveloperProfileView':
+                    uri = 'profile/';
                     router.navigate(uri, {trigger: options.trigger});
                     break;
                 case 'TalkingPointView':
