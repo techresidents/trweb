@@ -17,16 +17,16 @@ define([
     widget,
     events) {
 
-    /**
-     * General Form View
-     * @constructor
-     * @param {Object} options
-     * @param {DeveloperProfile} DeveloperProfile model
-     * @classdesc
-     * Form view to edit general preferences
-     */
     var GeneralFormView = ui.form.views.FormView.extend({
 
+        /**
+         * General Form View
+         * @constructor
+         * @param {Object} options
+         * @param {DeveloperProfile} DeveloperProfile model
+         * @classdesc
+         * Form view to edit general preferences
+         */
         initialize: function(options) {
 
             /*
@@ -74,13 +74,16 @@ define([
         }
     });
 
-    /**
-     * Preferences Form View
-     * @constructor
-     * @param {Object} options
-     */
     var PreferencesFormView = ui.form.views.FormView.extend({
 
+        /**
+         * Preferences Form View
+         * @constructor
+         * @param {Object} options
+         * @param {User} options.model User model
+         * @classdesc
+         * View to edit position, location, and technology preferences
+         */
         initialize: function(options) {
             options = _.extend({
                 horizontal: false
@@ -253,14 +256,16 @@ define([
         }
     });
 
-    
-    /**
-     * Skills Form View
-     * @constructor
-     * @param {Object} options
-     */
     var SkillsFormView = ui.form.views.FormView.extend({
 
+        /**
+         * Skills Form View
+         * @constructor
+         * @param {Object} options
+         * @param {User} options.model User model
+         * @classdesc
+         * View to edit skills
+         */
         initialize: function(options) {
             options = _.extend({
                 horizontal: false
