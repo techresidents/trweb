@@ -35,7 +35,7 @@ define([
         initialize: function(options) {
             this.view = null;
             this.defaultCollection = new api.models.UserSearchCollection();
-            this.defaultQuery = this.defaultCollection.slice(0, 10);
+            this.defaultQuery = this.defaultCollection.slice(0, 10).query();
 
             this.collection = null;
             this.query = null;
@@ -48,11 +48,10 @@ define([
 
                 this.collection = this.defaultCollection.clone();
                 this.collection.on('reset', this.onReset, this);
-                this.query = api.query.ApiQuery.parse(this.collection, uri);
+                this.query = this.collection.query().parse(uri);
 
                 this.view = new search_views.SearchView({
-                    collection: this.collection,
-                    query: this.query
+                    collection: this.collection
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {

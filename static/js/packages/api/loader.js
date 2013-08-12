@@ -27,6 +27,13 @@ define([
             this.triggerAlways = options.triggerAlways;
             this.loaded = false;
             this.loading = false;
+
+            _.each(this.targets, function(target) {
+                if(!target.withRelated) {
+                    var query = target.instance.query();
+                    target.withRelated = query.state.withRelations().withRelated();
+                }
+            }, this);
         },
 
         isLoading: function() {
@@ -121,6 +128,7 @@ define([
                     this.loading = true;
                     this.trigger('loading');
                     fetcher = new api_fetcher.ApiFetcher(queries);
+
                     fetcher.fetch({
                         success: _.bind(successCallback, this),
                         error: options.error

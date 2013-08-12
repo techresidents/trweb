@@ -112,14 +112,20 @@ define([
             this.application = options.application;
             this.currentUser = new api.models.User({id: 'CURRENT'});
             this.currentTenant = this.currentUser.get_tenant();
-            this.applications = this.currentTenant.get_applications();
-            this.applicationsQuery = this.applications.filterBy({
-                user_id: this.model.id
-            });
-            this.offers = this.currentTenant.get_interview_offers();
-            this.offersQuery = this.offers.filterBy({
-                candidate_id: this.model.id
-            }).withRelated(['application']);
+
+            this.applications = this.currentTenant.get_applications()
+                .filterBy({ user_id: this.model.id });
+
+            this.offers = this.currentTenant.get_interview_offers()
+                .filterBy({ candidate_id: this.model.id })
+                .withRelated(['application']);
+
+            this.loader = new api.loader.ApiLoader([
+                { instance: this.applications },
+                { instance: this.offers }
+            ]);
+
+            this.initialized = false;
 
             var expirationDate = new core.date.Date();
             expirationDate.add(new core.date.Interval(0, 0, 7));
@@ -152,11 +158,22 @@ define([
                 })
             ];
 
+            //bind events
+            this.listenTo(this.loader, 'loaded', this.render);
+
             //load data
-            this.applicationsQuery.fetch();
-            this.offersQuery.fetch();
+            this.loader.load();
 
             MakeInterviewOfferModal.__super__.initialize.call(this, options);
+
+            this.initialized = true;
+        },
+
+        render: function() {
+            if(this.loader.isLoaded() && this.initialized) {
+                MakeInterviewOfferModal.__super__.render.call(this);
+            }
+            return this;
         },
 
         typeField: function(model) {
@@ -168,7 +185,7 @@ define([
                     { label: '', value: null },
                     { label: 'Phone Interview', value: 'PHONE' },
                     { label: 'In-house Interview', value: 'IN_HOUSE' }
-                ],
+                ]
             });
         },
 
@@ -197,7 +214,7 @@ define([
                 var collection = that.currentUser.get_tenant().get_requisitions();
                 var query = collection.filterBy({
                     status: 'OPEN'
-                }).slice(0, 40);
+                }).slice(0, 40).query();
                 return query;
             };
             queryFactory = new core.factory.FunctionFactory(queryFactory);

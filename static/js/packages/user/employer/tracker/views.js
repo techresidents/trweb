@@ -31,44 +31,34 @@ define([
             this.session = this.model.session;
             this.currentUser = new api.models.User({id: 'CURRENT'});
             this.currentTenant = this.currentUser.get_tenant();
-            this.applicationsLoaded = false;
-            this.requisitionsLoaded = false;
 
-            this.requisitions = this.currentTenant.get_requisitions();
-            this.requisitionsQuery = this.requisitions.filterBy({
-                status: 'OPEN'
-            }).orderBy('created__desc');
+            this.requisitions = this.currentTenant
+                .get_requisitions()
+                .filterBy({status: 'OPEN'})
+                .orderBy('created__desc');
 
-            this.applications = this.currentTenant.get_applications();
-            this.applicationsQuery = this.applications.filterBy({
-                user__id: this.model.id,
-                requisition__status: 'OPEN'
-            }).orderBy('created__desc');
-            this.applicationsKey = this.session.expandKey(
-                    this.applications.key(),
-                    this.applicationsQuery);
+            this.applications = this.currentTenant
+                .get_applications()
+                .filterBy({
+                    user__id: this.model.id,
+                    requisition__status: 'OPEN'
+                })
+                .orderBy('created__desc');
             
+            this.loader = new api.loader.ApiLoader([
+                { instance: this.requisitions },
+                { instance: this.applications }
+            ]);
+
             //bind events
             //listen to session for our collection to be removed. This event will
             //be fired when a new application is created. When this happens we
             //should re-fetch the query to update the application briefs view.
-            this.listenTo(this.session, 'remove:' + this.applicationsKey, this.onRemove);
-            this.listenTo(this.applications, 'loaded', this.onApplicationsLoaded);
+            this.listenTo(this.session, 'remove:' + this.applications.key(), this.onRemove);
+            this.listenTo(this.loader, 'loaded', this.render);
 
             //load data
-            //TODO replace w/ loader when loader can support queries
-            this.applicationsQuery.fetch({
-                success: _.bind(function() {
-                    this.applicationsLoaded = true;
-                    this.render();
-                }, this)
-            });
-            this.requisitionsQuery.fetch({
-                success: _.bind(function() {
-                    this.requisitionsLoaded = true;
-                    this.render();
-                }, this)
-            });
+            this.loader.load();
 
             // init child views
             this.applicationBriefsView = null;
@@ -98,9 +88,7 @@ define([
         },
 
         render: function() {
-            if(this.applicationsLoaded &&
-               this.requisitionsLoaded &&
-               this.applicationBriefsView) {
+            if(this.loader.isLoaded() && this.applicationBriefsView) {
                 var context = this.context();
                 this.$el.html(this.template(context));
 
@@ -126,13 +114,9 @@ define([
         },
 
         onRemove: function() {
-            this.applicationsQuery.fetch();
-        },
-
-        onApplicationsLoaded: function(instance) {
-            if(instance === this.applications) {
-                this.render();
-            }
+            this.applications.fetch({
+                success: _.bind(this.render, this)
+            });
         }
     });
 

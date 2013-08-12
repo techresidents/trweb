@@ -331,7 +331,6 @@ define([
      * @param {object} options
      * @param {object} options.config: Facet config
      * @param {ApiCollection} options.collection collection
-     * @param {ApiQuery} options.query ApiQuery query
      * @param {boolean} [options.includeAll=true] Set to true to
      *   include all facet views, even those not explicitly
      *   configured.
@@ -356,8 +355,9 @@ define([
 
             }, options);
 
+
             this.config = options.config;
-            this.query = options.query;
+            this.query = options.collection.query();
             this.includeAll = options.includeAll;
             this.facetConfigMap = {};
             this.facetViewFactory = new FacetView.Factory();
@@ -371,6 +371,8 @@ define([
                 config.sortOrder = sortOrder++;
                 this.facetConfigMap[config.name] = config;
             }, this);
+
+            options.collection = options.collection.getFacets();
 
             collection_views.ListView.prototype.initialize.call(this, options);
         },

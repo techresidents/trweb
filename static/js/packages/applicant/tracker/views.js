@@ -17,8 +17,8 @@ define([
      * Tracker Grid view.
      * @constructor
      * @param {Object} options
-     *   collection: {ApplicationCollection} collection (required)
-     *   query: {ApiQuery} query (required)
+     * @param {ApplicationCollection} options.collection
+     *   Application collection
      */
     var TrackerGridView = ui.grid.views.GridView.extend({
 
@@ -184,7 +184,8 @@ define([
                         'tenant_id': currentUser.get_tenant_id()
                     })
                     .orderBy('created__DESC')
-                    .slice(0, 40);
+                    .slice(0, 40)
+                    .query();
             };
 
             var matcher = new ui.ac.matcher.QueryMatcher({

@@ -62,7 +62,6 @@ define([
      * @constructor
      * @param {object} options
      * @param {TopicSearchCollection} options.collection Topic Search collection
-     * @param {ApiQuery} options.query TopicSearchCollection query
      */
     var TopicSearchFacetsView = ui.facet.views.FacetsView.extend({
         initialize: function(options) {
@@ -86,7 +85,6 @@ define([
      * @constructor
      * @param {object} options
      * @param {TopicSearchCollection} options.collection TopicSearchCollection
-     * @param {ApiQuery} options.query TopicSearchCollection query
      */
     var TopicSearchPageView = core.view.View.extend({
 
@@ -103,8 +101,8 @@ define([
         initialize: function(options) {
             this.template =  _.template(topicsearch_page_template);
             this.collection = options.collection;
-            this.query = options.query;
-            this.query.fetch();
+            this.query = this.collection.query();
+            this.collection.fetch();
 
             //bind events
             this.listenTo(this.collection, 'reset', this.onReset);
@@ -126,8 +124,7 @@ define([
 
         initChildViews: function() {
             this.facetsView = new TopicSearchFacetsView({
-                collection: this.collection.getFacets(),
-                query: this.query
+                collection: this.collection
             });
 
             this.inputHandlerView = new ui.input.views.InputHandlerView({
@@ -142,7 +139,6 @@ define([
 
             this.topicsCollectionView = new ui.collection.views.CollectionView({
                 collection: this.collection,
-                query: this.query,
                 viewFactory: new core.factory.Factory(TopicSearchResultView, {}),
                 sort: this._viewSort
             });
@@ -150,8 +146,7 @@ define([
 
             this.paginatorView = new ui.paginator.views.PaginatorView({
                 maxPages: 10,
-                collection: this.collection,
-                query: this.query
+                collection: this.collection
             });
         },
 

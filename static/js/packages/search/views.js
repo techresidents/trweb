@@ -83,7 +83,7 @@ define([
                     var query = new api.models.TechnologySearchCollection();
                     query = query.filterBy({
                         ac: options.search
-                    }).slice(0, options.maxResults);
+                    }).slice(0, options.maxResults).query();
                     return query;
                 }),
                 stringify: function(technology) {
@@ -137,8 +137,8 @@ define([
         initialize: function(options) {
             this.template =  _.template(search_template);
             this.collection = options.collection;
-            this.query = options.query;
-            this.query.fetch();
+            this.query = this.collection.query();
+            this.collection.fetch();
             
             //bind events
             this.listenTo(this.collection, 'reset', this.onReset);
@@ -160,8 +160,7 @@ define([
 
         initChildViews: function() {
             this.facetsView = new SearchFacetsView({
-                collection: this.collection.getFacets(),
-                query: this.query
+                collection: this.collection
             });
 
             this.inputHandlerView = new ui.input.views.InputHandlerView({
@@ -175,15 +174,13 @@ define([
 
             this.usersView = new ui.collection.views.ListView({
                 collection: this.collection,
-                query: this.query,
                 viewFactory: new core.factory.Factory(SearchUserView, {})
             });
 
 
             this.paginatorView = new ui.paginator.views.PaginatorView({
                 maxPages: 10,
-                collection: this.collection,
-                query: this.query
+                collection: this.collection
             });
         },
 

@@ -30,42 +30,32 @@ define([
             this.session = this.model.session;
             this.currentUser = new api.models.User({id: 'CURRENT'});
             this.currentTenant = this.currentUser.get_tenant();
-            this.offersLoaded = false;
-            this.requisitionsLoaded = false;
 
-            this.offers = this.currentTenant.get_interview_offers();
-            this.offersQuery = this.offers.filterBy({
-                candidate_id: this.model.id,
-                application__requisition__status: 'OPEN'
-            }).orderBy('created__desc');
-            this.offersKey = this.session.expandKey(this.offers.key(), this.offersQuery);
+            this.offers = this.currentTenant.get_interview_offers()
+                .filterBy({
+                    candidate_id: this.model.id,
+                    application__requisition__status: 'OPEN'
+                })
+                .orderBy('created__desc');
 
-            this.requisitions = this.currentTenant.get_requisitions();
-            this.requisitionsQuery = this.requisitions.filterBy({
-                status: 'OPEN'
-            }).orderBy('created__desc');
+            this.requisitions = this.currentTenant.get_requisitions()
+                .filterBy({ status: 'OPEN' })
+                .orderBy('created__desc');
+
+            this.loader = new api.loader.ApiLoader([
+                { instance: this.offers },
+                { instance: this.requisitions }
+            ]);
 
             //bind events
             //listen to session for our collection to be removed. This event will
             //be fired when a new offer is created. When this happens we
             //should re-fetch the query to update the offers view.
-            this.listenTo(this.session, 'remove:' + this.offersKey, this.onRemove);
-            this.listenTo(this.offers, 'loaded', this.onOffersLoaded);
+            this.listenTo(this.session, 'remove:' + this.offers.key(), this.onRemove);
+            this.listenTo(this.loader, 'loaded', this.render);
 
             //load data
-            //TODO replace w/ loader when loader can support queries
-            this.offersQuery.fetch({
-                success: _.bind(function() {
-                    this.offersLoaded = true;
-                    this.render();
-                }, this)
-            });
-            this.requisitionsQuery.fetch({
-                success: _.bind(function() {
-                    this.requisitionsLoaded = true;
-                    this.render();
-                }, this)
-            });
+            this.loader.load();
 
             // init child views
             this.offersView = null;
@@ -94,9 +84,7 @@ define([
         },
 
         render: function() {
-            if(this.offersLoaded &&
-               this.requisitionsLoaded &&
-               this.offersView) {
+            if(this.loader.isLoaded() && this.offersView) {
                 var context = this.context();
                 this.$el.html(this.template(context));
                 if(this.requisitions.length) {
@@ -114,13 +102,9 @@ define([
         },
 
         onRemove: function() {
-            this.offersQuery.fetch();
-        },
-
-        onOffersLoaded: function(instance) {
-            if(instance === this.offers) {
-                this.render();
-            }
+            this.offers.fetch({
+                success: _.bind(this.render, this)
+            });
         }
     });
 

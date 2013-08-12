@@ -244,15 +244,7 @@ define([
         },
 
         expandKey: function(key, query) {
-            var result = key;
-            var uri;
-            if(query) {
-                uri = query.toUri();
-                if(uri) {
-                    result = key + '?' + uri;
-                }
-            }
-            return result;
+            return key;
         },
 
         expandFetchKey: function(key, query) {

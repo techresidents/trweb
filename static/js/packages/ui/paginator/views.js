@@ -16,8 +16,7 @@ define([
      * Paginator View.
      * @constructor
      * @param {Object} options
-     *   collection: {ApiCollection} collection (required)
-     *   query: {ApiQuery} query (required)
+     * @param {ApiCollection} options.collection Collection
      */
     var PaginatorView = core.view.View.extend({
 
@@ -41,7 +40,7 @@ define([
             this.template = _.template(options.template);
             this.context = options.context;
             this.collection = options.collection;
-            this.query = options.query;
+            this.query = this.collection.query();
 
             //bind events
             this.listenTo(this.collection, 'reset', this.render);

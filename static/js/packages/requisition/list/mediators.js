@@ -66,10 +66,9 @@ define([
                 var uri = notification.options.query || this.defaultQuery.toUri();
                 this.collection = this.defaultCollection.clone();
                 this.collection.on('reset', this.onReset, this);
-                this.query = api.query.ApiQuery.parse(this.collection, uri);
+                this.query = this.collection.query().parse(uri);
                 this.view = new requisition_list_views.RequisitionsSummaryView({
-                    collection: this.collection,
-                    query: this.query
+                    collection: this.collection
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {

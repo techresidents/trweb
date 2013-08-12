@@ -27,24 +27,22 @@ define([
             this.currentUser = new api.models.User({id: 'CURRENT'});
             this.selectionCollection = new ui.select.models.SelectionCollection();
             this.requisitionMatcher = this._buildRequisitionMatcher();
-            this.collection = this.currentUser.get_tenant().get_applications();
+            this.collection = this.currentUser.get_tenant().get_applications()
+                .filterBy({ user__id: this.model.id });
+            this.loader = new api.loader.ApiLoader([
+                { instance: this.collection }
+            ]);
+
+            //bind events
+            this.listenTo(this.loader, 'loaded', this.render);
 
             // init child views
             this.autoSelectView = null;
             this.initChildViews();
 
+
             //load data
-            //TODO add support for queries to Loader, so we can use
-            //the typical pattern of not rendering this view
-            //until we load the application collection which
-            //is needed to properly filter requisitions.
-            this.collection.filterBy({
-                user__id: this.model.id
-            }).fetch({
-                success: _.bind(function() {
-                    this.autoSelectView.refresh();
-                }, this)
-            });
+            this.loader.load();
         },
 
         childViews: function() {
@@ -65,9 +63,12 @@ define([
         },
 
         render: function() {
-            this.$el.empty();
-            this.$el.attr('class', this.classes().join(' '));
-            this.append(this.autoSelectView);
+            if(this.loader.isLoaded()) {
+                this.autoSelectView.refresh();
+                this.$el.empty();
+                this.$el.attr('class', this.classes().join(' '));
+                this.append(this.autoSelectView);
+            }
             return this;
         },
 
@@ -102,7 +103,8 @@ define([
                         'status__eq': 'OPEN'
                     })
                     .orderBy('created__desc')
-                    .slice(0, 40);
+                    .slice(0, 40)
+                    .query();
             };
 
             var stringify = function(model) {
