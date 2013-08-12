@@ -1,0 +1,62 @@
+<div class ="row">
+    <div class="span8">
+
+        <div class="row">
+            <div class="span8">
+                <h3 class="developer-profile-heading section-border-bottom">Profile <a class="btn btn-small" href="/d/profile/general/">Edit</a></h3>
+            </div>
+        </div>
+        <div class="developer-profile-general-hook"></div>
+
+        <div class="row">
+            <div class="span8">
+                <h3 class="developer-profile-heading section-border-bottom"><i class="icon-screenshot"></i> Seeking <a class="btn btn-small" href="/d/profile/preferences/">Edit</a></h3>
+            </div>
+        </div>
+        <div class="developer-profile-prefs-hook"></div>
+
+        <div class="row">
+            <div class="span8">
+                <h3 class="developer-profile-heading section-border-bottom"><i class="icon-check"></i> Skills <a class="btn btn-small" href="/d/profile/skills/">Edit</a></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span8">
+                <% if(model.skills.length) { %>
+                    <div class="developer-profile-skills-hook"></div>
+                <% } else { %>
+                    <div class="developer-profile-empty-view-container">
+                        <i class="icon-info-sign icon-2x orange-text"></i>
+                        <span class="developer-profile-empty-view-text">What's in your <a href="/d/profile/skills/">tool belt</a>?</span>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="span8">
+                <h3 class="developer-profile-heading section-border-bottom"><i class="icon-film"></i> Highlight Reel <a class="btn btn-small" href="/d/profile/reel/">Edit</a></h3>
+            </div>
+        </div>
+        <div class="developer-profile-reel-hook"></div>
+    </div>
+
+
+    <div class="span4">
+        <div class="developer-profile-progress-hook"></div>
+        <div class="row">
+            <div class="span4">
+                <div class="well">
+                    <h4 class=""><i class="icon-signal"></i> Trending Topics</h4>
+                    <ol>
+                        <li><a href="/d/topic/11qgs1s/talkingpoints/">Bio</a></li>
+                        <li><a href="/d/topic/4fti4g/talkingpoints/">War Story: Bug</a></li>
+                        <li><a href="/d/topic/m73im8/talkingpoints/">Slow Process Speculation</a></li>
+                        <li><a href="/d/topic/1lpnjls/talkingpoints/">Unicode for Grandmas</a></li>
+                        <li><a href="/d/topic/27wr28/talkingpoints/">Save the Music</a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

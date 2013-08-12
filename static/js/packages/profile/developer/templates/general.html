@@ -1,0 +1,19 @@
+<div class="row">
+    <div class="span8">
+        <div class="developer-profile-general-container">
+            <div class="developer-profile-label-container">
+                <label class="developer-profile-label">
+                    Job Hunt
+                </label>
+            </div>
+            <div class="span6">
+                <div class="developer-profile-general-prefs">
+                    <div class="btn-group" data-toggle="buttons-radio">
+                        <button type="button" class=" btn btn-small inactive-job-hunt <%= model.actively_seeking === false ? 'active btn-danger' : ''%>">Inactive</button>
+                        <button type="button" class=" btn btn-small active-job-hunt <%= model.actively_seeking === true ? 'active btn-success' : ''%>">Active</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

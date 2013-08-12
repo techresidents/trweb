@@ -31,10 +31,12 @@ define([
             'chat/:id(/)': 'chat',
             'chatsim/:id(/)': 'chatSimulation',
             'home(/)': 'home',
-            'profile/account(/)': 'profileAccount',
+            'profile(/)': 'profile',
+            'profile/general(/)': 'profileGeneral',
             'profile/preferences(/)': 'profilePreferences',
+            'profile/reel(/)': 'profileReel',
             'profile/skills(/)': 'profileSkills',
-            'reel(/)': 'reel',
+            'settings/account(/)': 'settingsAccount',
             'topic/:id(/)': 'topic',
             'topic/:id/talkingpoints(/)': 'topicTalkingPoints',
             'topics(/:query)(/)': 'topicSearch',
@@ -86,11 +88,22 @@ define([
             }, this));
         },
 
-        profileAccount: function() {
+        profile: function() {
             require(['profile'], _.bind(function(profile) {
                 var Mediator = profile.mediators.developer.DeveloperProfileMediator;
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: Mediator.VIEW_TYPE.ACCOUNT,
+                    type: Mediator.VIEW_TYPE.SUMMARY,
+                    options: {
+                    }
+                });
+            }, this));
+        },
+
+        profileGeneral: function() {
+            require(['profile'], _.bind(function(profile) {
+                var Mediator = profile.mediators.developer.DeveloperProfileMediator;
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: Mediator.VIEW_TYPE.GENERAL,
                     options: {
                     }
                 });
@@ -108,6 +121,17 @@ define([
             }, this));
         },
 
+        profileReel: function() {
+            require(['profile'], _.bind(function(profile) {
+                var Mediator = profile.mediators.developer.DeveloperProfileMediator;
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: Mediator.VIEW_TYPE.REEL,
+                    options: {
+                    }
+                });
+            }, this));
+        },
+
         profileSkills: function() {
             require(['profile'], _.bind(function(profile) {
                 var Mediator = profile.mediators.developer.DeveloperProfileMediator;
@@ -119,10 +143,10 @@ define([
             }, this));
         },
 
-        reel: function() {
-            require(['chat'], _.bind(function(chat) {
+        settingsAccount: function() {
+            require(['settings'], _.bind(function(settings) {
                 this.facade.trigger(notifications.VIEW_CREATE, {
-                    type: chat.mediators.reel.ChatReelMediator.VIEW_TYPE,
+                    type: settings.mediators.developer.DeveloperSettingsMediator.VIEW_TYPE,
                     options: {
                     }
                 });
@@ -280,6 +304,8 @@ define([
         notifications.UPDATE_SKILLS;
     EventNotificationMap[events.UPDATE_DEVELOPER_ACCOUNT] =
         notifications.UPDATE_DEVELOPER_ACCOUNT;
+    EventNotificationMap[events.UPDATE_DEVELOPER_PROFILE] =
+        notifications.UPDATE_DEVELOPER_PROFILE;
     EventNotificationMap[events.UPDATE_DEVELOPER_PREFERENCES] =
         notifications.UPDATE_DEVELOPER_PREFERENCES;
 

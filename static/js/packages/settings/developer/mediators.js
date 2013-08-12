@@ -9,19 +9,19 @@ define([
     notifications,
     core,
     api,
-    chat_reel_views) {
+    developer_settings_views) {
 
     /**
-     * ChatReel Mediator
+     * Developer Settings Mediator
      * @constructor
      */
-    var ChatReelMediator = core.mediator.Mediator.extend({
+    var DeveloperSettingsMediator = core.mediator.Mediator.extend({
         name: function() {
-            return ChatReelMediator.NAME;
+            return DeveloperSettingsMediator.NAME;
         },
 
         viewType: function() {
-            return ChatReelMediator.VIEW_TYPE;
+            return DeveloperSettingsMediator.VIEW_TYPE;
         },
 
         /**
@@ -39,9 +39,8 @@ define([
         onCreateView: function(notification) {
             if (notification.type === this.viewType()) {
 
-                var reelCollection = new api.models.ChatReelCollection();
-                this.view = new chat_reel_views.ChatReelPageView({
-                    collection: reelCollection
+                this.view = new developer_settings_views.DeveloperSettingsAccountView({
+                    model: new api.models.User({ id: 'CURRENT' })
                 });
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
@@ -68,12 +67,12 @@ define([
 
     }, {
 
-        NAME: 'ChatReelMediator',
+        NAME: 'DeveloperSettingsMediator',
 
-        VIEW_TYPE: 'ChatReelView'
+        VIEW_TYPE: 'DeveloperSettingsView'
     });
 
     return {
-        ChatReelMediator: ChatReelMediator
+        DeveloperSettingsMediator: DeveloperSettingsMediator
     };
 });

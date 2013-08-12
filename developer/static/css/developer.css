@@ -111,7 +111,7 @@
 .chat-reel-item-text-container {
     display: block;
 }
-.chat-reel-item-text-container h4 {
+.chat-reel-item-text-container h5 {
     margin-bottom: 5px;
 }
 .chat-reel-item-close {
@@ -268,4 +268,75 @@
 
 .developer-profile-account-form .controls {
     margin-left: 100px;
+}
+
+
+.developer-profile-reel-edit .developer-profile-reel-actions > div {
+    display: inline-block;
+}
+.developer-profile-reel-edit .developer-profile-reel-save.disabled {
+    cursor: not-allowed;
+}
+
+
+.developer-profile .developer-profile-heading .btn {
+    margin-bottom: 3px;
+}
+.developer-profile .developer-profile-label-container {
+    width: 72px;
+    float: left;
+}
+.developer-profile .developer-profile-label-container .developer-profile-label {
+    display: inline-block;
+    color: #555555;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.developer-profile .developer-profile-pref {
+    display: inline-block;
+    background-color: #FFF2E0;
+    border: 1px solid #DF9646;
+    border-radius: 4px;
+    padding: 2px 4px 2px 4px;
+    margin-right: 3px;
+    margin-bottom: 8px;
+}
+.developer-profile .developer-profile-general .developer-profile-label {
+    font-size: 16px;
+    margin-top: 3px;
+}
+.developer-profile .developer-profile-reel-container {
+    margin-bottom: 8px;
+}
+.developer-profile .developer-profile-reel-container .developer-profile-chat-title {
+    font-size: 14pt;
+    line-height: 20px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+.developer-profile .developer-profile-reel-container .developer-profile-chat-title-small {
+    font-size: 14px;
+    font-weight: normal;
+    color: #999;
+}
+.developer-profile .developer-profile-progress-container {
+    margin-top: 50px;
+}
+.developer-profile-progress-container.well {
+    padding-bottom: 0;
+    padding-top: 10px;
+}
+.developer-profile .developer-profile-progress-container .progress-striped .bar {
+    background-color: #EA8F00;
+ }
+.developer-profile .developer-profile-general-container {
+    margin-bottom: 50px;
+}
+.developer-profile .developer-profile-empty-view-container {
+    margin-bottom: 50px;
+}
+.developer-profile .developer-profile-empty-view-text {
+    margin-left: 5px;
+    font-size: 16px;
+    vertical-align: text-bottom;
 }
