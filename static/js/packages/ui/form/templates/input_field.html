@@ -1,5 +1,5 @@
 <div class="control-group<%= state.showError && state.error ? ' error' : ''%>">
-    <label class="control-label"><%= state.label %></label>
+    <label class="control-label"><%= state.label %> <span class="form-field-help"></span></label>
     <div class="controls">
         <input class="<%= inputClasses %>" type="text" value="<%= state.value %>" autocomplete="off" maxlength="<%= maxLength %>" placeholder="<%= placeholder %>" <%= state.enabled ? '' : 'disabled' %>>
         <% if(state.showError && state.error) { %>

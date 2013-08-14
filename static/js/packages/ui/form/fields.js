@@ -49,6 +49,8 @@ define(/** @exports ui/form/fields */[
          *   that the field is enabled
          * @param {boolean} [options.required=true] Boolean indicating
          *   that the field is required.
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {Formatter|function} [options.formatter] Field formatter
          *   to use to format the field value for display. For example,
          *   for a number field this may convert '1000' to '1,000'.
@@ -105,6 +107,7 @@ define(/** @exports ui/form/fields */[
                 label: options.label,
                 enabled: options.enabled,
                 required: options.required,
+                help: options.help,
                 value: this.read(),
                 valid: true
             });
@@ -265,6 +268,8 @@ define(/** @exports ui/form/fields */[
          *   that the field is enabled
          * @param {boolean} [options.required=true] Boolean indicating
          *   that the field is required.
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {Formatter|function} [options.formatter] Field formatter
          *   to use to format the field value for display.
          * @param {FieldValidator|function} [options.validator] Field validator
@@ -361,6 +366,8 @@ define(/** @exports ui/form/fields */[
          *   that the field is enabled
          * @param {boolean} [options.required=true] Boolean indicating
          *   that the field is required.
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {Formatter|function} [options.formatter] Field formatter
          *   to use to format the field value for display.
          * @param {FieldValidator|function} [options.validator] Field validator
@@ -409,6 +416,8 @@ define(/** @exports ui/form/fields */[
          *   that the field is enabled
          * @param {boolean} [options.required=true] Boolean indicating
          *   that the field is required.
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {Formatter|function} [options.formatter] Field formatter
          *   to use to format the field value for display.
          * @param {FieldValidator|function} [options.validator] Field validator
@@ -457,6 +466,8 @@ define(/** @exports ui/form/fields */[
          *   that the field is enabled
          * @param {boolean} [options.required=true] Boolean indicating
          *   that the field is required.
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {array} [options.formats=['MM/dd/yyyy']] Array of date
          *   format strings.
          * @param {Formatter|function} [options.formatter] Field formatter
@@ -508,6 +519,8 @@ define(/** @exports ui/form/fields */[
          *   that the field is enabled
          * @param {boolean} [options.required=true] Boolean indicating
          *   that the field is required.
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {FieldValidator|function} [options.validator] Field validator
          *   to use to validate input values and convert them if neccessary.
          */
@@ -548,6 +561,8 @@ define(/** @exports ui/form/fields */[
          *   that the field is enabled
          * @param {boolean} [options.required=true] Boolean indicating
          *   that the field is required.
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {FieldValidator|function} [options.validator] Field validator
          *   to use to validate input values and convert them if neccessary.
          */
@@ -602,6 +617,8 @@ define(/** @exports ui/form/fields */[
          *   that the field is enabled
          * @param {boolean} [options.required=true] Boolean indicating
          *   that the field is required.
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {Formatter|function} [options.formatter] Field formatter
          *   to use to format the field value for display.
          * @param {FieldValidator|function} [options.validator] Field validator
@@ -650,6 +667,8 @@ define(/** @exports ui/form/fields */[
          *   that the field is enabled
          * @param {boolean} [options.required=true] Boolean indicating
          *   that the field is required.
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {Formatter|function} [options.formatter] Field formatter
          *   to use to format the field value for display.
          * @param {FieldValidator|function} [options.validator] Field validator
