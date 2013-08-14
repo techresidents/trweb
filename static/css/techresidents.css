@@ -900,7 +900,31 @@ button.drop-button .caret {
 .help:hover > i {
     color: #000000;
 }
-
+.help .hover.hover-top .hover-arrow {
+    border-top-color: #444444;
+}
+.help .hover.hover-right .hover-arrow {
+    border-right-color: #444444;
+}
+.help .hover.hover-bottom .hover-arrow {
+    border-bottom-color: #444444;
+}
+.help .hover.hover-left .hover-arrow {
+    border-left-color: #444444;
+}
+.help .hover-inner {
+    border-radius: 8px;
+}
+.help .hover-content {
+    background-color: #444444;
+    color: #eeeeee;
+}
+.help .help-content {
+    font-size: 12px;
+    font-weight: normal;
+    padding: 1px 3px 1px 3px;
+    max-width: 250px;
+}
 
 .w-skill {
     display: inline-block;
