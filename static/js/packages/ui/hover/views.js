@@ -233,7 +233,9 @@ define(/** @exports ui/hover/views */[
                 clearTimeout(this.hideTimer);
                 this.hideTimer = null;
             }
-            this.showTimer = setTimeout(_.bind(this.show, this), this.showDelay);
+            if(!this.showTimer) {
+                this.showTimer = setTimeout(_.bind(this.show, this), this.showDelay);
+            }
         },
 
         onTargetLeave: function(e) {
@@ -241,7 +243,9 @@ define(/** @exports ui/hover/views */[
                 clearTimeout(this.showTimer);
                 this.showTimer = null;
             }
-            this.hideTimer = setTimeout(_.bind(this.hide, this), this.hideDelay);
+            if(!this.hideTimer) {
+                this.hideTimer = setTimeout(_.bind(this.hide, this), this.hideDelay);
+            }
         },
 
         onEnter: function(e) {
@@ -249,7 +253,9 @@ define(/** @exports ui/hover/views */[
                 clearTimeout(this.hideTimer);
                 this.hideTimer = null;
             }
-            this.showTimer = setTimeout(_.bind(this.show, this), this.showDelay);
+            if(!this.showTimer) {
+                this.showTimer = setTimeout(_.bind(this.show, this), this.showDelay);
+            }
         },
 
         onLeave: function(e) {
@@ -257,7 +263,9 @@ define(/** @exports ui/hover/views */[
                 clearTimeout(this.showTimer);
                 this.showTimer = null;
             }
-            this.hideTimer = setTimeout(_.bind(this.hide, this), this.hideDelay);
+            if(!this.hideTimer) {
+                this.hideTimer = setTimeout(_.bind(this.hide, this), this.hideDelay);
+            }
         }
     });
 
