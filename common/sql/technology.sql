@@ -171,3 +171,4 @@ INSERT INTO technology (name, type_id, description) VALUES ('UX Design', 9, 'The
 
 
 INSERT INTO technology (name, type_id, description) VALUES ('Shell Scripting', 2, 'Scripting using shells such as Bash, Korn, etc');
+INSERT INTO technology (name, type_id, description) VALUES ('HTML', 2, 'Hypertext markup language');
