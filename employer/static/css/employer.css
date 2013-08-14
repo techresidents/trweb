@@ -580,6 +580,12 @@
     font-size: 13px;
     font-weight: bold;
     margin-bottom: 8px;
+    vertical-align: top;
+}
+
+.user-search-result-items {
+    display: inline-block;
+    width: 600px;
 }
 
 .user-search-result-pref {
