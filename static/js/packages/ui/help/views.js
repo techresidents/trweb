@@ -25,8 +25,9 @@ define(/** @exports ui/help/views */[
          * @param {string} [options.placement='bottom'] Placement string -
          *   top, right, bottom, left  - indicating where to position 
          *   view.
-         * @param {string} [options.iconClasses='icon-question-sign icon-large']
-         *   String to indicate which icon to display
+         * @param {string} [options.iconClasses='icon-question-sign']
+         *   String to indicate which icon to display, i.e.
+         *   'icon-question-sign icon-large'
          * @param {View|Factory} [options.viewOrFactory] View object or Factory
          *   returning a View object to use for the tooltip content.
          * @param {boolean} [options.delayViewCreate=false] Flag indicating 
@@ -47,7 +48,7 @@ define(/** @exports ui/help/views */[
             options = _.extend({
                 template: help_template,
                 placement: 'right',
-                iconClasses: 'icon-question-sign icon-large',
+                iconClasses: 'icon-question-sign',
                 delayViewCreate: false,
                 showDelay: 200,
                 hideDelay: 100,

@@ -51,6 +51,8 @@ define([
             return {
                 name: 'notes',
                 title: 'Notes',
+                help: '<p>Take notes to remind you about a developer, and prevent you ' +
+                      'from having to re-listen to their chats in the future.</p>',
                 viewOrFactory: view
             };
         },
@@ -62,6 +64,10 @@ define([
             return {
                 name: 'tracker',
                 title: 'Applicant Tracker',
+                help: '<p>Add a developer to the Applicant Tracker to allow ' +
+                      'you and your team to evaluate and vote on ' +
+                      'whether they should receive an interview offer ' +
+                      'for a given requisition.</p>',
                 viewOrFactory: view
             };
         },
@@ -73,6 +79,10 @@ define([
             return {
                 name: 'offers',
                 title: 'Offers',
+                help: '<p>Make phone and in-house interview offers to promising ' +
+                      'developers.</p><p>Making an offer will automatically ' +
+                      'add the developer to the Applicant Tracker if they haven\'t ' +
+                      'yet been added.</p>',
                 viewOrFactory: view
             };
         }

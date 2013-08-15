@@ -15,6 +15,7 @@ define([
         defaults: {
             name: null,
             title: null,
+            help: null,
             viewOrFactory: null,
             expandable: true,
             open: true
@@ -26,6 +27,10 @@ define([
 
         title: function() {
             return this.get('title');
+        },
+
+        help: function() {
+            return this.get('help');
         },
 
         viewOrFactory: function() {
