@@ -135,7 +135,7 @@ def register(request, account_request_code=None):
                         html_template = html_template
                         )
             
-            return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
+            return HttpResponseRedirect(settings.REGISTRATION_SUCCESS_URL)
     else:
         user_form = forms.RegisterUserForm(request, account_request_code, initial={'timezone': settings.TIME_ZONE})
     
@@ -145,6 +145,11 @@ def register(request, account_request_code=None):
     }
 
     return render_to_response('accounts/register.html', context,  context_instance=RequestContext(request))
+
+def register_success(request):
+    """This is a page with no UI to facilitate tracking
+    developers that successfully register."""
+    return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
 
 def register_employer(request, account_request_code=None):
     """Register user with or without account request code.

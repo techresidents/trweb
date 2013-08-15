@@ -117,6 +117,7 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = '/home/'
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
+REGISTRATION_SUCCESS_URL = '/accounts/register/success/'
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
