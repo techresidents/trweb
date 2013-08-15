@@ -64,8 +64,6 @@ class User(AbstractBaseUser):
 
     otp_enabled = models.BooleanField(default=False)
 
-    timezone = models.CharField(max_length=255)
-
     tenant = models.ForeignKey(Tenant, default=DEVELOPER_TENANT_ID, related_name="users")
 
     objects = UserManager()
@@ -123,7 +121,6 @@ class DeveloperProfile(models.Model):
 
     user = models.OneToOneField(User)
     location = models.CharField(max_length=100, null=True)
-    developer_since = models.DateField(null=True)
     email_upcoming_chats = models.BooleanField(default=False)
     email_new_chat_topics = models.BooleanField(default=False)
     email_new_job_opps = models.BooleanField(default=True)

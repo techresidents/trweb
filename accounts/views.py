@@ -35,7 +35,6 @@ def login(request):
             
             user = form.get_user()
             request.session['tenant_id'] = user.tenant_id
-            request.session['timezone'] = user.timezone
 
             if user.otp_enabled:
                 otp = OneTimePassword.objects.get(
@@ -99,8 +98,8 @@ def account_request(request):
 
     return render_to_response('accounts/account_request.html', context,  context_instance=RequestContext(request))
 
-def register(request, account_request_code=None):
-    """Register user with or without account request code.
+def register_developer(request, account_request_code=None):
+    """Register developer with or without account request code.
     
     In order to force user registration to require a valid 
     account request code set the REGISTRATION_REQUIRES_CODE
@@ -114,7 +113,7 @@ def register(request, account_request_code=None):
             the provided code in order for registration to be allowed.
     """
     if request.method == 'POST':
-        user_form = forms.RegisterUserForm(request, account_request_code, data=request.POST)
+        user_form = forms.RegisterDeveloperForm(request, account_request_code, data=request.POST)
 
         if user_form.is_valid():
             user = user_form.save()
@@ -137,7 +136,7 @@ def register(request, account_request_code=None):
             
             return HttpResponseRedirect(settings.REGISTRATION_SUCCESS_URL)
     else:
-        user_form = forms.RegisterUserForm(request, account_request_code, initial={'timezone': settings.TIME_ZONE})
+        user_form = forms.RegisterDeveloperForm(request, account_request_code)
     
     context = {
         'user_form' : user_form,
@@ -145,11 +144,6 @@ def register(request, account_request_code=None):
     }
 
     return render_to_response('accounts/register.html', context,  context_instance=RequestContext(request))
-
-def register_success(request):
-    """This is a page with no UI to facilitate tracking
-    developers that successfully register."""
-    return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
 
 def register_employer(request, account_request_code=None):
     """Register user with or without account request code.
@@ -186,7 +180,7 @@ def register_employer(request, account_request_code=None):
 
             return HttpResponseRedirect(reverse('accounts.views.register_activate'))
     else:
-        user_form = forms.RegisterEmployerForm(request, account_request_code, initial={'timezone': settings.TIME_ZONE})
+        user_form = forms.RegisterEmployerForm(request, account_request_code)
     
     context = {
         'user_form' : user_form,
@@ -194,6 +188,11 @@ def register_employer(request, account_request_code=None):
     }
 
     return render_to_response('accounts/register_employer.html', context,  context_instance=RequestContext(request))
+
+def register_success(request):
+    """This is a page with no UI to facilitate tracking
+    developers that successfully register."""
+    return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
 
 def register_activate(request, registration_code=None):
     success = False

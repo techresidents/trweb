@@ -35,8 +35,7 @@ define([
             tenant_id: new fields.StringField(),
             first_name: new fields.StringField(),
             last_name: new fields.StringField(),
-            email: new fields.StringField(),
-            timezone: new fields.StringField()
+            email: new fields.StringField()
         },
 
         relatedFields: {

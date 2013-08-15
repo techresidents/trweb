@@ -16,8 +16,8 @@ urlpatterns = patterns('accounts.views',
 )
 
 if settings.REGISTRATION_REQUIRES_CODE:
-    urlpatterns += patterns('accounts.views', url(r'^register/(?P<account_request_code>\w+)$', 'register'))
+    urlpatterns += patterns('accounts.views', url(r'^register/(?P<account_request_code>\w+)$', 'register_developer'))
     urlpatterns += patterns('accounts.views', url(r'^e/register/(?P<account_request_code>\w+)$', 'register_employer'))
 else:
-    urlpatterns += patterns('accounts.views', url(r'^register/$', 'register'))
+    urlpatterns += patterns('accounts.views', url(r'^register/$', 'register_developer'))
     urlpatterns += patterns('accounts.views', url(r'^e/register/$', 'register_employer'))

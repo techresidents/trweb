@@ -127,7 +127,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'techresidents_web.common.middleware.TimezoneMiddleware',
+    #'techresidents_web.common.middleware.TimezoneMiddleware',
     'techresidents_web.common.middleware.TLSRequestMiddleware',
 )
 
