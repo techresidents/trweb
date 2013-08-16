@@ -10,6 +10,7 @@ FEEDBACK_TYPE_CHOICES = [
     ("General", "General"),
     ("RFE", "Feature Request/Enhancement"),
     ("BUG", "Bug Report"),
+    ("Chat Topic Request", "Chat Topic Request")
     ]
 
 

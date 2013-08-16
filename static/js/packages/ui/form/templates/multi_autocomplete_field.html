@@ -1,5 +1,5 @@
 <div class="control-group<%= state.error ? ' error' : ''%>">
-    <label class="control-label"><%= state.label %></label>
+    <label class="control-label"><%= state.label %> <span class="form-field-help"></span></label>
     <div class="controls">
         <% if(state.error) { %>
             <span class="help-inline"><%= state.error %></span>

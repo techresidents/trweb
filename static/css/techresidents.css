@@ -811,6 +811,121 @@ button.drop-button .caret {
     margin-top: 6px;
 }
 
+.hover {
+    position: absolute;
+    z-index: 1000;
+    display: none;
+}
+.hover.hover-show {
+    display: block;
+}
+.hover.hover-top {
+    margin-top: -3px;
+}
+.hover.hover-top.hover-show-arrow {
+  padding: 5px 0;
+}
+.hover.hover-right {
+    margin-left:  3px;
+}
+.hover.hover-right.hover-show-arrow {
+    padding: 0 5px; 
+}
+.hover.hover-bottom {
+  margin-top: 3px;
+}
+.hover.hover-bottom.hover-show-arrow {
+  padding: 5px 0;
+}
+.hover.hover-left {
+  margin-left: -3px;
+}
+.hover.hover-left.hover-show-arrow {
+  padding: 0 5px;
+}
+.hover.hover-show-arrow .hover-arrow {
+    display: block;
+}
+.hover-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    display: none;
+}
+.hover.hover-top .hover-arrow {
+    bottom: 0;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px 5px 0;
+    border-top-color: #777777;
+}
+.hover.hover-right .hover-arrow {
+    top: 50%;
+    left: 0;
+    margin-top: -5px;
+    border-width: 5px 5px 5px 0;
+    border-right-color: #777777;
+}
+.hover.hover-bottom .hover-arrow {
+    top: 0;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 0 5px 5px;
+    border-bottom-color: #777777;
+}
+.hover.hover-left .hover-arrow {
+    top: 50%;
+    right: 0;
+    margin-top: -5px;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #777777;
+}
+.hover-inner .hover-content {
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    margin: 0px;
+    padding: 5px 5px;
+}
+
+.help {
+    display: inline-block;
+}
+.help > i {
+    color: #EA8F00;
+}
+.help:hover > i {
+    color: #000000;
+}
+.help .hover.hover-top .hover-arrow {
+    border-top-color: #444444;
+}
+.help .hover.hover-right .hover-arrow {
+    border-right-color: #444444;
+}
+.help .hover.hover-bottom .hover-arrow {
+    border-bottom-color: #444444;
+}
+.help .hover.hover-left .hover-arrow {
+    border-left-color: #444444;
+}
+.help .hover-inner {
+    border-radius: 8px;
+}
+.help .hover-content {
+    background-color: #444444;
+    color: #eeeeee;
+}
+.help .help-content {
+    font-size: 12px;
+    font-weight: normal;
+    padding: 1px 3px 1px 3px;
+    max-width: 250px;
+}
+
 .w-skill {
     display: inline-block;
     border: 1px solid #E3E3E3;

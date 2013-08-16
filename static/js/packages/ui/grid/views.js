@@ -666,9 +666,8 @@ define(/** @exports grid/views */[
      * Grid View.
      * @constructor
      * @param {Object} options
-     *   config: {Object} config (required)
-     *   collection: {ApiCollection} collection (required)
-     *   query: {ApiQuery} query (optional)
+     * @param {Object} options.config Config
+     * @param {ApiCollection} options.collection Collection
      */
     var GridView = core.view.View.extend({
 

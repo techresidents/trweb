@@ -6,6 +6,7 @@ define([
     '../events/type',
     '../ac/views',
     '../collection/views',
+    '../help/views',
     './models',
     'text!./templates/accordion.html',
     'text!./templates/accordion_item.html'
@@ -17,6 +18,7 @@ define([
     events,
     ac_views,
     collection_views,
+    help_views,
     models,
     accordion_template,
     accordion_item_template) {
@@ -27,7 +29,9 @@ define([
      * @constructor
      * @param {object} options
      * @param {string} options.name name (i.e. offers)
-     * @param {string} options.title: title (i.e. Offers)
+     * @param {string} options.title title (i.e. Offers)
+     * @param {string} [options.help] optional help text
+     *   or html to display next to title
      * @param {boolean} [options.expandable=true] If true view 
      *   can be toggled open and close by user.
      * @param {boolean} [options.open=true] If true view 
@@ -51,11 +55,13 @@ define([
             this.template = _.template(options.template);
             this.name = options.name;
             this.title = options.title;
+            this.help = options.help;
             this.viewOrFactory = options.viewOrFactory;
             this.expandable = options.expandable;
             
             //child views
             this.childView = null;
+            this.helpView = null;
             this.initChildViews();
 
             if(options.open) {
@@ -64,7 +70,7 @@ define([
         },
 
         childViews: function() {
-            return [this.childView];
+            return [this.childView, this.helpView];
         },
 
         initChildViews: function() {
@@ -72,6 +78,13 @@ define([
                 this.childView = this.viewOrFactory;
             } else {
                 this.childView = this.viewOrFactory.create();
+            }
+
+            if(this.help) {
+                this.helpView = new help_views.HelpView({
+                    help: this.help,
+                    placement: 'bottom'
+                });
             }
         },
 
@@ -105,6 +118,10 @@ define([
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.childView, '.accordion-item-child');
+            
+            if(this.helpView) {
+                this.append(this.helpView, '.accordion-item-help');
+            }
             return this;
         },
 
@@ -194,6 +211,7 @@ define([
             view = this.accordionItemViewFactory.create({
                 name: model.name(),
                 title: model.title(),
+                help: model.help(),
                 viewOrFactory: model.viewOrFactory(),
                 expandable: model.expandable(),
                 open: model.open()

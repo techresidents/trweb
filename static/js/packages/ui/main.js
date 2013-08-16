@@ -20,6 +20,8 @@ define(/** @exports ui */[
     './form/validators',
     './form/views',
     './grid/views',
+    './help/views',
+    './hover/views',
     './input/views',
     './load/views',
     './menu/models',
@@ -32,6 +34,7 @@ define(/** @exports ui */[
     './select/views',
     './spinner/views',
     './timer/views',
+    './tooltip/views',
     './template/views'
 ], function(
     ac_inputhandler,
@@ -55,6 +58,8 @@ define(/** @exports ui */[
     form_validators,
     form_views,
     grid_views,
+    help_views,
+    hover_views,
     input_views,
     load_views,
     menu_models,
@@ -67,6 +72,7 @@ define(/** @exports ui */[
     select_views,
     spinner_views,
     timer_views,
+    tooltip_views,
     template_views) {
     
     return {
@@ -111,6 +117,12 @@ define(/** @exports ui */[
         grid: {
             views: grid_views
         },
+        help: {
+            views: help_views
+        },
+        hover: {
+            views: hover_views
+        },
         input: {
             views: input_views
         },
@@ -144,6 +156,9 @@ define(/** @exports ui */[
         },
         timer: {
             views: timer_views
+        },
+        tooltip: {
+            views: tooltip_views
         },
         template: {
             views: template_views

@@ -52,6 +52,9 @@ define([
             if(uri && uri[uri.length - 1] !== '/') {
                 uri += '/';
             }
+            this.facade.trigger(notifications.TRACK_PAGE_VIEW, {
+                uri: '/' + uri
+            });
             AppRouter.__super__.navigate.call(this, uri, options);
         },
 
@@ -427,6 +430,9 @@ define([
             this.registerCommand(notifications.APP_START, AppStartCommand);
             this.registerCommand(notifications.VIEW_NAVIGATE, NavigateCommand);
 
+            /* TRACK COMMANDS */
+            this.registerCommand(notifications.TRACK_PAGE_VIEW,
+                ctrl.commands.track.TrackPageView);
             /* APPLICATION COMMANDS */
             this.registerCommand(notifications.CREATE_APPLICATION,
                 ctrl.commands.applicant.CreateApplication);

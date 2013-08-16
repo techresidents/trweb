@@ -5,6 +5,7 @@ define(/** @exports ui/form/views/fields */[
     'core',
     '../../ac/views',
     '../../date/views',
+    '../../help/views',
     '../../input/views',
     '../events',
     '../models',
@@ -22,6 +23,7 @@ define(/** @exports ui/form/views/fields */[
     core,
     ac_views,
     date_views,
+    help_views,
     input_views,
     form_events,
     models,
@@ -47,12 +49,32 @@ define(/** @exports ui/form/views/fields */[
          * @param {object} options Options object
          * @param {Field} options.field Field object
          * @param {FieldState} options.state Field state model
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {string} [options.template] View template
          */
         initialize: function(options) {
             this.template = _.template(options.template);
             this.field = options.field;
             this.state = options.state;
+
+            //child views
+            this.helpView = null;
+            this.createHelpView();
+        },
+
+        childViews: function() {
+            return [this.helpView];
+        },
+
+        createHelpView: function() {
+            if(this.state.help()) {
+                this.helpView = new help_views.HelpView({
+                    help: this.state.help(),
+                    iconClasses: 'icon-question-sign',
+                    placement: 'top'
+                });
+            }
         },
 
         classes: function() {
@@ -68,6 +90,12 @@ define(/** @exports ui/form/views/fields */[
 
         render: function() {
             return this;
+        },
+
+        appendHelpView: function() {
+            if(this.helpView) {
+                this.append(this.helpView, '.form-field-help');
+            }
         },
 
         focus: function() {
@@ -136,6 +164,8 @@ define(/** @exports ui/form/views/fields */[
          * @param {string} [options.classes] additional classes to apply
          *   to the <input> element.
          * @param {string} [options.inputSelector='input'] Input selector
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {string} [options.template] View template
          */
         initialize: function(options) {
@@ -180,7 +210,9 @@ define(/** @exports ui/form/views/fields */[
         },
 
         childViews: function() {
-            return [this.inputHandlerView];
+            var result = InputFieldView.__super__.childViews.call(this);
+            result.push(this.inputHandlerView);
+            return result;
         },
 
         initChildViews: function() {
@@ -217,6 +249,7 @@ define(/** @exports ui/form/views/fields */[
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.inputHandlerView);
+            this.appendHelpView();
 
             if(hasFocus) {
                 this.inputHandlerView.focus();
@@ -312,6 +345,8 @@ define(/** @exports ui/form/views/fields */[
          * @param {string} [options.classes] additional classes to apply
          *   to the <textarea> element.
          * @param {string} [options.inputSelector='textarea'] Input selector
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {string} [options.template] View template
          */
         initialize: function(options) {
@@ -395,7 +430,9 @@ define(/** @exports ui/form/views/fields */[
         },
 
         childViews: function() {
-            return [this.dateView];
+            var result = DateFieldView.__super__.childViews.call(this);
+            result.push(this.dateView);
+            return result;
         },
 
         initChildViews: function() {
@@ -426,6 +463,7 @@ define(/** @exports ui/form/views/fields */[
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.dateView);
+            this.appendHelpView();
             return this;
         },
 
@@ -461,6 +499,8 @@ define(/** @exports ui/form/views/fields */[
          * @param {object} options.model Model to commit value to
          * @param {string} options.modelAttribute Model attribute to
          *   commit value to.
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {string} [options.template] View template
          */
         initialize: function(options) {
@@ -486,6 +526,7 @@ define(/** @exports ui/form/views/fields */[
             var context = this.context();
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
+            this.appendHelpView();
             return this;
         },
 
@@ -536,6 +577,8 @@ define(/** @exports ui/form/views/fields */[
          *   commit value to.
          * @param {string} [options.classes] additional classes to apply
          *   to the <input> element.
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {string} [options.template] View template
          */
         initialize: function(options) {
@@ -578,6 +621,7 @@ define(/** @exports ui/form/views/fields */[
             var context = this.context();
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
+            this.appendHelpView();
             return this;
         },
 
@@ -660,6 +704,8 @@ define(/** @exports ui/form/views/fields */[
          *   when the enter key is pressed.
          * @param {string} [options.classes] additional classes to apply
          *   to the <input> element.
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          * @param {string} [options.template] View template
          */
         initialize: function(options) {
@@ -696,7 +742,9 @@ define(/** @exports ui/form/views/fields */[
         },
 
         childViews: function() {
-            return [this.acView];
+            var result = AutoCompleteFieldView.__super__.childViews.call(this);
+            result.push(this.acView);
+            return result;
         },
 
         initChildViews: function() {
@@ -739,6 +787,7 @@ define(/** @exports ui/form/views/fields */[
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.acView);
+            this.appendHelpView();
 
             if(hasFocus) {
                 this.acView.focus();
@@ -822,6 +871,8 @@ define(/** @exports ui/form/views/fields */[
          * @param {FieldState} options.state Field state model
          * @param {Matcher} options.matcher Autocomplete matcher
          * @param {string} [options.placeholder] Placeholder text
+         * @param {string} [options.help] Help text or html
+         *   to display next to field label.
          */
         initialize: function(options) {
             options = _.extend({
@@ -855,7 +906,9 @@ define(/** @exports ui/form/views/fields */[
         },
 
         childViews: function() {
-            return [this.acView];
+            var result = MultiAutoCompleteFieldView.__super__.childViews.call(this);
+            result.push(this.acView);
+            return result;
         },
 
         initChildViews: function() {
@@ -885,6 +938,7 @@ define(/** @exports ui/form/views/fields */[
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.acView, '.controls');
+            this.appendHelpView();
             return this;
         },
 

@@ -21,9 +21,9 @@
         <div class="span10">
             <div class="well">
                 {% if account_request_code %}
-                    <form class="form-horizontal" method="post" action="{% url 'accounts.views.register' account_request_code %}">
+                    <form class="form-horizontal" method="post" action="{% url 'accounts.views.register_developer' account_request_code %}">
                 {% else %}
-                    <form class="form-horizontal" method="post" action="{% url 'accounts.views.register' %}">
+                    <form class="form-horizontal" method="post" action="{% url 'accounts.views.register_developer' %}">
                 {% endif %}
                     {% csrf_token %}
                     <fieldset>

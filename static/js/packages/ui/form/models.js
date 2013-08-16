@@ -92,6 +92,7 @@ define([
             value: null,
             dirty: false,
             valid: false,
+            help: null,
             error: null,
             showError: false,
             enabled: true,
@@ -140,6 +141,15 @@ define([
 
         setValid: function(valid) {
             this.set('valid', valid);
+            return this;
+        },
+
+        help: function() {
+            return this.get('help');
+        },
+
+        setHelp: function(help) {
+            this.set('help', help);
             return this;
         },
 

@@ -10,6 +10,8 @@ from django.utils import timezone
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 
+from trpycore.encode.basic import basic_encode
+
 DEVELOPER_TENANT_ID = 1
 
 class Tenant(models.Model):
@@ -64,8 +66,6 @@ class User(AbstractBaseUser):
 
     otp_enabled = models.BooleanField(default=False)
 
-    timezone = models.CharField(max_length=255)
-
     tenant = models.ForeignKey(Tenant, default=DEVELOPER_TENANT_ID, related_name="users")
 
     objects = UserManager()
@@ -80,6 +80,14 @@ class User(AbstractBaseUser):
     @property
     def is_employer(self):
         return not self.is_developer
+
+    @property
+    def encoded_id(self):
+        return basic_encode(self.id)
+
+    @property
+    def encoded_tenant_id(self):
+        return basic_encode(self.tenant_id)
 
     def get_absolute_url(self):
         return "/users/%s/" % urlquote(self.username)
@@ -123,7 +131,6 @@ class DeveloperProfile(models.Model):
 
     user = models.OneToOneField(User)
     location = models.CharField(max_length=100, null=True)
-    developer_since = models.DateField(null=True)
     email_upcoming_chats = models.BooleanField(default=False)
     email_new_chat_topics = models.BooleanField(default=False)
     email_new_job_opps = models.BooleanField(default=True)

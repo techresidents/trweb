@@ -62,7 +62,7 @@ define([
             }
 
             this.eachRelated(withRelated, function(current) {
-                current.instance._loaded = true;
+                current.instance._loaded = this.key();
                 current.instance._loading = false;
             }, this);
             this._loading = false;

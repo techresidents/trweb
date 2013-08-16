@@ -73,11 +73,9 @@ define([
                 });
             }
 
-            if(loaderArgs.length) {
+            if(this.load && loaderArgs.length) {
                 this.loader = new api.loader.ApiLoader(loaderArgs);
-                if(this.load) {
-                    this.loader.load();
-                }
+                this.loader.load();
             }
         },
 

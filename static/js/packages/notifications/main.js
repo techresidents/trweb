@@ -70,6 +70,9 @@ define([
         /* REQUISITION ACTIONS */
         UPDATE_REQUISITION: 'notification:UpdateRequisition',
         UPDATE_REQUISITION_TECHNOLOGIES: 'notification:UpdateRequisitionTechnologies',
-        SAVE_REQUISITION: 'notification:SaveRequisition'
+        SAVE_REQUISITION: 'notification:SaveRequisition',
+
+        /* TRACK ACTIONS */
+        TRACK_PAGE_VIEW: 'notification:TrackPageView'
     };
 });

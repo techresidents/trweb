@@ -40,14 +40,21 @@ define([
                 this.session = api_session.ApiSession.get(
                     options.session || api_config.defaultSession);
             }
-            
+
+            if(!options.query) {
+                options.query = new api_query.ApiQuery({
+                    model: this
+                });
+            }
+            this.setQuery(options.query);
+
             //if using session and being constructed with id
             //check the cache to see if we already have the model.
             //Note that the session will returned a cloned model
             //so no need to worry side effects.
             if(this.session && attributes.id) {
                 model = this.session.getModel(
-                    this.constructor.key(attributes.id));
+                    this.constructor.key(attributes.id, options.query));
             }
             
             //if the model is not in cache proceed with construction
@@ -61,8 +68,8 @@ define([
             
                 this._parentRelation = null;
                 this._loading = false;
-                this._loaded = false;
                 this._isDirty = false;
+                this._loaded = undefined;
 
                 // Listen on 'all' instead of 'change' because the generic
                 // 'change' event is fired after 'change:<attribute>' events.
@@ -120,6 +127,17 @@ define([
             } else {
                 result = core.base.getValue(this, 'url'); 
             }
+
+            //append query
+            //Note that toUri() by default will not include with
+            //relations. This is critical since the key should
+            //reflect the state of this object and its data
+            //and should not change just because the  withRelated
+            //args happen to change.
+            if(this.query().toUri()) {
+                result += '?' + this.query().toUri();
+            }
+
             return result;
         },
 
@@ -132,7 +150,7 @@ define([
         },
 
         isLoaded: function() {
-            return this._loaded;
+            return this._loaded === this.key();
         },
 
         isLoadable: function() {
@@ -228,6 +246,8 @@ define([
             }
 
             result.url = this.url;
+            result._query = this._query.clone();
+            result._query.instance = result;
             result._loaded = this._loaded;
             if(!result._parentRelation) {
                 result._parentRelation = _.clone(this._parentRelation);
@@ -292,7 +312,7 @@ define([
             }
 
             this._isDirty = false;
-            this._loaded = true;
+            this._loaded = this.key();
             
             if(this.session && !options.noSession) {
                 this.session.putModel(this.clone({attributes: result}));
@@ -333,21 +353,25 @@ define([
         sync: api_utils.sync,
 
         query: function() {
-            return new api_query.ApiQuery({model: this});
+            return this._query;
+        },
+
+        setQuery: function(query) {
+            this._query = query;
+            this._query.instance = this;
         },
 
         filterBy: function(filters) {
-            return new api_query.ApiQuery({model: this}).filterBy(filters);
+            return this._query.filterBy(filters);
         },
 
         withRelated: function() {
-            var query = new api_query.ApiQuery({model: this});
-            return query.withRelated.apply(query, arguments);
+            this._query.withRelated.apply(this._query, arguments);
+            return this;
         },
 
         chain: function() {
-            var query = new api_query.ApiQuery({model: this});
-            return query.chain.apply(query, arguments);
+            return this._query.chain.apply(this._query, arguments);
         },
 
         fetchFromSession: function(options) {
@@ -357,8 +381,8 @@ define([
             var withRelated;
             options = options || {};
 
-            if(options.query) {
-                withRelated = options.query.state.withRelations().pluck('value');
+            if(this._query) {
+                withRelated = this._query.state.withRelations().pluck('value');
             }
 
             var triggerFetchEvents = function(model) {
@@ -377,7 +401,7 @@ define([
 
             if(this.session && !options.noSession) {
 
-                model = this.session.getModel(this.key(), options.query);
+                model = this.session.getModel(this.key(), this._query);
 
                 if(model) {
                     model.clone({
@@ -388,7 +412,7 @@ define([
                     triggerFetchEvents(this);
                     result = true;
                 } else {
-                    fetch = this.session.getFetch(this.key(), options.query);
+                    fetch = this.session.getFetch(this.key(), this._query);
                     if(fetch) {
                         var that = this;
                         fetch.success.push(function(instance, response) {
@@ -397,7 +421,7 @@ define([
                         });
                         result = true;
                     } else {
-                        this.session.putFetch(this, this.key(), options.query);
+                        this.session.putFetch(this, this.key(), this._query);
                     }
                 }
             }
@@ -406,6 +430,13 @@ define([
         },
 
         fetch: function(options) {
+            options = _.extend({
+                data: {},
+                query: this._query
+            }, options);
+            this.setQuery(options.query);
+
+            _.extend(options.data, this._query.toUriObject());
             var handled = this.fetchFromSession(options);
             if(!handled) {
                 Backbone.Model.prototype.fetch.call(this, options);
@@ -455,10 +486,20 @@ define([
 
     }, {
 
-        key: function(id) {
+        key: function(id, query) {
             var baseUrl = core.base.getValue(this.prototype, 'baseUrl');
             var urlRoot = core.base.getValue(this.prototype, 'urlRoot');
             var result = baseUrl + urlRoot + '/' + encodeURIComponent(id);
+
+            //append query
+            //Note that toUri() by default will not include with
+            //relations. This is critical since the key should
+            //reflect the state of this object and its data
+            //and should not change just because the  withRelated
+            //args happen to change.
+            if(query && query.toUri()) {
+                result += '?' + query.toUri();
+            }
             return result;
         }
     });
@@ -521,13 +562,20 @@ define([
             this._facets = new api_facet.FacetCollection();
             this._parentRelation = null;
             this._loading = false;
-            this._loaded = false;
-        
+            this._loaded = undefined;
+
             if(options.session ||
               (!options.noSession && api_config.defaultSession)) {
                 this.session = api_session.ApiSession.get(
                     options.session || api_config.defaultSession);
             }
+
+            if(!options.query) {
+                options.query = new api_query.ApiQuery({
+                    collection: this
+                });
+            }
+            this.setQuery(options.query);
 
             //for save()
             this.toDestroy = [];
@@ -561,6 +609,16 @@ define([
             } else {
                 result = core.base.getValue(this, 'url');
             }
+
+            //append query
+            //Note that toUri() by default will not include with
+            //relations. This is critical since the key should
+            //reflect the state of this object and its data
+            //and should not change just because the  withRelated
+            //args happen to change.
+            if(this.query().toUri()) {
+                result += '?' + this.query().toUri();
+            }
             return result;
         },
 
@@ -585,7 +643,7 @@ define([
         },
 
         isLoaded: function() {
-            return this._loaded;
+            return this._loaded === this.key();
         },
 
         isLoadable: function() {
@@ -631,6 +689,8 @@ define([
             result.meta = _.clone(this.meta);
             result.toDestroy = _.clone(this.toDestroy);
             result.url = this.url;
+            this._query.clone({to: result._query});
+            result._query.instance = result;
             result._loaded = this._loaded;
             if(!result.parentRelation) {
                 result._parentRelation = _.clone(this._parentRelation);
@@ -658,13 +718,13 @@ define([
             
             this.meta = response.meta;
             this._facets.reset(this._facets.parse(response.meta.facets));
-            this._loaded = true;
-
+            this._loaded = this.key();
+            
             if(this.session && !options.noSession) {
                 this.session.putCollection(
                         this.clone({models: result}),
                         this.key(),
-                        options.query);
+                        this._query);
             }
 
             return result;
@@ -673,30 +733,36 @@ define([
         sync: api_utils.sync,
 
         query: function() {
-            return new api_query.ApiQuery({collection: this});
+            return this._query;
+        },
+
+        setQuery: function(query) {
+            this._query = query;
+            this._query.instance = this;
         },
 
         filterBy: function(filters) {
-            return new api_query.ApiQuery({collection: this}).filterBy(filters);
+            this._query.filterBy(filters);
+            return this;
         },
 
         withRelated: function() {
-            var query = new api_query.ApiQuery({collection: this});
-            return query.withRelated.apply(query, arguments);
+            this._query.withRelated.apply(this._query, arguments);
+            return this;
         },
 
         orderBy: function() {
-            var query = new api_query.ApiQuery({collection: this});
-            return query.orderBy.apply(query, arguments);
+            this._query.orderBy.apply(this._query, arguments);
+            return this;
         },
 
         slice: function(start, end) {
-            return new api_query.ApiQuery({collection: this}).slice(start, end);
+            this._query.slice(start, end);
+            return this;
         },
 
         chain: function() {
-            var query = new api_query.ApiQuery({collection: this});
-            return query.chain.apply(query, arguments);
+            return this._query.chain.apply(this._query, arguments);
         },
 
         fetchFromSession: function(options) {
@@ -713,13 +779,13 @@ define([
             };
             
             if(this.session && !options.noSession) {
-                collection = this.session.getCollection(this.key(), options.query);
+                collection = this.session.getCollection(this.key(), this._query);
                 if(collection) {
                     collection.clone({ to: this });
                     triggerFetchEvents(collection);
                     result = true;
                 } else {
-                    fetch = this.session.getFetch(this.key(), options.query);
+                    fetch = this.session.getFetch(this.key(), this._query);
                     if(fetch) {
                         var that = this;
                         fetch.success.push(function(instance, response, options) {
@@ -728,7 +794,7 @@ define([
                         });
                         result = true;
                     } else {
-                        this.session.putFetch(this, this.key(), options.query);
+                        this.session.putFetch(this, this.key(), this._query);
                     }
 
                 }
@@ -738,8 +804,15 @@ define([
         },
 
         fetch: function(options) {
+            options = _.extend({
+                data: {},
+                query: this._query
+            }, options);
+            options.query = this._query;
+            this.setQuery(options.query);
+            _.extend(options.data, this._query.toUriObject());
+            
             var handled = this.fetchFromSession(options);
-
             if(!handled) {
                 Backbone.Collection.prototype.fetch.call(this, options);
             }
@@ -765,7 +838,7 @@ define([
                         that.session.putCollection(
                                 that,
                                 that.key(),
-                                options.query);
+                                that._query);
                     }
 
                     if(errors > 0 && options.error) {
@@ -785,7 +858,7 @@ define([
                         that.session.removeCollection(
                                 that,
                                 that.key(),
-                                options.query);
+                                that._query);
                     }
 
                     if(options.error) {
@@ -841,10 +914,20 @@ define([
 
     }, {
 
-        key: function() {
+        key: function(query) {
             var baseUrl = core.base.getValue(this.prototype, 'baseUrl');
             var urlRoot = core.base.getValue(this.prototype, 'urlRoot');
             var result = baseUrl + urlRoot;
+
+            //append query
+            //Note that toUri() by default will not include with
+            //relations. This is critical since the key should
+            //reflect the state of this object and its data
+            //and should not change just because the  withRelated
+            //args happen to change.
+            if(query && query.toUri()) {
+                result += '?' + query.toUri();
+            }
             return result;
         }
     });

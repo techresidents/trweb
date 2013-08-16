@@ -1,0 +1,24 @@
+{% extends "navbar_unauthenticated.html" %}
+{% load staticfiles %}
+{% load url from future %}
+{% load verbatim %}
+
+{% block title %}Register Success | Tech Residents{% endblock %}
+
+{% block extrahead %}
+{% endblock %}
+
+{% block content %}
+    <script src="{% static "js/3ps/jquery/jquery-min.js" %}"></script>
+    <script>
+        //DOM ready notification
+        $(document).ready(function() {
+            var url = '';
+            url = '{{ redirect_url }}';
+            setTimeout(function(){
+                window.location.replace(url);
+            }, 500);
+        });
+    </script>
+
+{% endblock %}

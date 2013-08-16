@@ -48,8 +48,8 @@ define([
      * Requisition grid view.
      * @constructor
      * @param {Object} options
-     *   collection: {RequisitionCollection} collection (required)
-     *   query: {ApiQuery} query (optional)
+     * @param {RequisitionCollection} options.collection
+     *   Requisition collection
      */
     var RequisitionGridView = ui.grid.views.GridView.extend({
 
@@ -236,17 +236,17 @@ define([
      * Requisitions main view.
      * @constructor
      * @param {Object} options
-     *   collection: {RequisitionCollection} (required)
-     *   query: {ApiQuery} query (optional)
+     * @param {RequisitionCollection} options.collection 
+     *   Requisition collection
      */
     var RequisitionsSummaryView = core.view.View.extend({
 
         contentSelector: '.content',
 
         initialize: function(options) {
-            this.collection = options.collection;
-            this.query = options.query;
             this.template =  _.template(list_template);
+            this.collection = options.collection;
+            this.query = this.collection.query();
 
             this.query.fetch();
 
@@ -259,13 +259,11 @@ define([
         initChildViews: function() {
             this.destroyChildViews();
             this.requisitionGridView = new RequisitionGridView({
-                collection: this.collection,
-                query: this.query
+                collection: this.collection
             });
             this.paginatorView = new ui.paginator.views.PaginatorView({
                 maxPages: 10,
-                collection: this.collection,
-                query: this.query
+                collection: this.collection
             });
         },
 

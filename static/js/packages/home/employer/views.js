@@ -29,7 +29,6 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(employer_home_template);
-
         },
 
         render: function() {

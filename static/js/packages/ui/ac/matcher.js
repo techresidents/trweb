@@ -156,7 +156,7 @@ define(/** @exports ui/ac/matcher */[
         },
 
         getQueryFactory: function() {
-            return this.query;
+            return this.queryFactory;
         },
 
         setQueryFactory: function(queryFactory) {

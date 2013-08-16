@@ -12,6 +12,11 @@ define([
         debugFlash: false,
         noSWFCache: false 
     });
+
+    //if document.readystate !== 'complete' the above setup call
+    //won't initialize sounderManager, and we'll need to call
+    //soundManager.beginDelayedInit() to to initialize it.
+    soundManager.beginDelayedInit();
     
     return soundManager;
 });

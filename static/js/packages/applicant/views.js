@@ -29,8 +29,8 @@ define([
      * Tracker view.
      * @constructor
      * @param {Object} options
-     *   collection: {ApplicationCollection} collection (required)
-     *   query: {ApiQuery} query (required)
+     * @param {ApplicationCollection} options.collection
+     *   Application collection
      */
     var TrackerView = core.view.View.extend({
             
@@ -39,9 +39,8 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(tracker_template);
-            this.collection = options.collection;
-            this.query = options.query.withRelated('requisition');
-            this.query.fetch();
+            this.collection = options.collection.withRelated('requisition');
+            this.collection.fetch();
 
             //child views
             this.filtersView = null;
@@ -63,19 +62,16 @@ define([
             });
             this.filtersView = new applicant_tracker.TrackerFiltersView({
                 collection: this.collection,
-                query: this.query,
                 horizontal: true
             });
 
             this.gridView = new applicant_tracker.TrackerGridView({
-                collection: this.collection,
-                query: this.query
+                collection: this.collection
             });
 
             this.paginatorView = new ui.paginator.views.PaginatorView({
                 maxPages: 10,
-                collection: this.collection,
-                query: this.query
+                collection: this.collection
             });
         },
 

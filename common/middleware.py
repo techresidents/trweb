@@ -70,6 +70,7 @@ class DemoMiddleware(object):
                     if user and user.is_active:
                         user.backend = 'django.contrib.auth.backends.ModelBackend'
                         auth.login(request, user)
+                        request.session['tenant_id'] = user.tenant_id
                         return HttpResponseRedirect(request.path)
         except:
             pass

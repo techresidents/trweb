@@ -13,7 +13,7 @@ define([
      * @classdesc
      * Check Flash compatibility
      */
-    var CheckFlashCompatibility = core.command.AsyncCommand.extend({
+    var CheckFlashCompatibility = core.command.Command.extend({
 
         /**
          * Execute Command
@@ -37,6 +37,8 @@ define([
                             'supported. Please upgrade to the latest version.'
                 });
             }
+
+            return true;
         }
     });
 
@@ -46,7 +48,7 @@ define([
      * @classdesc
      * Check browser compatibility
      */
-    var CheckBrowserCompatibility = core.command.AsyncCommand.extend({
+    var CheckBrowserCompatibility = core.command.Command.extend({
 
         /**
          * Execute Command
@@ -72,6 +74,8 @@ define([
                             'supported. Please upgrade to the latest version.'
                 });
             }
+
+            return true;
         }
     });
 

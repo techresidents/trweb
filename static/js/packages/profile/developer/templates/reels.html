@@ -5,7 +5,6 @@
                 <% _.each(model.chat_reels, function(chatReel) { %>
                     <% if(chatReel.chat.topic && chatReel.chat.topic.title) { %>
                         <div class="developer-profile-reel-container">
-                            <i class="icon-play-sign"></i>
                             <a class="developer-profile-chat-title" href="/d/topic/<%=chatReel.chat.topic.id%>/talkingpoints/"><%= chatReel.chat.topic.title %></a>
                             <% var duration = (chatReel.chat.end - chatReel.chat.start)/1000;
                                if (duration < 60) { %>

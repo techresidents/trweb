@@ -7,11 +7,13 @@
                 <i class="icon-briefcase"></i>
                 Skills
             </label>
-            <% _.each(skills, function(skill) { %>
-            <div class="user-skills-container user-skills-<%= skill.expertise_type.toLowerCase() %>">
-                <div><%= skill.name %></div>
+            <div class="user-search-result-items">
+                <% _.each(skills, function(skill) { %>
+                <div class="user-skills-container user-skills-<%= skill.expertise_type.toLowerCase() %>">
+                    <div><%= skill.name %></div>
+                </div>
+                <% }); %>
             </div>
-            <% }); %>
         </div>
     <% } %>
 
@@ -21,9 +23,11 @@
                 <i class="icon-screenshot"></i>
                 Seeking
             </label>
-            <% _.each(position_prefs, function(position, index) { %>
-                <div class="user-search-result-pref"><%= position.type %></div>
-            <% }); %>
+            <div class="user-search-result-items">
+                <% _.each(position_prefs, function(position, index) { %>
+                    <div class="user-search-result-pref"><%= position.type %></div>
+                <% }); %>
+            </div>
         </div>
     <% } %>
 
@@ -33,9 +37,11 @@
                 <i class="icon-globe"></i>
                 Locations
             </label>
-            <% _.each(location_prefs, function(location, index) { %>
-                <div class="user-search-result-pref"><%= location.region %></div>
-            <% }); %>
+            <div class="user-search-result-items">
+                <% _.each(location_prefs, function(location, index) { %>
+                    <div class="user-search-result-pref"><%= location.region %></div>
+                <% }); %>
+            </div>
         </div>
     <% } %>
 
@@ -45,9 +51,11 @@
                 <i class="icon-thumbs-up"></i>
                 Tech Prefs
             </label>
-            <% _.each(technology_prefs, function(technology, index) { %>
-                <div class="user-search-result-pref"><%= technology.name %></div>
-            <% }); %>
+            <div class="user-search-result-items">
+                <% _.each(technology_prefs, function(technology, index) { %>
+                    <div class="user-search-result-pref"><%= technology.name %></div>
+                <% }); %>
+            </div>
         </div>
     <% } %>
 

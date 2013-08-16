@@ -38,8 +38,7 @@ define([
      * Filter View.
      * @constructor
      * @param {Object} options
-     *   collection: {ApiCollection} collection (required)
-     *   query: {ApiQuery} query (required)
+     * @param {ApiCollection} options.collection Collection
      */
     var FilterView = core.view.View.extend({
 
@@ -61,8 +60,8 @@ define([
             this.collection = options.collection;
             this.name = options.name;
             this.field = options.field;
-            this.query = options.query;
             this.view = options.view;
+            this.query = this.collection.query();
             
             //child views
             this.dropView = null;
@@ -504,10 +503,9 @@ define([
      * Filters View.
      * @constructor
      * @param {Object} options
-     *   config: {Object} config (required)
-     *   collection: {ApiCollection} collection (required)
-     *   query: {ApiQuery} query (required)
-     *   horizontal: {Boolean} (optional)
+     * @param {Object} options.config Config
+     * @param {ApiCollection} options.collection Collection
+     * @param {boolean} [options.horizontal=false] Horizontal flag
      */
     var FiltersView = core.view.View.extend({
 
@@ -536,7 +534,7 @@ define([
             this.context = options.context;
             this.config = options.config;
             this.collection = options.collection;
-            this.query = options.query;
+            this.query = this.collection.query();
             this.horizontal = options.horizontal || false;
             this.filterConfigMap = {};
 
@@ -595,8 +593,7 @@ define([
             var view = filterConfig.filterView.create({
                 name: filterConfig.name,
                 field: filterConfig.field,
-                collection: this.colleciton,
-                query: this.query
+                collection: this.collection
             });
 
             this.filterViews.add({

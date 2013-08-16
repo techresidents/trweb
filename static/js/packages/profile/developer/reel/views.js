@@ -101,9 +101,9 @@ define([
                initial results will then be parsed by the user's search string.*/
             this.queryFactory = function(options) {
                 var chatCollection = that.userModel.get_chats();
-                return chatCollection.withRelated('topic').filterBy({
-                    'topic__title__istartswith': options.search
-                }).orderBy('start__desc');
+                return chatCollection.withRelated('topic')
+                    .orderBy('start__desc')
+                    .query();
             };
 
             /* A matcher is used to compare the results of the query with

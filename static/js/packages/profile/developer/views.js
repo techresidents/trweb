@@ -80,6 +80,28 @@ define([
                 model: this.model
             }, options);
             DeveloperProfileGeneralView.__super__.initialize.call(this, options);
+
+            //child views
+            this.jobHuntHelpView = null;
+            this.initChildViews();
+        },
+
+        childViews: function() {
+            return [this.jobHuntHelpView];
+        },
+
+        initChildViews: function() {
+            this.jobHuntHelpView = new ui.help.views.HelpView({
+                help: 'Set if actively seeking new job opportunities',
+                placement: 'bottom',
+                iconClasses: 'icon-question-sign'
+            });
+        },
+
+        render: function() {
+            DeveloperProfileGeneralView.__super__.render.call(this, {});
+            this.append(this.jobHuntHelpView, '.developer-profile-job-hunt-help');
+            return this;
         },
 
         onClickActiveJobHunt: function() {

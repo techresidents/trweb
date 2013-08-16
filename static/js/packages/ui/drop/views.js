@@ -2,7 +2,6 @@ define([
     'jquery',
     'underscore',
     'core',
-    'core/view',
     '../events/type',
     'text!./templates/drop.html',
     'text!./templates/drop_menu.html'
@@ -10,7 +9,6 @@ define([
     $,
     _,
     core,
-    view,
     events,
     drop_template,
     drop_menu_template) {

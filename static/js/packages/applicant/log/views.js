@@ -19,8 +19,8 @@ define([
      * Application Log Grid view.
      * @constructor
      * @param {Object} options
-     *   collection: {ApplicationLogCollection} collection (required)
-     *   query: {ApiQuery} query (required)
+     * @param {ApplicationLogCollection} options.collection
+     *   Application log collection
      */
     var ApplicationLogGridView = ui.grid.views.GridView.extend({
 
@@ -166,13 +166,11 @@ define([
             this.query = this.collection
                 .withRelated(['user'])
                 .orderBy('created__desc')
-                .slice(0, this.itemsPerPage);
-            this.collectionKey = this.session.expandKey(
-                    this.collection.key(),
-                    this.query);
+                .slice(0, this.itemsPerPage)
+                .query();
             
             //bind events
-            this.listenTo(this.session, 'remove:' + this.collectionKey, this.onRemove);
+            this.listenTo(this.session, 'remove:' + this.collection.key(), this.onRemove);
             
             //fetch data
             this.query.fetch();
@@ -199,13 +197,11 @@ define([
 
         initChildViews: function() {
             this.gridView = new ApplicationLogGridView({
-                collection: this.collection,
-                query: this.query
+                collection: this.collection
             });
             this.paginatorView = new ui.paginator.views.PaginatorView({
                 maxPages: this.maxPages,
-                collection: this.collection,
-                query: this.query
+                collection: this.collection
             });
             this.dropView = new ui.drop.views.DropView({
                 targetView: this,

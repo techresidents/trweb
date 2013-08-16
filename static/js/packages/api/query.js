@@ -177,6 +177,10 @@ define([
      */
     var ApiQueryWithRelationCollection = Backbone.Collection.extend({
         model: ApiQueryWithRelation,
+        
+        withRelated: function() {
+            return this.pluck('value');
+        },
 
         toUriObject: function() {
             return {
@@ -329,6 +333,30 @@ define([
 
         noSession: function() {
             return this.get('noSession');
+        },
+
+        reset: function() {
+            this.filters().reset();
+            this.withRelations().reset();
+            this.orderBys().reset();
+            this.slice = null;
+        },
+
+        clone: function(options) {
+            options = options || {};
+            var result = options.to || new ApiQueryState();
+            result.filters().reset(this.filters().clone().models);
+            result.withRelations().reset(this.withRelations().clone().models);
+            result.orderBys().reset(this.orderBys().clone().models);
+            if(result.slice() && this.slice()) {
+                result.slice().setStart(this.slice().start());
+                result.slice().setEnd(this.slice().end());
+            } else if(result.slice()) {
+                result.set('slice', null);
+            } else if(this.slice()) {
+                result.set('slice', this.slice().clone());
+            }
+            return result;
         }
     });
 
@@ -343,7 +371,7 @@ define([
     var ApiQuery = core.base.Base.extend({
         initialize: function(options) {
             options = options || {};
-            this.instance = options.model || options.collection;
+            this.instance = options.model || options.collection || options.instance;
             this.state = new ApiQueryState();
             this.queryChain = [];
             this.queryChainCallback = null;
@@ -451,6 +479,28 @@ define([
             
         },
 
+        reset: function() {
+            this.state.reset();
+            return this;
+        },
+
+        clone: function(options) {
+            options = options || {};
+            var result = options.to || new ApiQuery();
+            result.instance = this.instance;
+            result.queryChain = this.queryChain;
+            result.queryChainCallback = this.queryChainCallback;
+            this.state.clone({to: result.state});
+
+            return result;
+        },
+
+        parse: function(query) {
+            var q = ApiQuery.parse(this.instance, query);
+            q.clone({to: this});
+            return this;
+        },
+
         toUriObject: function() {
             var result = {};
             var filters = this.state.filters();
@@ -503,19 +553,14 @@ define([
 
         _fetchOptions: function(options) {
             options = _.extend({
-                query: this,
-                noSession: this.state.noSession()
+                query: this
             }, options);
-            if(!options.hasOwnProperty("data")) {
-                options.data = {};
-            }
-            _.extend(options.data, this.toUriObject());
             return options;
         }
     }, {
 
         parse: function(instance, query) {
-            var result = instance.query();
+            var result = new ApiQuery({instance: instance});
             var parts, key, value, uriObject = {};
 
             if(_.isString(query) && query) {
