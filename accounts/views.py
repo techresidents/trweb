@@ -190,9 +190,14 @@ def register_employer(request, account_request_code=None):
     return render_to_response('accounts/register_employer.html', context,  context_instance=RequestContext(request))
 
 def register_success(request):
-    """This is a page with no UI to facilitate tracking
-    developers that successfully register."""
-    return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
+    """This is a page that was created to facilitate tracking developers
+    that successfully register."""
+    relative_link = reverse("home.views.home")
+    context = {
+        'redirect_url': relative_link
+    }
+    return render_to_response('accounts/register_success.html', context,  context_instance=RequestContext(request))
+
 
 def register_activate(request, registration_code=None):
     success = False
