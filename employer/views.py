@@ -16,6 +16,7 @@ def employer(request):
     current_user_json = client.user(user_id=encoded_user_id)
 
     context = {
+        "GA_TRACK_PAGE_VIEW": False, #Page tracking will happen in app router
         "current_user_json": json.dumps(current_user_json)
     }
     

@@ -2,7 +2,13 @@
 
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', '{{ GA_ID }}']);
-    _gaq.push(['_trackPageview']);
+    {% if USER.is_authenticated %}
+        _gaq.push(['_setCustomVar', 1, 'user_id', '{{USER.encoded_id}}', 2]);
+        _gaq.push(['_setCustomVar', 2, 'tenant_id', '{{USER.encoded_tenant_id}}', 2]);
+    {% endif %}
+    {% if GA_TRACK_PAGE_VIEW %}
+        _gaq.push(['_trackPageview']);
+    {% endif %}
 
     (function() {
         var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
