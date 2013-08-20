@@ -925,6 +925,9 @@ button.drop-button .caret {
     padding: 1px 3px 1px 3px;
     max-width: 250px;
 }
+.help .help-content a:hover {
+    color: #ea8f00;
+}
 
 .w-skill {
     display: inline-block;

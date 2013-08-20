@@ -92,6 +92,7 @@ define([
         searchBarSelector: '.search-bar',
         searchResultsSelector: '.topicsearch-results-container',
         searchViewInputSelector: '.search-input',
+        searchHelpSelector: '.topicsearch-help',
 
         events: {
             'enterkey .search-bar': 'onEnterKey',
@@ -111,6 +112,7 @@ define([
             this.facetsView = null;
             this.topicsCollectionView = null;
             this.inputHandlerView = null;
+            this.searchHelpView = null;
             this.initChildViews();
         },
 
@@ -119,7 +121,9 @@ define([
                 this.facetsView,
                 this.inputHandlerView,
                 this.topicsCollectionView,
-                this.paginatorView];
+                this.paginatorView,
+                this.searchHelpView
+            ];
         },
 
         initChildViews: function() {
@@ -143,10 +147,15 @@ define([
                 sort: this._viewSort
             });
 
-
             this.paginatorView = new ui.paginator.views.PaginatorView({
                 maxPages: 10,
                 collection: this.collection
+            });
+
+            this.searchHelpView = new ui.help.views.HelpView({
+                help: '<p>Have a topic that you want to chat about? <a href="/feedback/" target="_blank">Request Chat Topic</a></p>',
+                placement: 'bottom',
+                iconClasses: 'icon-question-sign'
             });
         },
 
@@ -159,6 +168,7 @@ define([
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.facetsView, this.facetsSelector);
             this.append(this.inputHandlerView, this.searchBarSelector);
+            this.append(this.searchHelpView, this.searchHelpSelector);
             this.append(this.topicsCollectionView, this.searchResultsSelector);
             this.append(this.paginatorView, this.searchResultsSelector);
             return this;
