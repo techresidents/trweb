@@ -143,8 +143,7 @@ define([
 
             this.topicsCollectionView = new ui.collection.views.CollectionView({
                 collection: this.collection,
-                viewFactory: new core.factory.Factory(TopicSearchResultView, {}),
-                sort: this._viewSort
+                viewFactory: new core.factory.Factory(TopicSearchResultView, {})
             });
 
             this.paginatorView = new ui.paginator.views.PaginatorView({
@@ -198,22 +197,6 @@ define([
         onClick: function(e) {
             var q = this.inputHandlerView.getInputValue();
             this.search(q);
-        },
-
-        /**
-         * viewSort
-         * @param {View} view to sort
-         * @classdesc
-         * this.topicsCollectionView requires a sort function to be defined that the
-         * underlying CollectionView will use to sort the views in the collection.
-         * @returns {string} topic title
-         */
-        _viewSort: function(view) {
-            var ret = '';
-            if (view && view.model) {
-                ret = view.model.get_title();
-            }
-            return ret;
         }
     });
 
