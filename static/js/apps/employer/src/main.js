@@ -38,6 +38,7 @@ require.config({
         { name: 'profile', location: 'packages/profile' },
         { name: 'requisition', location: 'packages/requisition' },
         { name: 'search', location: 'packages/search' },
+        { name: 'settings', location: 'packages/settings' },
         { name: 'soundmanager', location: 'packages/soundmanager' },
         { name: 'ui', location: 'packages/ui' },
         { name: 'user', location: 'packages/user' },
