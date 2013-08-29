@@ -30,17 +30,18 @@ define([
      */
     var AppRouter = Backbone.Router.extend({
         routes: {
-            'home(/)': 'home',
             'application/:id(/)': 'application',
+            'home(/)': 'home',
+            'offers(/:query)(/)': 'offers',
             'playback/:id(/)': 'playback',
-            'tracker(/:query)(/)': 'tracker',
-            'user/:id(/)': 'user',
-            'search(/:query)(/)': 'search',
             'requisition/create(/)': 'createRequisition',
             'requisition/view/:id(/)': 'readRequisition',
             'requisition/edit/:id(/)': 'editRequisition',
             'requisition/list(/:query)(/)': 'listRequisition',
+            'search(/:query)(/)': 'search',
             'settings/account(/)': 'settingsAccount',
+            'tracker(/:query)(/)': 'tracker',
+            'user/:id(/)': 'user',
             '*actions': 'search'
         },
         
@@ -174,7 +175,18 @@ define([
                     }
                 });
             }, this));
-        }
+        },
+
+        offers: function(query) {
+            require(['offer'], _.bind(function(offer) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: offer.mediators.employer.EmployerOffersMediator.VIEW_TYPE,
+                    options: {
+                        query: query
+                    }
+                });
+            }, this));
+        },
     });
 
     /**
