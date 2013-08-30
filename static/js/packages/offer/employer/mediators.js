@@ -39,8 +39,7 @@ define([
                 .get_tenant()
                 .get_interview_offers()
                 .orderBy('created__desc')
-                .slice(0, 20)
-                .withRelated(['application__requisition']);
+                .slice(0, 20);
             this.defaultQuery = this.defaultCollection.query();
             this.collection = null;
         },

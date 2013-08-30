@@ -331,11 +331,11 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(employer_offers_template);
-            // TODO Move withRelated into view
+            this.collectionWithRelated = ['application__requisition'];
             // It's expected that the collection passed to this view
             // has a withRelated field of ['application__requisition']
             this.loader = new api.loader.ApiLoader([
-                { instance: this.collection }
+                { instance: this.collection, withRelated: this.collectionWithRelated }
             ]);
 
             //bind events
