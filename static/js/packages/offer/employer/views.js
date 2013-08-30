@@ -154,6 +154,121 @@ define([
     });
 
     /**
+     * Offers Filters View.
+     * @constructor
+     * @param {Object} options
+     * @param {InterviewOfferCollection} options.collection
+     *  InterviewOffer collection
+     */
+    var OffersFiltersView = ui.filter.views.FiltersView.extend({
+
+        initialize: function(options) {
+            options = _.extend({
+                config: OffersFiltersView.config()
+            }, options);
+
+            ui.filter.views.FiltersView.prototype.initialize.call(this, options);
+        },
+
+        classes: function() {
+            var result = ui.filter.views.FiltersView.prototype.classes.call(this);
+            result = result.concat(['offers-filters']);
+            return result;
+        }
+    }, {
+        config: function() {
+            var config = {
+                filters: [
+                    OffersFiltersView.statusFilter(),
+                    OffersFiltersView.typeFilter(),
+                    OffersFiltersView.requisitionFilter(),
+                    OffersFiltersView.createdFilter(),
+                    OffersFiltersView.expiresFilter()
+                ]
+            };
+            return config;
+        },
+
+        statusFilter: function() {
+            return {
+                name: 'Status',
+                field: 'status',
+                filterView: new ui.filter.views.SelectFilterView.Factory({
+                    selections: [
+                        'PENDING',
+                        'ACCEPTED',
+                        'DECLINED',
+                        'RESCINDED',
+                        'EXPIRED']
+                })
+            };
+        },
+
+        typeFilter: function() {
+            return {
+                name: 'Type',
+                field: 'type',
+                filterView: new ui.filter.views.SelectFilterView.Factory({
+                    selections: [
+                        'IN_HOUSE',
+                        'PHONE']
+                })
+            };
+        },
+
+        requisitionFilter: function() {
+            var createQuery = function(options) {
+                var currentUser = new api.models.User({id: 'CURRENT'});
+                return new api.models.RequisitionCollection()
+                    .filterBy({
+                        'tenant_id': currentUser.get_tenant_id()
+                    })
+                    .orderBy('created__DESC')
+                    .slice(0, 40)
+                    .query();
+            };
+
+            var matcher = new ui.ac.matcher.QueryMatcher({
+                queryFactory: new core.factory.FunctionFactory(createQuery),
+                stringify: function(model) {
+                    return model.get_title();
+                },
+                map: function(model) {
+                    return {
+                        value: model.get_title()
+                    };
+                },
+                sort: null
+            });
+
+            return {
+                name: 'Requsition',
+                field: 'application__requisition__title',
+                filterView: new ui.filter.views.AutoSelectFilterView.Factory({
+                    inputPlaceholder: 'Requisition title',
+                    matcher: matcher
+                })
+            };
+        },
+
+        createdFilter: function() {
+            return {
+                name: 'Created',
+                field: 'created',
+                filterView: new ui.filter.views.DateRangeFilterView.Factory()
+            };
+        },
+
+        expiresFilter: function() {
+            return {
+                name: 'Expires',
+                field: 'expires',
+                filterView: new ui.filter.views.DateRangeFilterView.Factory()
+            };
+        }
+    });
+
+    /**
      * Employer Offers Page View
      * @constructor
      * @param {Object} options
@@ -207,10 +322,10 @@ define([
 
         initChildViews: function() {
 
-//            this.filtersView = new TrackerFiltersView({
-//                collection: this.collection,
-//                horizontal: true
-//            });
+            this.filtersView = new OffersFiltersView({
+                collection: this.collection,
+                horizontal: true
+            });
 
             this.gridView = new OffersGridView({
                 collection: this.collection
@@ -230,7 +345,7 @@ define([
             if (this.initialized && this.loader.isLoaded()) {
                 this.$el.html(this.template());
                 this.$el.attr('class', this.classes().join(' '));
-                //this.append(this.filtersView, this.contentSelector);
+                this.append(this.filtersView, this.contentSelector);
                 this.append(this.gridView, this.contentSelector);
                 //this.append(this.paginatorView, this.contentSelector);
             }
@@ -239,6 +354,7 @@ define([
     });
 
     return {
+        OffersFiltersView: OffersFiltersView,
         OffersGridView: OffersGridView,
         EmployerOffersView: EmployerOffersView
     };
