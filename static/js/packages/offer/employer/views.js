@@ -32,8 +32,8 @@ define([
             var config = {
                 columns: [
                     OffersGridView.candidateColumn(),
-                    OffersGridView.interviewTypeColumn(),
                     OffersGridView.requisitionColumn(),
+                    OffersGridView.interviewTypeColumn(),
                     OffersGridView.createdColumn(),
                     OffersGridView.expiresColumn(),
                     OffersGridView.statusColumn(),
@@ -194,12 +194,12 @@ define([
         config: function() {
             var config = {
                 filters: [
-                    OffersFiltersView.candidateFilter(),
                     OffersFiltersView.statusFilter(),
+                    OffersFiltersView.expiresFilter(),
+                    OffersFiltersView.createdFilter(),
                     OffersFiltersView.typeFilter(),
                     OffersFiltersView.requisitionFilter(),
-                    OffersFiltersView.createdFilter(),
-                    OffersFiltersView.expiresFilter()
+                    OffersFiltersView.candidateFilter()
                 ]
             };
             return config;

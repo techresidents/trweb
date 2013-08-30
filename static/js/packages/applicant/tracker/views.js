@@ -26,8 +26,8 @@ define([
             var config = {
                 columns: [
                     TrackerGridView.applicationColumn(),
-                    TrackerGridView.requisitionColumn(),
                     TrackerGridView.userColumn(),
+                    TrackerGridView.requisitionColumn(),
                     TrackerGridView.createdColumn(),
                     TrackerGridView.statusColumn(),
                     TrackerGridView.actionColumn(this)
@@ -161,9 +161,9 @@ define([
             var config = {
                 filters: [
                     TrackerFiltersView.statusFilter(),
+                    TrackerFiltersView.createdFilter(),
                     TrackerFiltersView.requisitionFilter(),
-                    TrackerFiltersView.applicantFilter(),
-                    TrackerFiltersView.createdFilter()
+                    TrackerFiltersView.applicantFilter()
                 ]
             };
             return config;
