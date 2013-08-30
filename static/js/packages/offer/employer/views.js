@@ -136,12 +136,26 @@ define([
         },
 
         actionColumn: function(view) {
+            // Show an action to rescind an interview offer as long as the
+            // offer is not in the 'RESCINDED' state.
+
             var map = function(model) {
-                var handler = new widget.application.handlers.ApplicationHandler({
-                    model: model.get_application(),
-                    view: view
-                });
-                return handler.menuItems();
+                var rescindOffer = function() {
+                    var modal = new widget.offer.views.RescindInterviewOfferModal({
+                        model: model.get_application(),
+                        offer: model
+                    });
+                    view.append(modal);
+                };
+                var menuItems = [
+                    {
+                        key: 'rescind-interview_offer',
+                        label: 'Rescind Interview Offer',
+                        handler: rescindOffer,
+                        visible: model.get_status() !== 'RESCINDED'
+                    }
+                ];
+                return menuItems;
             };
             return {
                 key: 'action',
@@ -159,6 +173,7 @@ define([
      * @param {Object} options
      * @param {InterviewOfferCollection} options.collection
      *  InterviewOffer collection
+     * @param {boolean} [options.horizontal=false] Horizontal layout flag
      */
     var OffersFiltersView = ui.filter.views.FiltersView.extend({
 
