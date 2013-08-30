@@ -215,6 +215,13 @@ define([
                     }
                     router.navigate(uri, {trigger: options.trigger});
                     break;
+                case 'EmployerOffersView':
+                    uri = 'offers';
+                    if(options.query) {
+                        uri += '/' + options.query;
+                    }
+                    router.navigate(uri, {trigger: options.trigger});
+                    break;
                 case 'ApplicationView':
                     uri = 'application/' + options.id;
                     router.navigate(uri, {trigger: options.trigger});
