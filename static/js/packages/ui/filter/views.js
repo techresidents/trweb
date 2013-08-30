@@ -619,7 +619,6 @@ define([
         },
 
         filter: function() {
-            console.log('filter');
             var pageSize = 20;
             var slice = this.query.state.slice();
             if(slice) {
