@@ -35,8 +35,8 @@ define([
         initialize: function(options) {
             this.view = null;
             this.currentUser = new api.models.User({id: 'CURRENT'});
-            this.currentTenant = this.currentUser.get_tenant();
-            this.defaultCollection = this.currentTenant
+            this.defaultCollection = this.currentUser
+                .get_tenant()
                 .get_interview_offers()
                 .orderBy('created__desc')
                 .slice(0, 20)
@@ -48,7 +48,11 @@ define([
         onCreateView: function(notification) {
             if (notification.type === this.viewType()) {
 
-                this.collection = this.defaultCollection.clone(); // TODO why need to clone?
+                // Clone the default collection since this.defaultQuery
+                // has a reference to the query obj within this.defaultCollection.
+                // If we didn't clone, then the check against the defaultQuery in
+                // onReset() would always pass and set the uri = null.
+                this.collection = this.defaultCollection.clone();
                 this.collection.on('reset', this.onReset, this);
                 this.view = new employer_offers_views.EmployerOffersView({
                     collection: this.collection
