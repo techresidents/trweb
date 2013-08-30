@@ -179,6 +179,7 @@ define([
         config: function() {
             var config = {
                 filters: [
+                    OffersFiltersView.candidateFilter(),
                     OffersFiltersView.statusFilter(),
                     OffersFiltersView.typeFilter(),
                     OffersFiltersView.requisitionFilter(),
@@ -187,6 +188,38 @@ define([
                 ]
             };
             return config;
+        },
+
+        candidateFilter: function() {
+            var createQuery = function(options) {
+                var currentUser = new api.models.User({id: 'CURRENT'});
+                return currentUser.get_tenant().get_interview_offers()
+                    .orderBy('created__desc')
+                    .slice(0, 40)
+                    .query();
+            };
+
+            var matcher = new ui.ac.matcher.QueryMatcher({
+                queryFactory: new core.factory.FunctionFactory(createQuery),
+                stringify: function(model) {
+                    return model.get_candidate_id();
+                },
+                map: function(model) {
+                    return {
+                        value: model.get_candidate_id()
+                    };
+                },
+                sort: null
+            });
+
+            return {
+                name: 'Candidate',
+                field: 'candidate_id',
+                filterView: new ui.filter.views.AutoSelectFilterView.Factory({
+                    inputPlaceholder: 'Candidate ID',
+                    matcher: matcher
+                })
+            };
         },
 
         statusFilter: function() {
@@ -242,7 +275,7 @@ define([
             });
 
             return {
-                name: 'Requsition',
+                name: 'Requisition',
                 field: 'application__requisition__title',
                 filterView: new ui.filter.views.AutoSelectFilterView.Factory({
                     inputPlaceholder: 'Requisition title',
@@ -331,10 +364,13 @@ define([
                 collection: this.collection
             });
 
-//            this.paginatorView = new ui.paginator.views.PaginatorView({
-//                maxPages: 10,
-//                collection: this.collection
-//            });
+            // Page size is determined by the slice. In this case, the
+            // mediator specifies a slice of 0-20, which implies pages
+            // have 20 entries. This is consistent with the applicant tracker.
+            this.paginatorView = new ui.paginator.views.PaginatorView({
+                maxPages: 10,
+                collection: this.collection
+            });
         },
 
         classes: function() {
@@ -347,7 +383,7 @@ define([
                 this.$el.attr('class', this.classes().join(' '));
                 this.append(this.filtersView, this.contentSelector);
                 this.append(this.gridView, this.contentSelector);
-                //this.append(this.paginatorView, this.contentSelector);
+                this.append(this.paginatorView, this.contentSelector);
             }
             return this;
         }
