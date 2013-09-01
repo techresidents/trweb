@@ -98,7 +98,8 @@ define([
                 var collection = new api.models.LocationSearchCollection();
                 var query = collection.filterBy({
                     ac: options.search
-                }).slice(0, options.maxResults);
+                }).slice(0, options.maxResults)
+                .query();
                 return query;
             };
             queryFactory = new core.factory.FunctionFactory(queryFactory);
@@ -172,7 +173,8 @@ define([
                 var collection = new api.models.TechnologySearchCollection();
                 var query = collection.filterBy({
                     ac: options.search
-                }).slice(0, options.maxResults);
+                }).slice(0, options.maxResults)
+                .query();
                 return query;
             };
             queryFactory = new core.factory.FunctionFactory(queryFactory);
