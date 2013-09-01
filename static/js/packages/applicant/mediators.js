@@ -40,7 +40,7 @@ define([
             this.currentTenant = this.currentUser.get_tenant();
             this.defaultCollection = this.currentTenant.get_applications();
             this.defaultQuery = this.defaultCollection.query()
-                .orderBy('created__desc').slice(0,20);
+                .orderBy('created__desc').slice(0, 20);
 
             this.collection = null;
             this.query = null;

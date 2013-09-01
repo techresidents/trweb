@@ -1,0 +1,12 @@
+<p><span>&nbsp;</span></p>
+<p><span><img alt="image" src="http://media.tumblr.com/afb0c37bffee48f1f104e1cfa1bdfdbb/tumblr_inline_mpmxzegdZi1qz4rgp.jpg" /></span></p>
+<p></p>
+<p></p>
+<p><span>Here at Tech Residents we&rsquo;re constantly coming up with new and interesting chat topics. &nbsp;One of our latest chat topics is titled <em>Unicode for Grandma</em>. &nbsp;Before diving into why and how this chat topic came to be, here&rsquo;s a little background about Tech Residents.</span></p>
+<p><span>At Tech Residents we&rsquo;ve built a new platform with the goal of overhauling the traditional hiring process. &nbsp;We&rsquo;re striving to make recruiters, phone screens, and fruitless interviews the basis of the horror story you tell your kids about how you found jobs when you were their age.&nbsp;</span></p>
+<p><span>[[MORE]]</span></p>
+<p><span>So back to Unicode and grandma. &nbsp;Unicode is a topic that is frequently misunderstood. &nbsp;Unicode isn&rsquo;t all that complex relative to other concepts that developers have to deal with, but for some reason there&rsquo;s some confusion about what it is and how it works.&nbsp; With this in mind, we felt Unicode would make for a great chat topic. But we weren't quite done; we decided to up the ante and ask developers to explain Unicode to a non-technical audience.&nbsp; And who's the most non-technical person we could think of? Our dear old Grandma of course! &nbsp;</span></p>
+<p><span>The best developers have the capacity to not only communicate ideas and concepts clearly, but also to adapt the way they explain things depending on their audience. &nbsp;And so the chat topic&nbsp;<em>Unicode for Grandma</em> was born.</span></p>
+<p><span>Think you&rsquo;re up to the challenge of explaining Unicode to your grandma? Give it your best shot at </span><a href="http://techresidents.com"><span>http://techresidents.com</span></a><span> and land your next job.<br /></span></p>
+<p><em>Tech Residents is flipping the tech hiring process on its head and putting software developers in the driver's seat where they belong. &nbsp;</em><em>For more info visit <a href="http://techresidents.com/">http://techresidents.com</a>.</em></p>
+<p></p>

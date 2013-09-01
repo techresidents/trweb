@@ -33,6 +33,8 @@ define([
      *   Application collection
      */
     var TrackerView = core.view.View.extend({
+
+        contentSelector: '.tracker-container',
             
         events: {
         },
@@ -82,9 +84,9 @@ define([
         render: function() {
             this.$el.html(this.template());
             this.$el.attr('class', this.classes().join(' '));
-            this.append(this.filtersView, '.content');
-            this.append(this.gridView, '.content');
-            this.append(this.paginatorView, '.content');
+            this.append(this.filtersView, this.contentSelector);
+            this.append(this.gridView, this.contentSelector);
+            this.append(this.paginatorView, this.contentSelector);
             return this;
         }
     });

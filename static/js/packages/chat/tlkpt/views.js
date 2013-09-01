@@ -355,7 +355,7 @@ define([
      * TalkingPointsPageView View
      * @constructor
      * @param {Object} options
-     *   model: {Topic} Root topic model (required)
+     * @param {Topic} options.model Root Topic model
      */
     var TalkingPointsPageView = core.view.View.extend({
 
@@ -368,7 +368,6 @@ define([
 
         childViews: function() {
             return [
-                this.loaderView,
                 this.talkingPointsView
             ];
         },
@@ -386,15 +385,11 @@ define([
             this.loader.load();
 
             //child views
-            this.loaderView = null;
             this.talkingPointsView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
-            this.loaderView = new ui.load.views.LoaderView({
-                loader: this.loader
-            });
             this.talkingPointsView = new ui.collection.views.CollectionView({
                 collection: this.model.get_tree(),
                 viewFactory: new core.factory.Factory(TopicTalkingPointsEditView, {})
@@ -402,11 +397,9 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template());
             if (this.loader.isLoaded()) {
+                this.$el.html(this.template());
                 this.append(this.talkingPointsView, this.talkingPointsSelector);
-            } else {
-                this.append(this.loaderView);
             }
             return this;
         },

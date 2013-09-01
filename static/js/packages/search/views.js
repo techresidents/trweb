@@ -155,7 +155,9 @@ define([
                 this.facetsView,
                 this.inputHandlerView,
                 this.usersView,
-                this.paginatorView];
+                this.paginatorView,
+                this.demoHelpView,
+            ];
         },
 
         initChildViews: function() {
@@ -182,10 +184,17 @@ define([
                 maxPages: 10,
                 collection: this.collection
             });
+
+            this.demoHelpView = new ui.help.views.HelpView({
+                help: 'Feel free to explore the platform and click around. All actions you perform will have no effect.',
+                placement: 'bottom',
+                iconClasses: 'icon-question-sign'
+            });
         },
 
         render: function() {
             this.$el.html(this.template());
+            this.append(this.demoHelpView, '.search-demo-help');
             this.append(this.facetsView, '.search-facets');
             this.append(this.inputHandlerView, '.search-bar');
             this.append(this.usersView, '.search-container');

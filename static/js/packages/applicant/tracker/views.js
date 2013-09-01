@@ -26,8 +26,8 @@ define([
             var config = {
                 columns: [
                     TrackerGridView.applicationColumn(),
-                    TrackerGridView.requisitionColumn(),
                     TrackerGridView.userColumn(),
+                    TrackerGridView.requisitionColumn(),
                     TrackerGridView.createdColumn(),
                     TrackerGridView.statusColumn(),
                     TrackerGridView.actionColumn(this)
@@ -90,6 +90,9 @@ define([
         userColumn: function() {
             return {
                 column: 'Applicant',
+                headerCellView: new ui.grid.views.GridHeaderCellView.Factory({
+                    sort: 'user_id'
+                }),
                 cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
                     return {
                         href: '/e/user/' + options.model.get_user_id() + '/',
@@ -134,6 +137,9 @@ define([
      * Tracker Filters View.
      * @constructor
      * @param {Object} options
+     * @param {ApplicationCollection} options.collection
+     *  Application collection
+     * @param {boolean} [options.horizontal=false] Horizontal layout flag
      */
     var TrackerFiltersView = ui.filter.views.FiltersView.extend({
 
@@ -155,11 +161,44 @@ define([
             var config = {
                 filters: [
                     TrackerFiltersView.statusFilter(),
+                    TrackerFiltersView.createdFilter(),
                     TrackerFiltersView.requisitionFilter(),
-                    TrackerFiltersView.createdFilter()
+                    TrackerFiltersView.applicantFilter()
                 ]
             };
             return config;
+        },
+
+        applicantFilter: function() {
+            var createQuery = function(options) {
+                var currentUser = new api.models.User({id: 'CURRENT'});
+                return currentUser.get_tenant().get_applications()
+                    .orderBy('created__desc')
+                    .slice(0, 40)
+                    .query();
+            };
+
+            var matcher = new ui.ac.matcher.QueryMatcher({
+                queryFactory: new core.factory.FunctionFactory(createQuery),
+                stringify: function(model) {
+                    return model.get_user_id();
+                },
+                map: function(model) {
+                    return {
+                        value: model.get_user_id()
+                    };
+                },
+                sort: null
+            });
+
+            return {
+                name: 'Applicant',
+                field: 'user_id',
+                filterView: new ui.filter.views.AutoSelectFilterView.Factory({
+                    inputPlaceholder: 'Applicant ID',
+                    matcher: matcher
+                })
+            };
         },
 
         statusFilter: function() {

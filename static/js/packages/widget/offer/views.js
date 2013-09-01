@@ -322,6 +322,9 @@ define([
          * @param {Object} options
          * @param {Application} options.model
          *   Application w/ offer to rescind
+         * @param {InterviewOffer} [options.offer] InterviewOffer model
+         *   Use this parameter to propagate changes to the provided model.
+         *   An example of this is in the OffersGridView.
          */
         initialize: function(options) {
             options = _.extend({
@@ -331,7 +334,7 @@ define([
             this.model = options.model;
             this.currentUser = new api.models.User({id: 'CURRENT'});
             this.currentTenant = this.currentUser.get_tenant();
-            this.offer = new api.models.InterviewOffer();
+            this.offer = options.offer || new api.models.InterviewOffer();
             this.loader = new api.loader.ApiLoader([{
                 instance: this.model,
                 withRelated: ['interview_offers', 'requisition']
@@ -419,6 +422,8 @@ define([
         },
 
         onLoaded: function() {
+            // TODO Add sanity check to ensure that the ID of this.offer when
+            // passed in matches the ID retrieved by the next line of code.
             var offer = _.first(this.model.get_interview_offers().where({
                 status: 'PENDING'
             }));
