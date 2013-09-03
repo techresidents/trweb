@@ -147,6 +147,7 @@ define([
 
         initialize: function(options) {
             this.template =  _.template(developer_offers_template);
+            this.collection = options.collection;
             this.collectionWithRelated = ['tenant', 'application__requisition'];
             this.loader = new api.loader.ApiLoader([
                 { instance: this.collection, withRelated: this.collectionWithRelated }
@@ -159,7 +160,6 @@ define([
             this.loader.load();
 
             //child views
-            this.filtersView = null;
             this.gridView = null;
             this.paginatorView = null;
             this.initChildViews();
@@ -177,18 +177,12 @@ define([
 
         childViews: function() {
             return [
-                this.filtersView,
                 this.gridView,
                 this.paginatorView];
         },
 
         initChildViews: function() {
 
-//            this.filtersView = new OffersFiltersView({
-//                collection: this.collection,
-//                horizontal: true
-//            });
-//
             this.gridView = new OffersGridView({
                 collection: this.collection
             });
@@ -210,7 +204,6 @@ define([
             if (this.initialized && this.loader.isLoaded()) {
                 this.$el.html(this.template());
                 this.$el.attr('class', this.classes().join(' '));
-                //this.append(this.filtersView, this.contentSelector);
                 this.append(this.gridView, this.contentSelector);
                 this.append(this.paginatorView, this.contentSelector);
             }
