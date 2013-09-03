@@ -50,7 +50,7 @@ define([
 
         classes: function() {
             var result = ui.grid.views.GridView.prototype.classes.call(this);
-            result = result.concat(['offers-grid']);
+            result = result.concat(['employer-offers-grid']);
             return result;
         }
     }, {
