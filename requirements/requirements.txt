@@ -7,4 +7,6 @@ opentok-python-sdk == 0.91.1
 protobuf==2.4.1
 riak==1.4.0
 
-git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/trpycore.git@0.10.0#egg=trpycore
+git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/trpycore.git@integration#egg=trpycore
+git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/trhttp.git@integration#egg=trhttp
+git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/trrackspace.git@integration#egg=trrackspace

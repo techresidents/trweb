@@ -65,6 +65,7 @@ MEDIA_URL = 'http://localhost:8000/'
 # distributed (filesystem, cloud, etc...)
 #STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
+#STATICFILES_STORAGE = 'techresidents_web.cloudfiles_storage.storage.CloudfilesCachedStaticStorage'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -264,8 +265,11 @@ CLOUDFILES_USERNAME = 'trdev'
 CLOUDFILES_PASSWORD = 'B88mMJqh'
 CLOUDFILES_CONTAINER_NAME = "trdev_public"
 CLOUDFILES_SERVICENET = False
-CLOUDFILES_TIMEOUT = 5
+CLOUDFILES_TIMEOUT = 30
+CLOUDFILES_RETRIES = 2
 CLOUDFILES_CREATE_CONTAINER = False
+CLOUDFILES_DEBUG_LEVEL = 0
+CLOUDFILES_STATIC_CONTAINER_NAME = "trdev_static_files"
 
 #Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
