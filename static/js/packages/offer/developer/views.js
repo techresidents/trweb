@@ -192,14 +192,14 @@ define([
             this.gridView = new OffersGridView({
                 collection: this.collection
             });
-//
-//            // Page size is determined by the slice. In this case, the
-//            // mediator specifies a slice of 0-20, which implies pages
-//            // have 20 entries. This is consistent with the applicant tracker.
-//            this.paginatorView = new ui.paginator.views.PaginatorView({
-//                maxPages: 10,
-//                collection: this.collection
-//            });
+
+            // Page size is determined by the slice. In this case, the
+            // mediator specifies a slice of 0-20, which implies pages
+            // have 20 entries. This is consistent with the applicant tracker.
+            this.paginatorView = new ui.paginator.views.PaginatorView({
+                maxPages: 10,
+                collection: this.collection
+            });
         },
 
         classes: function() {
@@ -212,7 +212,7 @@ define([
                 this.$el.attr('class', this.classes().join(' '));
                 //this.append(this.filtersView, this.contentSelector);
                 this.append(this.gridView, this.contentSelector);
-                //this.append(this.paginatorView, this.contentSelector);
+                this.append(this.paginatorView, this.contentSelector);
             }
             return this;
         }
