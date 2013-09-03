@@ -9,7 +9,75 @@ define([
     notifications,
     core,
     api,
-    developer_offers_views) {
+    developer_offer_views) {
+
+    /**
+     * Developer Offer Mediator
+     * @constructor
+     * Decided to create a separate mediator to handle the individual
+     * offer views since this mediator won't be working with queries
+     * and collections.
+     */
+    var DeveloperOfferMediator = core.mediator.Mediator.extend({
+        name: function() {
+            return DeveloperOfferMediator.NAME;
+        },
+
+        viewType: function() {
+            return DeveloperOfferMediator.VIEW_TYPE;
+        },
+
+        /**
+         * Notification handlers
+         */
+        notifications: [
+            [notifications.VIEW_CREATE, 'onCreateView'],
+            [notifications.VIEW_DESTROY, 'onDestroyView']
+        ],
+
+        initialize: function(options) {
+            this.view = null;
+        },
+
+        onCreateView: function(notification) {
+            if (notification.type === this.viewType()) {
+
+                var offer = new api.models.InterviewOffer({
+                    id: notification.options.id
+                });
+
+                this.view = new developer_offer_views.DeveloperOfferView({
+                    model: offer
+                });
+
+                this.facade.trigger(notifications.VIEW_CREATED, {
+                    type: this.viewType(),
+                    view: this.view,
+                    options: notification.options
+                });
+            }
+        },
+
+        onDestroyView: function(notification) {
+            if (notification.type === this.viewType()) {
+                notification.view.destroy();
+
+                this.facade.trigger(notifications.VIEW_DESTROYED, {
+                    type: this.viewType(),
+                    view: notification.view
+                });
+                if (this.view === notification.view) {
+                    this.view = null;
+                }
+            }
+        }
+
+    }, {
+
+        NAME: 'DeveloperOfferMediator',
+
+        VIEW_TYPE: 'DeveloperOfferView'
+    });
 
     /**
      * Developer Offers Mediator
@@ -52,7 +120,7 @@ define([
                 // onReset() would always pass and set the uri = null.
                 this.collection = this.defaultCollection.clone();
                 this.collection.on('reset', this.onReset, this);
-                this.view = new developer_offers_views.DeveloperOffersView({
+                this.view = new developer_offer_views.DeveloperOffersView({
                     collection: this.collection
                 });
 
@@ -106,6 +174,7 @@ define([
     });
 
     return {
+        DeveloperOfferMediator: DeveloperOfferMediator,
         DeveloperOffersMediator: DeveloperOffersMediator
     };
 });

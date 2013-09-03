@@ -12,6 +12,7 @@ define(/** @exports alert */[
     employer_views) {
 
     var register = function(facade) {
+        facade.registerMediator(new developer_mediators.DeveloperOfferMediator());
         facade.registerMediator(new developer_mediators.DeveloperOffersMediator());
         facade.registerMediator(new employer_mediators.EmployerOffersMediator());
     };

@@ -7,7 +7,8 @@ define([
     'events',
     'ui',
     'widget',
-    'text!./templates/offers.html'
+    'text!./templates/offers.html',
+    'text!./templates/offer.html'
 ], function(
     $,
     _,
@@ -17,7 +18,66 @@ define([
     events,
     ui,
     widget,
-    developer_offers_template) {
+    offers_template,
+    offer_template) {
+
+    /**
+     * Developer Offer Page View
+     * @constructor
+     * @param {Object} options
+     * @param {InterviewOffer} options.model InterviewOffer model
+     */
+    var DeveloperOfferView = core.view.View.extend({
+
+        contentSelector: '.developer-offer-container',
+
+        events: {
+        },
+
+        initialize: function(options) {
+            this.template =  _.template(offer_template);
+            this.model = options.model;
+            this.modelWithRelated = ['tenant', 'application__requisition'];
+            this.loader = new api.loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated }
+            ]);
+
+            //bind events
+            this.listenTo(this.loader, 'loaded', this.render);
+
+            //load data
+            this.loader.load();
+
+            //child views
+            this.gridView = null;
+            this.paginatorView = null;
+            this.initChildViews();
+        },
+
+        childViews: function() {
+            return [
+                this.gridView,
+                this.paginatorView];
+        },
+
+        initChildViews: function() {
+
+        },
+
+        classes: function() {
+            return ['developer-offer'];
+        },
+
+        render: function() {
+            if (this.loader.isLoaded()) {
+                this.$el.html(this.template());
+                this.$el.attr('class', this.classes().join(' '));
+                //this.append(this.gridView, this.contentSelector);
+                //this.append(this.paginatorView, this.contentSelector);
+            }
+            return this;
+        }
+    });
 
     /**
      * Offers Grid view.
@@ -146,7 +206,7 @@ define([
         },
 
         initialize: function(options) {
-            this.template =  _.template(developer_offers_template);
+            this.template =  _.template(offers_template);
             this.collection = options.collection;
             this.collectionWithRelated = ['tenant', 'application__requisition'];
             this.loader = new api.loader.ApiLoader([
@@ -212,6 +272,7 @@ define([
     });
 
     return {
+        DeveloperOfferView: DeveloperOfferView,
         DeveloperOffersView: DeveloperOffersView
     };
 });

@@ -31,6 +31,7 @@ define([
             'chat/:id(/)': 'chat',
             'chatsim/:id(/)': 'chatSimulation',
             'home(/)': 'home',
+            'offer/:id(/)': 'offer',
             'offers(/:query)(/)': 'offers',
             'profile(/)': 'profile',
             'profile/general(/)': 'profileGeneral',
@@ -183,6 +184,17 @@ define([
             require(['chat'], _.bind(function(chat) {
                 this.facade.trigger(notifications.VIEW_CREATE, {
                     type: chat.mediators.tlkpt.TalkingPointsMediator.VIEW_TYPE,
+                    options: {
+                        id: id
+                    }
+                });
+            }, this));
+        },
+
+        offer: function(id) {
+            require(['offer'], _.bind(function(offer) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: offer.mediators.developer.DeveloperOfferMediator.VIEW_TYPE,
                     options: {
                         id: id
                     }
