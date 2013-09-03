@@ -1,12 +1,92 @@
 <div class="row">
      <div class="span12">
          <div class="section-header">
-             <span>Offer Details</span>
+             <span><%= model.tenant.name %> <small><%= requisition.title %></small></span>
          </div>
      </div>
 </div>
 <div class="row">
-    <div class="span12">
-        <div class="developer-offer-container"></div>
+    <div class="span8">
+        <div class="developer-offer-details-container">
+            <div class="offer-overview">
+                <div class="row">
+                    <div class="span4">
+                        <label class="requisition-label">Employer</label>
+                        <span><%= model.tenant.name %></span>
+                    </div>
+                    <div class="span4">
+                        <label class="requisition-label">Position</label>
+                        <span><%= requisition.title %></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4">
+                        <label class="requisition-label">Location</label>
+                        <span><%= requisition.location %></span>
+                    </div>
+                    <div class="span4">
+                        <label class="requisition-label">Type</label>
+                        <span><%= requisition.position_type %></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4">
+                        <label class="requisition-label">Salary</label>
+                        <span><%= requisition.salary %></span>
+                    </div>
+                    <div class="span4">
+                        <label class="requisition-label">Equity</label>
+                        <% if(requisition.equity) { %>
+                            <span><%= requisition.equity %></span>
+                        <% } else { %>
+                            <span>No</span>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4">
+                        <label class="requisition-label">Telecommute</label>
+                        <span><%= requisition.telecommute ? 'Yes' : 'No' %></span>
+                    </div>
+                    <div class="span4">
+                        <label class="requisition-label">Relocation</label>
+                        <span><%= requisition.relocation ? 'Yes' : 'No' %></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span8">
+                    <div class="requisition-section requisition-wishlist">
+                        <div class="requisition-section-header">
+                            <span>Wishlist </span>
+                            <span class="requisition-expertise requisition-expert">Expert</span>
+                            <span class="requisition-expertise requisition-proficient">Proficient</span>
+                            <span class="requisition-expertise requisition-novice">Novice</span>
+                        </div>
+                        <div class="requisition-wishlist-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="span8">
+                    <div class="requisition-section requisition-description">
+                        <div class="requisition-section-header">Description</div>
+                        <p><%= requisition.description %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="span4">
+        <div class="developer-offer-actions-container">
+            <div class="well">
+                <h3>Offer</h3>
+                <p>Status: <%= model.status %></p>
+                <p>Expires <%= fmt.date(model.expires, 'MM/dd/yyyy') %></p>
+                <a class="btn btn-large btn-success accept-offer-btn">Accept</a>
+                <a class="btn btn-large btn-primary reject-offer-btn">Reject</a>
+            </div>
+        </div>
     </div>
 </div>

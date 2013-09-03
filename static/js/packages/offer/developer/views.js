@@ -29,7 +29,7 @@ define([
      */
     var DeveloperOfferView = core.view.View.extend({
 
-        contentSelector: '.developer-offer-container',
+        contentSelector: '.developer-offer-details-container',
 
         events: {
         },
@@ -37,7 +37,7 @@ define([
         initialize: function(options) {
             this.template =  _.template(offer_template);
             this.model = options.model;
-            this.modelWithRelated = ['tenant', 'application__requisition'];
+            this.modelWithRelated = ['tenant', 'application__requisition__requisition_technologies__technology'];
             this.loader = new api.loader.ApiLoader([
                 { instance: this.model, withRelated: this.modelWithRelated }
             ]);
@@ -49,19 +49,23 @@ define([
             this.loader.load();
 
             //child views
-            this.gridView = null;
-            this.paginatorView = null;
+            this.wishlistView = null;
             this.initChildViews();
         },
 
         childViews: function() {
             return [
-                this.gridView,
-                this.paginatorView];
+                this.wishlistView
+            ];
         },
 
         initChildViews: function() {
-
+            this.wishlistView = new widget.skill.views.SkillsView({
+                collection: this.model.
+                    get_application().
+                    get_requisition().
+                    get_requisition_technologies()
+            });
         },
 
         classes: function() {
@@ -70,10 +74,16 @@ define([
 
         render: function() {
             if (this.loader.isLoaded()) {
-                this.$el.html(this.template());
+                var context = {
+                    fmt: this.fmt,
+                    model: this.model.toJSON({
+                        withRelated: this.modelWithRelated
+                    }),
+                    requisition: this.model.get_application().get_requisition().toJSON()
+                };
+                this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
-                //this.append(this.gridView, this.contentSelector);
-                //this.append(this.paginatorView, this.contentSelector);
+                this.append(this.wishlistView, '.requisition-wishlist-container');
             }
             return this;
         }
