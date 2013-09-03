@@ -31,6 +31,7 @@ define([
             'chat/:id(/)': 'chat',
             'chatsim/:id(/)': 'chatSimulation',
             'home(/)': 'home',
+            'offers(/:query)(/)': 'offers',
             'profile(/)': 'profile',
             'profile/general(/)': 'profileGeneral',
             'profile/preferences(/)': 'profilePreferences',
@@ -189,6 +190,17 @@ define([
             }, this));
         },
 
+        offers: function(query) {
+            require(['offer'], _.bind(function(offer) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: offer.mediators.developer.DeveloperOffersMediator.VIEW_TYPE,
+                    options: {
+                        query: query
+                    }
+                });
+            }, this));
+        },
+
         placeholder: function() {
         }
     });
@@ -211,6 +223,13 @@ define([
                     break;
                 case 'DeveloperHomeView':
                     uri = 'home/';
+                    router.navigate(uri, {trigger: options.trigger});
+                    break;
+                case 'DeveloperOffersView':
+                    uri = 'offers';
+                    if(options.query) {
+                        uri += '/' + options.query;
+                    }
                     router.navigate(uri, {trigger: options.trigger});
                     break;
                 case 'DeveloperProfileView':
