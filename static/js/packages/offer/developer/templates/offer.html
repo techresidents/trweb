@@ -8,34 +8,34 @@
 <div class="row">
     <div class="span8">
         <div class="developer-offer-details-container">
-            <div class="offer-overview">
+            <div class="offer-section offer-overview">
                 <div class="row">
                     <div class="span4">
-                        <label class="requisition-label">Employer</label>
+                        <label class="offer-label">Employer</label>
                         <span><%= model.tenant.name %></span>
                     </div>
                     <div class="span4">
-                        <label class="requisition-label">Position</label>
+                        <label class="offer-label">Position</label>
                         <span><%= requisition.title %></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="span4">
-                        <label class="requisition-label">Location</label>
+                        <label class="offer-label">Location</label>
                         <span><%= requisition.location %></span>
                     </div>
                     <div class="span4">
-                        <label class="requisition-label">Type</label>
+                        <label class="offer-label">Type</label>
                         <span><%= requisition.position_type %></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="span4">
-                        <label class="requisition-label">Salary</label>
+                        <label class="offer-label">Salary</label>
                         <span><%= requisition.salary %></span>
                     </div>
                     <div class="span4">
-                        <label class="requisition-label">Equity</label>
+                        <label class="offer-label">Equity</label>
                         <% if(requisition.equity) { %>
                             <span><%= requisition.equity %></span>
                         <% } else { %>
@@ -45,33 +45,33 @@
                 </div>
                 <div class="row">
                     <div class="span4">
-                        <label class="requisition-label">Telecommute</label>
+                        <label class="offer-label">Telecommute</label>
                         <span><%= requisition.telecommute ? 'Yes' : 'No' %></span>
                     </div>
                     <div class="span4">
-                        <label class="requisition-label">Relocation</label>
+                        <label class="offer-label">Relocation</label>
                         <span><%= requisition.relocation ? 'Yes' : 'No' %></span>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="span8">
-                    <div class="requisition-section requisition-wishlist">
-                        <div class="requisition-section-header">
+                    <div class="offer-section offer-wishlist">
+                        <div class="offer-section-header">
                             <span>Wishlist </span>
-                            <span class="requisition-expertise requisition-expert">Expert</span>
-                            <span class="requisition-expertise requisition-proficient">Proficient</span>
-                            <span class="requisition-expertise requisition-novice">Novice</span>
+                            <span class="offer-expertise offer-expert">Expert</span>
+                            <span class="offer-expertise offer-proficient">Proficient</span>
+                            <span class="offer-expertise offer-novice">Novice</span>
                         </div>
-                        <div class="requisition-wishlist-container"></div>
+                        <div class="offer-wishlist-container"></div>
                     </div>
                 </div>
             </div>
 
             <div class="row">
                 <div class="span8">
-                    <div class="requisition-section requisition-description">
-                        <div class="requisition-section-header">Description</div>
+                    <div class="offer-section offer-description">
+                        <div class="offer-section-header">Description</div>
                         <p><%= requisition.description %></p>
                     </div>
                 </div>

@@ -344,23 +344,23 @@
 }
 
 
-.offer-overview {
+.offer-section {
     margin-bottom: 25px;
 }
-.requisition-section-header {
+.offer-section-header {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
     padding-bottom: 5px;
     border-bottom: 1px solid #dddddd;
 }
-.requisition-label {
+.offer-label {
     display: inline-block;
     color: #777777;
     width: 90px;
 }
 
-.requisition-expertise {
+.offer-expertise {
     font-size: 14px;
     font-weight: normal;
     color: #686868;
@@ -369,12 +369,12 @@
     padding: 3px 7px;
     margin-right: 5px;
 }
-.requisition-novice {
+.offer-novice {
     background-color: #F2DEDE;
 }
-.requisition-proficient {
+.offer-proficient {
     background-color: #D9EDF7;
 }
-.requisition-expert {
+.offer-expert {
     background-color: #DFF0D8;
 }

@@ -83,7 +83,7 @@ define([
                 };
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
-                this.append(this.wishlistView, '.requisition-wishlist-container');
+                this.append(this.wishlistView, '.offer-wishlist-container');
             }
             return this;
         }
