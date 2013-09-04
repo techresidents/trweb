@@ -24,7 +24,7 @@ DATABASES = {
 }
 
 #Allowed hosts
-ALLOWED_HOSTS = ['.techresidents.com', 'localdev']
+ALLOWED_HOSTS = ['.techresidents.com', 'localhost', 'localdev']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -75,6 +75,9 @@ STATIC_ROOT = os.path.join(os.path.dirname(__file__), 'static_collected')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
+#STATIC_01_URL = 'https://9d2ad1e33e5c2e3b782d-69c8d0e85694b472ba0a17f258f893e5.ssl.cf1.rackcdn.com/static/'
+#STATIC_02_URL = 'https://a1227b74ab04c30d4ec9-274a9a20a50dd87b75302ff0340ebf3a.ssl.cf1.rackcdn.com/static/'
+#STATIC_URL = STATIC_01_URL
 STATIC_URL = '/static/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
@@ -269,7 +272,7 @@ CLOUDFILES_TIMEOUT = 30
 CLOUDFILES_RETRIES = 2
 CLOUDFILES_CREATE_CONTAINER = False
 CLOUDFILES_DEBUG_LEVEL = 0
-CLOUDFILES_STATIC_CONTAINER_NAME = "trdev_static_test"
+CLOUDFILES_STATIC_CONTAINER_NAME = "trdev_static_01"
 
 #Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
