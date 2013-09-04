@@ -37,7 +37,7 @@
         {% endif %}
     </script>
 
-    <script data-main="apps/developer/src/main" src="{% static "js/3ps/require/require-min.js" %}"></script>
+    <script data-main="apps/developer/src/main{{app_md5_ext}}" src="{% static "js/3ps/require/require-min.js" %}"></script>
 
 {% endblock %}
 

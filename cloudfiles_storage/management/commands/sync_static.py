@@ -105,6 +105,7 @@ class Command(NoArgsCommand):
         #translate glob patterns to regular expressions
         includes_pattern = r"|".join([fnmatch.translate(x) for x in includes])
         excludes_pattern = r"|".join([fnmatch.translate(x) for x in excludes]) or r"$."
+        hash_pattern = r".*\.[0-9a-f]{12}\..*"
         matches = []
 
         for root, dirs, files in os.walk(prefix, topdown=True):
@@ -119,16 +120,35 @@ class Command(NoArgsCommand):
             files = [f for f in files if not re.match(excludes_pattern, f)]
             files = [f for f in files if re.match(includes_pattern, f.split(prefix)[1])]
 
+            #only allow files with md5 hash preceeding file extension
+            #to avoid issues where non-hashed files are uploaded
+            #to the cdn and cached and later modified. These modifications
+            #will not be visible until the CDN ttl elapses and
+            #will cause issues.
+            files = [f for f in files if re.match(hash_pattern, f)]
+
             for fname in files:
                 matches.append(fname)
         return matches
 
     def sync(self, sync_paths):
         "Sync files in paths dict to Cloudfiles"
+        container = self.cloudfiles_storage.container
+
         for path in sync_paths.values():
-            print 'Syncing %s' % path["relative_path"]
-            with self.cloudfiles_storage.open(path["relative_path"], "w") as f:
-                f.write(open(path["absolute_path"], "r"))
+            relative_path = path["relative_path"]
+            ext = os.path.splitext(relative_path)[1]
+
+            #set CORS headers for embedded fonts to ensure
+            #everything works properly with firefox which
+            #will not allow a font to be used without it.
+            cors = None
+            if ext.lower() in ['.eot', '.svg', '.ttf', '.woff']:
+                cors = {"Access-Control-Allow-Origin": "*" }
+            
+            print 'Syncing %s' % relative_path
+            obj = container.create_object(relative_path, cors=cors)
+            obj.write(open(path["absolute_path"], "r"))
     
     def sync_archive(self, sync_paths, archive="sync_static.tar.gz"):
         """Sync files in paths dict to Cloudfiles using an archive

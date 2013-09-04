@@ -269,7 +269,7 @@ CLOUDFILES_TIMEOUT = 30
 CLOUDFILES_RETRIES = 2
 CLOUDFILES_CREATE_CONTAINER = False
 CLOUDFILES_DEBUG_LEVEL = 0
-CLOUDFILES_STATIC_CONTAINER_NAME = "trdev_static_files"
+CLOUDFILES_STATIC_CONTAINER_NAME = "trdev_static_test"
 
 #Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
