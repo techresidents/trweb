@@ -461,17 +461,14 @@ define([
      * @constructor
      * @param {Object} options
      * @param {InterviewOffer} options.model InterviewOffer model
+     * @param {Function} options.onOk Function to invoke on Ok
      * @param {String} [options.message] message to display
-     * @classdesc
-     *  This view is designed to be used as a base class.
-     *  It displays interview offer details but leaves it to the
-     *  derived to specify the behavior of onOk().
      */
     var InterviewOfferDetailsModal = core.view.View.extend({
 
         initialize: function(options) {
-            console.log('called super');
             this.model = options.model;
+            this.onOk = options.onOk;
             this.message = options.message || '';
             this.template =  _.template(interview_offer_details_template);
             this.modelWithRelated = ['tenant', 'application__requisition'];
@@ -500,10 +497,6 @@ define([
             return this;
         },
 
-        onOk: function() {
-            return true;
-        },
-
         onCancel: function() {
             return true;
         },
@@ -526,25 +519,33 @@ define([
      * @constructor
      * @param {Object} options
      * @param {InterviewOffer} options.model InterviewOffer model
-     * @classdesc
-     * This view is designed to be used within a ModalView.
-     * It specifies the view to display within the modal,
-     * which modal buttons to show, and the behavior
-     * when the modal buttons are clicked.
      */
-    var AcceptInterviewOfferModal = InterviewOfferDetailsModal.extend({
+    var AcceptInterviewOfferModal = ui.modal.views.ModalView.extend({
 
         initialize: function(options) {
             options = _.extend({
-                message: 'Upon acceptance, you\'ll receive an email from ' +
+                title: 'Accept Interview Offer',
+                viewOrFactory: new InterviewOfferDetailsModal({
+                    model: options.model,
+                    message: 'Upon acceptance, you\'ll receive an email from ' +
                     'Tech Residents putting you in touch with the employer ' +
-                    'so you can schedule your interview.'
+                    'so you can schedule your interview.',
+                    onOk: function() {
+                        this.triggerEvent(events.ACCEPT_INTERVIEW_OFFER, {
+                            model: this.model,
+                            application: this.model.get_application(),
+                            onSuccess: _.bind(this.onAcceptSuccess, this, options),
+                            onError: _.bind(this.onAcceptError, this, options)
+                        });
+                        return true;
+                    }
+                })
             }, options);
             AcceptInterviewOfferModal.__super__.initialize.call(this, options);
         },
 
-        onOk: function() {
-            return true;
+        onAcceptSuccess: function(model, response) {
+            this.destroy();
         }
     });
 
@@ -553,26 +554,25 @@ define([
      * @constructor
      * @param {Object} options
      * @param {InterviewOffer} options.model InterviewOffer model
-     * @classdesc
-     * This view is designed to be used within a ModalView.
-     * It specifies the view to display within the modal,
-     * which modal buttons to show, and the behavior
-     * when the modal buttons are clicked.
      */
-    var RejectInterviewOfferModal = InterviewOfferDetailsModal.extend({
+    var RejectInterviewOfferModal = ui.modal.views.ModalView.extend({
 
         initialize: function(options) {
-            AcceptInterviewOfferModal.__super__.initialize.call(this, options);
+            options = _.extend({
+                title: 'Reject Interview Offer',
+                viewOrFactory: new InterviewOfferDetailsModal({
+                    model: options.model,
+                    onOk: function() {
+                        return true;
+                    }
+                })
+            }, options);
+            RejectInterviewOfferModal.__super__.initialize.call(this, options);
         },
 
         onOk: function() {
             return true;
         }
-    });
-
-    AcceptInterviewOfferModal.Factory = core.factory.Factory(AcceptInterviewOfferModal, {
-        title: 'Accept Interview Offer',
-
     });
 
     return {

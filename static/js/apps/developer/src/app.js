@@ -346,6 +346,11 @@ define([
         notifications.UPDATE_DEVELOPER_PROFILE;
     EventNotificationMap[events.UPDATE_DEVELOPER_PREFERENCES] =
         notifications.UPDATE_DEVELOPER_PREFERENCES;
+    /* INTERVIEW OFFER EVENTS */
+    EventNotificationMap[events.ACCEPT_INTERVIEW_OFFER] =
+        notifications.ACCEPT_INTERVIEW_OFFER;
+    EventNotificationMap[events.REJECT_INTERVIEW_OFFER] =
+        notifications.REJECT_INTERVIEW_OFFER;
 
     /**
      * App Mediator
@@ -496,10 +501,10 @@ define([
                 ctrl.commands.applicant.MakeInterviewOffer);
             this.registerCommand(notifications.RESCIND_INTERVIEW_OFFER,
                 ctrl.commands.applicant.RescindInterviewOffer);
-            this.registerCommand(notifications.SHOW_MAKE_INTERVIEW_OFFER,
-                ctrl.commands.applicant.ShowMakeInterviewOffer);
-            this.registerCommand(notifications.SHOW_RESCIND_INTERVIEW_OFFER,
-                ctrl.commands.applicant.ShowRescindInterviewOffer);
+            this.registerCommand(notifications.ACCEPT_INTERVIEW_OFFER,
+                ctrl.commands.offer.AcceptInterviewOffer);
+            this.registerCommand(notifications.REJECT_INTERVIEW_OFFER,
+                ctrl.commands.offer.RejectInterviewOffer);
             /* DEVELOPER NOTE COMMANDS */
             this.registerCommand(notifications.TAKE_NOTE,
                 ctrl.commands.user.TakeNote);

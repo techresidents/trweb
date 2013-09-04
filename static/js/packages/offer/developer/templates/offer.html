@@ -82,7 +82,7 @@
         <div class="developer-offer-actions-container">
             <div class="well">
                 <h3>Offer: <%= model.status.charAt(0).toUpperCase() + model.status.slice(1).toLowerCase() %></h3>
-                <p>Type: <%= interviewType %> Interview</p>
+                <p><%= interviewType %> Interview</p>
                 <p>Offer expires on <%= fmt.date(model.expires, 'MM/dd/yyyy') %></p>
                 <a class="btn btn-large btn-success accept-offer-btn">Accept</a>
                 <a class="btn btn-large btn-primary reject-offer-btn">Reject</a>

@@ -95,27 +95,16 @@ define([
         },
 
         onAccept: function() {
-            // Since we are showing a modal view, we don't have to
-            // treat like a typical child view.  The modal view will destroy
-            // itself when it loses focus.
-            var modalOptions = {
-                title: 'Accept Interview Offer',
-                viewOrFactory: new widget.offer.views.AcceptInterviewOfferModal({
-                    model: this.model
-                })
-            };
-            var modalView = new ui.modal.views.ModalView(modalOptions);
+            var modalView = new widget.offer.views.AcceptInterviewOfferModal({
+                model: this.model
+            });
             this.append(modalView);
         },
 
         onReject: function() {
-            var modalOptions = {
-                title: 'Reject Interview Offer',
-                viewOrFactory: new widget.offer.views.RejectInterviewOfferModal({
-                    model: this.model
-                })
-            };
-            var modalView = new ui.modal.views.ModalView(modalOptions);
+            var modalView = new widget.offer.views.RejectInterviewOfferModal({
+                model: this.model
+            });
             this.append(modalView);
         },
 
