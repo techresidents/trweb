@@ -378,3 +378,17 @@
 .offer-expert {
     background-color: #DFF0D8;
 }
+
+.interview-offer-details-modal .offer-details-modal-label {
+    display: inline-block;
+    color: #777777;
+    width: 160px;
+    text-align: right;
+    margin-right: 25px;
+    margin-bottom: 10px;
+}
+.interview-offer-details-modal .offer-details-modal-instructions {
+    margin-top: 10px;
+    padding-left: 14px;
+    padding-right: 45px;
+}

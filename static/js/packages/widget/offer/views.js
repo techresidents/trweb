@@ -7,7 +7,8 @@ define([
     'ui',
     'events',
     '../application/handlers',
-    'text!./templates/interview_offer_brief.html'
+    'text!./templates/interview_offer_brief.html',
+    'text!./templates/interview_offer_details.html'
 ], function(
     $,
     Backbone,
@@ -17,7 +18,8 @@ define([
     ui,
     events,
     application_handlers,
-    interview_offer_brief_template) {
+    interview_offer_brief_template,
+    interview_offer_details_template) {
 
     var InterviewOfferBriefView = core.view.View.extend({
 
@@ -454,10 +456,131 @@ define([
         }
     });
 
+    /**
+     * InterviewOfferDetailsModal View
+     * @constructor
+     * @param {Object} options
+     * @param {InterviewOffer} options.model InterviewOffer model
+     * @param {String} [options.message] message to display
+     * @classdesc
+     *  This view is designed to be used as a base class.
+     *  It displays interview offer details but leaves it to the
+     *  derived to specify the behavior of onOk().
+     */
+    var InterviewOfferDetailsModal = core.view.View.extend({
+
+        initialize: function(options) {
+            console.log('called super');
+            this.model = options.model;
+            this.message = options.message || '';
+            this.template =  _.template(interview_offer_details_template);
+            this.modelWithRelated = ['tenant', 'application__requisition'];
+            this.loader = new api.loader.ApiLoader([
+                { instance: this.model, withRelated: this.modelWithRelated }
+            ]);
+
+            //bind events
+            this.listenTo(this.loader, 'loaded', this.render);
+
+            //load data
+            this.loader.load();
+        },
+
+        render: function() {
+            if (this.loader.isLoaded()) {
+                var context = {
+                    message: this.message,
+                    model: this.model.toJSON({
+                        withRelated: this.modelWithRelated
+                    }),
+                    type: this._formatInterviewTypeString()
+                };
+                this.$el.html(this.template(context));
+            }
+            return this;
+        },
+
+        onOk: function() {
+            return true;
+        },
+
+        onCancel: function() {
+            return true;
+        },
+
+        onClose: function() {
+            return true;
+        },
+
+        _formatInterviewTypeString: function() {
+            var interviewType = 'In-house';
+            if (this.model.get_type() === 'PHONE') {
+                interviewType = 'Phone';
+            }
+            return interviewType;
+        }
+    });
+
+    /**
+     * AcceptInterviewOfferModal View
+     * @constructor
+     * @param {Object} options
+     * @param {InterviewOffer} options.model InterviewOffer model
+     * @classdesc
+     * This view is designed to be used within a ModalView.
+     * It specifies the view to display within the modal,
+     * which modal buttons to show, and the behavior
+     * when the modal buttons are clicked.
+     */
+    var AcceptInterviewOfferModal = InterviewOfferDetailsModal.extend({
+
+        initialize: function(options) {
+            options = _.extend({
+                message: 'Upon acceptance, you\'ll receive an email from ' +
+                    'Tech Residents putting you in touch with the employer ' +
+                    'so you can schedule your interview.'
+            }, options);
+            AcceptInterviewOfferModal.__super__.initialize.call(this, options);
+        },
+
+        onOk: function() {
+            return true;
+        }
+    });
+
+    /**
+     * RejectInterviewOfferModal View
+     * @constructor
+     * @param {Object} options
+     * @param {InterviewOffer} options.model InterviewOffer model
+     * @classdesc
+     * This view is designed to be used within a ModalView.
+     * It specifies the view to display within the modal,
+     * which modal buttons to show, and the behavior
+     * when the modal buttons are clicked.
+     */
+    var RejectInterviewOfferModal = InterviewOfferDetailsModal.extend({
+
+        initialize: function(options) {
+            AcceptInterviewOfferModal.__super__.initialize.call(this, options);
+        },
+
+        onOk: function() {
+            return true;
+        }
+    });
+
+    AcceptInterviewOfferModal.Factory = core.factory.Factory(AcceptInterviewOfferModal, {
+        title: 'Accept Interview Offer',
+
+    });
+
     return {
         InterviewOfferBriefView: InterviewOfferBriefView,
         InterviewOfferBriefsView: InterviewOfferBriefsView,
         MakeInterviewOfferModal: MakeInterviewOfferModal,
-        RescindInterviewOfferModal: RescindInterviewOfferModal
+        RescindInterviewOfferModal: RescindInterviewOfferModal,
+        AcceptInterviewOfferModal: AcceptInterviewOfferModal,
+        RejectInterviewOfferModal: RejectInterviewOfferModal
     };
 });

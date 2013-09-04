@@ -32,6 +32,8 @@ define([
         contentSelector: '.developer-offer-details-container',
 
         events: {
+            'click .accept-offer-btn': 'onAccept',
+            'click .reject-offer-btn': 'onReject'
         },
 
         initialize: function(options) {
@@ -79,13 +81,50 @@ define([
                     model: this.model.toJSON({
                         withRelated: this.modelWithRelated
                     }),
-                    requisition: this.model.get_application().get_requisition().toJSON()
+                    requisition: this.model.
+                        get_application().
+                        get_requisition().
+                        toJSON(),
+                    interviewType: this._formatInterviewTypeString()
                 };
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
                 this.append(this.wishlistView, '.offer-wishlist-container');
             }
             return this;
+        },
+
+        onAccept: function() {
+            // Since we are showing a modal view, we don't have to
+            // treat like a typical child view.  The modal view will destroy
+            // itself when it loses focus.
+            var modalOptions = {
+                title: 'Accept Interview Offer',
+                viewOrFactory: new widget.offer.views.AcceptInterviewOfferModal({
+                    model: this.model
+                })
+            };
+            var modalView = new ui.modal.views.ModalView(modalOptions);
+            this.append(modalView);
+        },
+
+        onReject: function() {
+            var modalOptions = {
+                title: 'Reject Interview Offer',
+                viewOrFactory: new widget.offer.views.RejectInterviewOfferModal({
+                    model: this.model
+                })
+            };
+            var modalView = new ui.modal.views.ModalView(modalOptions);
+            this.append(modalView);
+        },
+
+        _formatInterviewTypeString: function() {
+            var interviewType = 'In-house';
+            if (this.model.get_type() === 'PHONE') {
+                interviewType = 'Phone';
+            }
+            return interviewType;
         }
     });
 
@@ -137,7 +176,7 @@ define([
 
         requisitionColumn: function() {
             return {
-                column: 'Requisition',
+                column: 'Position',
                 headerCellView: new ui.grid.views.GridHeaderCellView.Factory({
                     sort: 'application__requisition__title'
                 }),
