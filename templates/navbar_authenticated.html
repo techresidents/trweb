@@ -33,10 +33,13 @@
     <a class="brand-beta" href="{% url 'employer.views.employer' %}home/">beta</a>
     <ul class="nav">
         <li>
-            <a href="{% url 'employer.views.employer' %}search/">Talent Search</a>
+            <a href="{% url 'employer.views.employer' %}search/">Search</a>
         </li>
         <li>
-            <a href="{% url 'employer.views.employer' %}tracker/">Applicant Tracker</a>
+            <a href="{% url 'employer.views.employer' %}tracker/">Tracker</a>
+        </li>
+        <li>
+            <a href="{% url 'employer.views.employer' %}offers/">Offers</a>
         </li>
         <li>
             <a href="{% url 'employer.views.employer' %}requisition/list/">Requisitions</a>
@@ -49,6 +52,7 @@
                 <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
+                <li><a href="{% url 'employer.views.employer' %}settings/account/">Settings</a></li>
                 <li><a href="{% url 'feedback.views.feedback' %}" target="_blank">Feedback</a></li>
                 <li class="divider"></li>
                 <li><a href="{% url 'accounts.views.logout' %}">Logout</a></li>

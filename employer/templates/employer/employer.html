@@ -26,7 +26,7 @@
     <script>
         {% if TR_DIST %}
             var require = {
-                baseUrl: '/static/js/apps/employer',
+                baseUrl: '{% static "/static/js/apps/employer/" %}',
                 urlArgs: '{{VERSION}}'
             };
         {% else %}
@@ -37,7 +37,7 @@
         {% endif %}
     </script>
 
-    <script data-main="apps/employer/src/main" src="{% static "js/3ps/require/require-min.js" %}"></script>
+    <script data-main="apps/employer/src/main{{app_md5_ext}}" src="{% static "js/3ps/require/require-min.js" %}"></script>
 
 {% endblock %}
 

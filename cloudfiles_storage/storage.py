@@ -4,15 +4,13 @@ import mimetypes
 import os
 import threading
 
-import cloudfiles
-from cloudfiles.errors import NoSuchObject, NoSuchContainer
-
 from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import Storage
 from django.contrib.staticfiles.storage import CachedFilesMixin
 
-from techresidents_web.cloudfiles_storage.auth import CloudfilesAuthenticator
+from trrackspace.services.cloudfiles.factory import CloudfilesClientFactory
+from trrackspace.services.cloudfiles.errors import NoSuchObject, NoSuchContainer
 
 class StorageFileMode(object):
     """Class representation for file modes.
@@ -225,6 +223,18 @@ class CloudfilesStorageFile(File):
             raise IOError(str(error))
         return result
 
+    def chunks(self, chunk_size=None):
+        """Read yielding chunk_size chunks of data
+        
+        Args:
+            chunk_size: optional chunk size
+        Returns:
+            Generator yielding chunk_size chunks of data
+        """
+        chunk_size = chunk_size or self.DEFAULT_CHUNK_SIZE
+        for chunk in self.object.chunks(chunk_size):
+            yield chunk
+
     def write(self, data):
         """Write data to file.
 
@@ -303,10 +313,12 @@ class CloudfilesStorage(Storage):
     CLOUDFILES_API_KEY:  Rackspace api key (required if password not provided)
     CLOUDFILES_PASSWORD: Rackspace password (required if api_key not provided)
     CLOUDFILES_LOCATION_BASE: optional location within container to store files
-    CLOUDFILES_SERVICENET: boolean to use internal Rackspace network
+    CLOUDFILES_SERVICENET: optional boolean to use internal Rackspace network
     CLOUDFILES_TIMEOUT: optional timeout in seconds
+    CLOUDFILES_RETRIES: optoinal number of times to try API request before failing
     CLOUDFILES_CREATE_CONTAINER: optional boolean indicating that the container
         should be created if it does not exist.
+    CLOUDFILES_DEBUG_LEVEL: optional debug level (0 is no debug info)
     """
     
     #Thread local storage for cloudfiles.Connection object.
@@ -320,7 +332,9 @@ class CloudfilesStorage(Storage):
             container_name=None,
             servicenet=None,
             timeout=None,
-            create_container=None):
+            retries=2,
+            create_container=None,
+            debug_level=0):
         """CloudfilesStorage constructor.
 
         Args:
@@ -339,6 +353,8 @@ class CloudfilesStorage(Storage):
                 on a Rackspace server, since it will prevent
                 charges from being incurred.
             timeout: timeout in seconds.
+            retries: number of times to try API request before failing
+            debug_level: debug level (0 is no debug info)
         """
         self.username = username or settings.CLOUDFILES_USERNAME
         self.api_key = api_key or getattr(settings, "CLOUDFILES_API_KEY", None)
@@ -347,7 +363,9 @@ class CloudfilesStorage(Storage):
         self.container_name = container_name or settings.CLOUDFILES_CONTAINER_NAME
         self.servicenet = servicenet or getattr(settings, "CLOUDFILES_SERVICENET")
         self.timeout = timeout or getattr(settings, "CLOUDFILES_TIMEOUT", 5)
+        self.retries = retries or getattr(settings, "CLOUDFILES_RETRIES", 2)
         self.create_container = create_container or getattr(settings, "CLOUDFILES_CREATE_CONTAINER", False)
+        self.debug_level = debug_level or getattr(settings, "CLOUDFILES_DEBUG_LEVEL", 0)
         
         #normalize location
         if self.location_base:
@@ -360,11 +378,14 @@ class CloudfilesStorage(Storage):
         #Replace it with an authenticator that will do api-key
         #or password based authentication depending on which
         #is provided.
-        self.authenticator = CloudfilesAuthenticator(
+        self.cloudfiles_client_factory = CloudfilesClientFactory(
                 username=self.username,
                 api_key=self.api_key,
                 password=self.password,
-                timeout=self.timeout)
+                timeout=self.timeout,
+                retries=self.retries,
+                debug_level=self.debug_level,
+                servicenet=self.servicenet)
     
     def _name_to_location(self, name):
         """Convert relative filename to container location.
@@ -381,21 +402,16 @@ class CloudfilesStorage(Storage):
         return result
 
     @property
-    def connection(self):
-        """Get threadlocal cloudfiles Connection.
+    def client(self):
+        """Get threadlocal cloudfiles client.
 
         Returns:
-            threadlocal cloudfiles.Connection object.
+            threadlocal CloudfilesClient object.
         """
-        if not getattr(self.threadlocal, "connection", None):
-            connection = cloudfiles.Connection(
-                    username=self.username,
-                    api_key=self.api_key,
-                    timeout=self.timeout,
-                    servicenet=self.servicenet,
-                    auth=self.authenticator)
-            self.threadlocal.connection = connection
-        return self.threadlocal.connection
+        if not getattr(self.threadlocal, "client", None):
+            client = self.cloudfiles_client_factory.create()
+            self.threadlocal.client = client
+        return self.threadlocal.client
 
     @property
     def container(self):
@@ -406,13 +422,11 @@ class CloudfilesStorage(Storage):
         """
         if not getattr(self.threadlocal, "container", None):
             try:
-                container = self.connection.get_container(
-                        container_name=self.container_name)
+                container = self.client.get_container(self.container_name)
             except NoSuchContainer:
                 if self.create_container:
-                    container = self.connection.create_container(
-                            container_name=self.container_name)
-                    container.make_public()
+                    container = self.client.create_container(self.container_name)
+                    container.enable_cdn()
                 else:
                     raise
             self.threadlocal.container = container
@@ -439,7 +453,7 @@ class CloudfilesStorage(Storage):
         path_length = len(path)
 
         
-        objects = self.container.list_objects(prefix=path, delimiter="/")
+        objects = self.container.list(prefix=path, delimiter="/")
 
         for entry in objects:
             if entry.endswith("/"):
@@ -553,9 +567,9 @@ class CloudfilesStorage(Storage):
 
         result = None
 
-        if self.container.is_public():
+        if self.container.cdn_enabled:
             location = self._name_to_location(name)
-            container_uri = self.container.public_uri()
+            container_uri = self.container.cdn_uri
             result = "%s/%s" % (container_uri, location)
 
         return result
@@ -588,8 +602,8 @@ class CloudfilesStaticStorage(CloudfilesStorage):
         Args:
             Same as CloudfilesStorage.
         """
-        if "location_base" not in kwargs:
-            kwargs["location_base"] = settings.STATIC_URL
+        #if "location_base" not in kwargs:
+        #    kwargs["location_base"] = settings.STATIC_URL
 
         if "container_name" not in kwargs:
             kwargs["container_name"] = settings.CLOUDFILES_STATIC_CONTAINER_NAME
@@ -606,4 +620,25 @@ class CloudfilesCachedStaticStorage(CachedFilesMixin, CloudfilesStaticStorage):
 
     CLOUDFILES_STATIC_CONTAINER_NAME: Rackspace container name
     """
-    pass
+
+    def file_hash(self, name, content=None):
+        """Return hash of the file with given name and content.
+
+        Args:            
+            name: file name
+            content: django storage File object
+        Returns:
+            first 12 bytes of the md5 hash of content
+        """
+        result = None
+
+        #if content is a CloudfilesStorageFile see if we can
+        #use the etag returned from the HEAD request and 
+        #avoid an additional GET to read the data.
+        if content and isinstance(content, CloudfilesStorageFile):
+            storage_object = content.object
+            if storage_object and storage_object.etag:
+                result = storage_object.etag[:12]
+        if result is None:
+            result = super(CloudfilesCachedStaticStorage, self).file_hash(name, content)
+        return result

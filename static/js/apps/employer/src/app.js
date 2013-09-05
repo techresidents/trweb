@@ -30,16 +30,18 @@ define([
      */
     var AppRouter = Backbone.Router.extend({
         routes: {
-            'home(/)': 'home',
             'application/:id(/)': 'application',
+            'home(/)': 'home',
+            'offers(/:query)(/)': 'offers',
             'playback/:id(/)': 'playback',
-            'tracker(/:query)(/)': 'tracker',
-            'user/:id(/)': 'user',
-            'search(/:query)(/)': 'search',
             'requisition/create(/)': 'createRequisition',
             'requisition/view/:id(/)': 'readRequisition',
             'requisition/edit/:id(/)': 'editRequisition',
             'requisition/list(/:query)(/)': 'listRequisition',
+            'search(/:query)(/)': 'search',
+            'settings/account(/)': 'settingsAccount',
+            'tracker(/:query)(/)': 'tracker',
+            'user/:id(/)': 'user',
             '*actions': 'search'
         },
         
@@ -163,7 +165,28 @@ define([
                     }
                 });
             }, this));
-        }
+        },
+
+        settingsAccount: function() {
+            require(['settings'], _.bind(function(settings) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: settings.mediators.employer.EmployerSettingsMediator.VIEW_TYPE,
+                    options: {
+                    }
+                });
+            }, this));
+        },
+
+        offers: function(query) {
+            require(['offer'], _.bind(function(offer) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: offer.mediators.employer.EmployerOffersMediator.VIEW_TYPE,
+                    options: {
+                        query: query
+                    }
+                });
+            }, this));
+        },
     });
 
     /**
@@ -187,6 +210,13 @@ define([
                     break;
                 case 'TrackerView':
                     uri = 'tracker';
+                    if(options.query) {
+                        uri += '/' + options.query;
+                    }
+                    router.navigate(uri, {trigger: options.trigger});
+                    break;
+                case 'EmployerOffersView':
+                    uri = 'offers';
                     if(options.query) {
                         uri += '/' + options.query;
                     }
@@ -311,6 +341,9 @@ define([
     /* REQUISITION EVENTS */
     EventNotificationMap[events.SAVE_REQUISITION] =
         notifications.SAVE_REQUISITION;
+    /* PROFILE EVENTS */
+    EventNotificationMap[events.UPDATE_USER] =
+        notifications.UPDATE_USER;
 
     /**
      * App Mediator
@@ -469,6 +502,9 @@ define([
                 ctrl.commands.requisition.UpdateRequisitionTechnologies);
             this.registerCommand(notifications.SAVE_REQUISITION,
                 ctrl.commands.requisition.SaveRequisition);
+            /* PROFILE COMMANDS */
+            this.registerCommand(notifications.UPDATE_USER,
+                ctrl.commands.profile.UpdateUser);
         },
         
         /**
