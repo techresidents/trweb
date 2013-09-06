@@ -24,7 +24,7 @@ define([
          */
         asyncCallbackArgs: ['model', 'response'],
 
-        // Shown since we don't specify an onError callback
+        // Shown if when no onError callback is provided
         defaultErrorMessage: 'Unexpected error. Failed to accept offer. Please try again.',
 
         /**
@@ -66,7 +66,7 @@ define([
      * RejectInterviewOffer constructor
      * @constructor
      * @classdesc
-     * Accept an interview offer
+     * Reject an interview offer
      */
     var RejectInterviewOffer = core.command.AsyncCommand.extend({
 
@@ -75,7 +75,7 @@ define([
          */
         asyncCallbackArgs: ['model', 'response'],
 
-        // Shown since we don't specify an onError callback
+        // Shown if when no onError callback is provided
         defaultErrorMessage: 'Unexpected error. Failed to reject offer. Please try again.',
 
         /**

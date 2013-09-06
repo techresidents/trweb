@@ -523,19 +523,19 @@ define([
     var AcceptInterviewOfferModal = ui.modal.views.ModalView.extend({
 
         initialize: function(options) {
+            var that = this;
             options = _.extend({
                 title: 'Accept Interview Offer',
                 viewOrFactory: new InterviewOfferDetailsModal({
                     model: options.model,
-                    message: 'Upon acceptance, you\'ll receive an email from ' +
+                    message: 'Upon acceptance you\'ll receive an email from ' +
                     'Tech Residents putting you in touch with the employer ' +
                     'so you can schedule your interview.',
                     onOk: function() {
                         this.triggerEvent(events.ACCEPT_INTERVIEW_OFFER, {
                             model: this.model,
                             application: this.model.get_application(),
-                            onSuccess: _.bind(this.onAcceptSuccess, this, options),
-                            onError: _.bind(this.onAcceptError, this, options)
+                            onSuccess: _.bind(that.onAcceptSuccess, this, options)
                         });
                         return true;
                     }
@@ -563,6 +563,11 @@ define([
                 viewOrFactory: new InterviewOfferDetailsModal({
                     model: options.model,
                     onOk: function() {
+                        this.triggerEvent(events.REJECT_INTERVIEW_OFFER, {
+                            model: this.model,
+                            application: this.model.get_application(),
+                            onSuccess: _.bind(that.onRejectSuccess, this, options)
+                        });
                         return true;
                     }
                 })
@@ -570,8 +575,8 @@ define([
             RejectInterviewOfferModal.__super__.initialize.call(this, options);
         },
 
-        onOk: function() {
-            return true;
+        onRejectSuccess: function(model, response) {
+            this.destroy();
         }
     });
 

@@ -1,7 +1,7 @@
 <div class="row">
      <div class="span12">
          <div class="section-header">
-             <span>Interview Offer</span>
+             <span><%= interviewType %> Interview Offer</span>
          </div>
      </div>
 </div>
@@ -81,11 +81,18 @@
     <div class="span4">
         <div class="developer-offer-actions-container">
             <div class="well">
-                <h3>Offer: <%= model.status.charAt(0).toUpperCase() + model.status.slice(1).toLowerCase() %></h3>
-                <p><%= interviewType %> Interview</p>
-                <p>Offer expires on <%= fmt.date(model.expires, 'MM/dd/yyyy') %></p>
-                <a class="btn btn-large btn-success accept-offer-btn">Accept</a>
-                <a class="btn btn-large btn-primary reject-offer-btn">Reject</a>
+                <h3>Status: <%= model.status.charAt(0).toUpperCase() + model.status.slice(1).toLowerCase() %></h3>
+                <% if(model.status.toUpperCase() === 'PENDING') { %>
+                    <p>Offer expires on <%= fmt.date(model.expires, 'MM/dd/yyyy') %></p>
+                <% } %>
+                <% if(model.status.toUpperCase() === 'ACCEPTED') { %>
+                    <p>You'll receive an email from Tech Residents putting you in touch with the employer so you can schedule your interview.</p>
+                <% } %>
+                <% if(model.status.toUpperCase() === 'PENDING') { %>
+                    <a class="btn btn-large btn-success accept-offer-btn">Accept</a>
+                    <a class="btn btn-large btn-primary reject-offer-btn">Reject</a>
+                <% } %>
+
             </div>
         </div>
     </div>

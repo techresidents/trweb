@@ -46,6 +46,7 @@ define([
 
             //bind events
             this.listenTo(this.loader, 'loaded', this.render);
+            this.listenTo(this.model, 'change', this.render);
 
             //load data
             this.loader.load();
@@ -109,7 +110,7 @@ define([
         },
 
         _formatInterviewTypeString: function() {
-            var interviewType = 'In-house';
+            var interviewType = 'In-House';
             if (this.model.get_type() === 'PHONE') {
                 interviewType = 'Phone';
             }
