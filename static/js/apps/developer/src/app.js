@@ -349,8 +349,8 @@ define([
     /* INTERVIEW OFFER EVENTS */
     EventNotificationMap[events.ACCEPT_INTERVIEW_OFFER] =
         notifications.ACCEPT_INTERVIEW_OFFER;
-    EventNotificationMap[events.REJECT_INTERVIEW_OFFER] =
-        notifications.REJECT_INTERVIEW_OFFER;
+    EventNotificationMap[events.DECLINE_INTERVIEW_OFFER] =
+        notifications.DECLINE_INTERVIEW_OFFER;
 
     /**
      * App Mediator
@@ -503,8 +503,8 @@ define([
                 ctrl.commands.applicant.RescindInterviewOffer);
             this.registerCommand(notifications.ACCEPT_INTERVIEW_OFFER,
                 ctrl.commands.offer.AcceptInterviewOffer);
-            this.registerCommand(notifications.REJECT_INTERVIEW_OFFER,
-                ctrl.commands.offer.RejectInterviewOffer);
+            this.registerCommand(notifications.DECLINE_INTERVIEW_OFFER,
+                ctrl.commands.offer.DeclineInterviewOffer);
             /* DEVELOPER NOTE COMMANDS */
             this.registerCommand(notifications.TAKE_NOTE,
                 ctrl.commands.user.TakeNote);

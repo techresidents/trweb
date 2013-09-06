@@ -21,7 +21,7 @@ define(/** @exports events */[
         MAKE_INTERVIEW_OFFER: 'make_interview_offer',
         RESCIND_INTERVIEW_OFFER: 'rescind_interview_offer',
         ACCEPT_INTERVIEW_OFFER: 'accept_interview_offer',
-        REJECT_INTERVIEW_OFFER: 'reject_interview_offer',
+        DECLINE_INTERVIEW_OFFER: 'decline_interview_offer',
 
         /* DEVELOPER NOTE EVENTS*/
         TAKE_NOTE: 'take_note',

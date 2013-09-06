@@ -33,7 +33,7 @@ define([
 
         events: {
             'click .accept-offer-btn': 'onAccept',
-            'click .reject-offer-btn': 'onReject'
+            'click .decline-offer-btn': 'onDecline'
         },
 
         initialize: function(options) {
@@ -102,8 +102,8 @@ define([
             this.append(modalView);
         },
 
-        onReject: function() {
-            var modalView = new widget.offer.views.RejectInterviewOfferModal({
+        onDecline: function() {
+            var modalView = new widget.offer.views.DeclineInterviewOfferModal({
                 model: this.model
             });
             this.append(modalView);
@@ -219,7 +219,7 @@ define([
         },
 
         statusColumn: function() {
-            return   {
+            return {
                 column: 'Status',
                 headerCellView: new ui.grid.views.GridHeaderCellView.Factory({
                     sort: 'status'

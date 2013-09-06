@@ -63,12 +63,12 @@ define([
     });
 
     /**
-     * RejectInterviewOffer constructor
+     * DeclineInterviewOffer constructor
      * @constructor
      * @classdesc
      * Reject an interview offer
      */
-    var RejectInterviewOffer = core.command.AsyncCommand.extend({
+    var DeclineInterviewOffer = core.command.AsyncCommand.extend({
 
         /**
          * OnSuccess and onError argument names
@@ -76,14 +76,14 @@ define([
         asyncCallbackArgs: ['model', 'response'],
 
         // Shown if when no onError callback is provided
-        defaultErrorMessage: 'Unexpected error. Failed to reject offer. Please try again.',
+        defaultErrorMessage: 'Unexpected error. Failed to decline offer. Please try again.',
 
         /**
          * Execute command
          * @param {object} options Options object
          * @param {object} options.model InterviewOffer model to rescind.
          * @param {object} options.application Application model
-         * @param {string} [options.applicationStatus='INTERVIEW_OFFER_REJECTED']
+         * @param {string} [options.applicationStatus='INTERVIEW_OFFER_DECLINED']
          *  New application status.
          * @param {function} [options.onSuccess] Success callback
          * @param {function} [options.onError] Error callback
@@ -92,7 +92,7 @@ define([
             var model = options.model;
             var application = options.application;
             var applicationStatus = options.applicationStatus ||
-                'INTERVIEW_OFFER_REJECTED';
+                'INTERVIEW_OFFER_DECLINED';
 
             var success = function() {
                 application.get_interview_offers().add(model);
@@ -104,7 +104,7 @@ define([
             };
 
             model.save({
-                status: 'REJECTED'
+                status: 'DECLINED'
             }, {
                 success: _.bind(success, this)
             });
@@ -115,6 +115,6 @@ define([
 
     return {
         AcceptInterviewOffer: AcceptInterviewOffer,
-        RejectInterviewOffer: RejectInterviewOffer
+        DeclineInterviewOffer: DeclineInterviewOffer
     };
 });

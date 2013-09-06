@@ -550,32 +550,33 @@ define([
     });
 
     /**
-     * RejectInterviewOfferModal View
+     * DeclineInterviewOfferModal View
      * @constructor
      * @param {Object} options
      * @param {InterviewOffer} options.model InterviewOffer model
      */
-    var RejectInterviewOfferModal = ui.modal.views.ModalView.extend({
+    var DeclineInterviewOfferModal = ui.modal.views.ModalView.extend({
 
         initialize: function(options) {
+            var that = this;
             options = _.extend({
-                title: 'Reject Interview Offer',
+                title: 'Decline Interview Offer',
                 viewOrFactory: new InterviewOfferDetailsModal({
                     model: options.model,
                     onOk: function() {
-                        this.triggerEvent(events.REJECT_INTERVIEW_OFFER, {
+                        this.triggerEvent(events.DECLINE_INTERVIEW_OFFER, {
                             model: this.model,
                             application: this.model.get_application(),
-                            onSuccess: _.bind(that.onRejectSuccess, this, options)
+                            onSuccess: _.bind(that.onDeclineSuccess, this, options)
                         });
                         return true;
                     }
                 })
             }, options);
-            RejectInterviewOfferModal.__super__.initialize.call(this, options);
+            DeclineInterviewOfferModal.__super__.initialize.call(this, options);
         },
 
-        onRejectSuccess: function(model, response) {
+        onDeclineSuccess: function(model, response) {
             this.destroy();
         }
     });
@@ -586,6 +587,6 @@ define([
         MakeInterviewOfferModal: MakeInterviewOfferModal,
         RescindInterviewOfferModal: RescindInterviewOfferModal,
         AcceptInterviewOfferModal: AcceptInterviewOfferModal,
-        RejectInterviewOfferModal: RejectInterviewOfferModal
+        DeclineInterviewOfferModal: DeclineInterviewOfferModal
     };
 });
