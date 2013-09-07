@@ -89,7 +89,8 @@ define([
                     return {
                         model: options.model,
                         attribute: 'technicalScore',
-                        readonly: true
+                        readonly: true,
+                        starImageClass: 'rating-star-image-white'
                     };
             });
 
@@ -107,7 +108,8 @@ define([
                     return {
                         model: options.model,
                         attribute: 'communicationScore',
-                        readonly: true
+                        readonly: true,
+                        starImageClass: 'rating-star-image-white'
                     };
             });
 
@@ -125,7 +127,8 @@ define([
                     return {
                         model: options.model,
                         attribute: 'culturalFitScore',
-                        readonly: true
+                        readonly: true,
+                        starImageClass: 'rating-star-image-white'
                     };
             });
 
@@ -146,7 +149,8 @@ define([
                     return {
                         model: model,
                         attribute: 'average',
-                        readonly: true
+                        readonly: true,
+                        starImageClass: 'rating-star-image-white'
                     };
             });
 
