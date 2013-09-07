@@ -359,8 +359,8 @@
     table-layout: fixed;
 }
 
-.tracker-grid .grid-cell-application,
-.tracker-grid .grid-header-cell-application {
+.tracker-grid .grid-cell-evaluations,
+.tracker-grid .grid-header-cell-evaluations {
     text-align: center;
     width: 95px;
 }
@@ -388,6 +388,19 @@
 .tracker-grid .grid-cell-action,
 .tracker-grid .grid-header-cell-action {
     width: 50px;
+}
+
+.tracker-grid .eval-grid .rating-stars {
+    cursor: default;
+}
+
+.tracker-grid .eval-grid th,
+.tracker-grid .eval-grid td {
+    cursor: default;
+}
+
+.tracker-grid .eval-grid .grid-row:hover {
+    background-color: transparent;
 }
 
 .tracker-filters .filter-status .drop-content {
