@@ -20,17 +20,7 @@ define([
         CHANGE: events.CHANGE
     };
 
-    /**
-     * Rating Stars View.
-     * @constructor
-     * @param {Object} options
-     *   label: {String} text label (optional)
-     *   model: {Model} model (optional)
-     *   attribute: {String} model attribute (optional)
-     *   totalStars: {Number} number of stars. Defaults to 5 (optional)
-     *   readonly: {boolean} Readonly model (optional)
-     */
-    var RatingStarsView = core.view.View.extend({
+    var RatingStarsView = core.view.View.extend(/** @lends module:ui/rating/stars/views~RatingStarsView.prototype */{
 
         // selectors
         allStarsSelector: '.rating-stars > .rating-star',
@@ -47,13 +37,26 @@ define([
             'click .clear-rating': 'onClear'
         },
 
+        /**
+         * Rating Stars View.
+         * @constructs
+         * @augments module:core/view~View
+         * @param {Object} options
+         * @param {String} [options.label] text label
+         * @param {Model} [options.model] model object
+         * @param {String} [options.attribute] model attribute
+         * @param {Number} [options.totalStars=5] number of stars
+         * @param {Boolean} [options.readonly=false] make stars read-only
+         * @param {String} [options.starImageClass] specify custom star image
+         */
         initialize: function(options) {
             options = _.extend({
                 label: '',
                 model: null,
                 attribute: null,
                 totalStars: 5,
-                readonly: false
+                readonly: false,
+                starImageClass: ''
             }, options);
 
             this.label = options.label;
@@ -61,6 +64,7 @@ define([
             this.attribute = options.attribute;
             this.totalStars = options.totalStars;
             this.readonly = options.readonly;
+            this.starImageClass = options.starImageClass;
             this.template = _.template(ratingstars_template);
             
             // Create a model if not passed in
@@ -118,7 +122,8 @@ define([
             var context = {
                 label: this.label,
                 stars: starsToRender,
-                readonly: this.readonly
+                readonly: this.readonly,
+                starImageClass: this.starImageClass
             };
             this.$el.html(this.template(context));
 
