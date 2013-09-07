@@ -344,8 +344,7 @@
 }
 
 
-.developer-offers-container .developer-offers-empty
-.developer-offers-empty-view-text {
+.developer-offers-empty .developer-offers-empty-view-text {
     margin-left: 5px;
     font-size: 16px;
     vertical-align: text-bottom;
