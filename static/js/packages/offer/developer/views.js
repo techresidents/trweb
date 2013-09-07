@@ -8,7 +8,8 @@ define([
     'ui',
     'widget',
     'text!./templates/offers.html',
-    'text!./templates/offer.html'
+    'text!./templates/offer.html',
+    'text!./templates/empty.html'
 ], function(
     $,
     _,
@@ -19,7 +20,8 @@ define([
     ui,
     widget,
     offers_template,
-    offer_template) {
+    offer_template,
+    empty_template) {
 
     var DeveloperOfferView = core.view.View.extend(
         /** @lends module:offer/developer/views~DeveloperOfferView.prototype */
@@ -237,6 +239,27 @@ define([
         }
     );
 
+    var OffersEmptyView = ui.template.views.TemplateView.extend(
+        /** @lends module:offer/developer/views~DeveloperOffersView.prototype */
+        {
+           /**
+            * Offers Empty View
+            * @constructs
+            * @augments module:ui/template/view~TemplateView
+            * @param {Object} options
+            * @classdesc
+            * View to display when user has no offers
+            */
+            initialize: function(options) {
+                options = _.extend({
+                    template: empty_template,
+                    classes:  ['developer-offers-empty']
+                }, options);
+                OffersEmptyView.__super__.initialize.call(this, options);
+            }
+        }
+    );
+
     var DeveloperOffersView = core.view.View.extend(
         /** @lends module:offer/developer/views~DeveloperOffersView.prototype */
         {
@@ -265,6 +288,7 @@ define([
                 this.loader.load();
 
                 //child views
+                this.emptyView = null;
                 this.gridView = null;
                 this.paginatorView = null;
                 this.initChildViews();
@@ -282,11 +306,14 @@ define([
 
             childViews: function() {
                 return [
+                    this.emptyView,
                     this.gridView,
                     this.paginatorView];
             },
 
             initChildViews: function() {
+
+                this.emptyView = new OffersEmptyView();
 
                 this.gridView = new OffersGridView({
                     collection: this.collection
@@ -309,8 +336,12 @@ define([
                 if (this.initialized && this.loader.isLoaded()) {
                     this.$el.html(this.template());
                     this.$el.attr('class', this.classes().join(' '));
-                    this.append(this.gridView, this.contentSelector);
-                    this.append(this.paginatorView, this.contentSelector);
+                    if (this.collection.length > 0) {
+                        this.append(this.gridView, this.contentSelector);
+                        this.append(this.paginatorView, this.contentSelector);
+                    } else {
+                        this.append(this.emptyView, this.contentSelector);
+                    }
                 }
                 return this;
             }

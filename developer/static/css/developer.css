@@ -344,6 +344,14 @@
 }
 
 
+.developer-offers-container .developer-offers-empty
+.developer-offers-empty-view-text {
+    margin-left: 5px;
+    font-size: 16px;
+    vertical-align: text-bottom;
+}
+
+
 .offer-section {
     margin-bottom: 25px;
 }
@@ -378,6 +386,7 @@
 .offer-expert {
     background-color: #DFF0D8;
 }
+
 
 .interview-offer-details-modal .offer-details-modal-label {
     display: inline-block;
