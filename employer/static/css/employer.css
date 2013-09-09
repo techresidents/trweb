@@ -394,8 +394,7 @@
     cursor: default;
 }
 
-.tracker-grid .eval-grid th,
-.tracker-grid .eval-grid td {
+.tracker-grid .eval-grid th {
     cursor: default;
 }
 
@@ -412,8 +411,16 @@
     margin-bottom: 30px;
 }
 
-.application-summary .application-summary-status {
+.application .application-summary-status {
     margin-right: 10px;
+}
+
+.application .eval-container .eval-grid th {
+    cursor: default;
+}
+
+.application .eval-container .eval-grid .grid-row:hover {
+    background-color: transparent;
 }
 
 .application .eval-container .rating-stars {
