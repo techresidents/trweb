@@ -326,7 +326,18 @@ define(/** @exports grid/views */[
                     current = current[getter]();
                 });
                 getter = 'get_' + _.last(fields);
-                result.value = current[getter]();
+                var rawValue = current[getter]();
+                // Convert case of returned value
+                if (rawValue && rawValue.length > 1) {
+                    var underscoreToWhitespace = rawValue.replace(/_/gi, ' ');
+                    var titleText = underscoreToWhitespace.replace(/\w\S*/g,
+                        function(txt){
+                            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                        });
+                    result.value = titleText;
+                } else {
+                    result.value = rawValue;
+                }
             }
             return result;
         },
