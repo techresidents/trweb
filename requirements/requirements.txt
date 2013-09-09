@@ -1,12 +1,10 @@
-pytz
+pytz>dev
 django==1.5
 #git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/django.git@1.5c1#egg=django
 psycopg2==2.4.4
 pygments==1.5
-opentok-python-sdk == 0.91.1
 protobuf==2.4.1
 riak==1.4.0
 
-git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/trpycore.git@0.11.0#egg=trpycore
-git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/trhttp.git@0.5.0#egg=trhttp
-git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/trrackspace.git@0.3.0#egg=trrackspace
+git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/trpycore.git@0.12.0#egg=trpycore
+git+ssh://dev.techresidents.com/tr/repos/techresidents/lib/python/trrackspace.git@0.4.0#egg=trrackspace
