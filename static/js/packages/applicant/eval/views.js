@@ -207,7 +207,9 @@ define([
         defaultTemplate: team_eval_template,
 
         childViews: function() {
-            return [this.gridView];
+            return [
+                this.gridView
+            ];
         },
 
         initChildViews: function() {

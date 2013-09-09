@@ -390,18 +390,6 @@
     width: 50px;
 }
 
-.tracker-grid .eval-grid .rating-stars {
-    cursor: default;
-}
-
-.tracker-grid .eval-grid th {
-    cursor: default;
-}
-
-.tracker-grid .eval-grid .grid-row:hover {
-    background-color: transparent;
-}
-
 .tracker-filters .filter-status .drop-content {
     min-width: 280px;
 }
@@ -415,15 +403,15 @@
     margin-right: 10px;
 }
 
-.application .eval-container .eval-grid th {
+.eval-grid th {
     cursor: default;
 }
 
-.application .eval-container .eval-grid .grid-row:hover {
+.eval-grid .grid-row:hover {
     background-color: transparent;
 }
 
-.application .eval-container .rating-stars {
+.eval-grid .rating-stars {
     cursor: default;
 }
 
