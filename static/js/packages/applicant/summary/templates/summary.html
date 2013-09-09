@@ -1,10 +1,19 @@
-<div class="section-header">
-    <h3>Applicant <span class="normal-font"><a href="/e/user/<%= model.user_id %>/">{<%= model.user_id %>}</a></span> for <span class="normal-font"><a href="/e/requisition/view/<%= model.requisition.id %>/"><%= model.requisition.title %></a></span></h3>
+<div class="row">
+    <div class="span10">
+        <div class="section-header">
+            <span>Applicant <span class="normal-font"><a href="/e/user/<%= model.user_id %>/">{<%= model.user_id %>}</a></span> for <span class="normal-font"><a href="/e/requisition/view/<%= model.requisition.id %>/"><%= model.requisition.title %></a></span> <small>created <%= fmt.date(model.created, 'MM/dd/yy') %></small></span>
+        </div>
+    </div>
 </div>
-<div class="container">
-    <button class="drop-button btn btn-primary">Actions
-        <span class="caret"></span>
-    </button>
-    <span><strong>Created:</strong> <%= fmt.date(model.created, 'MM/dd/yy') %></span>
-    <span><strong>Status:</strong> <%= model.status %></span>
+<div class="row">
+    <div class="span10">
+        <div class="application-summary-container">
+            <%
+            var status = model.status.replace(/_/gi, ' ');
+            status = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+            %>
+            <span class="application-summary-status alert alert-info"><strong>Status: </strong><%= status %></span>
+            <button class="drop-button btn btn-primary">Actions <span class="caret"></span></button>
+        </div>
+    </div>
 </div>
