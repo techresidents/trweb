@@ -81,7 +81,7 @@
     <div class="span4">
         <div class="developer-offer-actions-container">
             <div class="well">
-                <h3>Status: <%= model.status.charAt(0).toUpperCase() + model.status.slice(1).toLowerCase() %></h3>
+                <h3>Offer <%= model.status.charAt(0).toUpperCase() + model.status.slice(1).toLowerCase() %></h3>
                 <% if(model.status.toUpperCase() === 'PENDING') { %>
                     <p>Offer expires on <%= fmt.date(model.expires, 'MM/dd/yyyy') %></p>
                 <% } %>
