@@ -549,9 +549,9 @@ define([
                     title: 'Accept Interview Offer',
                     viewOrFactory: new InterviewOfferDetailsModal({
                         model: options.model,
-                        message: 'Upon acceptance you\'ll receive an email from ' +
-                        'Tech Residents putting you in touch with the employer ' +
-                        'so you can schedule your interview.',
+                        message: 'Upon acceptance your identity will be revealed to ' +
+                            options.model.get_tenant().get_name() + ' so that they can ' +
+                            'schedule your interview.',
                         onOk: function() {
                             this.triggerEvent(events.ACCEPT_INTERVIEW_OFFER, {
                                 model: this.model,
@@ -587,6 +587,8 @@ define([
                     title: 'Decline Interview Offer',
                     viewOrFactory: new InterviewOfferDetailsModal({
                         model: options.model,
+                        message: 'You won\'t be able to change your decision ' +
+                            'after clicking Ok.',
                         onOk: function() {
                             this.triggerEvent(events.DECLINE_INTERVIEW_OFFER, {
                                 model: this.model,

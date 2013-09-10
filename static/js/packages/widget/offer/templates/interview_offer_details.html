@@ -15,11 +15,10 @@
         <label class="offer-details-modal-label">Type</label>
         <span><%= type %> Interview</span>
     </div>
-    <div class="offer-details-modal-instructions">
-        <p><%= message %></p>
-    </div>
 </div>
 
 <div class="alert alert-info">
-    <strong>Note:</strong> You won't be able to change your response after clicking Ok.
+    <% if (message) { %>
+    <strong>Note:</strong> <%= message %>
+    <% } %>
 </div>
