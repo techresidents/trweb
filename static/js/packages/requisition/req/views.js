@@ -138,7 +138,6 @@ define([
             this.loader.load();
 
             // child views
-            this.childViews = [];
             this.wishlistView = null;
             this.initChildViews();
         },
@@ -147,6 +146,10 @@ define([
             this.wishlistView = new widget.skill.views.SkillsView({
                 collection: this.model.get_requisition_technologies()
             });
+        },
+
+        childViews: function() {
+            return [this.wishlistView];
         },
 
         classes: function() {
@@ -158,9 +161,10 @@ define([
                 fmt: this.fmt,
                 model: this.model.toJSON({
                     withRelated: this.modelWithRelated
-                })
+                }),
+                status: core.string.titleText(this.model.get_status())
             };
-            if(this.loader.isLoaded()) {
+            if (this.loader.isLoaded()) {
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
                 this.append(this.wishlistView, '.requisition-wishlist-container');
