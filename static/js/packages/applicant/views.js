@@ -327,11 +327,9 @@ define([
         },
 
         onAction: function() {
-            var applicationStatus = this.$('select :selected').val();
             this.triggerEvent(events.RESCIND_INTERVIEW_OFFER, {
                 model: this.getOffer(),
-                application: this.model,
-                applicationStatus: applicationStatus
+                application: this.model
             });
             return true;
         }

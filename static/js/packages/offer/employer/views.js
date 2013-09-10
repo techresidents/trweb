@@ -145,7 +145,7 @@ define([
 
         actionColumn: function(view) {
             // Show an action to rescind an interview offer as long as the
-            // offer is not in the 'RESCINDED' state.
+            // offer is in the 'PENDING' state.
 
             var map = function(model) {
                 var rescindOffer = function() {
@@ -160,7 +160,7 @@ define([
                         key: 'rescind-interview_offer',
                         label: 'Rescind Interview Offer',
                         handler: rescindOffer,
-                        visible: model.get_status() !== 'RESCINDED'
+                        enabled: model.get_status() === 'PENDING'
                     }
                 ];
                 return menuItems;

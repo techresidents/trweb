@@ -454,7 +454,6 @@ define([
                 this.triggerEvent(events.RESCIND_INTERVIEW_OFFER, {
                     model: this.offer,
                     application: this.model,
-                    applicationStatus: 'INTERVIEW_OFFER_RESCINDED',
                     onSuccess: _.bind(this.onRescindSuccess, this, options),
                     onError: _.bind(this.onRescindError, this, options)
                 });

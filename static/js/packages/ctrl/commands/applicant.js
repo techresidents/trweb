@@ -331,12 +331,7 @@ define([
 
             var success = function() {
                 application.get_interview_offers().add(model);
-
-                this.facade.trigger(notifications.UPDATE_APPLICATION_STATUS, {
-                    model: application,
-                    status: 'INTERVIEW_OFFER_PENDING',
-                    onSuccess: _.bind(this.onSuccess, this)
-                });
+                this.onSuccess.apply(this, arguments);
             };
 
             attributes.application_id = application.id;
@@ -372,7 +367,6 @@ define([
          * @param {object} options Options object
          * @param {object} options.application Application model
          * @param {object} options.model InterviewOffer model to rescind.
-         * @param {string} [options.applicationStatus] New application status.
          * @param {function} [options.onSuccess] Success callback 
          * @param {function} [options.onError] Error callback 
          */
@@ -382,15 +376,10 @@ define([
             var currentUser = currentProxy.currentUser();
             var application = options.application;
             var model = options.model;
-            var applicationStatus = options.applicationStatus;
 
             var success = function() {
                 application.get_interview_offers().add(model);
-                this.facade.trigger(notifications.UPDATE_APPLICATION_STATUS, {
-                    model: application,
-                    status: applicationStatus,
-                    onSuccess: _.bind(this.onSuccess, this)
-                });
+                this.onSuccess.apply(this, arguments);
             };
 
             model.save({
