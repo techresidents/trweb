@@ -34,6 +34,7 @@ require.config({
         { name: 'home', location: 'packages/home'},
         { name: 'lookup', location: 'packages/lookup' },
         { name: 'notifications', location: 'packages/notifications' },
+        { name: 'offer', location: 'packages/offer' },
         { name: 'player', location: 'packages/player' },
         { name: 'profile', location: 'packages/profile' },
         { name: 'requisition', location: 'packages/requisition' },

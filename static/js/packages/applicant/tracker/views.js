@@ -4,14 +4,16 @@ define([
     'api',
     'core',
     'ui',
-    'widget'
+    'widget',
+    'applicant/eval/views'
 ], function(
     $,
     _,
     api,
     core,
     ui,
-    widget) {
+    widget,
+    applicant_eval_views) {
 
     /**
      * Tracker Grid view.
@@ -25,7 +27,7 @@ define([
         initialize: function(options) {
             var config = {
                 columns: [
-                    TrackerGridView.applicationColumn(),
+                    TrackerGridView.evaluationsColumn(),
                     TrackerGridView.userColumn(),
                     TrackerGridView.requisitionColumn(),
                     TrackerGridView.createdColumn(),
@@ -47,20 +49,8 @@ define([
             return result;
         }
     }, {
-        applicationColumn: function() {
-            return {
-                column: 'Application',
-                cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
-                    return {
-                        href: '/e/application/' + options.model.id + '/',
-                        value: '<i class="icon-list-alt"></i>'
-                    };
-                })
-            };
-        },
-
         statusColumn: function() {
-            return   {
+            return {
                 column: 'Status',
                 headerCellView: new ui.grid.views.GridHeaderCellView.Factory({
                     sort: 'status'
@@ -96,9 +86,23 @@ define([
                 cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
                     return {
                         href: '/e/user/' + options.model.get_user_id() + '/',
-                        value:'{' + options.model.get_user_id() + '}'
+                        value: '{' + options.model.get_user_id() + '}'
                     };
                 })
+            };
+        },
+
+        evaluationsColumn: function() {
+            var evalViewFactory = new core.factory.Factory(applicant_eval_views.TeamEvalView, {});
+            return {
+                column: 'Evaluations',
+                cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
+                    return {
+                        href: '/e/application/' + options.model.id + '/',
+                        value: '<i class="icon-list-alt"></i>'
+                    };
+                }),
+                hoverView: evalViewFactory
             };
         },
 

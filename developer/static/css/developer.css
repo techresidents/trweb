@@ -342,3 +342,61 @@
     font-size: 16px;
     vertical-align: text-bottom;
 }
+
+
+.developer-offers-empty .developer-offers-empty-view-text {
+    margin-left: 5px;
+    font-size: 16px;
+    vertical-align: text-bottom;
+}
+
+
+.offer-section {
+    margin-bottom: 25px;
+}
+.offer-section-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #dddddd;
+}
+.offer-label {
+    display: inline-block;
+    color: #777777;
+    width: 90px;
+}
+
+.offer-expertise {
+    font-size: 14px;
+    font-weight: normal;
+    color: #686868;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    padding: 3px 7px;
+    margin-right: 5px;
+}
+.offer-novice {
+    background-color: #F2DEDE;
+}
+.offer-proficient {
+    background-color: #D9EDF7;
+}
+.offer-expert {
+    background-color: #DFF0D8;
+}
+
+
+.interview-offer-details-modal .offer-details-modal-label {
+    display: inline-block;
+    color: #777777;
+    width: 160px;
+    text-align: right;
+    margin-right: 25px;
+    margin-bottom: 10px;
+}
+.interview-offer-details-modal .offer-details-modal-instructions {
+    margin-top: 10px;
+    padding-left: 14px;
+    padding-right: 45px;
+}

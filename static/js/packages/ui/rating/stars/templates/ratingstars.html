@@ -11,9 +11,9 @@
     <% if (star.lit) { %>
     <div class="rating-star-background" style="width: 100%;"></div>
     <div class="rating-star-background rating-star-on <%= star.starID %>" style="width:<%= star.percentage %>%;"></div>
-    <div class="rating-star-image"></div>
+    <div class="rating-star-image <%= starImageClass %>"></div>
     <% } else { %>
     <div class="rating-star-background <%= star.starID %>" style="width: 100%;"></div>
-    <div class="rating-star-image"></div>
+    <div class="rating-star-image <%= starImageClass %>"></div>
     <% } %></div><% }); %>
 </div>

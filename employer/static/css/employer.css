@@ -359,8 +359,8 @@
     table-layout: fixed;
 }
 
-.tracker-grid .grid-cell-application,
-.tracker-grid .grid-header-cell-application {
+.tracker-grid .grid-cell-evaluations,
+.tracker-grid .grid-header-cell-evaluations {
     text-align: center;
     width: 95px;
 }
@@ -399,20 +399,20 @@
     margin-bottom: 30px;
 }
 
-.application .eval-container .rating-stars {
+.application .application-summary-status {
+    margin-right: 10px;
+}
+
+.eval-grid th {
     cursor: default;
 }
 
-.application-summary > .container span {
-    margin-right: 10px;
+.eval-grid .grid-row:hover {
+    background-color: transparent;
 }
 
-.application-summary > .container > span > a {
-    font-size: 16px;
-}
-
-.application-summary > .container > button {
-    margin-right: 10px;
+.eval-grid .rating-stars {
+    cursor: default;
 }
 
 .application-log-grid table {

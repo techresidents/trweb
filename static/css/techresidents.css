@@ -595,6 +595,10 @@ button.drop-button .caret {
     background-image: url("../img/star_fg_well.png");
 }
 
+.rating-star-image-white {
+    background-image: url("../img/star_fg_white.png");
+}
+
 .rating-star-background {
     position: absolute;
     height: 100%;

@@ -1,0 +1,98 @@
+<div class="row">
+     <div class="span12">
+         <div class="section-header">
+             <span><%= interviewType %> Interview Offer</span>
+         </div>
+     </div>
+</div>
+<div class="row">
+    <div class="span8">
+        <div class="developer-offer-details-container">
+            <div class="offer-section offer-overview">
+                <div class="row">
+                    <div class="span4">
+                        <label class="offer-label">Employer</label>
+                        <span><%= model.tenant.name %></span>
+                    </div>
+                    <div class="span4">
+                        <label class="offer-label">Position</label>
+                        <span><%= requisition.title %></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4">
+                        <label class="offer-label">Location</label>
+                        <span><%= requisition.location %></span>
+                    </div>
+                    <div class="span4">
+                        <label class="offer-label">Type</label>
+                        <span><%= requisition.position_type %></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4">
+                        <label class="offer-label">Salary</label>
+                        <span><%= requisition.salary %></span>
+                    </div>
+                    <div class="span4">
+                        <label class="offer-label">Equity</label>
+                        <% if(requisition.equity) { %>
+                            <span><%= requisition.equity %></span>
+                        <% } else { %>
+                            <span>No</span>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4">
+                        <label class="offer-label">Telecommute</label>
+                        <span><%= requisition.telecommute ? 'Yes' : 'No' %></span>
+                    </div>
+                    <div class="span4">
+                        <label class="offer-label">Relocation</label>
+                        <span><%= requisition.relocation ? 'Yes' : 'No' %></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span8">
+                    <div class="offer-section offer-wishlist">
+                        <div class="offer-section-header">
+                            <span>Wishlist </span>
+                            <span class="offer-expertise offer-expert">Expert</span>
+                            <span class="offer-expertise offer-proficient">Proficient</span>
+                            <span class="offer-expertise offer-novice">Novice</span>
+                        </div>
+                        <div class="offer-wishlist-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="span8">
+                    <div class="offer-section offer-description">
+                        <div class="offer-section-header">Description</div>
+                        <p><%= requisition.description %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="span4">
+        <div class="developer-offer-actions-container">
+            <div class="well">
+                <h3>Status: <%= model.status.charAt(0).toUpperCase() + model.status.slice(1).toLowerCase() %></h3>
+                <% if(model.status.toUpperCase() === 'PENDING') { %>
+                    <p>Offer expires on <%= fmt.date(model.expires, 'MM/dd/yyyy') %></p>
+                <% } %>
+                <% if(model.status.toUpperCase() === 'ACCEPTED') { %>
+                    <p>You'll receive an email from Tech Residents putting you in touch with the employer so you can schedule your interview.</p>
+                <% } %>
+                <% if(model.status.toUpperCase() === 'PENDING') { %>
+                    <a class="btn btn-large btn-success accept-offer-btn">Accept</a>
+                    <a class="btn btn-large btn-primary decline-offer-btn">Decline</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
