@@ -66,12 +66,26 @@ define(/** @exports core/string */[
         return string.replace(/\s+$/, '');
     };
 
+    var titleText = function(string) {
+        var result = string;
+        var titleText, underscoreToWhitespace;
+        if (string && string.length > 1) {
+            underscoreToWhitespace = string.replace(/_/gi, ' ');
+            titleText = underscoreToWhitespace.replace(/\w\S*/g, function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+            result = titleText;
+        }
+        return result;
+    };
+
     return {
         oneOf: oneOf,
         regExpEscape: regExpEscape,
         stringify: stringify,
         trim: trim,
         ltrim: ltrim,
-        rtrim: rtrim
+        rtrim: rtrim,
+        titleText: titleText
     };
 });

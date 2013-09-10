@@ -70,7 +70,11 @@ define([
                     sort: 'status'
                 }),
                 cellView: new ui.grid.views.GridCellView.Factory({
-                    valueAttribute: 'status'
+                    valueAttribute: 'status',
+                    context: function(defaultContext) {
+                        defaultContext.value = core.string.titleText(defaultContext.value);
+                        return defaultContext;
+                    }
                 })
             };
         },
