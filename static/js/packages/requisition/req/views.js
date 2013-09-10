@@ -138,7 +138,6 @@ define([
             this.loader.load();
 
             // child views
-            this.childViews = [];
             this.wishlistView = null;
             this.initChildViews();
         },
@@ -147,6 +146,10 @@ define([
             this.wishlistView = new widget.skill.views.SkillsView({
                 collection: this.model.get_requisition_technologies()
             });
+        },
+
+        childViews: function() {
+            return [this.wishlistView];
         },
 
         classes: function() {
