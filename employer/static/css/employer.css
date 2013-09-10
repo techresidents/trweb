@@ -359,8 +359,8 @@
     table-layout: fixed;
 }
 
-.tracker-grid .grid-cell-evaluations,
-.tracker-grid .grid-header-cell-evaluations {
+.tracker-grid .grid-cell-application,
+.tracker-grid .grid-header-cell-application {
     text-align: center;
     width: 95px;
 }
@@ -401,6 +401,10 @@
 
 .application .application-summary-status {
     margin-right: 10px;
+}
+
+.team-evaluation-header {
+    text-align: left;
 }
 
 .eval-grid th {

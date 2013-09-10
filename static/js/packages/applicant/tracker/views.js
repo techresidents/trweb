@@ -27,7 +27,7 @@ define([
         initialize: function(options) {
             var config = {
                 columns: [
-                    TrackerGridView.evaluationsColumn(),
+                    TrackerGridView.applicationColumn(),
                     TrackerGridView.userColumn(),
                     TrackerGridView.requisitionColumn(),
                     TrackerGridView.createdColumn(),
@@ -49,6 +49,20 @@ define([
             return result;
         }
     }, {
+        applicationColumn: function() {
+            var evalViewFactory = new core.factory.Factory(applicant_eval_views.TeamEvalView, {});
+            return {
+                column: 'Application',
+                cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
+                    return {
+                        href: '/e/application/' + options.model.id + '/',
+                        value: '<i class="icon-list-alt"></i>'
+                    };
+                }),
+                hoverView: evalViewFactory
+            };
+        },
+
         statusColumn: function() {
             return {
                 column: 'Status',
@@ -89,20 +103,6 @@ define([
                         value: '{' + options.model.get_user_id() + '}'
                     };
                 })
-            };
-        },
-
-        evaluationsColumn: function() {
-            var evalViewFactory = new core.factory.Factory(applicant_eval_views.TeamEvalView, {});
-            return {
-                column: 'Evaluations',
-                cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
-                    return {
-                        href: '/e/application/' + options.model.id + '/',
-                        value: '<i class="icon-list-alt"></i>'
-                    };
-                }),
-                hoverView: evalViewFactory
             };
         },
 
