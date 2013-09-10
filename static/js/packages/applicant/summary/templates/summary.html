@@ -8,10 +8,6 @@
 <div class="row">
     <div class="span10">
         <div class="application-summary-container">
-            <%
-            var status = model.status.replace(/_/gi, ' ');
-            status = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
-            %>
             <span class="application-summary-status alert alert-info"><strong>Status: </strong><%= status %></span>
             <button class="drop-button btn btn-primary">Actions <span class="caret"></span></button>
         </div>
