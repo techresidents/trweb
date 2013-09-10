@@ -550,8 +550,8 @@ define([
                     viewOrFactory: new InterviewOfferDetailsModal({
                         model: options.model,
                         message: 'Upon acceptance your identity will be revealed to ' +
-                            options.model.get_tenant().get_name() + ' so that they can ' +
-                            'schedule your interview.',
+                            options.model.get_tenant().get_name() + ' so that your ' +
+                            'interview can be scheduled.',
                         onOk: function() {
                             this.triggerEvent(events.ACCEPT_INTERVIEW_OFFER, {
                                 model: this.model,
