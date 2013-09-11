@@ -100,6 +100,46 @@ define([
         }
     );
 
+    var MakeInterviewOfferValidator = ui.form.validators.FormValidator.extend(
+    /** @lends module:widget/offer/views~MakeInterviewOfferValidator.prototype */ {
+
+        /**
+         * MakeInterviewOfferValidator constructor
+         * @constructor
+         * @augments module:ui/form/validators~FormValidator.prototype
+         * @param {object} options Options object
+         * @param {MakeInterviewOfferModal} options.form Offer form
+         */
+        initialize: function(options) {
+            this.form = options.form;
+        },
+
+        /**
+         * Validate the form
+         * @param {FormState} state Current form state
+         * @returns {boolean} True if form is valid or False if
+         *   form is invalid but no error message should be displayed.
+         * @throws {Error} If form is invalid
+         *   an exception will be raised containing
+         *   an appropriate error message.
+         */
+        validate: function(state) {
+            var valid = MakeInterviewOfferValidator.__super__.validate.call(this, state);
+            var requisition = this.form.formModel.get('requisition');
+            if(valid && requisition) {
+                this.form.offers.each(function(offer) {
+                    if(offer.get_application().get_requisition_id() === requisition.id &&
+                       offer.get_status() === 'PENDING') {
+                        throw new Error('There is already an offer pending.');
+                    }
+                });
+            }
+
+            return valid;
+        }
+        
+    });
+
     var MakeInterviewOfferModal = ui.modal.views.ModalFormView.extend(
         /** @lends module:widget/offer/views~MakeInterviewOfferModal.prototype */
         {
@@ -169,6 +209,12 @@ define([
                     })
                 ];
 
+                if(!options.validator) {
+                    options.validator = new MakeInterviewOfferValidator({
+                        form: this
+                    });
+                }
+
                 //bind events
                 this.listenTo(this.loader, 'loaded', this.render);
 
@@ -235,7 +281,7 @@ define([
                     var result = model;
                     that.offers.each(function(offer) {
                         if(offer.get_application().get_requisition_id() === model.id &&
-                           offer.get_status === 'PENDING') {
+                           offer.get_status() === 'PENDING') {
                             result = null;
                         }
                     });

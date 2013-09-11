@@ -278,7 +278,12 @@ define(/** @exports ui/form/views/forms */[
             }, options);
 
             try {
-                valid = this.validator.validate(this.state);
+                if(_.isObject(this.validator)) {
+                    valid = this.validator.validate(this.state);
+                } else {
+                    valid = this.validator(this.state);
+                }
+
                 if(valid) {
                     this.state.set({valid: true, error: null });
                 } else {
