@@ -385,6 +385,9 @@
 .offer-expert {
     background-color: #DFF0D8;
 }
+.offer-description p {
+    white-space: pre;
+}
 
 
 .interview-offer-details-modal .offer-details-modal-label {

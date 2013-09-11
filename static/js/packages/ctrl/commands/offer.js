@@ -46,7 +46,8 @@ define([
             model.save({
                 status: 'ACCEPTED'
             }, {
-                success: _.bind(success, this)
+                success: _.bind(success, this),
+                error: _.bind(this.onError, this)
             });
 
             return true;
@@ -89,7 +90,8 @@ define([
             model.save({
                 status: 'DECLINED'
             }, {
-                success: _.bind(success, this)
+                success: _.bind(success, this),
+                error: _.bind(this.onError, this)
             });
 
             return true;

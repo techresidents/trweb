@@ -767,6 +767,9 @@
 .requisition-expert {
     background-color: #DFF0D8;
 }
+.requisition-description p {
+    white-space: pre;
+}
 
 #user-actions {
     margin-top: 12px;
