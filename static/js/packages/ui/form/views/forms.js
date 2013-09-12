@@ -278,7 +278,12 @@ define(/** @exports ui/form/views/forms */[
             }, options);
 
             try {
-                valid = this.validator.validate(this.state);
+                if(_.isObject(this.validator)) {
+                    valid = this.validator.validate(this.state);
+                } else {
+                    valid = this.validator(this.state);
+                }
+
                 if(valid) {
                     this.state.set({valid: true, error: null });
                 } else {
@@ -342,9 +347,16 @@ define(/** @exports ui/form/views/forms */[
         },
 
         onKeyPress: function(e) {
+            //e.preventDefault() was orignally intended to prevent form
+            //submission on the enter key. This is better handled downstream
+            //by view components since preventing default here will
+            //actually prevent textareas from adding newlines.
+            
+            /*
             if(e.keyCode === events_kc.ENTER) {
                 e.preventDefault();
             }
+            */
         },
 
         onFormChange: function(e, eventBody) {

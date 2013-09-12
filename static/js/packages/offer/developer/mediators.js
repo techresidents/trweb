@@ -9,19 +9,87 @@ define([
     notifications,
     core,
     api,
-    employer_offers_views) {
+    developer_offer_views) {
 
     /**
-     * Employer Offers Mediator
+     * Developer Offer Mediator
      * @constructor
+     * Decided to create a separate mediator to handle the individual
+     * offer views since this mediator won't be working with queries
+     * and collections.
      */
-    var EmployerOffersMediator = core.mediator.Mediator.extend({
+    var DeveloperOfferMediator = core.mediator.Mediator.extend({
         name: function() {
-            return EmployerOffersMediator.NAME;
+            return DeveloperOfferMediator.NAME;
         },
 
         viewType: function() {
-            return EmployerOffersMediator.VIEW_TYPE;
+            return DeveloperOfferMediator.VIEW_TYPE;
+        },
+
+        /**
+         * Notification handlers
+         */
+        notifications: [
+            [notifications.VIEW_CREATE, 'onCreateView'],
+            [notifications.VIEW_DESTROY, 'onDestroyView']
+        ],
+
+        initialize: function(options) {
+            this.view = null;
+        },
+
+        onCreateView: function(notification) {
+            if (notification.type === this.viewType()) {
+
+                var offer = new api.models.InterviewOffer({
+                    id: notification.options.id
+                });
+
+                this.view = new developer_offer_views.DeveloperOfferView({
+                    model: offer
+                });
+
+                this.facade.trigger(notifications.VIEW_CREATED, {
+                    type: this.viewType(),
+                    view: this.view,
+                    options: notification.options
+                });
+            }
+        },
+
+        onDestroyView: function(notification) {
+            if (notification.type === this.viewType()) {
+                notification.view.destroy();
+
+                this.facade.trigger(notifications.VIEW_DESTROYED, {
+                    type: this.viewType(),
+                    view: notification.view
+                });
+                if (this.view === notification.view) {
+                    this.view = null;
+                }
+            }
+        }
+
+    }, {
+
+        NAME: 'DeveloperOfferMediator',
+
+        VIEW_TYPE: 'DeveloperOfferView'
+    });
+
+    /**
+     * Developer Offers Mediator
+     * @constructor
+     */
+    var DeveloperOffersMediator = core.mediator.Mediator.extend({
+        name: function() {
+            return DeveloperOffersMediator.NAME;
+        },
+
+        viewType: function() {
+            return DeveloperOffersMediator.VIEW_TYPE;
         },
 
         /**
@@ -36,7 +104,6 @@ define([
             this.view = null;
             this.currentUser = new api.models.User({id: 'CURRENT'});
             this.defaultCollection = this.currentUser
-                .get_tenant()
                 .get_interview_offers()
                 .orderBy('created__desc')
                 .slice(0, 20);
@@ -57,7 +124,7 @@ define([
                 this.collection = this.defaultCollection.clone();
                 this.collection.on('reset', this.onReset, this);
                 this.collection.query().parse(uri);
-                this.view = new employer_offers_views.EmployerOffersView({
+                this.view = new developer_offer_views.DeveloperOffersView({
                     collection: this.collection
                 });
 
@@ -97,7 +164,7 @@ define([
                 uri = null;
             }
             this.facade.trigger(notifications.VIEW_NAVIGATE, {
-                type: EmployerOffersMediator.VIEW_TYPE,
+                type: DeveloperOffersMediator.VIEW_TYPE,
                 query: uri,
                 trigger: false
             });
@@ -105,12 +172,13 @@ define([
 
     }, {
 
-        NAME: 'EmployerOffersMediator',
+        NAME: 'DeveloperOffersMediator',
 
-        VIEW_TYPE: 'EmployerOffersView'
+        VIEW_TYPE: 'DeveloperOffersView'
     });
 
     return {
-        EmployerOffersMediator: EmployerOffersMediator
+        DeveloperOfferMediator: DeveloperOfferMediator,
+        DeveloperOffersMediator: DeveloperOffersMediator
     };
 });

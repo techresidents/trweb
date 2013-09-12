@@ -31,6 +31,8 @@ define([
             'chat/:id(/)': 'chat',
             'chatsim/:id(/)': 'chatSimulation',
             'home(/)': 'home',
+            'offer/:id(/)': 'offer',
+            'offers(/:query)(/)': 'offers',
             'profile(/)': 'profile',
             'profile/general(/)': 'profileGeneral',
             'profile/preferences(/)': 'profilePreferences',
@@ -189,6 +191,28 @@ define([
             }, this));
         },
 
+        offer: function(id) {
+            require(['offer'], _.bind(function(offer) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: offer.mediators.developer.DeveloperOfferMediator.VIEW_TYPE,
+                    options: {
+                        id: id
+                    }
+                });
+            }, this));
+        },
+
+        offers: function(query) {
+            require(['offer'], _.bind(function(offer) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: offer.mediators.developer.DeveloperOffersMediator.VIEW_TYPE,
+                    options: {
+                        query: query
+                    }
+                });
+            }, this));
+        },
+
         placeholder: function() {
         }
     });
@@ -211,6 +235,13 @@ define([
                     break;
                 case 'DeveloperHomeView':
                     uri = 'home/';
+                    router.navigate(uri, {trigger: options.trigger});
+                    break;
+                case 'DeveloperOffersView':
+                    uri = 'offers';
+                    if(options.query) {
+                        uri += '/' + options.query;
+                    }
                     router.navigate(uri, {trigger: options.trigger});
                     break;
                 case 'DeveloperProfileView':
@@ -315,6 +346,11 @@ define([
         notifications.UPDATE_DEVELOPER_PROFILE;
     EventNotificationMap[events.UPDATE_DEVELOPER_PREFERENCES] =
         notifications.UPDATE_DEVELOPER_PREFERENCES;
+    /* INTERVIEW OFFER EVENTS */
+    EventNotificationMap[events.ACCEPT_INTERVIEW_OFFER] =
+        notifications.ACCEPT_INTERVIEW_OFFER;
+    EventNotificationMap[events.DECLINE_INTERVIEW_OFFER] =
+        notifications.DECLINE_INTERVIEW_OFFER;
 
     /**
      * App Mediator
@@ -465,10 +501,10 @@ define([
                 ctrl.commands.applicant.MakeInterviewOffer);
             this.registerCommand(notifications.RESCIND_INTERVIEW_OFFER,
                 ctrl.commands.applicant.RescindInterviewOffer);
-            this.registerCommand(notifications.SHOW_MAKE_INTERVIEW_OFFER,
-                ctrl.commands.applicant.ShowMakeInterviewOffer);
-            this.registerCommand(notifications.SHOW_RESCIND_INTERVIEW_OFFER,
-                ctrl.commands.applicant.ShowRescindInterviewOffer);
+            this.registerCommand(notifications.ACCEPT_INTERVIEW_OFFER,
+                ctrl.commands.offer.AcceptInterviewOffer);
+            this.registerCommand(notifications.DECLINE_INTERVIEW_OFFER,
+                ctrl.commands.offer.DeclineInterviewOffer);
             /* DEVELOPER NOTE COMMANDS */
             this.registerCommand(notifications.TAKE_NOTE,
                 ctrl.commands.user.TakeNote);

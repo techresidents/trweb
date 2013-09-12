@@ -4,14 +4,16 @@ define([
     'api',
     'core',
     'ui',
-    'widget'
+    'widget',
+    'applicant/eval/views'
 ], function(
     $,
     _,
     api,
     core,
     ui,
-    widget) {
+    widget,
+    applicant_eval_views) {
 
     /**
      * Tracker Grid view.
@@ -48,6 +50,7 @@ define([
         }
     }, {
         applicationColumn: function() {
+            var evalViewFactory = new core.factory.Factory(applicant_eval_views.TeamEvalView, {});
             return {
                 column: 'Application',
                 cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
@@ -55,18 +58,23 @@ define([
                         href: '/e/application/' + options.model.id + '/',
                         value: '<i class="icon-list-alt"></i>'
                     };
-                })
+                }),
+                hoverView: evalViewFactory
             };
         },
 
         statusColumn: function() {
-            return   {
+            return {
                 column: 'Status',
                 headerCellView: new ui.grid.views.GridHeaderCellView.Factory({
                     sort: 'status'
                 }),
                 cellView: new ui.grid.views.GridCellView.Factory({
-                    valueAttribute: 'status'
+                    valueAttribute: 'status',
+                    context: function(defaultContext) {
+                        defaultContext.value = core.string.titleText(defaultContext.value);
+                        return defaultContext;
+                    }
                 })
             };
         },
@@ -96,7 +104,7 @@ define([
                 cellView: new ui.grid.views.GridLinkCellView.Factory(function(options) {
                     return {
                         href: '/e/user/' + options.model.get_user_id() + '/',
-                        value:'{' + options.model.get_user_id() + '}'
+                        value: '{' + options.model.get_user_id() + '}'
                     };
                 })
             };
@@ -207,10 +215,7 @@ define([
                 field: 'status',
                 filterView: new ui.filter.views.SelectFilterView.Factory({
                     selections: [
-                        'NEW', 'REVIEW', 'INTERVIEW_OFFER_PENDING',
-                        'INTERVIEW_OFFER_ACCEPTED', 'INTERVIEW_OFFER_DECLINED',
-                        'INTERVIEW_OFFER_RESCINDED', 'INTERVIEW_OFFER_EXPIRED',
-                        'REJECTED']
+                        'NEW', 'REVIEW', 'REJECTED']
                 })
             };
         },

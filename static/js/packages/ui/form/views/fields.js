@@ -335,10 +335,10 @@ define(/** @exports ui/form/views/fields */[
          *   indicating that the input should be validated while
          *   the user is still typing. If false, the field will not
          *   be validated until the input loses focus.
-         * @param {boolean} [options.preventDefaultOnEnter=true] Boolean 
+         * @param {boolean} [options.preventDefaultOnEnter=false] Boolean 
          *   indicating that default behavior should be prevented
          *   when the enter key is pressed.
-         * @param {boolean} [options.blurOnEnter=true] Boolean 
+         * @param {boolean} [options.blurOnEnter=false] Boolean 
          *   indicating that the input should give up focus
          *   when the enter key is pressed. Note that preventDefaultOnEnter
          *   must also be true.
@@ -354,7 +354,9 @@ define(/** @exports ui/form/views/fields */[
                 template: text_field_template,
                 inputSelector: 'textarea',
                 maxLength: 4096,
-                rows: 3 
+                rows: 3,
+                preventDefaultOnEnter: false,
+                blurOnEnter: false
             }, options);
 
             TextFieldView.__super__.initialize.call(this, options);

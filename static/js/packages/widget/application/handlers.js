@@ -51,16 +51,6 @@ define([
             }, this));
         },
 
-        rescindInterviewOffer: function() {
-            //avoid circular dependency on '../offer/views'
-            require(['widget'], _.bind(function(widget) {
-                var modal = new widget.offer.views.RescindInterviewOfferModal({
-                    model: this.model
-                });
-                this.view.append(modal);
-            }, this));
-        },
-
         menuItems: function() {
             var showOfferDivider = this.isValidStatusChange('REVIEW') &&
                 (this.isVisibleAction(ApplicationHandler.MAKE_INTERVIEW_OFFER) ||
@@ -81,10 +71,6 @@ define([
                 { key: 'make-interview_offer', label: 'Make Interview Offer',
                   handler: _.bind(this.makeInterviewOffer, this),
                   visible: this.isVisibleAction(ApplicationHandler.MAKE_INTERVIEW_OFFER)
-                },
-                { key: 'rescind-interview_offer', label: 'Rescind Interview Offer',
-                  handler: _.bind(this.rescindInterviewOffer, this),
-                  visible: this.isVisibleAction(ApplicationHandler.RESCIND_INTERVIEW_OFFER)
                 },
                 { key: 'divider',
                   visible: this.isVisibleStatusChange('REJECTED')
@@ -118,33 +104,6 @@ define([
                         ApplicationHandler.UPDATE_APPLICATION_STATUS,
                         ApplicationHandler.MAKE_INTERVIEW_OFFER];
                     break;
-                case 'INTERVIEW_OFFER_PENDING':
-                    result = [ApplicationHandler.RESCIND_INTERVIEW_OFFER];
-                    break;
-                case 'INTERVIEW_OFFER_ACCEPTED':
-                    result = [ApplicationHandler.UPDATE_APPLICATION_STATUS];
-                    break;
-                case 'INTERVIEW_OFFER_DECLINED':
-                    result = [ApplicationHandler.UPDATE_APPLICATION_STATUS];
-                    break;
-                case 'INTERVIEW_OFFER_RESCINDED':
-                    result = [
-                        ApplicationHandler.UPDATE_APPLICATION_STATUS,
-                        ApplicationHandler.MAKE_INTERVIEW_OFFER];
-                    break;
-                case 'INTERVIEW_OFFER_EXPIRED':
-                    result = [ApplicationHandler.UPDATE_APPLICATION_STATUS];
-                    break;
-                case 'JOB_OFFER_PENDING':
-                    break;
-                case 'JOB_OFFER_ACCEPTED':
-                    break;
-                case 'JOB_OFFER_DECLINED':
-                    break;
-                case 'JOB_OFFER_RESCINDED':
-                    break;
-                case 'JOB_OFFER_EXPIRED':
-                    break;
                 case 'REJECTED':
                     result = [ApplicationHandler.UPDATE_APPLICATION_STATUS];
                     break;
@@ -174,30 +133,6 @@ define([
                 case 'REVIEW':
                     result = ['NEW', 'REJECTED'];
                     break;
-                case 'INTERVIEW_OFFER_PENDING':
-                    break;
-                case 'INTERVIEW_OFFER_ACCEPTED':
-                    result = ['NEW', 'REVIEW', 'REJECTED'];
-                    break;
-                case 'INTERVIEW_OFFER_DECLINED':
-                    result = ['NEW', 'REVIEW', 'REJECTED'];
-                    break;
-                case 'INTERVIEW_OFFER_RESCINDED':
-                    result = ['NEW', 'REVIEW', 'REJECTED'];
-                    break;
-                case 'INTERVIEW_OFFER_EXPIRED':
-                    result = ['NEW', 'REVIEW', 'REJECTED'];
-                    break;
-                case 'JOB_OFFER_PENDING':
-                    break;
-                case 'JOB_OFFER_ACCEPTED':
-                    break;
-                case 'JOB_OFFER_DECLINED':
-                    break;
-                case 'JOB_OFFER_RESCINDED':
-                    break;
-                case 'JOB_OFFER_EXPIRED':
-                    break;
                 case 'REJECTED':
                     result = ['NEW', 'REVIEW'];
                     break;
@@ -211,11 +146,8 @@ define([
 
         UPDATE_APPLICATION_STATUS: 'update-status',
 
-        MAKE_INTERVIEW_OFFER: 'make-interivew-offer',
+        MAKE_INTERVIEW_OFFER: 'make-interivew-offer'
 
-        RESCIND_INTERVIEW_OFFER: 'rescind-interview-offer'
-
-        
     });
 
     return {

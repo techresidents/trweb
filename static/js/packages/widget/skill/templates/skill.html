@@ -1,1 +1,1 @@
-<span rel="tooltip" title="<%= model.yrs_experience%> yrs experience"><%= model.technology.name %><span class="w-skill-years-experience"> (<%= model.yrs_experience %>)</span></span>
+<span rel="tooltip" title="<%= model.yrs_experience %> <%= model.yrs_experience > 1 ? 'yrs experience' : 'yr experience'%>"><%= model.technology.name %><span class="w-skill-years-experience"> (<%= model.yrs_experience %>)</span></span>

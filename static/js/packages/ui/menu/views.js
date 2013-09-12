@@ -41,7 +41,7 @@ define([
             var model = this.collection.where({key: target.data('key')})[0];
             var handler = model.handler();
 
-            if(handler) {
+            if(model.enabled() && handler) {
                 handler.call(this, model);
             }
 

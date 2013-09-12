@@ -17,8 +17,6 @@ define(/** @exports ui/form/validators */[
          * @constructor
          * @augments module:core/base~Base
          * @param {object} options Options object
-         * @param {boolean} [options.required=true] Boolean indicating
-         *   that the field is required.
          */
         initialize: function(options) {
         },

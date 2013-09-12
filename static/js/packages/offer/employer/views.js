@@ -50,7 +50,7 @@ define([
 
         classes: function() {
             var result = ui.grid.views.GridView.prototype.classes.call(this);
-            result = result.concat(['offers-grid']);
+            result = result.concat(['employer-offers-grid']);
             return result;
         }
     }, {
@@ -76,7 +76,11 @@ define([
                     sort: 'type'
                 }),
                 cellView: new ui.grid.views.GridCellView.Factory({
-                    valueAttribute: 'type'
+                    valueAttribute: 'type',
+                    context: function(defaultContext) {
+                        defaultContext.value = core.string.titleText(defaultContext.value);
+                        return defaultContext;
+                    }
                 })
             };
         },
@@ -130,14 +134,18 @@ define([
                     sort: 'status'
                 }),
                 cellView: new ui.grid.views.GridCellView.Factory({
-                    valueAttribute: 'status'
+                    valueAttribute: 'status',
+                    context: function(defaultContext) {
+                        defaultContext.value = core.string.titleText(defaultContext.value);
+                        return defaultContext;
+                    }
                 })
             };
         },
 
         actionColumn: function(view) {
             // Show an action to rescind an interview offer as long as the
-            // offer is not in the 'RESCINDED' state.
+            // offer is in the 'PENDING' state.
 
             var map = function(model) {
                 var rescindOffer = function() {
@@ -152,7 +160,7 @@ define([
                         key: 'rescind-interview_offer',
                         label: 'Rescind Interview Offer',
                         handler: rescindOffer,
-                        visible: model.get_status() !== 'RESCINDED'
+                        enabled: model.get_status() === 'PENDING'
                     }
                 ];
                 return menuItems;
@@ -324,7 +332,7 @@ define([
      */
     var EmployerOffersView = core.view.View.extend({
 
-        contentSelector: '.offers-container',
+        contentSelector: '.employer-offers-container',
 
         events: {
         },
@@ -332,8 +340,6 @@ define([
         initialize: function(options) {
             this.template =  _.template(employer_offers_template);
             this.collectionWithRelated = ['application__requisition'];
-            // It's expected that the collection passed to this view
-            // has a withRelated field of ['application__requisition']
             this.loader = new api.loader.ApiLoader([
                 { instance: this.collection, withRelated: this.collectionWithRelated }
             ]);
@@ -389,7 +395,7 @@ define([
         },
 
         classes: function() {
-            return ['offers'];
+            return ['employer-offers'];
         },
 
         render: function() {

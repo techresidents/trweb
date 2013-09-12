@@ -42,13 +42,13 @@ define(/** @exports grid/views */[
         /**
          * Grid Hover Cell View.
          * @constructs
+         * @augments module:core/view~View
          * @param {object} options options
          * @param {object} options.config Grid config
          * @param {ApiQuery} options.query Query
          * @param {ApiModel} options.model Model
          * @param {module:core/view~View|module:core/factory~Factory} options.view
          *   View or view factory
-         * @augments module:core/view~View
          */
         initialize: function(options) {
             options = _.extend({

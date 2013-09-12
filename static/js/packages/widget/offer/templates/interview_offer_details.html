@@ -1,0 +1,24 @@
+<div class="interview-offer-details-modal">
+    <div>
+        <label class="offer-details-modal-label">Employer</label>
+        <span><%= model.tenant.name %></span>
+    </div>
+    <div>
+        <label class="offer-details-modal-label">Position</label>
+        <span><%= model.application.requisition.title %></span>
+    </div>
+    <div>
+        <label class="offer-details-modal-label">Location</label>
+        <span><%= model.application.requisition.location %></span>
+    </div>
+    <div>
+        <label class="offer-details-modal-label">Type</label>
+        <span><%= type %> Interview</span>
+    </div>
+</div>
+
+<div class="alert alert-info">
+    <% if (message) { %>
+    <strong>Note:</strong> <%= message %>
+    <% } %>
+</div>

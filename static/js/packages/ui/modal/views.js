@@ -124,6 +124,12 @@ define([
         
         destroy: function() {
             this.hide();
+
+            //the following is need to work around a bootstrap bug where
+            //the background is not always removed if an ajax event is fired.
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+
             ModalView.__super__.destroy.call(this);
         },
 

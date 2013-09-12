@@ -419,10 +419,21 @@ button.drop-button .caret {
     white-space: nowrap;
 }
 
+.menu li.disabled > a {
+    color: #aaaaaa;
+}
+
 .menu li > a:hover, .menu li a:focus {
     background-color: #0081C2;
     color: #FFFFFF;
     text-decoration: none;
+}
+
+.menu li.disabled > a:hover, .menu li a:focus {
+    color: #aaaaaa;
+    background-color: #FFFFFF;
+    text-decoration: none;
+    cursor: not-allowed;
 }
 
 .menu-divider {
@@ -593,6 +604,10 @@ button.drop-button .caret {
     width: 100%;
     height: 100%;
     background-image: url("../img/star_fg_well.png");
+}
+
+.rating-star-image-white {
+    background-image: url("../img/star_fg_white.png");
 }
 
 .rating-star-background {

@@ -85,6 +85,7 @@ define([
                 model: this.model.toJSON({
                     withRelated: ['requisition']
                 }),
+                status: core.string.titleText(this.model.get_status()),
                 fmt: core.format
             };
 

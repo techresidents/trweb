@@ -399,20 +399,24 @@
     margin-bottom: 30px;
 }
 
-.application .eval-container .rating-stars {
+.application .application-summary-status {
+    margin-right: 10px;
+}
+
+.team-evaluation-header {
+    text-align: left;
+}
+
+.eval-grid th {
     cursor: default;
 }
 
-.application-summary > .container span {
-    margin-right: 10px;
+.eval-grid .grid-row:hover {
+    background-color: transparent;
 }
 
-.application-summary > .container > span > a {
-    font-size: 16px;
-}
-
-.application-summary > .container > button {
-    margin-right: 10px;
+.eval-grid .rating-stars {
+    cursor: default;
 }
 
 .application-log-grid table {
@@ -762,6 +766,9 @@
 }
 .requisition-expert {
     background-color: #DFF0D8;
+}
+.requisition-description p {
+    white-space: pre-wrap;
 }
 
 #user-actions {

@@ -221,9 +221,17 @@ define([
         },
 
         initChildViews: function() {
-            this.sort = _.bind(this.sortSkill, this);
+            //disabling sorting for now since  previously we were only
+            //sorting the persisted skills and not newly added skills.
+            //As a result, when backspace is pressed for newly added
+            //skills we need to pop of the last skill in the collection,
+            //and for persisted skills we need to sort and figure out
+            //which to remove. Too much work... removing sorting for now.
+            //TODO maybe backend can sort this.
+            
+            //this.sort = _.bind(this.sortSkill, this);
             EditSkillsView.__super__.initChildViews.call(this);
-            this.sort = null;
+            //this.sort = null;
         },
 
         addMatch: function(match) {
@@ -259,7 +267,7 @@ define([
         },
 
         onChange: function() {
-            this.sortChildViews();
+            //this.sortChildViews();
         },
 
         onSkillClose: function(e) {
@@ -403,6 +411,7 @@ define([
                 case ui.events.kc.ESC:
                 case ui.events.kc.ENTER:
                     this.close();
+                    e.preventDefault();
                     break;
             }
         },
