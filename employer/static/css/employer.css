@@ -768,7 +768,7 @@
     background-color: #DFF0D8;
 }
 .requisition-description p {
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 #user-actions {

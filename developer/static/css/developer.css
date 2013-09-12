@@ -386,7 +386,7 @@
     background-color: #DFF0D8;
 }
 .offer-description p {
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 
