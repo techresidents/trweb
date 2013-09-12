@@ -114,12 +114,16 @@ define([
         onCreateView: function(notification) {
             if (notification.type === this.viewType()) {
 
+                var uri = notification.options.query ||
+                    this.defaultQuery.toUri();
+
                 // Clone the default collection since this.defaultQuery
                 // has a reference to the query obj within this.defaultCollection.
                 // If we didn't clone, then the check against the defaultQuery in
                 // onReset() would always pass and set the uri = null.
                 this.collection = this.defaultCollection.clone();
                 this.collection.on('reset', this.onReset, this);
+                this.collection.query().parse(uri);
                 this.view = new developer_offer_views.DeveloperOffersView({
                     collection: this.collection
                 });
