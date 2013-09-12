@@ -1,13 +1,3 @@
 INSERT INTO job_application_status (name, description) VALUES ('NEW', 'New application');
 INSERT INTO job_application_status (name, description) VALUES ('REVIEW', 'Application under review');
-INSERT INTO job_application_status (name, description) VALUES ('INTERVIEW_OFFER_PENDING', 'Interview offer pending');
-INSERT INTO job_application_status (name, description) VALUES ('INTERVIEW_OFFER_ACCEPTED', 'Interview offer accepted');
-INSERT INTO job_application_status (name, description) VALUES ('INTERVIEW_OFFER_DECLINED', 'Interview offer declined');
-INSERT INTO job_application_status (name, description) VALUES ('INTERVIEW_OFFER_RESCINDED', 'Interview offer rescinded');
-INSERT INTO job_application_status (name, description) VALUES ('INTERVIEW_OFFER_EXPIRED', 'Interview offer expired');
-INSERT INTO job_application_status (name, description) VALUES ('JOB_OFFER_PENDING', 'Job offer pending');
-INSERT INTO job_application_status (name, description) VALUES ('JOB_OFFER_ACCEPTED', 'Job offer accepted');
-INSERT INTO job_application_status (name, description) VALUES ('JOB_OFFER_DECLINED', 'Job offer declined');
-INSERT INTO job_application_status (name, description) VALUES ('JOB_OFFER_RESCINDED', 'Job offer rescinded');
-INSERT INTO job_application_status (name, description) VALUES ('JOB_OFFER_EXPIRED', 'Job offer expired');
 INSERT INTO job_application_status (name, description) VALUES ('REJECTED', 'Application rejected');
