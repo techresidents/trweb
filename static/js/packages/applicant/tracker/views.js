@@ -215,10 +215,7 @@ define([
                 field: 'status',
                 filterView: new ui.filter.views.SelectFilterView.Factory({
                     selections: [
-                        'NEW', 'REVIEW', 'INTERVIEW_OFFER_PENDING',
-                        'INTERVIEW_OFFER_ACCEPTED', 'INTERVIEW_OFFER_DECLINED',
-                        'INTERVIEW_OFFER_RESCINDED', 'INTERVIEW_OFFER_EXPIRED',
-                        'REJECTED']
+                        'NEW', 'REVIEW', 'REJECTED']
                 })
             };
         },
