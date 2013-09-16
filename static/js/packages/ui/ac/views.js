@@ -50,7 +50,9 @@ define(/** @exports ui/ac/ac */[
         events: {
             'select .drop': 'onDropSelect',
             'change .input-handler': 'onInputChange',
-            'enterkey .input-handler': 'onInputEnterKey'
+            'enterkey .input-handler': 'onInputEnterKey',
+            'mouseenter .drop-content': 'onMouseEnterDropContent',
+            'mouseleave .drop-content': 'onMouseLeaveDropContent'
         },
         
         /**
@@ -101,6 +103,7 @@ define(/** @exports ui/ac/ac */[
             this.lastMatches = null;
             this.lastSelectedMatch = null;
             this.delayedCloseTimer = null;
+            this.mouseInDropContent = false;
 
             //child views
             this.dropView = null;
@@ -225,7 +228,7 @@ define(/** @exports ui/ac/ac */[
             var search = this.getInputValue();
             var searchMatch = this._valueToMatch(search);
     
-            if(searchMatch) {
+            if(searchMatch && !this.mouseInDropContent) {
                 this.setLastSelectedMatch(searchMatch, true);
             } else {
                 if(this.forceSelection) {
@@ -268,6 +271,7 @@ define(/** @exports ui/ac/ac */[
 
         close: function() {
             this.dropView.close();
+            this.mouseInDropContent = false;
         },
 
         closeOnDelay: function() {
@@ -423,6 +427,14 @@ define(/** @exports ui/ac/ac */[
 
         onDropSelect: function(e) {
             e.stopPropagation();
+        },
+
+        onMouseEnterDropContent: function(e) {
+            this.mouseInDropContent = true;
+        },
+
+        onMouseLeaveDropContent: function(e) {
+            this.mouseInDropContent = false;
         },
 
         _matchToValue: function(match) {
