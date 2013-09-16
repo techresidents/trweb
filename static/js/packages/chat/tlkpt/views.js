@@ -361,6 +361,7 @@ define([
 
         chatWithFriendSelector: '#chat-with-friend-radio-btn',
         talkingPointsSelector: '.talking-points-view-hook',
+        talkingPointsHelpViewSelector: '.talking-points-help-view-hook',
 
         events: {
             'click .start-chat-btn': 'onStart'
@@ -368,7 +369,8 @@ define([
 
         childViews: function() {
             return [
-                this.talkingPointsView
+                this.talkingPointsView,
+                this.talkingPointsHelpView
             ];
         },
 
@@ -386,6 +388,7 @@ define([
 
             //child views
             this.talkingPointsView = null;
+            this.talkingPointsHelpView = null;
             this.initChildViews();
         },
 
@@ -394,12 +397,19 @@ define([
                 collection: this.model.get_tree(),
                 viewFactory: new core.factory.Factory(TopicTalkingPointsEditView, {})
             });
+            this.talkingPointsHelpView = new ui.help.views.HelpView({
+                help: 'Talking points are brief notes on your main discussion points, ' +
+                    'similar to notes found on a presentation slide. ' +
+                    'They also help employers discover your content.',
+                placement: 'bottom'
+            });
         },
 
         render: function() {
             if (this.loader.isLoaded()) {
                 this.$el.html(this.template());
                 this.append(this.talkingPointsView, this.talkingPointsSelector);
+                this.append(this.talkingPointsHelpView, this.talkingPointsHelpViewSelector);
             }
             return this;
         },
