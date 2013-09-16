@@ -127,6 +127,8 @@ define([
      */
     var AddTalkingPointView = core.view.View.extend({
 
+        talkingPointsHelpViewSelector: '.talking-points-help-view-hook',
+
         events: {
             'click .add': 'onAdd'
         },
@@ -135,10 +137,31 @@ define([
             this.topic = options.topic;
             this.collection = options.collection;
             this.template =  _.template(add_tlkpt_template);
+
+            //child views
+            this.talkingPointsHelpView = null;
+            this.initChildViews();
+        },
+
+        childViews: function() {
+            return [
+                this.talkingPointsHelpView
+            ];
+        },
+
+        initChildViews: function() {
+            this.talkingPointsHelpView = new ui.help.views.HelpView({
+                help: 'Talking points are brief notes on your main discussion points, ' +
+                    'similar to notes on a presentation slide. ' +
+                    'They help to guide you during your chat and help employers ' +
+                    'discover your content.',
+                placement: 'bottom'
+            });
         },
 
         render: function() {
             this.$el.html(this.template());
+            this.append(this.talkingPointsHelpView, this.talkingPointsHelpViewSelector);
             return this;
         },
 
@@ -386,6 +409,7 @@ define([
 
             //child views
             this.talkingPointsView = null;
+            this.talkingPointsHelpView = null;
             this.initChildViews();
         },
 
