@@ -34,6 +34,7 @@ define([
             title: new fields.StringField(),
             description: new fields.StringField(),
             tree: new fields.ListField(),
+            tags: new fields.ListField(),
             duration: new fields.IntegerField(),
             q: new fields.StringField({nullable: true})
         },

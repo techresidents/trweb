@@ -2,13 +2,15 @@ define([
     'jquery',
     'underscore',
     '../base',
-    '../fields'
+    '../fields',
+    './tag'
 
 ], function(
     $,
     _,
     api,
-    fields) {
+    fields,
+    tag_models) {
 
     var TopicCollection = api.ApiCollection.extend({
 
@@ -48,6 +50,10 @@ define([
             tree: new fields.RelatedField({
                 relation: "self",
                 many: true
+            }),
+
+            tags: new fields.ManyToMany({
+                relation: tag_models.Tag
             })
         }
 
