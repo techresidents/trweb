@@ -31,6 +31,7 @@ define([
     var AppRouter = Backbone.Router.extend({
         routes: {
             'application/:id(/)': 'application',
+            'company(/)': 'company',
             'home(/)': 'home',
             'offers(/:query)(/)': 'offers',
             'playback/:id(/)': 'playback',
@@ -183,6 +184,16 @@ define([
                     type: offer.mediators.employer.EmployerOffersMediator.VIEW_TYPE,
                     options: {
                         query: query
+                    }
+                });
+            }, this));
+        },
+
+        company: function() {
+            require(['company'], _.bind(function(company) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: company.mediators.employer.EmployerCompanyMediator.VIEW_TYPE,
+                    options: {
                     }
                 });
             }, this));
