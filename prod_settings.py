@@ -28,6 +28,12 @@ SESSION_COOKIE_DOMAIN = '.techresidents.com'
 #Static files settings
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
 
+# URL prefix for static files.
+# Example: "http://media.lawrence.com/static/"
+STATIC_01_URL = 'https://e9f378d750ee0b5160d3-c86406842fda26b707fba5aa1ad8ca51.ssl.cf1.rackcdn.com/static/'
+STATIC_02_URL = 'https://6d4b9b187348079d82ef-e349c40e6de90f3496242edc160e9365.ssl.cf1.rackcdn.com/static/'
+STATIC_URL = STATIC_01_URL
+
 #Django message settings
 #MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
@@ -51,6 +57,7 @@ CLOUDFILES_CONTAINER_NAME = "tr_public"
 CLOUDFILES_SERVICENET = True
 CLOUDFILES_TIMEOUT = 5
 CLOUDFILES_CREATE_CONTAINER = False
+CLOUDFILES_STATIC_CONTAINER_NAME = "tr_static_01"
 
 #Landing settings
 LANDING_PLACEHOLDER = False
