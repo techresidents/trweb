@@ -76,8 +76,8 @@ INSERT INTO topic (id, rank, duration, parent_id, title, recommended_participant
 INSERT INTO topic_tag (topic_id, tag_id) VALUES(22, (select id from tag where name = 'Back-end'));
 INSERT INTO topic_tag (topic_id, tag_id) VALUES(22, (select id from tag where name = 'Web'));
 
--- Protect your Passwords
-INSERT INTO topic (id, rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (23, 0, 180, NULL, 'Protect your Passwords', 1, True, True, 1, 1, 'It seems like we can''t make it more than a few weeks without hearing about yet another well known company insecurely storing user passwords. Describe the steps you would take to properly protect user passwords.');
+-- Protect the Passwords
+INSERT INTO topic (id, rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (23, 0, 180, NULL, 'Protect the Passwords', 1, True, True, 1, 1, 'It seems like we can''t make it more than a few weeks without hearing about yet another well known company insecurely storing user passwords. Describe the steps you would take to properly protect user passwords.');
 INSERT INTO topic_tag (topic_id, tag_id) VALUES(23, (select id from tag where name = 'Back-end'));
 INSERT INTO topic_tag (topic_id, tag_id) VALUES(23, (select id from tag where name = 'Security'));
 
@@ -114,8 +114,8 @@ INSERT INTO topic_tag (topic_id, tag_id) VALUES(29, (select id from tag where na
 INSERT INTO topic (id, rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (30, 0, 180, NULL, 'Can''t Live Without: Design Pattern', 1, True, True, 1, 1, 'What design pattern could you not live without?');
 INSERT INTO topic_tag (topic_id, tag_id) VALUES(30, (select id from tag where name = 'OOP'));
 
--- Take me to your Leader
-INSERT INTO topic (id, rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (31, 0, 300, NULL, 'Take me to your Leader', 1, True, True, 1, 1, 'How would you elect a leader in a distributed system and make it known to all nodes in the system?');
+-- Take Me to Your Leader
+INSERT INTO topic (id, rank, duration, parent_id, title, recommended_participants, public, active, type_id, user_id, description) VALUES (31, 0, 300, NULL, 'Take Me to Your Leader', 1, True, True, 1, 1, 'How would you elect a leader in a distributed system and make it known to all nodes in the system?');
 INSERT INTO topic_tag (topic_id, tag_id) VALUES(31, (select id from tag where name = 'Back-end'));
 INSERT INTO topic_tag (topic_id, tag_id) VALUES(31, (select id from tag where name = 'Distributed System'));
 
