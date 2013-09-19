@@ -366,4 +366,11 @@ INSERT INTO concept (id, parent_id, name, description) VALUES (365, 356, 'Advanc
 INSERT INTO concept (id, parent_id, name, description) VALUES (366, 356, 'Blowfish', '');
 INSERT INTO concept (id, parent_id, name, description) VALUES (367, 357, 'RC4', '');
 
+INSERT INTO concept (id, parent_id, name, description) VALUES (368, 1, 'Miscellaneous', '');
+INSERT INTO concept (id, parent_id, name, description) VALUES (369, 1, 'Discipline', '');
+INSERT INTO concept (id, parent_id, name, description) VALUES (370, 368, 'Front-end', '');
+INSERT INTO concept (id, parent_id, name, description) VALUES (371, 368, 'Back-end', '');
+INSERT INTO concept (id, parent_id, name, description) VALUES (372, 368, 'Mobile', '');
+INSERT INTO concept (id, parent_id, name, description) VALUES (373, 368, 'Web', '');
+
 SELECT setval('concept_id_seq', (SELECT max(id) FROM concept));
