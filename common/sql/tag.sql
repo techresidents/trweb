@@ -386,4 +386,10 @@ INSERT INTO tag (id, name, concept_id) VALUES (385, 'Non-repeatable Read', 321);
 INSERT INTO tag (id, name, concept_id) VALUES (386, 'Phantom Read', 322);
 INSERT INTO tag (id, name, concept_id) VALUES (387, 'Durability', 129);
 
+INSERT INTO tag (id, name, concept_id) VALUES (388, 'General', 368);
+INSERT INTO tag (id, name, concept_id) VALUES (389, 'Front-end', 370);
+INSERT INTO tag (id, name, concept_id) VALUES (390, 'Back-end', 371);
+INSERT INTO tag (id, name, concept_id) VALUES (391, 'Mobile', 372);
+INSERT INTO tag (id, name, concept_id) VALUES (392, 'Web', 373);
+
 SELECT setval('tag_id_seq', (SELECT max(id) FROM tag));

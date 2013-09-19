@@ -4,6 +4,7 @@ User = get_user_model()
 
 from techresidents_web.common.managers import TreeManager
 
+
 class TopicManager(TreeManager):
     def topic_tree(self, topic_id):
         return self.tree_by_rank(topic_id)
@@ -22,6 +23,13 @@ class Concept(models.Model):
     description = models.CharField(max_length=1024)
 
     objects = TreeManager()
+
+class Tag(models.Model):
+    class Meta:
+        db_table = "tag"
+
+    name = models.CharField(max_length=100, unique=True)
+    concept = models.ForeignKey(Concept)
 
 class TopicType(models.Model):
     class Meta:
@@ -81,12 +89,15 @@ class Topic(models.Model):
         """
         return self.duration / 60
 
-class Tag(models.Model):
-    class Meta:
-        db_table = "tag"
+class TopicTag(models.Model):
+    """Topic Tag Linking Model."""
 
-    name = models.CharField(max_length=100, unique=True)
-    concept = models.ForeignKey(Concept)
+    class Meta:
+        db_table = "topic_tag"
+        unique_together = ("topic", "tag")
+
+    topic = models.ForeignKey(Topic, related_name="topic_tags")
+    tag = models.ForeignKey(Tag, related_name="+")
 
 class TechnologyType(models.Model):
     """Represents a technology type such as framework, programming language, etc"""

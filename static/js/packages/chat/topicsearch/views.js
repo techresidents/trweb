@@ -68,7 +68,8 @@ define([
 
             var config = {
                 facets: [
-                    { name: 'f_duration', open: true}
+                    { name: 'f_duration', open: true},
+                    { name: 'f_tags', open: true}
                 ]
             };
 
