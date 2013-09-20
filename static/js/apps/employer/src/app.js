@@ -371,8 +371,8 @@ define([
     EventNotificationMap[events.UPDATE_USER] =
         notifications.UPDATE_USER;
     /* COMPANY PROFILE EVENTS */
-    EventNotificationMap[events.SAVE_COMPANY_PROFILE] =
-        notifications.SAVE_COMPANY_PROFILE;
+    EventNotificationMap[events.UPDATE_COMPANY_PROFILE] =
+        notifications.UPDATE_COMPANY_PROFILE;
 
     /**
      * App Mediator
@@ -535,12 +535,8 @@ define([
             this.registerCommand(notifications.UPDATE_USER,
                 ctrl.commands.profile.UpdateUser);
             /* COMPANY PROFILE COMMANDS */
-            this.registerCommand(notifications.UPDATE_TENANT,
-                ctrl.commands.company.UpdateTenant);
             this.registerCommand(notifications.UPDATE_COMPANY_PROFILE,
                 ctrl.commands.company.UpdateCompanyProfile);
-            this.registerCommand(notifications.SAVE_COMPANY_PROFILE,
-                ctrl.commands.company.SaveCompanyProfile);
         },
         
         /**

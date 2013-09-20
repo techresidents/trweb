@@ -29,9 +29,10 @@ define([
             id: new fields.StringField({primaryKey: true}),
             tenant_id: new fields.StringField(),
             size: new fields.StringField(),
-            description: new fields.StringField({nullable: true }),
-            location: new fields.StringField({nullable: true }),
-            website: new fields.StringField({nullable: true })
+            name: new fields.StringField({nullable: true}),
+            description: new fields.StringField({nullable: true}),
+            location: new fields.StringField({nullable: true}),
+            url: new fields.StringField({nullable: true})
         },
 
         relatedFields: {

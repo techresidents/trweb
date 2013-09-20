@@ -41,15 +41,17 @@ define([
 
         createCompanyProfileView: function() {
             var userModel = new api.models.User({ id: 'CURRENT' });
+            var tenantModel = userModel.get_tenant();
             this.view = new employer_company_views.CompanyProfileView({
-                model: userModel.get_tenant()
+                model: tenantModel.get_company_profile()
             });
         },
 
         createCompanyProfileEditView: function() {
             var userModel = new api.models.User({ id: 'CURRENT' });
+            var tenantModel = userModel.get_tenant();
             this.view = new employer_company_views.CompanyProfileEditView({
-                model: userModel.get_tenant()
+                model: tenantModel.get_company_profile()
             });
         },
 

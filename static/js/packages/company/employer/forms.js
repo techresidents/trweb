@@ -23,18 +23,17 @@ define([
          * Company Profile Form View
          * @constructor
          * @param {Object} options
-         * @param {Tenant} options.model Tenant model
+         * @param {CompanyProfile} options.model CompanyProfile model
          */
         initialize: function(options) {
-            this.tenantModel = options.model;
-            this.companyProfileModel = options.model.get_company_profile();
+            this.model = options.model;
 
             options.fields = [
-                this.nameField(this.tenantModel),
-                this.sizeField(this.companyProfileModel),
-                this.locationField(this.companyProfileModel),
-                this.websiteField(this.companyProfileModel),
-                this.descriptionField(this.companyProfileModel)
+                this.nameField(this.model),
+                this.sizeField(this.model),
+                this.locationField(this.model),
+                this.websiteField(this.model),
+                this.descriptionField(this.model)
             ];
 
             options.actions = [
@@ -69,8 +68,7 @@ define([
                 model: model,
                 label: 'Size',
                 choices: [
-                    { label: '1', value: '1' },
-                    { label: '2-10', value: '2-10' },
+                    { label: '1-10', value: '1-10' },
                     { label: '11-50', value: '11-50' },
                     { label: '51-200', value: '51-200' },
                     { label: '201-500', value: '201-500' },
@@ -93,7 +91,7 @@ define([
 
         websiteField: function(model) {
             return new ui.form.fields.InputField({
-                name: 'website',
+                name: 'url',
                 model: model,
                 label: 'Website',
                 placeholder: 'http://company.com'
@@ -119,7 +117,7 @@ define([
                 });
             };
 
-            this.triggerEvent(events.SAVE_COMPANY_PROFILE, {
+            this.triggerEvent(events.UPDATE_COMPANY_PROFILE, {
                 model: this.model,
                 onSuccess: _.bind(success, this),
                 onError: options.error

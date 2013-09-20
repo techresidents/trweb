@@ -27,16 +27,15 @@ define([
          * Employer Company Profile View
          * @constructor
          * @param {Object} options
-         * @param {Tenant} options.model Tenant model
+         * @param {CompanyProfile} options.model CompanyProfile model
          * @classdesc
          * View to display employer company profile
          */
         initialize: function(options) {
             this.model = options.model;
             this.template =  _.template(employer_company_profile_template);
-            this.modelWithRelated = ['company_profile'];
             this.loader = new api.loader.ApiLoader([
-                {instance: this.model, withRelated: this.modelWithRelated}
+                { instance: this.model }
             ]);
 
             // bindings
@@ -53,9 +52,7 @@ define([
         render: function() {
             if (this.loader.isLoaded()) {
                 var context = {
-                    model: this.model.toJSON({
-                        withRelated: this.modelWithRelated
-                    })
+                    model: this.model.toJSON()
                 };
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
@@ -70,16 +67,15 @@ define([
          * Employer Company Profile Edit View
          * @constructor
          * @param {Object} options
-         * @param {Tenant} options.model Tenant model
+         * @param {CompanyProfile} options.model CompanyProfile model
          * @classdesc
          * View to edit the employer company profile
          */
         initialize: function(options) {
             this.model = options.model;
             this.template =  _.template(employer_company_profile_edit_template);
-            this.modelWithRelated = ['company_profile'];
             this.loader = new api.loader.ApiLoader([
-                {instance: this.model, withRelated: this.modelWithRelated}
+                { instance: this.model }
             ]);
 
             // bindings
