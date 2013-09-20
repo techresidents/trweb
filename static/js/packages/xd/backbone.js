@@ -37,7 +37,14 @@ define([
             params.data = JSON.stringify(model.toJSON());
             params.headers['Content-Type'] = 'application/json';
         } 
-
+        
+        //Work around for ie10 where if data is undefined somehow
+        //the string 'undefined' is getting sent to server in 
+        //response body. Setting it to null works around the issue.
+        if(params.data === undefined) {
+            params.data = null;
+        }
+        
         xd.xhr.request({
             url: params.url,
             method: type,
