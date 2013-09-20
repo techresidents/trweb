@@ -179,7 +179,7 @@ define([
         getParentRelation: function() {
             var result = null;
             if(_.isObject(this._parentRelation)) {
-                result = this._parentRelation.instnace;
+                result = this._parentRelation.instance;
             }
             return result;
         },
@@ -661,7 +661,7 @@ define([
         getParentRelation: function() {
             var result = null;
             if(_.isObject(this._parentRelation)) {
-                result = this._parentRelation.instnace;
+                result = this._parentRelation.instance;
             }
             return relation;
         },
