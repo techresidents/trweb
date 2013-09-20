@@ -11,18 +11,14 @@ define([
     api,
     employer_company_views) {
 
-    /**
-     * Employer Company Mediator
-     * @constructor
-     */
-    var EmployerCompanyMediator = core.mediator.Mediator.extend({
+    var CompanyProfileMediator = core.mediator.Mediator.extend({
 
         name: function() {
-            return EmployerCompanyMediator.NAME;
+            return CompanyProfileMediator.NAME;
         },
 
-        viewType: function() {
-            return EmployerCompanyMediator.VIEW_TYPE;
+        isViewType: function(type) {
+            return _.contains(CompanyProfileMediator.VIEW_TYPE, type);
         },
 
         /**
@@ -33,17 +29,44 @@ define([
             [notifications.VIEW_DESTROY, 'onDestroyView']
         ],
 
+        /**
+         * Employer Company Profile Mediator
+         * @constructor
+         * @classdesc
+         * Mediator responsible for read/edit employer company profile views
+         */
         initialize: function(options) {
             this.view = null;
         },
 
-        onCreateView: function(notification) {
-            if (notification.type === this.viewType()) {
+        createCompanyProfileView: function() {
+            var userModel = new api.models.User({ id: 'CURRENT' });
+            this.view = new employer_company_views.CompanyProfileView({
+                model: userModel.get_tenant()
+            });
+        },
 
-                this.view = new employer_company_views.EmployerCompanyView({});
+        createCompanyProfileEditView: function() {
+            var userModel = new api.models.User({ id: 'CURRENT' });
+            this.view = new employer_company_views.CompanyProfileEditView({
+                model: userModel.get_tenant()
+            });
+        },
+
+        onCreateView: function(notification) {
+            if (this.isViewType(notification.type)) {
+
+                switch(notification.type) {
+                    case CompanyProfileMediator.VIEW_TYPE.READ:
+                        this.createCompanyProfileView();
+                        break;
+                    case CompanyProfileMediator.VIEW_TYPE.EDIT:
+                        this.createCompanyProfileEditView();
+                        break;
+                }
 
                 this.facade.trigger(notifications.VIEW_CREATED, {
-                    type: this.viewType(),
+                    type: notification.type,
                     view: this.view,
                     options: notification.options
                 });
@@ -51,11 +74,10 @@ define([
         },
 
         onDestroyView: function(notification) {
-            if (notification.type === this.viewType()) {
+            if (this.isViewType(notification.type)) {
                 notification.view.destroy();
-
                 this.facade.trigger(notifications.VIEW_DESTROYED, {
-                    type: this.viewType(),
+                    type: notification.type,
                     view: notification.view
                 });
                 if (this.view === notification.view) {
@@ -66,12 +88,15 @@ define([
 
     }, {
 
-        NAME: 'EmployerCompanyMediator',
+        NAME: 'EmployerCompanyProfileMediator',
 
-        VIEW_TYPE: 'EmployerCompanyView'
+        VIEW_TYPE: {
+            READ: 'EmployerCompanyProfileView',
+            EDIT: 'EmployerCompanyProfileEditView'
+        }
     });
 
     return {
-        EmployerCompanyMediator: EmployerCompanyMediator
+        CompanyProfileMediator: CompanyProfileMediator
     };
 });

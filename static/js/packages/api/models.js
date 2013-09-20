@@ -34,7 +34,8 @@ define([
     './models/technology_search',
     './models/location_search',
     './models/talking_point',
-    './models/topic_search'
+    './models/topic_search',
+    './models/company'
 ], function(
     $,
     _,
@@ -71,7 +72,8 @@ define([
     technology_search_models,
     location_search_models,
     talking_point_models,
-    topic_search_models) {
+    topic_search_models,
+    company_profile_models) {
 
 
     return {
@@ -140,6 +142,8 @@ define([
         TalkingPoint: talking_point_models.TalkingPoint,
         TalkingPointCollection: talking_point_models.TalkingPointCollection,
         TopicSearch: topic_search_models.TopicSearch,
-        TopicSearchCollection: topic_search_models.TopicSearchCollection
+        TopicSearchCollection: topic_search_models.TopicSearchCollection,
+        CompanyProfile: company_profile_models.CompanyProfile,
+        CompanyProfileCollection: company_profile_models.CompanyProfileCollection
     };
 });

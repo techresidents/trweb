@@ -9,7 +9,7 @@ define(/** @exports alert */[
 
     var register = function(facade) {
         facade.registerMediator(
-            new employer_mediators.EmployerCompanyMediator()
+            new employer_mediators.CompanyProfileMediator()
         );
     };
     core.facade.register(register);

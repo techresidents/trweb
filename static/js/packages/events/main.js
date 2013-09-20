@@ -47,6 +47,9 @@ define(/** @exports events */[
         UPDATE_DEVELOPER_PREFERENCES: 'update_developer_preferences',
         
         /* REQUISTION EVENTS */
-        SAVE_REQUISITION: 'save_requisition'
+        SAVE_REQUISITION: 'save_requisition',
+
+        /* COMPANY PROFILE EVENTS */
+        SAVE_COMPANY_PROFILE: 'save_company_profile'
     };
 });

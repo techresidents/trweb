@@ -75,6 +75,11 @@ define([
         SAVE_REQUISITION: 'notification:SaveRequisition',
 
         /* TRACK ACTIONS */
-        TRACK_PAGE_VIEW: 'notification:TrackPageView'
+        TRACK_PAGE_VIEW: 'notification:TrackPageView',
+
+        /* COMPANY PROFILE ACTIONS */
+        UPDATE_TENANT: 'notification:UpdateTenant',
+        UPDATE_COMPANY_PROFILE: 'notification:UpdateCompanyProfile',
+        SAVE_COMPANY_PROFILE: 'notification:SaveCompanyProfile'
     };
 });
