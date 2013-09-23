@@ -680,6 +680,16 @@ button.drop-button .caret {
     width: 1px;
 }
 
+.loaderbar {
+    height: 2px;
+}
+.loaderbar-bar {
+    position: relative;
+    background-color: #EA8F00;
+    width: 0px;
+    height: 100%;
+}
+
 .facets {
     list-style: none;
     margin: 0px;
@@ -785,6 +795,9 @@ button.drop-button .caret {
 
 .form button.disabled {
     cursor: not-allowed;
+}
+.form-control-actions .loaderbar {
+    margin-top: 5px;
 }
 
 .accordion {

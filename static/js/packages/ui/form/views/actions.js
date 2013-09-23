@@ -4,6 +4,7 @@ define(/** @exports ui/form/views/actions */[
     'backbone',
     'core',
     '../../collection/views',
+    '../../load/views',
     '../events',
     'text!../templates/actions.html',
     'text!../templates/button_action.html'
@@ -13,6 +14,7 @@ define(/** @exports ui/form/views/actions */[
     Backbone,
     core,
     collection_views,
+    load_views,
     form_events,
     actions_template,
     button_action_template) {
@@ -39,13 +41,17 @@ define(/** @exports ui/form/views/actions */[
             this.template = _.template(options.template);
             this.state = options.state;
 
+            //events
+            this.listenTo(this.state, 'change:executing', this.onExecutingChange);
+
             //child views
             this.actionsView = null;
+            this.loaderView = null;
             this.initChildViews();
         },
         
         childViews: function() {
-            return [this.actionsView];
+            return [this.actionsView, this.loaderView];
         },
 
         initChildViews: function() {
@@ -56,6 +62,8 @@ define(/** @exports ui/form/views/actions */[
                 collection: this.state.actions(),
                 viewFactory: viewFactory
             });
+
+            this.loaderView = new load_views.LoaderBarView();
         },
 
         createActionView: function(options) {
@@ -74,7 +82,16 @@ define(/** @exports ui/form/views/actions */[
             this.$el.html(this.template(context));
             this.$el.attr('class', this.classes().join(' '));
             this.append(this.actionsView, '.controls');
+            this.append(this.loaderView, '.controls');
             return this;
+        },
+
+        onExecutingChange: function() {
+            if(this.state.executing()) {
+                this.loaderView.start();
+            } else {
+                this.loaderView.stop();
+            }
         }
     });
 
