@@ -279,9 +279,9 @@ define(/** @exports ui/form/views/forms */[
 
             try {
                 if(_.isObject(this.validator)) {
-                    valid = this.validator.validate(this.state);
+                    valid = this.validator.validate(this.state, options);
                 } else {
-                    valid = this.validator(this.state);
+                    valid = this.validator(this.state, options);
                 }
 
                 if(valid) {
@@ -361,7 +361,12 @@ define(/** @exports ui/form/views/forms */[
 
         onFormChange: function(e, eventBody) {
             this._updateDirtyState();
-            this.validate();
+
+            //update valid state but leave it up to each field
+            //to determine if an error should be shown.
+            this.validate({
+                showError: false
+            });
         },
 
         onFormAction: function(e, eventBody) {
@@ -370,7 +375,7 @@ define(/** @exports ui/form/views/forms */[
 
             //primary actions allowed on valid/committed data
             if(action.primary) {
-                allowed = this.validate() && this.commit();
+                allowed = this.validate({showError: true}) && this.commit();
             }
 
             if(allowed) {
