@@ -135,6 +135,7 @@ define([
                     });
                 } else {
                     this.loaded = true;
+                    this.loading = false;
                     if(options.triggerAlways) {
                         this.trigger('loaded');
                         if(options.success) {

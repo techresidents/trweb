@@ -58,7 +58,6 @@ class RestClient(object):
         path = "/%s/%s" % (self.path, path.strip("/"))
 
         try:
-            print headers
             self.connection.request(method, path, data, headers)
             response = self.connection.getresponse()
             self.validate_response(response)

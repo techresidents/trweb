@@ -29,17 +29,23 @@ define(/** @exports ui/form/actions */[
          * @param {boolean} [options.primary=true] Boolean indicating
          *   that the action is a primary action and that the form
          *   must be valid before the action is allowed.
+         * @param {boolean} [options.dirtyRequired=false] Boolean indicating
+         *   that form state.dirty must be true for action to be enabled.
+         * @param {boolean} [options.validRequired=false] Boolean indicating
+         *   that form state.valid must be true for action to be enabled.
          */
         initialize: function(options) {
             options = _.extend({
-                primary: true
+                primary: true,
+                dirtyRequired: false,
+                validRequired: false
             }, options);
 
             this.label = options.label;
             this.handler = options.handler;
             this.primary = options.primary;
-            this.dirtyRequired = options.dirtyRequired === undefined ?
-                this.primary : options.dirtyRequired;
+            this.dirtyRequired = options.dirtyRequired;
+            this.validRequired = options.validRequired;
 
             this.viewFactory = options.viewFactory;
 
@@ -73,7 +79,7 @@ define(/** @exports ui/form/actions */[
         update: function(state) {
             var enabled = !state.executing();
             if(this.primary && enabled) {
-                enabled = state.valid() &&
+                enabled = (!this.validRequired ||state.valid()) &&
                           (!this.dirtyRequired || state.dirty());
             }
             this.state.set({

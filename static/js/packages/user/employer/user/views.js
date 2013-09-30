@@ -54,6 +54,7 @@ define([
             this.loader.load();
 
             //child views
+            this.loaderView = null;
             this.jobPrefsView = null;
             this.skillsView = null;
             this.chatsView = null;
@@ -71,6 +72,7 @@ define([
 
         childViews: function() {
             return [
+                this.loaderView,
                 this.jobPrefsView,
                 this.skillsView,
                 this.chatsView,
@@ -79,6 +81,9 @@ define([
         },
 
         initChildViews: function() {
+            this.loaderView = new ui.load.views.LoaderBarView({
+                loader: this.loader
+            });
 
             this.jobPrefsView = new pref_views.UserJobPrefsView({
                 model: this.model
@@ -107,10 +112,13 @@ define([
             if(this.loader.isLoaded()) {
                 this.$el.html(this.template(context));
 
+                this.prepend(this.loaderView);
                 this.assign(this.jobPrefsView, this.jobPrefsSelector);
                 this.assign(this.skillsView, this.skillsSelector);
                 this.assign(this.chatsView, this.chatsSelector);
                 this.assign(this.actionsView, this.actionsSelector);
+            } else {
+                this.prepend(this.loaderView);
             }
             return this;
         }

@@ -4,6 +4,7 @@ import re
 import shutil
 import sys
 import tempfile
+import uuid
 
 from contextlib import contextmanager
 from string import Template
@@ -28,6 +29,7 @@ def localdev():
     env.project_environment="localdev"
     env.project_install_root="/opt/tr/www/%s/install" % (env.project_site)
     env.project_deploy_root="/opt/tr/www/%s/%s" % (env.project_site, env.project_environment)
+    env.static_containers = ["trdev_static_01", "trdev_static_02"]
 
     #Add additional convenience root for localdev deploy
     env.project_localdev_deploy_root="/opt/tr/www/localdev.com/%s" % env.project_environment
@@ -39,6 +41,7 @@ def integration():
     env.project_environment="integration"
     env.project_install_root="/opt/tr/www/%s/install" % (env.project_site)
     env.project_deploy_root="/opt/tr/www/%s/%s" % (env.project_site, env.project_environment)
+    env.static_containers = []
 
 def staging():
     """Configure environment for staging """
@@ -47,6 +50,7 @@ def staging():
     env.project_environment="staging"
     env.project_install_root="/opt/tr/www/%s/install" % (env.project_site)
     env.project_deploy_root="/opt/tr/www/%s/%s" % (env.project_site, env.project_environment)
+    env.static_containers = []
 
 def prod():
     """Configure environment for staging """
@@ -55,6 +59,7 @@ def prod():
     env.project_environment="prod"
     env.project_install_root="/opt/tr/www/%s/install" % (env.project_site)
     env.project_deploy_root="/opt/tr/www/%s/%s" % (env.project_site, env.project_environment)
+    env.static_containers = ["tr_static_01", "tr_static_02"]
 
 
 
@@ -313,3 +318,42 @@ def release(new_version, new_snapshot_version, current_version=None):
     bump_version(info["new_version"], info["new_snapshot_version"])
     local("git commit -a -m 'Bumping version to {new_snapshot_version}'".format(**info))
     local("git push")
+
+def extract_static(version, release="1", arch="x86_64"):
+    """Extract static_collected from specified RPM.
+       Note resulting rpm must exist in current directory.
+       
+       Typical invocation: fab localdev extract_static:0.1.0
+    """
+    if len(env.hosts) != 1:
+        raise RuntimeError("build_rpm must be run exactly 1 remote machine")
+
+    rpm = "{0}-{1}-{2}.{3}.rpm".format(env.project, version, release, arch)
+    if not os.path.exists(rpm):
+        raise RuntimeError("rpm file, %s,  does not exist. Execute build_rpm to create it." % rpm)
+    
+    tmpdir = "/tmp/%s" % uuid.uuid4().hex
+    run("mkdir %s" % tmpdir)
+    put(rpm, tmpdir)
+    with cd(tmpdir):
+        run("rpm2cpio %s|cpio -id" % rpm)
+    
+    static_collected_path = "%s/%s/techresidents_web-%s/techresidents_web/static_collected" %\
+            (tmpdir, env.project_install_root, version)
+
+    get(static_collected_path, ".")
+    run("rm -rf %s" % tmpdir)
+
+
+def sync_static():
+    """Sync static files to CDN.
+       
+       Typical invocation: fab prod sync_static
+    """
+    if not env.static_containers:
+        raise RuntimeError("sync_static must be run against environment with static_containers")
+    
+    for container in env.static_containers:
+        cmd = "python manage.py sync_static -c %s -t 300" %\
+                (container)
+        local(cmd)
