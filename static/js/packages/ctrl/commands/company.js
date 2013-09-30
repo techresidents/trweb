@@ -34,8 +34,6 @@ define([
          * @param {function} [options.onError] Error callback
          */
         execute: function(options) {
-            console.log('update profile command');
-            console.log(options.model);
             var model = options.model;
             model.save(null, {
                 wait: true,

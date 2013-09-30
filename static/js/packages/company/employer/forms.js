@@ -5,7 +5,6 @@ define([
     'core',
     'api',
     'ui',
-    'widget',
     'events'
 ], function(
     $,
@@ -14,7 +13,6 @@ define([
     core,
     api,
     ui,
-    widget,
     events) {
 
     var CompanyProfileFormView = ui.form.views.FormView.extend({
@@ -32,7 +30,7 @@ define([
                 this.nameField(this.model),
                 this.sizeField(this.model),
                 this.locationField(this.model),
-                this.websiteField(this.model),
+                this.urlField(this.model),
                 this.descriptionField(this.model)
             ];
 
@@ -89,7 +87,7 @@ define([
             });
         },
 
-        websiteField: function(model) {
+        urlField: function(model) {
             return new ui.form.fields.InputField({
                 name: 'url',
                 model: model,
