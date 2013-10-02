@@ -5,6 +5,11 @@
             <div class="progress progress-striped">
                 <div class="bar" style="width: <%= progress %>%;"></div>
             </div>
+            <% if (eligible) { %>
+            <p class="green-text"><i class="icon-ok-sign"></i> Eligible to receive offers</p>
+            <% } else { %>
+            <p class="red-text"><i class="icon-warning-sign"></i> To receive offers you have to add at least one chat to your highlight reel. </p>
+            <% } %>
         </div>
     </div>
 </div>

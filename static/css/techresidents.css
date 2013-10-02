@@ -219,6 +219,12 @@ a[name] {
     white-space: nowrap;
 }
 
+.green-text {
+    color: #468847;
+}
+.red-text {
+    color: #b94a48;
+}
 .orange-text {
     color: #EA8F00;
 }

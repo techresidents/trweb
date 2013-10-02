@@ -218,7 +218,8 @@ define([
         render: function() {
             if (this.loader.isLoaded()) {
                 var context = {
-                    progress: this.computeProfileCompletion()
+                    progress: this.computeProfileCompletion(),
+                    eligible: this.isEligibleToReceiveOffers()
                 };
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
@@ -250,6 +251,14 @@ define([
                 progress += 35;
             }
             return progress;
+        },
+
+        isEligibleToReceiveOffers: function() {
+            var isEligible = false;
+            if (this.model.get_chat_reels().length) {
+                isEligible = true;
+            }
+            return isEligible;
         }
     });
 
