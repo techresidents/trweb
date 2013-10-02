@@ -793,6 +793,10 @@
     vertical-align: text-bottom;
 }
 
+.employer-company-profile-about p {
+    white-space: pre;
+}
+
 #user-actions {
     margin-top: 12px;
 }
