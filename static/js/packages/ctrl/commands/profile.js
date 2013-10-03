@@ -89,6 +89,7 @@ define([
             }, this);
 
             collection.save({
+                wait: true,
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this)
             });
