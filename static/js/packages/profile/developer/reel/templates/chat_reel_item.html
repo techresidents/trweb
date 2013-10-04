@@ -8,6 +8,13 @@
 </div>
 <div class="chat-reel-item-text-container">
     <a class="chat-reel-item-close close-inline remove pull-right">x</a>
-    <h5><%= topic.get_title() %> <small>(<%= Math.round(topic.get_duration() / 60) %> mins)</small></h5>
+    <h5><%= topic.get_title() %>
+    <% var duration = (chat.get_end() - chat.get_start())/1000;
+       if (duration < 60) { %>
+        <small>(1 min)</small>
+    <% } else { %>
+        <small>(<%= fmt.format(duration/60, 'n0') %> mins)</small>
+    <% } %>
+    </h5>
     <em><%= fmt.date(chat.get_start(), 'MM/dd/yy hh:mm tt')%></em>
 </div>
