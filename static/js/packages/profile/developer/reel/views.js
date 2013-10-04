@@ -218,10 +218,10 @@ define([
         },
 
         onOk: function() {
-            this.chatSelectView.chatSelectionCollection.each(
-                this._createChatReel,
-                this // context
-            );
+            var selected = this.chatSelectView.chatSelectionCollection.where({
+                selected: true
+            });
+            _.each(selected, this._createChatReel, this);
             return true;
         },
 
@@ -247,25 +247,32 @@ define([
          * @private
          */
         _createChatReel: function(chatSelectionModel) {
-            // Only create chat reel objs for the selected chats
-            if (chatSelectionModel.selected()) {
-                var highestRank = null;
-                var rank = 0;
-                // Find rank of last element in collection. Since this collection
-                // is sorted, this element will have the highest rank.
-                if (this.chatReelCollection.length) {
-                    highestRank = this.chatReelCollection
-                        .at(this.chatReelCollection.length - 1)
-                        .get_rank();
-                    rank = highestRank + 1;
-                }
-                var chatReel = new api.models.ChatReel({
+            var chatReel = _.find(this.chatReelCollection.toDestroy, function(model) {
+                return model.get_chat_id() === chatSelectionModel.id;
+            });
+
+            var highestRank = null;
+            var rank = 0;
+            // Find rank of last element in collection. Since this collection
+            // is sorted, this element will have the highest rank.
+            if (this.chatReelCollection.length) {
+                highestRank = this.chatReelCollection
+                    .at(this.chatReelCollection.length - 1)
+                    .get_rank();
+                rank = highestRank + 1;
+            }
+
+            if(!chatReel) {
+                chatReel = new api.models.ChatReel({
                     user_id: this.userModel.id,
                     chat_id: chatSelectionModel.id,
                     rank: rank
                 });
-                this.chatReelCollection.add(chatReel);
+            } else {
+                chatReel.set_rank(rank);
             }
+
+            this.chatReelCollection.add(chatReel);
         }
     });
 
