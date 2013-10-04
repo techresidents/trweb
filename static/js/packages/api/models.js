@@ -35,7 +35,7 @@ define([
     './models/location_search',
     './models/talking_point',
     './models/topic_search',
-    './models/company'
+    './models/company_profile'
 ], function(
     $,
     _,
