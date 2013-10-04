@@ -123,8 +123,8 @@ define([
          *   an exception will be raised containing
          *   an appropriate error message.
          */
-        validate: function(state) {
-            var valid = MakeInterviewOfferValidator.__super__.validate.call(this, state);
+        validate: function(state, options) {
+            var valid = MakeInterviewOfferValidator.__super__.validate.call(this, state, options);
             var requisition = this.form.formModel.get('requisition');
             if(valid && requisition) {
                 this.form.offers.each(function(offer) {

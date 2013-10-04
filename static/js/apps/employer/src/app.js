@@ -31,6 +31,8 @@ define([
     var AppRouter = Backbone.Router.extend({
         routes: {
             'application/:id(/)': 'application',
+            'company(/)': 'companyProfile',
+            'company/edit(/)': 'editCompanyProfile',
             'home(/)': 'home',
             'offers(/:query)(/)': 'offers',
             'playback/:id(/)': 'playback',
@@ -186,6 +188,26 @@ define([
                     }
                 });
             }, this));
+        },
+
+        companyProfile: function() {
+            require(['company'], _.bind(function(company) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: company.mediators.employer.CompanyProfileMediator.VIEW_TYPE.READ,
+                    options: {
+                    }
+                });
+            }, this));
+        },
+
+        editCompanyProfile: function() {
+            require(['company'], _.bind(function(company) {
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: company.mediators.employer.CompanyProfileMediator.VIEW_TYPE.EDIT,
+                    options: {
+                    }
+                });
+            }, this));
         }
     });
 
@@ -243,6 +265,10 @@ define([
                     if (options.query) {
                         uri += '/' + options.query;
                     }
+                    router.navigate(uri, { trigger: options.trigger});
+                    break;
+                case 'EmployerCompanyProfileView':
+                    uri = 'company';
                     router.navigate(uri, { trigger: options.trigger});
                     break;
             }
@@ -344,6 +370,9 @@ define([
     /* PROFILE EVENTS */
     EventNotificationMap[events.UPDATE_USER] =
         notifications.UPDATE_USER;
+    /* COMPANY PROFILE EVENTS */
+    EventNotificationMap[events.UPDATE_COMPANY_PROFILE] =
+        notifications.UPDATE_COMPANY_PROFILE;
 
     /**
      * App Mediator
@@ -505,6 +534,9 @@ define([
             /* PROFILE COMMANDS */
             this.registerCommand(notifications.UPDATE_USER,
                 ctrl.commands.profile.UpdateUser);
+            /* COMPANY PROFILE COMMANDS */
+            this.registerCommand(notifications.UPDATE_COMPANY_PROFILE,
+                ctrl.commands.company.UpdateCompanyProfile);
         },
         
         /**

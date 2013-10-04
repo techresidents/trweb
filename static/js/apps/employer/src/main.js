@@ -28,6 +28,7 @@ require.config({
         { name: 'applicant', location: 'packages/applicant' },
         { name: 'browser', location: 'packages/browser'},
         { name: 'chat', location: 'packages/chat' },
+        { name: 'company', location: 'packages/company' },
         { name: 'core', location: 'packages/core' },
         { name: 'ctrl', location: 'packages/ctrl' },
         { name: 'events', location: 'packages/events' },

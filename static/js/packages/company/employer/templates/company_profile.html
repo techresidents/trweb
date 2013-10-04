@@ -1,0 +1,48 @@
+<div class="row">
+    <div class="span10">
+        <div class="section-header">
+            <span>Company Profile <a class="btn btn-small btn-success" href="/e/company/edit/">Edit</a></span>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="span10">
+        <div class="employer-company-profile-container">
+            <div class="employer-company-profile-section employer-company-profile-overview">
+                <div class="row">
+                    <div class="span4">
+                        <label class="employer-company-profile-label">Name</label>
+                        <span><%= model.name %></span>
+                    </div>
+                    <div class="span6">
+                        <label class="employer-company-profile-label">Location</label>
+                        <span><%= model.location %></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4">
+                        <label class="employer-company-profile-label">Size</label>
+                        <span><%= model.size %> Employees</span>
+                    </div>
+                    <div class="span6">
+                        <label class="employer-company-profile-label">Website</label>
+                        <span><a href="<%= model.url %>" target="_blank"><%= model.url %></a></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span8">
+                    <div class="employer-company-profile-section employer-company-profile-about">
+                        <div class="employer-company-profile-section-header">About</div>
+                        <% if (model.description) { %>
+                            <p><%= model.description %></p>
+                        <% } else { %>
+                            <i class="icon-info-sign icon-2x orange-text"></i>
+                            <span class="empty-view-text"><a href="/e/company/edit/">Add company description</a></span>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

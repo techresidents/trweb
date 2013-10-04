@@ -66,9 +66,16 @@ define([
         },
 
         onSave: function(options) {
+            var success = function() {
+                options.success.apply(this, arguments);
+                this.triggerEvent(events.VIEW_NAVIGATE, {
+                    type: 'DeveloperProfileView'
+                });
+            };
+
             this.triggerEvent(events.UPDATE_DEVELOPER_PROFILE, {
                 model: this.model,
-                onSuccess: options.success,
+                onSuccess: _.bind(success, this),
                 onError: options.error
             });
         }
@@ -248,9 +255,16 @@ define([
         },
 
         onSave: function(options) {
+            var success = function() {
+                options.success.apply(this, arguments);
+                this.triggerEvent(events.VIEW_NAVIGATE, {
+                    type: 'DeveloperProfileView'
+                });
+            };
+
             this.triggerEvent(events.UPDATE_DEVELOPER_PREFERENCES, {
                 model: this.model,
-                onSuccess: options.success,
+                onSuccess: _.bind(success, this),
                 onError: options.error
             });
         }
@@ -338,9 +352,16 @@ define([
         },
 
         onSave: function(options) {
+            var success = function() {
+                options.success.apply(this, arguments);
+                this.triggerEvent(events.VIEW_NAVIGATE, {
+                    type: 'DeveloperProfileView'
+                });
+            };
+
             this.triggerEvent(events.UPDATE_SKILLS, {
                 collection: this.model.get_skills(),
-                onSuccess: options.success,
+                onSuccess: _.bind(success, this),
                 onError: options.error
             });
         }

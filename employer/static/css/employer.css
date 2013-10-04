@@ -771,6 +771,32 @@
     white-space: pre-wrap;
 }
 
+.employer-company-profile-section {
+    margin-bottom: 25px;
+}
+.employer-company-profile-section-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #dddddd;
+}
+.employer-company-profile-label {
+    display: inline-block;
+    color: #777777;
+    width: 70px;
+}
+
+.employer-company-profile-about .empty-view-text {
+    margin-left: 5px;
+    font-size: 16px;
+    vertical-align: text-bottom;
+}
+
+.employer-company-profile-about p {
+    white-space: pre;
+}
+
 #user-actions {
     margin-top: 12px;
 }

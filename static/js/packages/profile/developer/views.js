@@ -218,7 +218,8 @@ define([
         render: function() {
             if (this.loader.isLoaded()) {
                 var context = {
-                    progress: this.computeProfileCompletion()
+                    progress: this.computeProfileCompletion(),
+                    eligible: this.isEligibleToReceiveOffers()
                 };
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
@@ -250,6 +251,14 @@ define([
                 progress += 35;
             }
             return progress;
+        },
+
+        isEligibleToReceiveOffers: function() {
+            var isEligible = false;
+            if (this.model.get_chat_reels().length) {
+                isEligible = true;
+            }
+            return isEligible;
         }
     });
 
@@ -283,18 +292,15 @@ define([
             this.loader.load();
 
             //child views
-            this.navView = null;
             this.formView = null;
             this.initChildViews();
         },
 
         childViews: function() {
-            return [this.navView, this.formView];
+            return [this.formView];
         },
 
         initChildViews: function() {
-            this.navView = new DeveloperProfileNavView();
-
             this.formView = new forms.GeneralFormView({
                 model: this.model.get_developer_profile()
             });
@@ -307,8 +313,7 @@ define([
         render: function() {
             this.$el.html(this.template());
             this.$el.attr('class', this.classes().join(' '));
-            if(this.loader.isLoaded()) {
-                this.append(this.navView, '.developer-profile-general-nav');
+            if (this.loader.isLoaded()) {
                 this.append(this.formView, '.developer-profile-general-form');
             }
             return this;
@@ -349,17 +354,15 @@ define([
             this.loader.load();
 
             //child views
-            this.navView = null;
             this.formView = null;
             this.initChildViews();
         },
         
         childViews: function() {
-            return [this.navView, this.formView];
+            return [this.formView];
         },
 
         initChildViews: function() {
-            this.navView = new DeveloperProfileNavView();
             this.formView = new forms.PreferencesFormView({
                 model: this.model
             });
@@ -373,7 +376,6 @@ define([
             this.$el.html(this.template());
             this.$el.attr('class', this.classes().join(' '));
             if(this.loader.isLoaded()) {
-                this.append(this.navView, '.developer-profile-pref-nav');
                 this.append(this.formView, '.developer-profile-pref-form');
             }
             return this;
@@ -410,17 +412,14 @@ define([
 
             //child views
             this.formView = null;
-            this.navView = null;
             this.initChildViews();
         },
         
         childViews: function() {
-            return [this.navView, this.formView];
+            return [this.formView];
         },
 
         initChildViews: function() {
-            this.navView = new DeveloperProfileNavView();
-
             this.formView = new forms.SkillsFormView({
                 model: this.model
             });
@@ -434,7 +433,6 @@ define([
             this.$el.html(this.template());
             this.$el.attr('class', this.classes().join(' '));
             if(this.loader.isLoaded()) {
-                this.append(this.navView, '.developer-profile-skills-nav');
                 this.append(this.formView, '.developer-profile-skills-form');
             }
             return this;

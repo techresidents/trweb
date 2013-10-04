@@ -380,6 +380,7 @@ define([
         execute: function(options) {
             var collection = options.collection;
             collection.save({
+                wait: true,
                 success: _.bind(this.onSuccess, this),
                 error: _.bind(this.onError, this)
             });

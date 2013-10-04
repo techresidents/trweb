@@ -368,8 +368,7 @@ define([
         childViews: function() {
             return [
                 this.addChatButtonView,
-                this.ChatReelCollectionView,
-                this.navView
+                this.ChatReelCollectionView
             ];
         },
 
@@ -393,21 +392,13 @@ define([
                 orderBy('rank').
                 fetch();
 
-            // listen on changes to collection to enable the save btn
-            this.listenTo(this.collection, 'add', this.enableSaveBtn);
-            this.listenTo(this.collection, 'change:rank', this.enableSaveBtn);
-            this.listenTo(this.collection, 'remove', this.enableSaveBtn);
-
             //child views
             this.addChatButtonView = null;
             this.ChatReelCollectionView = null;
-            this.navView = null;
             this.initChildViews();
         },
 
         initChildViews: function() {
-            this. navView = new profile_views.DeveloperProfileNavView();
-
             this.addChatButtonView = new AddChatButtonView({
                 collection: this.collection
             });
@@ -426,7 +417,6 @@ define([
             this.$el.html(this.template());
             this.$el.attr('class', this.classes().join(' '));
             if (this.collection.isLoaded()) {
-                this.append(this.navView, this.navSelector);
                 this.append(this.ChatReelCollectionView, this.chatReelSelector);
                 this.append(this.addChatButtonView, this.addChatButtonSelector);
             }
@@ -442,17 +432,15 @@ define([
             // destroy the removed model.
             var eventBody = {
                 collection: this.collection,
-                onSuccess: this.disableSaveBtn()
+                onSuccess: _.bind(this.onSaveSuccess, this)
             };
             this.triggerEvent(events.UPDATE_CHAT_REEL, eventBody);
         },
 
-        enableSaveBtn: function() {
-            this.$(this.saveBtnSelector).removeClass('disabled');
-        },
-
-        disableSaveBtn: function() {
-            this.$(this.saveBtnSelector).addClass('disabled');
+        onSaveSuccess: function() {
+            this.triggerEvent(events.VIEW_NAVIGATE, {
+                type: 'DeveloperProfileView'
+            });
         }
     });
 

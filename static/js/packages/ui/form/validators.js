@@ -24,17 +24,28 @@ define(/** @exports ui/form/validators */[
         /**
          * Validate the form
          * @param {FormState} state Current form state
+         * @param {object} [options] object
+         * @param {boolean} [options.showError=true] True if
+         *   field state.showError should be set to True for
+         *   invalid fields.
          * @returns {boolean} True if form is valid or False if
          *   form is invalid but no error message should be displayed.
          * @throws {Error} If form is invalid
          *   an exception will be raised containing
          *   an appropriate error message.
          */
-        validate: function(state) {
+        validate: function(state, options) {
+            options = _.extend({
+                showError: true
+            }, options);
+
             var result = true;
             state.fields().each(function(fieldModel) {
                 var field = fieldModel.field();
                 if(!field.state.valid()) {
+                    if(options.showError) {
+                        field.state.setShowError(true);
+                    }
                     result = false;
                 }
             }, this);

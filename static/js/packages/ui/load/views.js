@@ -151,7 +151,6 @@ define([
         },
 
         start: function() {
-            console.log(this._bar().width());
             //stop any active animation
             this._bar().stop();
 
