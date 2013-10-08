@@ -273,6 +273,7 @@ define([
         {
 
             contentSelector: '.developer-offers-container',
+            loaderBarViewSelector: '.developer-offers-loaderbar',
 
             /**
              * Developer Offers Page View
@@ -296,6 +297,7 @@ define([
                 this.loader.load();
 
                 //child views
+                this.loaderBarView = null;
                 this.emptyView = null;
                 this.gridView = null;
                 this.paginatorView = null;
@@ -307,19 +309,24 @@ define([
                 // which triggers a 'loaded' event, which then invokes 'render' before
                 // our views have been created.  Models don't suffer from this
                 // problem because if it's cached, the model pulls all the cached
-                // data into it's own instance which then prevents the loader from even
+                // data into its own instance which then prevents the loader from even
                 // trying to load the data, and thus no 'loaded' event is triggered.
                 this.initialized = true;
             },
 
             childViews: function() {
                 return [
+                    this.loaderBarView,
                     this.emptyView,
                     this.gridView,
                     this.paginatorView];
             },
 
             initChildViews: function() {
+
+                this.loaderBarView = new ui.load.views.LoaderBarView({
+                    loader: this.loader
+                });
 
                 this.emptyView = new OffersEmptyView();
 
@@ -341,14 +348,19 @@ define([
             },
 
             render: function() {
-                if (this.initialized && this.loader.isLoaded()) {
-                    this.$el.html(this.template());
-                    this.$el.attr('class', this.classes().join(' '));
-                    if (this.collection.length > 0) {
-                        this.append(this.gridView, this.contentSelector);
-                        this.append(this.paginatorView, this.contentSelector);
+                if (this.initialized) {
+                    if (this.loader.isLoaded()) {
+                        this.$el.html(this.template());
+                        this.$el.attr('class', this.classes().join(' '));
+                        this.append(this.loaderBarView, this.loaderBarViewSelector);
+                        if (this.collection.length > 0) {
+                            this.append(this.gridView, this.contentSelector);
+                            this.append(this.paginatorView, this.contentSelector);
+                        } else {
+                            this.append(this.emptyView, this.contentSelector);
+                        }
                     } else {
-                        this.append(this.emptyView, this.contentSelector);
+                        this.append(this.loaderBarView);
                     }
                 }
                 return this;

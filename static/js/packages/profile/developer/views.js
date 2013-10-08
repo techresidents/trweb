@@ -526,7 +526,7 @@ define([
 
     var DeveloperProfileView = core.view.View.extend({
         
-        loaderViewSelector: '.developer-profile-loader-hook',
+        loaderBarViewSelector: '.developer-profile-loader-hook',
         generalViewSelector: '.developer-profile-general-hook',
         preferencesViewSelector: '.developer-profile-prefs-hook',
         skillsViewSelector: '.developer-profile-skills-hook',
@@ -566,7 +566,7 @@ define([
             this.loader.load();
 
             //child views
-            this.loaderView = null;
+            this.loaderBarView = null;
             this.generalView = null;
             this.preferencesView = null;
             this.skillsView = null;
@@ -578,6 +578,7 @@ define([
 
         childViews: function() {
             return [
+                this.loaderBarView,
                 this.generalView,
                 this.preferencesView,
                 this.skillsView,
@@ -588,7 +589,7 @@ define([
         },
 
         initChildViews: function() {
-            this.loaderView = new ui.load.views.LoaderBarView({
+            this.loaderBarView = new ui.load.views.LoaderBarView({
                 loader: this.loader
             });
             this.generalView = new DeveloperProfileGeneralView({
@@ -626,7 +627,7 @@ define([
                 };
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
-                this.append(this.loaderView, this.loaderViewSelector);
+                this.append(this.loaderBarView, this.loaderBarViewSelector);
                 this.append(this.generalView, this.generalViewSelector);
                 this.append(this.preferencesView, this.preferencesViewSelector);
                 this.append(this.skillsView, this.skillsViewSelector);
@@ -634,7 +635,7 @@ define([
                 this.append(this.progressView, this.progressViewSelector);
                 this.append(this.spotlightView, this.spotlightViewSelector);
             } else {
-                this.append(this.loaderView);
+                this.append(this.loaderBarView);
             }
             return this;
         }
