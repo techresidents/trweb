@@ -343,6 +343,9 @@
     font-size: 16px;
     vertical-align: text-bottom;
 }
+.developer-profile-spotlight .w-playback-brief-duration {
+    color: #777777;
+}
 
 
 .developer-offers-empty .developer-offers-empty-view-text {
@@ -389,7 +392,6 @@
 .offer-description p {
     white-space: pre-wrap;
 }
-
 
 .interview-offer-details-modal .offer-details-modal-label {
     display: inline-block;

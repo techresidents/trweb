@@ -20,8 +20,8 @@ define([
             return PlayerMediator.NAME;
         },
 
-        viewType: function() {
-            return PlayerMediator.VIEW_TYPE;
+        isViewType: function(type) {
+            return _.contains(PlayerMediator.VIEW_TYPE, type);
         },
 
         /**
@@ -39,32 +39,53 @@ define([
             this.proxy = null;
         },
 
-        onCreateView: function(notification) {
-            if(notification.type === this.viewType()) {
+        createPlayerView: function(options) {
+            return new player_views.PlayerView({
+                model: this.proxy.model
+            });
+        },
 
+        createEmployerPlayerView: function(options) {
+            return new player_views.EmployerPlayerView({
+                model: this.proxy.model
+            });
+        },
+
+        onCreateView: function(notification) {
+            if(!this.isViewType(notification.type)) {
+                return;
+            }
+
+            if(this.proxy === null) {
                 this.proxy = this.facade.getProxy(
                     ctrl.proxies.player.PlayerStateProxy.NAME);
-
-                this.view = new player_views.PlayerView({
-                    model: this.proxy.model
-                });
-
-                this.facade.trigger(notifications.VIEW_CREATED, {
-                    type: this.viewType(),
-                    view: this.view,
-                    options: notification.options
-                });
             }
+
+            switch(notification.type) {
+                case PlayerMediator.VIEW_TYPE.PLAYER:
+                    this.view = this.createPlayerView(notification.options);
+                    break;
+                case PlayerMediator.VIEW_TYPE.EMPLOYER:
+                    this.view = this.createEmployerPlayerView(notification.options);
+                    break;
+            }
+
+            this.facade.trigger(notifications.VIEW_CREATED, {
+                type: notification.type,
+                view: this.view,
+                options: notification.options
+            });
         },
 
         onDestroyView: function(notification) {
-            if(notification.type === this.viewType()) {
+            if(this.isViewType(notification.type)) {
                 notification.view.destroy();
 
                 this.facade.trigger(notifications.VIEW_DESTROYED, {
-                    type: this.viewType(),
+                    type: notification.type,
                     view: notification.view
                 });
+
                 if(this.view === notification.view) {
                     this.view = null;
                 }
@@ -82,8 +103,11 @@ define([
     }, {
 
         NAME: 'PlayerMediator',
-        
-        VIEW_TYPE: 'PlayerView'
+
+        VIEW_TYPE: {
+            PLAYER: 'PlayerView',
+            EMPLOYER: 'EmployerPlayerView'
+        }
     });
 
     return {

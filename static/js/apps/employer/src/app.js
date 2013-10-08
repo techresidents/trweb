@@ -300,7 +300,7 @@ define([
                 this.html(view, '#alerts');
             } else {
                 switch(type) {
-                    case 'PlayerView':
+                    case 'EmployerPlayerView':
                         this.append(view, '#player-content');
                         break;
                     default:
@@ -401,7 +401,7 @@ define([
 
             //create player view
             this.facade.trigger(notifications.VIEW_CREATE, {
-                type: player.mediators.PlayerMediator.VIEW_TYPE
+                type: player.mediators.PlayerMediator.VIEW_TYPE.EMPLOYER
             });
         },
 
