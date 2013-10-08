@@ -156,7 +156,7 @@ define([
                 this.inputHandlerView,
                 this.usersView,
                 this.paginatorView,
-                this.demoHelpView,
+                this.demoHelpView
             ];
         },
 
