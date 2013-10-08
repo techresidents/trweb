@@ -55,15 +55,14 @@
     margin-left: 0px;
 }
 
-.chat-topic-registration-container {
-    margin-top: 20px;
+.topic-registration .topic-registration-actions label {
+    margin-left: 20px;
 }
-.chat-topic-registration-container .start-chat-btn{
-    margin-top: 15px;
+.topic-registration .topic-registration-actions p {
+    margin-top: 5px;
+    margin-bottom: 0px;
 }
-.chat-topic-registration-container .well {
-    padding-top: 0px;
-}
+
 .chat-topic .level1 {
     margin-left: 0px;
 }

@@ -5,6 +5,7 @@ define([
     'core',
     'api',
     'events',
+    'ui',
     'text!./templates/topic.html',
     'text!./templates/playable_topic.html',
     'text!./templates/topic_tree.html',
@@ -16,6 +17,7 @@ define([
     core,
     api,
     events,
+    ui,
     topic_template,
     playable_topic_template,
     topic_tree_template,
@@ -181,15 +183,20 @@ define([
      */
     var TopicRegistrationView = core.view.View.extend({
 
+        chatWithFriendSelector: '#chat-with-friend-checkbox',
+        chatWithFriendHelpSelector: '.chat-with-friend-help-hook',
         topicSelector: '.chat-topic-view-hook',
-        setupBtnSelector: '.setup-chat-btn',
+        recordChatBtnSelector: '.record-chat-btn',
 
         events: {
-            'click .setup-chat-btn': 'onSetupChat'
+            'click .record-chat-btn': 'onRecordChat'
         },
 
         childViews: function() {
-            return [this.topicView];
+            return [
+                this.topicView,
+                this.chatWithFriendHelpView
+            ];
         },
 
         initialize: function(options) {
@@ -198,6 +205,7 @@ define([
 
             //child views
             this.topicView = null;
+            this.chatWithFriendHelpView = null;
             this.initChildViews();
         },
 
@@ -205,20 +213,44 @@ define([
             this.topicView = new TopicTreeView({
                 model: this.model
             });
+            this.chatWithFriendHelpView = new ui.help.views.HelpView({
+                help: 'Select this option if you\'d prefer to chat with someone you know about this topic instead of chatting alone.',
+                placement: 'right',
+                iconClasses: 'icon-question-sign'
+            });
         },
 
         render: function() {
             this.$el.html(this.template());
+            this.append(this.chatWithFriendHelpView, this.chatWithFriendHelpSelector);
             this.append(this.topicView, this.topicSelector);
             return this;
         },
 
-        onSetupChat: function() {
+        onRecordChat: function() {
+            var that = this;
+            var chatModel = null;
+            var eventBody = null;
+            var maxParticipants = 1;
+            if (this.$(this.chatWithFriendSelector).is(":checked")) {
+                maxParticipants = 2;
+            }
+            chatModel = new api.models.Chat({
+                topic_id: this.model.id,
+                max_participants: maxParticipants,
+                max_duration: this.model.get_duration()
+            });
             eventBody = {
-                type: 'TalkingPointView',
-                id: this.model.id
+                model: chatModel,
+                onSuccess: function(result) {
+                    var navigateEvtBody = {
+                        type: 'ChatView',
+                        id: chatModel.id // TODO this ok?
+                    };
+                    that.triggerEvent(events.VIEW_NAVIGATE, navigateEvtBody);
+                }
             };
-            this.triggerEvent(events.VIEW_NAVIGATE, eventBody);
+            this.triggerEvent(events.CREATE_CHAT, eventBody);
         }
     });
 
