@@ -525,7 +525,8 @@ define([
     });
 
     var DeveloperProfileView = core.view.View.extend({
-
+        
+        loaderViewSelector: '.developer-profile-loader-hook',
         generalViewSelector: '.developer-profile-general-hook',
         preferencesViewSelector: '.developer-profile-prefs-hook',
         skillsViewSelector: '.developer-profile-skills-hook',
@@ -565,6 +566,7 @@ define([
             this.loader.load();
 
             //child views
+            this.loaderView = null;
             this.generalView = null;
             this.preferencesView = null;
             this.skillsView = null;
@@ -586,6 +588,9 @@ define([
         },
 
         initChildViews: function() {
+            this.loaderView = new ui.load.views.LoaderBarView({
+                loader: this.loader
+            });
             this.generalView = new DeveloperProfileGeneralView({
                 model: this.model.get_developer_profile()
             });
@@ -621,12 +626,15 @@ define([
                 };
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
+                this.append(this.loaderView, this.loaderViewSelector);
                 this.append(this.generalView, this.generalViewSelector);
                 this.append(this.preferencesView, this.preferencesViewSelector);
                 this.append(this.skillsView, this.skillsViewSelector);
                 this.append(this.reelsView, this.reelViewSelector);
                 this.append(this.progressView, this.progressViewSelector);
                 this.append(this.spotlightView, this.spotlightViewSelector);
+            } else {
+                this.append(this.loaderView);
             }
             return this;
         }
