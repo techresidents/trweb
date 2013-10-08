@@ -183,19 +183,18 @@ define([
      */
     var TopicRegistrationView = core.view.View.extend({
 
-        chatWithFriendSelector: '#chat-with-friend-checkbox',
-        chatWithFriendHelpSelector: '.chat-with-friend-help-hook',
         topicSelector: '.chat-topic-view-hook',
-        recordChatBtnSelector: '.record-chat-btn',
+        recordChatAloneBtnSelector: '.record-chat-alone-btn',
+        recordChatWithFriendBtnSelector: '.record-chat-with-friend-btn',
 
         events: {
-            'click .record-chat-btn': 'onRecordChat'
+            'click .record-chat-alone-btn': 'onRecordChatAlone',
+            'click .record-chat-with-friend-btn': 'onRecordChatWithFriend'
         },
 
         childViews: function() {
             return [
-                this.topicView,
-                this.chatWithFriendHelpView
+                this.topicView
             ];
         },
 
@@ -205,7 +204,6 @@ define([
 
             //child views
             this.topicView = null;
-            this.chatWithFriendHelpView = null;
             this.initChildViews();
         },
 
@@ -213,28 +211,28 @@ define([
             this.topicView = new TopicTreeView({
                 model: this.model
             });
-            this.chatWithFriendHelpView = new ui.help.views.HelpView({
-                help: 'Select this option if you\'d prefer to chat with someone you know about this topic instead of chatting alone.',
-                placement: 'right',
-                iconClasses: 'icon-question-sign'
-            });
         },
 
         render: function() {
             this.$el.html(this.template());
-            this.append(this.chatWithFriendHelpView, this.chatWithFriendHelpSelector);
             this.append(this.topicView, this.topicSelector);
             return this;
         },
 
-        onRecordChat: function() {
+        onRecordChatAlone: function() {
+            var maxParticipants = 1;
+            this._recordChat(maxParticipants);
+        },
+
+        onRecordChatWithFriend: function() {
+            var maxParticipants = 2;
+            this._recordChat(maxParticipants);
+        },
+
+        _recordChat: function(maxParticipants) {
             var that = this;
             var chatModel = null;
             var eventBody = null;
-            var maxParticipants = 1;
-            if (this.$(this.chatWithFriendSelector).is(":checked")) {
-                maxParticipants = 2;
-            }
             chatModel = new api.models.Chat({
                 topic_id: this.model.id,
                 max_participants: maxParticipants,
