@@ -31,6 +31,7 @@ define([
                 template: playback_brief_template
             }, options);
 
+            this.model = options.model;                
             this.playerState = options.playerState;
             this.context = options.context;
             this.template = _.template(options.template);
