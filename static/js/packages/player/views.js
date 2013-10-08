@@ -6,6 +6,7 @@ define([
     'core',
     './models',
     'text!./templates/button.html',
+    'text!./templates/employer_player.html',
     'text!./templates/player.html',
     'text!./templates/scrubber.html',
     'text!./templates/timer.html',
@@ -20,6 +21,7 @@ define([
     core,
     player_models,
     button_template,
+    employer_player_template,
     player_template,
     scrubber_template,
     timer_template,
@@ -633,55 +635,25 @@ define([
             'FINISHED_EVENT': 'onFinished'
         },
 
+        initialize: function(options) {
+            this.template =  _.template(player_template);
+            this.playerView = null;
+            this.progressTimerId = null;
+
+            //child views
+            this.initChildViews();
+        },
+
         childViews: function() {
             return [
-                this.titleView,
-                this.timerView,
-                this.usersView,
-                this.buttonView,
-                this.scrubberView,
                 this.playerView
             ];
         },
 
         initChildViews: function() {
-            this.usersView = new PlayerUsersView({
-                model: this.model
-            });
-            this.buttonView = new PlayerButtonView({
-                model: this.model
-            });
-            this.timerView = new PlayerTimerView({
-                model: this.model
-            });
-            this.titleView = new PlayerTitleView({
-                model: this.model
-            });
-            this.scrubberView = new PlayerScrubberView({
-                model: this.model
-            });
-            /*
-            this.playerView = new FlowplayerView({
-                model: this.model
-            });
-            */
             this.playerView = new SoundManagerView({
                 model: this.model
             });
-        },
-
-        initialize: function(options) {
-            this.template =  _.template(player_template);
-            this.playerView = null;
-            this.titleView = null;
-            this.buttonView = null;
-            this.scrubberView = null;
-            this.timerView = null;
-            this.usersView = null;
-            this.progressTimerId = null;
-
-            //child views
-            this.initChildViews();
         },
 
         startProgressTimer: function(interval) {
@@ -729,12 +701,6 @@ define([
         render: function() {
             var context = this.model.toJSON({withRelated: true});
             this.$el.html(this.template(context));
-
-            this.assign(this.usersView, '.player-users');
-            this.assign(this.buttonView, '.player-button');
-            this.assign(this.timerView, '.player-timer');
-            this.assign(this.titleView, '.player-title');
-            this.assign(this.scrubberView, '.player-scrubber');
             this.assign(this.playerView, '.player-component');
             return this;
         },
@@ -884,8 +850,78 @@ define([
 
     });
 
+    /**
+     * Employer Player view.
+     * @constructor
+     * @param {Object} options
+     *   model: {PlayerState} model (requried)
+     */
+    var EmployerPlayerView = PlayerView.extend({
+
+        childViews: function() {
+            return [
+                this.titleView,
+                this.timerView,
+                this.usersView,
+                this.buttonView,
+                this.scrubberView,
+                this.playerView
+            ];
+        },
+
+        initialize: function(options) {
+            this.template =  _.template(employer_player_template);
+            this.playerView = null;
+            this.titleView = null;
+            this.buttonView = null;
+            this.scrubberView = null;
+            this.timerView = null;
+            this.usersView = null;
+            this.progressTimerId = null;
+
+            //child views
+            this.initChildViews();
+        },
+
+        initChildViews: function() {
+            this.usersView = new PlayerUsersView({
+                model: this.model
+            });
+            this.buttonView = new PlayerButtonView({
+                model: this.model
+            });
+            this.timerView = new PlayerTimerView({
+                model: this.model
+            });
+            this.titleView = new PlayerTitleView({
+                model: this.model
+            });
+            this.scrubberView = new PlayerScrubberView({
+                model: this.model
+            });
+            this.playerView = new SoundManagerView({
+                model: this.model
+            });
+        },
+
+
+        render: function() {
+            var context = this.model.toJSON({withRelated: true});
+            this.$el.html(this.template(context));
+
+            this.assign(this.usersView, '.player-users');
+            this.assign(this.buttonView, '.player-button');
+            this.assign(this.timerView, '.player-timer');
+            this.assign(this.titleView, '.player-title');
+            this.assign(this.scrubberView, '.player-scrubber');
+            this.assign(this.playerView, '.player-component');
+            return this;
+        }
+    });
+
     return {
         EVENTS: EVENTS,
-        PlayerView: PlayerView
+        PlayerView: PlayerView,
+        EmployerPlayerView: EmployerPlayerView
     };
 });

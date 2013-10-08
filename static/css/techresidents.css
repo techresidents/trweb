@@ -927,6 +927,7 @@ button.drop-button .caret {
 
 .help {
     display: inline-block;
+    font-size: 14px;
 }
 .help > i {
     color: #EA8F00;
@@ -1182,4 +1183,23 @@ button.drop-button .caret {
     text-align: right;
     margin: 0px 10px 0px 0px;
     color: #777777;
+}
+
+.w-playback-button {
+    color: #777777;
+    cursor: pointer;
+    margin-right: 3px;
+}
+.w-playback-button:hover {
+    color: #EA8F00;
+    text-decoration: none;
+}
+.w-playback-button i {
+    display: inline-block;
+    width: 12px;
+    font-size: 14px;
+}
+.w-playback-brief-duration {
+    font-size: 12px;
+    color: #999999;
 }

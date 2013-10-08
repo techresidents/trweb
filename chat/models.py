@@ -210,3 +210,15 @@ class ChatReel(models.Model):
     user = models.ForeignKey(User, related_name="chat_reels")
     chat = models.ForeignKey(Chat, related_name="+")
     rank = models.IntegerField()
+
+class SpotlightChat(models.Model):
+    """Spotlight Chat.
+
+    Fields:
+        chat: Chat data model object
+    """
+    class Meta:
+        db_table = "spotlight_chat"
+
+    chat = models.ForeignKey(Chat, unique=True, related_name="+")
+    rank = models.IntegerField()

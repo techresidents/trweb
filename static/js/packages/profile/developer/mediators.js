@@ -1,6 +1,7 @@
 define([
     'underscore',
     'notifications',
+    'ctrl',
     'core',
     'api',
     './views',
@@ -8,6 +9,7 @@ define([
 ], function(
     _,
     notifications,
+    ctrl,
     core,
     api,
     profile_views,
@@ -38,8 +40,12 @@ define([
         },
 
         createSummaryView: function() {
+            var proxy = this.facade.getProxy(
+                    ctrl.proxies.player.PlayerStateProxy.NAME);
+
             var view = new profile_views.DeveloperProfileView({
-                model: new api.models.User({ id: 'CURRENT' })
+                model: new api.models.User({ id: 'CURRENT' }),
+                playerState: proxy.model
             });
             return view;
         },
@@ -108,9 +114,6 @@ define([
                     type: notification.type,
                     view: notification.view
                 });
-                if(this.view === notification.view) {
-                    this.view = null;
-                }
             }
         }
 

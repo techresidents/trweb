@@ -1,0 +1,23 @@
+<div>
+    <% if(model.topic && model.topic.title) { %>
+
+        <% if(playing) { %>
+        <a class="w-playback-button pause"><i class="icon-pause"></i></a>
+        <% } else { %>
+        <a class="w-playback-button play"><i class="icon-play"></i></a>
+        <% } %>
+
+        <% if(href) { %>
+            <a href="<%= href %>"><%= model.topic.title %></a>
+        <% } else { %>
+            <span><%= model.topic.title %></span>
+        <% } %>
+
+        <% if(duration < 60) { %>
+            <span class="w-playback-brief-duration">(1 min) </span>
+        <% } else { %>
+            <span class="w-playback-brief-duration">(<%= fmt.format(duration / 60, 'n0') %> min) </span>
+        <% } %>
+
+    <% } %>
+</div>
