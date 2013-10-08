@@ -269,7 +269,9 @@
     margin-left: 100px;
 }
 
-
+.developer-profile-reel-edit .developer-profile-reel-info .well {
+    margin-bottom: 10px;
+}
 .developer-profile-reel-edit .developer-profile-reel-actions > div {
     display: inline-block;
 }
