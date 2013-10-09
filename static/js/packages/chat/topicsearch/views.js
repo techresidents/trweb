@@ -105,16 +105,10 @@ define([
             this.template =  _.template(topicsearch_page_template);
             this.collection = options.collection;
             this.query = this.collection.query();
-            this.loader = new api.loader.ApiLoader([
-                { instance: this.collection }
-            ]);
+            this.collection.fetch();
 
             //bind events
             this.listenTo(this.collection, 'reset', this.onReset);
-            this.listenTo(this.loader, 'loaded', this.render);
-
-            //load data
-            this.loader.load();
 
             //child views
             this.loaderBarView = null;
@@ -148,7 +142,7 @@ define([
 
         initChildViews: function() {
             this.loaderBarView = new ui.load.views.LoaderBarView({
-                loader: this.loader
+                collection: this.collection
             });
 
             this.facetsView = new TopicSearchFacetsView({
@@ -188,18 +182,16 @@ define([
 
         render: function() {
             if (this.initialized) {
-                if (this.loader.isLoaded()) {
-                    this.$el.html(this.template());
-                    this.$el.attr('class', this.classes().join(' '));
-                    this.append(this.loaderBarView, this.loaderBarViewSelector);
-                    this.append(this.facetsView, this.facetsSelector);
-                    this.append(this.inputHandlerView, this.searchBarSelector);
-                    this.append(this.searchHelpView, this.searchHelpSelector);
-                    this.append(this.topicsCollectionView, this.searchResultsSelector);
-                    this.append(this.paginatorView, this.searchResultsSelector);
-                } else {
-                    this.append(this.loaderBarView);
-                }
+                this.$el.html(this.template());
+                this.$el.attr('class', this.classes().join(' '));
+                this.append(this.loaderBarView, this.loaderBarViewSelector);
+                this.append(this.facetsView, this.facetsSelector);
+                this.append(this.inputHandlerView, this.searchBarSelector);
+                this.append(this.searchHelpView, this.searchHelpSelector);
+                this.append(this.topicsCollectionView, this.searchResultsSelector);
+                this.append(this.paginatorView, this.searchResultsSelector);
+            } else {
+                this.append(this.loaderBarView);
             }
             return this;
         },
@@ -214,6 +206,8 @@ define([
                 .filterBy({q: q})
                 .slice(0, pageSize)
                 .fetch();
+                           
+            this.loader.load();
         },
 
         onReset: function() {

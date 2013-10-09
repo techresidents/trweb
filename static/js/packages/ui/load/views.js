@@ -118,7 +118,9 @@ define([
          * LoaderBarView constructor
          * @constructs
          * @param {object} options Options object
-         * @param {object} options.loader ApiLoader object
+         * @param {object} [options.loader] ApiLoader object
+         * @param {object} [options.collection] ApiCollection object
+         * @param {object} [options.model] ApiModel object
          * @classdesc
          * Loading bar view
          */
@@ -137,11 +139,15 @@ define([
             this.stopDuration = options.stopDuration;
             this.fadeOutDuration = options.fadeOutDuration;
             this.loader = options.loader;
+            this.instance = options.model || options.collection || options.instance;
             this.loading = false;
 
-            if(options.loader) {
+            if(this.loader) {
                 this.listenTo(this.loader, 'loading', this.start);
                 this.listenTo(this.loader, 'loaded', this.stop);
+            } else if(this.instance) {
+                this.listenTo(this.instance, 'request', this.start);
+                this.listenTo(this.instance, 'loaded', this.stop);
             }
         },
 
@@ -196,15 +202,16 @@ define([
             //get current percentage width so we can maintain it across
             //multiple render() calls.
             var width = this._bar().width();
+            var loaderOrInstance = this.loader || this.instance;
 
             this.$el.html(this.template());
             this.$el.attr('class', this.classes().join(' '));
             this._bar().width(width + '%');
 
-            if(this.loader) {
-                if(this.loader.isLoading()) {
+            if(loaderOrInstance) {
+                if(loaderOrInstance.isLoading()) {
                     this.start();
-                } else if(this.loading && !this.loader.isLoading()) {
+                } else if(this.loading && !loaderOrInstance.isLoading()) {
                     this.stop();
                 }
             } else if(this.loading) {
