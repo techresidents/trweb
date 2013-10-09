@@ -2,8 +2,7 @@
     <div class="row">
         <div class="span8">
             <div class="developer-profile-empty-view-container">
-                <i class="icon-info-sign icon-2x orange-text"></i>
-                <span class="developer-profile-empty-view-text">What are you <a href="/d/profile/preferences/">looking for</a> in your next job?</span>
+                <span class="developer-profile-empty-view-text"><i class="icon-info-sign orange-text"></i> What are you <a href="/d/profile/preferences/">looking for</a> in your next job?</span>
             </div>
         </div>
     </div>
@@ -11,9 +10,9 @@
     <div class="row">
         <div class="span8">
             <div class="developer-profile-label-container">
-                <label class="developer-profile-label">
+                <span class="developer-profile-label">
                     Positions
-                </label>
+                </span>
             </div>
             <div class="span6">
             <% if(model.position_prefs.length) { %>
@@ -31,9 +30,9 @@
     <div class="row">
         <div class="span8">
             <div class="developer-profile-label-container">
-                <label class="developer-profile-label">
+                <span class="developer-profile-label">
                     Locations
-                </label>
+                </span>
             </div>
             <div class="span6">
                 <% if(model.location_prefs.length) { %>
@@ -51,9 +50,9 @@
     <div class="row">
         <div class="span8">
             <div class="developer-profile-label-container">
-                <label class="developer-profile-label">
+                <span class="developer-profile-label">
                     Tech Prefs
-                </label>
+                </span>
             </div>
             <div class="span6">
                 <% if(model.technology_prefs.length) { %>

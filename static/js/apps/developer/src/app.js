@@ -9,6 +9,7 @@ define([
     'notifications',
     'ctrl',
     'alert',
+    'player',
     'text!apps/developer/src/app.html'
 ], function(
     $,
@@ -21,6 +22,7 @@ define([
     notifications,
     ctrl,
     alert,
+    player,
     app_template) {
     
     /**
@@ -287,16 +289,23 @@ define([
             } else if(view.isAlert()) {
                 this.html(view, '#alerts');
             } else {
-                if(this.activeView) {
-                    this._destroyView(this.activeView);
+                switch(type) {
+                    case 'PlayerView':
+                        this.append(view, '#player-content');
+                        break;
+                    default:
+                        if(this.activeView) {
+                            this._destroyView(this.activeView);
+                        }
+                        this.html(view, '#content');
+                        $('html,body').scrollTop(0);
+                        this.activeView = {
+                            type: type,
+                            view: view,
+                            options: options
+                        };
+                        break;
                 }
-                this.html(view, '#content');
-                $('html,body').scrollTop(0);
-                this.activeView = {
-                    type: type,
-                    view: view,
-                    options: options
-                };
             }
         },
 
@@ -351,6 +360,11 @@ define([
         notifications.ACCEPT_INTERVIEW_OFFER;
     EventNotificationMap[events.DECLINE_INTERVIEW_OFFER] =
         notifications.DECLINE_INTERVIEW_OFFER;
+    /* PLAYER EVENTS */
+    EventNotificationMap[events.PLAYER_PLAY] =
+        notifications.PLAYER_PLAY;
+    EventNotificationMap[events.PLAYER_PAUSE] =
+        notifications.PLAYER_PAUSE;
 
     /**
      * App Mediator
@@ -376,6 +390,11 @@ define([
             _.each(EventNotificationMap, function(notificationName, eventName) {
                 this.view.addEventListener(this.cid, eventName, this.onNotificationEvent, this);
             }, this);
+
+            //create headless player view
+            this.facade.trigger(notifications.VIEW_CREATE, {
+                type: player.mediators.PlayerMediator.VIEW_TYPE.PLAYER
+            });
         },
 
         onDomReady: function(notification) {
@@ -408,6 +427,9 @@ define([
         execute: function() {
             this.facade.registerProxy(new ctrl.proxies.current.CurrentProxy({
                 user: TR.CURRENT_USER
+            }));
+            this.facade.registerProxy(new ctrl.proxies.player.PlayerStateProxy({
+                model: new player.models.PlayerState()
             }));
         }
     });

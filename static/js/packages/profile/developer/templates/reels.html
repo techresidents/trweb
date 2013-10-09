@@ -5,7 +5,7 @@
                 <% _.each(model.chat_reels, function(chatReel) { %>
                     <% if(chatReel.chat.topic && chatReel.chat.topic.title) { %>
                         <div class="developer-profile-reel-container">
-                            <a class="developer-profile-chat-title" href="/d/topic/<%=chatReel.chat.topic.id%>/talkingpoints/"><%= chatReel.chat.topic.title %></a>
+                            <a class="developer-profile-chat-title" href="/d/topic/<%=chatReel.chat.topic.id%>/"><%= chatReel.chat.topic.title %></a>
                             <% var duration = (chatReel.chat.end - chatReel.chat.start);
                                if (duration < 60) { %>
                                 <span class="developer-profile-chat-title-small">(1 min </span>
@@ -19,8 +19,7 @@
             </div>
         <% } else { %>
             <div class="developer-profile-empty-view-container">
-                <i class="icon-info-sign icon-2x orange-text"></i>
-                <span class="developer-profile-empty-view-text"><a href="/d/topics/">Pick a topic</a> and show employers what you got.</span>
+                <span class="developer-profile-empty-view-text"><i class="icon-info-sign orange-text"></i> <a href="/d/topics/">Pick a topic</a> and <a href="/d/profile/reel/">add your best chats</a> here to start receiving offers.</span>
             </div>
         <% } %>
     </div>

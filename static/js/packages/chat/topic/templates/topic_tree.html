@@ -1,14 +1,14 @@
 <div class="chat-topic">
     <% _.each(topicTree, function(topic) { %>
         <% if(topic.rank === 0) { %>
-        <h2 class="level<%-topic.level%>">
+        <h3 class="level<%-topic.level%>">
             <%= topic.title %>
             <% if(topic.duration < 60) { %>
                 <small> (<%= topic.duration %> sec)</small>
             <% } else { %>
                 <small> (<%= fmt.format(topic.duration / 60, 'n0') %> min)</small>
             <% } %>
-        </h2>
+        </h3>
         <% } else { %>
         <h3 class="level<%-topic.level%>">
             <%= topic.title %>

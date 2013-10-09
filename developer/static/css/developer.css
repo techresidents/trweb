@@ -55,15 +55,13 @@
     margin-left: 0px;
 }
 
-.chat-topic-registration-container {
-    margin-top: 20px;
+.topic-registration .topic-registration-actions {
+    margin-top: 30px;
 }
-.chat-topic-registration-container .start-chat-btn{
-    margin-top: 15px;
+.topic-registration .topic-registration-actions p {
+    margin-top: 5px;
 }
-.chat-topic-registration-container .well {
-    padding-top: 0px;
-}
+
 .chat-topic .level1 {
     margin-left: 0px;
 }
@@ -270,7 +268,9 @@
     margin-left: 100px;
 }
 
-
+.developer-profile-reel-edit .developer-profile-reel-info .well {
+    margin-bottom: 10px;
+}
 .developer-profile-reel-edit .developer-profile-reel-actions > div {
     display: inline-block;
 }
@@ -342,6 +342,9 @@
     font-size: 16px;
     vertical-align: text-bottom;
 }
+.developer-profile-spotlight .w-playback-brief-duration {
+    color: #777777;
+}
 
 
 .developer-offers-empty .developer-offers-empty-view-text {
@@ -388,7 +391,6 @@
 .offer-description p {
     white-space: pre-wrap;
 }
-
 
 .interview-offer-details-modal .offer-details-modal-label {
     display: inline-block;

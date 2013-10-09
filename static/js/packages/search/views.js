@@ -144,6 +144,7 @@ define([
             this.listenTo(this.collection, 'reset', this.onReset);
 
             //child views
+            this.loaderView = null;
             this.facetsView = null;
             this.usersView = null;
             this.inputHandlerView = null;
@@ -156,11 +157,14 @@ define([
                 this.inputHandlerView,
                 this.usersView,
                 this.paginatorView,
-                this.demoHelpView,
+                this.demoHelpView
             ];
         },
 
         initChildViews: function() {
+            this.loaderView = new ui.load.views.LoaderBarView({
+                collection: this.collection
+            });
             this.facetsView = new SearchFacetsView({
                 collection: this.collection
             });
@@ -194,6 +198,7 @@ define([
 
         render: function() {
             this.$el.html(this.template());
+            this.append(this.loaderView, '.search-loader');
             this.append(this.demoHelpView, '.search-demo-help');
             this.append(this.facetsView, '.search-facets');
             this.append(this.inputHandlerView, '.search-bar');

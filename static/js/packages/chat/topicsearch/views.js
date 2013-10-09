@@ -89,6 +89,7 @@ define([
      */
     var TopicSearchPageView = core.view.View.extend({
 
+        loaderBarViewSelector: '.topicsearch-loaderbar',
         facetsSelector: '.topicsearch-facets',
         searchBarSelector: '.search-bar',
         searchResultsSelector: '.topicsearch-results-container',
@@ -110,6 +111,7 @@ define([
             this.listenTo(this.collection, 'reset', this.onReset);
 
             //child views
+            this.loaderBarView = null;
             this.facetsView = null;
             this.topicsCollectionView = null;
             this.inputHandlerView = null;
@@ -119,6 +121,7 @@ define([
 
         childViews: function() {
             return [
+                this.loaderBarView,
                 this.facetsView,
                 this.inputHandlerView,
                 this.topicsCollectionView,
@@ -128,6 +131,10 @@ define([
         },
 
         initChildViews: function() {
+            this.loaderBarView = new ui.load.views.LoaderBarView({
+                collection: this.collection
+            });
+
             this.facetsView = new TopicSearchFacetsView({
                 collection: this.collection
             });
@@ -166,6 +173,7 @@ define([
         render: function() {
             this.$el.html(this.template());
             this.$el.attr('class', this.classes().join(' '));
+            this.append(this.loaderBarView, this.loaderBarViewSelector);
             this.append(this.facetsView, this.facetsSelector);
             this.append(this.inputHandlerView, this.searchBarSelector);
             this.append(this.searchHelpView, this.searchHelpSelector);

@@ -5,6 +5,7 @@ define([
     'core',
     'api',
     'events',
+    'ui',
     'text!./templates/topic.html',
     'text!./templates/playable_topic.html',
     'text!./templates/topic_tree.html',
@@ -16,6 +17,7 @@ define([
     core,
     api,
     events,
+    ui,
     topic_template,
     playable_topic_template,
     topic_tree_template,
@@ -182,14 +184,18 @@ define([
     var TopicRegistrationView = core.view.View.extend({
 
         topicSelector: '.chat-topic-view-hook',
-        setupBtnSelector: '.setup-chat-btn',
+        recordChatAloneBtnSelector: '.record-chat-alone-btn',
+        recordChatWithFriendBtnSelector: '.record-chat-with-friend-btn',
 
         events: {
-            'click .setup-chat-btn': 'onSetupChat'
+            'click .record-chat-alone-btn': 'onRecordChatAlone',
+            'click .record-chat-with-friend-btn': 'onRecordChatWithFriend'
         },
 
         childViews: function() {
-            return [this.topicView];
+            return [
+                this.topicView
+            ];
         },
 
         initialize: function(options) {
@@ -213,12 +219,36 @@ define([
             return this;
         },
 
-        onSetupChat: function() {
+        onRecordChatAlone: function() {
+            var maxParticipants = 1;
+            this._recordChat(maxParticipants);
+        },
+
+        onRecordChatWithFriend: function() {
+            var maxParticipants = 2;
+            this._recordChat(maxParticipants);
+        },
+
+        _recordChat: function(maxParticipants) {
+            var that = this;
+            var chatModel = null;
+            var eventBody = null;
+            chatModel = new api.models.Chat({
+                topic_id: this.model.id,
+                max_participants: maxParticipants,
+                max_duration: this.model.get_duration()
+            });
             eventBody = {
-                type: 'TalkingPointView',
-                id: this.model.id
+                model: chatModel,
+                onSuccess: function(result) {
+                    var navigateEvtBody = {
+                        type: 'ChatView',
+                        id: chatModel.id // TODO this ok?
+                    };
+                    that.triggerEvent(events.VIEW_NAVIGATE, navigateEvtBody);
+                }
             };
-            this.triggerEvent(events.VIEW_NAVIGATE, eventBody);
+            this.triggerEvent(events.CREATE_CHAT, eventBody);
         }
     });
 

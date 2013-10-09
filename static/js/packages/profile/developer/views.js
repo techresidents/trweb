@@ -16,7 +16,9 @@ define([
     'text!./templates/preferences.html',
     'text!./templates/reels.html',
     'text!./templates/progress.html',
-    'text!./templates/profile.html'
+    'text!./templates/profile.html',
+    'text!./templates/spotlight.html'
+
 ], function(
     $,
     _,
@@ -35,7 +37,8 @@ define([
     preferences_template,
     reels_template,
     progress_template,
-    profile_template) {
+    profile_template,
+    spotlight_template) {
 
     var DeveloperProfileNavView = ui.template.views.TemplateView.extend({
 
@@ -262,6 +265,88 @@ define([
         }
     });
 
+    var DeveloperProfileSpotlightView = core.view.View.extend({
+
+        /**
+         * Developer Profile Spotlight View
+         * @constructor
+         * @param {Object} options
+         * @param {SpotlightlChatCollection} options.collection
+         *   SpotlightChat collection
+         * @param {PlayerState} options.playerState PlayerState model
+         */
+        initialize: function(options) {
+            this.template = _.template(spotlight_template);
+            this.collection = options.collection;
+            this.collection.slice(0, 5);
+            this.playerState = options.playerState;
+            this.collectionWithRelated = ['chat__topic'];
+
+            //loader
+            this.loader = new api.loader.ApiLoader([
+                { instance: this.collection, withRelated: this.collectionWithRelated}
+            ]);
+
+            //bind events
+            this.listenTo(this.loader, 'loaded', this.render);
+
+            //load data
+            this.loader.load();
+
+            //child views
+            this.collectionView = null;
+            this.helpView = null;
+            this.initChildViews();
+            this.initialized = true;
+        },
+
+        initChildViews: function() {
+            var that = this;
+            var viewFactory = new core.factory.FunctionFactory(function(options) {
+                return new widget.playback.views.PlaybackBriefView({
+                    model: options.model.get_chat(),
+                    playerState: that.playerState,
+                    context: function(view) {
+                        return {
+                            href: '/d/topic/' + view.model.get_topic_id()
+                        };
+                    }
+                });
+            });
+
+            this.collectionView = new ui.collection.views.CollectionView({
+                collection: this.collection,
+                viewFactory: viewFactory
+            });
+
+            this.helpView = new ui.help.views.HelpView({
+                help: 'Spotlight chats are chats by fellow developers which you ' +
+                      'can listen to get a feel for what chats are all about.',
+                placement: 'top',
+                iconClasses: 'icon-question-sign'
+            });
+        },
+
+        childViews: function() {
+            return [this.collectionView];
+        },
+
+        classes: function() {
+            return ['developer-profile-spotlight'];
+        },
+
+        render: function() {
+            if (this.initialized && this.loader.isLoaded()) {
+                var context = {};
+                this.$el.html(this.template(context));
+                this.$el.attr('class', this.classes().join(' '));
+                this.append(this.collectionView, '.developer-profile-spotlight-hook');
+                this.append(this.helpView, '.developer-profile-spotlight-help-hook');
+            }
+            return this;
+        }
+    });
+
     var DeveloperProfileGeneralEditView = core.view.View.extend({
 
         events: {
@@ -440,23 +525,27 @@ define([
     });
 
     var DeveloperProfileView = core.view.View.extend({
-
+        
+        loaderBarViewSelector: '.developer-profile-loader-hook',
         generalViewSelector: '.developer-profile-general-hook',
         preferencesViewSelector: '.developer-profile-prefs-hook',
         skillsViewSelector: '.developer-profile-skills-hook',
         reelViewSelector: '.developer-profile-reel-hook',
         progressViewSelector: '.developer-profile-progress-hook',
+        spotlightViewSelector: '.developer-profile-spotlight-hook',
 
         /**
          * Developer Profile View.
          * @constructor
          * @param {Object} options
          * @param {User} options.model User model
+         * @param {PlayerState} options.playerState PlayerState model
          * @classdesc
          * View to display user's profile
         */
         initialize: function(options) {
             this.model = options.model;
+            this.playerState = options.playerState;
             this.template = _.template(profile_template);
             this.modelWithRelated = [
                 'chat_reels__chat__topic',
@@ -477,25 +566,32 @@ define([
             this.loader.load();
 
             //child views
+            this.loaderBarView = null;
             this.generalView = null;
             this.preferencesView = null;
             this.skillsView = null;
             this.reelsView = null;
             this.progressView = null;
+            this.spotlightView = null;
             this.initChildViews();
         },
 
         childViews: function() {
             return [
+                this.loaderBarView,
                 this.generalView,
                 this.preferencesView,
                 this.skillsView,
                 this.reelsView,
-                this.progressView
+                this.progressView,
+                this.spotlightView
             ];
         },
 
         initChildViews: function() {
+            this.loaderBarView = new ui.load.views.LoaderBarView({
+                loader: this.loader
+            });
             this.generalView = new DeveloperProfileGeneralView({
                 model: this.model.get_developer_profile()
             });
@@ -510,6 +606,10 @@ define([
             });
             this.progressView = new DeveloperProfileProgressView({
                 model: this.model
+            });
+            this.spotlightView = new DeveloperProfileSpotlightView({
+                collection: new api.models.SpotlightChatCollection(),
+                playerState: this.playerState
             });
         },
 
@@ -527,11 +627,15 @@ define([
                 };
                 this.$el.html(this.template(context));
                 this.$el.attr('class', this.classes().join(' '));
+                this.append(this.loaderBarView, this.loaderBarViewSelector);
                 this.append(this.generalView, this.generalViewSelector);
                 this.append(this.preferencesView, this.preferencesViewSelector);
                 this.append(this.skillsView, this.skillsViewSelector);
                 this.append(this.reelsView, this.reelViewSelector);
                 this.append(this.progressView, this.progressViewSelector);
+                this.append(this.spotlightView, this.spotlightViewSelector);
+            } else {
+                this.append(this.loaderBarView);
             }
             return this;
         }
