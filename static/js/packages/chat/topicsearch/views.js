@@ -117,16 +117,6 @@ define([
             this.inputHandlerView = null;
             this.searchHelpView = null;
             this.initChildViews();
-
-            // This flag is set to indicate that our child views have been
-            // initialized. There's currently a problem when loading cached
-            // collections whereby the loader loads them from cache really quickly
-            // which triggers a 'loaded' event, which then invokes 'render' before
-            // our views have been created.  Models don't suffer from this
-            // problem because if it's cached, the model pulls all the cached
-            // data into its own instance which then prevents the loader from even
-            // trying to load the data, and thus no 'loaded' event is triggered.
-            this.initialized = true;
         },
 
         childViews: function() {
@@ -181,18 +171,14 @@ define([
         },
 
         render: function() {
-            if (this.initialized) {
-                this.$el.html(this.template());
-                this.$el.attr('class', this.classes().join(' '));
-                this.append(this.loaderBarView, this.loaderBarViewSelector);
-                this.append(this.facetsView, this.facetsSelector);
-                this.append(this.inputHandlerView, this.searchBarSelector);
-                this.append(this.searchHelpView, this.searchHelpSelector);
-                this.append(this.topicsCollectionView, this.searchResultsSelector);
-                this.append(this.paginatorView, this.searchResultsSelector);
-            } else {
-                this.append(this.loaderBarView);
-            }
+            this.$el.html(this.template());
+            this.$el.attr('class', this.classes().join(' '));
+            this.append(this.loaderBarView, this.loaderBarViewSelector);
+            this.append(this.facetsView, this.facetsSelector);
+            this.append(this.inputHandlerView, this.searchBarSelector);
+            this.append(this.searchHelpView, this.searchHelpSelector);
+            this.append(this.topicsCollectionView, this.searchResultsSelector);
+            this.append(this.paginatorView, this.searchResultsSelector);
             return this;
         },
 
