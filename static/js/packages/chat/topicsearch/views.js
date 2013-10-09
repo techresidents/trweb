@@ -192,8 +192,6 @@ define([
                 .filterBy({q: q})
                 .slice(0, pageSize)
                 .fetch();
-                           
-            this.loader.load();
         },
 
         onReset: function() {
