@@ -50,6 +50,9 @@ define(/** @exports events */[
         SAVE_REQUISITION: 'save_requisition',
 
         /* COMPANY PROFILE EVENTS */
-        UPDATE_COMPANY_PROFILE: 'update_company_profile'
+        UPDATE_COMPANY_PROFILE: 'update_company_profile',
+
+        /* TRACK ACTIONS */
+        TRACK_EVENT: 'track_event'
     };
 });

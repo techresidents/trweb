@@ -32,6 +32,7 @@ define([
         routes: {
             'chat/:id(/)': 'chat',
             'chatsim/:id(/)': 'chatSimulation',
+            'event/register(/)': 'eventRegister',
             'home(/)': 'home',
             'offer/:id(/)': 'offer',
             'offers(/:query)(/)': 'offers',
@@ -81,6 +82,16 @@ define([
                         id: id,
                         simulation: true
                     }
+                });
+            }, this));
+        },
+
+        eventRegister: function() {
+            require(['hiring'], _.bind(function(hiring) {
+                var Mediator = hiring.mediators.developer.event.DeveloperEventMediator;
+                this.facade.trigger(notifications.VIEW_CREATE, {
+                    type: Mediator.VIEW_TYPE.REGISTER,
+                    options: {}
                 });
             }, this));
         },
@@ -329,6 +340,9 @@ define([
     /* ALERT EVENTS */
     EventNotificationMap[events.ALERT] =
         notifications.ALERT;
+    /* TRACK EVENTS */
+    EventNotificationMap[events.TRACK_EVENT] =
+        notifications.TRACK_EVENT;
     /* CHAT EVENTS */
     EventNotificationMap[events.PARTICIPATE_IN_CHAT] =
         notifications.PARTICIPATE_IN_CHAT;
@@ -491,6 +505,8 @@ define([
             /* TRACK COMMANDS */
             this.registerCommand(notifications.TRACK_PAGE_VIEW,
                 ctrl.commands.track.TrackPageView);
+            this.registerCommand(notifications.TRACK_EVENT,
+                ctrl.commands.track.TrackEvent);
             /* APPLICATION COMMANDS */
             this.registerCommand(notifications.CREATE_APPLICATION,
                 ctrl.commands.applicant.CreateApplication);

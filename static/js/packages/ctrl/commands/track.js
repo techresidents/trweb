@@ -25,7 +25,28 @@ define([
         }
     });
 
+    /**
+     * Track Event constructor
+     * @constructor
+     */
+    var TrackEvent = core.command.Command.extend({
+
+        /**
+         * Execute Command
+         * @param {object} options options object
+         * @param {string} options.category event category
+         * @param {string} options.action event action
+         * @param {string} [options.label] event label
+         * @param {integer} [options.value] event value
+         */
+        execute: function(options) {
+            _gaq.push(['_trackEvent', options.category, options.action, options.label, options.value]);
+            return true;
+        }
+    });
+
     return {
-        TrackPageView: TrackPageView
+        TrackPageView: TrackPageView,
+        TrackEvent: TrackEvent
     };
 });
