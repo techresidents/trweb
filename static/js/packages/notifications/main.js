@@ -76,6 +76,7 @@ define([
 
         /* TRACK ACTIONS */
         TRACK_PAGE_VIEW: 'notification:TrackPageView',
+        TRACK_EVENT: 'notification:TrackEvent',
 
         /* COMPANY PROFILE ACTIONS */
         UPDATE_COMPANY_PROFILE: 'notification:UpdateCompanyProfile'

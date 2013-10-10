@@ -400,3 +400,13 @@
     margin-right: 25px;
     margin-bottom: 10px;
 }
+
+.developer-event-register li {
+    margin-bottom: 5px;
+}
+.developer-event-register-list {
+    list-style: none;
+}
+.developer-event-register button {
+    margin-top: 10px;
+}
