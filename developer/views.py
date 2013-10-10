@@ -29,7 +29,6 @@ def developer(request):
         app_md5_ext = md5_match.groupdict().get("md5_ext")
     
     context = {
-        "GA_TRACK_PAGE_VIEW": False, #Page tracking will happen in app router
         "current_user_json": json.dumps(current_user_json),
         "app_md5_ext": app_md5_ext
     }

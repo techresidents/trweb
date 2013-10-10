@@ -20,6 +20,9 @@ define([
             //track in google analytics
             //replace ';' with '--' for ga since can't handle it
             var gaUri = options.uri.replace(/;/g, '--');
+            if(gaUri.length && gaUri[0] !== '/') {
+                gaUri = '/' + gaUri;
+            }
             _gaq.push(['_trackPageview', gaUri]);
             return true;
         }
