@@ -258,6 +258,27 @@ a[name] {
     border-bottom: 1px solid #E3E3E3;
 }
 
+.sub-section-header {
+    margin-bottom: 10px;
+}
+
+.sub-section-header > span {
+    display: block;
+    font-size: 18px;
+    line-height: 36px;
+    font-weight:bold;
+    margin: 5px 0;
+    text-rendering: optimizelegibility;
+    border-bottom: 1px solid #DDDDDD;
+}
+
+.sub-section-header > span small {
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1;
+    color: #999999;
+}
+
 [class^="tr-icon-"] {
     display: inline-block;
     width: 14px;

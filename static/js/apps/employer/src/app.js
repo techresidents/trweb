@@ -339,6 +339,9 @@ define([
     /* ALERT EVENTS */
     EventNotificationMap[events.ALERT] =
         notifications.ALERT;
+    /* TRACK EVENTS */
+    EventNotificationMap[events.TRACK_EVENT] =
+        notifications.TRACK_EVENT;
     /* APPLICATION EVENTS */
     EventNotificationMap[events.CREATE_APPLICATION] =
         notifications.CREATE_APPLICATION;
@@ -499,6 +502,8 @@ define([
             /* TRACK COMMANDS */
             this.registerCommand(notifications.TRACK_PAGE_VIEW,
                 ctrl.commands.track.TrackPageView);
+            this.registerCommand(notifications.TRACK_EVENT,
+                ctrl.commands.track.TrackEvent);
             /* APPLICATION COMMANDS */
             this.registerCommand(notifications.CREATE_APPLICATION,
                 ctrl.commands.applicant.CreateApplication);
