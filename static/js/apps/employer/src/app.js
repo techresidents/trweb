@@ -56,7 +56,7 @@ define([
                 uri += '/';
             }
             this.facade.trigger(notifications.TRACK_PAGE_VIEW, {
-                uri: '/' + uri
+                uri: uri
             });
             AppRouter.__super__.navigate.call(this, uri, options);
         },
